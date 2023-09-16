@@ -32,7 +32,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 		if(entity == null){
 			return LazyOptional.empty();
 		}else{
-			if(entity.level.isClientSide){
+			if(entity.level().isClientSide()){
 				Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
 
 				if(fakeState.first){

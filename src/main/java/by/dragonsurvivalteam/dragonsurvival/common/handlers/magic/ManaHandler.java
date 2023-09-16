@@ -59,7 +59,7 @@ public class ManaHandler{
 			return false;
 		}
 
-		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
+		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 		BlockState feetBlock = player.getFeetBlockState();
 
 		if(feetBlock.getBlock() instanceof TreasureBlock || blockBelow.getBlock() instanceof TreasureBlock){
@@ -94,7 +94,7 @@ public class ManaHandler{
 		return manaCost <= 0;
 	}
 	public static void replenishMana(Player entity, int mana){
-		if(entity.level.isClientSide){
+		if(entity.level().isClientSide()){
 			return;
 		}
 
@@ -109,14 +109,14 @@ public class ManaHandler{
 			return;
 
 		if(ServerConfig.consumeEXPAsMana){
-			if(entity.level.isClientSide){
+			if(entity.level().isClientSide()){
 				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
 					entity.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
 				}
 			}
 		}
 
-		if(entity.level.isClientSide){
+		if(entity.level().isClientSide()){
 			return;
 		}
 

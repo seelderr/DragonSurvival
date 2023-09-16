@@ -50,7 +50,7 @@ public class ForestDragonType extends AbstractDragonType{
 
 	@Override
 	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
-		Level world = player.level;
+		Level world = player.level();
 		BlockState feetBlock = player.getFeetBlockState();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
@@ -69,7 +69,7 @@ public class ForestDragonType extends AbstractDragonType{
 		   && ServerConfig.forestStressTicks > 0
 		   && !player.isCreative() &&
 		   !player.isSpectator()) {
-			if (!world.isClientSide) {
+			if (!world.isClientSide()) {
 				LevelLightEngine lightManager = world.getChunkSource().getLightEngine();
 				if (lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(
 						player.blockPosition().above()) < 3) {
@@ -93,7 +93,7 @@ public class ForestDragonType extends AbstractDragonType{
 				}
 			}
 			
-			if (world.isClientSide && !player.isCreative() && !player.isSpectator()) {
+			if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
 				if (!player.hasEffect(DragonEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
 					world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
 				}
@@ -103,12 +103,12 @@ public class ForestDragonType extends AbstractDragonType{
 
 	@Override
 	public boolean isInManaCondition(Player player, DragonStateHandler cap){
-		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
+		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 		BlockState feetBlock = player.getFeetBlockState();
 
-		if(player.level.canSeeSky(player.blockPosition())){
-			int light = player.level.getBrightness(LightLayer.SKY, player.blockPosition()) - player.level.getSkyDarken();
-			float f = player.level.getSunAngle(1.0F);
+		if(player.level().canSeeSky(player.blockPosition())){
+			int light = player.level().getBrightness(LightLayer.SKY, player.blockPosition()) - player.level().getSkyDarken();
+			float f = player.level().getSunAngle(1.0F);
 
 			float f1 = f < (float)Math.PI ? 0.0F : (float)Math.PI * 2F;
 			f = f + (f1 - f) * 0.2F;

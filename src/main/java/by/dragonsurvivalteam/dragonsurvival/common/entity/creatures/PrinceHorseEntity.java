@@ -82,7 +82,7 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 
 	@Override
 	public int getExperienceReward(){
-		return 1 + level.random.nextInt(2);
+		return 1 + random.nextInt(2);
 	}
 
 	@Override

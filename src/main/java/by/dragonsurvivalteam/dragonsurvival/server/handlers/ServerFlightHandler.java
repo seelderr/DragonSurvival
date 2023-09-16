@@ -119,11 +119,11 @@ public class ServerFlightHandler{
 					double damage = livingEntity.getDeltaMovement().lengthSqr() * (dragonStateHandler.getSize() / 20);
 					damage = Mth.clamp(damage, 0, livingEntity.getHealth() - (lethalFlight ? 0 : 1));
 
-					if (!livingEntity.level.isClientSide && dragonStateHandler.isWingsSpread()) {
+					if (!livingEntity.level().isClientSide() && dragonStateHandler.isWingsSpread()) {
 						event.setDistance((float) Math.floor((damage + 3.0F + f) * event.getDamageMultiplier()));
 					}
 				}finally {
-					if(!livingEntity.level.isClientSide){
+					if(!livingEntity.level().isClientSide()){
 						if(foldWingsOnLand){
 							if(dragonStateHandler.isWingsSpread()){
 								dragonStateHandler.setWingsSpread(false);
@@ -139,7 +139,7 @@ public class ServerFlightHandler{
 	@SubscribeEvent
 	public static void foldWings(PlayerTickEvent tickEvent){
 		Player player = tickEvent.player;
-		if(tickEvent.phase == Phase.START || !DragonUtils.isDragon(player) || player.level.isClientSide){
+		if(tickEvent.phase == Phase.START || player.level().isClientSide() || !DragonUtils.isDragon(player)){
 			return;
 		}
 		if(!foldWingsOnLand || player.getFoodData().getFoodLevel() <= flightHungerThreshold && !player.isCreative() && !allowFlyingWithoutHunger){
@@ -152,7 +152,7 @@ public class ServerFlightHandler{
 			player.fallDistance = Math.max(0, player.fallDistance * 0.5f);
 		}
 
-		if(dragonStateHandler.hasFlown && player.isOnGround()){
+		if(dragonStateHandler.hasFlown && player.onGround()){
 			if(dragonStateHandler.isWingsSpread() && player.isCreative()){
 				dragonStateHandler.hasFlown = false;
 				dragonStateHandler.setWingsSpread(false);
@@ -167,7 +167,7 @@ public class ServerFlightHandler{
 
 	public static boolean isFlying(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		return dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava();
+		return dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
 	}
 
 	@SubscribeEvent
@@ -220,7 +220,7 @@ public class ServerFlightHandler{
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
 					if(!isFlying(player) && !canSwimSpin(player)){
-						if(!player.level.isClientSide){
+						if(!player.level().isClientSide()){
 							handler.getMovementData().spinAttack = 0;
 							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 						}
@@ -229,7 +229,7 @@ public class ServerFlightHandler{
 
 				if(isSpin(player)){
 					int range = 5;
-					List<Entity> entities = player.level.getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
+					List<Entity> entities = player.level().getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
 					entities.removeIf(e -> e.distanceTo(player) > range);
 					entities.remove(player);
 					entities.removeIf(e -> e instanceof Player && !player.canHarmPlayer((Player)e));
@@ -248,11 +248,11 @@ public class ServerFlightHandler{
 
 					handler.getMovementData().spinAttack--;
 
-					if(!player.level.isClientSide){
+					if(!player.level().isClientSide()){
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 				}else if(handler.getMovementData().spinCooldown > 0){
-					if(!player.level.isClientSide){
+					if(!player.level().isClientSide()){
 						handler.getMovementData().spinCooldown--;
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
@@ -274,7 +274,7 @@ public class ServerFlightHandler{
 	public static boolean canSwimSpin(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		boolean validSwim = (Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) || Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE);
-		return validSwim && dragonStateHandler.hasWings() && !player.isOnGround();
+		return validSwim && dragonStateHandler.hasWings() && !player.onGround();
 	}
 
 	@ConfigRange(min = 1, max = 60 * 60 * 20)
@@ -291,7 +291,7 @@ public class ServerFlightHandler{
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
-				if(creativeFlight && !player.level.isClientSide){
+				if(creativeFlight && !player.level().isClientSide()){
 					if(player.getAbilities().flying != wingsSpread && !player.isCreative() && !player.isSpectator()){
 						player.getAbilities().flying = wingsSpread;
 						player.onUpdateAbilities();
@@ -301,7 +301,7 @@ public class ServerFlightHandler{
 				if(wingsSpread){
 					if(flyingUsesHunger){
 						if(isFlying(player)){
-							if(!player.level.isClientSide){
+							if(!player.level().isClientSide()){
 								if(player.getFoodData().getFoodLevel() <= foldWingsThreshold && !allowFlyingWithoutHunger && !player.isCreative()){
 									player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 									dragonStateHandler.setWingsSpread(false);
@@ -332,7 +332,7 @@ public class ServerFlightHandler{
 
 	public static double getLandTime(final Player player, double goalTime, final Vec3 deltaMovement) {
 		if (isFlying(player)) {
-			BlockPos blockHeight = player.level.getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
+			BlockPos blockHeight = player.level().getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
 			int height = blockHeight.getY();
 			double aboveGround = Math.max(0, player.position().y - height);
 			double timeToGround = aboveGround / Math.abs(deltaMovement.y);

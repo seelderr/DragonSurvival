@@ -97,7 +97,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 				DragonStateHandler dragonStateHandler = dragonState.orElse(null);
 				if(dragonStateHandler.isDragon() && (playerEntity.totalExperience >= 60 || playerEntity.isCreative())){
 					if(this == DSBlocks.peaceDragonBeacon){
-						if(!world.isClientSide){
+						if(!world.isClientSide()){
 							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
@@ -105,7 +105,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 							});
 						}
 					}else if(this == DSBlocks.magicDragonBeacon){
-						if(!world.isClientSide){
+						if(!world.isClientSide()){
 							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
@@ -113,7 +113,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 							});
 						}
 					}else if(this == DSBlocks.fireDragonBeacon){
-						if(!world.isClientSide){
+						if(!world.isClientSide()){
 							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 								if(effect != null){
 									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
@@ -128,7 +128,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 				}
 			}
 		}
-		playerEntity.hurt(DamageSource.GENERIC, 1);
+		playerEntity.hurt(playerEntity.damageSources().generic(), 1);
 		return InteractionResult.SUCCESS;
 	}
 
@@ -178,6 +178,6 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 	@Override
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
-		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.dragonBeacon, DragonBeaconTileEntity::serverTick);
+		return pLevel.isClientSide() ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.dragonBeacon, DragonBeaconTileEntity::serverTick);
 	}
 }

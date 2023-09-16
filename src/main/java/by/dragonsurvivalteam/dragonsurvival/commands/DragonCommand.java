@@ -125,7 +125,7 @@ public class DragonCommand{
 
 			if(player instanceof ServerPlayer serverPlayer){
 				if(!serverPlayer.addItem(stack)){
-					serverPlayer.level.addFreshEntity(new ItemEntity(serverPlayer.level, serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack));
+					serverPlayer.level().addFreshEntity(new ItemEntity(serverPlayer.level(), serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack));
 				}
 			}
 		}

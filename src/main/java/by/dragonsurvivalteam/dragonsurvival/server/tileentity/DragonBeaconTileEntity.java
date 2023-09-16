@@ -48,7 +48,7 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 				pLevel.setBlockAndUpdate(pPos, pState.cycle(DragonBeacon.LIT));
 				pLevel.playSound(null, pPos, SoundRegistry.activateBeacon, SoundSource.BLOCKS, 1, 1);
 			}
-			if(!pLevel.isClientSide){
+			if(!pLevel.isClientSide()){
 				List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonUtils::isDragon);
 				switch(pBlockEntity.type){
 					case PEACE -> dragons.forEach(playerEntity -> {

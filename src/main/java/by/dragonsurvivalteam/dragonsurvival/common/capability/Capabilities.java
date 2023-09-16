@@ -43,7 +43,7 @@ public class Capabilities{
 		Entity entity = event.getObject();
 
 		if (entity instanceof Player player) {
-			if (entity.getLevel().isClientSide && isFakePlayer(player)) {
+			if (entity.level().isClientSide() && isFakePlayer(player)) {
 				return;
 			}
 

@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
+import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
@@ -130,7 +131,7 @@ public class DragonAbilities{
 
 			handler.getMagicData().abilities.put(ability.getName(), ability);
 
-			if(player.level.isClientSide){
+			if(player.level().isClientSide()){
 				NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagicData()));
 			}else{
 				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagicData()));
@@ -150,7 +151,7 @@ public class DragonAbilities{
 			s.level = Mth.clamp(level, s.getMinLevel(), s.getMaxLevel());
 		});
 
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagicData()));
 		}else{
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagicData()));
@@ -257,10 +258,10 @@ public class DragonAbilities{
 		Vec3 vector3d2 = eyePosition.add(viewVector);
 
 		BlockPos pos = null;
-		BlockHitResult result = player.level.clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility instanceof StormBreathAbility ? ClipContext.Fluid.NONE : ClipContext.Fluid.ANY, null));
+		BlockHitResult result = player.level().clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility instanceof StormBreathAbility ? ClipContext.Fluid.NONE : ClipContext.Fluid.ANY, null));
 
 		if (result.getType() == HitResult.Type.MISS) {
-			pos = new BlockPos(vector3d2.x, vector3d2.y, vector3d2.z);
+			pos = BlockPosHelper.get(vector3d2);
 		} else if (result.getType() == HitResult.Type.BLOCK) {
 			pos = result.getBlockPos();
 		}

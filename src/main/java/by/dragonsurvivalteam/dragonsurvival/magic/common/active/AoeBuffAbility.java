@@ -34,10 +34,10 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 				float f7 = Mth.sqrt(player.getRandom().nextFloat()) * getRange();
 				float f8 = Mth.cos(f6) * f7;
 				float f9 = Mth.sin(f6) * f7;
-				player.level.addAlwaysVisibleParticle(getParticleEffect(), player.getX() + (double)f8, player.getY(), player.getZ() + (double)f9, (0.5D - player.getRandom().nextDouble()) * 0.15D, 0.01F, (0.5D - player.getRandom().nextDouble()) * 0.15D);
+				player.level().addAlwaysVisibleParticle(getParticleEffect(), player.getX() + (double)f8, player.getY(), player.getZ() + (double)f9, (0.5D - player.getRandom().nextDouble()) * 0.15D, 0.01F, (0.5D - player.getRandom().nextDouble()) * 0.15D);
 			}
 
-		List<LivingEntity> list1 = player.level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(getRange()));
+		List<LivingEntity> list1 = player.level().getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(getRange()));
 		if(!list1.isEmpty())
 			for(LivingEntity livingentity : list1){
 				if(livingentity.isAffectedByPotions()){
@@ -50,7 +50,7 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 					}
 				}
 			}
-		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundSource.PLAYERS, 5F, 0.1F, false);
+		player.level().playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_OUT, SoundSource.PLAYERS, 5F, 0.1F, false);
 	}
 
 	@Override

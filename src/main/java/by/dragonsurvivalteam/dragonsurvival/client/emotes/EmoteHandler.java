@@ -90,7 +90,7 @@ public class EmoteHandler{
 					if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull)){
 						if(emote.sound != null && emote.sound.interval > 0){
 							if(cap.getEmoteData().emoteTicks[index] % emote.sound.interval == 0){
-								player.level.playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundSource.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
+								player.level().playLocalSound(player.position().x, player.position().y, player.position().z, new SoundEvent(new ResourceLocation(emote.sound.key)), SoundSource.PLAYERS, emote.sound.volume, emote.sound.pitch, false);
 							}
 						}
 

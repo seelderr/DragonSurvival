@@ -86,7 +86,7 @@ public abstract class MixinLivingEntity extends Entity{
 			DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
 				if (dragonStateHandler.isDragon()) {
 					if (DragonFoodHandler.isDragonEdible(itemStack.getItem(), dragonStateHandler.getType())) {
-						level.playSound(null, getX(), getY(), getZ(), getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0F, 1.0F + (level.random.nextFloat() - level.random.nextFloat()) * 0.4F);
+						level.playSound(null, getX(), getY(), getZ(), getEatingSound(itemStack), SoundSource.NEUTRAL, 1.0F, 1.0F + (random.nextFloat() - random.nextFloat()) * 0.4F);
 						addEatEffect(itemStack, level, (LivingEntity) (Object) this);
 						if (!((Object) this instanceof Player) || !((Player) (Object) this).getAbilities().instabuild) {
 							itemStack.shrink(1);
@@ -119,8 +119,8 @@ public abstract class MixinLivingEntity extends Entity{
 					if (DragonFoodHandler.isDragonEdible(item, dragonStateHandler.getType())) {
 
 						for (Pair<MobEffectInstance, Float> pair : DragonFoodHandler.getDragonFoodProperties(item, dragonStateHandler.getType()).getEffects()) {
-							if (!level.isClientSide && pair.getFirst() != null) {
-								if (pair.getFirst() != null && pair.getFirst().getEffect() != MobEffects.HUNGER && level.random.nextFloat() < pair.getSecond()) {
+							if (!level.isClientSide() && pair.getFirst() != null) {
+								if (pair.getFirst() != null && pair.getFirst().getEffect() != MobEffects.HUNGER && random.nextFloat() < pair.getSecond()) {
 									livingEntity.addEffect(new MobEffectInstance(pair.getFirst()));
 								}
 								if (pair.getFirst().getEffect() == MobEffects.HUNGER) {

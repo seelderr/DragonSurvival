@@ -17,9 +17,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.ForestBreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
@@ -35,9 +32,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.datafixers.util.Pair;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
@@ -49,8 +44,6 @@ import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -58,7 +51,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
@@ -69,6 +61,9 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+import software.bernie.geckolib.core.object.Color;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
@@ -209,19 +204,19 @@ public class ClientDragonRender{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(!playerDragonHashMap.containsKey(player.getId())){
-			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level);
+			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level());
 			dummyDragon.playerId = player.getId();
 			playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
 		}
 
 		if(dragonArmor == null){
-			dragonArmor = DSEntities.DRAGON_ARMOR.create(player.level);
+			dragonArmor = DSEntities.DRAGON_ARMOR.create(player.level());
 			assert dragonArmor != null;
 			dragonArmor.playerId = player.getId();
 		}
 
 		if(dummyDragon == null){
-			dummyDragon = DSEntities.DRAGON.create(player.level);
+			dummyDragon = DSEntities.DRAGON.create(player.level());
 			assert dummyDragon != null;
 			dummyDragon.playerId = player.getId();
 		}
@@ -256,18 +251,18 @@ public class ClientDragonRender{
 					}
 				}
 
-				matrixStack.mulPose(Vector3f.YN.rotationDegrees((float)handler.getMovementData().bodyYaw));
+				matrixStack.mulPose(Axis.YN.rotationDegrees((float)handler.getMovementData().bodyYaw));
 				matrixStack.scale(scale, scale, scale);
 				((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius((float)((3.0F * size + 62.0F) / 260.0F));
 				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
 				EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
-				if(player.isCrouching() && handler.isWingsSpread() && !player.isOnGround()){
+				if(player.isCrouching() && handler.isWingsSpread() && !player.onGround()){
 					matrixStack.translate(0, -0.15, 0);
 				}else if(player.isCrouching()){
 					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
-				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
+				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()){
  					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 				}
 				if(!player.isInvisible()){
@@ -286,7 +281,7 @@ public class ClientDragonRender{
 								dummyDragon.prevXRot = 0;
 							}
 
-							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
+							matrixStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
 
 							Vec3 vector3d1 = player.getDeltaMovement();
 							Vec3 vector3d = player.getViewVector(1f);
@@ -308,7 +303,7 @@ public class ClientDragonRender{
 								dummyDragon.prevZRot = 0;
 							}
 
-							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
+							matrixStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
 						}
 					}
 					if(player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight){
@@ -336,14 +331,14 @@ public class ClientDragonRender{
 				if(!player.isSpectator()){
 					((AccessorLivingRenderer)playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
 						matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
-						matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
+						matrixStack.mulPose(Axis.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
 						double forward = 0.3 * scale;
 						float parrotHeadYaw = Mth.clamp(-1.0F * ((float)handler.getMovementData().bodyYaw - (float)handler.getMovementData().headYaw), -75.0F, 75.0F);
 						matrixStack.translate(0, -height, -forward);
 						renderLayer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)handler.getMovementData().headPitch);
 						matrixStack.translate(0, height, forward);
-						matrixStack.mulPose(Vector3f.XN.rotationDegrees(-180.0F));
+						matrixStack.mulPose(Axis.XN.rotationDegrees(-180.0F));
 						matrixStack.scale(scale, scale, scale);
 					});
 
@@ -363,20 +358,20 @@ public class ClientDragonRender{
 	}
 
 	private static void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, float yaw, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
-		software.bernie.geckolib3.core.util.Color armorColor = software.bernie.geckolib3.core.util.Color.ofRGB(1f, 1f, 1f);
+		Color armorColor = Color.ofRGB(1f, 1f, 1f);
 
 		if(stack == null || stack.isEmpty()) return;
 
 		if(stack.getItem() instanceof DyeableArmorItem){
 			int colorCode = ((DyeableArmorItem)stack.getItem()).getColor(stack);
-			armorColor = software.bernie.geckolib3.core.util.Color.ofOpaque(colorCode);
+			armorColor = Color.ofOpaque(colorCode);
 		}
 
 		if(!stack.isEmpty()){
 			EntityRenderer<? super DragonEntity> dragonArmorRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ClientDragonRender.dragonArmor);
 			ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
 			ClientDragonRender.dragonArmorModel.setArmorTexture(helmetTexture);
-			software.bernie.geckolib3.core.util.Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
+			Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
 			((DragonRenderer)dragonArmorRenderer).shouldRenderLayers = false;
 			((DragonRenderer)dragonArmorRenderer).renderColor = armorColor;
 			dragonArmorRenderer.render(entitylivingbaseIn, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
@@ -550,13 +545,13 @@ public class ClientDragonRender{
 
 		if(entity instanceof DragonEntity){
 			if(ClientDragonRender.dragonArmor == null){
-				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level);
+				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level());
 				assert dragonArmor != null;
 				ClientDragonRender.dragonArmor.playerId = Minecraft.getInstance().player.getId();
 			}
 
 			if(!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())){
-				DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level);
+				DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level());
 				dummyDragon.playerId = Minecraft.getInstance().player.getId();
 				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
 			}
@@ -570,8 +565,8 @@ public class ClientDragonRender{
 		matrixstack.scale(1.0F, 1.0F, -1.0F);
 		matrixstack.translate(0.0D, 0.0D, 0);
 		matrixstack.scale(scale, scale, scale);
-		Quaternion quaternion = Vector3f.ZP.rotationDegrees(180.0F);
-		Quaternion quaternion1 = Vector3f.XP.rotationDegrees(yRot * 10.0F);
+		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
+		Quaternionf quaternion1 = Axis.XP.rotationDegrees(yRot * 10.0F);
 		quaternion.mul(quaternion1);
 		matrixstack.mulPose(quaternion);
 		matrixstack.translate(xOffset, -1 + yOffset, 0);
@@ -588,7 +583,7 @@ public class ClientDragonRender{
 		entity.yHeadRotO = entity.yRot;
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
 		boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
-		quaternion1.conj();
+		quaternion1 = quaternion1.conjugate();
 		entityrenderermanager.overrideCameraOrientation(quaternion1);
 		MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {

@@ -26,7 +26,7 @@ public class StarHeartItem extends Item{
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
-		if(!world.isClientSide){
+		if(!world.isClientSide()){
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if(handler.isDragon()){

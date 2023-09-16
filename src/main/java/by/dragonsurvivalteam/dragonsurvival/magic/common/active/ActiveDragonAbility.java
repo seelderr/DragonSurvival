@@ -94,7 +94,7 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 		}
 
 		if(requiresStationaryCasting() || ServerFlightHandler.isGliding(player)){
-			if(handler.isWingsSpread() && player.isFallFlying() || !player.isOnGround() && player.fallDistance > 0.15F){
+			if(handler.isWingsSpread() && player.isFallFlying() || !player.onGround() && player.fallDistance > 0.15F){
 				ClientMagicHUDHandler.castingError(Component.translatable("ds.skill.nofly"));
 				return false;
 			}

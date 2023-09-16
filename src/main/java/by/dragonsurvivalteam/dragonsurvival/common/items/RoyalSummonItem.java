@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.BlockPos;
@@ -47,7 +48,6 @@ public class RoyalSummonItem extends Item
 				return InteractionResultHolder.pass(itemstack);
 			} else {
 				Vec3 vec3 = pPlayer.getViewVector(1.0F);
-				double d0 = 5.0D;
 				List<Entity> list = pLevel.getEntities(pPlayer, pPlayer.getBoundingBox().expandTowards(vec3.scale(5.0D)).inflate(1.0D), ENTITY_PREDICATE);
 				if (!list.isEmpty()) {
 					Vec3 vec31 = pPlayer.getEyePosition();
@@ -64,10 +64,10 @@ public class RoyalSummonItem extends Item
 					Mob ent = entityType.get().create(pLevel);
 					ent.setPos(hitresult.getLocation().x, hitresult.getLocation().y, hitresult.getLocation().z);
 					ent.addEffect(new MobEffectInstance(DragonEffects.ROYAL_DEPARTURE, Functions.minutesToTicks(ServerConfig.royalDisappearInMinutes)));
-					if (!pLevel.isClientSide) {
+					if (!pLevel.isClientSide()) {
 						ent.finalizeSpawn((ServerLevelAccessor)pLevel, pLevel.getCurrentDifficultyAt(ent.blockPosition()), MobSpawnType.SPAWN_EGG, (SpawnGroupData)null, (CompoundTag)null);
 						pLevel.addFreshEntity(ent);
-						pLevel.gameEvent(pPlayer, GameEvent.ENTITY_PLACE, new BlockPos(hitresult.getLocation()));
+						pLevel.gameEvent(pPlayer, GameEvent.ENTITY_PLACE, BlockPosHelper.get(hitresult.getLocation()));
 						if (!pPlayer.getAbilities().instabuild) {
 							itemstack.shrink(1);
 						}

@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Stat;
@@ -54,7 +55,7 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket(){return null;}
+	public Packet<ClientGamePacketListener> getAddEntityPacket(){return null;}
 
 	@Override
 	public void tick(){return;}

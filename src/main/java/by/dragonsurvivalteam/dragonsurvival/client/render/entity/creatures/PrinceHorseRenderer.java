@@ -12,7 +12,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
@@ -72,7 +72,7 @@ public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEn
 	}
 
 	@Override
-	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, IBone bone){
+	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, CoreGeoBone bone){
 //		matrixStack.last().normal().mul(bone.getWorldSpaceNormal());
 //		matrixStack.last().pose().multiply(bone.getWorldSpaceXform());
 //		matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
@@ -85,7 +85,7 @@ public class PrinceHorseRenderer extends ExtendedGeoEntityRenderer<PrinceHorseEn
 	}
 
 	@Override
-	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, IBone bone){
+	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, CoreGeoBone bone){
 
 	}
 

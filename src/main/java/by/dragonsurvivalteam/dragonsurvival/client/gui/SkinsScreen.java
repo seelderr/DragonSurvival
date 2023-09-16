@@ -8,8 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUD
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -23,22 +23,26 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib3.core.processor.IBone;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
+import java.util.function.Supplier;
 
 public class SkinsScreen extends Screen{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_interface.png");
@@ -71,27 +75,40 @@ public class SkinsScreen extends Screen{
 	protected int imageWidth = 164;
 	protected int imageHeight = 128;
 
+	// To avoid having to retrieve the player capabilities every render tick
+	private boolean renderNewBorn;
+	private boolean renderYoung;
+	private boolean renderAdult;
+
 	public SkinsScreen(Screen sourceScreen){
 		super(Component.empty());
 		this.sourceScreen = sourceScreen;
+
+		LocalPlayer localPlayer = sourceScreen.getMinecraft().player;
+		SkinCap skinData = DragonUtils.getHandler(localPlayer).getSkinData();
+		renderNewBorn = skinData.renderNewborn;
+		renderYoung = skinData.renderYoung;
+		renderAdult = skinData.renderAdult;
 	}
 
 	@Override
-	public void render(PoseStack stack, int mouseX, int mouseY, float partialTicks){
-		if(minecraft == null){
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		if (minecraft == null) {
 			return;
 		}
 
+		PoseStack stack = guiGraphics.pose();
+
 		stack.pushPose();
 		stack.translate(0F, 0F, -500);
-		renderBackground(stack);
+		renderBackground(guiGraphics);
 		stack.popPose();
 
 		int startX = guiLeft;
 		int startY = guiTop;
 
 		stack.pushPose();
-		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final CoreGeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(false);
@@ -138,46 +155,38 @@ public class SkinsScreen extends Screen{
 		stack.translate(0F, 0F, 400);
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
-		blit(stack, startX + 128, startY, 0, 0, 164, 256);
+		guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
 
-		drawNonShadowString(stack, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
-		drawCenteredString(stack, minecraft.font, Component.translatable("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
-
-		drawNonShadowString(stack, minecraft.font, Component.empty().append(playerName + " - " + level.getName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
+		drawNonShadowString(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
+		guiGraphics.drawCenteredString(minecraft.font, Component.translatable("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
+		drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - " + level.getName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
 		if(!loading){
 			if(noSkin){
-				if(playerName == minecraft.player.getGameProfile().getName()){
-					drawNonShadowLineBreak(stack, minecraft.font, Component.translatable("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
+				if(playerName.equals(minecraft.player.getGameProfile().getName())){
+					drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
 				}else{
-					drawNonShadowLineBreak(stack, minecraft.font, Component.translatable("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
+					drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
 				}
 			}
 		}
 
-		super.render(stack, mouseX, mouseY, partialTicks);
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-		for(Widget btn : renderables){
-			if(btn instanceof AbstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
-				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
-			}
-		}
-
+		// TODO 1.20 :: Is this safe?
 		stack.translate(0F, 0F, -400f);
 	}
 
-	public static void drawNonShadowString(PoseStack p_238472_0_, Font p_238472_1_, Component p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_){
-		p_238472_1_.draw(p_238472_0_, Language.getInstance().getVisualOrder(p_238472_2_), p_238472_3_ - p_238472_1_.width(p_238472_2_) / 2, p_238472_4_, p_238472_5_);
+	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
+		guiGraphics.drawString(font, Language.getInstance().getVisualOrder(component), x - font.width(component) / 2, y, color);
 	}
 
-	public static void drawNonShadowLineBreak(PoseStack p_238472_0_, Font p_238472_1_, Component p_238472_2_, int p_238472_3_, int p_238472_4_, int p_238472_5_){
-		FormattedCharSequence ireorderingprocessor = p_238472_2_.getVisualOrderText();
+	public static void drawNonShadowLineBreak(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
+		List<FormattedText> wrappedLine = font.getSplitter().splitLines(component, 150, Style.EMPTY);
 
-		List<FormattedText> wrappedLine = p_238472_1_.getSplitter().splitLines(p_238472_2_, 150, Style.EMPTY);
-		int i = 0;
-		for(FormattedText properties : wrappedLine){
-			p_238472_1_.draw(p_238472_0_, Language.getInstance().getVisualOrder(properties), p_238472_3_ - p_238472_1_.width(ireorderingprocessor) / 2, p_238472_4_ + i * 9, p_238472_5_);
-			i++;
+		for (int i = 0; i < wrappedLine.size(); i++) {
+			FormattedText properties = wrappedLine.get(i);
+			guiGraphics.drawString(font, Language.getInstance().getVisualOrder(properties), x - font.width(component.getVisualOrderText()) / 2, y + i * 9, color);
 		}
 	}
 
@@ -205,57 +214,57 @@ public class SkinsScreen extends Screen{
 		// Button to enable / disable rendering of the newborn dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
+			boolean newValue = !handler.getSkinData().renderNewborn;
 
-			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
-			ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
+			handler.getSkinData().renderNewborn = newValue;
+			renderNewBorn = newValue;
+			ConfigHandler.updateConfigValue("renderNewbornSkin", newValue);
+
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-
-				DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
-				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+				guiGraphics.blit(renderNewBorn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13 );
 			}
 		});
 
 		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
+			boolean newValue = !handler.getSkinData().renderYoung;
 
-			handler.getSkinData().renderYoung = !handler.getSkinData().renderYoung;
+			handler.getSkinData().renderYoung = newValue;
+			renderYoung = newValue;
 			ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
+
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-
-				DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderYoung ? UNCHECKED : CHECKED);
-				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+				guiGraphics.blit(renderYoung ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
 		// Button to enable / disable rendering of the adult dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, Component.translatable("ds.level.adult"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
+			boolean newValue = !handler.getSkinData().renderAdult;
 
-			handler.getSkinData().renderAdult = !handler.getSkinData().renderAdult;
+			handler.getSkinData().renderAdult = newValue;
+			renderAdult = newValue;
 			ConfigHandler.updateConfigValue("renderAdultSkin", handler.getSkinData().renderAdult);
+
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-
-				DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderAdult ? UNCHECKED : CHECKED);
-				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+				guiGraphics.blit(renderAdult ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
@@ -263,13 +272,11 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
 			ConfigHandler.updateConfigValue("renderOtherPlayerSkins", !ClientDragonRender.renderOtherPlayerSkins);
 			setTextures();
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-
-				RenderSystem.setShaderTexture(0, ClientDragonRender.renderOtherPlayerSkins ? CHECKED : UNCHECKED);
-				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+				guiGraphics.blit(ClientDragonRender.renderOtherPlayerSkins ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
@@ -281,16 +288,14 @@ public class SkinsScreen extends Screen{
 			}catch(URISyntaxException urisyntaxexception){
 				urisyntaxexception.printStackTrace();
 			}
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, DISCORD);
-				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16, 16);
-			}
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				if (getTooltip() == null) {
+					setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.discord")));
+				}
 
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.skins.tooltip.discord"), p_230443_2_, p_230443_3_);
+				guiGraphics.blit(DISCORD, getX(), getY(), 0, 0, 16, 16, 16, 16);
 			}
 		});
 
@@ -302,32 +307,25 @@ public class SkinsScreen extends Screen{
 			}catch(URISyntaxException urisyntaxexception){
 				urisyntaxexception.printStackTrace();
 			}
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, WIKI);
-				blit(p_230431_1_, x, y, 0, 0, 16, 16, 16, 16);
-			}
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				if (getTooltip() == null) {
+					setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.wiki")));
+				}
 
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.skins.tooltip.wiki"), p_230443_2_, p_230443_3_);
+				guiGraphics.blit(WIKI, getX(), getY(), 0, 0, 16, 16, 16, 16);
 			}
 		});
 
 		addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16,  "ds.gui.skins.tooltip.help", 1));
 
-		addRenderableWidget(new Button(startX - 60, startY + 128, 90, 20, Component.translatable("ds.gui.skins.yours"), button -> {
+		addRenderableWidget(Button.builder(Component.translatable("ds.gui.skins.yours"), button -> {
 			playerName = minecraft.player.getGameProfile().getName();
 			setTextures();
-		}){
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.skins.tooltip.yours"), p_230443_2_, p_230443_3_);
-			}
-		});
+		}).bounds(startX - 60, startY + 128, 90, 20).tooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.yours"))).build());
 
-		addRenderableWidget(new Button(startX + 35, startY + 128, 60, 20, Component.translatable("ds.gui.skins.random"), button -> {
+		addRenderableWidget(Button.builder(Component.translatable("ds.gui.skins.random"), button -> {
 			ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
 			HashSet<String> users = new HashSet<>();
 			Random random = new Random();
@@ -342,7 +340,7 @@ public class SkinsScreen extends Screen{
 			}
 
 			skins.removeIf(c -> seenSkins.contains(c.second));
-			if(skins.size() > 0){
+			if(!skins.isEmpty()){
 				Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 
 				if(skin != null){
@@ -359,28 +357,19 @@ public class SkinsScreen extends Screen{
 					setTextures();
 				}
 			}
-		}){
-			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.skins.tooltip.random"), p_230443_2_, p_230443_3_);
-			}
-		});
+		}).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.random"))).build());
 
 		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, Component.empty(), button -> {
 			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
-
-			//			executor.execute(() -> setTextures());
 			setTextures();
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
-
-				if(isHoveredOrFocused()){
-					blit(stack, x, y, 66 / 2, 222 / 2, 11, 17, 128, 128);
-				}else{
-					blit(stack, x, y, 44 / 2, 222 / 2, 11, 17, 128, 128);
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				if (isHoveredOrFocused()) {
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+				} else {
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});
@@ -388,18 +377,14 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new Button(startX - 70, startY + 10, 11, 17, Component.empty(), button -> {
 			int pos = Mth.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
-
-			//			executor.execute(() -> setTextures());
 			setTextures();
-		}){
+		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
-
-				if(isHoveredOrFocused()){
-					blit(stack, x, y, 22 / 2, 222 / 2, 11, 17, 128, 128);
+			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				if (isHoveredOrFocused()) {
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
-					blit(stack, x, y, 0, 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});
@@ -453,8 +438,8 @@ public class SkinsScreen extends Screen{
 
 	@Override
 	public boolean mouseDragged(double x1, double y1, int p_231045_5_, double x2, double y2){
-		xRot -= x2 / 5;
-		yRot -= y2 / 5;
+		xRot -= (float) (x2 / 5);
+		yRot -= (float) (y2 / 5);
 
 		return super.mouseDragged(x1, y1, p_231045_5_, x2, y2);
 	}

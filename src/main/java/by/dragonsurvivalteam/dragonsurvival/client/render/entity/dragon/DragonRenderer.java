@@ -17,7 +17,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.ModList;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.core.util.Color;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
@@ -80,8 +80,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
 
-		IBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
-		IBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
+		CoreGeoBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
+		CoreGeoBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
 
 		if(leftWing != null)
 			leftWing.setHidden(!hasWings);

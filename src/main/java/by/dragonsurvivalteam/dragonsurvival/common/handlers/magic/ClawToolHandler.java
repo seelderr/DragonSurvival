@@ -74,7 +74,7 @@ public class ClawToolHandler{
 		Entity ent = event.getEntity();
 
 		if(ent instanceof Player player){
-			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
+			if(!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				for(int i = 0; i < handler.getClawToolData().getClawsInventory().getContainerSize(); i++){
@@ -82,7 +82,7 @@ public class ClawToolHandler{
 
 					if(!stack.isEmpty()){
 						if (!EnchantmentHelper.hasVanishingCurse(stack)) {
-							event.getDrops().add(new ItemEntity(player.level, player.getX(), player.getY(), player.getZ(), stack));
+							event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
 						}
 
 						handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
@@ -147,7 +147,7 @@ public class ClawToolHandler{
 			return mainStack;
 		}
 
-		Level world = player.level;
+		Level world = player.level();
 		BlockHitResult result = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
 
 		if (result.getType() != HitResult.Type.MISS) {
@@ -192,7 +192,7 @@ public class ClawToolHandler{
 			if (ItemStack.matches(clawTool, event.getOriginal())) {
 				player.broadcastBreakEvent(event.getHand());
 			} else {
-				if (!player.level.isClientSide) {
+				if (!player.level().isClientSide()) {
 					DragonStateHandler handler = DragonUtils.getHandler(player);
 					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
 				}

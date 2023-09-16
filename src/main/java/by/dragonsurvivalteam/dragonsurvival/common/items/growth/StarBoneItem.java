@@ -45,7 +45,7 @@ public class StarBoneItem extends Item{
 						playerIn.getItemInHand(handIn).shrink(1);
 					}
 
-					if(!worldIn.isClientSide){
+					if(!worldIn.isClientSide()){
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
 						if(dragonStateHandler.getPassengerId() != 0){
 							Entity mount = worldIn.getEntity(dragonStateHandler.getPassengerId());

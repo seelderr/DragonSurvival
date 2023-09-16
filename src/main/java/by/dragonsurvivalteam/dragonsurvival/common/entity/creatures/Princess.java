@@ -129,10 +129,10 @@ public class Princess extends Villager{
 
 		if(isRemoved() || hasCustomName()) return;
 
-		Entity entity1 = level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
+		Entity entity1 = level().getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
 
 		if(entity1 == null){
-			Entity entity = level.getNearestPlayer(this, -1.0D);
+			Entity entity = level().getNearestPlayer(this, -1.0D);
 			if (entity != null) {
 				double d0 = entity.distanceToSqr(this);
 				int i = getType().getCategory().getDespawnDistance();
@@ -188,8 +188,8 @@ public class Princess extends Villager{
 				flower = Items.LILY_OF_THE_VALLEY;
 				break;
 		}
-		if(!level.isClientSide){
-			level.addFreshEntity(new ItemEntity(level, getX(), getY(), getZ(), new ItemStack(flower)));
+		if(!level().isClientSide()){
+			level().addFreshEntity(new ItemEntity(level(), getX(), getY(), getZ(), new ItemStack(flower)));
 		}
 	}
 

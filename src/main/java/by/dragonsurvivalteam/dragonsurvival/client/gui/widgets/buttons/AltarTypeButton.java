@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -16,22 +15,25 @@ import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
-import java.util.ArrayList;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -40,38 +42,39 @@ public class AltarTypeButton extends Button implements TooltipRender{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_icons.png");
 	private final DragonAltarGUI gui;
 	public AbstractDragonType type;
-	private boolean atTheTopOrBottom;
 
 	public AltarTypeButton(DragonAltarGUI gui, AbstractDragonType type, int x, int y){
-		super(x, y, 49, 147, null, null);
+		super(x, y, 49, 147, Component.empty(), /* TODO 1.20 :: Unsure */ Button::onPress, DEFAULT_NARRATION);
 		this.gui = gui;
 		this.type = type;
 	}
 
-	@Override
-	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(atTheTopOrBottom) TooltipRendering.drawHoveringText(pPoseStack, altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getEdibleFoods(type)), pMouseX, pMouseY);
-	}
-
-	private ArrayList<Component> altarDragonInfoLocalized(String dragonType, List<Item> foodList){
-		ArrayList<Component> info = new ArrayList<>();
+	private Component altarDragonInfoLocalized(final String dragonType, final List<Item> foodList) {
+		MutableComponent tooltip = Component.empty();
 		Component foodInfo = Component.empty();
 
-		if(Screen.hasShiftDown()){
-			if(!Objects.equals(dragonType, "human")){
-				String food = "";
-				for(Item item : foodList)
-					food += item.getName(new ItemStack(item)).getString() + "; ";
-				foodInfo = Component.nullToEmpty(food);
+		if (Screen.hasShiftDown()) {
+			if (!Objects.equals(dragonType, "human")) {
+				StringBuilder food = new StringBuilder();
+
+				for (Item item : foodList) {
+					food.append(item.getName(new ItemStack(item)).getString()).append("; ");
+				}
+
+				foodInfo = Component.nullToEmpty(food.toString());
 			}
-		}else
+		} else {
 			foodInfo = Component.translatable("ds.hold_shift.for_food");
+		}
 
 		Component textComponent = Component.translatable("ds.altar_dragon_info." + dragonType, foodInfo.getString());
 		String text = textComponent.getString();
-		for(String s : text.split("\n"))
-			info.add(Component.empty().append(s));
-		return info;
+
+		for (String string : text.split("\n")) {
+			tooltip.append(string);
+		}
+
+		return tooltip;
 	}
 
 	@Override
@@ -80,12 +83,28 @@ public class AltarTypeButton extends Button implements TooltipRender{
 	}
 
 	@Override
-	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float p_230431_4_){
-		atTheTopOrBottom = mouseY > y + 6 && mouseY < y + 26 || mouseY > y + 133 && mouseY < y + 153;
+	protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		// TODO 1.20 :: Check and potentially optimize
+		if (mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153) {
+			setTooltip(Tooltip.create(altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getEdibleFoods(type))));
+		} else {
+			setTooltip(Tooltip.create(Component.empty()));
+		}
+
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 
-		fill(mStack, x - 1, y - 1, x + width + 1, y + height + 1, new Color(0.5f, 0.5f, 0.5f).getRGB());
-		blit(mStack, x, y, (type == null ? 3 : Objects.equals(type, DragonTypes.CAVE) ? 0 : Objects.equals(type, DragonTypes.FOREST) ? 1 : Objects.equals(type, DragonTypes.SEA) ? 2 : 3) * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
+		int uOffset = 3;
+
+		if (DragonUtils.isDragonType(type, DragonTypes.CAVE)) {
+			uOffset = 0;
+		} else if (DragonUtils.isDragonType(type, DragonTypes.FOREST)) {
+			uOffset = 1;
+		} else if (DragonUtils.isDragonType(type, DragonTypes.SEA)) {
+			uOffset = 2;
+		}
+
+		guiGraphics.fill(getX() - 1, getY() - 1, getX() + width, getY() + height, new Color(0.5f, 0.5f, 0.5f).getRGB());
+		guiGraphics.blit(BACKGROUND_TEXTURE, getX(), getY(), uOffset * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
 	}
 
 	private void initiateDragonForm(AbstractDragonType type){
@@ -98,7 +117,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 			Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds.choice_human"));
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				player.level.playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
+				player.level().playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 				if (ServerConfig.saveGrowthStage) {
 					cap.setSavedDragonSize(cap.getTypeName(), cap.getSize());

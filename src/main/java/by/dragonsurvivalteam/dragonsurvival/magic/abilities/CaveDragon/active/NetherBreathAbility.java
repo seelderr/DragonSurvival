@@ -136,17 +136,17 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(!player.level.isClientSide){
+		if(!player.level().isClientSide()){
 			if(fireBreathSpreadsFire){
 				BlockPos blockPos = pos.relative(direction);
 
-				if(FireBlock.canBePlacedAt(player.level, blockPos, direction)){
-					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
+				if(FireBlock.canBePlacedAt(player.level(), blockPos, direction)){
+					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level(), player);
 
 					if(flag){
 						if(player.getRandom().nextInt(100) < 50){
-							BlockState blockstate1 = FireBlock.getState(player.level, blockPos);
-							player.level.setBlock(blockPos, blockstate1, 3);
+							BlockState blockstate1 = FireBlock.getState(player.level(), blockPos);
+							player.level().setBlock(blockPos, blockstate1, 3);
 						}
 					}
 				}
@@ -155,35 +155,35 @@ public class NetherBreathAbility extends BreathAbility{
 
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 			if(player.getRandom().nextInt(100) < burnAbility.level * 15){
-				BlockState blockAbove = player.level.getBlockState(pos.above());
+				BlockState blockAbove = player.level().getBlockState(pos.above());
 
 				if(blockAbove.getBlock() == Blocks.AIR){
-					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
+					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 					entity.setWaitTime(0);
 					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
 					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
 					entity.setParticle(new SmallFireParticleData(37, false));
-					player.level.addFreshEntity(entity);
+					player.level().addFreshEntity(entity);
 				}
 			}
 		}
 
 
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			for(int z = 0; z < 4; ++z){
 				if(player.getRandom().nextInt(100) < 20){
-					player.level.addParticle(ParticleTypes.LAVA, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
+					player.level().addParticle(ParticleTypes.LAVA, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
 				}
 			}
 		}
 
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			if(blockState.getBlock() == Blocks.WATER){
 				for(int z = 0; z < 4; ++z){
 					if(player.getRandom().nextInt(100) < 90){
-						player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
+						player.level().addParticle(ParticleTypes.BUBBLE_COLUMN_UP, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
 					}
 				}
 			}
@@ -194,8 +194,8 @@ public class NetherBreathAbility extends BreathAbility{
 	public void onChanneling(Player player, int castDuration){
 		super.onChanneling(player, castDuration);
 
-		if(player.isInWaterRainOrBubble() || player.level.isRainingAt(player.blockPosition())){
-			if(player.level.isClientSide){
+		if(player.isInWaterRainOrBubble() || player.level().isRainingAt(player.blockPosition())){
+			if(player.level().isClientSide()){
 				if(player.tickCount % 10 == 0){
 					player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
 				}
@@ -204,29 +204,29 @@ public class NetherBreathAbility extends BreathAbility{
 					double xSpeed = speed * 1f * xComp;
 					double ySpeed = speed * 1f * yComp;
 					double zSpeed = speed * 1f * zComp;
-					player.level.addParticle(ParticleTypes.SMOKE, dx, dy, dz, xSpeed, ySpeed, zSpeed);
+					player.level().addParticle(ParticleTypes.SMOKE, dx, dy, dz, xSpeed, ySpeed, zSpeed);
 				}
 			}
 			return;
 		}
 
-		if(player.level.isClientSide && castDuration <= 0){
+		if(player.level().isClientSide() && castDuration <= 0){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound); // FIXME dist
 		}
 
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			for(int i = 0; i < 24; i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level.addParticle(new SmallFireParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new SmallFireParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
 			for(int i = 0; i < 10; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
-				player.level.addParticle(new LargeFireParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new LargeFireParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
 
@@ -284,7 +284,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 		super.onEntityHit(entityHit);
 
-		if(!entityHit.level.isClientSide){
+		if(!entityHit.level().isClientSide()){
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
@@ -325,7 +325,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void castComplete(Player player){
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
 		}
 	}

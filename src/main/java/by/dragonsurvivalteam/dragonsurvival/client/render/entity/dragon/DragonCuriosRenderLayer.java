@@ -13,7 +13,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
@@ -37,7 +37,7 @@ public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
 
         if (player.isSpectator()) return;
 
-        IBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+        CoreGeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
         if(neck != null)
             neck.setHidden(false);

@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import com.mojang.math.Vector3f;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import org.joml.Vector3f;
 
 public class Functions{
 	public static int minutesToTicks(int minutes){

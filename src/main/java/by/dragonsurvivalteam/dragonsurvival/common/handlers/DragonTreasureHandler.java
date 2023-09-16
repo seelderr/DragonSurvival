@@ -63,7 +63,7 @@ public class DragonTreasureHandler{
 						for(int y = -(verticalRange / 2); y < verticalRange / 2; y++){
 							for(int z = -(horizontalRange / 2); z < horizontalRange / 2; z++){
 								BlockPos pos = player.blockPosition().offset(x, y, z);
-								BlockState state = player.level.getBlockState(pos);
+								BlockState state = player.level().getBlockState(pos);
 
 								if(state.getBlock() instanceof TreasureBlock){
 									int layers = state.getValue(TreasureBlock.LAYERS);
@@ -126,7 +126,7 @@ public class DragonTreasureHandler{
 			if(event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()){
 
 				Window window = Minecraft.getInstance().getWindow();
-				float f = playerEntity.level.getSunAngle(1.0F);
+				float f = playerEntity.level().getSunAngle(1.0F);
 
 				float f1 = f < (float)Math.PI ? 0.0F : (float)Math.PI * 2F;
 				f = f + (f1 - f) * 0.2F;
@@ -150,7 +150,7 @@ public class DragonTreasureHandler{
 
 		if(entity instanceof Player player){
 			
-			if(!player.level.isClientSide){
+			if(!player.level().isClientSide()){
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(cap.treasureResting){
 						cap.treasureResting = false;

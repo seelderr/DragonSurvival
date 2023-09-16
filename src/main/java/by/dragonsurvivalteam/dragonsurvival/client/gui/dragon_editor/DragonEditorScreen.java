@@ -529,7 +529,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			@Override
 			public void onPress(){
 				DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
-					minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
+					minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 					if(cap.getType() != type && cap.getType() != null){
 						if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
@@ -798,7 +798,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 	public void confirm(){
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
-			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
+			minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(cap.getType() != type){
 				minecraft.player.sendSystemMessage(Component.translatable("ds." + type.getTypeName().toLowerCase() + "_dragon_choice"));

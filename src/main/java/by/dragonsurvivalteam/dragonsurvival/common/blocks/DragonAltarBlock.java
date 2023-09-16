@@ -66,7 +66,7 @@ public class DragonAltarBlock extends Block{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(handler.altarCooldown > 0){
-			if(worldIn.isClientSide){
+			if(worldIn.isClientSide()){
 				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
 				int mins = Functions.ticksToMinutes(handler.altarCooldown);
 				int secs = Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins));
@@ -74,7 +74,7 @@ public class DragonAltarBlock extends Block{
 			}
 			return InteractionResult.CONSUME;
 		}else{
-			if(worldIn.isClientSide){
+			if(worldIn.isClientSide()){
 				openGUi();
 			}
 		}

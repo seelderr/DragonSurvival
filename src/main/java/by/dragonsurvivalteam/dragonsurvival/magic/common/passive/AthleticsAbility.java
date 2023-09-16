@@ -40,7 +40,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 	@Override
 	public void onTick(Player player){
 		BlockState feetBlock = player.getFeetBlockState();
-		BlockState blockUnder = player.level.getBlockState(player.blockPosition().below());
+		BlockState blockUnder = player.level().getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
 
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
@@ -49,7 +49,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 		boolean isSpeedMaterial = DragonConfigHandler.DRAGON_SPEED_MATERIALS != null && DragonConfigHandler.DRAGON_SPEED_MATERIALS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEED_MATERIALS.get(dragonStateHandler.getTypeName()).contains(blockUnder.getMaterial());
 
 
-		if(!player.level.isClientSide && ServerConfig.bonuses && ServerConfig.speedupEffectLevel > 0 && (isSpeedBlock || isSpeedMaterial)){
+		if(!player.level().isClientSide() && ServerConfig.bonuses && ServerConfig.speedupEffectLevel > 0 && (isSpeedBlock || isSpeedMaterial)){
 			if(getDuration() > 0){
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), ServerConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
 			}

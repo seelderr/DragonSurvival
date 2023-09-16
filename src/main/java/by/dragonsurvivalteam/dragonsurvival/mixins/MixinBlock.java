@@ -33,7 +33,7 @@ public class MixinBlock{
 		}
 
 		Block.getDrops(state, (ServerLevel)level, pos, blockEntity, entity, stack).forEach(droppedStack -> {
-			if(!level.isClientSide && !droppedStack.isEmpty() && level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !level.restoringBlockSnapshots) {
+			if(!level.isClientSide() && !droppedStack.isEmpty() && level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !level.restoringBlockSnapshots) {
 				double d0 = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
 				double d1 = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
 				double d2 = (double)(level.random.nextFloat() * 0.5F) + 0.25D;

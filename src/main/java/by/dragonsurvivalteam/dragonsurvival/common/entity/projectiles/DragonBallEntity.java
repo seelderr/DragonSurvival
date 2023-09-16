@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -67,8 +68,8 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 
 		Entity entity = getOwner();
 
-		if(level.isClientSide || (entity == null || !entity.isRemoved()) && level.hasChunkAt(blockPosition())){
-			HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
+		if(level().isClientSide() || (entity == null || !entity.isRemoved()) && level().hasChunkAt(blockPosition())){
+			HitResult raytraceresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 
 			if(raytraceresult.getType() != HitResult.Type.MISS){
 
@@ -87,7 +88,7 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 			}
 			moveDist += (float)distanceToSqr(d0, d1, d2);
 			setDeltaMovement(vector3d.add(xPower, yPower, zPower).scale(f));
-			level.addParticle(getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
+			level().addParticle(getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
 			setPos(d0, d1, d2);
 		}else{
 			isDead = true;
@@ -95,7 +96,7 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 		}
 
 		if(moveDist >= 32){
-			onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
+			onHit(ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity));
 		}
 	}
 
@@ -105,7 +106,7 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket(){
+	public Packet<ClientGamePacketListener> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

@@ -6,12 +6,12 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
@@ -40,20 +40,19 @@ public class FireBallEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult p_70227_1_){
-		if(!level.isClientSide && !isDead){
-			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
+		if(!level().isClientSide() && !isDead){
 			float explosivePower = getSkillLevel();
 			Entity attacker = getOwner();
 			DamageSource damagesource;
 			if(attacker == null){
-				damagesource = DamageSource.fireball(this, this);
+				damagesource = damageSources().fireball(this, this);
 			}else{
-				damagesource = DamageSource.fireball(this, attacker);
+				damagesource = damageSources().fireball(this, attacker);
 				if(attacker instanceof LivingEntity attackerEntity){
 					attackerEntity.setLastHurtMob(attacker);
 				}
 			}
-			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level().explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, true, Level.ExplosionInteraction.MOB);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
@@ -64,14 +63,14 @@ public class FireBallEntity extends DragonBallEntity{
 
 	private void aoeDamage(){
 		int range = 2;
-		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		List<Entity> entities = level().getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e == getOwner() || e instanceof FireBallEntity);
 		entities.removeIf(e -> e.distanceTo(this) > range);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!level.isClientSide){
-				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getSkillLevel())), ent);
+			if(!level().isClientSide()){
+				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(damageSources().explosion(null), FireBallAbility.getDamage(getSkillLevel())), ent);
 
 				if(getOwner() instanceof LivingEntity){
 					doEnchantDamageEffects((LivingEntity)getOwner(), ent);
@@ -82,17 +81,17 @@ public class FireBallEntity extends DragonBallEntity{
 
 
 	@Override
-	public boolean isInvulnerableTo(DamageSource p_180431_1_){
-		return p_180431_1_.isExplosion() || super.isInvulnerableTo(p_180431_1_);
+	public boolean isInvulnerableTo(DamageSource damageSource){
+		return damageSource.is(DamageTypeTags.IS_EXPLOSION) || super.isInvulnerableTo(damageSource);
 	}
 
 	@Override
 	protected void onHitEntity(EntityHitResult p_213868_1_){
-		if(!level.isClientSide && !isDead){
+		if(!level().isClientSide() && !isDead){
 			Entity entity = p_213868_1_.getEntity();
 			Entity entity1 = getOwner();
 
-			TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.fireball(this, entity1), FireBallAbility.getDamage(getSkillLevel())), entity);
+			TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(damageSources().fireball(this, entity1), FireBallAbility.getDamage(getSkillLevel())), entity);
 
 			if(entity1 instanceof LivingEntity){
 				doEnchantDamageEffects((LivingEntity)entity1, entity);

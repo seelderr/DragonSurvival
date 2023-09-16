@@ -141,8 +141,8 @@ public class WingObtainmentController{
 		String lowercase = message.getString().toLowerCase();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
-				if(player.getLevel().dimension() == Level.END){
-					if(!player.getLevel().getDragons().isEmpty()){
+				if(player.level().dimension() == Level.END){
+					if(!player.level().getDragons().isEmpty()){
 						if(!lowercase.isEmpty()){
 							executorService.schedule(() -> player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
 
@@ -165,7 +165,7 @@ public class WingObtainmentController{
 		LivingEntity living = damageEvent.getEntity();
 		if(living instanceof Player){
 			DamageSource damageSource = damageEvent.getSource();
-			if(living.level.dimension() == Level.END && damageSource == DamageSource.OUT_OF_WORLD && living.position().y < -60){
+			if(living.level().dimension() == Level.END && damageSource == living.damageSources().fellOutOfWorld() && living.position().y < -60){
 				DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
 						living.changeDimension(living.getServer().overworld());

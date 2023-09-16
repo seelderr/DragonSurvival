@@ -259,7 +259,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	@Override
 	public void playerWillDestroy(Level worldIn, BlockPos pos, BlockState state, Player player){
-		if(!worldIn.isClientSide){
+		if(!worldIn.isClientSide()){
 			Part part = state.getValue(PART);
 			if(part != Part.MIDDLE && !player.isCreative()){
 				BlockPos middlePos = part == Part.BOTTOM ? pos.above() : pos.below();

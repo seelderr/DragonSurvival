@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -51,35 +52,34 @@ public class DragonSpikeEntity extends AbstractArrow{
 
 	@Override
 	protected void onHitEntity(EntityHitResult p_213868_1_){
-
 		Entity entity = p_213868_1_.getEntity();
 		Entity entity1 = getOwner();
 		DamageSource damagesource;
 		if(entity1 == null){
-			damagesource = DamageSource.arrow(this, this);
+			damagesource = damageSources().arrow(this, this);
 		}else{
-			damagesource = DamageSource.arrow(this, entity1);
-			if(entity1 instanceof LivingEntity){
-				((LivingEntity)entity1).setLastHurtMob(entity);
+			damagesource = damageSources().arrow(this, entity1);
+			if(entity1 instanceof LivingEntity livingEntity){
+				livingEntity.setLastHurtMob(entity);
 			}
 		}
 		float damage = (float)getBaseDamage();
 
 		if(TargetingFunctions.attackTargets(getOwner(), ent -> ent.hurt(damagesource, damage), entity)){
 			if(entity instanceof LivingEntity livingentity){
-				if(!level.isClientSide){
+				if(!level().isClientSide()){
 					livingentity.setArrowCount(livingentity.getArrowCount() + 1);
 				}
 
-				if(!level.isClientSide && entity1 instanceof LivingEntity){
+				if(!level().isClientSide() && entity1 instanceof LivingEntity){
 					EnchantmentHelper.doPostHurtEffects(livingentity, entity1);
 					EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity);
 				}
 
 				doPostHurtEffects(livingentity);
 
-				if(entity1 != null && livingentity != entity1 && livingentity instanceof Player && entity1 instanceof ServerPlayer && !isSilent()){
-					((ServerPlayer)entity1).connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
+				if(entity1 instanceof ServerPlayer serverPlayer && !isSilent()){
+					serverPlayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
 				}
 			}
 
@@ -91,7 +91,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 			setYRot(getYRot() + 180.0F);
 			yRotO += 180.0F;
 
-			if(!level.isClientSide && getDeltaMovement().lengthSqr() < 1.0E-7D){
+			if(!level().isClientSide() && getDeltaMovement().lengthSqr() < 1.0E-7D){
 				remove(RemovalReason.DISCARDED);
 			}
 		}
@@ -132,8 +132,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket(){
-
+	public Packet<ClientGamePacketListener> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 }

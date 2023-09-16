@@ -75,7 +75,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	public Vec3 getPseudoDeltaMovement() {
-		Entity entity = level.getEntity(playerId);
+		Entity entity = level().getEntity(playerId);
 
 		if (entity instanceof Player player) {
 			return getPseudoDeltaMovement(player);
@@ -223,7 +223,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 	}
 
 	public Player getPlayer(){
-		return (Player) level.getEntity(playerId);
+		return (Player) level().getEntity(playerId);
 	}
 
 	@Override
@@ -330,7 +330,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				dragonAnimationController.speed = 1 + deltaMovement.horizontalDistance() / 10;
 				builder.addAnimation("swim_fast", EDefaultLoopTypes.LOOP);
 			}
-		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()){
+		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.onGround()){
 			if(ServerFlightHandler.isSpin(player)){
 				neckLocked = false;
 				tailLocked = false;
@@ -341,7 +341,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			}
 		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
 			builder.addAnimation("jump", EDefaultLoopTypes.PLAY_ONCE);
-		}else if(!player.isOnGround() ){
+		}else if(!player.onGround() ){
 			builder.addAnimation("fall_loop", EDefaultLoopTypes.LOOP);
 			//Doesn't work and not needed for now
 		//}else if(player.isOnGround() &&

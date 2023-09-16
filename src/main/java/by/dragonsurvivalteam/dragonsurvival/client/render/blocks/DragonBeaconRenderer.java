@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -65,7 +65,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 
 		float f1 = Mth.sin(((float)dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
 		PoseStack.translate(0.5, 0.25 + f1 / 2f, 0.5);
-		PoseStack.mulPose(Vector3f.YP.rotationDegrees(dragonBeaconEntity.tick));
+		PoseStack.mulPose(Axis.YP.rotationDegrees(dragonBeaconEntity.tick));
 		PoseStack.scale(2, 2, 2);
 		Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), TransformType.GROUND, light, overlay, PoseStack, iRenderTypeBuffer, 0);
 		PoseStack.popPose();

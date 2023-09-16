@@ -113,7 +113,7 @@ public class DragonGrowthHandler{
 				event.getItemStack().shrink(1);
 			}
 
-			if(world.isClientSide){
+			if(world.isClientSide()){
 				return;
 			}
 
@@ -169,7 +169,7 @@ public class DragonGrowthHandler{
 		Player player = event.player;
 		Level world = player.getCommandSenderWorld();
 
-		if(world.isClientSide || event.phase == Phase.END){
+		if(world.isClientSide() || event.phase == Phase.END){
 			return;
 		}
 

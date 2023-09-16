@@ -201,7 +201,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 
 	@Override
 	public int getExperienceReward(){
-		return 1 + level.random.nextInt(2);
+		return 1 + random.nextInt(2);
 	}
 
 	@Override

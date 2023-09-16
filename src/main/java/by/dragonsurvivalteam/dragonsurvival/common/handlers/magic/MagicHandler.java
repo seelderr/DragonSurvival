@@ -118,7 +118,7 @@ public class MagicHandler{
 
 			if(player.hasEffect(DragonEffects.HUNTER)){
 				BlockState bl = player.getFeetBlockState();
-				BlockState below = player.level.getBlockState(player.blockPosition().below());
+				BlockState below = player.level().getBlockState(player.blockPosition().below());
 
 				if(bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.REPLACEABLE_PLANT || bl.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT){
 					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
@@ -158,17 +158,17 @@ public class MagicHandler{
 		if(entity.tickCount % 20 == 0){
 			if(entity.hasEffect(DragonEffects.DRAIN)){
 				if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
-					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
+					Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
 					if(player != null){
 						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
 					}else{
-						entity.hurt(DamageSource.MAGIC, 1.0F);
+						entity.hurt(entity.damageSources().magic(), 1.0F);
 					}
 				}
 			}
 
 			if(entity.hasEffect(DragonEffects.CHARGED)){
-				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
+				Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
 				if(!DragonUtils.isDragonType(entity, DragonTypes.SEA)){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
@@ -185,11 +185,11 @@ public class MagicHandler{
 								// Short enough fire duration to not cause fire damage but still drop cooked items
 								entity.setRemainingFireTicks(1);
 							}
-							Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
+							Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
 							if(player != null){
 								TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage), entity);
 							}else{
-								entity.hurt(DamageSource.ON_FIRE, damage);
+								entity.hurt(entity.damageSources().onFire(), damage);
 							}
 						}
 					}
@@ -269,8 +269,8 @@ public class MagicHandler{
 									double d0 = -Mth.sin(player.yRot * ((float)Math.PI / 180F));
 									double d1 = Mth.cos(player.yRot * ((float)Math.PI / 180F));
 
-									if(player.level instanceof ServerLevel){
-										((ServerLevel)player.level).sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+									if(player.level() instanceof ServerLevel serverLevel){
+										serverLevel.sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
 									}
 								}
 							}else if(Objects.equals(cap.getType(), DragonTypes.CAVE)){
@@ -284,7 +284,7 @@ public class MagicHandler{
 										entityCap.lastAfflicted = player.getId();
 									}
 
-									if(!player.level.isClientSide){
+									if(!player.level().isClientSide()){
 										event.getEntity().addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
 									}
 								}

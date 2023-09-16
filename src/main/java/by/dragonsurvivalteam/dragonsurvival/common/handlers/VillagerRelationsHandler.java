@@ -60,7 +60,7 @@ public class VillagerRelationsHandler{
 		Entity killer = deathEvent.getSource().getEntity();
 		if(killer instanceof Player playerEntity){
 			if(livingEntity instanceof AbstractVillager){
-				Level world = killer.level;
+				Level world = killer.level();
 				if(!(livingEntity instanceof PrincesHorseEntity)){
 
 					if(DragonUtils.isDragon(killer)){
@@ -77,12 +77,12 @@ public class VillagerRelationsHandler{
 								offer.ifPresent(merchantOffer -> world.addFreshEntity(new ItemEntity(world, villager.getX(), villager.getY(), villager.getZ(), merchantOffer.getResult())));
 							}
 
-							if(!world.isClientSide){
+							if(!world.isClientSide()){
 								playerEntity.giveExperiencePoints(level * ServerConfig.xpGain);
 								//                                applyEvilMarker(playerEntity);
 							}
 						}else if(villagerEntity instanceof WanderingTrader wanderingTrader){
-							if(!world.isClientSide){
+							if(!world.isClientSide()){
 								playerEntity.giveExperiencePoints(2 * ServerConfig.xpGain);
 								if(world.random.nextInt(100) < 30){
 									ItemStack itemStack = wanderingTrader.getOffers().stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).toList().get(wanderingTrader.getRandom().nextInt(wanderingTrader.getOffers().size())).getResult();
@@ -215,24 +215,23 @@ public class VillagerRelationsHandler{
 	public static void spawnHunters(TickEvent.PlayerTickEvent playerTickEvent){
 		if(!dragonHunters.isEmpty() && playerTickEvent.phase == TickEvent.Phase.END){
 			Player player = playerTickEvent.player;
-			if(DragonUtils.isDragon(player) && player.hasEffect(DragonEffects.ROYAL_CHASE) && !player.level.isClientSide && !player.isCreative() && !player.isSpectator() && player.isAlive()){
-				ServerLevel serverWorld = (ServerLevel)player.level;
-				if(serverWorld.dimension() == Level.OVERWORLD){
+			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DragonEffects.ROYAL_CHASE) && DragonUtils.isDragon(player)){
+				if(serverLevel.dimension() == Level.OVERWORLD){
 					VillageRelationShips villageRelationShips = DragonUtils.getHandler(player).getVillageRelationShips();
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								if (serverWorld.getBiome(spawnPosition).is(Tags.Biomes.IS_WATER)) {
+								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_WATER)) {
 									return;
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
 								for(int i = 0; i < levelOfEvil; i++){
-									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverWorld.random.nextInt(dragonHunters.size())).create(serverWorld)), spawnPosition, serverWorld);
+									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverLevel.random.nextInt(dragonHunters.size())).create(serverLevel)), spawnPosition, serverLevel);
 								}
-								if(serverWorld.isCloseToVillage(player.blockPosition(), 3)){
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverWorld.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
+								if(serverLevel.isCloseToVillage(player.blockPosition(), 3)){
+									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
 								}else{
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverWorld.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
+									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
 								}
 							}
 						}else{
@@ -358,7 +357,7 @@ public class VillagerRelationsHandler{
 	public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent){
 		if(playerTickEvent.phase == TickEvent.Phase.END){
 			Player playerEntity = playerTickEvent.player;
-			if(!playerEntity.level.isClientSide){
+			if(!playerEntity.level().isClientSide()){
 				if(playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
 					DragonUtils.getHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DragonEffects.ROYAL_CHASE).getDuration();
 				}

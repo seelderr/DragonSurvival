@@ -23,8 +23,8 @@ public class PotionSync{
 
 		LivingEntity entity = event.getEntity();
 
-		if(!entity.level.isClientSide){
-			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level.dimension());
+		if(!entity.level().isClientSide()){
+			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level().dimension());
 			NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionAddedEffect(entity.getId(), MobEffect.getId(event.getEffectInstance().getEffect()), event.getEffectInstance().getDuration(), event.getEffectInstance().getAmplifier()));
 		}
 	}
@@ -37,8 +37,8 @@ public class PotionSync{
 
 		LivingEntity entity = event.getEntity();
 
-		if(!entity.level.isClientSide){
-			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level.dimension());
+		if(!entity.level().isClientSide()){
+			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level().dimension());
 			NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionRemovedEffect(entity.getId(), MobEffect.getId(event.getEffectInstance().getEffect())));
 		}
 	}

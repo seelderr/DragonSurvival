@@ -81,7 +81,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
 				if(!handler.treasureResting){
-					if(world.isClientSide){
+					if(world.isClientSide()){
 						handler.treasureResting = true;
 						NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), true));
 					}
@@ -89,7 +89,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 					return InteractionResult.SUCCESS;
 				}
 
-				if(!world.isClientSide){
+				if(!world.isClientSide()){
 					player.resetStat(Stats.CUSTOM.get(Stats.TIME_SINCE_REST));
 					ServerPlayer serverplayerentity = (ServerPlayer)player;
 					if(serverplayerentity.getRespawnPosition() == null || serverplayerentity.getRespawnDimension() != world.dimension() || serverplayerentity.getRespawnPosition() != null && !serverplayerentity.getRespawnPosition().equals(p_225533_3_) && serverplayerentity.getRespawnPosition().distSqr(p_225533_3_) > 40){
@@ -232,7 +232,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 			FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_225534_2_, (double)p_225534_3_.getX() + 0.5D, p_225534_3_.getY(), (double)p_225534_3_.getZ() + 0.5D, p_225534_2_.getBlockState(p_225534_3_)){
 				@Override
 				public void tick(){
-					BlockState state = level.getBlockState(blockPosition().below());
+					BlockState state = level().getBlockState(blockPosition().below());
 
 					if(state.getBlock() == getBlockState().getBlock()){
 						int i = state.getValue(LAYERS);
@@ -247,7 +247,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 								newLayers = missingLayers;
 							}
 
-							level.setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + newLayers))));
+							level().setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + newLayers))));
 
 							if(leftOver > 0){
 								p_225534_2_.setBlock(blockPosition(), getBlockState().setValue(LAYERS, Integer.valueOf(Math.min(8, leftOver))), 3);

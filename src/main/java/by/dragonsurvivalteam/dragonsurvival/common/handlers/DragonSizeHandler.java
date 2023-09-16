@@ -93,7 +93,7 @@ public class DragonSizeHandler{
 		Pose overridePose = getOverridePose(player);
 		if(player.getForcedPose() != overridePose){
 			player.setForcedPose(overridePose);
-			if(player.level.isClientSide() && Minecraft.getInstance().getCameraEntity() != player){
+			if(player.level().isClientSide() && Minecraft.getInstance().getCameraEntity() != player){
 				player.refreshDimensions();
 			}
 		}
@@ -130,7 +130,7 @@ public class DragonSizeHandler{
 		double size = player.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getSize();
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
 		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
-		return player.level.noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));
+		return player.level().noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));
 	}
 
 	public static double calculateModifiedHeight(double height, Pose pose, boolean sizeChangesHitbox){

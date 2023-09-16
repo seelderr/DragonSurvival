@@ -117,7 +117,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 				return superState;
 			}
 
-			if(world.isClientSide){
+			if(world.isClientSide()){
 				playerEntity.sendSystemMessage(Component.translatable("ds.space.occupied"));
 			}
 		}
@@ -239,7 +239,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
 
 						if(source != null && !source.isEmpty()){
-							if(worldIn.isClientSide){
+							if(worldIn.isClientSide()){
 								NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), true, 0));
 							}
 						}
@@ -414,6 +414,6 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	@Override
 	@Nullable
 	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
-		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.sourceOfMagicTileEntity, SourceOfMagicTileEntity::serverTick);
+		return pLevel.isClientSide() ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.sourceOfMagicTileEntity, SourceOfMagicTileEntity::serverTick);
 	}
 }

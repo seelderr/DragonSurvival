@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -51,20 +52,20 @@ public class Bolas extends ThrowableItemProjectile{
 	@Override
 	protected void onHit(HitResult p_70227_1_){
 		super.onHit(p_70227_1_);
-		if(!level.isClientSide){
+		if(!level().isClientSide()){
 			remove(RemovalReason.DISCARDED);
 		}
 	}
 
 	@Override
-	public Packet<?> getAddEntityPacket(){
+	public Packet<ClientGamePacketListener> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	protected void onHit(EntityHitResult entityHitResult){
 		super.onHit(entityHitResult);
 		Entity entity = entityHitResult.getEntity();
-		if(!entity.level.isClientSide){
+		if(!entity.level().isClientSide()){
 			if(entity instanceof LivingEntity living){
 				AttributeInstance attributeInstance = living.getAttribute(Attributes.MOVEMENT_SPEED);
 				AttributeModifier bolasTrap = new AttributeModifier(DISABLE_MOVEMENT, "Bolas trap", -attributeInstance.getValue(), AttributeModifier.Operation.ADDITION);

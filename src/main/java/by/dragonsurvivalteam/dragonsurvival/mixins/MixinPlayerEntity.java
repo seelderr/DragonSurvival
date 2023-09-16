@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
@@ -51,7 +52,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Inject( method = "isInvulnerableTo", at = @At( "HEAD" ), cancellable = true )
 	public void isInvulnerableTo(DamageSource pSource, CallbackInfoReturnable<Boolean> cir){
-		if(pSource == DamageSource.IN_WALL && DragonUtils.isDragon(this)){
+		if(pSource == damageSources().inWall() && DragonUtils.isDragon(this)){
 			if(ServerConfig.disableSuffocation){
 				cir.setReturnValue(true);
 			}
@@ -112,7 +113,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			if (handler.isDragon()) {
 				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), handler.getType());
 				awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
-				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, random.nextFloat() * 0.1F + 0.9F);
 				callback.setReturnValue(super.eat(level, itemStack)); // TODO :: Not sure why it's handled this way - are all dragon foods correctly tagged as edible?
 			}
 		});
@@ -146,7 +147,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 			if(DragonStateProvider.getCap(this).isPresent() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()){
 				double d3 = getLookAngle().y;
 				double d4 = d3 < -0.2D ? 0.185D : 0.06D;
-				if(d3 <= 0.0D || jumping || !level.getBlockState(new BlockPos(getX(), getY() + 1.0D - 0.1D, getZ())).getFluidState().isEmpty()){
+				if(d3 <= 0.0D || jumping || !level().getBlockState(BlockPosHelper.get(getX(), getY() + 1 - 0.1, getZ())).getFluidState().isEmpty()){
 					Vec3 vector3d1 = getDeltaMovement();
 					setDeltaMovement(vector3d1.add(0.0D, (d3 - vector3d1.y) * d4, 0.0D));
 				}
@@ -166,7 +167,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 					if (gravity != null)
 						d0 = gravity.getValue();
 
-					FluidState fluidstate = level.getFluidState(blockPosition());
+					FluidState fluidstate = level().getFluidState(blockPosition());
 					if(isInLava() && isAffectedByFluids() && !canStandOnFluid(fluidstate)
 					   && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE)){
 						double d8 = getY();
@@ -174,7 +175,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 						float f6 = 0.05F;
 						float f7 = Math.min(3, (float)EnchantmentHelper.getDepthStrider(this));
 
-						if(!onGround){
+						if(!onGround()){
 							f7 *= 0.5F;
 						}
 
@@ -204,7 +205,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 					}
 				}
 
-				calculateEntityAnimation(this, this instanceof FlyingAnimal);
+				calculateEntityAnimation(this instanceof FlyingAnimal);
 				checkMovementStatistics(getX() - d01, getY() - d11, getZ() - d21);
 			}
 		}

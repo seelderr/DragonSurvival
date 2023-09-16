@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,7 +59,7 @@ public class SeaDragonType extends AbstractDragonType {
 
 	@Override
 	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
-		Level world = player.level;
+		Level world = player.level();
 		BlockState feetBlock = player.getFeetBlockState();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
@@ -83,12 +84,12 @@ public class SeaDragonType extends AbstractDragonType {
 		}
 		
 		if(ServerConfig.penalties && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
-			if (!world.isClientSide) {
+			if (!world.isClientSide()) {
 				if (player.hasEffect(DragonEffects.PEACE)) {
 					timeWithoutWater = 0;
 				} else {
 					if (!player.isInWaterRainOrBubble() && !isInSeaBlock) {
-						boolean hotBiome = biome.getPrecipitation() == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
+						boolean hotBiome = biome.getPrecipitationAt(player.blockPosition()) == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
 						double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
 						timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
 					}
@@ -100,7 +101,7 @@ public class SeaDragonType extends AbstractDragonType {
 					timeWithoutWater = Math.min(timeWithoutWater, maxTicksOutofWater * 2);
 					
 					
-					if (!player.level.isClientSide) {
+					if (!player.level().isClientSide()) {
 						float hydrationDamage = ServerConfig.seaDehydrationDamage.floatValue();
 						
 						if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
@@ -121,7 +122,7 @@ public class SeaDragonType extends AbstractDragonType {
 				}
 			}
 			
-			if(world.isClientSide && !player.isCreative() && !player.isSpectator()){
+			if(world.isClientSide() && !player.isCreative() && !player.isSpectator()){
 				if(!player.hasEffect(DragonEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
 					world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
 				}
@@ -132,7 +133,7 @@ public class SeaDragonType extends AbstractDragonType {
 
 	@Override
 	public boolean isInManaCondition(final Player player, final DragonStateHandler cap) {
-		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
+		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 		BlockState blockAtFeet = player.getFeetBlockState();
 
 		if (player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)) {

@@ -15,7 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoModel;
 import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
 import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
@@ -41,7 +41,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		if(player.isSpectator())
 			return;
 
-		IBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+		CoreGeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
 		if(neck != null)
 			neck.setHidden(false);

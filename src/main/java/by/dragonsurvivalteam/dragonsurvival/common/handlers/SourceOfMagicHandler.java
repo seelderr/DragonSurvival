@@ -60,13 +60,13 @@ public class SourceOfMagicHandler{
 				}
 
 				BlockPos pos1 = player.blockPosition();
-				BlockEntity blockEntity = player.level.getBlockEntity(pos1);
+				BlockEntity blockEntity = player.level().getBlockEntity(pos1);
 
 				if(blockEntity instanceof SourceOfMagicPlaceholder){
 					pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
 				}
 
-				BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
+				BlockEntity sourceOfMagic = player.level().getBlockEntity(pos1);
 
 				if(sourceOfMagic instanceof SourceOfMagicTileEntity tile){
 					if(!tile.isEmpty()){
@@ -94,7 +94,7 @@ public class SourceOfMagicHandler{
 						}else{
 							if(ServerConfig.damageWrongSourceOfMagic){
 								if(player.tickCount % Functions.secondsToTicks(5) == 0){
-									player.hurt(DamageSource.MAGIC, 1F);
+									player.hurt(player.damageSources().magic(), 1F);
 								}
 							}
 						}
@@ -120,13 +120,13 @@ public class SourceOfMagicHandler{
 
 			if(handler.getMagicData().onMagicSource){
 				BlockPos pos1 = player.blockPosition();
-				BlockEntity blockEntity = player.level.getBlockEntity(pos1);
+				BlockEntity blockEntity = player.level().getBlockEntity(pos1);
 
 				if(blockEntity instanceof SourceOfMagicPlaceholder){
 					pos1 = ((SourceOfMagicPlaceholder)blockEntity).rootPos;
 				}
 
-				BlockEntity sourceOfMagic = player.level.getBlockEntity(pos1);
+				BlockEntity sourceOfMagic = player.level().getBlockEntity(pos1);
 
 				if(sourceOfMagic instanceof SourceOfMagicTileEntity tile){
 
@@ -135,7 +135,7 @@ public class SourceOfMagicHandler{
 						
 						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
 							if(ServerConfig.sourceOfMagicInfiniteMagic){
-								if(player.level.isClientSide){
+								if(player.level().isClientSide()){
 									Minecraft minecraft = Minecraft.getInstance();
 									RandomSource random = player.getRandom();
 									double x = -1 + random.nextDouble() * 2;
@@ -143,11 +143,11 @@ public class SourceOfMagicHandler{
 
 									if(pState.getBlock() == DSBlocks.seaSourceOfMagic || pState.getBlock() == DSBlocks.forestSourceOfMagic){
 										if(!minecraft.isPaused()){
-											player.level.addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											player.level().addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}else if(pState.getBlock() == DSBlocks.caveSourceOfMagic){
 										if(!minecraft.isPaused()){
-											player.level.addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											player.level().addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}
 								}
@@ -185,7 +185,7 @@ public class SourceOfMagicHandler{
 		LivingEntity entity = event.getEntity();
 
 		if(entity instanceof Player player){
-			if(!player.level.isClientSide){
+			if(!player.level().isClientSide()){
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(cap.getMagicData().onMagicSource){
 						cap.getMagicData().onMagicSource = false;

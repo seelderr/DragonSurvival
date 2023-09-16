@@ -58,7 +58,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public static <T extends Entity> List<T> getEntitiesNearby(final LivingEntity source, final Class<T> entityClass, double radius) {
-		return source.level.getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(radius, radius, radius), entity -> entity != source && source.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= source.getY() + radius);
+		return source.level().getEntitiesOfClass(entityClass, source.getBoundingBox().inflate(radius, radius, radius), entity -> entity != source && source.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= source.getY() + radius);
 	}
 
 	@Override
@@ -132,7 +132,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public void hitEntities() {
 		AABB breathArea = DragonAbilities.calculateBreathArea(player, currentBreathRange);
 
-		List<Entity> entities = player.level.getEntities(player, breathArea, entity -> {
+		List<Entity> entities = player.level().getEntities(player, breathArea, entity -> {
 					// TODO :: Check if solid blocks are between the player and the entity?
 					if (entity instanceof LivingEntity livingEntity) {
 						// TODO :: Also check for creative? Or add spectator and creative as checks to isValidTarget?
@@ -173,7 +173,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public <T extends Entity> List<T> getEntitiesNearby(final Class<T> entityClass, double dX, double dY, double dZ, double radius) {
-		return player.level.getEntitiesOfClass(entityClass, player.getBoundingBox().inflate(dX, dY, dZ), entity -> entity != player && player.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= player.getY() + dY);
+		return player.level().getEntitiesOfClass(entityClass, player.getBoundingBox().inflate(dX, dY, dZ), entity -> entity != player && player.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= player.getY() + dY);
 	}
 
 	public void hitBlocks() {
@@ -195,13 +195,13 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 					mutablePosition.set(position).move(x, y, z);
 
 					if (mutablePosition.distSqr(position) <= currentBreathRange) {
-						BlockState state = player.level.getBlockState(mutablePosition);
+						BlockState state = player.level().getBlockState(mutablePosition);
 
 						if (state.getBlock() != Blocks.AIR) {
 							if (DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())) {
-								if (!player.level.isClientSide) {
+								if (!player.level().isClientSide()) {
 									if (player.getRandom().nextFloat() * 100 <= blockBreakChance()) {
-										player.level.destroyBlock(mutablePosition, false, player);
+										player.level().destroyBlock(mutablePosition, false, player);
 										continue;
 									}
 								}

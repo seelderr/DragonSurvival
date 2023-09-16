@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
@@ -35,7 +36,7 @@ public class StormBreathEntity extends Entity implements IAnimatable{
 	protected void addAdditionalSaveData(CompoundTag p_213281_1_){}
 
 	@Override
-	public Packet<?> getAddEntityPacket(){
+	public Packet<ClientGamePacketListener> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 

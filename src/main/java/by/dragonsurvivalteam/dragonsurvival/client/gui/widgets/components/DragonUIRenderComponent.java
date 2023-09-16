@@ -9,7 +9,7 @@ import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -38,7 +38,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		}
 
 		pMatrixStack.pushPose();
-		final IBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final CoreGeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(false);

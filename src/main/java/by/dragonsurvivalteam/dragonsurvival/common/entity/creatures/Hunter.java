@@ -16,7 +16,7 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter{
 
 	@Override
 	public int getExperienceReward(){
-		return 5 + level.random.nextInt(5);
+		return 5 + random.nextInt(5);
 	}
 
 	@Override

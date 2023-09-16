@@ -133,21 +133,13 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
-				double x = KnightEntity.this.getX();
-				double y = KnightEntity.this.getY();
-				double z = KnightEntity.this.getZ();
 				Entity entity = KnightEntity.this;
-				Level world = KnightEntity.this.level;
 				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				double x = KnightEntity.this.getX();
-				double y = KnightEntity.this.getY();
-				double z = KnightEntity.this.getZ();
 				Entity entity = KnightEntity.this;
-				Level world = KnightEntity.this.level;
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});
@@ -166,7 +158,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 
 	@Override
 	public int getExperienceReward(){
-		return 5 + level.random.nextInt(5);
+		return 5 + random.nextInt(5);
 	}
 
 	@Override

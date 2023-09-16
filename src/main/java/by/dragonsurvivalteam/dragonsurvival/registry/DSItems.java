@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
+import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
@@ -83,9 +84,9 @@ public class DSItems{
 		charredSeafood = registerItem(event, new DragonFoodItem(defaultProperties), "charred_seafood");
 		hotDragonRod = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(DragonEffects.FIRE, Functions.minutesToTicks(1))), "hot_dragon_rod");
 		explosiveCopper = registerItem(event, new DragonFoodItem(defaultProperties, null, e -> {
-			e.hurt(DamageSource.explosion(e), 1f);
-			e.level.addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
-			e.level.playSound(null, new BlockPos(e.getEyePosition()), SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR, SoundSource.PLAYERS, 1f, 1f);
+			e.hurt(e.damageSources()/* TODO 1.20 :: Unsure */.explosion(e, e), 1f);
+			e.level().addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
+			e.level().playSound(null, BlockPosHelper.get(e.getEyePosition()), SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR, SoundSource.PLAYERS, 1f, 1f);
 		}), "explosive_copper");
 		quartzExplosiveCopper = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
 			e.removeEffect(MobEffects.POISON);
@@ -108,7 +109,7 @@ public class DSItems{
 		frozenRawFish = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
 			e.removeAllEffects();
 
-			if(!e.level.isClientSide){
+			if(!e.level().isClientSide()){
 				if(DragonUtils.getHandler(e).getType() instanceof SeaDragonType type){
 					type.timeWithoutWater = 0;
 				}

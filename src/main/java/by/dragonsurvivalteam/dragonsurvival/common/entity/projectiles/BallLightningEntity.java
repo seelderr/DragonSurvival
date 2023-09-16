@@ -23,7 +23,6 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
@@ -54,20 +53,19 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult p_70227_1_){
-		if(!level.isClientSide && !isDead){
-			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
+		if(!level().isClientSide() && !isDead){
 			float explosivePower = getSkillLevel() / 1.25f;
 			Entity attacker = getOwner();
 			DamageSource damagesource;
 			if(attacker == null){
-				damagesource = DamageSource.fireball(this, this);
+				damagesource = damageSources().fireball(this, this);
 			}else{
-				damagesource = DamageSource.fireball(this, attacker);
+				damagesource = damageSources().fireball(this, attacker);
 				if(attacker instanceof LivingEntity attackerEntity){
 					attackerEntity.setLastHurtMob(attacker);
 				}
 			}
-			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level().explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, true, Level.ExplosionInteraction.MOB);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
@@ -80,22 +78,22 @@ public class BallLightningEntity extends DragonBallEntity{
 	public void attackMobs(){
 		if (!(getOwner() instanceof Player))
 		{
-			level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+			level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 			return;
 		}
 		int range = DragonAbilities.getSelfAbility((Player)getOwner(), BallLightningAbility.class).getRange();
-		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		List<Entity> entities = level().getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e == getOwner() || e instanceof BallLightningEntity);
 		entities.removeIf(e -> e.distanceTo(this) > range);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!level.isClientSide){
-				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
+			if(!level().isClientSide()){
+				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(damageSources().lightningBolt(), BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
 					if(livingEntity.getRandom().nextInt(100) < 40){
-						if(!livingEntity.level.isClientSide && !StormBreathAbility.chargedBlacklist.contains(ResourceHelper.getKey(livingEntity).toString())){
+						if(!livingEntity.level().isClientSide() && !StormBreathAbility.chargedBlacklist.contains(ResourceHelper.getKey(livingEntity).toString())){
 							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
 					}
@@ -106,30 +104,30 @@ public class BallLightningEntity extends DragonBallEntity{
 				}
 			}
 
-			if(level.isClientSide){
+			if(level().isClientSide()){
 				for(int i = 0; i < 10; i++){
-					double d1 = level.random.nextFloat();
-					double d2 = level.random.nextFloat();
-					double d3 = level.random.nextFloat();
-					level.addParticle(new LargeLightningParticleData(37F, false), ent.getX() + d1, ent.getY() + 0.5 + d2, ent.getZ() + d3, 0.0D, 0.0D, 0.0D);
+					double d1 = random.nextFloat();
+					double d2 = random.nextFloat();
+					double d3 = random.nextFloat();
+					level().addParticle(new LargeLightningParticleData(37F, false), ent.getX() + d1, ent.getY() + 0.5 + d2, ent.getZ() + d3, 0.0D, 0.0D, 0.0D);
 				}
 			}
 		}
 
-		if(!level.isClientSide){
-			if(level.isThundering()){
-				if(level.random.nextInt(100) < 30){
-					if(level.canSeeSky(blockPosition())){
-						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(level);
+		if(!level().isClientSide()){
+			if(level().isThundering()){
+				if(level().random.nextInt(100) < 30){
+					if(level().canSeeSky(blockPosition())){
+						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(level());
 						lightningboltentity.moveTo(new Vec3(position().x, position().y, position().z));
 
-						level.addFreshEntity(lightningboltentity);
+						level().addFreshEntity(lightningboltentity);
 					}
 				}
 			}
 		}
 
-		if(level.isClientSide){
+		if(level().isClientSide()){
 			float f = range;
 			float f5 = (float)Math.PI * f * f;
 
@@ -138,11 +136,11 @@ public class BallLightningEntity extends DragonBallEntity{
 				float f7 = Mth.sqrt(random.nextFloat()) * f;
 				float f8 = Mth.cos(f6) * f7;
 				float f9 = Mth.sin(f6) * f7;
-				level.addParticle(new LargeLightningParticleData(37F, false), getX() + (double)f8, getY(), getZ() + (double)f9, 0, 0, 0);
+				level().addParticle(new LargeLightningParticleData(37F, false), getX() + (double)f8, getY(), getZ() + (double)f9, 0, 0, 0);
 			}
 		}
 
 
-		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+		level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 	}
 }

@@ -29,7 +29,7 @@ public class WingGrantItem extends Item{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(handler.isDragon()){
-			if(!world.isClientSide){
+			if(!world.isClientSide()){
 				handler.setHasWings(!handler.hasWings());
 				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getSize(), handler.hasWings(), handler.getPassengerId()));
 

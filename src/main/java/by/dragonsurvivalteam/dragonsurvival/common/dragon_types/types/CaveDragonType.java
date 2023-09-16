@@ -59,7 +59,7 @@ public class CaveDragonType extends AbstractDragonType{
 
 	@Override
 	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
-		Level world = player.level;
+		Level world = player.level();
 		BlockState feetBlock = player.getFeetBlockState();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
@@ -80,7 +80,7 @@ public class CaveDragonType extends AbstractDragonType{
 		   && !player.hasEffect(DragonEffects.FIRE)
 		   && !player.isCreative()
 		   && !player.isSpectator()) {
-			if(!world.isClientSide ) {
+			if(!world.isClientSide() ) {
 				if (player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0 || player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0 || isInSeaBlock && ServerConfig.caveRainDamage != 0.0) {
 					if (player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0) {
 						player.hurt(DamageSources.WATER_BURN, ServerConfig.caveWaterDamage.floatValue());
@@ -107,7 +107,7 @@ public class CaveDragonType extends AbstractDragonType{
 				}
 			}
 			
-			if (world.isClientSide) {
+			if (world.isClientSide()) {
 				if (player.tickCount % 10 == 0 && timeInRain > 0) {
 					world.addParticle(ParticleTypes.POOF, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
 				}
@@ -118,7 +118,7 @@ public class CaveDragonType extends AbstractDragonType{
 			player.clearFire();
 		}
 
-		if(!player.level.isClientSide){
+		if(!player.level().isClientSide()){
 			if(player.isEyeInFluid(FluidTags.LAVA)
 			   && ServerConfig.bonuses
 			   && ServerConfig.caveLavaSwimming
@@ -127,12 +127,12 @@ public class CaveDragonType extends AbstractDragonType{
 					lavaAirSupply--;
 					if(lavaAirSupply == -20){
 						lavaAirSupply = 0;
-						if(!player.level.isClientSide){
-							player.hurt(DamageSource.DROWN, 2F); //LAVA_YES
+						if(!player.level().isClientSide()){
+							player.hurt(player.damageSources().drown(), 2F); //LAVA_YES
 						}
 					}
 				}
-				if(!player.level.isClientSide && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(ForgeMod.WATER_TYPE.get(), player)){
+				if(!player.level().isClientSide() && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(ForgeMod.WATER_TYPE.get(), player)){
 					player.stopRiding();
 				}
 			}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluid(FluidTags.WATER)){
@@ -147,7 +147,7 @@ public class CaveDragonType extends AbstractDragonType{
 
 	@Override
 	public boolean isInManaCondition(Player player, DragonStateHandler cap){
-		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
+		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 		BlockState feetBlock = player.getFeetBlockState();
 
 		if(player.isInLava() || player.isOnFire() || player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)){

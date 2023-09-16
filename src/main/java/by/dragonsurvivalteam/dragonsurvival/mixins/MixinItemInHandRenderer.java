@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -42,9 +42,9 @@ public class MixinItemInHandRenderer{
 				float f3 = 1.0F - (float)Math.pow(f1, 27.0D);
 				int i = p_228398_3_ == HumanoidArm.RIGHT ? 1 : -1;
 				p_228398_1_.translate(f3 * 0.6F * (float)i, f3 * -0.5F, f3 * 0.0F);
-				p_228398_1_.mulPose(Vector3f.YP.rotationDegrees((float)i * f3 * 90.0F));
-				p_228398_1_.mulPose(Vector3f.XP.rotationDegrees(f3 * 10.0F));
-				p_228398_1_.mulPose(Vector3f.ZP.rotationDegrees((float)i * f3 * 30.0F));
+				p_228398_1_.mulPose(Axis.YP.rotationDegrees((float)i * f3 * 90.0F));
+				p_228398_1_.mulPose(Axis.XP.rotationDegrees(f3 * 10.0F));
+				p_228398_1_.mulPose(Axis.ZP.rotationDegrees((float)i * f3 * 30.0F));
 
 				ci.cancel();
 			}

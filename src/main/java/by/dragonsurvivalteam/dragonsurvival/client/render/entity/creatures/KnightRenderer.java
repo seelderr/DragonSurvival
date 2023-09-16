@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
-import software.bernie.geckolib3.core.processor.IBone;
+import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib3.geo.render.built.GeoBone;
 import software.bernie.geckolib3.model.AnimatedGeoModel;
 import software.bernie.geckolib3.renderers.geo.ExtendedGeoEntityRenderer;
@@ -76,9 +76,9 @@ public class KnightRenderer extends ExtendedGeoEntityRenderer<KnightEntity>{
 	}
 
 	@Override
-	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, KnightEntity currentEntity, IBone bone){
+	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, KnightEntity currentEntity, CoreGeoBone bone){
 		if(boneName.equalsIgnoreCase("left_item")){
-			matrixStack.mulPose(Vector3f.ZP.rotationDegrees(180));
+			matrixStack.mulPose(Axis.ZP.rotationDegrees(180));
 			matrixStack.translate(0.0, -0.3, -0.5);
 		}else{
 			matrixStack.translate(0.0, 0, -0.3);
@@ -92,7 +92,7 @@ public class KnightRenderer extends ExtendedGeoEntityRenderer<KnightEntity>{
 	}
 
 	@Override
-	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, KnightEntity currentEntity, IBone bone){
+	protected void postRenderItem(PoseStack matrixStack, ItemStack item, String boneName, KnightEntity currentEntity, CoreGeoBone bone){
 
 	}
 

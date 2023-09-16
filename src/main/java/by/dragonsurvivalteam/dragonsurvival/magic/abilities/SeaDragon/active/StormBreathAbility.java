@@ -19,21 +19,17 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
@@ -169,7 +165,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public static void spark(LivingEntity source, LivingEntity target){
-		if(source.level.isClientSide){
+		if(source.level().isClientSide()){
 			float eyeHeight = source instanceof Player ? 0f : source.getEyeHeight();
 			Vec3 start = source.getPosition(eyeHeight);
 			Vec3 end = target.getPosition(target.getEyeHeight());
@@ -188,7 +184,7 @@ public class StormBreathAbility extends BreathAbility{
 				double x = start.x + xDif * i;
 				double y = start.y + yDif * i + eyeHeight;
 				double z = start.z + zDif * i;
-				source.level.addParticle(new SmallLightningParticleData(37, true), x, y, z, xDif, yDif, zDif);
+				source.level().addParticle(new SmallLightningParticleData(37, true), x, y, z, xDif, yDif, zDif);
 			}
 		}
 	}
@@ -224,9 +220,9 @@ public class StormBreathAbility extends BreathAbility{
 
 		for(LivingEntity target : secondaryTargets){
 			if(player != null){
-				TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(DamageSource.indirectMobAttack(source, player), damage), target);
+				TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(player.damageSources()/* TODO 1.20 :: Unsure */.mobProjectile(source, player), damage), target);
 			}else{
-				target.hurt(DamageSource.mobAttack(source), damage);
+				target.hurt(target.damageSources().mobAttack(source), damage);
 			}
 
 			onDamageChecks(target);
@@ -238,7 +234,7 @@ public class StormBreathAbility extends BreathAbility{
 
 					entityCap.chainCount = capSource.chainCount + 1;
 
-					if(!target.level.isClientSide){
+					if(!target.level().isClientSide()){
 						if(target.getRandom().nextInt(100) < 40){
 							if(entityCap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
 								entityCap.lastAfflicted = player != null ? player.getId() : -1;
@@ -249,7 +245,7 @@ public class StormBreathAbility extends BreathAbility{
 
 					if(player != null){
 						if(player.getRandom().nextInt(100) < 50){
-							if(!player.level.isClientSide){
+							if(!player.level().isClientSide()){
 								player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 							}
 						}
@@ -287,12 +283,12 @@ public class StormBreathAbility extends BreathAbility{
 		onDamage(entity);
 
 		if(player.getRandom().nextInt(100) < 50){
-			if(!player.level.isClientSide){
+			if(!player.level().isClientSide()){
 				player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
 			}
 		}
 
-		if(!entity.level.isClientSide){
+		if(!entity.level().isClientSide()){
 			if(!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())){
 				if(entity.getRandom().nextInt(100) < 40){
 					EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
@@ -367,16 +363,16 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(!player.level.isClientSide){
+		if(!player.level().isClientSide()){
 			if(player.tickCount % 40 == 0){
-				if(player.level.isThundering()){
+				if(player.level().isThundering()){
 					if(player.getRandom().nextInt(100) < 30){
-						if(player.level.canSeeSky(pos)){
-							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
+						if(player.level().canSeeSky(pos)){
+							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
 							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
 							lightningboltentity.setCause((ServerPlayer)player);
-							player.level.addFreshEntity(lightningboltentity);
-							player.level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
+							player.level().addFreshEntity(lightningboltentity);
+							player.level().playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
 						}
 					}
 				}
@@ -407,23 +403,23 @@ public class StormBreathAbility extends BreathAbility{
 	public void onChanneling(Player player, int castDuration){
 		super.onChanneling(player, castDuration);
 
-		if(player.level.isClientSide && castDuration <= 0){
+		if(player.level().isClientSide() && castDuration <= 0){
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			for(int i = 0; i < 4; i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level.addParticle(new SmallLightningParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new SmallLightningParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
 			for(int i = 0; i < 2; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
-				player.level.addParticle(new LargeLightningParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new LargeLightningParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
 

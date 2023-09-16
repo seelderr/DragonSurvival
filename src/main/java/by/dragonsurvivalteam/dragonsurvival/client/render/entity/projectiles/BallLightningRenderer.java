@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Vector3f;
+import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
@@ -38,7 +38,7 @@ public class BallLightningRenderer extends GeoProjectilesRenderer<BallLightningE
 			stack.translate(0F, -0.2F, 0F);
 			stack.scale(2.0F, 2.0F, 2.0F);
 			stack.mulPose(entityRenderDispatcher.cameraOrientation());
-			stack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+			stack.mulPose(Axis.YP.rotationDegrees(180.0F));
 			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.lightningTextureItem), TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_, 0);
 			stack.popPose();
 			super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
