@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -70,10 +71,14 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		}
 
 		guiGraphics.pose().popPose();
+	}
 
-		if (isHoveredOrFocused()) {
-			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
-		}
+	/** To prevent the tooltip from getting overlayed by the screen */
+	public void renderTooltip(final GuiGraphics guiGraphics, int mouseX, int mouseY) {
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 450);
+		guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
+		guiGraphics.pose().popPose();
 	}
 
 	@Override

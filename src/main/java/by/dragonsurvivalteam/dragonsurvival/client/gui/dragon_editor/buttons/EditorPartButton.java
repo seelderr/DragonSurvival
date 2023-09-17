@@ -41,7 +41,7 @@ public class EditorPartButton extends ExtendedButton{
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 400);
+		guiGraphics.pose().translate(0, 0, 300);
 
 		int u = !active ? 32 : 0;
 		int v = isHoveredOrFocused() && active ? 32 : 0;

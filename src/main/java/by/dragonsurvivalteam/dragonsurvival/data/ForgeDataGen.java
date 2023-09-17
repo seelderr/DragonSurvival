@@ -25,6 +25,7 @@ public class ForgeDataGen {
 
 		generator.addProvider(event.includeClient(), new DataBlockStateProvider(generator.getPackOutput(), DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeClient(), new DataItemModelProvider(generator.getPackOutput(), DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(generator.getPackOutput(), existingFileHelper, DragonSurvivalMod.MODID));
 
 		Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.keySet().stream().map(key -> new ResourceLocation(DragonSurvivalMod.MODID, "blocks/" + key)).collect(Collectors.toSet());
 		generator.addProvider(event.includeServer(), new DataLootTableProvider(generator.getPackOutput(), blocks, List.of(new LootTableProvider.SubProviderEntry(BlockLootTableSubProvider::new, LootContextParamSets.BLOCK))));

@@ -50,7 +50,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				guiGraphics.pose().translate(0, 0, 100);
 				setMessage(Component.empty());
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(DragonAltarGUI.CONFIRM_BUTTON, x + 1, y, 0, 0, 15, 15, 15, 15);
+				guiGraphics.blit(DragonAltarGUI.CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
 				guiGraphics.pose().popPose();
 
 				if (isHovered) {
@@ -100,7 +100,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				guiGraphics.pose().translate(0, 0, 100);
 				setMessage(Component.empty());
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(DragonAltarGUI.CANCEL_BUTTON, x, y, 0, 0, 15, 15, 15, 15);
+				guiGraphics.blit(DragonAltarGUI.CANCEL_BUTTON, getX(), getY(), 0, 0, 15, 15, 15, 15);
 				guiGraphics.pose().popPose();
 
 				if (isHovered) {

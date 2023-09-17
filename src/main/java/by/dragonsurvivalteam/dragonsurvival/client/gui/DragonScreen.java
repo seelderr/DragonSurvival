@@ -149,6 +149,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			}
 		});
 
+		// Info button at the bottom of the claw menu
 		addRenderableWidget(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0){
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -291,21 +292,18 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-//		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
-
-		guiGraphics.pose().pushPose();
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
 		float sizef = Math.min(30 - sizeOffset, 30);
+
+		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0f, sizef / 10f, 0);
 		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,leftPos + 65, topPos + 65, (int) sizef, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
-		RenderSystem.disableScissor();
-
 		guiGraphics.pose().popPose();
-
+		RenderSystem.disableScissor();
 
 		if (isGrowthIconHovered) {
 			String age = (int)handler.getSize() - handler.getLevel().size + "/";

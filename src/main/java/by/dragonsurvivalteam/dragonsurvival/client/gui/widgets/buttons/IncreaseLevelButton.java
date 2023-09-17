@@ -48,6 +48,8 @@ public class IncreaseLevelButton extends ArrowButton {
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
 		if (isHovered()) {
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 				ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
@@ -67,7 +69,5 @@ public class IncreaseLevelButton extends ArrowButton {
 				}
 			});
 		}
-
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 	}
 }

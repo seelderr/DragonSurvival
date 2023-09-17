@@ -83,7 +83,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 500);
+		guiGraphics.pose().translate(0, 0, 350);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
 		guiGraphics.pose().popPose();
 		colorPicker.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);

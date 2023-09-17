@@ -181,29 +181,19 @@ public class ToolTipHandler{
 	}
 
 	@SubscribeEvent
-	public static void postScreenRender(ScreenEvent.Render.Post event){ // TODO 1.20 :: Check (still needed?)
-//		if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null){
-//			if(Minecraft.getInstance().screen instanceof TooltipRender){
-//				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
-//					if(btn instanceof AbstractWidget abstractWidget){
-//						if (abstractWidget.isHoveredOrFocused()) {
-//							abstractWidget.renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
-//						}
-//					}
-//				}
-//
-//			}else{
-//				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
-//					if(btn instanceof AbstractWidget){
-//						if(btn instanceof TooltipRender && ((AbstractWidget)btn).isHoveredOrFocused()){
-//							((AbstractWidget)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
-//						}
-//					}
-//				}
-//			}
-//		}
+	public static void postScreenRender(ScreenEvent.Render.Post event) {
+		if (Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null) {
+			for (GuiEventListener button : Minecraft.getInstance().screen.children) {
+				if (button instanceof HelpButton helpButton) {
+					if (helpButton.isHoveredOrFocused()) {
+						helpButton.renderTooltip(event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
+					}
+				}
+			}
+		}
 	}
 
+	/** Renders the special border elements for the info tooltips */
 	@SubscribeEvent
 	public static void onTooltipEvent(RenderTooltipEvent.Pre event){
 		boolean render = isHelpText();
@@ -248,7 +238,7 @@ public class ToolTipHandler{
 		int texHeight = 128;
 
 		matrix.pushPose();
-		matrix.translate(0, 0, 710.0); // TODO :: Seems kinda high
+		matrix.translate(0, 0, 400);
 
 		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);

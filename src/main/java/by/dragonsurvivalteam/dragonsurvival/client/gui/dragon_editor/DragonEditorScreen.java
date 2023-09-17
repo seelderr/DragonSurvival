@@ -196,7 +196,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, -600);
+		guiGraphics.pose().translate(0, 0, -300);
 		renderBackground(guiGraphics);
 		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent)s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
 		guiGraphics.pose().popPose();

@@ -18,7 +18,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -98,7 +97,7 @@ public class SkinsScreen extends Screen{
 		}
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0F, 0F, -500);
+		guiGraphics.pose().translate(0F, 0F, -300);
 		renderBackground(guiGraphics);
 		guiGraphics.pose().popPose();
 
@@ -151,7 +150,7 @@ public class SkinsScreen extends Screen{
 		guiGraphics.pose().popPose();
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0F, 0F, 400);
+		guiGraphics.pose().translate(0F, 0F, 300);
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
@@ -278,6 +277,8 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
+		int screenWidth = width;
+
 		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
 			try{
 				URI uri = new URI(DISCORD_URL);
@@ -292,7 +293,7 @@ public class SkinsScreen extends Screen{
 				guiGraphics.blit(DISCORD, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
 				if (isHovered()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.skins.tooltip.discord"), mouseX, mouseY);
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Minecraft.getInstance().font.split(Component.translatable("ds.gui.skins.tooltip.discord"), screenWidth / 2), mouseX, mouseY);
 				}
 			}
 		});
@@ -311,8 +312,16 @@ public class SkinsScreen extends Screen{
 				guiGraphics.blit(WIKI, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
 				if (isHovered()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.skins.tooltip.wiki"), mouseX, mouseY);
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Minecraft.getInstance().font.split(Component.translatable("ds.gui.skins.tooltip.wiki"), screenWidth / 2), mouseX, mouseY);
 				}
+			}
+
+			@Override
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				guiGraphics.pose().pushPose();
+				guiGraphics.pose().translate(0, 0, 300);
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+				guiGraphics.pose().popPose();
 			}
 		});
 
@@ -394,7 +403,7 @@ public class SkinsScreen extends Screen{
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 
-		if(!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName() || skinTexture == null){
+		if(!DragonSkins.renderStage(minecraft.player, level) && minecraft.player.getGameProfile().getName().equals(playerName) || skinTexture == null){
 			skinTexture = null;
 			defaultSkin = true;
 		}

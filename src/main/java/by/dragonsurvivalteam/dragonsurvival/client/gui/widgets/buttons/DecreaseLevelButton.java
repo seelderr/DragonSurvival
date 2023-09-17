@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCo
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -43,16 +42,16 @@ public class DecreaseLevelButton extends ArrowButton{
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-//		if (isHovered()) {
+		if (isHovered()) {
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 				ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
 				if (ability != null) {
 					if (ability.getLevel() > ability.getMinLevel()) {
-						guiGraphics.renderTooltip(Minecraft.getInstance().font, (Component.translatable("ds.skill.level.down", (int) Math.max(1, ability.getLevelCost() * 0.8F))), pMouseX, pMouseY);
+						guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.skill.level.down", (int) Math.max(1, ability.getLevelCost() * 0.8F)), pMouseX, pMouseY);
 					}
 				}
 			});
-//		}
+		}
 	}
 }
