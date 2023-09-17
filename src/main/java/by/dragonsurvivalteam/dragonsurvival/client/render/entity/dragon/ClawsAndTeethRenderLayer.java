@@ -66,7 +66,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private void renderToolLayer(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, final ResourceLocation texture, float partialTick, int packedLight) {
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, false /* FIXME :: Re-Render? */, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 	}
 
 	public String constructClaws(final Player player) {

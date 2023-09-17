@@ -40,6 +40,9 @@ public class EditorPartButton extends ExtendedButton{
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 400);
+
 		int u = !active ? 32 : 0;
 		int v = isHoveredOrFocused() && active ? 32 : 0;
 		guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), u, v, width, height, 32, 32, 10, 10, 10, 10/*, (float)getBlitOffset()*/);
@@ -49,6 +52,7 @@ public class EditorPartButton extends ExtendedButton{
 		}
 
 		TextRenderUtil.drawScaledTextSplit(guiGraphics, getX() + 4, getY() + height - 10, 0.4f, message, getFGColor(), width - 9, 200);
+		guiGraphics.pose().popPose();
 	}
 
 	@Override

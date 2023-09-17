@@ -43,7 +43,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 		String curValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin;
 
-		if(curValue != current){
+		if(!Objects.equals(curValue, current)){
 			current = curValue;
 			updateMessage();
 		}

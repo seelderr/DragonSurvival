@@ -28,7 +28,6 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -55,6 +54,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	private final Player player;
 	public boolean clawsMenu = false;
 	private boolean buttonClicked;
+	private boolean isGrowthIconHovered;
 
 	private static HashMap<String, ResourceLocation> textures;
 
@@ -135,6 +135,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			}
 		});
 
+		// (Unsure) Growth icon in the claw menu
 		addRenderableWidget(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null, 0){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -144,77 +145,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-
-				// TODO 1.20 :: Check
-				if (isHovered) {
-					String age = (int)handler.getSize() - handler.getLevel().size + "/";
-					double seconds = 0;
-
-					if(handler.getLevel() == DragonLevel.NEWBORN){
-						age += DragonLevel.YOUNG.size - handler.getLevel().size;
-						double missing = DragonLevel.YOUNG.size - handler.getSize();
-						double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ServerConfig.newbornGrowthModifier;
-						seconds = missing / increment / 20;
-					}else if(handler.getLevel() == DragonLevel.YOUNG){
-						age += DragonLevel.ADULT.size - handler.getLevel().size;
-
-						double missing = DragonLevel.ADULT.size - handler.getSize();
-						double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ServerConfig.youngGrowthModifier;
-						seconds = missing / increment / 20;
-					}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
-						age += 40 - handler.getLevel().size;
-
-						double missing = 40 - handler.getSize();
-						double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToMax * 20.0) * ServerConfig.adultGrowthModifier;
-						seconds = missing / increment / 20;
-					}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-						age += (int)(ServerConfig.maxGrowthSize - handler.getLevel().size);
-
-						double missing = ServerConfig.maxGrowthSize - handler.getSize();
-						double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.beyond * 20.0) * ServerConfig.maxGrowthModifier;
-						seconds = missing / increment / 20;
-					}
-
-					if(seconds != 0){
-						int minutes = (int)(seconds / 60);
-						seconds -= minutes * 60;
-
-						int hours = minutes / 60;
-						minutes -= hours * 60;
-
-						String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
-						String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
-
-						if(handler.growing){
-							age += " (" + hourString + ":" + minuteString + ")";
-						}else{
-							age += " (§4--:--§r)";
-						}
-					}
-
-					ArrayList<Item> allowedList = new ArrayList<>();
-
-					List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-					List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-					List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
-
-					if(handler.getSize() < DragonLevel.YOUNG.size){
-						allowedList.addAll(newbornList);
-					}else if(handler.getSize() < DragonLevel.ADULT.size){
-						allowedList.addAll(youngList);
-					}else{
-						allowedList.addAll(adultList);
-					}
-
-					List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
-					StringJoiner result = new StringJoiner(", ");
-					displayData.forEach(result::add);
-
-					setTooltip(Tooltip.create(Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()).append(Component.translatable("ds.gui.growth_age", age)).append(Component.translatable("ds.gui.growth_help", result))));
-				} else {
-					setTooltip(Tooltip.create(Component.empty()));
-				}
+				isGrowthIconHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 			}
 		});
 
@@ -326,7 +257,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 //			RenderSystem.enableTexture();
 
 			guiGraphics.pose().pushPose();
-			guiGraphics.pose().translate(0, 0, 150); // Don't get overlayed by other rendered elements
+			guiGraphics.pose().translate(0, 0, 150);
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
@@ -334,8 +265,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			guiGraphics.pose().popPose();
 		}
 	}
-
-
 
 	@Override
 	public boolean mouseReleased(double p_mouseReleased_1_, double p_mouseReleased_3_, int p_mouseReleased_5_){
@@ -362,7 +291,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		renderTooltip(guiGraphics, mouseX, mouseY);
+//		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
@@ -376,5 +305,79 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		RenderSystem.disableScissor();
 
 		guiGraphics.pose().popPose();
+
+
+		if (isGrowthIconHovered) {
+			String age = (int)handler.getSize() - handler.getLevel().size + "/";
+			double seconds = 0;
+
+			if(handler.getLevel() == DragonLevel.NEWBORN){
+				age += DragonLevel.YOUNG.size - handler.getLevel().size;
+				double missing = DragonLevel.YOUNG.size - handler.getSize();
+				double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ServerConfig.newbornGrowthModifier;
+				seconds = missing / increment / 20;
+			}else if(handler.getLevel() == DragonLevel.YOUNG){
+				age += DragonLevel.ADULT.size - handler.getLevel().size;
+
+				double missing = DragonLevel.ADULT.size - handler.getSize();
+				double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ServerConfig.youngGrowthModifier;
+				seconds = missing / increment / 20;
+			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
+				age += 40 - handler.getLevel().size;
+
+				double missing = 40 - handler.getSize();
+				double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToMax * 20.0) * ServerConfig.adultGrowthModifier;
+				seconds = missing / increment / 20;
+			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
+				age += (int)(ServerConfig.maxGrowthSize - handler.getLevel().size);
+
+				double missing = ServerConfig.maxGrowthSize - handler.getSize();
+				double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.beyond * 20.0) * ServerConfig.maxGrowthModifier;
+				seconds = missing / increment / 20;
+			}
+
+			if(seconds != 0){
+				int minutes = (int)(seconds / 60);
+				seconds -= minutes * 60;
+
+				int hours = minutes / 60;
+				minutes -= hours * 60;
+
+				String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
+				String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
+
+				if(handler.growing){
+					age += " (" + hourString + ":" + minuteString + ")";
+				}else{
+					age += " (§4--:--§r)";
+				}
+			}
+
+			ArrayList<Item> allowedList = new ArrayList<>();
+
+			List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+			List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+			List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+
+			if(handler.getSize() < DragonLevel.YOUNG.size){
+				allowedList.addAll(newbornList);
+			}else if(handler.getSize() < DragonLevel.ADULT.size){
+				allowedList.addAll(youngList);
+			}else{
+				allowedList.addAll(adultList);
+			}
+
+			List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
+			StringJoiner result = new StringJoiner(", ");
+			displayData.forEach(result::add);
+
+			List<Component> components = List.of(
+					Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()),
+					Component.translatable("ds.gui.growth_age", age),
+					Component.translatable("ds.gui.growth_help", result)
+			);
+
+			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, components, mouseX, mouseY);
+		}
 	}
 }

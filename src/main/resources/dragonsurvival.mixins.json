@@ -28,7 +28,8 @@
     "MixinInventoryScreen",
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",
-    "MixinWorldRenderer"
+    "MixinWorldRenderer",
+    "MixinGeoModel"
   ],
   "minVersion": "0.8"
 }

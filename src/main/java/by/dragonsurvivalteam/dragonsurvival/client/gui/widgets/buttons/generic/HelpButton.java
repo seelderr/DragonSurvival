@@ -8,16 +8,20 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class HelpButton extends ExtendedButton implements TooltipRender{
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
 	public String text;
+	private final List<Component> tooltip;
 	public int variation;
 	public AbstractDragonType type;
 
@@ -30,6 +34,14 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		this.text = text;
 		this.variation = variation;
 		this.type = type;
+
+		tooltip = new ArrayList<>();
+
+		if (text != null && !text.isBlank()) {
+			for (String string : I18n.get(text).split("\n")) {
+				tooltip.add(Component.literal(string));
+			}
+		}
 	}
 
 	@Override
@@ -60,7 +72,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		guiGraphics.pose().popPose();
 
 		if (isHoveredOrFocused()) {
-			guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable(text), mouseX, mouseY);
+			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
 		}
 	}
 

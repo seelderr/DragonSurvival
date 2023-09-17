@@ -221,6 +221,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
 
+		guiGraphics.pose().popPose();
+
 		for(Renderable widget : new CopyOnWriteArrayList<>(renderables)){
 			widget.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		}
@@ -231,8 +233,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				((Renderable)ch).render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 		}
-
-		guiGraphics.pose().popPose();
 	}
 
 	public SkinPreset save(){
@@ -285,7 +285,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 
 				DragonEditorRegistry.getSavedCustomizations().current.computeIfAbsent(typeS, s -> new HashMap<>());
-				DragonEditorRegistry.getSavedCustomizations().current.get(typeS).computeIfAbsent(level, s -> 0);
+				DragonEditorRegistry.getSavedCustomizations().current.get(typeS).putIfAbsent(level, 0);
 
 				currentSelected = DragonEditorRegistry.getSavedCustomizations().current.get(typeS).get(level);
 

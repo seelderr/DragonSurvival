@@ -178,7 +178,7 @@ public class SkinsScreen extends Screen{
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
-		guiGraphics.drawString(font, Language.getInstance().getVisualOrder(component), x - font.width(component) / 2, y, color);
+		guiGraphics.drawString(font, Language.getInstance().getVisualOrder(component), x - font.width(component) / 2, y, color, false);
 	}
 
 	public static void drawNonShadowLineBreak(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
@@ -186,7 +186,7 @@ public class SkinsScreen extends Screen{
 
 		for (int i = 0; i < wrappedLine.size(); i++) {
 			FormattedText properties = wrappedLine.get(i);
-			guiGraphics.drawString(font, Language.getInstance().getVisualOrder(properties), x - font.width(component.getVisualOrderText()) / 2, y + i * 9, color);
+			guiGraphics.drawString(font, Language.getInstance().getVisualOrder(properties), x - font.width(component.getVisualOrderText()) / 2, y + i * 9, color, false);
 		}
 	}
 
@@ -291,11 +291,11 @@ public class SkinsScreen extends Screen{
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				if (getTooltip() == null || getTooltip().toString().isBlank()) {
-					setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.discord")));
-				}
-
 				guiGraphics.blit(DISCORD, getX(), getY(), 0, 0, 16, 16, 16, 16);
+
+				if (isHovered()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.skins.tooltip.discord"), mouseX, mouseY);
+				}
 			}
 		});
 
@@ -310,11 +310,11 @@ public class SkinsScreen extends Screen{
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				if (getTooltip() == null || getTooltip().toString().isBlank()) {
-					setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.wiki")));
-				}
-
 				guiGraphics.blit(WIKI, getX(), getY(), 0, 0, 16, 16, 16, 16);
+
+				if (isHovered()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.skins.tooltip.wiki"), mouseX, mouseY);
+				}
 			}
 		});
 

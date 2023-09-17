@@ -81,7 +81,8 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		}
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, -150);
+		guiGraphics.pose().translate(0, 0, 350);
+		// Background square which contains all dragon editor part buttons
 		renderBackground(guiGraphics);
 		guiGraphics.pose().popPose();
 		int i = getScrollbarPosition();

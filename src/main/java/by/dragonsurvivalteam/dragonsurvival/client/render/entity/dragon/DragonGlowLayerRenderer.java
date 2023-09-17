@@ -70,7 +70,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			RenderType type = RenderType.eyes(glowTexture);
 			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
 			dragonRenderer.isRenderLayers = true;
-			dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, /* TODO 1.20 :: Re-Render? */ false, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+			dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 		} else {
 			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 			dragonRenderer.isRenderLayers = true;
@@ -78,7 +78,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
 				RenderType type = RenderType.eyes(dynamicGlowKey);
 				VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-				dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, /* TODO 1.20 :: Re-Render? */ false, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+				dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
 		}
 

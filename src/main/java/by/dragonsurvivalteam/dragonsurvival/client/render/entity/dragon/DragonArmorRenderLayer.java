@@ -83,7 +83,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		ClientDragonRender.dragonArmor.copyPosition(animatable);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, /* TODO 1.20 :: Re-Render? */false, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRed() / 255F, armorColor.getGreen() / 255F, armorColor.getBlue() / 255F, 1F);
+		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRed() / 255F, armorColor.getGreen() / 255F, armorColor.getBlue() / 255F, 1F);
 	}
 
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){

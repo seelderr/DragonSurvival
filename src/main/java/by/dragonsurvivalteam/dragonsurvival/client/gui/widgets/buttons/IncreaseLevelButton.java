@@ -66,8 +66,6 @@ public class IncreaseLevelButton extends ArrowButton {
 					}
 				}
 			});
-		} else {
-			setTooltip(Tooltip.create(Component.empty()));
 		}
 
 		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);

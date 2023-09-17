@@ -26,37 +26,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private ResourceLocation currentTexture = defaultTexture;
 
-	/**
-	 * Copied code from Geckolib pre version 3.0.47 which broke dragon rendering
-	 * @link <a href="https://github.com/bernie-g/geckolib/blob/4e864bd2d4a0a8dceea01f600b7031cb2fba3a3b/Forge/src/main/java/software/bernie/geckolib3/model/AnimatedGeoModel.java#L51">Github link</a>
-	 */
-	// TODO 1.20 :: Still needed?
-//	@Override
-//	public void setCustomAnimations(DragonEntity animatable, long instanceId, AnimationState<DragonEntity> animationState) {
-//		AnimationData manager = dragon.getFactory().getOrCreateAnimationData(uniqueID);
-//
-//		if (manager.startTick == -1) {
-//			manager.startTick = dragon.tickCount + Minecraft.getInstance().getFrameTime();
-//		}
-//
-//		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-//			manager.tick = getCurrentTick() - manager.startTick;
-//			double gameTick = manager.tick;
-//			double deltaTicks = gameTick - lastGameTickTime;
-//			seekTime += deltaTicks;
-//			lastGameTickTime = gameTick;
-//		}
-//
-//		AnimationEvent<DragonEntity> predicate = Objects.requireNonNullElseGet(customPredicate, () -> new AnimationEvent<>(dragon, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList()));
-//		predicate.animationTick = seekTime;
-//
-//		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
-//
-//		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
-//			getAnimationProcessor().tickAnimation(dragon, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
-//		}
-//	}
-
 	@Override
 	public void applyMolangQueries(final DragonEntity dragon, double currentTick) {
 		super.applyMolangQueries(dragon, currentTick);
@@ -66,7 +35,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return;
 		}
 
-//		MolangParser parser = getAnimatableInstanceCache().getInstance().parser;
 		MolangParser parser = MolangParser.INSTANCE;
 
 		Player player = dragon.getPlayer();

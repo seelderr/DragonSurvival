@@ -17,8 +17,6 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.commands.arguments.item.ItemParser;
@@ -412,11 +410,7 @@ public class ResourceTextField extends EditBox /*implements TooltipAccessor*/ {
 
 		if (stack != null && !stack.isEmpty()) {
 			stack.tick();
-			ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-			// TODO 1.20 :: Check
-			itemRenderer.render(stack.getDisplayItem(), ItemDisplayContext.GUI, false, guiGraphics.pose(), guiGraphics.bufferSource(), 0, OverlayTexture.NO_OVERLAY, itemRenderer.getItemModelShaper().getItemModel(stack.getDisplayItem()));
-//			itemRenderer.renderAndDecorateItem(stack.getDisplayItem(), x + 3, y + 3);
-//			itemRenderer.renderGuiItemDecorations(Minecraft.getInstance().font, stack.getDisplayItem(), x + 3, y + 3);
+			guiGraphics.renderItem(stack.getDisplayItem(), getX() + 3, getY() + 3);
 		}
 
 		setX(getX() + 25);

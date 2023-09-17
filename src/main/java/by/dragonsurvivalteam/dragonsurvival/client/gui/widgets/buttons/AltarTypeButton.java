@@ -21,11 +21,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -34,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -42,6 +42,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_icons.png");
 	private final DragonAltarGUI gui;
 	public AbstractDragonType type;
+	private boolean atTheTopOrBottom;
 
 	public AltarTypeButton(DragonAltarGUI gui, AbstractDragonType type, int x, int y){
 		super(x, y, 49, 147, Component.empty(), /* TODO 1.20 :: Unsure */ Button::onPress, DEFAULT_NARRATION);
@@ -49,9 +50,8 @@ public class AltarTypeButton extends Button implements TooltipRender{
 		this.type = type;
 	}
 
-	private Component altarDragonInfoLocalized(final String dragonType, final List<Item> foodList) {
-		MutableComponent tooltip = Component.empty();
-		Component foodInfo = Component.empty();
+	private List<Component> altarDragonInfoLocalized(final String dragonType, final List<Item> foodList) {
+		String foodInfo = "";
 
 		if (Screen.hasShiftDown()) {
 			if (!Objects.equals(dragonType, "human")) {
@@ -61,20 +61,23 @@ public class AltarTypeButton extends Button implements TooltipRender{
 					food.append(item.getName(new ItemStack(item)).getString()).append("; ");
 				}
 
-				foodInfo = Component.nullToEmpty(food.toString());
+				foodInfo = food.toString();
 			}
 		} else {
-			foodInfo = Component.translatable("ds.hold_shift.for_food");
+			foodInfo = I18n.get("ds.hold_shift.for_food");
 		}
 
-		Component textComponent = Component.translatable("ds.altar_dragon_info." + dragonType, foodInfo.getString());
-		String text = textComponent.getString();
+		List<Component> tooltips = new ArrayList<>();
 
-		for (String string : text.split("\n")) {
-			tooltip.append(string);
+		for (String string : I18n.get("ds.altar_dragon_info." + dragonType).split("\n")) {
+			if (string.equals("{0}")) {
+				string = foodInfo;
+			}
+
+			tooltips.add(Component.literal(string));
 		}
 
-		return tooltip;
+		return tooltips;
 	}
 
 	@Override
@@ -85,10 +88,10 @@ public class AltarTypeButton extends Button implements TooltipRender{
 	@Override
 	protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		// TODO 1.20 :: Check and potentially optimize
-		if (mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153) {
-			setTooltip(Tooltip.create(altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getEdibleFoods(type))));
-		} else {
-			setTooltip(Tooltip.create(Component.empty()));
+		atTheTopOrBottom = mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153;
+
+		if (isHovered() && atTheTopOrBottom) {
+			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getEdibleFoods(type)), mouseX, mouseY);
 		}
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);

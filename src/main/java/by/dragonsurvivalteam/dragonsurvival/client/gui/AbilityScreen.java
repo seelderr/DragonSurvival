@@ -107,17 +107,10 @@ public class AbilityScreen extends Screen{
 			Component textComponent = Component.empty().append(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
 			int xPos = startX + 117 + 1;
 			int finalXPos = (xPos - minecraft.font.width(textComponent) / 2);
-			guiGraphics.drawString(minecraft.font, textComponent, finalXPos, startY + 26, 0);
+			guiGraphics.drawString(minecraft.font, textComponent, finalXPos, startY + 26, 0, false);
 		}
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-		// TODO 1.20 :: Check
-//		for(Renderable btn : renderables){
-//			if(btn instanceof AbstractWidget abstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
-//				((AbstractWidget)btn).renderToolTip(guiGraphics, mouseX, mouseY);
-//			}
-//		}
 
 		renderables.forEach(renderable -> {
 			if (renderable  instanceof AbilityButton button) {

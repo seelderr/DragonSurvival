@@ -64,7 +64,7 @@ public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
         RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
         VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
 
-        renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, false /* FIXME :: Re-Render? */, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
+        renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
     }
 
     private ArrayList<ResourceLocation> getCurioTextures(Player player) {

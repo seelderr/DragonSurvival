@@ -19,7 +19,9 @@ public class CustomTickAnimationController extends AnimationController<DragonEnt
 
 	@Override
 	public void process(final CoreGeoModel<DragonEntity> model, final AnimationState<DragonEntity> state, final Map<String, CoreGeoBone> bones, final Map<String, BoneSnapshot> snapshots, double seekTime, boolean crashWhenCantFindBone) {
-		super.process(model, state, bones, snapshots, (seekTime + seekTime * (speed - 1.0)), crashWhenCantFindBone);
+		double tickDifference = seekTime - lastTick;
 		lastTick = seekTime;
+
+		super.process(model, state, bones, snapshots, (seekTime + tickDifference * (speed - 1)), crashWhenCantFindBone);
 	}
 }

@@ -99,13 +99,13 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 		for (int slot = 0; slot < EmoteCap.MAX_EMOTES; slot++) {
 			int finalSlot = slot;
-			registrar.add(new CustomTickAnimationController(this, "2_" + slot, 0, state -> emotePredicate(finalSlot)));
+			registrar.add(new CustomTickAnimationController(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
 		}
 
 		registrar.add(dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate));
-		registrar.add(new AnimationController<>(this, "4", 0, this::bitePredicate));
-		registrar.add(new AnimationController<>(this, "5", 0, this::tailPredicate));
-		registrar.add(new AnimationController<>(this, "1", 0, this::headPredicate));
+		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
+		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
+		registrar.add(new AnimationController<>(this, "1", this::headPredicate));
 	}
 
 	private PlayState tailPredicate(final AnimationState<DragonEntity> state) {
@@ -198,7 +198,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 //		return animation != null;
 //	}
 
-	private PlayState emotePredicate(int slot) {
+	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
 		DragonStateHandler handler = DragonUtils.getHandler(getPlayer());
 
 		if (handler.getEmoteData().currentEmotes[slot] != null) {
@@ -211,12 +211,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 			if (emote.animation != null && !emote.animation.isEmpty()) {
 				if (!emote.loops) {
-					RawAnimation.begin().thenPlay(emote.animation);
+					return state.setAndContinue(RawAnimation.begin().thenPlay(emote.animation));
 				} else {
-					RawAnimation.begin().thenLoop(emote.animation);
+					return state.setAndContinue(RawAnimation.begin().thenLoop(emote.animation));
 				}
-
-				return PlayState.CONTINUE;
 			}
 		}
 
@@ -343,7 +341,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
 		RawAnimation rawAnimation = null;
 
-		// FIXME :: Not sure if these animations will get overwritten by the follow-up movement animations
 		if (currentCast != null && lastCast == null) {
 			// Need to animate cast and there was no previous animation
 			if (currentCast.getStartingAnimation() != null) {
