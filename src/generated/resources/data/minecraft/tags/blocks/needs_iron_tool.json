@@ -1,10 +1,12 @@
 {
-  "replace": false,
   "values": [
-    "dragonsurvival:dragon_beacon_magic",
-    "dragonsurvival:dragon_beacon_fire",
-    "dragonsurvival:dragon_memory_block",
+    "dragonsurvival:treasure_diamond",
+    "dragonsurvival:treasure_emerald",
+    "dragonsurvival:treasure_gold",
     "dragonsurvival:empty_dragon_beacon",
-    "dragonsurvival:dragon_beacon_peace"
+    "dragonsurvival:dragon_memory_block",
+    "dragonsurvival:dragon_beacon_peace",
+    "dragonsurvival:dragon_beacon_magic",
+    "dragonsurvival:dragon_beacon_fire"
   ]
 }
