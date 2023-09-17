@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 
@@ -18,8 +19,8 @@ public class HelmetStackTileEntityRenderer extends BlockEntityWithoutLevelRender
 	}
 
 	@Override
-	public void renderByItem(ItemStack pStack, ItemTransforms.TransformType pTransformType, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay){
-		if(pTransformType == TransformType.GUI){
+	public void renderByItem(ItemStack pStack, ItemDisplayContext displayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay){
+		if(displayContext == ItemDisplayContext.GUI){
 			pPoseStack.translate(0.5, -0.15, 0);
 			pPoseStack.mulPose(Axis.XP.rotationDegrees(45));
 			pPoseStack.mulPose(Axis.YP.rotationDegrees(135));

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 public class BolasEntityRenderer extends EntityRenderer<Bolas>{
@@ -27,7 +28,7 @@ public class BolasEntityRenderer extends EntityRenderer<Bolas>{
 			stack.scale(2.0F, 2.0F, 2.0F);
 			stack.mulPose(entityRenderDispatcher.cameraOrientation());
 			stack.mulPose(Axis.YP.rotationDegrees(180.0F));
-			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.huntingNet), TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_, 0);
+			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.huntingNet), ItemDisplayContext.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_, 0);
 			stack.popPose();
 			super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
 		}

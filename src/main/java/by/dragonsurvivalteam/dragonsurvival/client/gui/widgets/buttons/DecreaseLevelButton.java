@@ -1,16 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,15 +40,19 @@ public class DecreaseLevelButton extends ArrowButton{
 	}
 
 	@Override
-	public void renderToolTip(@NotNull final PoseStack stack, int mouseX, int mouseY){
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-			if (ability != null) {
-				if (ability.getLevel() > ability.getMinLevel()) {
-                    TooltipRendering.drawHoveringText(stack, Component.translatable("ds.skill.level.down", (int) Math.max(1, ability.getLevelCost() * 0.8F)), mouseX, mouseY);
-                }
-			}
-		});
+//		if (isHovered()) {
+			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+				ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
+
+				if (ability != null) {
+					if (ability.getLevel() > ability.getMinLevel()) {
+						guiGraphics.renderTooltip(Minecraft.getInstance().font, (Component.translatable("ds.skill.level.down", (int) Math.max(1, ability.getLevelCost() * 0.8F))), pMouseX, pMouseY);
+					}
+				}
+			});
+//		}
 	}
 }

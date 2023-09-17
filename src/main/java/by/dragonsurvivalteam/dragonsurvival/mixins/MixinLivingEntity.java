@@ -10,7 +10,6 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -67,16 +66,17 @@ public abstract class MixinLivingEntity extends Entity{
 		return getItemBySlot(slotType);
 	}
 
-	@Inject( at = @At( "HEAD" ), method = "rideableUnderWater()Z", cancellable = true )
-	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
-		Object self = this;
-
-		if (self instanceof Player) {
-			if (DragonUtils.isDragon(this)) {
-				ci.setReturnValue(true);
-			}
-		}
-	}
+	// TODO 1.20 :: Entity#dismountsUnderwater - determined by a tag so this should not be needed anymore
+//	@Inject( at = @At( "HEAD" ), method = "rideableUnderWater()Z", cancellable = true )
+//	public void dragonRideableUnderWater(CallbackInfoReturnable<Boolean> ci){
+//		Object self = this;
+//
+//		if (self instanceof Player) {
+//			if (DragonUtils.isDragon(this)) {
+//				ci.setReturnValue(true);
+//			}
+//		}
+//	}
 
 	@Inject( at = @At( "HEAD" ), method = "eat", cancellable = true )
 	public void dragonEat(Level level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> ci){
@@ -202,7 +202,7 @@ public abstract class MixinLivingEntity extends Entity{
 
 	@ModifyArg(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"), index = 0)
 	public double disableKnockbackForMagic(double strength) {
-		if (dragonSurvival$damageSource instanceof EntityDamageSource) {
+		if (dragonSurvival$damageSource != null && dragonSurvival$damageSource.is(/* TODO 1.20 :: DS damage source magic tag */)) {
 			String id = dragonSurvival$damageSource.msgId;
 
 			if (id.equals("onFire") || id.equals("magic")) {

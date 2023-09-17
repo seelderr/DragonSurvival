@@ -46,8 +46,8 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 
 		boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getTypeName()).contains(block);
-		boolean isSpeedMaterial = DragonConfigHandler.DRAGON_SPEED_MATERIALS != null && DragonConfigHandler.DRAGON_SPEED_MATERIALS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEED_MATERIALS.get(dragonStateHandler.getTypeName()).contains(blockUnder.getMaterial());
-
+		// TODO 1.20 :: No more materials
+		boolean isSpeedMaterial = false /*DragonConfigHandler.DRAGON_SPEED_MATERIALS != null && DragonConfigHandler.DRAGON_SPEED_MATERIALS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEED_MATERIALS.get(dragonStateHandler.getTypeName()).contains(blockUnder.getMaterial())*/;
 
 		if(!player.level().isClientSide() && ServerConfig.bonuses && ServerConfig.speedupEffectLevel > 0 && (isSpeedBlock || isSpeedMaterial)){
 			if(getDuration() > 0){

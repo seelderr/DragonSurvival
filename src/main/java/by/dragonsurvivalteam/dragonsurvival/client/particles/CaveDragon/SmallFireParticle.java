@@ -1,14 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Quaternion;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.joml.AxisAngle4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 
 public class SmallFireParticle extends TextureSheetParticle{
@@ -54,11 +55,15 @@ public class SmallFireParticle extends TextureSheetParticle{
 			float yaw = (float)Math.atan2(motionVec.x(), motionVec.z());
 			float pitch = (float)Math.atan2(motionVec.y(), 1);
 			float swirlRadius = 1f * (age / (float)lifetime) * spread;
-			Quaternion quatSpin = motionVec.rotation(swirlTick * 0.2f);
-			Quaternion quatOrient = new Quaternion(pitch, yaw, 0, false);
+
+			// TODO 1.20 :: Unsure
+			Quaternionf quatSpin = new Quaternionf(new AxisAngle4f(swirlTick * 0.2f, motionVec.x(), motionVec.y(), motionVec.z()));
+			Quaternionf quatOrient = new Quaternionf().rotateXYZ(pitch, yaw, 0);
+
 			Vector3f vec = new Vector3f(swirlRadius, 0, 0);
-			vec.transform(quatOrient);
-			vec.transform(quatSpin);
+			vec = quatSpin.transform(vec);
+			vec = quatOrient.transform(vec);
+
 			x += vec.x();
 			y += vec.y();
 			z += vec.z();

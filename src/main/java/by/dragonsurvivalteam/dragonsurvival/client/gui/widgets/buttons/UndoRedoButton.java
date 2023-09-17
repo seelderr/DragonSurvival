@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class UndoRedoButton extends ArrowButton{
 	public static final ResourceLocation undo = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrow_undo.png");
@@ -15,17 +15,16 @@ public class UndoRedoButton extends ArrowButton{
 	}
 
 	@Override
-	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-		stack.pushPose();
-		stack.translate(0, 0, 200);
+	public void renderWidget(@NonNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 200);
 
-		if(next){
-			RenderSystem.setShaderTexture(0, redo);
-			blit(stack, x, y, 0, 0, width, height, width, height);
-		}else{
-			RenderSystem.setShaderTexture(0, undo);
-			blit(stack, x, y, 0, 0, width, height, width, height);
+		if (next) {
+			guiGraphics.blit(redo, getX(), getY(), 0, 0, width, height, width, height);
+		} else {
+			guiGraphics.blit(undo, getX(), getY(), 0, 0, width, height, width, height);
 		}
-		stack.popPose();
+
+		guiGraphics.pose().popPose();
 	}
 }

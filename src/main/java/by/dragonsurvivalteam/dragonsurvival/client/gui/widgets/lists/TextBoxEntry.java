@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -12,6 +13,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,14 +40,14 @@ public class TextBoxEntry extends OptionListEntry{
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
-		widget.y = pTop;
+	public void render(@NotNull final GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
+		widget.setY(pTop);
 		widget.visible = getHeight() != 0 && visible;
-		widget.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+		widget.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-		removeButton.y = pTop;
+		removeButton.setY(pTop);
 		removeButton.visible = getHeight() != 0 && visible;
-		removeButton.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+		removeButton.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 
 	@Override

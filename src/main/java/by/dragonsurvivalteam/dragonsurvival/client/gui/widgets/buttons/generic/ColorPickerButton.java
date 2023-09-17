@@ -1,13 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.function.Consumer;
 
 public class ColorPickerButton extends ExtendedButton{
@@ -22,19 +23,19 @@ public class ColorPickerButton extends ExtendedButton{
 		this.colorConsumer = colorConsumer;
 
 		float[] hsb = Color.RGBtoHSB(defaultColor.getRed(), defaultColor.getGreen(), defaultColor.getBlue(), null);
-		selectorX = hsb[0] * width;
+		selectorX = (hsb[0] * width);
 
-		selectorY = hsb[2] < 1.0f ? hsb[2] * (height / 2f) : height / 2f + (1 - hsb[1]) * (height / 2f);
+		selectorY = (hsb[2] < 1.0f ? hsb[2] * (height / 2f) : height / 2f + (1 - hsb[1]) * (height / 2f));
 	}
 
 	@Override
-	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		RenderingUtils.renderColorSquare(mStack, x, y, width, height);
-		mStack.pushPose();
-		mStack.translate(0, 0, 200);
-		RenderingUtils.fill(mStack, x + selectorX - 2, y + selectorY - 2, x + selectorX + 2, y + selectorY + 2, Color.black.getRGB());
-		RenderingUtils.fill(mStack, x + selectorX - 1, y + selectorY - 1, x + selectorX + 1, y + selectorY + 1, getColor().getRGB());
-		mStack.popPose();
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+		RenderingUtils.renderColorSquare(guiGraphics, getX(), getY(), width, height);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 200);
+		RenderingUtils.fill(guiGraphics, getX() + selectorX - 2, getY() + selectorY - 2, getX() + selectorX + 2, getY() + selectorY + 2, Color.black.getRGB());
+		RenderingUtils.fill(guiGraphics, getX() + selectorX - 1, getY() + selectorY - 1, getX() + selectorX + 1, getY() + selectorY + 1, getColor().getRGB());
+		guiGraphics.pose().popPose();
 	}
 
 	public Color getColor(){
@@ -51,15 +52,15 @@ public class ColorPickerButton extends ExtendedButton{
 
 	@Override
 	public void onClick(double pMouseX, double pMouseY){
-		selectorX = Mth.clamp(pMouseX - x, 0, width);
-		selectorY = Mth.clamp(pMouseY - y, 0, height);
+		selectorX = Mth.clamp(pMouseX - getX(), 0, width);
+		selectorY = Mth.clamp(pMouseY - getY(), 0, height);
 		colorConsumer.accept(getColor());
 	}
 
 	@Override
 	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY){
-		selectorX = Mth.clamp(pMouseX - x, 0, width);
-		selectorY = Mth.clamp(pMouseY - y, 0, height);
+		selectorX = Mth.clamp(pMouseX - getX(), 0, width);
+		selectorY = Mth.clamp(pMouseY - getY(), 0, height);
 		colorConsumer.accept(getColor());
 
 		return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);

@@ -313,7 +313,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 						if(source.isEmpty()){
 							source.setItem(0, stack);
 							itemE.kill();
-						}else if(ItemStack.isSame(tileStack, stack) && tileStack.getCount() < tileStack.getMaxStackSize()){
+						}else if(ItemStack.isSameItem(tileStack, stack) && tileStack.getCount() < tileStack.getMaxStackSize()){
 							int left = tileStack.getMaxStackSize() - tileStack.getCount();
 							int toAdd = Math.min(stack.getCount(), left);
 							itemE.getItem().shrink(toAdd);
@@ -324,7 +324,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 				}
 
 				if(ServerConfig.damageWrongSourceOfMagic){
-					entity.hurt(pState.getBlock() == DSBlocks.caveSourceOfMagic ? DamageSource.HOT_FLOOR : pState.getBlock() == DSBlocks.seaSourceOfMagic ? DamageSource.DROWN : DamageSource.CACTUS, 1F);
+					entity.hurt(pState.getBlock() == DSBlocks.caveSourceOfMagic ? entity.damageSources().hotFloor() : pState.getBlock() == DSBlocks.seaSourceOfMagic ? entity.damageSources().drown() : entity.damageSources().cactus(), 1F);
 				}
 			}
 		}

@@ -291,7 +291,7 @@ public class SkinsScreen extends Screen{
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				if (getTooltip() == null) {
+				if (getTooltip() == null || getTooltip().toString().isBlank()) {
 					setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.discord")));
 				}
 
@@ -310,7 +310,7 @@ public class SkinsScreen extends Screen{
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				if (getTooltip() == null) {
+				if (getTooltip() == null || getTooltip().toString().isBlank()) {
 					setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.wiki")));
 				}
 

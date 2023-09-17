@@ -61,7 +61,7 @@ public class DragonRidingHandler{
 		}
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			int passengerId = dragonStateHandler.getPassengerId();
-			Entity passenger = player.level.getEntity(passengerId);
+			Entity passenger = player.level().getEntity(passengerId);
 			boolean flag = false;
 			if(!dragonStateHandler.isDragon() && player.isVehicle() && player.getPassengers().get(0) instanceof ServerPlayer){
 				flag = true;

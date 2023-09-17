@@ -344,7 +344,7 @@ public class ClientDragonRender{
 
 					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
 					if(player.hasEffect(DragonEffects.TRAPPED)){
-						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
+						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack, player.level());
 					}
 				}
 			} catch (Throwable throwable) {

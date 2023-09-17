@@ -1,6 +1,5 @@
-package by.jackraidenph.dragonsurvival.client.particles;
+package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticleData;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.util.Mth;

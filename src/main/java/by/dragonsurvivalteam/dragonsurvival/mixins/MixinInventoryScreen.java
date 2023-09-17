@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -21,39 +21,40 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		super(p_98701_, p_98702_, p_98703_);
 	}
 
-	@Redirect( method = "renderEntityInInventoryRaw(IIIFFLnet/minecraft/world/entity/LivingEntity;)V", at = @At( value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V" ) )
-	private static void dragonScreenEntityRender(Runnable p_runAsFancy_0_){
+	// TODO :: The cause dragon editor dragons looking up when the editor is opened while the player is looking up?
+	@Redirect(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"))
+	private static void dragonScreenEntityRender(final Runnable runnable) {
 		LocalPlayer player = Minecraft.getInstance().player;
-		if(DragonStateProvider.getCap(player).isPresent() && DragonUtils.getHandler(player).isDragon()){
-			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				double bodyYaw = dragonStateHandler.getMovementData().bodyYaw;
-				double headYaw = dragonStateHandler.getMovementData().headYaw;
-				double headPitch = dragonStateHandler.getMovementData().headPitch;
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				double lastBodyYaw = dragonStateHandler.getMovementData().bodyYawLastTick;
-				double lastHeadYaw = dragonStateHandler.getMovementData().headYawLastTick;
-				double lastHeadPitch = dragonStateHandler.getMovementData().headPitchLastTick;
+		if (handler.isDragon()) {
+			double bodyYaw = handler.getMovementData().bodyYaw;
+			double headYaw = handler.getMovementData().headYaw;
+			double headPitch = handler.getMovementData().headPitch;
 
-				dragonStateHandler.getMovementData().bodyYaw = player.yBodyRot;
-				dragonStateHandler.getMovementData().headYaw = 0;
-				dragonStateHandler.getMovementData().headPitch = 0;
+			double lastBodyYaw = handler.getMovementData().bodyYawLastTick;
+			double lastHeadYaw = handler.getMovementData().headYawLastTick;
+			double lastHeadPitch = handler.getMovementData().headPitchLastTick;
 
-				dragonStateHandler.getMovementData().bodyYawLastTick = player.yBodyRot;
-				dragonStateHandler.getMovementData().headYawLastTick = player.yHeadRot;
-				dragonStateHandler.getMovementData().headPitchLastTick = player.xRot;
+			handler.getMovementData().bodyYaw = player.yBodyRot;
+			handler.getMovementData().headYaw = 0;
+			handler.getMovementData().headPitch = 0;
 
-				RenderSystem.runAsFancy(p_runAsFancy_0_);
+			handler.getMovementData().bodyYawLastTick = player.yBodyRot;
+			handler.getMovementData().headYawLastTick = player.yHeadRot;
+			handler.getMovementData().headPitchLastTick = player.xRot;
 
-				dragonStateHandler.getMovementData().bodyYaw = bodyYaw;
-				dragonStateHandler.getMovementData().headYaw = headYaw;
-				dragonStateHandler.getMovementData().headPitch = headPitch;
+			RenderSystem.runAsFancy(runnable);
 
-				dragonStateHandler.getMovementData().bodyYawLastTick = lastBodyYaw;
-				dragonStateHandler.getMovementData().headYawLastTick = lastHeadYaw;
-				dragonStateHandler.getMovementData().headPitchLastTick = lastHeadPitch;
-			});
-		}else{
-			RenderSystem.runAsFancy(p_runAsFancy_0_);
+			handler.getMovementData().bodyYaw = bodyYaw;
+			handler.getMovementData().headYaw = headYaw;
+			handler.getMovementData().headPitch = headPitch;
+
+			handler.getMovementData().bodyYawLastTick = lastBodyYaw;
+			handler.getMovementData().headYawLastTick = lastHeadYaw;
+			handler.getMovementData().headPitchLastTick = lastHeadPitch;
+		} else {
+			RenderSystem.runAsFancy(runnable);
 		}
 	}
 }

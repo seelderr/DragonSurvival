@@ -218,7 +218,7 @@ public class DragonSkins{
 	}
 	public static void init() {
 		invalidateSkins();
-		String currentLanguage = Minecraft.getInstance().getLanguageManager().getSelected().getCode();
+		String currentLanguage = Minecraft.getInstance().getLanguageManager().getSelected();
 		if (!currentLanguage.equals("zh_cn"))
 		{
 			if (!initFromGithub())

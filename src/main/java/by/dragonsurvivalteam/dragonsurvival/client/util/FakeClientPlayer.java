@@ -35,7 +35,7 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	public int number;
 
 	public FakeClientPlayer(int number){
-		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number), null);
+		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number));
 		this.number = number;
 	}
 

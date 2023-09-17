@@ -15,8 +15,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractOptionSliderButton;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
@@ -27,6 +27,7 @@ import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 public class ResetSettingsButton extends Button {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
@@ -73,7 +74,7 @@ public class ResetSettingsButton extends Button {
 					}
 				}
 			}
-		});
+		}, Supplier::get);
 
 		this.option = option;
 	}
@@ -135,10 +136,10 @@ public class ResetSettingsButton extends Button {
 	}
 
 	@Override
-	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
 			active = false;
-			isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 
 			if (OptionsList.configMap.containsKey(option)) {
 				String key = OptionsList.configMap.get(option);
@@ -147,18 +148,17 @@ public class ResetSettingsButton extends Button {
 			}
 
 			Minecraft minecraft = Minecraft.getInstance();
-			RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
-			int i = getYImage(isHoveredOrFocused());
+			int i = /*getYImage(isHoveredOrFocused())*/ !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableDepthTest();
-			blit(poseStack, x, y, 0, 46 + i * 20, width / 2, height);
-			blit(poseStack, x + width / 2, y, 200 - width / 2, 46 + i * 20, width / 2, height);
-			renderBg(poseStack, minecraft, mouseX, mouseY);
+			guiGraphics.blit(WIDGETS_LOCATION, getX(), getY(), 0, 46 + i * 20, width / 2, height);
+			guiGraphics.blit(WIDGETS_LOCATION, getX() + width / 2, getY(), 200 - width / 2, 46 + i * 20, width / 2, height);
+			// TODO 1.20 :: Check -> in 1.19.2 ExtendedButton / Button / AbstractButon did not implement it (and AbstractWidget had an empty method)
+//			renderBg(poseStack, minecraft, mouseX, mouseY);
 
-			RenderSystem.setShaderTexture(0, texture);
-			blit(poseStack, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
+			guiGraphics.blit(texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 		}
 	}
 }

@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -18,7 +19,6 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.EntityDamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -28,7 +28,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -158,7 +157,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public abstract boolean canHitEntity(LivingEntity entity);
 
 	public void onEntityHit(final LivingEntity entityHit) {
-		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new BreathDamage(player), getDamage()), entityHit)) {
+		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.DRAGON_BREATH, player), getDamage()), entityHit)) {
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}
@@ -253,12 +252,6 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		}
 
 		return components;
-	}
-
-	public static class BreathDamage extends EntityDamageSource {
-		public BreathDamage(@Nullable final Entity entity) {
-			super("player", entity);
-		}
 	}
 
 	public static int calculateCurrentBreathRange(@NotNull final DragonLevel dragonLevel) {

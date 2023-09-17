@@ -6,25 +6,22 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.Cop
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.common.util.Lazy;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Widget{
+public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton confirm;
 	private final ExtendedButton cancel;
 	private final Checkbox newborn;
@@ -48,18 +45,18 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, Component.empty(), null){
 			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				mStack.pushPose();
-				mStack.translate(0, 0, 100);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				guiGraphics.pose().pushPose();
+				guiGraphics.pose().translate(0, 0, 100);
 				setMessage(Component.empty());
-				super.renderButton(mStack, mouseX, mouseY, partial);
-				RenderSystem.setShaderTexture(0, DragonAltarGUI.CONFIRM_BUTTON);
-				blit(mStack, x + 1, y, 0, 0, 15, 15, 15, 15);
-				mStack.popPose();
+				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
+				guiGraphics.blit(DragonAltarGUI.CONFIRM_BUTTON, x + 1, y, 0, 0, 15, 15, 15, 15);
+				guiGraphics.pose().popPose();
 
-				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
-				}
+				// TODO 1.20 :: Check
+//				if(isHovered){
+//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+//				}
 			}
 
 			@Override
@@ -99,18 +96,18 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, Component.empty(), null){
 			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				mStack.pushPose();
-				mStack.translate(0, 0, 100);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				guiGraphics.pose().pushPose();
+				guiGraphics.pose().translate(0, 0, 100);
 				setMessage(Component.empty());
-				super.renderButton(mStack, mouseX, mouseY, partial);
-				RenderSystem.setShaderTexture(0, DragonAltarGUI.CANCEL_BUTTON);
-				blit(mStack, x, y, 0, 0, 15, 15, 15, 15);
-				mStack.popPose();
+				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
+				guiGraphics.blit(DragonAltarGUI.CANCEL_BUTTON, x, y, 0, 0, 15, 15, 15, 15);
+				guiGraphics.pose().popPose();
 
-				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
-				}
+				// TODO 1.20 :: Check
+//				if(isHovered){
+//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+//				}
 			}
 
 
@@ -122,8 +119,8 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {}){
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.NEWBORN){
 					selected = true;
 					active = false;
@@ -134,8 +131,8 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		};
 		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {}){
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.YOUNG){
 					selected = true;
 					active = false;
@@ -146,8 +143,8 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		};
 		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {}){
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.ADULT){
 					selected = true;
 					active = false;
@@ -169,13 +166,16 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 	}
 
 	@Override
-	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		ScreenUtils.blitWithBorder(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)10);
-		confirm.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		cancel.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		newborn.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		young.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		adult.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		Gui.drawCenteredString(pMatrixStack, Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.copy_to"), x + xSize / 2, y + 1, 14737632);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 10);
+		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
+		guiGraphics.pose().popPose();
+		confirm.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		cancel.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		newborn.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		young.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		adult.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.copy_to"), x + xSize / 2, y + 1, 14737632);
 	}
 }

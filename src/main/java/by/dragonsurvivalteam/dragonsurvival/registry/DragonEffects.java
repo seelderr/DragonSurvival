@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
@@ -19,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 
 import java.util.Collections;
@@ -49,8 +49,10 @@ public class DragonEffects{
 	@SuppressWarnings( "unused" )
 	@SubscribeEvent
 	public static void registerEffects(RegisterEvent event){
-		if (!event.getRegistryKey().equals(Registry.MOB_EFFECT_REGISTRY))
+		if (!event.getRegistryKey().equals(ForgeRegistries.Keys.MOB_EFFECTS)) {
 			return;
+		}
+
 		STRESS = registerMobEffect(event, "stress", new Stress(0xf4a2e8));
 		TRAPPED = registerMobEffect(event, "trapped", new Trapped(MobEffectCategory.HARMFUL, 0xdddddd, true));
 		ROYAL_CHASE = registerMobEffect(event, "royal_chase", new RoyalChase(MobEffectCategory.NEUTRAL));
@@ -89,7 +91,7 @@ public class DragonEffects{
 	}
 	protected static MobEffect registerMobEffect(RegisterEvent event, String identity, MobEffect mobEffect)
 	{
-		event.register(Registry.MOB_EFFECT_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, identity), ()->mobEffect);
+		event.register(ForgeRegistries.Keys.MOB_EFFECTS, new ResourceLocation(DragonSurvivalMod.MODID, identity), ()->mobEffect);
 		return mobEffect;
 	}
 
@@ -183,8 +185,8 @@ public class DragonEffects{
 
 		public void removeAttributeModifiers(LivingEntity entity, AttributeMap attributeMap, int amplifier) {
 			super.removeAttributeModifiers(entity, attributeMap, amplifier);
-			if (entity.getType().is(TagKey.create(Registry.ENTITY_TYPE_REGISTRY, new ResourceLocation("dragonsurvival:royal_departure_affected")))) {
-				if (!entity.level.isClientSide())
+			if (entity.getType().is(TagKey.create(ForgeRegistries.Keys.ENTITY_TYPES, new ResourceLocation("dragonsurvival:royal_departure_affected")))) {
+				if (!entity.level().isClientSide())
 					entity.discard();
 			}
 		}

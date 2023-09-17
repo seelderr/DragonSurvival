@@ -100,11 +100,11 @@ public class BallLightningAbility extends ChargeCastAbility{
 		double y = player.getY() + size / 20F - 0.2;
 		double z = player.getZ() + f5;
 
-		BallLightningEntity entity = new BallLightningEntity(player.level, player, d2, d3, d4);
+		BallLightningEntity entity = new BallLightningEntity(player.level(), player, d2, d3, d4);
 		entity.setPos(x + vector3d.x * speed, y, z + vector3d.z * speed);
 		entity.setLevel(getLevel());
 		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
-		player.level.addFreshEntity(entity);
+		player.level().addFreshEntity(entity);
 	}
 
 	@Override

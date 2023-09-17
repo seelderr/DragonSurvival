@@ -2,10 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -14,8 +12,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -48,21 +47,19 @@ public class CategoryEntry extends OptionListEntry{
 	}
 
 	@Override
-	public void render(PoseStack p_230432_1_, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_){
+	public void render(@NotNull final GuiGraphics guiGraphics, int p_230432_2_, int p_230432_3_, int p_230432_4_, int p_230432_5_, int p_230432_6_, int p_230432_7_, int p_230432_8_, boolean p_230432_9_, float p_230432_10_){
 		if(parent != null && !parent.enabled)
 			return;
 
 		int color = new Color(0.05F, 0.05F, 0.05F, 0.85F).getRGB();
-		Gui.fill(p_230432_1_, 32 + indent, p_230432_3_ + p_230432_6_ - 16, ((OptionsList)list).getScrollbarPosition(), p_230432_3_ + p_230432_6_, color);
+		guiGraphics.fill(32 + indent, p_230432_3_ + p_230432_6_ - 16, ((OptionsList)list).getScrollbarPosition(), p_230432_3_ + p_230432_6_, color);
 
-		Minecraft.getInstance().font.draw(p_230432_1_, name, (float)(Minecraft.getInstance().screen.width / 2 - width / 2) + indent, (float)(p_230432_3_ + p_230432_6_ - 12), 16777215);
+		guiGraphics.drawString(Minecraft.getInstance().font, name.getVisualOrderText(), (Minecraft.getInstance().screen.width / 2 - width / 2) + indent, (p_230432_3_ + p_230432_6_ - 12), 16777215);
 
 		if(!enabled){
-			RenderSystem.setShaderTexture(0, BUTTON_UP);
-			Gui.blit(p_230432_1_, ((OptionsList)list).getScrollbarPosition() - 30, p_230432_3_ + p_230432_6_ - 16, 0, 0, 16, 16, 16, 16);
+			guiGraphics.blit(BUTTON_UP, ((OptionsList)list).getScrollbarPosition() - 30, p_230432_3_ + p_230432_6_ - 16, 0, 0, 16, 16, 16, 16);
 		}else{
-			RenderSystem.setShaderTexture(0, BUTTON_DOWN);
-			Gui.blit(p_230432_1_, ((OptionsList)list).getScrollbarPosition() - 30, p_230432_3_ + p_230432_6_ - 16, 0, 0, 16, 16, 16, 16);
+			guiGraphics.blit(BUTTON_DOWN, ((OptionsList)list).getScrollbarPosition() - 30, p_230432_3_ + p_230432_6_ - 16, 0, 0, 16, 16, 16, 16);
 		}
 	}
 
@@ -84,10 +81,11 @@ public class CategoryEntry extends OptionListEntry{
 		return super.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
 	}
 
-	@Override
-	public boolean changeFocus(boolean p_231049_1_){
-		return false;
-	}
+	// TODO 1.20 :: Check
+//	@Override
+//	public boolean changeFocus(boolean p_231049_1_){
+//		return false;
+//	}
 
 	@Override
 	public int getHeight(){

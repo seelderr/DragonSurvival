@@ -11,9 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.mojang.bridge.game.Language;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
@@ -25,7 +23,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.ServerChatEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -119,13 +116,13 @@ public class WingObtainmentController{
 
 		if(event.signerId.equals(enderDragonUUID.toString())){
 			Vec3 centerPoint = new Vec3(0D, 128D, 0D);
-			List<EnderDragon> enderDragons = player.getLevel().getEntitiesOfClass(EnderDragon.class, AABB.ofSize(centerPoint,192 ,192 ,192));
+			List<EnderDragon> enderDragons = player.level().getEntitiesOfClass(EnderDragon.class, AABB.ofSize(centerPoint,192 ,192 ,192));
 			if (enderDragons.size() == 0)
 				return;
 			String dragonName = "<"+enderDragons.get(0).getDisplayName().getString()+"> ";
 			if(event.chatId.equals("ds.endmessage")){
-				Language language = Minecraft.getInstance().getLanguageManager().getSelected();
-				int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language.getCode(), dragonPhrases.getOrDefault("en_us", 1))) + 1;
+				String language = Minecraft.getInstance().getLanguageManager().getSelected();
+				int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language, dragonPhrases.getOrDefault("en_us", 1))) + 1;
 				player.sendSystemMessage(Component.literal(dragonName).append(Component.translatable("ds.endmessage." + messageId, player.getDisplayName().getString())));
 			}else if(event.chatId.equals("ds.dragon.grants.wings")){
 				player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings"));
@@ -141,8 +138,8 @@ public class WingObtainmentController{
 		String lowercase = message.getString().toLowerCase();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
-				if(player.level().dimension() == Level.END){
-					if(!player.level().getDragons().isEmpty()){
+				if(player.level().dimension() == Level.END) {
+					if(!player.serverLevel().getDragons().isEmpty()){
 						if(!lowercase.isEmpty()){
 							executorService.schedule(() -> player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
 

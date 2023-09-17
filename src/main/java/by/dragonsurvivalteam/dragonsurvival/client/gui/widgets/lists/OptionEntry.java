@@ -3,10 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ResetSettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -15,8 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -40,11 +40,11 @@ public class OptionEntry extends OptionListEntry{
 		width = Minecraft.getInstance().font.width(key);
 		options = pOptions;
 
-		resetButton = new ResetSettingsButton(widget.x + 3 + widget.getWidth() + (categoryEntry != null && categoryEntry.parent != null ? 0 : 1), 0, option);
+		resetButton = new ResetSettingsButton(widget.getX() + 3 + widget.getWidth() + (categoryEntry != null && categoryEntry.parent != null ? 0 : 1), 0, option);
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		int indent = category != null ? category.indent : 0;
 
 		if(getHeight() != 0){
@@ -53,18 +53,18 @@ public class OptionEntry extends OptionListEntry{
 			if(isMouseOver(pMouseX, pMouseY))
 				color = new Color(0.2F, 0.2F, 0.2F, 0.85F).getRGB();
 
-			Gui.fill(pPoseStack, 32 + indent, pTop, ((OptionsList)list).getScrollbarPosition(), pTop + getHeight(), color);
+			guiGraphics.fill(32 + indent, pTop, ((OptionsList)list).getScrollbarPosition(), pTop + getHeight(), color);
 
 			Font font = Minecraft.getInstance().font;
-			font.draw(pPoseStack, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(key, ((OptionsList)list).getScrollbarPosition() - 32 - indent - 180))), 40 + indent, (float)(pTop + 6), 16777215);
+			guiGraphics.drawString(font, Language.getInstance().getVisualOrder(FormattedText.composite(font.substrByWidth(key, ((OptionsList)list).getScrollbarPosition() - 32 - indent - 180))), 40 + indent, (pTop + 6), 16777215);
 		}
-		widget.y = pTop;
+		widget.setY(pTop);
 		widget.visible = getHeight() != 0 && visible;
-		widget.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+		widget.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-		resetButton.y = pTop;
+		resetButton.setY(pTop);
 		resetButton.visible = getHeight() != 0 && visible;
-		resetButton.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+		resetButton.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 
 	@Override

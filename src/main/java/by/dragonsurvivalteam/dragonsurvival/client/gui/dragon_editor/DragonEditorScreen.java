@@ -24,7 +24,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -47,13 +46,11 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
@@ -66,15 +63,21 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 import net.minecraftforge.common.util.Lazy;
 import org.apache.commons.lang3.text.WordUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 
 public class DragonEditorScreen extends Screen implements TooltipRender{
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
+	private static final ResourceLocation RESET_POSITION = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png");
+	private static final ResourceLocation SAVE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png");
+	private static final ResourceLocation RANDOM = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png");
+	private static final ResourceLocation RESET = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png");
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> REDO_QUEUES = new ConcurrentHashMap<>();
 	private final Screen source;
@@ -168,7 +171,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	@Override
-	public void render(PoseStack stack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		if (dragonRender == null) {
 			// TODO :: Can happen with the dragon-editor command before using the altar first
 			init();
@@ -192,44 +195,44 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 
-		stack.pushPose();
-		stack.translate(0, 0, -600);
-		renderBackground(stack);
-		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent)s).render(stack, pMouseX, pMouseY, pPartialTicks));
-		stack.popPose();
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, -600);
+		renderBackground(guiGraphics);
+		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent)s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
+		guiGraphics.pose().popPose();
 
-		DragonAltarGUI.renderBorders(stack, backgroundTexture, 0, width, 32, height - 32, width, height);
+		DragonAltarGUI.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
 
-		stack.pushPose();
-		stack.translate(0, 0, 300);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 300);
 
-		TextRenderUtil.drawCenteredScaledText(stack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
+		TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
 		if(showUi){
 			int i = 0;
 			for(EnumSkinLayer layers : EnumSkinLayer.values()){
 				String name = layers.name;
-				SkinsScreen.drawNonShadowLineBreak(stack, font, Component.translatable("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
+				SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.translatable("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
 				i++;
 			}
 		}
 
 		if(showUi){
-			SkinsScreen.drawNonShadowLineBreak(stack, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
 		}
 
-		for(Widget widget : new CopyOnWriteArrayList<>(renderables)){
-			widget.render(stack, pMouseX, pMouseY, pPartialTicks);
+		for(Renderable widget : new CopyOnWriteArrayList<>(renderables)){
+			widget.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		}
 
 		for(int x = 0; x < children.size(); ++x){
 			GuiEventListener ch = children.get(x);
 			if(!(ch instanceof DragonUIRenderComponent)){
-				((Widget)ch).render(stack, pMouseX, pMouseY, pPartialTicks);
+				((Renderable)ch).render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 		}
 
-		stack.popPose();
+		guiGraphics.pose().popPose();
 	}
 
 	public SkinPreset save(){
@@ -254,13 +257,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	@Override
-	public void renderBackground(PoseStack pMatrixStack){
-		Gui.fill(pMatrixStack, 0, 0, width, height, backgroundColor);
-	}
-
-	@Override
-	public void renderBackground(PoseStack pMatrixStack, int pVOffset){
-		super.renderBackground(pMatrixStack, pVOffset);
+	public void renderBackground(@NotNull final GuiGraphics guiGraphics) {
+		guiGraphics.fill(0, 0, width, height, backgroundColor);
 	}
 
 	@Override
@@ -346,7 +344,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			};
 			addRenderableWidget(btn);
-			addRenderableWidget(new ArrowButton(btn.x - 15, btn.y + 1, 13, 13, false, s -> {
+			addRenderableWidget(new ArrowButton(btn.getX() - 15, btn.getY() + 1, 13, 13, false, s -> {
 				int index = 0;
 
 				for(int i1 = 0; i1 < btn.values.length; i1++){
@@ -363,16 +361,16 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				btn.updateMessage();
 			}){
 				@Override
-				public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 					active = showUi;
 
 					if(active){
-						super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+						super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 					}
 				}
 			});
 
-			addRenderableWidget(new ArrowButton(btn.x + btn.getWidth() + 2, btn.y + 1, 13, 13, true, s -> {
+			addRenderableWidget(new ArrowButton(btn.getX() + btn.getWidth() + 2, btn.getY() + 1, 13, 13, true, s -> {
 				int index = 0;
 
 				for(int i1 = 0; i1 < btn.values.length; i1++){
@@ -389,16 +387,16 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				btn.updateMessage();
 			}){
 				@Override
-				public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 					active = showUi || btn.values == null || btn.values.length <= 1;
 
 					if(showUi){
-						super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+						super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 					}
 				}
 			});
 
-			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), s -> {
+			addRenderableWidget(new ColorSelectorButton(this, layers, btn.getX() + 15 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {
 				doAction();
 				preset.skinAges.get(level).get().layerSettings.get(layers).get().hue = s.floatValue();
 				handler.getSkinData().compileSkin();
@@ -413,21 +411,19 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			if(curAnimation >= animations.length){
 				curAnimation = 0;
 			}
-		}){
+		}, Supplier::get) {
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
-
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				if(isHoveredOrFocused()){
-					blit(stack, x, y, 66 / 2, 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
-					blit(stack, x, y, 44 / 2, 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});
@@ -438,21 +434,21 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			if(curAnimation < 0){
 				curAnimation = animations.length - 1;
 			}
-		}){
+		}, Supplier::get) {
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 				if(isHoveredOrFocused()){
-					blit(stack, x, y, 22 / 2, 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
-					blit(stack, x, y, 0, 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});
@@ -481,43 +477,46 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-			}
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-			@Override
-			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
+				}
 			}
 		});
 
 		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
 			@Override
-			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().wings;
-				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
 		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
 			@Override
-			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().defaultSkin;
-				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.default_skin.tooltip"), p_230443_2_, p_230443_3_);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.default_skin.tooltip"), pMouseX, pMouseY);
+				}
 			}
 		});
 
 		addRenderableWidget(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
-			Widget renderButton;
+			Renderable renderButton;
 			boolean toggled;
 
 			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				super.renderButton(mStack, mouseX, mouseY, partial);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				if(toggled && (!visible || !confirmation)){
 					toggled = false;
 					Screen screen = Minecraft.getInstance().screen;
@@ -546,11 +545,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					if(!toggled){
 						renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 							@Override
-							public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+							public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 								active = visible = false;
 
 								if(conf != null && confirmation){
-									conf.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+									conf.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 								}
 							}
 						};
@@ -566,15 +565,19 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 
 			@Override
-			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), pMouseX, pMouseY);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.done"), pMouseX, pMouseY);
+				}
 			}
 		});
 
 		addRenderableWidget(new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.back"), null){
 			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				super.renderButton(mStack, mouseX, mouseY, partial);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 			}
 
 			@Override
@@ -583,8 +586,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 
 			@Override
-			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.tooltip.back"), pMouseX, pMouseY);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.back"), pMouseX, pMouseY);
+				}
 			}
 		});
 
@@ -595,14 +602,17 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			update();
 		}){
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
+				}
 			}
 
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png"));
-				blit(stack, x, y, 0, 0, width, height, width, height);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				guiGraphics.blit(RESET, getX(), getY(), 0, 0, width, height, width, height);
 			}
 		});
 
@@ -628,7 +638,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					keys.add(SkinCap.defaultSkinValue);
 				}
 
-				if(keys.size() > 0){
+				if(!keys.isEmpty()){
 					String key = keys.get(minecraft.player.getRandom().nextInt(keys.size()));
 					if(Objects.equals(layer.name, "Extra")){
 						extraKeys.remove(key);
@@ -656,14 +666,17 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			update();
 		}){
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.random"), p_230443_2_, p_230443_3_);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.random"), pMouseX, pMouseY);
+				}
 			}
 
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
-				blit(stack, x, y, 0, 0, width, height, width, height);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				guiGraphics.blit(RANDOM, getX(), getY(), 0, 0, width, height, width, height);
 			}
 		});
 
@@ -671,14 +684,13 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			undoAction();
 		}){
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
-			}
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+				active = UNDO_QUEUES.containsKey(currentSelected) && !UNDO_QUEUES.get(currentSelected).isEmpty();
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				active = UNDO_QUEUES.containsKey(currentSelected) && UNDO_QUEUES.get(currentSelected).size() > 0;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.undo"), pMouseX, pMouseY);
+				}
 			}
 		});
 
@@ -686,36 +698,33 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			redoAction();
 		}){
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
-			}
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+				active = REDO_QUEUES.containsKey(currentSelected) && !REDO_QUEUES.get(currentSelected).isEmpty();
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-				active = REDO_QUEUES.containsKey(currentSelected) && REDO_QUEUES.get(currentSelected).size() > 0;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.redo"), pMouseX, pMouseY);
+				}
 			}
 		});
 
 		addRenderableWidget(new ExtendedButton(width / 2 + 198 + 15, guiTop - 26, 16, 16, Component.empty(), p -> {}){
 			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-				if(visible){
-					RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
-					blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
+				if (visible) {
+					guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
+
+					if (isHoveredOrFocused()) {
+						guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.save_slot"), pMouseX, pMouseY);
+					}
 				}
 			}
 
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.save_slot"), p_230443_2_, p_230443_3_);
-			}
-
-			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){}
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){}
 		});
 
 		addRenderableWidget(new CopySettingsButton(this, width / 2 + 198 + 15, guiTop + 10, 16, 16, Component.empty(), p -> {}));
@@ -728,20 +737,18 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			dragonRender.zoom = (float)(level.size * preset.sizeMul);
 		}){
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.reset"), p_230443_2_, p_230443_3_);
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				guiGraphics.blit(RESET_POSITION, getX(), getY(), 0, 0, width, height, width, height);
 			}
 
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png"));
-				blit(stack, x, y, 0, 0, width, height, width, height);
-			}
-
-			@Override
-			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
-				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
+				}
 			}
 		});
 
@@ -749,7 +756,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, Component.empty(), s -> {}, this));
 		addRenderableWidget(new HelpButton(type, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
 		//addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, Component.empty(), (s) -> {}, this));
-
 	}
 
 	public void update(){

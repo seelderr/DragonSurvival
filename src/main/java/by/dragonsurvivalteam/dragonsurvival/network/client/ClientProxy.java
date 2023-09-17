@@ -43,7 +43,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player) {
                 DragonStateProvider.getCap(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state);
@@ -55,7 +55,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player) {
                 DragonStateProvider.getCap(entity).ifPresent(handler -> {
@@ -70,7 +70,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Level world = localPlayer.level;
+            Level world = localPlayer.level();
             Entity entity = world.getEntity(message.playerId);
 
             if (entity instanceof Player) {
@@ -102,7 +102,7 @@ public class ClientProxy {
             Player localPlayer = Minecraft.getInstance().player;
 
             if (localPlayer != null) {
-                Entity entity = localPlayer.level.getEntity(message.playerId);
+                Entity entity = localPlayer.level().getEntity(message.playerId);
 
                 if (entity instanceof Player player) {
                     message.runClient(message, context, player);
@@ -115,7 +115,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -130,7 +130,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             // Local player already has the correct values of themselves
             if (entity instanceof Player player && player != localPlayer) {
@@ -151,7 +151,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> handler.setWingsSpread(message.state));
@@ -163,7 +163,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
@@ -181,7 +181,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -208,7 +208,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMagicData().readNBT(message.nbt));
@@ -220,7 +220,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerid);
+            Entity entity = localPlayer.level().getEntity(message.playerid);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -236,7 +236,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.entityId);
+            Entity entity = localPlayer.level().getEntity(message.entityId);
             MobEffect mobEffect = MobEffect.byId(message.effectId);
 
             if (mobEffect != null) {
@@ -251,7 +251,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
             MobEffect mobEffect = MobEffect.byId(message.effectId);
 
             if (mobEffect != null) {
@@ -266,7 +266,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw, message.headYaw, message.headPitch, message.bite));
@@ -286,7 +286,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -315,7 +315,7 @@ public class ClientProxy {
                 ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
             }
 
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -328,7 +328,7 @@ public class ClientProxy {
 
                 // Refresh instances
                 if (player != localPlayer) {
-                    DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level);
+                    DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level());
                     dragon.playerId = player.getId();
                     ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
                 }
@@ -351,7 +351,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMovementData().dig = message.status);
@@ -370,16 +370,16 @@ public class ClientProxy {
     public static void handleRefreshDragons(final RefreshDragons message) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-        ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(localPlayer.level);
+        ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(localPlayer.level());
 
         if (ClientDragonRender.dragonArmor != null) {
             ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
         }
 
-        Entity entity = localPlayer.level.getEntity(message.playerId);
+        Entity entity = localPlayer.level().getEntity(message.playerId);
 
         if (entity instanceof Player player) {
-            DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level);
+            DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level());
             dragon.playerId = player.getId();
             ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
         }
@@ -389,7 +389,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
@@ -402,7 +402,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
@@ -417,7 +417,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level.getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {

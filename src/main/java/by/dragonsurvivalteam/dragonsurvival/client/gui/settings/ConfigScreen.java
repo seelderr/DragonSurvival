@@ -18,18 +18,21 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Primitives;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
-import net.minecraft.client.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.CycleButton.Builder;
-import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
@@ -103,7 +106,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 		children.add(list);
 
 		// Button to go back
-		addRenderableWidget(new Button(32, height - 27, 120 + 32, 20, CommonComponents.GUI_DONE, p_213106_1_ -> minecraft.setScreen(lastScreen)));
+		addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> minecraft.setScreen(lastScreen)).bounds(32, height - 27, 120 + 32, 20).build());
 
 		// Search field
 		addRenderableWidget(new TextField(list.getScrollbarPosition() - 150 - 32, height - 27, 150 + 32, 20, Component.literal("Search")) {
@@ -238,7 +241,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
                                 .withStyle(ChatFormatting.GREEN), ((MutableComponent) CommonComponents.OPTION_OFF)
                                 .withStyle(ChatFormatting.RED))
                         .displayOnlyValue())
-                        .setTooltip(mc-> s ->mc.font.split(tooltip, 200));
+                        .setTooltip(minecraft -> ignored -> Tooltip.create(Component.literal(minecraft.font.split(tooltip, 200).toString()))); // TODO 1.20 :: Check
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
 			} else if (checkType.isEnum()) {
@@ -283,7 +286,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 							name,
                             options -> text,
                             (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), configValue, screenSide(), configOption)),
-                            () -> new Builder<String>(ignored -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(minecraft -> ignored -> minecraft.font.split(tooltip, 200));
+                            () -> new Builder<String>(ignored -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(minecraft -> ignored -> Tooltip.create(Component.literal(minecraft.font.split(tooltip, 200).toString()))); // TODO 1.20 :: Check
 
 					OptionsList.configMap.put(option, key);
 					addOption(category, name, option);
@@ -319,35 +322,46 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 	}
 
 	@Override
-	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		// Renders a black transparent overlay behind the config categories
-		renderBackground(poseStack);
+		renderBackground(guiGraphics);
 		// Render the actual config categories
-		list.render(poseStack, mouseX, mouseY, partialTicks);
+		list.render(guiGraphics, mouseX, mouseY, partialTicks);
 		// Renders default buttons (e.g. `Done`)
-		super.render(poseStack, mouseX, mouseY, partialTicks);
+		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-		List<FormattedCharSequence> list = tooltipAt(this.list, mouseX, mouseY);
+		setTooltipForNextRenderPass(tooltipAt(this.list, mouseX, mouseY));
 
-		if (list != null) {
-			renderTooltip(poseStack, list, mouseX, mouseY);
-		}
+		// TODO :: Check
+//		if (list != null) {
+//			renderTooltip(poseStack, list, mouseX, mouseY);
+//		}
 	}
 
 	public static List<FormattedCharSequence> tooltipAt(final OptionsList options, int mouseX, int mouseY) {
 		Optional<AbstractWidget> optional = options.getMouseOver(mouseX, mouseY);
 		OptionListEntry entry = options.getEntryAtPos(mouseX, mouseY);
 
-		if (optional.isEmpty() || !(optional.get() instanceof TooltipAccessor)) {
-			if (entry instanceof OptionEntry optionEntry) {
-				optional = Optional.of(optionEntry.widget);
-			}
+		if (optional.isEmpty() && entry instanceof OptionEntry optionEntry) {
+			optional = Optional.of(optionEntry.widget);
 		}
 
-		if (optional.isPresent() && optional.get() instanceof TooltipAccessor tooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused()) {
-			return tooltipAccessor.getTooltip();
-		} else {
-			return ImmutableList.of();
+		if (optional.isPresent() && optional.get().visible && !optional.get().isHoveredOrFocused()) {
+			return optional.get().getTooltip().toCharSequence(Minecraft.getInstance());
 		}
+
+		return ImmutableList.of();
+
+//		if (optional.isEmpty() || !(optional.get() instanceof TooltipAccessor)) {
+//			if (entry instanceof OptionEntry optionEntry) {
+//				optional = Optional.of(optionEntry.widget);
+//			}
+//		}
+//
+//		if (optional.isPresent() && optional.get() instanceof TooltipAccessor tooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused()) {
+//			return tooltipAccessor.getTooltip();
+//		} else {
+//			return ImmutableList.of();
+//		}
 	}
 }

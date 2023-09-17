@@ -25,17 +25,16 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.Locale;
-import java.util.Objects;
 
 
 public class DragonDoor extends Block implements SimpleWaterloggedBlock{
@@ -116,28 +115,44 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		worldIn.levelEvent(null, isOpening ? getOpenSound() : getCloseSound(), pos, 0);
 	}
 
+	// TODO 1.20 :: tags or sth. else?
 	private int getCloseSound(){
-		return material == Material.METAL ? 1011 : 1012;
+//		return material == Material.METAL ? 1011 : 1012;
+		return 1011;
 	}
 
 	private int getOpenSound(){
-		return material == Material.METAL ? 1005 : 1006;
+//		return material == Material.METAL ? 1005 : 1006;
+		return 1005;
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
-		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		if(state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || dragonStateHandler.isDragon() && state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) || state.getValue(
-				OPEN_REQ) == DragonDoorOpenRequirement.FOREST && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA)){
-			state = state.cycle(OPEN).setValue(WATERLOGGED, worldIn.getFluidState(pos).getType() == Fluids.WATER);
-			worldIn.setBlock(pos, state, 10);
-			worldIn.levelEvent(player, state.getValue(OPEN) ? getOpenSound() : getCloseSound(), pos, 0);
-			if(state.getValue(PART) == Part.TOP){
-				worldIn.setBlock(pos.below(2), state.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, worldIn.getFluidState(pos.below(2)).getType() == Fluids.WATER), 10);
-				worldIn.setBlock(pos.below(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.below()).getType() == Fluids.WATER), 10);
+	public @NotNull InteractionResult use(@NotNull BlockState blockState, @NotNull final Level level, @NotNull final BlockPos blockPos, @NotNull final Player player, @NotNull final InteractionHand hand, @NotNull final BlockHitResult hitResult) {
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		boolean canOpen = switch (blockState.getValue(OPEN_REQ)) {
+			case NONE -> true;
+			case CAVE -> DragonUtils.isDragonType(handler, DragonTypes.CAVE);
+			case FOREST -> DragonUtils.isDragonType(handler, DragonTypes.FOREST);
+			case SEA -> DragonUtils.isDragonType(handler, DragonTypes.SEA);
+			case POWER -> /* TODO :: Unused? */ true;
+			case LOCKED -> /* TODO :: Unused? */ true;
+		};
+
+		if (canOpen) {
+			blockState = blockState.cycle(OPEN).setValue(WATERLOGGED, level.getFluidState(blockPos).getType() == Fluids.WATER);
+
+			level.setBlock(blockPos, blockState, 10);
+			level.levelEvent(player, blockState.getValue(OPEN) ? getOpenSound() : getCloseSound(), blockPos, 0);
+
+			if (blockState.getValue(PART) == Part.TOP) {
+				level.setBlock(blockPos.below(2), blockState.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, level.getFluidState(blockPos.below(2)).getType() == Fluids.WATER), 10);
+				level.setBlock(blockPos.below(), blockState.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, level.getFluidState(blockPos.below()).getType() == Fluids.WATER), 10);
 			}
+
 			return InteractionResult.SUCCESS;
 		}
+
 		return InteractionResult.PASS;
 	}
 

@@ -2,11 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,7 @@ public class DropdownValueEntry extends DropdownEntry{
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		if(button == null){
 			if(list != null)
 				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight + 1, null, null){
@@ -50,16 +51,11 @@ public class DropdownValueEntry extends DropdownEntry{
 						source.onPress();
 						setter.accept(value);
 					}
-
-					@Override
-					public int getBlitOffset(){
-						return 10;
-					}
 				};
 		}else{
-			button.y = pTop;
+			button.setY(pTop);
 			button.visible = source.visible;
-			button.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+			button.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		}
 	}
 

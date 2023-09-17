@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.stats.Stats;
@@ -24,18 +24,15 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
-
 
 public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -156,27 +153,37 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 		worldIn.levelEvent(null, isOpening ? getOpenSound() : getCloseSound(), pos, 0);
 	}
 
+	// TODO 1.20 :: Use tags? or sound type?
 	protected int getCloseSound(){
-		return material == Material.METAL ? 1011 : 1012;
+//		return material == Material.METAL ? 1011 : 1012;
+		return 1011;
 	}
 
 	protected int getOpenSound(){
-		return material == Material.METAL ? 1005 : 1006;
+//		return material == Material.METAL ? 1005 : 1006;
+		return 1005;
 	}
 
 	@Override
-	public InteractionResult use(BlockState state, Level worldIn, BlockPos pos, Player player, InteractionHand handIn, BlockHitResult hit){
-		LazyOptional<DragonStateHandler> dragonStateHandlerLazyOptional = player.getCapability(Capabilities.DRAGON_CAPABILITY);
-		if(dragonStateHandlerLazyOptional.isPresent()){
-			DragonStateHandler dragonStateHandler = dragonStateHandlerLazyOptional.orElseGet(() -> null);
-			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || dragonStateHandler.isDragon() && state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) || state.getValue(
-					OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA)){
-				state = state.cycle(OPEN);
-				worldIn.setBlock(pos, state, 10);
-				worldIn.levelEvent(player, state.getValue(OPEN) ? getOpenSound() : getCloseSound(), pos, 0);
-				return InteractionResult.SUCCESS;
-			}
+	public @NotNull InteractionResult use(@NotNull BlockState blockState, @NotNull final Level level, @NotNull final BlockPos blockPos, @NotNull final Player player, @NotNull final InteractionHand hand, @NotNull final BlockHitResult hitResult) {
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		boolean canOpen = switch (blockState.getValue(OPEN_REQ)) {
+			case NONE -> true;
+			case CAVE -> DragonUtils.isDragonType(handler, DragonTypes.CAVE);
+			case FOREST -> DragonUtils.isDragonType(handler, DragonTypes.FOREST);
+			case SEA -> DragonUtils.isDragonType(handler, DragonTypes.SEA);
+			case POWER -> /* TODO :: Unused? */ true;
+			case LOCKED -> /* TODO :: Unused? */ true;
+		};
+
+		if (canOpen) {
+			blockState = blockState.cycle(OPEN);
+			level.setBlock(blockPos, blockState, 10);
+			level.levelEvent(player, blockState.getValue(OPEN) ? getOpenSound() : getCloseSound(), blockPos, 0);
+			return InteractionResult.SUCCESS;
 		}
+
 		return InteractionResult.PASS;
 	}
 

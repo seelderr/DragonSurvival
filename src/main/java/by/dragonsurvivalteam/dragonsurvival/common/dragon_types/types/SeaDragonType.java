@@ -10,9 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
@@ -106,12 +105,12 @@ public class SeaDragonType extends AbstractDragonType {
 						
 						if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
 							if (player.tickCount % 40 == 0) {
-								player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
+								player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.DEHYDRATION), hydrationDamage);
 							}
 							
 						} else if (timeWithoutWater >= maxTicksOutofWater * 2) {
 							if (player.tickCount % 20 == 0) {
-								player.hurt(DamageSources.DEHYDRATION, hydrationDamage);
+								player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.DEHYDRATION), hydrationDamage);
 							}
 						}
 					}

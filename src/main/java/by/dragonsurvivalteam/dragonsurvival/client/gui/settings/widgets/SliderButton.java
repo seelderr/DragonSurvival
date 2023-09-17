@@ -3,16 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets;
 
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractOptionSliderButton;
-import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
-public class SliderButton extends AbstractOptionSliderButton implements TooltipAccessor {
+public class SliderButton extends AbstractOptionSliderButton /*implements TooltipAccessor*/ {
     private final ProgressOption option;
     public List<FormattedCharSequence> tooltip;
 
@@ -32,7 +32,7 @@ public class SliderButton extends AbstractOptionSliderButton implements TooltipA
         this.setMessage(this.option.getMessage(this.options));
     }
 
-    public @NotNull List<FormattedCharSequence> getTooltip() {
-        return this.tooltip;
+    public Tooltip getTooltip() {
+        return Tooltip.create(Component.literal(tooltip.toString()));
     }
 }

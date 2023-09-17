@@ -11,14 +11,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -29,13 +27,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.IForgeRegistry;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
 public class DSItems{
@@ -59,9 +58,11 @@ public class DSItems{
 
 	@SubscribeEvent
 	public static void register(final RegisterEvent event){
-		if (!event.getRegistryKey().equals(Registry.ITEM_REGISTRY))
-			return ;
-		Properties defaultProperties = new Item.Properties().tab(DragonSurvivalMod.items);
+		if (!Objects.equals(event.getForgeRegistry(), ForgeRegistries.ITEMS)) {
+			return;
+		}
+
+		Properties defaultProperties = new Item.Properties()/*.tab(DragonSurvivalMod.items)*/;
 
 		starBone = registerItem(event, new StarBoneItem(defaultProperties), "star_bone");
 		starHeart = registerItem(event, new StarHeartItem(defaultProperties), "star_heart");
@@ -141,20 +142,20 @@ public class DSItems{
 	}
 
 	public static Item registerItem(RegisterEvent event, String name, String description){
-		Item item = new Item(new Item.Properties().tab(DragonSurvivalMod.items)){
+		Item item = new Item(new Item.Properties()/*.tab(DragonSurvivalMod.items)*/){
 			@Override
 			public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> list, @NotNull TooltipFlag tooltipFlag){
 				super.appendHoverText(stack, world, list, tooltipFlag);
 				list.add(Component.translatable(description));
 			}
 		};
-		event.register(Registry.ITEM_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, name), ()->item);
+		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(DragonSurvivalMod.MODID, name), ()->item);
 		DS_ITEMS.put(name, item);
 		return item;
 	}
 
 	public static Item registerItem(RegisterEvent event, Item item, String name){
-		event.register(Registry.ITEM_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, name),()->item);
+		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(DragonSurvivalMod.MODID, name),()->item);
 		DS_ITEMS.put(name, item);
 		return item;
 	}

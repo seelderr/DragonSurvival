@@ -13,7 +13,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
 
-import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -52,51 +51,50 @@ public class DragonModifiers{
 			return;
 		}
 
-		AttributeModifier oldMod = getHealthModifier(oldPlayer);
-		if(oldMod != null){
-			updateHealthModifier(newPlayer, oldMod);
-		}
-		oldMod = getDamageModifier(oldPlayer);
-		if(oldMod != null){
-			updateDamageModifier(newPlayer, oldMod);
-		}
-		oldMod = getSwimSpeedModifier(oldPlayer);
-		if(oldMod != null){
-			updateSwimSpeedModifier(newPlayer, oldMod);
-		}
-		oldMod = getReachModifier(oldPlayer);
-		if(oldMod != null){
-			updateReachModifier(newPlayer, oldMod);
-		}
+		updateHealthModifier(newPlayer, getHealthModifier(oldPlayer));
+		updateDamageModifier(newPlayer, getDamageModifier(oldPlayer));
+		updateSwimSpeedModifier(newPlayer, getSwimSpeedModifier(oldPlayer));
+		updateBlockReachModifier(newPlayer, getBlockReachModifier(oldPlayer));
+		updateEntityReachModifier(newPlayer, getEntityReachModifier(oldPlayer));
 	}
 
-	@Nullable
-	public static AttributeModifier getReachModifier(Player player){
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get())).getModifier(REACH_MODIFIER_UUID);
+	public static AttributeModifier getBlockReachModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get())).getModifier(REACH_MODIFIER_UUID);
 	}
 
-	@Nullable
+	public static AttributeModifier getEntityReachModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get())).getModifier(REACH_MODIFIER_UUID);
+	}
+
 	public static AttributeModifier getHealthModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getModifier(HEALTH_MODIFIER_UUID);
 	}
 
-	@Nullable
 	public static AttributeModifier getDamageModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE)).getModifier(DAMAGE_MODIFIER_UUID);
 	}
 
-	@Nullable
 	public static AttributeModifier getSwimSpeedModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get())).getModifier(SWIM_SPEED_MODIFIER_UUID);
 	}
 
-	public static void updateReachModifier(Player player, AttributeModifier mod){
+	public static void updateBlockReachModifier(Player player, AttributeModifier mod){
 		if(!ServerConfig.bonuses){
 			return;
 		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
+	}
+
+	public static void updateEntityReachModifier(final Player player, final AttributeModifier modifier) {
+		if (!ServerConfig.bonuses) {
+			return;
+		}
+
+		AttributeInstance attribute = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
+		attribute.removeModifier(modifier);
+		attribute.addPermanentModifier(modifier);
 	}
 
 	public static void updateHealthModifier(Player player, AttributeModifier mod){

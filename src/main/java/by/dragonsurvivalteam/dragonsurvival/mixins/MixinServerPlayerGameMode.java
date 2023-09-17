@@ -48,7 +48,7 @@ public class MixinServerPlayerGameMode{
 			return originalCheck;
 		}
 
-		if (!originalCheck && player.level instanceof ServerLevel) {
+		if (!originalCheck && player.level() instanceof ServerLevel) {
 			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if (!handler.isDragon()) {
@@ -56,7 +56,7 @@ public class MixinServerPlayerGameMode{
 			}
 
 			UUID id = UUID.randomUUID();
-			FakePlayer fakePlayer = new FakePlayer((ServerLevel) player.level, new GameProfile(id, id.toString()));
+			FakePlayer fakePlayer = new FakePlayer((ServerLevel) player.level(), new GameProfile(id, id.toString()));
 
 			for (int toolSlot = 0; toolSlot < 4; toolSlot++) {
 				ItemStack tool = handler.getClawToolData().getClawsInventory().getItem(toolSlot);

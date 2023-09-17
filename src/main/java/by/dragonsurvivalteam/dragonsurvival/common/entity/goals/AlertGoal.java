@@ -27,6 +27,6 @@ public class AlertGoal<T extends LivingEntity> extends Goal{
 	public void tick(){
 		double range = owner.getAttributeValue(Attributes.FOLLOW_RANGE);
 		AABB axisAlignedBB = new AABB(owner.blockPosition()).inflate(range);
-		Arrays.stream(toAlert).forEach(aClass -> owner.level.getEntitiesOfClass(aClass, axisAlignedBB).forEach(mob -> mob.setTarget(owner.getLastHurtByMob())));
+		Arrays.stream(toAlert).forEach(aClass -> owner.level().getEntitiesOfClass(aClass, axisAlignedBB).forEach(mob -> mob.setTarget(owner.getLastHurtByMob())));
 	}
 }

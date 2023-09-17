@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib.core.object.Color;
 
 public class ColorUtil {
     /** Code from {@link java.awt.Color#RGBtoHSB(int, int, int, float[])} */

@@ -26,8 +26,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -37,8 +38,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
+import java.util.List;
 import java.util.*;
 
 public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer>{
@@ -86,7 +89,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	public DragonScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
-		passEvents = true;
+		// TODO 1.20 :: Check
+//		passEvents = true;
 		player = inv.player;
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
@@ -115,113 +119,111 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, 2, this));
 		addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, 3, this));
 
-		addRenderableWidget(new DSButton(leftPos + 27, topPos + 10, 11, 11 , p_onPress_1_ -> {
+		addRenderableWidget(new DSButton(leftPos + 27, topPos + 10, 11, 11 , button -> {
 			clawsMenu = !clawsMenu;
 			clearWidgets();
 			init();
 
 			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
 			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
-		}, Component.translatable("ds.gui.claws")){
+		}, Component.translatable("ds.gui.claws")) {
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				stack.pushPose();
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				RenderSystem.disableDepthTest();
-				RenderSystem.setShaderTexture(0, DRAGON_CLAW_BUTTON);
-				blit(stack, x, y, 0, 0, 11, 11, 11, 11);
+				guiGraphics.blit(DRAGON_CLAW_BUTTON, getX(), getY(), 0, 0, 11, 11, 11, 11);
 				RenderSystem.enableDepthTest();
-				stack.popPose();
 			}
 		});
 
 		addRenderableWidget(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null, 0){
 			@Override
-			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = clawsMenu;
 				active = clawsMenu;
 			}
 
 			@Override
-			public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
-				String age = (int)handler.getSize() - handler.getLevel().size + "/";
-				double seconds = 0;
+			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 
-				if(handler.getLevel() == DragonLevel.NEWBORN){
-					age += DragonLevel.YOUNG.size - handler.getLevel().size;
-					double missing = DragonLevel.YOUNG.size - handler.getSize();
-					double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ServerConfig.newbornGrowthModifier;
-					seconds = missing / increment / 20;
-				}else if(handler.getLevel() == DragonLevel.YOUNG){
-					age += DragonLevel.ADULT.size - handler.getLevel().size;
+				// TODO 1.20 :: Check
+				if (isHovered) {
+					String age = (int)handler.getSize() - handler.getLevel().size + "/";
+					double seconds = 0;
 
-					double missing = DragonLevel.ADULT.size - handler.getSize();
-					double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ServerConfig.youngGrowthModifier;
-					seconds = missing / increment / 20;
-				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
-					age += 40 - handler.getLevel().size;
+					if(handler.getLevel() == DragonLevel.NEWBORN){
+						age += DragonLevel.YOUNG.size - handler.getLevel().size;
+						double missing = DragonLevel.YOUNG.size - handler.getSize();
+						double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ServerConfig.newbornGrowthModifier;
+						seconds = missing / increment / 20;
+					}else if(handler.getLevel() == DragonLevel.YOUNG){
+						age += DragonLevel.ADULT.size - handler.getLevel().size;
 
-					double missing = 40 - handler.getSize();
-					double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToMax * 20.0) * ServerConfig.adultGrowthModifier;
-					seconds = missing / increment / 20;
-				}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-					age += (int)(ServerConfig.maxGrowthSize - handler.getLevel().size);
+						double missing = DragonLevel.ADULT.size - handler.getSize();
+						double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ServerConfig.youngGrowthModifier;
+						seconds = missing / increment / 20;
+					}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
+						age += 40 - handler.getLevel().size;
 
-					double missing = ServerConfig.maxGrowthSize - handler.getSize();
-					double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.beyond * 20.0) * ServerConfig.maxGrowthModifier;
-					seconds = missing / increment / 20;
-				}
+						double missing = 40 - handler.getSize();
+						double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToMax * 20.0) * ServerConfig.adultGrowthModifier;
+						seconds = missing / increment / 20;
+					}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
+						age += (int)(ServerConfig.maxGrowthSize - handler.getLevel().size);
 
-				if(seconds != 0){
-					int minutes = (int)(seconds / 60);
-					seconds -= minutes * 60;
-
-					int hours = minutes / 60;
-					minutes -= hours * 60;
-
-					String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
-					String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
-
-					if(handler.growing){
-						age += " (" + hourString + ":" + minuteString + ")";
-					}else{
-						age += " (§4--:--§r)";
+						double missing = ServerConfig.maxGrowthSize - handler.getSize();
+						double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.beyond * 20.0) * ServerConfig.maxGrowthModifier;
+						seconds = missing / increment / 20;
 					}
+
+					if(seconds != 0){
+						int minutes = (int)(seconds / 60);
+						seconds -= minutes * 60;
+
+						int hours = minutes / 60;
+						minutes -= hours * 60;
+
+						String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
+						String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
+
+						if(handler.growing){
+							age += " (" + hourString + ":" + minuteString + ")";
+						}else{
+							age += " (§4--:--§r)";
+						}
+					}
+
+					ArrayList<Item> allowedList = new ArrayList<>();
+
+					List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+					List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+					List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+
+					if(handler.getSize() < DragonLevel.YOUNG.size){
+						allowedList.addAll(newbornList);
+					}else if(handler.getSize() < DragonLevel.ADULT.size){
+						allowedList.addAll(youngList);
+					}else{
+						allowedList.addAll(adultList);
+					}
+
+					List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
+					StringJoiner result = new StringJoiner(", ");
+					displayData.forEach(result::add);
+
+					setTooltip(Tooltip.create(Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()).append(Component.translatable("ds.gui.growth_age", age)).append(Component.translatable("ds.gui.growth_help", result))));
+				} else {
+					setTooltip(Tooltip.create(Component.empty()));
 				}
-
-				ArrayList<Item> allowedList = new ArrayList<>();
-
-				List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-				List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-				List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
-
-				if(handler.getSize() < DragonLevel.YOUNG.size){
-					allowedList.addAll(newbornList);
-				}else if(handler.getSize() < DragonLevel.ADULT.size){
-					allowedList.addAll(youngList);
-				}else{
-					allowedList.addAll(adultList);
-				}
-
-				List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
-				StringJoiner result = new StringJoiner(", ");
-				displayData.forEach(result::add);
-
-				ArrayList<Component> description = new ArrayList<>(Arrays.asList(Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()), Component.translatable("ds.gui.growth_age", age), Component.translatable("ds.gui.growth_help", result)));
-				Minecraft.getInstance().screen.renderComponentTooltip(stack, description, mouseX, mouseY);
-			}
-
-			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-				isHovered = p_230430_2_ >= x && p_230430_3_ >= y && p_230430_2_ < x + width && p_230430_3_ < y + height;
 			}
 		});
 
 		addRenderableWidget(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0){
 			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = clawsMenu;
 				active = clawsMenu;
-				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+				super.render(guiGraphics, mouseX, mouseY, partialTick);
 			}
 		});
 
@@ -234,15 +236,15 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
 		}, Component.translatable("ds.gui.claws.rendering")){
 			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				active = clawsMenu;
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				if(handler.getClawToolData().shouldRenderClaws && clawsMenu){
-					RenderSystem.setShaderTexture(0, DRAGON_CLAW_CHECKMARK);
-					blit(p_230430_1_, x, y, 0, 0, 9, 9, 9, 9);
+				if (handler.getClawToolData().shouldRenderClaws && clawsMenu) {
+					guiGraphics.blit(DRAGON_CLAW_CHECKMARK, getX(), getY(), 0, 0, 9, 9, 9, 9);
 				}
-				isHovered = p_230430_2_ >= x && p_230430_3_ >= y && p_230430_2_ < x + width && p_230430_3_ < y + height;
+
+				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 			}
 		});
 
@@ -264,22 +266,20 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	}
 
 	@Override
-	protected void renderLabels(PoseStack stack, int p_230451_2_, int p_230451_3_){}
+	protected void renderLabels(@NotNull final GuiGraphics guiGraphics, int p_230451_2_, int p_230451_3_) { /* Nothing to do */ }
 
 	@Override
-	protected void renderBg(PoseStack stack, float partialTicks, int mouseX, int mouseY){
-		renderBackground(stack);
+	protected void renderBg(@NotNull final GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
+		renderBackground(guiGraphics);
 
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
-		RenderSystem.setShaderTexture(0, BACKGROUND);
 		RenderSystem.enableBlend();
-		blit(stack, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+		guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		RenderSystem.disableBlend();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(clawsMenu){
-			RenderSystem.setShaderTexture(0, CLAWS_TEXTURE);
-			blit(stack, leftPos - 80, topPos, 0, 0, 77, 170);
+			guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 		}
 
 		if(clawsMenu){
@@ -308,32 +308,30 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			int radius = size / 2;
 
-			stack.pushPose();
-
-			RenderSystem.disableTexture();
+//			RenderSystem.disableTexture();
 			Color c = new Color(99, 99, 99);
 
 			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
-			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius, sides, 1, 0);
+			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, sides, 1, 0);
 
-			RenderSystem.enableTexture();
+//			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "circle", "")));
-			RenderingUtils.drawTexturedCircle(stack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
+			RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
-			RenderSystem.disableTexture();
+//			RenderSystem.disableTexture();
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			RenderingUtils.drawSmoothCircle(stack, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-			RenderSystem.enableTexture();
+			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
+//			RenderSystem.enableTexture();
 
-			stack.translate(0, 0, 150); // Don't get overlayed by other rendered elements
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 150); // Don't get overlayed by other rendered elements
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))));
-			blit(stack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+			guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 
-			stack.popPose();
+			guiGraphics.pose().popPose();
 		}
 	}
 
@@ -362,21 +360,21 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
-		super.render(pPoseStack, pMouseX, pMouseY, pPartialTick);
-		renderTooltip(pPoseStack, pMouseX, pMouseY);
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
+		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		pPoseStack.pushPose();
+		guiGraphics.pose().pushPose();
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
 		float sizef = Math.min(30 - sizeOffset, 30);
-		pPoseStack.translate(0f, sizef / 10f, 0);
-		InventoryScreen.renderEntityInInventory(leftPos + 65, topPos + 65, (int)sizef, (float)(leftPos + 51 - pMouseX), (float)(topPos + 75 - 50 - pMouseY), minecraft.player);
+		guiGraphics.pose().translate(0f, sizef / 10f, 0);
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,leftPos + 65, topPos + 65, (int) sizef, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
 		RenderSystem.disableScissor();
 
-		pPoseStack.popPose();
+		guiGraphics.pose().popPose();
 	}
 }

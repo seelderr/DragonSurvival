@@ -3,14 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.CommonComponents;
@@ -18,10 +16,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Widget{
+public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_warning.png");
 	private final DragonEditorScreen screen;
 	private final AbstractWidget btn1;
@@ -42,12 +41,13 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
 		btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, null){
 			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
-				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
-				}
+				// TODO 1.20 :: Check
+//				if(isHovered){
+//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+//				}
 			}
 
 			@Override
@@ -58,14 +58,14 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
 		btn2 = new ExtendedButton(x + 66, y + 133, 41, 21, CommonComponents.GUI_NO, null){
 			@Override
-			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-				drawCenteredString(mStack, Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
-				if(isHovered){
-					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
-				}
+				// TODO 1.20 :: Check
+//				if(isHovered){
+//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+//				}
 			}
-
 
 			@Override
 			public void onPress(){
@@ -85,17 +85,15 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 	}
 
 	@Override
-	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		fillGradient(pMatrixStack, 0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+		guiGraphics.fillGradient(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
 
-		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		String key = "ds.gui.dragon_editor.confirm." + (!ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "all" : ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage ? "ability" : !ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage ? "growth" : "");
 		String text = Component.translatable(key).getString();
-		blit(pMatrixStack, x, y, 0, 0, xSize, ySize);
-		TextRenderUtil.drawCenteredScaledTextSplit(pMatrixStack, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 0);
+		guiGraphics.blit(BACKGROUND_TEXTURE, x, y, 0, 0, xSize, ySize);
+		TextRenderUtil.drawCenteredScaledTextSplit(guiGraphics, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 0);
 
-
-		btn1.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		btn2.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+		btn1.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		btn2.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 }

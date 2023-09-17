@@ -146,6 +146,6 @@ public class LavaVisionAbility extends ChargeCastAbility {
 	@Override
 	public void castingComplete(Player player){
 		player.addEffect(new MobEffectInstance(DragonEffects.LAVA_VISION, getDuration()));
-		player.level.playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
+		player.level().playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
 	}
 }

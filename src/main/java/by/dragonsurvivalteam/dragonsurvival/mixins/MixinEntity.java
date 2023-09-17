@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import com.mojang.math.Vector3f;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
@@ -16,6 +15,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -123,11 +123,11 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	}
 
 	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"), name = "itementity")
-	public ItemEntity protectDrops(ItemEntity itemEntity) {
+	public ItemEntity protectDrops(ItemEntity itemEntity) { // TODO 1.20 :: Check
 		Object self = this;
 
 		if (self instanceof LivingEntity livingEntity) {
-			if (!(livingEntity.level instanceof ServerLevel)) {
+			if (!(livingEntity.level() instanceof ServerLevel)) {
 				return itemEntity;
 			}
 
@@ -136,7 +136,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 
 				// Prevent the dropped item from burning when player is a cave dragon
 				if (DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
-					itemEntity = new ItemEntity(livingEntity.level, itemEntity.position().x, itemEntity.position().y, itemEntity.position().z, itemEntity.getItem()) {
+					itemEntity = new ItemEntity(livingEntity.level(), itemEntity.position().x, itemEntity.position().y, itemEntity.position().z, itemEntity.getItem()) {
 						@Override
 						public boolean fireImmune(){
 							return true;

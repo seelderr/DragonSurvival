@@ -11,16 +11,15 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class ClientGrowthHudHandler{
 	@ConfigRange( min = -1000, max = 1000 )
@@ -31,15 +30,17 @@ public class ClientGrowthHudHandler{
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthYOffset", comment = "Offset the y position of the item growth icon in relation to its normal position" )
 	public static Integer growthYOffset = 0;
 
-	public static void renderGrowth(ForgeGui gui, PoseStack mStack, float partialTicks, int width, int height){
-		Player playerEntity = Minecraft.getInstance().player;
-		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator())
+	public static void renderGrowth(@NotNull final GuiGraphics guiGraphics, int width, int height){
+		Player player = Minecraft.getInstance().player;
+
+		if (player == null || player.isSpectator()) {
 			return;
+		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(playerEntity);
-		ItemStack stack = playerEntity.getMainHandItem();
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		ItemStack stack = player.getMainHandItem();
 
-		if(stack.isEmpty()){
+		if (!handler.isDragon() || stack.isEmpty()) {
 			return;
 		}
 
@@ -79,12 +80,13 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
 			Color c = new Color(99, 99, 99);
 
-			RenderSystem.disableTexture();
+			// TODO 1.20 :: Check
+//			RenderSystem.disableTexture();
 
 			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
-			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius, 6, 1, 0);
+			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
 
-			RenderSystem.enableTexture();
+//			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
@@ -98,27 +100,26 @@ public class ClientGrowthHudHandler{
 				// FIXME :: Initialize them once
 
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
-				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
+				RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getTypeName().toLowerCase() + ".png"));
-				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+				RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 			}else if(increment < 0){
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_3.png"));
-				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
+				RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, progress, -0.5);
 
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + handler.getTypeName().toLowerCase() + ".png"));
-				RenderingUtils.drawTexturedCircle(mStack, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
+				RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
 			}
 
-			RenderSystem.disableTexture();
+//			RenderSystem.disableTexture();
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-			RenderingUtils.drawSmoothCircle(mStack, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
-			RenderSystem.enableTexture();
+			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, 6, 1, 0);
+//			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"));
-			Screen.blit(mStack, circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+			guiGraphics.blit(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 		}
 	}
 }

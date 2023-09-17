@@ -1,16 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.ScreenUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
@@ -33,18 +32,14 @@ public class ExtendedCheckbox extends Checkbox{
 	}
 
 	@Override
-	public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		pMatrixStack.pushPose();
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		Minecraft minecraft = Minecraft.getInstance();
 		Font fontrenderer = minecraft.font;
 
 		if(height > 10){
-			ScreenUtils.blitWithBorder(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
-			ScreenUtils.blitWithBorder(pMatrixStack, BACKGROUND_TEXTURE, x, y, 0, 0, renderWidth, height, 32, 32, 10, 10, 10, 10, (float)0);
+			guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), 0, 0, width, height, 32, 32, 10, 10, 10, 10);
+			guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), 0, 0, renderWidth, height, 32, 32, 10, 10, 10, 10);
 		}
-
-
-		RenderSystem.setShaderTexture(0, TEXTURE);
 
 		if(height > 10){
 			float widthMod = (renderWidth - 4) / 36f;
@@ -53,15 +48,13 @@ public class ExtendedCheckbox extends Checkbox{
 			float u = isHoveredOrFocused() || isFocused() ? renderWidth - 4 : 0.0F;
 			float v = selected() ? height - 4 : 0.0F;
 
-			blit(pMatrixStack, x + 2, y + 2, u, v, renderWidth - 4, height - 4, (int)(72 * widthMod), (int)(72f * heightMod));
-			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
+			guiGraphics.blit(TEXTURE, getX() + 2, getY() + 2, u, v, renderWidth - 4, height - 4, (int)(72 * widthMod), (int)(72f * heightMod));
+//			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
 			// Insecure modification
 			MutableComponent message = Component.empty().append(getMessage());
 			if (active)
 				message = message.withStyle(ChatFormatting.DARK_GRAY);
-			pMatrixStack.pushPose();
-			drawString(pMatrixStack, fontrenderer,  message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);
-			pMatrixStack.popPose();
+			guiGraphics.drawString(fontrenderer,  message, getX() + renderWidth + 2, getY() + (height - 8) / 2, 14737632);
 		}else{
 			float widthMod = renderWidth / 36f;
 			float heightMod = height / 36f;
@@ -69,19 +62,16 @@ public class ExtendedCheckbox extends Checkbox{
 			float u = isHoveredOrFocused() || isFocused() ? renderWidth : 0.0F;
 			float v = selected() ? height : 0.0F;
 
-			blit(pMatrixStack, x, y, u, v, renderWidth, height, (int)(72 * widthMod), (int)(72f * heightMod));
-			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
+			guiGraphics.blit(TEXTURE, getX(), getY(), u, v, renderWidth, height, (int)(72 * widthMod), (int)(72f * heightMod));
+//			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
 
-			//Component message = active ? getMessage() : ((TranslatableComponent)getMessage()).withStyle(ChatFormatting.DARK_GRAY);
-			// Insecure modification
 			MutableComponent message = Component.empty().append(getMessage());
-			if (active)
-				message = message.withStyle(ChatFormatting.DARK_GRAY);
 
-			pMatrixStack.pushPose();
-			drawString(pMatrixStack, fontrenderer, message, x + renderWidth + 2, y + (height - 8) / 2, 14737632);
-			pMatrixStack.popPose();
+			if (active) {
+				message = message.withStyle(ChatFormatting.DARK_GRAY);
+			}
+
+			guiGraphics.drawString(fontrenderer, message, getX() + renderWidth + 2, getY() + (height - 8) / 2, 14737632);
 		}
-		pMatrixStack.popPose();
 	}
 }

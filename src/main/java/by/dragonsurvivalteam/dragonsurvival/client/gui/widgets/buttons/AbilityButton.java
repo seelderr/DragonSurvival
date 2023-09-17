@@ -12,15 +12,16 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class AbilityButton extends Button implements TooltipRender{
 	public DragonAbility ability;
 
 	public AbilityButton(int x, int y, int skillType, int slot, Screen screen){
-		super(x, y, 16, 16, null, button -> {});
+		super(x, y, 16, 16, Component.empty(), button -> {}, DEFAULT_NARRATION);
 		this.slot = slot;
 		this.skillType = skillType;
 		this.screen = screen;
@@ -94,7 +95,7 @@ public class AbilityButton extends Button implements TooltipRender{
 	}
 
 	@Override
-	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
 			DragonAbility ab =
 				skillType == 0 ? cap.getMagicData().getAbilityFromSlot(slot) :
@@ -110,7 +111,7 @@ public class AbilityButton extends Button implements TooltipRender{
 		boolean isDragging = false;
 
 		if(skillType == 0){
-			for(Widget s : screen.renderables){
+			for(Renderable s : screen.renderables){
 				if(s instanceof AbilityButton btn){
 					if(btn != this && btn.skillType == 0 && btn.dragging){
 						isDragging = true;
@@ -120,36 +121,32 @@ public class AbilityButton extends Button implements TooltipRender{
 			}
 		}
 
-		RenderSystem.setShaderTexture(0, isDragging ? BLANK_3_TEXTURE : ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE);
-		blit(stack, x - 1, y - 1, 0, 0, 20, 20, 20, 20);
-
+		guiGraphics.blit(isDragging ? BLANK_3_TEXTURE : ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE, getX() - 1, getY() - 1, 0, 0, 20, 20, 20, 20);
 
 		if(ability != null && !dragging){
-			RenderSystem.setShaderTexture(0, ability.getIcon());
-			blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+			guiGraphics.blit(ability.getIcon(), getX(), getY(), 0, 0, 18, 18, 18, 18);
 
 			if(ability.isDisabled()){
 				RenderSystem.enableBlend();
-				RenderSystem.setShaderTexture(0, MagicDragonRender.INVALID_ICON);
-				blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+				guiGraphics.blit(MagicDragonRender.INVALID_ICON, getX(), getY(), 0, 0, 18, 18, 18, 18);
 				RenderSystem.disableBlend();
 			}
 		}
-	}
 
-	@Override
-	public void renderToolTip(PoseStack stack, int mouseX, int mouseY){
-		if(ability != null){
-			FormattedText desc = ability.getDescription();
+		// TODO 1.20 :: Check
+		if (isHovered()) {
+			if (ability != null) {
+				FormattedText desc = ability.getDescription();
 
-			if(ability.getInfo().size() > 0){
-				desc = FormattedText.composite(desc, Component.empty().append("\n\n"));
+				if (ability.getInfo().size() > 0) {
+					desc = FormattedText.composite(desc, Component.empty().append("\n\n"));
+				}
+
+				List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, 143);
+				int yPos = getY() - description.size() * 7;
+
+				MagicDragonRender.drawAbilityHover(guiGraphics, getX() + width * 2, yPos, ability);
 			}
-
-			List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, 143);
-			int yPos = y - description.size() * 7;
-
-			MagicDragonRender.drawAbilityHover(stack, x + width * 2, yPos, ability);
 		}
 	}
 }

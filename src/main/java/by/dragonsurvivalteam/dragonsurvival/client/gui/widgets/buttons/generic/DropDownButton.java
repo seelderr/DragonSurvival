@@ -4,17 +4,17 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
-import net.minecraft.client.gui.components.TooltipAccessor;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.function.Consumer;
 
 
-public class DropDownButton extends ExtendedButton implements TooltipAccessor{
+public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*/ {
 	public static final int maxItems = 4;
 	public String[] values;
 	public String current;
@@ -47,8 +47,8 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	}
 
 	@Override
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 
 		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && !list.isMouseOver(p_230430_2_, p_230430_3_))){
 			toggled = false;
@@ -63,17 +63,17 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 
 		if(toggled && list != null){
 			Screen screen = Minecraft.getInstance().screen;
-			int offset = screen.height - (y + height + 80);
-			list.reposition(x, y + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
+			int offset = screen.height - (getY() + height + 80);
+			list.reposition(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
 	}
 
 	@Override
-	public void renderButton(PoseStack poseStack, int mouseX, int mouseY, float partialTick) {
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		int k = getYImage(isHovered);
-		ScreenUtils.blitWithBorder(poseStack, WIDGETS_LOCATION, x, y, 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2, getBlitOffset());
-		renderBg(poseStack, mc, mouseX, mouseY);
+		int k = /*getYImage(isHoveredOrFocused())*/ !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
+		guiGraphics.blitWithBorder(WIDGETS_LOCATION, getX(), getY(), 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2/*, getBlitOffset()*/);
+//		renderBg(poseStack, mc, mouseX, mouseY);
 
 		Component buttonText = getMessage();
 		int strWidth = mc.font.width(buttonText);
@@ -82,10 +82,10 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		if (strWidth > width - 6 && strWidth > ellipsisWidth)
 			buttonText = Component.empty().append(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
-		poseStack.pushPose();
-		poseStack.translate(0,0, getBlitOffset());
-		drawCenteredString(poseStack, mc.font, buttonText, x + width / 2, y + (height - 8) / 2, getFGColor());
-		poseStack.popPose();
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, /*getBlitOffset()*/ 20); // TODO 1.20 :: Check
+		guiGraphics.drawCenteredString(mc.font, buttonText, getX() + width / 2, getY() + (height - 8) / 2, getFGColor());
+		guiGraphics.pose().popPose();
 	}
 
 
@@ -106,8 +106,8 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 		Screen screen = Minecraft.getInstance().screen;
 
 		if(!toggled){
-			int offset = screen.height - (y + height + 80);
-			list = new DropdownList(x, y + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
+			int offset = screen.height - (getY() + height + 80);
+			list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
 			DropdownEntry center = null;
 
 			for(int i = 0; i < values.length; i++){
@@ -144,7 +144,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 			boolean finalHasBorder = hasBorder;
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
-				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 					list.visible = DropDownButton.this.visible;
 
@@ -152,7 +152,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
 
 					if(list.visible)
-						list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+						list.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 
 					if(finalHasBorder)
 						RenderSystem.disableScissor();
@@ -176,7 +176,7 @@ public class DropDownButton extends ExtendedButton implements TooltipAccessor{
 	}
 
 	@Override
-	public List<FormattedCharSequence> getTooltip(){
-		return tooltip;
+	public Tooltip getTooltip(){
+		return Tooltip.create(Component.literal(tooltip.toString()));
 	}
 }

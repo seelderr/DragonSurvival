@@ -52,21 +52,13 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
-				double x = Shooter.this.getX();
-				double y = Shooter.this.getY();
-				double z = Shooter.this.getZ();
 				Entity entity = Shooter.this;
-				Level world = Shooter.this.level;
 				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				double x = Shooter.this.getX();
-				double y = Shooter.this.getY();
-				double z = Shooter.this.getZ();
 				Entity entity = Shooter.this;
-				Level world = Shooter.this.level;
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});

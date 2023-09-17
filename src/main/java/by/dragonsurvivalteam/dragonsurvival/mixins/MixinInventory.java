@@ -39,7 +39,7 @@ public abstract class MixinInventory{
 		ItemStack mainStack = player.getInventory().getSelected();
 		ItemStack breakStack = ClawToolHandler.getDragonHarvestTool(player, state);
 
-		if(!ItemStack.isSame(mainStack, breakStack)){
+		if(!ItemStack.isSameItem(mainStack, breakStack)){
 			float tempSpeed = breakStack.getDestroySpeed(state);
 			ci.setReturnValue(tempSpeed);
 		}

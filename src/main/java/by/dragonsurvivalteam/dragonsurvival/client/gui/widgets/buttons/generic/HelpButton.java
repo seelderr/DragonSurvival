@@ -2,16 +2,16 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
@@ -33,8 +33,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 	}
 
 	@Override
-	public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		Minecraft minecraft = Minecraft.getInstance();
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		RenderSystem.setShaderTexture(0, texture);
 
 		float size = variation == 0 ? 18f : 22f;
@@ -42,27 +41,30 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
 
 		int i = 0;
-		if(isHoveredOrFocused())
-			i += (int)(type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 :  Objects.equals(type, DragonTypes.FOREST) ? 2 :  Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
+		if (isHoveredOrFocused()) {
+			i += (int) (type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 : Objects.equals(type, DragonTypes.FOREST) ? 2 : Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
+		}
 
-		pMatrixStack.pushPose();
-		pMatrixStack.translate(0, 0, 200);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 200);
 
-		pMatrixStack.translate(x - x * xSize, y - y * ySize, 0);
-		pMatrixStack.scale(xSize, ySize, 0);
+		guiGraphics.pose().translate(getX() - getX() * xSize, getY() - getY() * ySize, 0);
+		guiGraphics.pose().scale(xSize, ySize, 0);
 
-		if(variation == 0)
-			blit(pMatrixStack, x, y, 0, (float)i, 18, 18, 256, 256);
-		else
-			blit(pMatrixStack, x - 1, y - 1, 18, (float)i, 22, 22, 256, 256);
+		if (variation == 0) {
+			guiGraphics.blit(texture, getX(), getY(), 0, (float) i, 18, 18, 256, 256);
+		} else {
+			guiGraphics.blit(texture, getX() - 1, getY() - 1, 18, (float) i, 22, 22, 256, 256);
+		}
 
-		pMatrixStack.popPose();
+		guiGraphics.pose().popPose();
 	}
 
-	@Override
-	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		TooltipRendering.drawHoveringText(pPoseStack, Component.translatable(text), pMouseX, pMouseY);
-	}
+	// TODO 1.20 :: Check
+//	@Override
+//	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
+//		TooltipRendering.drawHoveringText(pPoseStack, Component.translatable(text), pMouseX, pMouseY);
+//	}
 
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){

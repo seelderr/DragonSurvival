@@ -3,18 +3,19 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.util.Mth;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 
 import java.util.List;
 import java.util.function.Supplier;
 
-public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Widget{
+public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Renderable {
 	private final Screen screen;
 	private final Supplier<DragonEntity> getter;
 	public float yRot = -3, xRot = -5;
@@ -32,12 +33,12 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 	}
 
 	@Override
-	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		if(isMouseOver(pMouseX, pMouseY)){
 			screen.setFocused(this);
 		}
 
-		pMatrixStack.pushPose();
+		guiGraphics.pose().pushPose();
 		final CoreGeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
@@ -45,10 +46,10 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		}
 
 		float scale = zoom;
-		pMatrixStack.scale(scale, scale, 0);
+		guiGraphics.pose().scale(scale, scale, 0);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
 		ClientDragonRender.renderEntityInInventory(getter.get(), x + width / 2, y + height - 50, scale, xRot, yRot, xOffset / 10, yOffset / 10);
-		pMatrixStack.popPose();
+		guiGraphics.pose().popPose();
 	}
 
 	@Override

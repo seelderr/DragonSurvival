@@ -14,7 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLigh
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticle.SeaFactory;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import com.mojang.serialization.Codec;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
@@ -24,7 +23,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -54,17 +52,15 @@ public class DSParticles{
 		REGISTRY.register("sea_sweep", ()->seaSweep);
 	}
 
-	//Insecure modifications
-	//LargePoisonParticleData
 	@SubscribeEvent( priority = EventPriority.LOWEST)
 	public static void registerParticles(RegisterParticleProvidersEvent event){
-		event.register(DSParticles.FIRE.get(), SmallFireParticle.FireFactory::new);
-		event.register(DSParticles.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
-		event.register(DSParticles.POISON.get(), ForestFactory::new);
-		event.register(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
-		event.register(DSParticles.LIGHTNING.get(), SeaFactory::new);
-		event.register(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
-		event.register(DSParticles.TREASURE.get(), by.jackraidenph.dragonsurvival.client.particles.TreasureParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.FIRE.get(), SmallFireParticle.FireFactory::new);
+		event.registerSpriteSet(DSParticles.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
+		event.registerSpriteSet(DSParticles.POISON.get(), ForestFactory::new);
+		event.registerSpriteSet(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
+		event.registerSpriteSet(DSParticles.LIGHTNING.get(), SeaFactory::new);
+		event.registerSpriteSet(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
+		event.registerSpriteSet(DSParticles.TREASURE.get(), TreasureParticle.Factory::new);
 	}
 
 	public static final RegistryObject<ParticleType<SmallFireParticleData>> FIRE = REGISTRY.register("fire", () -> new ParticleType<SmallFireParticleData>(false, SmallFireParticleData.DESERIALIZER){

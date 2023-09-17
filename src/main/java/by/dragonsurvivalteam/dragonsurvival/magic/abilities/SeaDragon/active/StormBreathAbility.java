@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -279,7 +280,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public void hurtTarget(LivingEntity entity){
-		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(new BreathDamage(player), getDamage()), entity);
+		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.DRAGON_BREATH, player), getDamage()), entity);
 		onDamage(entity);
 
 		if(player.getRandom().nextInt(100) < 50){

@@ -29,7 +29,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import software.bernie.geckolib3.core.util.Color;
+import software.bernie.geckolib.core.object.Color;
 
 @Mod.EventBusSubscriber
 public class DragonTreasureHandler{
@@ -138,7 +138,7 @@ public class DragonTreasureHandler{
 				}
 				if(sleepTimer > 0){
 					Color darkening = Color.ofRGBA(0.05f, 0.05f, 0.05f, Mth.lerp(Math.min(sleepTimer, 100) / 100f, 0, 0.5F));
-					Gui.fill(event.getPoseStack(), 0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getColor());
+					event.getGuiGraphics().fill(0, 0, window.getGuiScaledWidth(), window.getGuiScaledHeight(), darkening.getColor());
 				}
 			}
 		});

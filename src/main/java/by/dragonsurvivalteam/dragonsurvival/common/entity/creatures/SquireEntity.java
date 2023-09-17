@@ -46,21 +46,13 @@ public class SquireEntity extends Hunter{
 		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
-				double x = SquireEntity.this.getX();
-				double y = SquireEntity.this.getY();
-				double z = SquireEntity.this.getZ();
 				Entity entity = SquireEntity.this;
-				Level world = SquireEntity.this.level;
 				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				double x = SquireEntity.this.getX();
-				double y = SquireEntity.this.getY();
-				double z = SquireEntity.this.getZ();
 				Entity entity = SquireEntity.this;
-				Level world = SquireEntity.this.level;
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});

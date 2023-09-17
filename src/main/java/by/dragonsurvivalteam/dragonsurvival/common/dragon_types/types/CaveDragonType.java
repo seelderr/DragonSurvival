@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
@@ -20,17 +20,14 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.List;
@@ -63,7 +60,6 @@ public class CaveDragonType extends AbstractDragonType{
 		BlockState feetBlock = player.getFeetBlockState();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
-		Biome biome = world.getBiome(player.blockPosition()).value();
 
 		boolean isInCauldron = DragonTraitHandler.isInCauldron(feetBlock, blockUnder);
 		boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
@@ -83,14 +79,14 @@ public class CaveDragonType extends AbstractDragonType{
 			if(!world.isClientSide() ) {
 				if (player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0 || player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0 || isInSeaBlock && ServerConfig.caveRainDamage != 0.0) {
 					if (player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0) {
-						player.hurt(DamageSources.WATER_BURN, ServerConfig.caveWaterDamage.floatValue());
+						player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.WATER_BURN), ServerConfig.caveWaterDamage.floatValue());
 					} else if ((player.isInWaterOrRain() && !player.isInWaterOrBubble() || isInSeaBlock) && ServerConfig.caveRainDamage != 0.0) {
 						timeInRain++;
 					}
 					
 					if (timeInRain >= maxRainTime) {
 						if (player.tickCount % 40 == 0) {
-							player.hurt(DamageSources.RAIN_BURN, ServerConfig.caveRainDamage.floatValue());
+							player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.RAIN_BURN), ServerConfig.caveRainDamage.floatValue());
 						}
 					}
 					
@@ -148,7 +144,6 @@ public class CaveDragonType extends AbstractDragonType{
 	@Override
 	public boolean isInManaCondition(Player player, DragonStateHandler cap){
 		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-		BlockState feetBlock = player.getFeetBlockState();
 
 		if(player.isInLava() || player.isOnFire() || player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)){
 			return true;

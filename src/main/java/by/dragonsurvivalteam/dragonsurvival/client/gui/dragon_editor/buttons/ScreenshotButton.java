@@ -5,17 +5,17 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.mojang.blaze3d.pipeline.TextureTarget;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class ScreenshotButton extends ExtendedButton implements TooltipRender{
+	private static final ResourceLocation ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/screenshot_icon.png");
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 	private final DragonEditorScreen dragonEditorScreen;
 
@@ -84,14 +85,16 @@ public class ScreenshotButton extends ExtendedButton implements TooltipRender{
 	}
 
 	@Override
-	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-		RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/screenshot_icon.png"));
-		blit(mStack, x, y, 0, 0, width, height, width, height);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+		if (isHoveredOrFocused()) {
+			guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.empty().append("Currently, out of order."), pMouseX, pMouseY);
+		}
 	}
 
 	@Override
-	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		TooltipRendering.drawHoveringText(p_230443_1_, Component.empty().append("Currently, out of order."), p_230443_2_, p_230443_3_);
-		//TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.screenshot"), p_230443_2_, p_230443_3_);
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+		guiGraphics.blit(ICON, getX(), getY(), 0, 0, width, height, width, height);
 	}
 }

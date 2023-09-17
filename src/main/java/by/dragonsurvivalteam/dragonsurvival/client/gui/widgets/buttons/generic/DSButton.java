@@ -3,10 +3,14 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class DSButton extends ExtendedButton implements TooltipRender{
 
@@ -39,9 +43,11 @@ public class DSButton extends ExtendedButton implements TooltipRender{
 		tooltips = tooltip;
 	}
 
-	@Override
-	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(tooltips != null && tooltips.length > 0)
-			TooltipRendering.drawHoveringText(pPoseStack, Arrays.asList(tooltips), pMouseX, pMouseY);
-	}
+	// TODO 1.20 :: Check
+//	@Override
+//	public void renderToolTip(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY) {
+//		if (tooltips != null && tooltips.length > 0) {
+//			TooltipRendering.drawHoveringText(guiGraphics, Arrays.asList(tooltips), mouseX, mouseY);
+//		}
+//	}
 }

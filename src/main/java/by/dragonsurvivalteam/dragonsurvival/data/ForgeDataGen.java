@@ -1,33 +1,38 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.tags.BlockTagsProvider;
+import net.minecraft.data.loot.LootTableProvider;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
-import net.minecraftforge.common.data.ForgeBlockTagsProvider;
 import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ForgeDataGen {
 	@SubscribeEvent
-	public static void configureDataGen(GatherDataEvent event){
+	public static void configureDataGen(final GatherDataEvent event) {
 		DataGenerator generator = event.getGenerator();
 		ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-		BlockTagsProvider provider = new ForgeBlockTagsProvider(generator, existingFileHelper);
 
-		generator.addProvider(true, new DataLanguageProvider(generator, DragonSurvivalMod.MODID, "en_us"));
-		generator.addProvider(true, new DataSoundProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeClient(), new DataBlockStateProvider(generator.getPackOutput(), DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeClient(), new DataItemModelProvider(generator.getPackOutput(), DragonSurvivalMod.MODID, existingFileHelper));
 
-		generator.addProvider(true, new DataRecipeProvider(generator));
-		generator.addProvider(true, new DataLootTableProvider(generator, existingFileHelper));
+		Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.keySet().stream().map(key -> new ResourceLocation(DragonSurvivalMod.MODID, key)).collect(Collectors.toSet());
+		generator.addProvider(event.includeServer(), new DataLootTableProvider(generator.getPackOutput(), blocks, List.of(new LootTableProvider.SubProviderEntry(BlockLootTableSubProvider::new, LootContextParamSets.BLOCK))));
 
-		generator.addProvider(true, new DataItemTagProvider(generator, provider, DragonSurvivalMod.MODID, existingFileHelper));
-		generator.addProvider(true, new DataBlockTagProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
+		BlockTagsProvider blockTagsProvider = new DataBlockTagProvider(generator.getPackOutput(), event.getLookupProvider(), DragonSurvivalMod.MODID, existingFileHelper);
+		generator.addProvider(event.includeServer(), blockTagsProvider);
 
-		generator.addProvider(true, new DataBlockModelProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
-		generator.addProvider(true, new DataItemModelProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
-		generator.addProvider(true, new DataBlockStateProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeServer(), new DataItemTagProvider(generator.getPackOutput(), event.getLookupProvider(), blockTagsProvider.contentsGetter(), DragonSurvivalMod.MODID, existingFileHelper));
+
 	}
 }

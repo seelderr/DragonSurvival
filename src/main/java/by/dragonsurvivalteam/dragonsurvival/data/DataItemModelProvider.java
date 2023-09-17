@@ -1,19 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import net.minecraft.data.DataGenerator;
+import net.minecraft.data.PackOutput;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import org.jetbrains.annotations.NotNull;
 
 public class DataItemModelProvider extends ItemModelProvider{
-	public DataItemModelProvider(DataGenerator generator, String modid, ExistingFileHelper existingFileHelper){
-		super(generator, modid, existingFileHelper);
-	}
-
-	@Override
-	public String getName(){
-		return "Dragon Survival Item models";
+	public DataItemModelProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
+		super(output, modId, existingFileHelper);
 	}
 
 	@Override
@@ -23,5 +19,10 @@ public class DataItemModelProvider extends ItemModelProvider{
 				.parent(new ModelFile.UncheckedModelFile("item/generated"))
 				.texture("layer0", modLoc("item/" + key));
 		});
+	}
+
+	@Override
+	public @NotNull String getName() {
+		return "Dragon Survival Item models";
 	}
 }

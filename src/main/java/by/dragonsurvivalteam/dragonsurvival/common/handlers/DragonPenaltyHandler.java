@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonT
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.world.entity.EntityType;
@@ -41,12 +41,12 @@ public class DragonPenaltyHandler{
 			if(potion.getItem().getItem() != Items.SPLASH_POTION){
 				return;
 			}
-			if(PotionUtils.getPotion(potion.getItem()).getEffects().size() > 0){
+			if(!PotionUtils.getPotion(potion.getItem()).getEffects().isEmpty()){
 				return; //Remove this line if you want potions with effects to also damage rather then just water ones.
 			}
 
 			Vec3 pos = potionEvent.getRayTraceResult().getLocation();
-			List<Player> entities = potion.level.getEntities(EntityType.PLAYER, new AABB(pos.x - 5, pos.y - 1, pos.z - 5, pos.x + 5, pos.y + 1, pos.z + 5), entity -> entity.position().distanceTo(pos) <= 4);
+			List<Player> entities = potion.level().getEntities(EntityType.PLAYER, new AABB(pos.x - 5, pos.y - 1, pos.z - 5, pos.x + 5, pos.y + 1, pos.z + 5), entity -> entity.position().distanceTo(pos) <= 4);
 
 			for(Player player : entities){
 				if(player.hasEffect(DragonEffects.FIRE)){
@@ -58,7 +58,7 @@ public class DragonPenaltyHandler{
 						if(dragonStateHandler.getType() == null || !Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
 							return;
 						}
-						player.hurt(DamageSources.WATER_BURN, ServerConfig.caveSplashDamage.floatValue());
+						player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.WATER_BURN), ServerConfig.caveSplashDamage.floatValue());
 					}
 				});
 			}

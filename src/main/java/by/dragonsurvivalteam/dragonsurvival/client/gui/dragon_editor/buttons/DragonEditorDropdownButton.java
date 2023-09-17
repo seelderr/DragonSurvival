@@ -11,11 +11,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Sk
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -36,9 +38,9 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	}
 
 	@Override
-	public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		active = visible = dragonEditorScreen.showUi;
-		super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 		String curValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin;
 
 		if(curValue != current){
@@ -68,8 +70,8 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		Screen screen = Minecraft.getInstance().screen;
 
 		if(!toggled){
-			int offset = screen.height - (y + height + 80);
-			list = new DropdownList(x, y + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), width / 2 - 6);
+			int offset = screen.height - (getY() + height + 80);
+			list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), width / 2 - 6);
 			DropdownEntry center = null;
 
 			for(int i = 0; i < values.length; i += 2){
@@ -80,10 +82,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 				int width = list.getWidth() / 2 - 6;
 
-				ent.children.add(new EditorPartButton(dragonEditorScreen, this, x + 3, y, width, width, val, setter, layers));
+				ent.children.add(new EditorPartButton(dragonEditorScreen, this, getX() + 3, getY(), width, width, val, setter, layers));
 
 				if(val2 != null){
-					ent.children.add(new EditorPartButton(dragonEditorScreen, this, x + 3 + width, y, width, width, val2, setter, layers));
+					ent.children.add(new EditorPartButton(dragonEditorScreen, this, getX() + 3 + width, getY(), width, width, val2, setter, layers));
 				}
 
 				list.addEntry(ent);
@@ -117,7 +119,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			boolean finalHasBorder = hasBorder;
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
-				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 					list.visible = DragonEditorDropdownButton.this.visible;
 
@@ -126,7 +128,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 					}
 
 					if(list.visible){
-						list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+						list.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
 
 					if(finalHasBorder){

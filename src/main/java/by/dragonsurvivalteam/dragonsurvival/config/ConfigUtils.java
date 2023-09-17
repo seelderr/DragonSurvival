@@ -28,7 +28,7 @@ public class ConfigUtils{
 			String ent = spEntry[0] + ":" + spEntry[1];
 			if(ResourceLocation.isValidResourceLocation(ent)){
 				ResourceLocation rlEntry = new ResourceLocation(ent);
-				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, rlEntry);
+				TagKey<Item> tagKey = TagKey.create(ForgeRegistries.Keys.ITEMS, rlEntry);
 				result.addAll(ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().toList());
 				result.add(ForgeRegistries.ITEMS.getValue(rlEntry));
 			}
@@ -45,7 +45,7 @@ public class ConfigUtils{
 			String ent = spEntry[0] + ":" + spEntry[1];
 			if(ResourceLocation.isValidResourceLocation(ent)){
 				ResourceLocation rlEntry = new ResourceLocation(ent);
-				TagKey<Block> tagKey = TagKey.create(Registry.BLOCK_REGISTRY, rlEntry);
+				TagKey<Block> tagKey = TagKey.create(ForgeRegistries.Keys.BLOCKS, rlEntry);
 				result.addAll(ForgeRegistries.BLOCKS.tags().getTag(tagKey).stream().toList());
 				Block block = ForgeRegistries.BLOCKS.getValue(rlEntry);
 				if(block != Blocks.AIR){

@@ -4,17 +4,17 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ColorPickerButton;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 
-public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Widget{
+public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton colorPicker;
 	private final DragonEditorScreen screen;
 	private final int x;
@@ -51,8 +51,11 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
 	}
 
 	@Override
-	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		ScreenUtils.blitWithBorder(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)10);
-		colorPicker.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 10);
+		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
+		guiGraphics.pose().popPose();
+		colorPicker.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 }

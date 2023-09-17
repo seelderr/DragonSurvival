@@ -15,7 +15,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -48,7 +47,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -145,7 +144,7 @@ public class EventHandler{
 		if(canDropDragonHeart){
 			if(ServerConfig.dragonHeartUseList || health >= 14 && health < 20){
 				if(entity.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + event.getLootingLevel() * (ServerConfig.dragonHeartShardChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
+					event.getDrops().add(new ItemEntity(entity.level(), entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
 				}
 			}
 		}
@@ -153,7 +152,7 @@ public class EventHandler{
 		if(canDropWeakDragonHeart){
 			if(ServerConfig.weakDragonHeartUseList || health >= 20 && health < 50){
 				if(entity.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.weakDragonHeartChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
+					event.getDrops().add(new ItemEntity(entity.level(), entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
 				}
 			}
 		}
@@ -161,7 +160,7 @@ public class EventHandler{
 		if(canDropElderDragonHeart){
 			if(ServerConfig.elderDragonHeartUseList || health >= 50){
 				if(entity.getRandom().nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.elderDragonHeartChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
+					event.getDrops().add(new ItemEntity(entity.level(), entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
 				}
 			}
 		}
@@ -218,16 +217,16 @@ public class EventHandler{
 				String[] tagStringSplit = ServerConfig.oresTag.split(":");
 				ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
 				// Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
-				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, ores);
+				TagKey<Item> tagKey = TagKey.create(ForgeRegistries.Keys.ITEMS, ores);
 				boolean isOre = ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().anyMatch(s -> s == block.asItem());
 
 				if(!isOre){
 					return;
 				}
 
-				List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerLevel)world).withParameter(LootContextParams.ORIGIN, new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())).withParameter(LootContextParams.TOOL, mainHandItem));
-				DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
+				List<ItemStack> drops = block.getDrops(blockState, new LootParams.Builder((ServerLevel) world).withParameter(LootContextParams.ORIGIN, new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())).withParameter(LootContextParams.TOOL, mainHandItem));
 
+				DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 
 				int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
 				int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());

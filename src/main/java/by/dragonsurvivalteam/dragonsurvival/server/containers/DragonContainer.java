@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class DragonContainer extends AbstractContainerMenu {
-	public final CraftingContainer craftMatrix = new CraftingContainer(this, 3, 3);
+	public final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 3, 3);
 	public final ResultContainer craftResult = new ResultContainer();
 	public final Player player;
 
@@ -263,13 +263,13 @@ public class DragonContainer extends AbstractContainerMenu {
 	public void slotsChanged(@NotNull final Container inventory) {
 		if (player instanceof ServerPlayer serverPlayer) {
 			ItemStack itemStack = ItemStack.EMPTY;
-			Optional<CraftingRecipe> recipeOptional = serverPlayer.level.getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, serverPlayer.level);
+			Optional<CraftingRecipe> recipeOptional = serverPlayer.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, serverPlayer.level());
 
 			if (recipeOptional.isPresent()) {
 				CraftingRecipe recipe = recipeOptional.get();
 
-				if (craftResult.setRecipeUsed(player.level, serverPlayer, recipe)) {
-					itemStack = recipe.assemble(craftMatrix);
+				if (craftResult.setRecipeUsed(player.level(), serverPlayer, recipe)) {
+					itemStack = recipe.assemble(craftMatrix, serverPlayer.level().registryAccess());
 				}
 			}
 

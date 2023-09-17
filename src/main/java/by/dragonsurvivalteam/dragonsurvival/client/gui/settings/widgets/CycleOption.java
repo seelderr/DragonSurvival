@@ -11,6 +11,7 @@ import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,7 +58,7 @@ public class CycleOption<T> extends Option {
     public static CycleOption<Boolean> createOnOff(String pCaptionKey, Component pDefaultValue, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
         return createOnOff(pCaptionKey, pGetter, pSetter).setTooltip((p_167791_) -> {
             List<FormattedCharSequence> list = p_167791_.font.split(pDefaultValue, 200);
-            return (p_167772_) -> list;
+            return ignored -> Tooltip.create(Component.literal(list.toString())); // FIXME 1.20
         });
     }
 

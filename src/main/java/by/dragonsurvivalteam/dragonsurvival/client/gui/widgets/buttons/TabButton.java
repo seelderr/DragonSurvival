@@ -13,10 +13,12 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.network.chat.Component;
+import org.jetbrains.annotations.NotNull;
 
 
 public class TabButton extends Button implements TooltipRender{
@@ -24,8 +26,7 @@ public class TabButton extends Button implements TooltipRender{
 	private final Screen parent;
 
 	public TabButton(int x, int y, int index, Screen parent){
-
-		super(x, y, 28, 32, null, button -> {});
+		super(x, y, 28, 32, Component.empty(), button -> {}, DEFAULT_NARRATION);
 		this.index = index;
 		this.parent = parent;
 	}
@@ -86,27 +87,31 @@ public class TabButton extends Button implements TooltipRender{
 	}
 
 	@Override
-	public void renderButton(PoseStack stack, int mouseX, int mouseY, float p_230431_4_){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_){
 		RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
-		if(isCurrent())
-			blit(stack, x, y, index == 0 ? 0 : 28, 0, 28, 32);
-		else if(isHovered){
-			blit(stack, x, y, 84, 0, 28, 32);
-		}else{
-			blit(stack, x, y, 56, 0, 28, 32);
+		if (isCurrent()) {
+			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), index == 0 ? 0 : 28, 0, 28, 32);
+		} else if(isHovered) {
+			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 84, 0, 28, 32);
+		} else {
+			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 56, 0, 28, 32);
 		}
 
 
-		if(isHovered || isCurrent())
-			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), index * 24, 67, 24, 24);
-		else
-			blit(stack, x + 2, y + 2 + (isCurrent() ? 2 : 0), index * 24, 41, 24, 24);
+		if (isHovered || isCurrent()) {
+			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), index * 24, 67, 24, 24);
+		} else {
+			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), index * 24, 41, 24, 24);
+		}
 	}
 
 	@Override
-	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		super.renderToolTip(pPoseStack, pMouseX, pMouseY);
-		TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.tab_button." + index), pMouseX, pMouseY);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+		if (isHovered()) {
+			guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.tab_button." + index), pMouseX, pMouseY);
+		}
 	}
 }

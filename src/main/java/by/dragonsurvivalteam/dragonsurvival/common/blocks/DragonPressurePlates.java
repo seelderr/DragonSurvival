@@ -12,6 +12,7 @@ import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -38,7 +39,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 	}
 
 	public DragonPressurePlates(Properties p_i48445_1_, PressurePlateType type){
-		super(Sensitivity.EVERYTHING, p_i48445_1_);
+		super(Sensitivity.EVERYTHING, p_i48445_1_, BlockSetType.WARPED);
 		registerDefaultState(stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
 
 		this.type = type;

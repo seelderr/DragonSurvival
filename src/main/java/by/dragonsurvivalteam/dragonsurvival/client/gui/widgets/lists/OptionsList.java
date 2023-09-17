@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.network.chat.Component;
@@ -158,7 +158,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 
 	/** Handles the rendering of the entries (but not the options when clicking on an entry) */
 	@Override
-	protected void renderList(@NotNull final PoseStack poseStack, int pMouseX, int pMouseY, float partialTicks) {
+	protected void renderList(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float partialTicks) {
 		int itemCount = getItemCount();
 
 		for (int index = 0; index < itemCount; index++) {
@@ -173,7 +173,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 				int rowWidth = getRowWidth();
 				int rowLeft = getRowLeft();
 				boolean mouseOver = isMouseOver(pMouseX, pMouseY) && Objects.equals(getEntryAtPos(pMouseX, pMouseY), entry);
-				entry.render(poseStack, index, top, rowLeft, rowWidth, entryHeight, pMouseX, pMouseY, mouseOver, partialTicks);
+				entry.render(guiGraphics, index, top, rowLeft, rowWidth, entryHeight, pMouseX, pMouseY, mouseOver, partialTicks);
 			}
 		}
 	}

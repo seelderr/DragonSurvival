@@ -43,7 +43,8 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib3.core.util.Color;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.core.object.Color;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -188,7 +189,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public boolean isPossibleToRespawnInThis(){
+	public boolean isPossibleToRespawnInThis(@NotNull final BlockState ignored) {
 		return true;
 	}
 

@@ -9,15 +9,13 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Random;
 
 public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTileEntity>{
 
@@ -67,7 +65,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 		PoseStack.translate(0.5, 0.25 + f1 / 2f, 0.5);
 		PoseStack.mulPose(Axis.YP.rotationDegrees(dragonBeaconEntity.tick));
 		PoseStack.scale(2, 2, 2);
-		Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), TransformType.GROUND, light, overlay, PoseStack, iRenderTypeBuffer, 0);
+		Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), ItemDisplayContext.GROUND, light, overlay, PoseStack, iRenderTypeBuffer, clientWorld, 0);
 		PoseStack.popPose();
 	}
 }

@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionResult;
@@ -16,6 +15,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.wrapper.InvWrapper;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -155,7 +155,7 @@ public final class SortingHandler{
 				continue;
 			}
 
-			if(stackAt.getCount() < stackAt.getMaxStackSize() && ItemStack.isSame(stack, stackAt) && ItemStack.tagMatches(stack, stackAt)){
+			if(stackAt.getCount() < stackAt.getMaxStackSize() && ItemStack.isSameItem(stack, stackAt) && ItemStack.isSameItemSameTags(stack, stackAt)){
 				int setSize = stackAt.getCount() + stack.getCount();
 				int carryover = Math.max(0, setSize - stackAt.getMaxStackSize());
 				stackAt.setCount(carryover);
@@ -288,7 +288,7 @@ public final class SortingHandler{
 				}else if(o instanceof ItemStack){
 					itemList.add(((ItemStack)o).getItem());
 				}else if(o instanceof String){
-					Registry.ITEM.getOptional(new ResourceLocation((String)o)).ifPresent(itemList::add);
+					ForgeRegistries.ITEMS.getDelegate(new ResourceLocation((String)o)).ifPresent(item -> itemList.add(item.get()));
 				}
 			}
 		}
@@ -339,11 +339,11 @@ public final class SortingHandler{
 		ArmorItem armor1 = (ArmorItem)stack1.getItem();
 		ArmorItem armor2 = (ArmorItem)stack2.getItem();
 
-		EquipmentSlot slot1 = armor1.getSlot();
-		EquipmentSlot slot2 = armor2.getSlot();
+		EquipmentSlot slot1 = armor1.getEquipmentSlot();
+		EquipmentSlot slot2 = armor2.getEquipmentSlot();
 
 		if(slot1 == slot2){
-			return armor2.getMaterial().getDefenseForSlot(slot2) - armor2.getMaterial().getDefenseForSlot(slot1);
+			return armor2.getMaterial().getDefenseForType(armor2.getType()) - armor2.getMaterial().getDefenseForType(armor1.getType());
 		}
 
 		return slot2.getIndex() - slot1.getIndex();

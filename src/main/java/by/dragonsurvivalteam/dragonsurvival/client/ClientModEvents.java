@@ -3,11 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SourceOfMagicScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientGrowthHudHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHorseModel;
@@ -25,12 +21,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.Bal
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BolasEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.Particle;
@@ -41,9 +35,10 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.core.particles.SimpleParticleType;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -54,17 +49,18 @@ import org.jetbrains.annotations.NotNull;
 public class ClientModEvents{
 
 	@SubscribeEvent
-	public static void onTextureStitchEvent(TextureStitchEvent.Pre event){
-		if(event.getAtlas().location() == TextureAtlas.LOCATION_BLOCKS){
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"));
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind_vertical"));
-
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe"));
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe"));
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel"));
-			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword"));
+	public static void onTextureStitchEvent(TextureStitchEvent event){
+		if (event.getAtlas().location() == TextureAtlas.LOCATION_BLOCKS) {
+			// TODO 1.20 :: texture atlas json...? SpriteSourceProvider datagen?
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"));
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind_vertical"));
+//
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe"));
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe"));
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel"));
+//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword"));
 		}
 
 		DragonSurvivalMod.LOGGER.info("Successfully added sprites!");
@@ -126,7 +122,7 @@ public class ClientModEvents{
 	}
 	@SubscribeEvent
 	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
-		event.register(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+		event.registerSprite(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
 			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5) {
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
@@ -134,7 +130,7 @@ public class ClientModEvents{
 				return beaconParticle;
 			}
 		});
-		event.register(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+		event.registerSprite(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
 			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
@@ -142,7 +138,7 @@ public class ClientModEvents{
 				return beaconParticle;
 			}
 		});
-		event.register(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+		event.registerSprite(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
 			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
@@ -151,7 +147,7 @@ public class ClientModEvents{
 			}
 		});
 
-		event.register(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
+		event.registerSprite(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
 			@Override
 			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
 				SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, v, v1, v2, v3, p_create_1_);

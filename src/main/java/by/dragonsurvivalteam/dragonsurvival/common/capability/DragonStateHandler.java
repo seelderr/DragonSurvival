@@ -93,32 +93,24 @@ public class DragonStateHandler extends EntityStateHandler {
 			DragonModifiers.updateSwimSpeedModifier(player, swimSpeed);
 
             AttributeModifier reach = DragonModifiers.buildReachMod(size);
-			DragonModifiers.updateReachModifier(player, reach);
+			DragonModifiers.updateBlockReachModifier(player, reach);
+			DragonModifiers.updateEntityReachModifier(player, reach);
 		} else {
             // Remove the dragon attribute modifiers
-			AttributeModifier oldMod = DragonModifiers.getHealthModifier(player);
-            if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
-				max.removeModifier(oldMod);
-			}
+			AttributeInstance maxHealthAttribute = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
+			maxHealthAttribute.removeModifier(DragonModifiers.getHealthModifier(player));
 
-			oldMod = DragonModifiers.getDamageModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
-				max.removeModifier(oldMod);
-			}
+			AttributeInstance attackDamageAttribute = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
+			attackDamageAttribute.removeModifier(DragonModifiers.getDamageModifier(player));
 
-			oldMod = DragonModifiers.getSwimSpeedModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
-				max.removeModifier(oldMod);
-			}
+			AttributeInstance swimSpeedAttribute = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
+			swimSpeedAttribute.removeModifier(DragonModifiers.getSwimSpeedModifier(player));
 
-			oldMod = DragonModifiers.getReachModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
-				max.removeModifier(oldMod);
-			}
+			AttributeInstance blockReachAttribute = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
+			blockReachAttribute.removeModifier(DragonModifiers.getBlockReachModifier(player));
+
+			AttributeInstance entityReachAttribute = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
+			entityReachAttribute.removeModifier(DragonModifiers.getBlockReachModifier(player));
 		}
 	}
 

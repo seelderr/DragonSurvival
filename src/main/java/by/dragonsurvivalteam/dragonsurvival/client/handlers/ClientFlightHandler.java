@@ -18,11 +18,8 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.math.Vector3f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -49,6 +46,7 @@ import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.TimeUnit;
@@ -158,41 +156,38 @@ public class ClientFlightHandler {
 	public static void renderFlightCooldown(RenderGuiOverlayEvent.Post event){
 		Player player = Minecraft.getInstance().player;
 
-		if(player == null || !DragonUtils.isDragon(player) || player.isSpectator()){
+		if (player == null || player.isSpectator()) {
 			return;
 		}
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(!ServerFlightHandler.isFlying(player) && !ServerFlightHandler.canSwimSpin(player)){
-				return;
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		if (!handler.isDragon()) {
+			return;
+		}
+
+		if (!ServerFlightHandler.isFlying(player) && !ServerFlightHandler.canSwimSpin(player)) {
+			return;
+		}
+
+		if (handler.getMovementData().spinLearned && handler.getMovementData().spinCooldown > 0) {
+			if (event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()) {
+				Window window = Minecraft.getInstance().getWindow();
+
+				int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
+				float f = ((float) cooldown - (float) handler.getMovementData().spinCooldown) / (float) cooldown;
+
+				int k = window.getGuiScaledWidth() / 2 - 66 / 2;
+				int j = window.getGuiScaledHeight() - 96;
+
+				k += spinCooldownXOffset;
+				j += spinCooldownYOffset;
+
+				int l = (int) (f * 62);
+				event.getGuiGraphics().blit(SPIN_COOLDOWN, k, j, 0, 0, 66, 21, 256, 256);
+				event.getGuiGraphics().blit(SPIN_COOLDOWN, k + 4, j + 1, 4, 21, l, 21, 256, 256);
 			}
-
-			if(cap.getMovementData().spinLearned && cap.getMovementData().spinCooldown > 0){
-				// Insecure modifications
-				if(event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()){
-					event.getPoseStack().pushPose();
-
-					TextureManager textureManager = Minecraft.getInstance().getTextureManager();
-					Window window = Minecraft.getInstance().getWindow();
-					RenderSystem.setShaderTexture(0, SPIN_COOLDOWN);
-
-					int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
-					float f = ((float)cooldown - (float)cap.getMovementData().spinCooldown) / (float)cooldown;
-
-					int k = window.getGuiScaledWidth() / 2 - 66 / 2;
-					int j = window.getGuiScaledHeight() - 96;
-
-					k += spinCooldownXOffset;
-					j += spinCooldownYOffset;
-
-					int l = (int)(f * 62);
-					Screen.blit(event.getPoseStack(), k, j, 0, 0, 66, 21, 256, 256);
-					Screen.blit(event.getPoseStack(), k + 4, j + 1, 4, 21, l, 21, 256, 256);
-
-					event.getPoseStack().popPose();
-				}
-			}
-		});
+		}
 	}
 
 	@SubscribeEvent
@@ -248,7 +243,7 @@ public class ClientFlightHandler {
 			double posX = player.position().x + player.getDeltaMovement().x + d0;
 			double posY = player.position().y - 1.5 + player.getDeltaMovement().y + d1;
 			double posZ = player.position().z + player.getDeltaMovement().z + d2;
-			player.level.addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
+			player.level().addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
 		}
 	}
 

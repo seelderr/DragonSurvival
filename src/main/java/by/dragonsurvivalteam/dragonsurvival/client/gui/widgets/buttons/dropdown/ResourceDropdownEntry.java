@@ -1,17 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,7 +38,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
 	}
 
 	@Override
-    public void render(@NotNull final PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks) {
+    public void render(@NotNull final GuiGraphics guiGraphics, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks) {
         if (button == null) {
             button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, height, null, null) {
                 private int tick = 0;
@@ -61,24 +58,19 @@ public class ResourceDropdownEntry extends DropdownEntry {
                 }
 
                 @Override
-                public int getBlitOffset() {
-                    return 10;
-                }
-
-                @Override
-                public void renderButton(final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+                public void renderWidget(@NotNull final GuiGraphics guiGraphics1 , int mouseX, int mouseY, float partialTicks) {
                     if (!source.isFocused()) {
                         return;
                     }
 
-                    if (y + height > list.getBottom() - 3 || y < list.getTop() + 3) {
+                    if (getY() + height > list.getBottom() - 3 || getY() < list.getTop() + 3) {
                         return;
                     }
 
-                    poseStack.pushPose();
+                    guiGraphics.pose().pushPose();
                     RenderSystem.enableDepthTest();
                     // Make sure it gets rendered above the other resource text fields
-                    poseStack.translate(0, 0, 200);
+                    guiGraphics.pose().translate(0, 0, 200);
 
                     if (entry != null) {
                         if (tick >= 1) {
@@ -101,41 +93,43 @@ public class ResourceDropdownEntry extends DropdownEntry {
                         }
 
                         // Draws the background per entry
-                        Gui.fill(poseStack, x, y, x + width, y + height, color);
+                        guiGraphics.fill(getX(), getY(), getX() + width, getY() + height, color);
 
                         String text = entry.id;
-                        Minecraft.getInstance().font.drawShadow(poseStack, Component.empty().append(Minecraft.getInstance().font.substrByWidth(Component.empty().append(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
+                        guiGraphics.drawString(Minecraft.getInstance().font, Component.empty().append(Minecraft.getInstance().font.substrByWidth(Component.empty().append(text), width - 20).getString()), getX() + 25, getY() + 5, DyeColor.WHITE.getTextColor());
 
                         if (!entry.isEmpty()) {
                             ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-                            itemRenderer.blitOffset = 100;
-                            itemRenderer.renderAndDecorateItem(entry.getDisplayItem(), x + 3, y + 1);
+//                            itemRenderer.blitOffset = 100;
+                            // FIXME 1.20
+//                            itemRenderer.renderAndDecorateItem(entry.getDisplayItem(), getX() + 3, getY() + 1);
 
                             if (entry.tag) {
-                                poseStack.translate(0, 0, 200);
-                                Minecraft.getInstance().font.drawShadow(poseStack, Component.empty().append("#"), x + 14, y + 10, DyeColor.WHITE.getTextColor());
-                                poseStack.translate(0, 0, -200);
+                                guiGraphics.pose().pushPose();
+                                guiGraphics.pose().translate(0, 0, 200);
+                                guiGraphics.drawString(Minecraft.getInstance().font, Component.empty().append("#"), getX() + 14, getY() + 10, DyeColor.WHITE.getTextColor(), true);
+                                guiGraphics.pose().popPose();
                             }
 
-                            itemRenderer.blitOffset = 0;
+//                            itemRenderer.blitOffset = 0;
 
-                            if (isHovered) {
-                                poseStack.translate(0, 0, 200);
-                                List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
-                                TooltipRendering.drawHoveringText(poseStack, lines, mouseX, mouseY);
-                                poseStack.translate(0, 0, -200);
-                            }
+                            // TODO 1.20 :: Check
+//                            if (isHovered) {
+//                                guiGraphics.pose().translate(0, 0, 200);
+//                                List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
+//                                TooltipRendering.drawHoveringText(poseStack, lines, mouseX, mouseY);
+//                                poseStack.translate(0, 0, -200);
+//                            }
                         }
 
                         RenderSystem.disableDepthTest();
-                        poseStack.popPose();
                     }
                 }
             };
         } else {
-            button.y = top;
+            button.setY(top);
             button.visible = source.visible;
-            button.render(poseStack, mouseX, mouseY, partialTicks);
+            button.render(guiGraphics, mouseX, mouseY, partialTicks);
         }
     }
 

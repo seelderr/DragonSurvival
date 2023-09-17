@@ -38,9 +38,10 @@ public class DSImageButton extends ImageButton implements TooltipRender{
 		tooltips = tooltip;
 	}
 
-	@Override
-	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-		if(tooltips != null && tooltips.length > 0)
-			TooltipRendering.drawHoveringText(pPoseStack, Arrays.asList(tooltips), pMouseX, pMouseY);
-	}
+	// TODO 1.20 :: Check
+//	@Override
+//	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
+//		if(tooltips != null && tooltips.length > 0)
+//			TooltipRendering.drawHoveringText(pPoseStack, Arrays.asList(tooltips), pMouseX, pMouseY);
+//	}
 }

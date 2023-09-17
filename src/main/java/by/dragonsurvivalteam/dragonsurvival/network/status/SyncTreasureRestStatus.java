@@ -60,7 +60,7 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus> 
 						handler.treasureResting = message.state;
 
 						if (update) {
-							((ServerLevel) entity.level).updateSleepingPlayerList();
+							((ServerLevel) entity.level()).updateSleepingPlayerList();
 						}
 					});
 

@@ -10,20 +10,20 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
 
-public class ColorSelectorComponent extends AbstractContainerEventHandler implements Widget{
+public class ColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton colorPicker;
 	private final Checkbox glowing;
 	private final DragonEditorScreen screen;
@@ -81,9 +81,12 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 	}
 
 	@Override
-	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-		ScreenUtils.blitWithBorder(pMatrixStack, DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10, (float)500);
-		colorPicker.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-		glowing.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 500);
+		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
+		guiGraphics.pose().popPose();
+		colorPicker.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 }

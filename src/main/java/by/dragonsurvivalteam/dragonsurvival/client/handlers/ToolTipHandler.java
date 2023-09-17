@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -13,12 +12,9 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -185,27 +181,27 @@ public class ToolTipHandler{
 	}
 
 	@SubscribeEvent
-	public static void postScreenRender(ScreenEvent.Render.Post event){
-		if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null){
-			if(Minecraft.getInstance().screen instanceof TooltipRender){
-				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
-					if(btn instanceof AbstractWidget){
-						if(((AbstractWidget)btn).isHoveredOrFocused()){
-							((AbstractWidget)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
-						}
-					}
-				}
-
-			}else{
-				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
-					if(btn instanceof AbstractWidget){
-						if(btn instanceof TooltipRender && ((AbstractWidget)btn).isHoveredOrFocused()){
-							((AbstractWidget)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
-						}
-					}
-				}
-			}
-		}
+	public static void postScreenRender(ScreenEvent.Render.Post event){ // TODO 1.20 :: Check (still needed?)
+//		if(Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null){
+//			if(Minecraft.getInstance().screen instanceof TooltipRender){
+//				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
+//					if(btn instanceof AbstractWidget abstractWidget){
+//						if (abstractWidget.isHoveredOrFocused()) {
+//							abstractWidget.renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
+//						}
+//					}
+//				}
+//
+//			}else{
+//				for(GuiEventListener btn : Minecraft.getInstance().screen.children){
+//					if(btn instanceof AbstractWidget){
+//						if(btn instanceof TooltipRender && ((AbstractWidget)btn).isHoveredOrFocused()){
+//							((AbstractWidget)btn).renderToolTip(event.getPoseStack(), event.getMouseX(), event.getMouseY());
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 	@SubscribeEvent
@@ -246,26 +242,23 @@ public class ToolTipHandler{
 			y = screen.height - height - 6;
 		}
 
-		PoseStack matrix = event.getPoseStack();
-		RenderSystem.setShaderTexture(0, blink ? tooltip_2 : tooltip_1);
+		PoseStack matrix = event.getGraphics().pose();
 
 		int texWidth = 128;
 		int texHeight = 128;
 
 		matrix.pushPose();
-		//RenderSystem.enableBlend();
-		matrix.translate(0, 0, 710.0);
+		matrix.translate(0, 0, 710.0); // TODO :: Seems kinda high
 
-		Gui.blit(matrix, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-		Gui.blit(matrix, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x - 8 - 6, y - 8 - 6, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width - 8 + 6, y - 8 - 6, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 
-		Gui.blit(matrix, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-		Gui.blit(matrix, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x - 8 - 6, y + height - 8 + 6, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width - 8 + 6, y + height - 8 + 6, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
 
-		Gui.blit(matrix, x + width / 2 - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-		Gui.blit(matrix, x + width / 2 - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
+		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y - 16, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
+		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y + height, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 
-		//RenderSystem.disableBlend();
 		matrix.popPose();
 	}
 

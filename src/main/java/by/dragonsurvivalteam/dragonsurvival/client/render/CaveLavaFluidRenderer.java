@@ -22,7 +22,7 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 
 
 
-	@Override
+	@Override // TODO 1.20 :: Unsure / also redo this because wtf
 	public void tesselate(BlockAndTintGetter p_228796_1_, BlockPos p_228796_2_, VertexConsumer p_228796_3_, BlockState state, FluidState p_228796_4_){
 		try{
 			if(p_228796_4_.is(FluidTags.LAVA)){
@@ -98,9 +98,10 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 
 						float f43 = (f13 + f14 + f15 + f16) / 4.0F;
 						float f44 = (f17 + f18 + f19 + f20) / 4.0F;
-						float f45 = (float)atextureatlassprite[0].getWidth() / (atextureatlassprite[0].getU1() - atextureatlassprite[0].getU0());
-						float f46 = (float)atextureatlassprite[0].getHeight() / (atextureatlassprite[0].getV1() - atextureatlassprite[0].getV0());
-						float f47 = 4.0F / Math.max(f46, f45);
+//						float f45 = (float)atextureatlassprite[0].getWidth() / (atextureatlassprite[0].getU1() - atextureatlassprite[0].getU0());
+//						float f46 = (float)atextureatlassprite[0].getHeight() / (atextureatlassprite[0].getV1() - atextureatlassprite[0].getV0());
+//						float f47 = 4.0F / Math.max(f46, f45);
+						float f47 = atextureatlassprite[0].uvShrinkRatio();
 						f13 = Mth.lerp(f47, f13, f43);
 						f14 = Mth.lerp(f47, f14, f43);
 						f15 = Mth.lerp(f47, f15, f43);
@@ -294,7 +295,7 @@ public class CaveLavaFluidRenderer extends LiquidBlockRenderer{
 					f += f1;
 					++i;
 				}
-			}else if(!p_217640_1_.getBlockState(blockpos).getMaterial().isSolid()){
+			}else if(!p_217640_1_.getBlockState(blockpos).isSolid()){
 				++i;
 			}
 		}

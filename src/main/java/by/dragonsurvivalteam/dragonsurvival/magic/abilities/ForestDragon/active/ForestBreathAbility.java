@@ -20,7 +20,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -122,7 +121,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(blockState.getMaterial().isSolidBlocking()){
+		if(blockState.isSolid()){
 			if(!player.level().isClientSide()){
 				if(player.getRandom().nextInt(100) < 30){
 					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());

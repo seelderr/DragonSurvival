@@ -17,8 +17,8 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -26,6 +26,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
@@ -46,15 +47,15 @@ public class DragonAltarGUI extends Screen{
 	}
 
 	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		if(minecraft == null){
 			return;
 		}
 
-		matrixStack.pushPose();
-		matrixStack.translate(0, 0, -600);
-		renderBackground(matrixStack);
-		matrixStack.popPose();
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, -600); // TODO :: Value okay?
+		renderBackground(guiGraphics);
+		guiGraphics.pose().popPose();
 
 		tick++;
 
@@ -71,7 +72,7 @@ public class DragonAltarGUI extends Screen{
 			}
 		}
 
-		for(Widget btn : renderables){
+		for(Renderable btn : renderables){
 			if(btn instanceof AltarTypeButton button){
 				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
@@ -87,33 +88,32 @@ public class DragonAltarGUI extends Screen{
 					FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
 
-					renderDragon(width / 2 + 170, button.y + button.getHeight() / 2 + 20, 5, matrixStack, 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
-					renderDragon(width / 2 - 205, button.y + button.getHeight() / 2 + 1, -4, matrixStack, 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
+					renderDragon(width / 2 + 170, button.getY() + button.getHeight() / 2 + 20, 5, guiGraphics.pose(), 20, FakeClientPlayerUtils.getFakePlayer(0, handler1), FakeClientPlayerUtils.getFakeDragon(0, handler1));
+					renderDragon(width / 2 - 205, button.getY() + button.getHeight() / 2 + 1, -4, guiGraphics.pose(), 40, FakeClientPlayerUtils.getFakePlayer(1, handler2), FakeClientPlayerUtils.getFakeDragon(1, handler2));
 				}
 			}
 		}
 
-		TextRenderUtil.drawCenteredScaledText(matrixStack, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
+		TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
-		super.render(matrixStack, mouseX, mouseY, partialTicks);
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
 	}
 
 	@Override
-	public void renderBackground(PoseStack pMatrixStack){
-		super.renderBackground(pMatrixStack);
-		renderBorders(pMatrixStack, backgroundTexture, 0, width, 32, height - 32, width, height);
+	public void renderBackground(@NotNull final GuiGraphics guiGraphics){
+		super.renderBackground(guiGraphics);
+		renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
 	}
 
-	public static void renderBorders(PoseStack stack, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
+	public static void renderBorders(@NotNull final GuiGraphics guiGraphics, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.setShaderTexture(0, texture);
 
-		stack.pushPose();
+		guiGraphics.pose().pushPose();
 		double zLevel = 0;
 
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
-//		RenderSystem.setShaderTexture(0, GuiComponent.BACKGROUND_LOCATION);
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthFunc(519);
 		bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
@@ -131,7 +131,7 @@ public class DragonAltarGUI extends Screen{
 		RenderSystem.disableDepthTest();
 		RenderSystem.enableBlend();
 		RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ZERO, GlStateManager.DestFactor.ONE);
-		RenderSystem.disableTexture();
+//		RenderSystem.disableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
 		bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -144,7 +144,7 @@ public class DragonAltarGUI extends Screen{
 		bufferbuilder.vertex(x1, y1 - 4, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
 		bufferbuilder.vertex(x0, y1 - 4, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
 		tesselator.end();
-		stack.popPose();
+		guiGraphics.pose().popPose();
 	}
 
 	private void renderDragon(int x, int y, int xrot, PoseStack matrixStack, float size, Player player, DragonEntity dragon){
@@ -180,9 +180,9 @@ public class DragonAltarGUI extends Screen{
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
 		}){
 			@Override
-			public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = DragonUtils.isDragon(minecraft.player);
-				super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+				super.render(guiGraphics, mouseX, mouseY, partialTick);
 			}
 		});
 	}

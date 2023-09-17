@@ -3,25 +3,24 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.BackgroundColorSelectorComponent;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.Widget;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.ScreenUtils;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
 public class BackgroundColorButton extends ExtendedButton{
-
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
+	private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png");
+
 	private final DragonEditorScreen screen;
 	public boolean toggled;
 	public int xSize, ySize;
 	private BackgroundColorSelectorComponent colorComponent;
-	private Widget renderButton;
+	private Renderable renderButton;
 
 
 	public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, OnPress handler, DragonEditorScreen dragonEditorScreen){
@@ -36,13 +35,13 @@ public class BackgroundColorButton extends ExtendedButton{
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
-				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
 					if(colorComponent != null){
 						colorComponent.visible = BackgroundColorButton.this.visible;
 						if(colorComponent.visible){
-							colorComponent.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 						}
 					}
 				}
@@ -50,7 +49,7 @@ public class BackgroundColorButton extends ExtendedButton{
 
 			Screen screen = Minecraft.getInstance().screen;
 
-			colorComponent = new BackgroundColorSelectorComponent(this.screen, x - 50, y + height + 3, 120, 61);
+			colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
 			screen.children.add(0, colorComponent);
 			screen.children.add(colorComponent);
 			screen.renderables.add(renderButton);
@@ -63,7 +62,7 @@ public class BackgroundColorButton extends ExtendedButton{
 	}
 
 	@Override
-	public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 		active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 
 		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))){
@@ -74,18 +73,12 @@ public class BackgroundColorButton extends ExtendedButton{
 		}
 
 		if(visible){
-			ScreenUtils.blitWithBorder(mStack, BACKGROUND_TEXTURE, x, y, 0, 0, width, height, 32, 32, 10, 10, 10, 10, (float)0);
-			RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png"));
-			blit(mStack, x + 3, y + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
+			guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), 0, 0, width, height, 32, 32, 10, 10, 10, 10);
+			guiGraphics.blit(BUTTON_TEXTURE, getX() + 3, getY() + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 
-			if(isHoveredOrFocused()){
-				renderToolTip(mStack, mouseX, mouseY);
+			if (isHoveredOrFocused()) {
+				guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.background_color"), mouseX, mouseY);
 			}
 		}
-	}
-
-	@Override
-	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
-		TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.background_color"), p_230443_2_, p_230443_3_);
 	}
 }

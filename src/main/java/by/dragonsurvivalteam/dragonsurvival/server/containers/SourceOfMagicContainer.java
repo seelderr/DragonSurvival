@@ -18,7 +18,7 @@ public class SourceOfMagicContainer extends AbstractContainerMenu{
 
 	public SourceOfMagicContainer(int windowId, Inventory inv, FriendlyByteBuf data){
 		super(DSContainers.nestContainer, windowId);
-		nestEntity = (SourceOfMagicTileEntity)inv.player.level.getBlockEntity(data.readBlockPos());
+		nestEntity = (SourceOfMagicTileEntity)inv.player.level().getBlockEntity(data.readBlockPos());
 		int index = 0;
 		for(int i = 0; i < 9; i++){
 			addSlot(new Slot(inv, index++, 8 + 18 * i, 142));

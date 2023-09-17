@@ -24,7 +24,7 @@ public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal
 	@Override
 	public boolean canUse(){
 		if(target == null){
-			List<LivingEntity> list = follower.level.getEntitiesOfClass(classs, new AABB(follower.blockPosition()).inflate(follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
+			List<LivingEntity> list = follower.level().getEntitiesOfClass(classs, new AABB(follower.blockPosition()).inflate(follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
 			if(!list.isEmpty()){
 				target = list.get(follower.getRandom().nextInt(list.size()));
 			}

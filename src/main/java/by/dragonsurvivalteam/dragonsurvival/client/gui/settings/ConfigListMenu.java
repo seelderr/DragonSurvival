@@ -15,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Options;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -102,7 +103,7 @@ public class ConfigListMenu extends OptionsSubScreen {
 		}));
 
 		// Button to save the input
-		addRenderableWidget(new Button(width / 2 - 120, height - 27, 100, 20, CommonComponents.GUI_DONE, button -> {
+		addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {
 			ArrayList<String> output = new ArrayList<>();
 
 			list.children().forEach(entry -> entry.children().forEach(child -> {
@@ -134,19 +135,19 @@ public class ConfigListMenu extends OptionsSubScreen {
 
 				minecraft.setScreen(lastScreen);
 			}
-		}));
+		}).bounds(width / 2 - 120, height - 27, 100, 20).build());
 
 		list.setScrollAmount(scroll);
 	}
 
 	@Override
-	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		// Renders a black background - without it you would see the players viewpoint but in cinema-format (top and bottom covered)
-		renderBackground(poseStack);
+		renderBackground(guiGraphics);
 		// Render the actual config entries (within a config category)
-		list.render(poseStack, mouseX, mouseY, partialTicks);
+		list.render(guiGraphics, mouseX, mouseY, partialTicks);
 		// Renders default buttons when going into config list entries (e.g. `Done` or `Add new`)
-		super.render(poseStack, mouseX, mouseY, partialTicks);
+		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 	}
 
 	private void createOption(final String text) {

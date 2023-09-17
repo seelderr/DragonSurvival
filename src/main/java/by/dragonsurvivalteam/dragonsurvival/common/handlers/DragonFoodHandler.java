@@ -10,12 +10,10 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -150,7 +148,7 @@ public class DragonFoodHandler {
 
 			String[] configuration = entry.split(":");
 			ResourceLocation resourceLocation = new ResourceLocation(configuration[0], configuration[1]);
-			TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, resourceLocation);
+			TagKey<Item> tagKey = TagKey.create(ForgeRegistries.Keys.ITEMS, resourceLocation);
 
 			// Add all food items from the tag
 			if (ForgeRegistries.ITEMS.tags().isKnownTagName(tagKey)) {
@@ -337,7 +335,7 @@ public class DragonFoodHandler {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void onRenderFoodBar(final ForgeGui forgeGUI, final PoseStack poseStack, float partialTicks, int width, int height) {
+	public static void onRenderFoodBar(final ForgeGui forgeGUI, final GuiGraphics guiGraphics, float partialTicks, int width, int height) {
 		LocalPlayer player = Minecraft.getInstance().player;
 
 		if (Minecraft.getInstance().options.hideGui || !forgeGUI.shouldDrawSurvivalElements()) {
@@ -345,7 +343,7 @@ public class DragonFoodHandler {
 		}
 
 		if (!customDragonFoods || !DragonUtils.isDragon(player)) {
-			VanillaGuiOverlay.FOOD_LEVEL.type().overlay().render(forgeGUI, poseStack, partialTicks, width, height);
+			VanillaGuiOverlay.FOOD_LEVEL.type().overlay().render(forgeGUI, guiGraphics, partialTicks, width, height);
 			return;
 		}
 
@@ -354,7 +352,6 @@ public class DragonFoodHandler {
 				RANDOM.setSeed(player.tickCount * 312871L);
 
 				RenderSystem.enableBlend();
-				RenderSystem.setShaderTexture(0, FOOD_ICONS);
 
 				rightHeight = forgeGUI.rightHeight;
 				forgeGUI.rightHeight += 10;
@@ -375,16 +372,15 @@ public class DragonFoodHandler {
 						y = top + RANDOM.nextInt(3) - 1;
 					}
 
-					forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
+					guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
 
 					if (icon < food.getFoodLevel()) {
-						forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
+						guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
 					} else if (icon == food.getFoodLevel()) {
-						forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
+						guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
 					}
 				}
 
-				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 				RenderSystem.disableBlend();
 			}
 		});
@@ -413,7 +409,7 @@ public class DragonFoodHandler {
 			if (handler.isDragon()) {
 				if (event.getSide() == LogicalSide.SERVER) {
 					ServerPlayer player = (ServerPlayer) event.getEntity();
-					ServerLevel level = player.getLevel();
+					ServerLevel level = player.serverLevel();
 					InteractionHand hand = event.getHand();
 					ItemStack itemStackInHand = player.getItemInHand(event.getHand());
 

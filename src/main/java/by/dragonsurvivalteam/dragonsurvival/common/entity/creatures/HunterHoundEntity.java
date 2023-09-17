@@ -47,21 +47,13 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
-				double x = HunterHoundEntity.this.getX();
-				double y = HunterHoundEntity.this.getY();
-				double z = HunterHoundEntity.this.getZ();
 				Entity entity = HunterHoundEntity.this;
-				Level world = HunterHoundEntity.this.level;
 				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				double x = HunterHoundEntity.this.getX();
-				double y = HunterHoundEntity.this.getY();
-				double z = HunterHoundEntity.this.getZ();
 				Entity entity = HunterHoundEntity.this;
-				Level world = HunterHoundEntity.this.level;
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});

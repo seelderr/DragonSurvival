@@ -100,7 +100,7 @@ public class ClientMagicHandler{
 		double x = entity.getX() + d0 - entity.getBbWidth() / 2;
 		double y = entity.getY() + d1;
 		double z = entity.getZ() + d2 - entity.getBbWidth() / 2;
-		Minecraft.getInstance().player.level.addParticle(data, x, y, z, 0, 0, 0);
+		Minecraft.getInstance().player.level().addParticle(data, x, y, z, 0, 0, 0);
 	}
 
 	@SubscribeEvent

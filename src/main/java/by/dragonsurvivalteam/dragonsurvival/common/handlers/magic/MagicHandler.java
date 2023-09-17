@@ -14,7 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility.BreathDamage;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -23,9 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.EntityDamageSource;
-import net.minecraft.world.damagesource.IndirectEntityDamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,7 +31,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -117,12 +113,13 @@ public class MagicHandler{
 			}
 
 			if(player.hasEffect(DragonEffects.HUNTER)){
-				BlockState bl = player.getFeetBlockState();
-				BlockState below = player.level().getBlockState(player.blockPosition().below());
+//				BlockState blockStateFeet = player.getFeetBlockState();
+//				BlockState blockStateBelow = player.level().getBlockState(player.blockPosition().below());
 
-				if(bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.REPLACEABLE_PLANT || bl.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT){
-					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
-				}
+				// TODO 1.20 :: Move to tags
+//				if(blockStateFeet.getMaterial() == Material.PLANT || blockStateFeet.getMaterial() == Material.REPLACEABLE_PLANT || blockStateFeet.getMaterial() == Material.GRASS || blockStateBelow.getMaterial() == Material.PLANT || blockStateBelow.getMaterial() == Material.REPLACEABLE_PLANT){
+//					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
+//				}
 
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
@@ -160,7 +157,7 @@ public class MagicHandler{
 				if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
 					Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
 					if(player != null){
-						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
+						TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN, player), 1f), entity);
 					}else{
 						entity.hurt(entity.damageSources().magic(), 1.0F);
 					}
@@ -187,7 +184,7 @@ public class MagicHandler{
 							}
 							Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
 							if(player != null){
-								TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage), entity);
+								TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
 							}else{
 								entity.hurt(entity.damageSources().onFire(), damage);
 							}
@@ -250,49 +247,44 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingHurt(LivingAttackEvent event){
-		if(event.getSource() instanceof EntityDamageSource && !(event.getSource() instanceof IndirectEntityDamageSource) && !(event.getSource() instanceof BreathDamage)){
-			if(event.getEntity() != null){
-				if(event.getSource() != null && event.getSource().getEntity() != null){
-					if(event.getSource().getEntity() instanceof Player player){
-						DragonStateProvider.getCap(player).ifPresent(cap -> {
-							if(!cap.isDragon()){
-								return;
-							}
+	public static void livingHurt(final LivingAttackEvent event) {
+		if (event.getSource().is(DSDamageTypes.DRAGON_BREATH)) {
+			return;
+		}
 
-							if(Objects.equals(cap.getType(), DragonTypes.SEA)){
-								SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
-								boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance();
+		if (event.getEntity() != null && event.getSource().getEntity() instanceof Player player) {
+			DragonStateProvider.getCap(player).ifPresent(handler -> {
+				if (!handler.isDragon()) {
+					return;
+				}
 
-								if(hit){
-									event.getSource().bypassArmor();
-									double d0 = -Mth.sin(player.yRot * ((float)Math.PI / 180F));
-									double d1 = Mth.cos(player.yRot * ((float)Math.PI / 180F));
+				if (Objects.equals(handler.getType(), DragonTypes.SEA)) {
+					SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
+					boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
 
-									if(player.level() instanceof ServerLevel serverLevel){
-										serverLevel.sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
-									}
-								}
-							}else if(Objects.equals(cap.getType(), DragonTypes.CAVE)){
-								BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
-								boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
+					if (hit) {
+						// FIXME 1.20
+						// event.getSource().bypassArmor();
+						double d0 = -Mth.sin(player.yRot * ((float) Math.PI / 180F));
+						double d1 = Mth.cos(player.yRot * ((float) Math.PI / 180F));
 
-								if(hit){
-									EntityStateHandler entityCap = DragonUtils.getEntityHandler(event.getEntity());
+						if (player.level() instanceof ServerLevel serverLevel) {
+							serverLevel.sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+						}
+					}
+				} else if (Objects.equals(handler.getType(), DragonTypes.CAVE)) {
+					BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
+					boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
-									if(entityCap != null){
-										entityCap.lastAfflicted = player.getId();
-									}
+					if (hit) {
+						DragonUtils.getEntityHandler(event.getEntity()).lastAfflicted = player.getId();
 
-									if(!player.level().isClientSide()){
-										event.getEntity().addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
-									}
-								}
-							}
-						});
+                        if (!player.level().isClientSide()) {
+							event.getEntity().addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
+						}
 					}
 				}
-			}
+			});
 		}
 	}
 
