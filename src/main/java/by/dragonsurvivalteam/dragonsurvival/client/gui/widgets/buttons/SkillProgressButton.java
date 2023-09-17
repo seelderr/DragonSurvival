@@ -1,11 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -53,40 +54,34 @@ public class SkillProgressButton extends Button{
 		guiGraphics.blit(AbilityButton.BLANK_2_TEXTURE, getX() - 1, getY() - 1, 0, 0, 18, 18, 18, 18);
 		guiGraphics.blit(texture, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
-		if(ability != null) {
-			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
-				DragonAbility ability1 = DragonAbilities.getSelfAbility(Minecraft.getInstance().player, ability.getClass());
+		if (ability != null) {
+			DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 
-				if(ability.getLevel() > ability1.getLevel() + 1){
+			if (handler.isDragon()) {
+				DragonAbility playerAbility = DragonAbilities.getSelfAbility(Minecraft.getInstance().player, ability.getClass());
+
+				if (ability.getLevel() > playerAbility.getLevel() + 1) {
 					guiGraphics.fill(getX(), getY(), getX() + 16, getY() + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
 				}
-			});
-		}
-	}
 
-	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+				if (isHoveredOrFocused()) {
+					ChatFormatting format = Objects.equals(handler.getType(), DragonTypes.CAVE) ? ChatFormatting.DARK_RED : Objects.equals(handler.getType(), DragonTypes.SEA) ? ChatFormatting.AQUA : Objects.equals(handler.getType(), DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
+					Component component = ability.getTitle();
+					ArrayList<Component> description = new ArrayList<>(List.of(Component.empty().append(component).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")").withStyle(format)));
 
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(handler -> {
-			if (ability != null) {
-				ChatFormatting format =  Objects.equals(handler.getType(), DragonTypes.CAVE) ? ChatFormatting.DARK_RED :  Objects.equals(handler.getType(), DragonTypes.SEA) ? ChatFormatting.AQUA :  Objects.equals(handler.getType(), DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
-				Component component = ability.getTitle();
-				ArrayList<Component> description = new ArrayList<>(List.of(Component.empty().append(component).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")").withStyle(format)));
+					if (!ability.getLevelUpInfo().isEmpty()) {
+						description.addAll(ability.getLevelUpInfo());
+					}
 
-				if (!ability.getLevelUpInfo().isEmpty()) {
-					description.addAll(ability.getLevelUpInfo());
+					int requiredLevel = ability.getCurrentRequiredLevel();
+
+					if (requiredLevel != -1) {
+						description.add(Component.translatable("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
+					}
+
+					guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, mouseX, mouseY);
 				}
-
-				int requiredLevel = ability.getCurrentRequiredLevel();
-
-
-				if (requiredLevel != -1) {
-					description.add(Component.translatable("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
-				}
-
-				guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, pMouseX, pMouseY);
 			}
-		});
+		}
 	}
 }

@@ -24,15 +24,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.animatable.GeoBlockEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.HashMap;
 
-public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, IAnimatable{
-	private final AnimationFactory manager = GeckoLibUtil.createFactory(this);
+public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, GeoBlockEntity {
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	public static HashMap<Item, Integer> consumables = new HashMap<>();
 	public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
 	private int ticks;
@@ -127,12 +127,11 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public void registerControllers(AnimationData data){
-	}
+	public void registerControllers(final AnimatableManager.ControllerRegistrar controllerRegistrar) { /* TODO :: Nothing to do? */ }
 
 	@Override
-	public AnimationFactory getFactory(){
-		return manager;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
 	}
 
 	@Override

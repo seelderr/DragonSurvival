@@ -16,29 +16,35 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
-import software.bernie.geckolib3.renderers.geo.IGeoRenderer;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 import java.util.Locale;
 
-public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
-	private final IGeoRenderer<DragonEntity> renderer;
+public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
+	private final GeoEntityRenderer<DragonEntity> renderer;
 
-	public DragonGlowLayerRenderer(IGeoRenderer<DragonEntity> entityRendererIn){
-		super(entityRendererIn);
-		renderer = entityRendererIn;
+	public DragonGlowLayerRenderer(final GeoEntityRenderer<DragonEntity> renderer) {
+		super(renderer);
+		this.renderer = renderer;
 	}
 
 	@Override
-	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-		if(!((DragonRenderer)renderer).shouldRenderLayers){
-			return;
-		}
-		if(entitylivingbaseIn == ClientDragonRender.dragonArmor){
+	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+		if (!(renderer instanceof DragonRenderer dragonRenderer)) {
 			return;
 		}
 
-		Player player = entitylivingbaseIn.getPlayer();
+		if (dragonRenderer.shouldRenderLayers) {
+			return;
+		}
+
+		if (animatable == ClientDragonRender.dragonArmor) {
+			return;
+		}
+
+		Player player = animatable.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		SkinPreset preset = handler.getSkinData().skinPreset;
@@ -46,35 +52,36 @@ public class DragonGlowLayerRenderer extends GeoLayerRenderer<DragonEntity>{
 
 		ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 
-		if(glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeName().toLowerCase() + "_")){
-			if(((DragonRenderer)renderer).glowTexture != null){
-				glowTexture = ((DragonRenderer)renderer).glowTexture;
+		if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeName().toLowerCase() + "_")) {
+			if (dragonRenderer.glowTexture != null) {
+				glowTexture = dragonRenderer.glowTexture;
 			}
 		}
 
-		if(glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin){
+		if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
 			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
-			if(Minecraft.getInstance().getResourceManager().getResource(location).isPresent()){
+
+			if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
 				glowTexture = location;
 			}
 		}
 
-		if(glowTexture != null){
+		if (glowTexture != null) {
 			RenderType type = RenderType.eyes(glowTexture);
-			VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-			((DragonRenderer)renderer).isRenderLayers = true;
-			renderer.render(getEntityModel().getModel(getEntityModel().getModelResource(entitylivingbaseIn)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, 0, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
-			((DragonRenderer)renderer).isRenderLayers = false;
-		}else{
-			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + entitylivingbaseIn.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
-			((DragonRenderer)renderer).isRenderLayers = true;
+			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+			dragonRenderer.isRenderLayers = true;
+			dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, /* TODO 1.20 :: Re-Render? */ false, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		} else {
+			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+			dragonRenderer.isRenderLayers = true;
 
-			if(ageGroup.layerSettings.values().stream().anyMatch(s -> s.get().glowing)){
+			if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
 				RenderType type = RenderType.eyes(dynamicGlowKey);
-				VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-				renderer.render(ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null)), entitylivingbaseIn, partialTicks, type, matrixStackIn, bufferIn, vertexConsumer, packedLightIn, OverlayTexture.NO_OVERLAY, 1f, 1f, 1f, 1f);
+				VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+				dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, /* TODO 1.20 :: Re-Render? */ false, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 			}
-			((DragonRenderer)renderer).isRenderLayers = false;
 		}
+
+		dragonRenderer.isRenderLayers = false;
 	}
 }

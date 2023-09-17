@@ -23,7 +23,6 @@ public class MagicDragonRender{
 	public static final ResourceLocation BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widget_bars.png");
 	public static final ResourceLocation INVALID_ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/disabled.png");
 
-
 	public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbility ability) {
 		int colorXPos = ability instanceof ActiveDragonAbility ? 0 : ability instanceof InnateDragonAbility ? 20 : 0;
 		int colorYPos = ability instanceof ActiveDragonAbility ? 20 : 0;
@@ -37,7 +36,7 @@ public class MagicDragonRender{
 		List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, 150 - 7);
 
 		if(!description.isEmpty()){
-			if(ability.getInfo().size() > 0){
+			if(!ability.getInfo().isEmpty()){
 				FormattedText textContents = Component.empty();
 
 				for(Component component : ability.getInfo()){

@@ -9,29 +9,30 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoProjectilesRenderer;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-@OnlyIn( Dist.CLIENT )
-public class FireBallRenderer extends GeoProjectilesRenderer<FireBallEntity>{
+@OnlyIn(Dist.CLIENT)
+public class FireBallRenderer extends GeoEntityRenderer<FireBallEntity> {
 	private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/fireball_texture.png");
 
-	public FireBallRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<FireBallEntity> modelProvider){
-		super(renderManager, modelProvider);
+	public FireBallRenderer(final EntityRendererProvider.Context context, final GeoModel<FireBallEntity> model) {
+		super(context, model);
 	}
 
 	@Override
-	protected int getBlockLightLevel(FireBallEntity p_225624_1_, BlockPos p_225624_2_){
+	protected int getBlockLightLevel(@NotNull final FireBallEntity entity, @NotNull final BlockPos position) {
 		return 15;
 	}
 
 	@Override
-	public void render(FireBallEntity p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack stack, MultiBufferSource p_225623_5_, int p_225623_6_){
-		super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
+	public void render(@NotNull final FireBallEntity entity, float p_225623_2_, float p_225623_3_, @NotNull final PoseStack poseStack, @NotNull final MultiBufferSource buffer, int p_225623_6_) {
+		super.render(entity, p_225623_2_, p_225623_3_, poseStack, buffer, p_225623_6_);
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(FireBallEntity p_110775_1_){
+	public @NotNull ResourceLocation getTextureLocation(@NotNull final FireBallEntity entity) {
 		return TEXTURE_LOCATION;
 	}
 }

@@ -1,13 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import java.util.Arrays;
 
 public class DSImageButton extends ImageButton implements TooltipRender{
 

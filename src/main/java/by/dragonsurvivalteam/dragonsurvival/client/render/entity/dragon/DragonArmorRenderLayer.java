@@ -15,82 +15,75 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
-import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-import java.awt.Color;
+import java.awt.*;
 
-public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
-
+public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;
 
-	public DragonArmorRenderLayer(GeoEntityRenderer<DragonEntity> entityRendererIn){
-		super(entityRendererIn);
-		renderer = entityRendererIn;
+	public DragonArmorRenderLayer(final GeoEntityRenderer<DragonEntity> renderer) {
+		super(renderer);
+		this.renderer = renderer;
 	}
 
 	@Override
-	public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch){
-		if(!ClientDragonRender.armorRenderLayer)
+	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+		if (!ClientDragonRender.armorRenderLayer) {
 			return;
+		}
 
-		Player player = entitylivingbaseIn.getPlayer();
+		Player player = animatable.getPlayer();
 
-		if(player.isSpectator())
+		if (player.isSpectator()) {
 			return;
+		}
 
 		CoreGeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
-		if(neck != null)
+		if (neck != null) {
 			neck.setHidden(false);
+		}
 
 		ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.HEAD));
 		ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.CHEST));
 		ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.LEGS));
 		ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.FEET));
 
-		((DragonRenderer)renderer).isRenderLayers = true;
+		((DragonRenderer) renderer).isRenderLayers = true;
 
-		GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null));
+		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.HEAD), helmetTexture);
+		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.CHEST), chestPlateTexture);
+		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.LEGS), legsTexture);
+		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.FEET), bootsTexture);
 
-		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.HEAD), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
-		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.CHEST), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
-		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.LEGS), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
-		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.FEET), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
-
-		((DragonRenderer)renderer).isRenderLayers = false;
+		((DragonRenderer) renderer).isRenderLayers = false;
 	}
 
-	private void renderArmorPiece(GeoModel model, ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
-		if(entitylivingbaseIn == null)
+	private void renderArmorPiece(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, float partialTick, int packedLight, final ItemStack stack, final ResourceLocation texture) {
+		if (animatable == null) {
 			return;
+		}
 
-		if(stack == null || stack.isEmpty()) return;
+		if (stack == null || stack.isEmpty()) {
+			return;
+		}
 
 		Color armorColor = new Color(1f, 1f, 1f);
 
-		if(stack.getItem() instanceof DyeableArmorItem){
-			int colorCode = ((DyeableArmorItem)stack.getItem()).getColor(stack);
+		if (stack.getItem() instanceof DyeableArmorItem) {
+			int colorCode = ((DyeableArmorItem) stack.getItem()).getColor(stack);
 			armorColor = new Color(colorCode);
 		}
 
-		ClientDragonRender.dragonModel.setCurrentTexture(helmetTexture);
-		ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
-		RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, helmetTexture);
-		VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-		renderer.render(model, entitylivingbaseIn,
-		                partialTicks,
-		                type,
-		                matrixStackIn,
-		                bufferIn,
-		                vertexConsumer,
-		                packedLightIn,
-		                OverlayTexture.NO_OVERLAY,
-		                armorColor.getRed() / 255F,
-		                armorColor.getGreen() / 255F,
-		                armorColor.getBlue() / 255F, 1F);
+		ClientDragonRender.dragonModel.setCurrentTexture(texture);
+		ClientDragonRender.dragonArmor.copyPosition(animatable);
+		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
+		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, /* TODO 1.20 :: Re-Render? */false, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRed() / 255F, armorColor.getGreen() / 255F, armorColor.getBlue() / 255F, 1F);
 	}
 
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){

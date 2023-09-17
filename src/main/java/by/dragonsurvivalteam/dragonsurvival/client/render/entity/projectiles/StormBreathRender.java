@@ -4,12 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreat
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoProjectilesRenderer;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
-@OnlyIn( Dist.CLIENT )
-public class StormBreathRender extends GeoProjectilesRenderer<StormBreathEntity>{
-	public StormBreathRender(EntityRendererProvider.Context renderManager, AnimatedGeoModel<StormBreathEntity> modelProvider){
-		super(renderManager, modelProvider);
+@OnlyIn(Dist.CLIENT) // FIXME :: Unused?
+public class StormBreathRender extends GeoEntityRenderer<StormBreathEntity> {
+	public StormBreathRender(final EntityRendererProvider.Context context, final GeoModel<StormBreathEntity> model) {
+		super(context, model);
 	}
 }

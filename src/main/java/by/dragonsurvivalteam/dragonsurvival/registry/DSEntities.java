@@ -11,12 +11,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.VillagerRelationsHan
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraft.world.entity.SpawnPlacements;
@@ -32,14 +30,12 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraftforge.common.ForgeSpawnEggItem;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
-import org.spongepowered.asm.launch.Phases;
 
 import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings( "rawtypes,unchecked" )
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -64,11 +60,11 @@ public class DSEntities{
 	public static void register(RegisterEvent event)
 	{
 		ResourceKey<? extends Registry<?>> key = event.getRegistryKey();
-		if (key.equals(Registry.ENTITY_TYPE_REGISTRY))
+		if (key.equals(ForgeRegistries.Keys.ENTITY_TYPES))
 			registerEntities(event);
-		else if (key.equals(Registry.VILLAGER_PROFESSION_REGISTRY))
+		else if (key.equals(ForgeRegistries.Keys.VILLAGER_PROFESSIONS))
 			registerVillageTypes(event);
-		else if (key.equals(Registry.ITEM_REGISTRY))
+		else if (key.equals(ForgeRegistries.Keys.ITEMS))
 			registerSpawnEggs(event);
 	}
 
@@ -100,8 +96,10 @@ public class DSEntities{
 	}
 
 	public static void registerEntities(RegisterEvent event){
-		DRAGON = register(event, "dummy_dragon", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
-		DRAGON_ARMOR = register(event, "dragon_armor", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
+		DRAGON = register(event, "dummy_dragon", EntityType.Builder.of(DragonEntity::new, MobCategory.MISC).noSummon().sized(0.9F, 1.9F /* TODO 1.20 :: Check -> scalable instead of fixed */ ).clientTrackingRange(0).updateInterval(0).build(DragonSurvivalMod.MODID + ".dummy_dragon"));
+		DRAGON_ARMOR = register(event, "dragon_armor", EntityType.Builder.of(DragonEntity::new, MobCategory.MISC).noSummon().sized(0.9F, 1.9F /* TODO 1.20 :: Check -> scalable instead of fixed */ ).clientTrackingRange(0).updateInterval(0).build(DragonSurvivalMod.MODID + ".dragon_armor"));
+//		DRAGON = register(event, "dummy_dragon", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
+//		DRAGON_ARMOR = register(event, "dragon_armor", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 
 		BOLAS_ENTITY = register(event, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new Bolas(p_create_2_), MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas")));
 
@@ -139,7 +137,7 @@ public class DSEntities{
 
 	private static EntityType register(RegisterEvent event, String id, EntityType type){
 		ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, id);
-		event.register(Registry.ENTITY_TYPE_REGISTRY, location, ()->type);
+		event.register(ForgeRegistries.Keys.ENTITY_TYPES, location, ()->type);
 		return type;
 	}
 
@@ -147,26 +145,23 @@ public class DSEntities{
 		return (T)entityType;
 	}
 
-	public static void registerVillageTypes(RegisterEvent event){
+	public static void registerVillageTypes(RegisterEvent ignored) {
 		PRINCESS_PROFESSION = new VillagerProfession("princess", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
-		//event.register(Registry.VILLAGER_PROFESSION_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, "princess"), ()->PRINCESS_PROFESSION);
-
 		PRINCE_PROFESSION = new VillagerProfession("prince", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
-		//event.register(Registry.VILLAGER_PROFESSION_REGISTRY, new ResourceLocation(DragonSurvivalMod.MODID, "prince"), ()->PRINCE_PROFESSION);
 	}
 
 	public static void registerSpawnEggs(RegisterEvent event){
-
-		registerSpawnEgg(event, HUNTER_HOUND, 10510648, 8934192);
-		registerSpawnEgg(event, SHOOTER_HUNTER, 12486764, 2690565);
-		registerSpawnEgg(event, SQUIRE_HUNTER, 12486764, 5318420);
-		registerSpawnEgg(event, KNIGHT,  -15526631, -8750470);
-		registerSpawnEgg(event, PRINCE_ON_HORSE, -14210026, -9571315);
-		registerSpawnEgg(event, PRINCESS_ON_HORSE, -14804205, -14047);
+		// FIXME 1.20 :: entity is null
+//		registerSpawnEgg(event, HUNTER_HOUND, 10510648, 8934192);
+//		registerSpawnEgg(event, SHOOTER_HUNTER, 12486764, 2690565);
+//		registerSpawnEgg(event, SQUIRE_HUNTER, 12486764, 5318420);
+//		registerSpawnEgg(event, KNIGHT,  -15526631, -8750470);
+//		registerSpawnEgg(event, PRINCE_ON_HORSE, -14210026, -9571315);
+//		registerSpawnEgg(event, PRINCESS_ON_HORSE, -14804205, -14047);
 	}
 
 	private static void registerSpawnEgg(RegisterEvent event, EntityType entity, int eggPrimary, int eggSecondary){
-		Item spawnEgg = new ForgeSpawnEggItem(()->entity, eggPrimary, eggSecondary, new Item.Properties().tab(DragonSurvivalMod.items));
-		event.register(Registry.ITEM_REGISTRY ,new ResourceLocation(DragonSurvivalMod.MODID, ResourceHelper.getKey(entity).getPath() + "_spawn_egg"),()->spawnEgg);
+		Item spawnEgg = new ForgeSpawnEggItem(()->entity, eggPrimary, eggSecondary, new Item.Properties()/*.tab(DragonSurvivalMod.items)*/);
+		event.register(ForgeRegistries.Keys.ITEMS ,new ResourceLocation(DragonSurvivalMod.MODID, ResourceHelper.getKey(entity).getPath() + "_spawn_egg"),()->spawnEgg);
 	}
 }

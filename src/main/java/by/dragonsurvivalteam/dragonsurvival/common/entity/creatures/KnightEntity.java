@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -19,108 +19,121 @@ import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.*;
+import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationProcessor;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHunter, CommonTraits{
-	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
-	AnimationTimer animationTimer = new AnimationTimer();
+public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter, CommonTraits {
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+	private final AnimationTimer animationTimer = new AnimationTimer();
 
-	public KnightEntity(EntityType<? extends PathfinderMob> p_i48576_1_, Level world){
-		super(p_i48576_1_, world);
+	public KnightEntity(final EntityType<? extends PathfinderMob> type, final Level level) {
+		super(type, level);
 	}
 
 	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController<>(this, "everything", 3, event -> {
-			AnimationBuilder animationBuilder = new AnimationBuilder();
-
-			AnimationController<KnightEntity> animationController = event.getController();
+	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+		// FIXME :: Similar to other entities - extract into method?
+		controllers.add(new AnimationController<>(this, "everything", 3, state -> {
+			AnimationController<KnightEntity> animationController = state.getController();
 			double movement = getMovementSpeed(this);
-			if(swingTime > 0){
-				Animation animation = animationController.getCurrentAnimation();
-				if(animation != null){
-					String name = animation.animationName;
-					switch(name){
-						case "attack":
-							if(animationTimer.getDuration("attack2") <= 0){
-								if(random.nextBoolean()){
-									animationTimer.putAnimation("attack", 17d, animationBuilder);
-								}else{
-									animationTimer.putAnimation("attack2", 17d, animationBuilder);
+
+			if (swingTime > 0) {
+				AnimationProcessor.QueuedAnimation currentAnimation = animationController.getCurrentAnimation();
+
+				if (currentAnimation != null) {
+					switch (currentAnimation.animation().name()) {
+						case "attack" -> {
+							if (animationTimer.getDuration("attack2") <= 0) {
+								if (random.nextBoolean()) {
+									animationTimer.putAnimation("attack", 17d);
+									return state.setAndContinue(ATTACK);
+								} else {
+									animationTimer.putAnimation("attack2", 17d);
+									return state.setAndContinue(ATTACK_2);
 								}
 							}
-							break;
-						case "attack2":
-							if(animationTimer.getDuration("attack") <= 0){
-								if(random.nextBoolean()){
-									animationTimer.putAnimation("attack", 17d, animationBuilder);
-								}else{
-									animationTimer.putAnimation("attack2", 17d, animationBuilder);
+						}
+						case "attack2" -> {
+							if (animationTimer.getDuration("attack") <= 0) {
+								if (random.nextBoolean()) {
+									animationTimer.putAnimation("attack", 17d);
+									return state.setAndContinue(ATTACK);
+								} else {
+									animationTimer.putAnimation("attack2", 17d);
+									return state.setAndContinue(ATTACK_2);
 								}
 							}
-							break;
-						default:
-							if(random.nextBoolean()){
-								animationTimer.putAnimation("attack", 17d, animationBuilder);
-							}else{
-								animationTimer.putAnimation("attack2", 17d, animationBuilder);
+						}
+						default -> {
+							if (random.nextBoolean()) {
+								animationTimer.putAnimation("attack", 17d);
+								return state.setAndContinue(ATTACK);
+							} else {
+								animationTimer.putAnimation("attack2", 17d);
+								return state.setAndContinue(ATTACK_2);
 							}
+						}
 					}
 				}
 			}
-			if(movement > 0.5){
-				animationBuilder.addAnimation("run");
-			}else if(movement > 0.05){
-				animationBuilder.addAnimation("walk");
-			}else{
-				Animation animation = animationController.getCurrentAnimation();
-				if(animation == null){
-					animationTimer.putAnimation("idle", 88d, animationBuilder);
-				}else{
-					String name = animation.animationName;
-					switch(name){
-						case "idle":
-							if(animationTimer.getDuration("idle") <= 0){
-								if(random.nextInt(2000) == 0){
-									animationTimer.putAnimation("idle_2", 145d, animationBuilder);
+
+			// TODO 1.20 :: AnimationUtils.createAnimation
+			if (movement > 0.5) {
+				return state.setAndContinue(WALK);
+			} else if (movement > 0.05) {
+				return state.setAndContinue(RUN);
+			} else {
+				AnimationProcessor.QueuedAnimation currentAnimation = animationController.getCurrentAnimation();
+
+				if (currentAnimation == null) {
+					animationTimer.putAnimation("idle", 88d);
+					return state.setAndContinue(IDLE);
+				} else {
+					switch (currentAnimation.animation().name()) {
+						case "idle" -> {
+							if (animationTimer.getDuration("idle") <= 0) {
+								if (random.nextInt(2000) == 0) {
+									animationTimer.putAnimation("idle_2", 145d);
+									return state.setAndContinue(IDLE_2);
 								}
 							}
-							break;
-						case "walk":
-						case "run":
-							animationTimer.putAnimation("idle", 88d, animationBuilder);
-							break;
-						case "idle_2":
-							if(animationTimer.getDuration("idle_2") <= 0){
-								animationTimer.putAnimation("idle", 88d, animationBuilder);
+						}
+						case "walk", "run" -> {
+							animationTimer.putAnimation("idle", 88d);
+							return state.setAndContinue(IDLE);
+						}
+						case "idle_2" -> {
+							if (animationTimer.getDuration("idle_2") <= 0) {
+								animationTimer.putAnimation("idle", 88d);
+								return state.setAndContinue(IDLE);
 							}
-							break;
+						}
 					}
 				}
 			}
-			animationController.setAnimation(animationBuilder);
+
 			return PlayState.CONTINUE;
 		}));
 	}
 
 	@Override
-	public AnimationFactory getFactory(){
-		return animationFactory;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
 	}
 
 	@Override
@@ -130,23 +143,21 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
 		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
 		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
-				Entity entity = KnightEntity.this;
-				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
+				return super.canUse() && HunterEntityCheckProcedure.execute(KnightEntity.this);
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				Entity entity = KnightEntity.this;
-				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
+				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(KnightEntity.this);
 			}
 		});
 		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 2.0, false) {
 			@Override
-			protected double getAttackReachSqr(LivingEntity entity) {
-				return (double) (4.0 + entity.getBbWidth() * entity.getBbWidth());
+			protected double getAttackReachSqr(@NotNull final LivingEntity entity) {
+				return 4.0 + entity.getBbWidth() * entity.getBbWidth();
 			}
 		});
 		this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
@@ -158,7 +169,7 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 
 	@Override
 	public int getExperienceReward(){
-		return 5 + random.nextInt(5);
+		return 5 + getRandom().nextInt(5);
 	}
 
 	@Override
@@ -194,4 +205,11 @@ public class KnightEntity extends PathfinderMob implements IAnimatable, DragonHu
 			setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
 		}
 	}
+
+	private static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("attack");
+	private static final RawAnimation ATTACK_2 = RawAnimation.begin().thenPlay("attack2");
+	private static final RawAnimation RUN = RawAnimation.begin().thenPlay("run");
+	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
+	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
+	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_2");
 }

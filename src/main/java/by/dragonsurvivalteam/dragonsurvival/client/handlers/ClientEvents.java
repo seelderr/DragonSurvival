@@ -156,32 +156,32 @@ public class ClientEvents{
 			if(dragonTabs){
 				initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen){
 					@Override
-					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
 						setX(screen.getGuiLeft());
 					}
 				});
 
 				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, 1, screen){
 					@Override
-					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
 						setX(screen.getGuiLeft() + 28);
 					}
 				});
 
 				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, 2, screen){
 					@Override
-					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
 						setX(screen.getGuiLeft() + 57);
 					}
 				});
 
 				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, 3, screen){
 					@Override
-					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
 						setX(screen.getGuiLeft() + 86);
 					}
 				});

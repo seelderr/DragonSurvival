@@ -10,7 +10,10 @@ logoFile = "dragonsurvival.png"
     displayName = "${mod_name}"
     displayURL = "https://www.curseforge.com/minecraft/mc-mods/dragons-survival"
     authors = "${mod_authors}"
-    description = "${mod_description}"
+    description = '''
+        This mod lets you play as a dragon. There are 3 dragon kinds, which have different traits.
+        To start, you must create a Dragon Altar where you can choose the dragon type you want to become.
+        '''
 
 [[dependencies.${mod_id}]]
     modId = "forge"

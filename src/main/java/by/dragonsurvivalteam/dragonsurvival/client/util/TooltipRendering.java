@@ -1,17 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.inventory.tooltip.TooltipComponent;
-import net.minecraft.world.item.ItemStack;
-
-import java.util.List;
-import java.util.Optional;
-
 public class TooltipRendering{
 //	public static void drawHoveringText(PoseStack poseStack, Component textLines, int x, int y){
 //		Minecraft minecraft = Minecraft.getInstance();

@@ -53,10 +53,9 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				guiGraphics.blit(DragonAltarGUI.CONFIRM_BUTTON, x + 1, y, 0, 0, 15, 15, 15, 15);
 				guiGraphics.pose().popPose();
 
-				// TODO 1.20 :: Check
-//				if(isHovered){
-//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
-//				}
+				if (isHovered) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+				}
 			}
 
 			@Override
@@ -104,10 +103,9 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				guiGraphics.blit(DragonAltarGUI.CANCEL_BUTTON, x, y, 0, 0, 15, 15, 15, 15);
 				guiGraphics.pose().popPose();
 
-				// TODO 1.20 :: Check
-//				if(isHovered){
-//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
-//				}
+				if (isHovered) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+				}
 			}
 
 

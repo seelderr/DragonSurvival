@@ -17,19 +17,19 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
-
-public class DragonBallEntity extends Fireball implements IAnimatable{
+public class DragonBallEntity extends Fireball implements GeoEntity {
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
-	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
+
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
 	protected boolean isDead;
 	protected int deadTicks;
 
@@ -41,7 +41,7 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
-	public int getSkillLevel(){
+	public int getSkillLevel() {
 		return entityData.get(SKILL_LEVEL);
 	}
 
@@ -101,12 +101,12 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	@Override
-	protected ParticleOptions getTrailParticle(){
+	protected @NotNull ParticleOptions getTrailParticle() {
 		return ParticleTypes.WHITE_ASH;
 	}
 
 	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket(){
+	public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
@@ -121,7 +121,7 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	@Override
-	protected void onHit(HitResult p_70227_1_){
+	protected void onHit(@NotNull final HitResult result) {
 		attackMobs();
 		setDeltaMovement(0, 0, 0);
 		isDead = true;
@@ -130,23 +130,21 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	public void attackMobs(){}
 
 	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController<>(this, "everything", 3, event -> {
-			AnimationBuilder animationBuilder = new AnimationBuilder();
-
-			if(isDead){
-				animationBuilder.addAnimation("explosion", EDefaultLoopTypes.LOOP);
-			}else{
-				animationBuilder.addAnimation("idle", EDefaultLoopTypes.LOOP);
+	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "everything", 3, state -> {
+			if (isDead) {
+				return state.setAndContinue(EXPLOSION);
+			} else {
+				return state.setAndContinue(IDLE);
 			}
-
-			event.getController().setAnimation(animationBuilder);
-			return PlayState.CONTINUE;
 		}));
 	}
 
 	@Override
-	public AnimationFactory getFactory(){
-		return animationFactory;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
 	}
+
+	private static final RawAnimation EXPLOSION = RawAnimation.begin().thenLoop("explosion");
+	private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
 }

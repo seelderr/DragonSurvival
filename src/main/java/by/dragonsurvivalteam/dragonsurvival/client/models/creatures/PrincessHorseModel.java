@@ -4,9 +4,9 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
-public class PrincessHorseModel extends AnimatedGeoModel<PrincesHorseEntity>{
+public class PrincessHorseModel extends GeoModel<PrincesHorseEntity> {
 	@Override
 	public ResourceLocation getModelResource(PrincesHorseEntity object){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/horseback_rider.geo.json");

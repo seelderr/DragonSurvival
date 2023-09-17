@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -97,10 +96,10 @@ public class ConfigListMenu extends OptionsSubScreen {
 		addWidget(list);
 
 		// Button to add new entries
-		addRenderableWidget(new Button(width / 2 + 20, height - 27, 100, 20, Component.literal("Add new"), button -> {
+		addRenderableWidget(new Button.Builder(Component.literal("Add new"), button -> {
 			createOption("");
 			list.setScrollAmount(list.getMaxScroll());
-		}));
+		}).bounds(width / 2 + 20, height - 27, 100, 20).build());
 
 		// Button to save the input
 		addRenderableWidget(Button.builder(CommonComponents.GUI_DONE, button -> {

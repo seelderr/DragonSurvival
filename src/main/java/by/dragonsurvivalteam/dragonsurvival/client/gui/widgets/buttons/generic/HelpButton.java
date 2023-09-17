@@ -58,13 +58,11 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		}
 
 		guiGraphics.pose().popPose();
-	}
 
-	// TODO 1.20 :: Check
-//	@Override
-//	public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-//		TooltipRendering.drawHoveringText(pPoseStack, Component.translatable(text), pMouseX, pMouseY);
-//	}
+		if (isHoveredOrFocused()) {
+			guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable(text), mouseX, mouseY);
+		}
+	}
 
 	@Override
 	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){

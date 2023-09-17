@@ -9,6 +9,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
@@ -113,13 +114,13 @@ public class ResourceDropdownEntry extends DropdownEntry {
 
 //                            itemRenderer.blitOffset = 0;
 
-                            // TODO 1.20 :: Check
-//                            if (isHovered) {
-//                                guiGraphics.pose().translate(0, 0, 200);
-//                                List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
-//                                TooltipRendering.drawHoveringText(poseStack, lines, mouseX, mouseY);
-//                                poseStack.translate(0, 0, -200);
-//                            }
+                            if (isHovered) {
+                                guiGraphics.pose().pushPose();
+                                guiGraphics.pose().translate(0, 0, 200);
+                                List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL);
+                                guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, lines, mouseX, mouseY);
+                                guiGraphics.pose().popPose();
+                            }
                         }
 
                         RenderSystem.disableDepthTest();

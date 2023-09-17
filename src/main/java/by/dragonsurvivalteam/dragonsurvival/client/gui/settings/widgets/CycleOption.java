@@ -22,7 +22,7 @@ public class CycleOption<T> extends Option {
     private final CycleOption.OptionSetter<T> setter;
     private final Function<Options, T> getter;
     private final Supplier<CycleButton.Builder<T>> buttonSetup;
-    private Function<Minecraft, OptionInstance.TooltipSupplier<T>> tooltip = minecraft -> ignored -> ImmutableList.of();
+    private Function<Minecraft, OptionInstance.TooltipSupplier<T>> tooltip = minecraft -> ignored -> Tooltip.create(Component.empty());
 
     public CycleOption(String pCaptionKey, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter, Supplier<CycleButton.Builder<T>> pButtonSetup) {
         super(pCaptionKey);

@@ -22,7 +22,6 @@ import java.util.List;
 
 public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_warning.png");
-	private final DragonEditorScreen screen;
 	private final AbstractWidget btn1;
 	private final AbstractWidget btn2;
 	private final int x;
@@ -33,7 +32,6 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
 
 	public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize){
-		this.screen = screen;
 		this.x = x;
 		this.y = y;
 		this.xSize = xSize;
@@ -44,10 +42,9 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
-				// TODO 1.20 :: Check
-//				if(isHovered){
-//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
-//				}
+				if (isHovered()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+				}
 			}
 
 			@Override
@@ -61,10 +58,9 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), x + width / 2, y + (height - 8) / 2, getFGColor());
 
-				// TODO 1.20 :: Check
-//				if(isHovered){
-//					TooltipRendering.drawHoveringText(mStack, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
-//				}
+				if (isHovered) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+				}
 			}
 
 			@Override
@@ -75,7 +71,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public @NotNull List<? extends GuiEventListener> children(){
 		return ImmutableList.of(btn1, btn2);
 	}
 

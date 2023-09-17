@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -8,48 +7,43 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.NetworkHooks;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
+public class StormBreathEntity extends Entity implements GeoEntity {
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-public class StormBreathEntity extends Entity implements IAnimatable{
-	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
-
-	public StormBreathEntity(EntityType<?> p_i48580_1_, Level p_i48580_2_){
-		super(p_i48580_1_, p_i48580_2_);
+	public StormBreathEntity(final EntityType<?> type, final Level level) {
+		super(type, level);
 	}
 
 	@Override
-	protected void defineSynchedData(){}
+	protected void defineSynchedData() { /* Nothing to do here */ }
 
 	@Override
 
-	protected void readAdditionalSaveData(CompoundTag p_70037_1_){}
+	protected void readAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
 
 	@Override
-	protected void addAdditionalSaveData(CompoundTag p_213281_1_){}
+	protected void addAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
 
 	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket(){
+	public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController<>(this, "everything", 0, event -> {
-			event.getController().setAnimation(new AnimationBuilder().addAnimation("idle", EDefaultLoopTypes.LOOP));
-			return PlayState.CONTINUE;
-		}));
+	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "idle", state -> state.setAndContinue(RawAnimation.begin().thenLoop("idle"))));
 	}
 
 	@Override
-	public AnimationFactory getFactory(){
-		return animationFactory;
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
 	}
 }

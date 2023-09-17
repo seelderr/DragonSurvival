@@ -202,12 +202,11 @@ public abstract class MixinLivingEntity extends Entity{
 
 	@ModifyArg(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"), index = 0)
 	public double disableKnockbackForMagic(double strength) {
-		if (dragonSurvival$damageSource != null && dragonSurvival$damageSource.is(/* TODO 1.20 :: DS damage source magic tag */)) {
-			String id = dragonSurvival$damageSource.msgId;
+		// TODO 1.20 :: Unsure - use tags?
+		boolean disableKnockback = dragonSurvival$damageSource.getMsgId().startsWith("dragonsurvival");
 
-			if (id.equals("onFire") || id.equals("magic")) {
-				return 0;
-			}
+		if (disableKnockback) {
+			return 0;
 		}
 
 		return strength;

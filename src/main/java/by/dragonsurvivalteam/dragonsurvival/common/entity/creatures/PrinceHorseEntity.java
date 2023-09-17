@@ -1,10 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
@@ -20,28 +18,27 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.npc.VillagerTrades.ItemListing;
-import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationProcessor;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 
-public class PrinceHorseEntity extends PrincesHorseEntity{
-	public PrinceHorseEntity(EntityType<? extends Villager> entityType, Level world){
-		super(entityType, world);
-	}
+public class PrinceHorseEntity extends PrincesHorseEntity {
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public PrinceHorseEntity(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
-		super(entityType, world, villagerType);
+	public PrinceHorseEntity(final EntityType<? extends Villager> entityType, final Level level) {
+		super(entityType, level);
 	}
 
 	@Override
@@ -74,97 +71,113 @@ public class PrinceHorseEntity extends PrincesHorseEntity{
 		this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 2.0D, true));
 		this.goalSelector.getAvailableGoals().removeIf(prioritizedGoal -> {
 			Goal goal = prioritizedGoal.getGoal();
-			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;});
+			return goal instanceof PanicGoal || goal instanceof AvoidEntityGoal;
+		});
 		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));
 		this.goalSelector.addGoal(6, new RandomStrollGoal(this, 0.5));
 		this.goalSelector.addGoal(7, new RandomLookAroundGoal(this));
 	}
 
 	@Override
-	public int getExperienceReward(){
-		return 1 + random.nextInt(2);
-	}
-
-	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController<>(this, "everything", 0, event -> {
-			AnimationBuilder animationBuilder = new AnimationBuilder();
-			AnimationController<PrinceHorseEntity> animationController = event.getController();
+	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "everything", 0, state -> {
+			AnimationController<PrinceHorseEntity> controller = state.getController();
 			double movement = getMovementSpeed(this);
-			if(swingTime > 0){
-				Animation animation = animationController.getCurrentAnimation();
-				if(animation != null){
-					String name = animation.animationName;
-					switch(name){
-						case "attack":
-							if(animationTimer.getDuration("attack2") <= 0){
-								if(random.nextBoolean()){
-									animationTimer.putAnimation("attack", 17d, animationBuilder);
-								}else{
-									animationTimer.putAnimation("attack2", 17d, animationBuilder);
+
+			if (swingTime > 0) {
+				AnimationProcessor.QueuedAnimation currentAnimation = controller.getCurrentAnimation();
+
+				if (currentAnimation != null) {
+					switch (currentAnimation.animation().name()) {
+						case "attack" -> {
+							if (animationTimer.getDuration("attack2") <= 0) {
+								if (random.nextBoolean()) {
+									animationTimer.putAnimation("attack", 17d);
+									return state.setAndContinue(ATTACK);
+								} else {
+									animationTimer.putAnimation("attack2", 17d);
+									return state.setAndContinue(ATTACK_2);
 								}
 							}
-							break;
-						case "attack2":
-							if(animationTimer.getDuration("attack") <= 0){
-								if(random.nextBoolean()){
-									animationTimer.putAnimation("attack", 17d, animationBuilder);
-								}else{
-									animationTimer.putAnimation("attack2", 17d, animationBuilder);
+						}
+						case "attack2" -> {
+							if (animationTimer.getDuration("attack") <= 0) {
+								if (random.nextBoolean()) {
+									animationTimer.putAnimation("attack", 17d);
+									return state.setAndContinue(ATTACK);
+								} else {
+									animationTimer.putAnimation("attack2", 17d);
+									return state.setAndContinue(ATTACK_2);
 								}
 							}
-							break;
-						default:
-							if(random.nextBoolean()){
-								animationTimer.putAnimation("attack", 17d, animationBuilder);
-							}else{
-								animationTimer.putAnimation("attack2", 17d, animationBuilder);
+						}
+						default -> {
+							if (random.nextBoolean()) {
+								animationTimer.putAnimation("attack", 17d);
+								return state.setAndContinue(ATTACK);
+							} else {
+								animationTimer.putAnimation("attack2", 17d);
+								return state.setAndContinue(ATTACK_2);
 							}
+						}
 					}
 				}
 			}
-			if(movement > 0.4){
-				animationBuilder.addAnimation("run");
-			}else if(movement > 0.05){
-				animationBuilder.addAnimation("walk");
-			}else{
-				Animation animation = animationController.getCurrentAnimation();
-				if(animation == null){
-					animationTimer.putAnimation("idle", 88d, animationBuilder);
-				}else{
-					String name = animation.animationName;
-					switch(name){
-						case "idle":
-							if(animationTimer.getDuration("idle") <= 0){
-								if(random.nextInt(2000) == 0){
-									animationTimer.putAnimation("idle_2", 145d, animationBuilder);
+
+			// TODO 1.20 :: AnimationUtils.createAnimation
+			if (movement > 0.4) {
+				return state.setAndContinue(RUN);
+			} else if(movement > 0.05) {
+				return state.setAndContinue(WALK);
+			} else {
+				AnimationProcessor.QueuedAnimation currentAnimation = controller.getCurrentAnimation();
+
+				if (currentAnimation == null) {
+					animationTimer.putAnimation("idle", 88d);
+					return state.setAndContinue(IDLE);
+				} else {
+					switch (currentAnimation.animation().name()) {
+						case "idle" -> {
+							if (animationTimer.getDuration("idle") <= 0) {
+								if (random.nextInt(2000) == 0) {
+									animationTimer.putAnimation("idle_2", 145d);
+									return state.setAndContinue(IDLE_2);
 								}
 							}
-							break;
-						case "walk":
-						case "run":
-							animationTimer.putAnimation("idle", 88d, animationBuilder);
-							break;
-						case "idle_2":
-							if(animationTimer.getDuration("idle_2") <= 0){
-								animationTimer.putAnimation("idle", 88d, animationBuilder);
+						}
+						case "walk", "run" -> {
+							animationTimer.putAnimation("idle", 88d);
+							return state.setAndContinue(IDLE);
+						}
+						case "idle_2" -> {
+							if (animationTimer.getDuration("idle_2") <= 0) {
+								animationTimer.putAnimation("idle", 88d);
+								return state.setAndContinue(IDLE);
 							}
-							break;
+						}
 					}
 				}
 			}
-			animationController.setAnimation(animationBuilder);
+
 			return PlayState.CONTINUE;
 		}));
 	}
 
 	@Override
-	public void tick(){
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return cache;
+	}
+
+	@Override
+	public void tick() {
 		updateSwingTime();
 		super.tick();
 	}
-	@Override
-	public boolean removeWhenFarAway(double distance){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
-	}
+
+	private static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("attack");
+	private static final RawAnimation ATTACK_2 = RawAnimation.begin().thenPlay("attack2");
+	private static final RawAnimation RUN = RawAnimation.begin().thenPlay("run");
+	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
+	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
+	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_2");
 }

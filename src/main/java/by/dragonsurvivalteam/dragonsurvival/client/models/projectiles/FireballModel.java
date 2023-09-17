@@ -4,28 +4,23 @@ package by.dragonsurvivalteam.dragonsurvival.client.models.projectiles;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
 import net.minecraft.resources.ResourceLocation;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
+import software.bernie.geckolib.model.GeoModel;
 
-public class FireballModel extends AnimatedGeoModel<FireBallEntity>{
-	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/fireball_texture.png");
-
+public class FireballModel extends GeoModel<FireBallEntity> {
+	private final ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/fireball_texture.png");
 
 	@Override
-	public ResourceLocation getModelResource(FireBallEntity dragonEntity){
+	public ResourceLocation getModelResource(FireBallEntity dragonEntity) {
 		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_fireball.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(FireBallEntity dragonEntity){
+	public ResourceLocation getTextureResource(FireBallEntity dragonEntity) {
 		return currentTexture;
 	}
 
-	public void setCurrentTexture(ResourceLocation currentTexture){
-		this.currentTexture = currentTexture;
-	}
-
 	@Override
-	public ResourceLocation getAnimationResource(FireBallEntity animatable){
+	public ResourceLocation getAnimationResource(FireBallEntity animatable) {
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/fireball.animation.json");
 	}
 }

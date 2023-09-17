@@ -13,16 +13,16 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib3.geo.render.built.GeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
-import software.bernie.geckolib3.renderers.geo.GeoLayerRenderer;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import top.theillusivec4.curios.api.CuriosApi;
 import top.theillusivec4.curios.api.type.inventory.IDynamicStackHandler;
 
 import java.util.ArrayList;
 
-public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
+public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
 
     private final GeoEntityRenderer<DragonEntity> renderer;
 
@@ -32,42 +32,39 @@ public class DragonCuriosRenderLayer extends GeoLayerRenderer<DragonEntity> {
     }
 
     @Override
-    public void render(PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entityLivingBaseIn, float limbSwing, float limbSwingAmount, float partialTicks, float ageInTicks, float netHeadYaw, float headPitch) {
-        Player player = entityLivingBaseIn.getPlayer();
+    public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        Player player = animatable.getPlayer();
 
-        if (player.isSpectator()) return;
+        if (player.isSpectator()) {
+            return;
+        }
 
         CoreGeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
-        if(neck != null)
+        if (neck != null) {
             neck.setHidden(false);
+        }
 
         ArrayList<ResourceLocation> curioTextures = getCurioTextures(player);
 
         if (!curioTextures.isEmpty()) {
             ((DragonRenderer) renderer).isRenderLayers = true;
-            GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelResource(null));
-            for (ResourceLocation tex : curioTextures) {
-                renderCurioPiece(model, matrixStackIn, bufferIn, packedLightIn, entityLivingBaseIn, partialTicks, tex);
+
+            for (ResourceLocation texture : curioTextures) {
+                renderCurioPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, texture);
             }
+
             ((DragonRenderer) renderer).isRenderLayers = false;
         }
     }
 
-    private void renderCurioPiece(GeoModel model, PoseStack matrixStackIn, MultiBufferSource bufferIn, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation curioTexture) {
-        ClientDragonRender.dragonModel.setCurrentTexture(curioTexture);
-        ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
-        RenderType type = renderer.getRenderType(entitylivingbaseIn, partialTicks, matrixStackIn, bufferIn, null, packedLightIn, curioTexture);
-        VertexConsumer vertexConsumer = bufferIn.getBuffer(type);
-        renderer.render(model, entitylivingbaseIn,
-                partialTicks,
-                type,
-                matrixStackIn,
-                bufferIn,
-                vertexConsumer,
-                packedLightIn,
-                OverlayTexture.NO_OVERLAY,
-                1F, 1F, 1F, 1F);
+    private void renderCurioPiece(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, float partialTick, int packedLight, ResourceLocation texture) {
+        ClientDragonRender.dragonModel.setCurrentTexture(texture);
+        ClientDragonRender.dragonArmor.copyPosition(animatable);
+        RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+
+        renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, false /* FIXME :: Re-Render? */, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1F, 1F, 1F, 1F);
     }
 
     private ArrayList<ResourceLocation> getCurioTextures(Player player) {

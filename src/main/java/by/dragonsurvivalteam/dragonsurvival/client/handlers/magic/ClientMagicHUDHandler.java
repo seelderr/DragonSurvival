@@ -16,7 +16,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbilit
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -156,8 +155,7 @@ public class ClientMagicHUDHandler{
 				ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(x);
 
 				if (ability != null && ability.getIcon() != null) {
-					RenderSystem.setShaderTexture(0, ability.getIcon());
-					guiGraphics.blit(widgets, posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
+					guiGraphics.blit(ability.getIcon(), posX + x * sizeX + 3, posY + 1, 0, 0, 16, 16, 16, 16);
 
 					if (ability.getSkillCooldown() > 0 && ability.getCurrentCooldown() > 0 && ability.getSkillCooldown() != ability.getCurrentCooldown()) {
 						float f = Mth.clamp((float) ability.getCurrentCooldown() / (float) ability.getSkillCooldown(), 0, 1);
@@ -171,10 +169,7 @@ public class ClientMagicHUDHandler{
 				}
 			}
 
-			RenderSystem.setShaderTexture(0, new ResourceLocation("textures/gui/widgets.png"));
 			guiGraphics.blit(widgets, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
-
-			RenderSystem.setShaderTexture(0, widgetTextures);
 
 			int maxMana = ManaHandler.getMaxMana(player);
 			int curMana = ManaHandler.getCurrentMana(player);
@@ -193,7 +188,7 @@ public class ClientMagicHUDHandler{
 						int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
 						int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
 						float rescale = 2.15F;
-						guiGraphics.blit(widgets, manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 204 / rescale, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
+						guiGraphics.blit(widgetTextures, manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 204 / rescale, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
 					}
 				}
 		}

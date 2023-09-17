@@ -11,23 +11,23 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.ModList;
+import software.bernie.geckolib.cache.object.BakedGeoModel;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib3.core.util.Color;
-import software.bernie.geckolib3.geo.render.built.GeoBone;
-import software.bernie.geckolib3.model.AnimatedGeoModel;
-import software.bernie.geckolib3.renderers.geo.GeoEntityRenderer;
-import software.bernie.geckolib3.util.EModelRenderCycle;
-import software.bernie.geckolib3.util.RenderUtils;
+import software.bernie.geckolib.core.object.Color;
+import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.renderer.GeoEntityRenderer;
+import software.bernie.geckolib.util.RenderUtils;
 
-import javax.annotation.Nullable;
+public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
+	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
+	public static boolean renderHeldItem = true;
 
-public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 	public ResourceLocation glowTexture = null;
 
 	public boolean shouldRenderLayers = true;
@@ -35,139 +35,112 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 	public Color renderColor = Color.ofRGB(255, 255, 255);
 
-	public DragonRenderer(EntityRendererProvider.Context renderManager, AnimatedGeoModel<DragonEntity> modelProvider){
-		super(renderManager, modelProvider);
-		addLayer(new DragonGlowLayerRenderer(this));
-		addLayer(new ClawsAndTeethRenderLayer(this));
-		addLayer(new DragonArmorRenderLayer(this));
+	public DragonRenderer(final EntityRendererProvider.Context context, final GeoModel<DragonEntity> model) {
+		super(context, model);
 
-		if(ModList.get().isLoaded("curios")){
-			addLayer(new DragonCuriosRenderLayer(this));
+		getRenderLayers().add(new DragonGlowLayerRenderer(this));
+		getRenderLayers().add(new ClawsAndTeethRenderLayer(this));
+		getRenderLayers().add(new DragonArmorRenderLayer(this));
+
+		if (ModList.get().isLoaded("curios")) {
+			getRenderLayers().add(new DragonCuriosRenderLayer(this));
 		}
 	}
 
-
-	private int pOverlay;
-	protected DragonEntity currentEntityBeingRendered;
-	private float currentPartialTicks;
-
 	@Override
-	public void renderEarly(DragonEntity animatable, PoseStack stackIn, float ticks, MultiBufferSource renderTypeBuffer, VertexConsumer vertexBuilder, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float partialTicks){
+	public void preRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		Minecraft.getInstance().getProfiler().push("player_dragon");
-		super.renderEarly(animatable, stackIn, ticks, renderTypeBuffer, vertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, partialTicks);
-		pOverlay = packedOverlayIn;
+		super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}
 
 	@Override
-	public void renderLate(DragonEntity animatable, PoseStack stackIn, float partialTicks, MultiBufferSource renderTypeBuffer, VertexConsumer bufferIn, int packedLightIn, int packedOverlayIn, float red, float green, float blue, float alpha){
-		super.renderLate(animatable, stackIn, partialTicks, renderTypeBuffer, bufferIn, packedLightIn, packedOverlayIn, red, green, blue, alpha);
+	public void postRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 		Minecraft.getInstance().getProfiler().pop();
-		currentEntityBeingRendered = animatable;
-		currentPartialTicks = partialTicks;
 	}
 
-	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
-	public static boolean renderHeldItem = true;
-
 	@Override
-	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
-		if(entity.getPlayer().hasEffect(MobEffects.INVISIBILITY)){
+	public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+		Player player = animatable.getPlayer();
+
+		if (player.hasEffect(MobEffects.INVISIBILITY)) {
 			return;
 		}
 
-		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
 
-		CoreGeoBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
-		CoreGeoBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
+		CoreGeoBone wingLeft = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
+		CoreGeoBone wingRight = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
 
-		if(leftWing != null)
-			leftWing.setHidden(!hasWings);
-
-		if(rightWing != null)
-			rightWing.setHidden(!hasWings);
-
-		super.render(entity, entityYaw, partialTicks, stack, bufferIn, packedLightIn);
-	}
-
-	@Override
-	public void renderRecursively(GeoBone bone, PoseStack stack, VertexConsumer buffer, int packedLight, int packedOverlay, float red, float green, float blue, float alpha){
-		if (getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
-			super.renderRecursively(bone, stack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-			return;
+		if (wingLeft != null) {
+			wingLeft.setHidden(!hasWings);
 		}
 
-		if(!isRenderLayers){
-			Player player = currentEntityBeingRendered.getPlayer();
+		if (wingRight != null) {
+			wingRight.setHidden(!hasWings);
+		}
 
-			ResourceLocation currentTexture = getTextureLocation(currentEntityBeingRendered);
-			MultiBufferSource bufferSource = getCurrentRTB();
+		// TODO 1.20 :: Check
+		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+	}
 
-			RenderType renderType = getRenderType(currentEntityBeingRendered, currentPartialTicks, stack, bufferSource, buffer, packedLight, currentTexture);
-			buffer = bufferSource.getBuffer(renderType);
+	@Override // FIXME 1.20
+	public void renderRecursively(final PoseStack poseStack, final DragonEntity animatable, final GeoBone bone, final RenderType renderType, final MultiBufferSource bufferSource, VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+//		if (getCurrentModelRenderCycle() != EModelRenderCycle.INITIAL) {
+		super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 
-			if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL){
-				if(renderHeldItem){
-					if(player != Minecraft.getInstance().player || ClientDragonRender.alternateHeldItem || !Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-						if(bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem") && !player.getInventory().offhand.get(0).isEmpty()){
-							stack.pushPose();
+		if (true) return; // FIXME 1.20 :
+//		return
+//		}
 
-							RenderUtils.prepMatrixForBone(stack, bone);
-							RenderUtils.translateAndRotateMatrixForBone(stack, bone);
+		if (!isRenderLayers) {
+			Player player = animatable.getPlayer();
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? TransformType.FIRST_PERSON_LEFT_HAND : TransformType.GROUND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
+			ResourceLocation currentTexture = getTextureLocation(animatable);
+//			MultiBufferSource bufferSource = getCurrentRTB();
+
+//			RenderType renderType = getRenderType(currentEntityBeingRendered, currentPartialTicks, stack, bufferSource, buffer, packedLight, currentTexture);
+//			buffer = bufferSource.getBuffer(renderType);
+
+//			if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL) {
+				if (renderHeldItem) {
+					if (player != Minecraft.getInstance().player || ClientDragonRender.alternateHeldItem || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+						if (bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem") && !player.getInventory().offhand.get(0).isEmpty()) {
+							poseStack.pushPose();
+
+							RenderUtils.prepMatrixForBone(poseStack, bone);
+							RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
+
+//							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? TransformType.FIRST_PERSON_LEFT_HAND : TransformType.GROUND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
 							buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
-							stack.popPose();
+							poseStack.popPose();
 						}
 
-						if(bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "RightItem_jaw" : "RightItem") && !player.getInventory().getSelected().isEmpty()){
-							stack.pushPose();
-							RenderUtils.prepMatrixForBone(stack, bone);
-							RenderUtils.translateAndRotateMatrixForBone(stack, bone);
+						if (bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "RightItem_jaw" : "RightItem") && !player.getInventory().getSelected().isEmpty()) {
+							poseStack.pushPose();
+							RenderUtils.prepMatrixForBone(poseStack, bone);
+							RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
 
-							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
+//							Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? TransformType.THIRD_PERSON_RIGHT_HAND : TransformType.GROUND, packedLight, pOverlay, stack, getCurrentRTB(), 0);
 							buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
-							stack.popPose();
+							poseStack.popPose();
 						}
 					}
 				}
+//			}
 
-//				if(bone.getName().equals("BreathSource")){
-//					stack.pushPose();
-//					RenderUtils.prepMatrixForBone(stack, bone);
-//					RenderUtils.translateAndRotateMatrixForBone(stack, bone);
-//
-//					if(handler.getMagic().getCurrentlyCasting() instanceof BreathAbility ability){
-//						if(ability.getChargeTime() >= ability.getSkillChargeTime()){
-//							if(ability.getEffectEntity() != null){
-//								stack.mulPose(Vector3f.YN.rotationDegrees(-90));
-//								//stack.mulPose(Vector3f.ZN.rotationDegrees(player.xRot));//For head pitch
-//								EntityRenderer<? super Entity> effectRender = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ability.getEffectEntity());
-//								effectRender.render(ability.getEffectEntity(), player.getViewYRot(currentPartialTicks), currentPartialTicks, stack, getCurrentRTB(), 200);
-//							}
-//						}
-//					}
-//
-//					stack.popPose();
-//				}
-			}
-
-			stack.pushPose();
-			RenderUtils.prepMatrixForBone(stack, bone);
-			super.renderCubesOfBone(bone, stack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-			super.renderChildBones(bone, stack, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-			stack.popPose();
+			poseStack.pushPose();
+			RenderUtils.prepMatrixForBone(poseStack, bone);
+			super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
+			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			poseStack.popPose();
 		}
 	}
 
 	@Override
-	public Color getRenderColor(DragonEntity animatable, float partialTicks, PoseStack stack,
-		@Nullable
-		MultiBufferSource renderTypeBuffer,
-		@Nullable
-		VertexConsumer vertexBuilder, int packedLightIn){
+	public Color getRenderColor(final DragonEntity animatable, float partialTick, int packedLight) {
 		return renderColor;
 	}
 }

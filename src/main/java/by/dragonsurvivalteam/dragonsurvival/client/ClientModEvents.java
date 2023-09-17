@@ -26,15 +26,11 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.Particle;
-import net.minecraft.client.particle.ParticleProvider;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
@@ -42,7 +38,6 @@ import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import org.jetbrains.annotations.NotNull;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
@@ -83,7 +78,7 @@ public class ClientModEvents{
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.fireDragonBeacon, RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.magicDragonBeacon, RenderType.cutout());
 
-		// enable transparency for certain small doors
+		// Enable transparecny for certain small doors
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.birchSmallDoor, RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.acaciaSmallDoor, RenderType.cutout());
 
@@ -116,44 +111,34 @@ public class ClientModEvents{
 	}
 
 	@SubscribeEvent
-	public static void onKeyRegister(RegisterKeyMappingsEvent event)
-	{
+	public static void onKeyRegister(final RegisterKeyMappingsEvent event) {
 		KeyInputHandler.registerKeys(event);
 	}
+
 	@SubscribeEvent
-	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
-		event.registerSprite(DSParticles.fireBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5) {
-				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
-				beaconParticle.pickSprite(p_create_1_);
-				return beaconParticle;
-			}
-		});
-		event.registerSprite(DSParticles.magicBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
-				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
-				beaconParticle.pickSprite(p_create_1_);
-				return beaconParticle;
-			}
-		});
-		event.registerSprite(DSParticles.peaceBeaconParticle, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
-				BeaconParticle beaconParticle = new BeaconParticle(clientWorld, v, v1, v2, v3, v4, v5);
-				beaconParticle.pickSprite(p_create_1_);
-				return beaconParticle;
-			}
+	public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
+		event.registerSpriteSet(DSParticles.fireBeaconParticle, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
+			BeaconParticle beaconParticle = new BeaconParticle(clientWorld, x, y, z, speedX, speedY, speedZ);
+			beaconParticle.pickSprite(spriteSet);
+			return beaconParticle;
 		});
 
-		event.registerSprite(DSParticles.seaSweep, p_create_1_ -> new ParticleProvider<SimpleParticleType>(){
-			@Override
-			public @NotNull Particle createParticle(@NotNull SimpleParticleType p_199234_1_, @NotNull ClientLevel clientWorld, double v, double v1, double v2, double v3, double v4, double v5){
-				SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, v, v1, v2, v3, p_create_1_);
-				beaconParticle.pickSprite(p_create_1_);
-				return beaconParticle;
-			}
+		event.registerSpriteSet(DSParticles.magicBeaconParticle, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
+			BeaconParticle beaconParticle = new BeaconParticle(clientWorld, x, y, z, speedX, speedY, speedZ);
+			beaconParticle.pickSprite(spriteSet);
+			return beaconParticle;
+		});
+
+		event.registerSpriteSet(DSParticles.peaceBeaconParticle, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
+			BeaconParticle beaconParticle = new BeaconParticle(clientWorld, x, y, z, speedX, speedY, speedZ);
+			beaconParticle.pickSprite(spriteSet);
+			return beaconParticle;
+		});
+
+		event.registerSpriteSet(DSParticles.seaSweep, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
+			SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, x, y, z, speedX, spriteSet);
+			beaconParticle.pickSprite(spriteSet);
+			return beaconParticle;
 		});
 	}
 }

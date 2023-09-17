@@ -22,153 +22,154 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LightningBolt;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerData;
 import net.minecraft.world.entity.npc.VillagerTrades;
-import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import org.jetbrains.annotations.NotNull;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationProcessor;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
-public class PrincesHorseEntity extends Villager implements IAnimatable, CommonTraits{
-	private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
-	public static EntityDataAccessor<Integer> color = SynchedEntityData.defineId(PrincesHorseEntity.class, EntityDataSerializers.INT);
-	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
-	AnimationTimer animationTimer = new AnimationTimer();
+public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTraits {
+	private static final List<DyeColor> COLORS = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
+	public static EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(PrincesHorseEntity.class, EntityDataSerializers.INT);
+
+	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+	protected final AnimationTimer animationTimer = new AnimationTimer();
 
 	public PrincesHorseEntity(EntityType<? extends Villager> entityType, Level world){
 		super(entityType, world);
 	}
 
-	public PrincesHorseEntity(EntityType<? extends Villager> entityType, Level world, VillagerType villagerType){
-		super(entityType, world, villagerType);
-	}
-	
+	@Override
 	protected void customServerAiStep() {
+		super.customServerAiStep();
+
 		Player player = getTradingPlayer();
-		if(player != null){
-			super.customServerAiStep();
-			if(getTradingPlayer() == null){
+
+		if (player != null) {
+			if (getTradingPlayer() == null) {
 				setTradingPlayer(player);
 			}
-		}else {
-			super.customServerAiStep();
 		}
 	}
-	
-	
+
 	@Override
-	public SoundEvent getNotifyTradeSound(){
-		return null;
+	public @NotNull SoundEvent getNotifyTradeSound() {
+		return SoundEvents.EMPTY;
 	}
 
 	@Override
-	protected SoundEvent getTradeUpdatedSound(boolean p_213721_1_){
-		return null;
+	protected @NotNull SoundEvent getTradeUpdatedSound(boolean p_213721_1_) {
+		return SoundEvents.EMPTY;
 	}
 
 	@Override
-	public void playCelebrateSound(){
-	}
+	public void playCelebrateSound() { /* Nothing to do here */ }
 
 	@Override
-	protected Brain<?> makeBrain(Dynamic<?> p_213364_1_){
+	protected @NotNull Brain<?> makeBrain(@NotNull final Dynamic<?> p_213364_1_) {
 		return brainProvider().makeBrain(p_213364_1_);
 	}
-	
+
 	@Override
-	protected void defineSynchedData(){
+	protected void defineSynchedData() {
 		super.defineSynchedData();
-		entityData.define(color, 0);
+		entityData.define(COLOR, 0);
 	}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag compoundNBT){
-		super.addAdditionalSaveData(compoundNBT);
-		compoundNBT.putInt("Color", getColor());
+	public void addAdditionalSaveData(@NotNull final CompoundTag compoundTag) {
+		super.addAdditionalSaveData(compoundTag);
+		compoundTag.putInt("Color", getColor());
 	}
 
-	public int getColor(){
-		return entityData.get(color);
+	public int getColor() {
+		return entityData.get(COLOR);
 	}
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag compoundNBT){
-		super.readAdditionalSaveData(compoundNBT);
-		setColor(compoundNBT.getInt("Color"));
+	public void readAdditionalSaveData(@NotNull final CompoundTag compoundTag) {
+		super.readAdditionalSaveData(compoundTag);
+        setColor(compoundTag.getInt("Color"));
 	}
 
-	public void setColor(int i){
-		entityData.set(color, i);
+	public void setColor(int color) {
+		entityData.set(COLOR, color);
 	}
 
 	@Override
 	@Nullable
-	protected SoundEvent getAmbientSound(){
+	protected SoundEvent getAmbientSound() {
 		return null;
 	}
 
 	@Override
-	protected SoundEvent getHurtSound(DamageSource p_184601_1_){
+	protected SoundEvent getHurtSound(@NotNull final DamageSource damageSource) {
 		return SoundEvents.GENERIC_HURT;
 	}
 
 	@Override
-	protected SoundEvent getDeathSound(){
+	protected SoundEvent getDeathSound() {
 		return SoundEvents.PLAYER_DEATH;
 	}
 
 	@Override
-	public void playWorkSound(){
+	public void playWorkSound() {
 	}
-	
+
 	@Override
-	public boolean canBreed(){
+	public boolean canBreed() {
 		return false;
 	}
 
 	@Override
-	protected Component getTypeName(){
+	protected @NotNull Component getTypeName() {
 		return Component.translatable(getType().getDescriptionId());
 	}
 
 	@Override
 	@Nullable
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
-		setColor(colors.get(random.nextInt(6)).getId());
+		setColor(COLORS.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}
-	
-	@Override
-	public void thunderHit(ServerLevel p_241841_1_, LightningBolt p_241841_2_){}
 
 	@Override
-	protected void updateTrades(){
+	public void thunderHit(@NotNull final ServerLevel level, @NotNull final LightningBolt bolt) { /* Nothing to do here */ }
+
+	@Override
+	protected void updateTrades() {
 		VillagerData villagerdata = getVillagerData();
 		Int2ObjectMap<VillagerTrades.ItemListing[]> int2objectmap = DSTrades.princessColorCodes.get(getColor());
-		if(int2objectmap != null && !int2objectmap.isEmpty()){
+
+        if (int2objectmap != null && !int2objectmap.isEmpty()) {
 			VillagerTrades.ItemListing[] trades = int2objectmap.get(villagerdata.getLevel());
-			if(trades != null){
+
+            if (trades != null) {
 				MerchantOffers merchantoffers = getOffers();
 				addOffersFromItemListings(merchantoffers, trades, 4);
 			}
@@ -176,15 +177,13 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	}
 
 	@Override
-	public void gossip(ServerLevel p_242368_1_, Villager p_242368_2_, long p_242368_3_){
-	}
+	public void gossip(@NotNull final ServerLevel level, @NotNull Villager villager, long p_242368_3_) { /* Nothing to do */ }
 
 	@Override
-	public void startSleeping(BlockPos p_213342_1_){
-	}
+	public void startSleeping(@NotNull final BlockPos position) { /* Nothing to do */ }
 
-	protected void pickUpItem(Item p_175445_1_){
-	}
+	@Override
+	protected void pickUpItem(@NotNull final ItemEntity ignored) { /* Nothing to do */ }
 
 	@Override
 	protected void registerGoals(){
@@ -200,83 +199,66 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	}
 
 	@Override
-	public int getExperienceReward(){
-		return 1 + random.nextInt(2);
+	public int getExperienceReward() {
+		return 1 + getRandom().nextInt(2);
 	}
 
-	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController(this, "everything", 10, event -> {
-			AnimationBuilder builder = new AnimationBuilder();
+	@Override // TODO 1.20 :: setAndContinue or add animations?
+	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "everything", 10, state -> {
 			double speed = getMovementSpeed(this);
-			AnimationController controller = event.getController();
-			if(speed > 0.4){
-				builder.addAnimation("run_princess");
-			}else if(speed > 0.05){
-				builder.addAnimation("walk_princess");
-			}else{
-				Animation animation = controller.getCurrentAnimation();
-				if(animation == null){
-					animationTimer.putAnimation("idle_princess", 88d, builder);
-				}else{
-					String name = animation.animationName;
-					switch(name){
-						case "idle_princess":
-							if(animationTimer.getDuration("idle_princess") <= 0){
-								if(random.nextInt(2000) == 1){
-									animationTimer.putAnimation("idle_princess_2", 145d, builder);
+			AnimationController<PrincesHorseEntity> controller = state.getController();
+
+			if (speed > 0.4) {
+				return state.setAndContinue(WALK);
+			} else if (speed > 0.05) {
+				return state.setAndContinue(RUN);
+			} else {
+				AnimationProcessor.QueuedAnimation currentAnimation = controller.getCurrentAnimation();
+
+				if (currentAnimation == null) {
+					animationTimer.putAnimation("idle_princess", 88d);
+					return state.setAndContinue(IDLE);
+				} else {
+					switch (currentAnimation.animation().name()) {
+						case "idle_princess" -> {
+							if (animationTimer.getDuration("idle_princess") <= 0) {
+								if (random.nextInt(2000) == 1) {
+									animationTimer.putAnimation("idle_princess_2", 145d);
+									return state.setAndContinue(IDLE_2);
 								}
 							}
-							break;
-						case "walk_princess":
-						case "run_princess":
-							animationTimer.putAnimation("idle_princess", 88d, builder);
-							break;
-						case "idle_princess_2":
-							if(animationTimer.getDuration("idle_princess_2") <= 0){
-								animationTimer.putAnimation("idle_princess", 88d, builder);
+						}
+						case "walk_princess", "run_princess" -> {
+                            animationTimer.putAnimation("idle_princess", 88d);
+                            return state.setAndContinue(IDLE);
+                        }
+						case "idle_princess_2" -> {
+							if (animationTimer.getDuration("idle_princess_2") <= 0) {
+								animationTimer.putAnimation("idle_princess", 88d);
+                                return state.setAndContinue(IDLE);
 							}
-							break;
+						}
 					}
 				}
 			}
-			controller.setAnimation(builder);
+
 			return PlayState.CONTINUE;
 		}));
 	}
 
-	@Override
-	public AnimationFactory getFactory(){
-		return animationFactory;
-	}
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
 
 	@Override
-	public boolean removeWhenFarAway(double distance){
+	public boolean removeWhenFarAway(double distance) {
 		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
-/*
-* Despawn if no knight is around
-
-private static final TargetingConditions KNIGHT_RANGE = TargetingConditions.forNonCombat().range(32);
-@Override
-public void checkDespawn() {
-	super.checkDespawn();
-
-	if (isRemoved() || hasCustomName()) return;
-
-	Entity entity1 = level.getNearestEntity(KnightEntity.class, KNIGHT_RANGE, this, getX(), getY(), getZ(), getBoundingBox().inflate(32));
-
-	if (entity1 == null) {
-		Entity entity = level.getNearestPlayer(this, -1.0D);
-		if (entity != null) {
-			double d0 = entity.distanceToSqr(this);
-			int i = getType().getCategory().getDespawnDistance();
-			if (d0 > (double) (i * 4)) {
-				discard();
-			}
-		}
-	}
-  }
-  */
+	private static final RawAnimation RUN = RawAnimation.begin().thenPlay("run_princess");
+	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk_princess");
+	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle_princess");
+	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_princess_2");
 }

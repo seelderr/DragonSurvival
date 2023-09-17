@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
@@ -16,17 +15,15 @@ import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import software.bernie.geckolib3.core.builder.Animation;
-import software.bernie.geckolib3.core.keyframe.BoneAnimation;
-import software.bernie.geckolib3.file.AnimationFile;
-import software.bernie.geckolib3.resource.GeckoLibCache;
-import software.bernie.shadowed.eliotlash.mclib.math.Constant;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
 public class EmoteRegistry{
@@ -77,81 +74,82 @@ public class EmoteRegistry{
 		}
 	}
 
+	// FIXME 1.20 :: ?
 	public static void initEmoteRotation(){
-		for(Emote emt : EMOTES){
-			if(emt.mirror != null && emt.animation != null){
-				AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(null));
-
-				if(animation != null){
-					Animation an = animation.getAnimation(emt.animation);
-
-					for(BoneAnimation bone : an.boneAnimations){
-						if(emt.mirror.xPos){
-							bone.positionKeyFrames.xKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.yPos){
-							bone.positionKeyFrames.yKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.zPos){
-							bone.positionKeyFrames.zKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.xRot){
-							bone.rotationKeyFrames.xKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.yRot){
-							bone.rotationKeyFrames.yKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.zRot){
-							bone.rotationKeyFrames.zKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.xScale){
-							bone.scaleKeyFrames.xKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.yScale){
-							bone.scaleKeyFrames.yKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-
-						if(emt.mirror.zScale){
-							bone.scaleKeyFrames.zKeyFrames.forEach(Frame -> {
-								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-							});
-						}
-					}
-				}
-			}
-		}
+//		for(Emote emt : EMOTES){
+//			if(emt.mirror != null && emt.animation != null){
+//				AnimationFile animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(null));
+//
+//				if(animation != null){
+//					Animation an = animation.getAnimation(emt.animation);
+//
+//					for(BoneAnimation bone : an.boneAnimations){
+//						if(emt.mirror.xPos){
+//							bone.positionKeyFrames.xKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.yPos){
+//							bone.positionKeyFrames.yKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.zPos){
+//							bone.positionKeyFrames.zKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.xRot){
+//							bone.rotationKeyFrames.xKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.yRot){
+//							bone.rotationKeyFrames.yKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.zRot){
+//							bone.rotationKeyFrames.zKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.xScale){
+//							bone.scaleKeyFrames.xKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.yScale){
+//							bone.scaleKeyFrames.yKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//
+//						if(emt.mirror.zScale){
+//							bone.scaleKeyFrames.zKeyFrames.forEach(Frame -> {
+//								Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
+//								Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
+//							});
+//						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 	@Mod.EventBusSubscriber( Dist.CLIENT )

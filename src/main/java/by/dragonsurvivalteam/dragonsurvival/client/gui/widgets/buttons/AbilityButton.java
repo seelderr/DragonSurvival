@@ -138,14 +138,17 @@ public class AbilityButton extends Button implements TooltipRender{
 			if (ability != null) {
 				FormattedText desc = ability.getDescription();
 
-				if (ability.getInfo().size() > 0) {
+				if (!ability.getInfo().isEmpty()) {
 					desc = FormattedText.composite(desc, Component.empty().append("\n\n"));
 				}
 
 				List<FormattedCharSequence> description = Minecraft.getInstance().font.split(desc, 143);
 				int yPos = getY() - description.size() * 7;
 
+				guiGraphics.pose().pushPose();
+				guiGraphics.pose().translate(0, 0, 300);
 				MagicDragonRender.drawAbilityHover(guiGraphics, getX() + width * 2, yPos, ability);
+				guiGraphics.pose().popPose();
 			}
 		}
 	}
