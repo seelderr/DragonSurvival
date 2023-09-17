@@ -53,14 +53,11 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			screen.handler.getSkinData().compileSkin();
 		});
 
-		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, Component.empty(), s -> {
-			hueSlider.setValue(0.0);
-
-		}){
+		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, Component.empty(), button -> hueSlider.setValue(0.0)) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(ResetSettingsButton.texture, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
+				guiGraphics.blit(ResetSettingsButton.texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
@@ -92,11 +89,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				if(visible){
-					isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
-					RenderingUtils.renderPureColorSquare(guiGraphics.pose(), x, y, width, height);
-
-					// TODO 1.20 :: Check
-//					renderBg(guiGraphics, Minecraft.getInstance(), mouseX, mouseY);
+					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
+					RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
 				}
 			}
 		};
@@ -121,40 +115,30 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				if(visible){
-					isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					float value1 = (hueSlider.getValueInt() + 180) / 360f;
 
-					guiGraphics.pose().pushPose();
 					int col1 = Color.getHSBColor(value1, 0f, 1f).getRGB();
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
-					// TODO :: Safe to do it like this?
-					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 200, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
-					guiGraphics.pose().translate(0, 0, 200);
-					// TODO 1.20 :: Check
-//					renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
-					guiGraphics.pose().popPose();
+					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 200, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
 				}
 			}
 		};
 
-		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, Component.empty(), s -> {
-			saturationSlider.setValue(0.0);
-		}){
+		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, Component.empty(), button -> saturationSlider.setValue(0.0)) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(ResetSettingsButton.texture, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
+				guiGraphics.blit(ResetSettingsButton.texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
-		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, Component.empty(), s -> {
-			brightnessSlider.setValue(0.0);
-		}){
+		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, Component.empty(), button -> brightnessSlider.setValue(0.0)) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(ResetSettingsButton.texture, x + 2, y + 2, 0, 0, 16, 16, 16, 16);
+				guiGraphics.blit(ResetSettingsButton.texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
@@ -178,19 +162,13 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				if(visible){
-					isHovered = mouseX >= x && mouseY >= y && mouseX < x + width && mouseY < y + height;
+					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					float value1 = (hueSlider.getValueInt() + 180) / 360f;
 
-					guiGraphics.pose().pushPose();
 					int col1 = Color.getHSBColor(value1, 1f, 0f).getRGB();
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
-					// TODO :: Safe to do it like this? (pushPose(), last().pos() etc.)
-					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 200, x, y, x + width, y + height, new int[]{col2, col1, col1, col2});
-					guiGraphics.pose().translate(0, 0, 200);
-					// TODO 1.20 :: Check
-//					renderBg(mStack, Minecraft.getInstance(), mouseX, mouseY);
-					guiGraphics.pose().popPose();
+					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 200, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
 				}
 			}
 		};
@@ -198,21 +176,23 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 	@Override
 	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
+		return visible && pMouseY >= (double) y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public @NotNull List<? extends GuiEventListener> children() {
 		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset, glowing);
 	}
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 500);
+		guiGraphics.pose().translate(0, 0, 300);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
 		guiGraphics.pose().popPose();
 
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 350);
 		glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
 		hueReset.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
@@ -222,5 +202,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		hueSlider.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		saturationSlider.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		brightnessSlider.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		guiGraphics.pose().popPose();
 	}
 }

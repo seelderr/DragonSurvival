@@ -82,35 +82,32 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	private void updateModifiers(double size, final Player player) {
 		if (isDragon()) {
-            // Grant the dragon attribute modifiers
+			// Grant the dragon attribute modifiers
 			AttributeModifier health = DragonModifiers.buildHealthMod(size);
 			DragonModifiers.updateHealthModifier(player, health);
 
-            AttributeModifier damage = DragonModifiers.buildDamageMod(this, isDragon());
+			AttributeModifier damage = DragonModifiers.buildDamageMod(this, isDragon());
 			DragonModifiers.updateDamageModifier(player, damage);
 
-            AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());
+			AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());
 			DragonModifiers.updateSwimSpeedModifier(player, swimSpeed);
 
-            AttributeModifier reach = DragonModifiers.buildReachMod(size);
+			AttributeModifier reach = DragonModifiers.buildReachMod(size);
 			DragonModifiers.updateBlockReachModifier(player, reach);
 			DragonModifiers.updateEntityReachModifier(player, reach);
 		} else {
-            // Remove the dragon attribute modifiers
-			AttributeInstance maxHealthAttribute = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
-			maxHealthAttribute.removeModifier(DragonModifiers.getHealthModifier(player));
+			// Remove the dragon attribute modifiers
+			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DragonModifiers.getDamageModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.SWIM_SPEED.get()), DragonModifiers.getSwimSpeedModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.BLOCK_REACH.get()), DragonModifiers.getBlockReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.ENTITY_REACH.get()), DragonModifiers.getEntityReachModifier(player));
+		}
+	}
 
-			AttributeInstance attackDamageAttribute = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
-			attackDamageAttribute.removeModifier(DragonModifiers.getDamageModifier(player));
-
-			AttributeInstance swimSpeedAttribute = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
-			swimSpeedAttribute.removeModifier(DragonModifiers.getSwimSpeedModifier(player));
-
-			AttributeInstance blockReachAttribute = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
-			blockReachAttribute.removeModifier(DragonModifiers.getBlockReachModifier(player));
-
-			AttributeInstance entityReachAttribute = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
-			entityReachAttribute.removeModifier(DragonModifiers.getBlockReachModifier(player));
+	private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final AttributeModifier modifier) {
+		if (attribute != null && modifier != null && attribute.hasModifier(modifier)) {
+			attribute.removeModifier(modifier);
 		}
 	}
 

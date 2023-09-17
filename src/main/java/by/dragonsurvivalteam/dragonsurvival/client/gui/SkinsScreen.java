@@ -97,17 +97,14 @@ public class SkinsScreen extends Screen{
 			return;
 		}
 
-		PoseStack stack = guiGraphics.pose();
-
-		stack.pushPose();
-		stack.translate(0F, 0F, -500);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0F, 0F, -500);
 		renderBackground(guiGraphics);
-		stack.popPose();
+		guiGraphics.pose().popPose();
 
 		int startX = guiLeft;
 		int startY = guiTop;
 
-		stack.pushPose();
 		final CoreGeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
@@ -126,7 +123,6 @@ public class SkinsScreen extends Screen{
 		}
 
 		float scale = zoom;
-		stack.scale(scale, scale, scale);
 
 		if(!loading){
 			handler.setHasWings(true);
@@ -142,17 +138,20 @@ public class SkinsScreen extends Screen{
 			}
 
 			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly";
-			stack.pushPose();
-			stack.translate(0, 0, 100);
+
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().scale(scale, scale, scale);
+			guiGraphics.pose().translate(0, 0, 100);
 			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
-			stack.popPose();
+			guiGraphics.pose().popPose();
 		}
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;
 
-		stack.popPose();
+		guiGraphics.pose().popPose();
 
-		stack.translate(0F, 0F, 400);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0F, 0F, 400);
 
 		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
@@ -173,8 +172,7 @@ public class SkinsScreen extends Screen{
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-		// TODO 1.20 :: Is this safe?
-		stack.translate(0F, 0F, -400f);
+		guiGraphics.pose().popPose();
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
@@ -353,7 +351,6 @@ public class SkinsScreen extends Screen{
 						seenSkins.remove(0);
 					}
 
-					//					executor.execute(() -> setTextures());
 					setTextures();
 				}
 			}

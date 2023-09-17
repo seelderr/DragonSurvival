@@ -95,8 +95,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 	@Override
 	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar) {
-//		animationData.shouldPlayWhilePaused = true;
-
 		for (int slot = 0; slot < EmoteCap.MAX_EMOTES; slot++) {
 			int finalSlot = slot;
 			registrar.add(new CustomTickAnimationController(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
@@ -412,6 +410,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
 		return cache;
+	}
+
+	@Override
+	public boolean shouldPlayAnimsWhileGamePaused() {
+		// Important to play animations inside menus (e.g. for fake player / dragons)
+		return true;
 	}
 
 	@Override

@@ -19,6 +19,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -27,8 +28,8 @@ import java.util.function.Supplier;
 
 @OnlyIn( Dist.CLIENT )
 public class FakeClientPlayer extends AbstractClientPlayer{
-	private static final ResourceLocation STEVE_SKIN_LOCATION = new ResourceLocation("textures/entity/steve.png");
-	private static final ResourceLocation ALEX_SKIN_LOCATION = new ResourceLocation("textures/entity/alex.png");
+	private static final ResourceLocation STEVE_SKIN_LOCATION = new ResourceLocation("textures/entity/player/slim/steve.png");
+	private static final ResourceLocation ALEX_SKIN_LOCATION = new ResourceLocation("textures/entity/player/slim/alex.png");
 	public DragonStateHandler handler = new DragonStateHandler();
 	public Supplier<String> animationSupplier = null;
 	public Long lastAccessed;
@@ -40,7 +41,7 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	}
 
 	@Override
-	public ResourceLocation getSkinTextureLocation(){
+	public @NotNull ResourceLocation getSkinTextureLocation(){
 		return number % 2 == 0 ? STEVE_SKIN_LOCATION : ALEX_SKIN_LOCATION;
 	}
 

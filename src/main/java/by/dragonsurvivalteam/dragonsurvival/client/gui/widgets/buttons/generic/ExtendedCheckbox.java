@@ -49,11 +49,12 @@ public class ExtendedCheckbox extends Checkbox{
 			float v = selected() ? height - 4 : 0.0F;
 
 			guiGraphics.blit(TEXTURE, getX() + 2, getY() + 2, u, v, renderWidth - 4, height - 4, (int)(72 * widthMod), (int)(72f * heightMod));
-//			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
-			// Insecure modification
 			MutableComponent message = Component.empty().append(getMessage());
-			if (active)
+
+			if (active) {
 				message = message.withStyle(ChatFormatting.DARK_GRAY);
+			}
+
 			guiGraphics.drawString(fontrenderer,  message, getX() + renderWidth + 2, getY() + (height - 8) / 2, 14737632);
 		}else{
 			float widthMod = renderWidth / 36f;
@@ -63,8 +64,6 @@ public class ExtendedCheckbox extends Checkbox{
 			float v = selected() ? height : 0.0F;
 
 			guiGraphics.blit(TEXTURE, getX(), getY(), u, v, renderWidth, height, (int)(72 * widthMod), (int)(72f * heightMod));
-//			renderBg(pMatrixStack, minecraft, pMouseX, pMouseY);
-
 			MutableComponent message = Component.empty().append(getMessage());
 
 			if (active) {

@@ -14,7 +14,7 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.util.RenderUtils;
 
-@Mixin(value = GeoModel.class, remap = false) // FIXME :: Adapts the previous `setCustomAnimations` fix (needs looking into why this is needed) (need to make DragonEntity not extend Entity?)
+@Mixin(value = GeoModel.class, remap = false) // FIXME :: Adopts the previous `setCustomAnimations` fix (needs looking into why this is needed) (need to make DragonEntity not extend Entity?)
 public abstract class MixinGeoModel<T extends GeoAnimatable> implements CoreGeoModel<T> {
     @Unique private T dragonSurvival$animatable;
     @Unique private long dragonSurvival$instanceId;

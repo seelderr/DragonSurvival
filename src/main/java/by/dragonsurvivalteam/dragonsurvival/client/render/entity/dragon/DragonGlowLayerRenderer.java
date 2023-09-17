@@ -36,7 +36,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		if (dragonRenderer.shouldRenderLayers) {
+		if (!dragonRenderer.shouldRenderLayers) {
 			return;
 		}
 

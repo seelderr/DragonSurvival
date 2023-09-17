@@ -48,11 +48,9 @@ public class ColorSelectorButton extends ExtendedButton{
 		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 		active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 
-		if(visible)
-			RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 100, getX() + 2, getY() + 2, getX() + xSize - 2, getY() + ySize - 2, new int[]{Color.red.getRGB(),
-			                                                                                                                Color.GREEN.getRGB(),
-			                                                                                                                Color.BLUE.getRGB(),
-			                                                                                                                Color.yellow.getRGB()});
+		if (visible) {
+			RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 100, getX() + 2, getY() + 2, getX() + xSize - 2, getY() + ySize - 2, new int[]{Color.red.getRGB(), Color.GREEN.getRGB(), Color.BLUE.getRGB(), Color.yellow.getRGB()});
+		}
 
 		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && (hueComponent == null || !hueComponent.isMouseOver(p_230430_2_, p_230430_3_)) && (colorComponent == null || !colorComponent.isMouseOver(p_230430_2_, p_230430_3_)))){
 			toggled = false;
@@ -68,7 +66,7 @@ public class ColorSelectorButton extends ExtendedButton{
 	}
 
 	@Override
-	public Component getMessage(){
+	public @NotNull Component getMessage(){
 		return Component.empty();
 	}
 
@@ -90,17 +88,22 @@ public class ColorSelectorButton extends ExtendedButton{
 				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
-					if(hueComponent != null && text.defaultColor == null){
+					guiGraphics.pose().pushPose();
+					guiGraphics.pose().translate(0, 0, 300);
+
+					if (hueComponent != null && text.defaultColor == null) {
 						hueComponent.visible = ColorSelectorButton.this.visible && text.defaultColor == null;
-						if(hueComponent.visible)
+						if (hueComponent.visible)
 							hueComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
 
-					if(colorComponent != null && text.defaultColor != null){
+					if (colorComponent != null && text.defaultColor != null) {
 						colorComponent.visible = ColorSelectorButton.this.visible && text.defaultColor != null;
-						if(colorComponent.visible)
+						if (colorComponent.visible)
 							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
+
+					guiGraphics.pose().popPose();
 				}
 			};
 

@@ -147,7 +147,6 @@ public class ResetSettingsButton extends Button {
 				active = !value.get().equals(ConfigHandler.defaultConfigValues.get(key));
 			}
 
-			Minecraft minecraft = Minecraft.getInstance();
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, alpha);
 			int i = /*getYImage(isHoveredOrFocused())*/ !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
 			RenderSystem.enableBlend();
@@ -155,8 +154,6 @@ public class ResetSettingsButton extends Button {
 			RenderSystem.enableDepthTest();
 			guiGraphics.blit(WIDGETS_LOCATION, getX(), getY(), 0, 46 + i * 20, width / 2, height);
 			guiGraphics.blit(WIDGETS_LOCATION, getX() + width / 2, getY(), 200 - width / 2, 46 + i * 20, width / 2, height);
-			// TODO 1.20 :: Check -> in 1.19.2 ExtendedButton / Button / AbstractButon did not implement it (and AbstractWidget had an empty method)
-//			renderBg(poseStack, minecraft, mouseX, mouseY);
 
 			guiGraphics.blit(texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 		}
