@@ -48,9 +48,4 @@ public class TextField extends EditBox /*implements TooltipAccessor*/ {
 		setX(getX() - 5);
 		setY(getY() - 6);
 	}
-
-	@Override
-	public Tooltip getTooltip(){
-		return Tooltip.create(Component.empty());
-	}
 }

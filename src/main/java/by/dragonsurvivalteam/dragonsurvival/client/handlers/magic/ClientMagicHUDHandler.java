@@ -70,7 +70,6 @@ public class ClientMagicHUDHandler{
 		int x = width / 2 - 91;
 
 		if(!ServerConfig.consumeEXPAsMana || !DragonUtils.isDragon(playerEntity)){
-			//Insecure modification
 			VanillaGuiOverlay.EXPERIENCE_BAR.type().overlay().render(gui, guiGraphics, partialTicks, width, height);
 			return;
 		}

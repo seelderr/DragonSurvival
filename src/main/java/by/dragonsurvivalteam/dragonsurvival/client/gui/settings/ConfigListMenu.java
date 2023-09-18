@@ -40,7 +40,6 @@ public class ConfigListMenu extends OptionsSubScreen {
 
 	private boolean isResouce = false;
 
-	// FIXME :: valueSpec and configKey seem to get the same value - why are there two fields for it?
 	public ConfigListMenu(final Screen screen, final Options options, final Component title, final ConfigValue<?> configValue, final ConfigSide side, final ConfigOption configOption) {
 		super(screen, options, title);
 		this.value = configValue;

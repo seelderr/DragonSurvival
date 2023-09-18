@@ -129,9 +129,12 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		}, Component.translatable("ds.gui.claws")) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				RenderSystem.disableDepthTest();
+//				RenderSystem.disableDepthTest();
+//				guiGraphics.pose().pushPose();
+//				guiGraphics.pose().translate(0, 0, 350);
 				guiGraphics.blit(DRAGON_CLAW_BUTTON, getX(), getY(), 0, 0, 11, 11, 11, 11);
-				RenderSystem.enableDepthTest();
+//				guiGraphics.pose().popPose();
+//				RenderSystem.enableDepthTest();
 			}
 		});
 

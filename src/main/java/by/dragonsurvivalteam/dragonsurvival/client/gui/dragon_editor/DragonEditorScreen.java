@@ -24,6 +24,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipUtils;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -51,6 +52,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.nbt.CompoundTag;
@@ -457,6 +459,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
 		}
 
+		// Slider to change the size
 		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, Component.translatable("ds.gui.dragon_editor.size"), Component.empty().append("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
 			@Override
 			protected void applyValue(){
@@ -480,8 +483,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
+				if (TooltipUtils.needsTooltip(this)) {
+					setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.size_info")));
 				}
 			}
 		});
@@ -549,7 +552,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 								active = visible = false;
 
 								if(conf != null && confirmation){
+									guiGraphics.pose().pushPose();
+									// To render above the dragon
+									guiGraphics.pose().translate(0, 0, 400);
 									conf.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
+									guiGraphics.pose().popPose();
 								}
 							}
 						};

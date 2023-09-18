@@ -76,7 +76,7 @@ public class BackgroundColorButton extends ExtendedButton{
 			guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), 0, 0, width, height, 32, 32, 10, 10, 10, 10);
 			guiGraphics.blit(BUTTON_TEXTURE, getX() + 3, getY() + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 
-			if (isHoveredOrFocused()) {
+			if (isHovered()) {
 				guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.background_color"), mouseX, mouseY);
 			}
 		}

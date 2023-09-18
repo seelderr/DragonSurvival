@@ -133,7 +133,6 @@ public class AbilityButton extends Button implements TooltipRender{
 			}
 		}
 
-		// TODO 1.20 :: Check
 		if (isHovered()) {
 			if (ability != null) {
 				FormattedText desc = ability.getDescription();

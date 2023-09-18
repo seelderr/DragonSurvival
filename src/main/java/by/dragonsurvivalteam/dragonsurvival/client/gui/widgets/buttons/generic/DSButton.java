@@ -1,51 +1,39 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.MouseTooltipPositioner;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class DSButton extends ExtendedButton implements TooltipRender{
-
+public class DSButton extends ExtendedButton implements TooltipRender {
 	public Component[] tooltips;
 
-	public DSButton(int pX, int pY, int pWidth, int pHeight, OnPress pOnPress){
-		super(pX, pY, pWidth, pHeight, Component.empty(), pOnPress);
+	public DSButton(int x, int y, int width, int height, final OnPress onPress, final Component... tooltip) {
+		this(x, y, width, height, Component.empty(), onPress, tooltip);
 	}
 
-	public DSButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, OnPress pOnPress){
-		super(pX, pY, pWidth, pHeight, pMessage, pOnPress);
+	public DSButton(int x, int y, int width, int height, final Component message, final OnPress onPress, final Component... tooltip) {
+		super(x, y, width, height, message, onPress);
+		setCustomTooltip(tooltip);
 	}
 
-	public DSButton(int pX, int pY, int pWidth, int pHeight){
-		super(pX, pY, pWidth, pHeight, Component.empty(), t -> {});
-	}
+	public void setCustomTooltip(final Component... tooltip) {
+		this.tooltips = tooltip;
+		MutableComponent base = Component.empty();
 
-	public DSButton(int pX, int pY, int pWidth, int pHeight, OnPress pOnPress, Component... tooltip){
-		super(pX, pY, pWidth, pHeight, Component.empty(), pOnPress);
-		tooltips = tooltip;
-	}
+		for (Component element : tooltip) {
+			base.append(element);
+		}
 
-	public DSButton(int pX, int pY, int pWidth, int pHeight, Component pMessage, OnPress pOnPress, Component... tooltip){
-		super(pX, pY, pWidth, pHeight, pMessage, pOnPress);
-		tooltips = tooltip;
-	}
-
-	public DSButton(int pX, int pY, int pWidth, int pHeight, Component... tooltip){
-		super(pX, pY, pWidth, pHeight, Component.empty(), t -> {});
-		tooltips = tooltip;
+		setTooltip(Tooltip.create(base));
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
-
-		if (isHoveredOrFocused()) {
-			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(tooltips), pMouseX, pMouseY);
-		}
+	protected @NotNull ClientTooltipPositioner createTooltipPositioner() {
+		return new MouseTooltipPositioner(this);
 	}
 }

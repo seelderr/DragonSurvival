@@ -4,29 +4,28 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.Te
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.util.FormattedCharSequence;
+import net.minecraft.client.gui.components.Tooltip;
 
-import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public class DSNumberFieldOption extends Option {
 	private final Function<Options, Number> getter;
 	private final BiConsumer<Options, Number> setter;
-	private final Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier;
+	private final Tooltip tooltip;
 
 	private final Number min;
 	private final Number max;
 	private final boolean hasDecimals;
 
-	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier, boolean hasDecimals) {
+	public DSNumberFieldOption(String key, Number min, Number max, Function<Options, Number> getter, BiConsumer<Options, Number> setter, final Tooltip tooltip, boolean hasDecimals) {
 		super(key);
 		this.getter = getter;
 		this.setter = setter;
 		this.min = min;
 		this.max = max;
 		this.hasDecimals = hasDecimals;
-		this.tooltipSupplier = tooltipSupplier;
+		this.tooltip = tooltip;
 	}
 
 	@Override
@@ -69,7 +68,8 @@ public class DSNumberFieldOption extends Option {
 			}
 		};
 
-		widget.tooltip = tooltipSupplier.apply(Minecraft.getInstance());
+		widget.setTooltip(tooltip);
+
 		widget.setFilter(text -> {
 			if (text.isEmpty()) {
 				return true;

@@ -1,19 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets;
 
-import com.google.common.collect.ImmutableList;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 @OnlyIn(Dist.CLIENT)
 public class ProgressOption extends Option {
@@ -23,9 +20,9 @@ public class ProgressOption extends Option {
     private final Function<Options, Double> getter;
     private final BiConsumer<Options, Double> setter;
     private final BiFunction<Options, ProgressOption, Component> toString;
-    private final Function<Minecraft, List<FormattedCharSequence>> tooltipSupplier;
+    private final Tooltip tooltip;
 
-    public ProgressOption(String pCaptionKey, double pMinValue, double pMaxValue, float pSteps, Function<Options, Double> pGetter, BiConsumer<Options, Double> pSetter, BiFunction<Options, ProgressOption, Component> pToString, Function<Minecraft, List<FormattedCharSequence>> pTooltipSupplier) {
+    public ProgressOption(String pCaptionKey, double pMinValue, double pMaxValue, float pSteps, Function<Options, Double> pGetter, BiConsumer<Options, Double> pSetter, BiFunction<Options, ProgressOption, Component> pToString, final Tooltip tooltip) {
         super(pCaptionKey);
         this.minValue = pMinValue;
         this.maxValue = pMaxValue;
@@ -33,18 +30,11 @@ public class ProgressOption extends Option {
         this.getter = pGetter;
         this.setter = pSetter;
         this.toString = pToString;
-        this.tooltipSupplier = pTooltipSupplier;
-    }
-
-    public ProgressOption(String pCaptionKey, double pMinValue, double pMaxValue, float pSteps, Function<Options, Double> pGetter, BiConsumer<Options, Double> pSetter, BiFunction<Options, ProgressOption, Component> pToString) {
-        this(pCaptionKey, pMinValue, pMaxValue, pSteps, pGetter, pSetter, pToString, (p_168549_) -> {
-            return ImmutableList.of();
-        });
+        this.tooltip = tooltip;
     }
 
     public AbstractWidget createButton(Options pOptions, int pX, int pY, int pWidth) {
-        List<FormattedCharSequence> list = this.tooltipSupplier.apply(Minecraft.getInstance());
-        return new SliderButton(pOptions, pX, pY, pWidth, 20, this, list);
+        return new SliderButton(pOptions, pX, pY, pWidth, 20, this, tooltip);
     }
 
     public double toPct(double pValue) {

@@ -23,10 +23,12 @@ public class ForgeDataGen {
 		DataGenerator generator = event.getGenerator();
 		ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
 
+		// Client
 		generator.addProvider(event.includeClient(), new DataBlockStateProvider(generator.getPackOutput(), DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeClient(), new DataItemModelProvider(generator.getPackOutput(), DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(generator.getPackOutput(), existingFileHelper, DragonSurvivalMod.MODID));
 
+		// Server
 		Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.keySet().stream().map(key -> new ResourceLocation(DragonSurvivalMod.MODID, "blocks/" + key)).collect(Collectors.toSet());
 		generator.addProvider(event.includeServer(), new DataLootTableProvider(generator.getPackOutput(), blocks, List.of(new LootTableProvider.SubProviderEntry(BlockLootTableSubProvider::new, LootContextParamSets.BLOCK))));
 
@@ -34,6 +36,6 @@ public class ForgeDataGen {
 		generator.addProvider(event.includeServer(), blockTagsProvider);
 
 		generator.addProvider(event.includeServer(), new DataItemTagProvider(generator.getPackOutput(), event.getLookupProvider(), blockTagsProvider.contentsGetter(), DragonSurvivalMod.MODID, existingFileHelper));
-
+		generator.addProvider(event.includeServer(), new DSRegistryProvider(generator.getPackOutput(), event.getLookupProvider()));
 	}
 }

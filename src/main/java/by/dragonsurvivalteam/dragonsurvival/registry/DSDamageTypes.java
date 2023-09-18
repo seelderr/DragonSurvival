@@ -26,9 +26,9 @@ public class DSDamageTypes {
 		context.register(WATER_BURN, new DamageType("dragonsurvival.water_burn", 0.1F));
 		context.register(RAIN_BURN, new DamageType("dragonsurvival.rain_burn", 0.1F));
 		context.register(DEHYDRATION, new DamageType("dragonsurvival.dehydration", 0.1F));
-		context.register(DRAGON_BREATH, new DamageType("dragonsurvival.dragon_breath", 0.1F));
+		context.register(DRAGON_BREATH, new DamageType("dragonsurvival.dragon_breath", 0.1F)); // TODO :: Split per dragon type?
 		context.register(FOREST_DRAGON_DRAIN, new DamageType("dragonsurvival.forest_dragon_drain", 0.1F));
-		context.register(FOREST_DRAGON_DRAIN, new DamageType("dragonsurvival.cave_dragon_burn", 0.1F));
+		context.register(CAVE_DRAGON_BURN, new DamageType("dragonsurvival.cave_dragon_burn", 0.1F));
 	}
 
 	public static DamageSource damageSource(final Level level, final ResourceKey<DamageType> damageType) {

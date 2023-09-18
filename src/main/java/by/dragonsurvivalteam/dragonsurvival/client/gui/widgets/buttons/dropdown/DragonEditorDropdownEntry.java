@@ -36,12 +36,12 @@ public class DragonEditorDropdownEntry extends DropdownEntry {
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public @NotNull List<? extends GuiEventListener> children(){
 		return children;
 	}
 
 	@Override
-	public List<? extends NarratableEntry> narratables(){
+	public @NotNull List<? extends NarratableEntry> narratables(){
 		return children;
 	}
 }

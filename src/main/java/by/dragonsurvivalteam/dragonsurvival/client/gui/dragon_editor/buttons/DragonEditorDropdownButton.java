@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
@@ -100,7 +99,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			}
 
 			boolean hasBorder = false;
-			if(screen.children.size() > 0){
+			if(!screen.children.isEmpty()){
 				screen.children.add(0, list);
 				screen.children.add(list);
 
@@ -128,6 +127,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 					}
 
 					if(list.visible){
+						// TODO :: What does this render exactly? Disabling it doesn't seem to change anything
 						list.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
 

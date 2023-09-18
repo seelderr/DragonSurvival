@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
 
-import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
@@ -13,7 +12,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ConfigUtils{
+public class ConfigUtils{ // FIXME :: Unused
 
 	public static boolean containsEntity(List<? extends String> values, Entity entity){
 		String type = entity.getEncodeId();

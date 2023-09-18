@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.CategoryEnt
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionListEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
+import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipUtils;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -26,7 +27,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.CycleButton.Builder;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -221,10 +221,10 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 						    options -> hasDecimals ? getter.apply(options).doubleValue() : getter.apply(options).intValue(),
 						    setter::accept,
 						    (settings, slider) -> Component.literal(numberFunction.apply(checkType, slider.get(settings)) + ""),
-						    minecraft -> minecraft.font.split(tooltip, 200)
+						    TooltipUtils.createTooltip(tooltip, 200)
 					);
 				} else {
-					option = new DSNumberFieldOption(name, min, max, getter, setter, minecraft -> Minecraft.getInstance().font.split(tooltip, 200), hasDecimals);
+					option = new DSNumberFieldOption(name, min, max, getter, setter, TooltipUtils.createTooltip(tooltip, 200), hasDecimals);
 				}
 
 				OptionsList.configMap.put(option, key);
@@ -241,7 +241,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
                                 .withStyle(ChatFormatting.GREEN), ((MutableComponent) CommonComponents.OPTION_OFF)
                                 .withStyle(ChatFormatting.RED))
                         .displayOnlyValue())
-                        .setTooltip(minecraft -> ignored -> Tooltip.create(Component.literal(minecraft.font.split(tooltip, 200).toString()))); // TODO 1.20 :: Check
+                        .setTooltip(minecraft -> ignored -> TooltipUtils.createTooltip(tooltip, 200));
 				OptionsList.configMap.put(option, key);
 				addOption(category, name, option);
 			} else if (checkType.isEnum()) {
@@ -261,7 +261,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 						if (screenSide() == ConfigSide.SERVER) {
 							NetworkHandler.CHANNEL.sendToServer(new SyncEnumConfig(ConfigHandler.createConfigPath(configOption), enumValue));
 						}
-					}, minecraft -> minecraft.font.split(tooltip, 200));
+					}, TooltipUtils.createTooltip(tooltip, 200));
 
 					OptionsList.configMap.put(option, key);
 					addOption(category, name, option);
@@ -286,7 +286,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 							name,
                             options -> text,
                             (val1, val2, val3) -> minecraft.setScreen(new ConfigListMenu(this, minecraft.options, Component.literal(name), configValue, screenSide(), configOption)),
-                            () -> new Builder<String>(ignored -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(minecraft -> ignored -> Tooltip.create(Component.literal(minecraft.font.split(tooltip, 200).toString()))); // TODO 1.20 :: Check
+                            () -> new Builder<String>(ignored -> Component.literal(text)).displayOnlyValue().withValues(text).withInitialValue(text)).setTooltip(minecraft -> ignored -> TooltipUtils.createTooltip(tooltip, 200));
 
 					OptionsList.configMap.put(option, key);
 					addOption(category, name, option);
@@ -330,12 +330,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 		// Renders default buttons (e.g. `Done`)
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-		setTooltipForNextRenderPass(tooltipAt(this.list, mouseX, mouseY));
-
-		// TODO :: Check
-//		if (list != null) {
-//			renderTooltip(poseStack, list, mouseX, mouseY);
-//		}
+		setTooltipForNextRenderPass(tooltipAt(this.list, mouseX, mouseY)); // TODO 1.20 :: Check - mouse positioner?
 	}
 
 	public static List<FormattedCharSequence> tooltipAt(final OptionsList options, int mouseX, int mouseY) {
@@ -351,17 +346,5 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 		}
 
 		return ImmutableList.of();
-
-//		if (optional.isEmpty() || !(optional.get() instanceof TooltipAccessor)) {
-//			if (entry instanceof OptionEntry optionEntry) {
-//				optional = Optional.of(optionEntry.widget);
-//			}
-//		}
-//
-//		if (optional.isPresent() && optional.get() instanceof TooltipAccessor tooltipAccessor && optional.get().visible && !optional.get().isHoveredOrFocused()) {
-//			return tooltipAccessor.getTooltip();
-//		} else {
-//			return ImmutableList.of();
-//		}
 	}
 }

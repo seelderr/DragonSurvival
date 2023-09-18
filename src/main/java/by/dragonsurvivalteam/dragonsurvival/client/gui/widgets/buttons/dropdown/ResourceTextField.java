@@ -14,7 +14,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.SharedSuggestionProvider;
@@ -436,10 +435,5 @@ public class ResourceTextField extends EditBox /*implements TooltipAccessor*/ {
 
 		setX(getX() - 25);
 		setY(getY() - 6);
-	}
-
-	@Override
-	public Tooltip getTooltip() {
-		return Tooltip.create(Component.empty());
 	}
 }

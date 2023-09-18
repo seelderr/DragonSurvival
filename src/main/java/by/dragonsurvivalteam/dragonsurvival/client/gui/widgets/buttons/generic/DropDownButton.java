@@ -50,6 +50,7 @@ public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*
 	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 
+		// TODO :: Is this safe?
 		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && !list.isMouseOver(p_230430_2_, p_230430_3_))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
@@ -90,7 +91,7 @@ public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*
 
 
 	@Override
-	public Component getMessage(){
+	public @NotNull Component getMessage(){
 		return message;
 	}
 
