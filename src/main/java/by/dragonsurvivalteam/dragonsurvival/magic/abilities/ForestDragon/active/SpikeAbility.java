@@ -149,7 +149,7 @@ public class SpikeAbility extends InstantCastAbility{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		handler.getMovementData().bite = true;
 
-		DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE, player.level(), player);
+		DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE.get(), player.level(), player);
 		entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
 		entity.setArrow_level(getLevel());
 		entity.setBaseDamage(getDamage());

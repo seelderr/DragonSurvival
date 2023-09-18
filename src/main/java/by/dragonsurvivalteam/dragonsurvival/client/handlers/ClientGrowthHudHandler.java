@@ -80,13 +80,9 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
 			Color c = new Color(99, 99, 99);
 
-			// TODO 1.20 :: Check
-//			RenderSystem.disableTexture();
-
 			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
 
-//			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 

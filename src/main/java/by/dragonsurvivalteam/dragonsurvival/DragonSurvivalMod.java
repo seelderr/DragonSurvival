@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandle
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.common.MinecraftForge;
@@ -51,6 +52,7 @@ public class DragonSurvivalMod{
 		// TODO :: Move to clientSetup?
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
+		DSEntities.ENTITY_TYPES.register(modEventBus);
 
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());

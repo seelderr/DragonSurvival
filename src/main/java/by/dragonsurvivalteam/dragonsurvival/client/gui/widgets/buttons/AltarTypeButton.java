@@ -87,7 +87,6 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 	@Override
 	protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		// TODO 1.20 :: Check and potentially optimize
 		atTheTopOrBottom = mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153;
 
 		if (isHovered() && atTheTopOrBottom) {

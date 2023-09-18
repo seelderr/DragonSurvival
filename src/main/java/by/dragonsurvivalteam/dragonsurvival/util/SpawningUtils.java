@@ -32,7 +32,7 @@ public class SpawningUtils
 			double zRandom = player.getZ() + Mth.floor(Mth.sin(f) * distance * i) + player.getRandom().nextInt(5);
 			int y = player.level().getHeight(Types.WORLD_SURFACE, (int)xRandom, (int)zRandom);
 			blockpos$mutable.set(xRandom, y, zRandom);
-			if(player.level().hasChunksAt(blockpos$mutable.getX() - 10, blockpos$mutable.getY() - 10, blockpos$mutable.getZ() - 10, blockpos$mutable.getX() + 10, blockpos$mutable.getY() + 10, blockpos$mutable.getZ() + 10) && (NaturalSpawner.canSpawnAtBody(Type.ON_GROUND, player.level(), blockpos$mutable, DSEntities.HUNTER_HOUND) || player.level().getBlockState(blockpos$mutable).is(
+			if(player.level().hasChunksAt(blockpos$mutable.getX() - 10, blockpos$mutable.getY() - 10, blockpos$mutable.getZ() - 10, blockpos$mutable.getX() + 10, blockpos$mutable.getY() + 10, blockpos$mutable.getZ() + 10) && (NaturalSpawner.canSpawnAtBody(Type.ON_GROUND, player.level(), blockpos$mutable, DSEntities.HUNTER_HOUND.get()) || player.level().getBlockState(blockpos$mutable).is(
 					Blocks.SNOW) && player.level().getBlockState(blockpos$mutable).isAir()))
 				return blockpos$mutable;
 		}

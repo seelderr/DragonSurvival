@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.Registry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -70,8 +69,8 @@ public class DSItems{
 		elderDragonDust = registerItem(event, "elder_dragon_dust", "ds.description.elderDragonDust");
 		elderDragonBone = registerItem(event, "elder_dragon_bone", "ds.description.elderDragonBone");
 
-     	princeSummon = registerItem(event, new RoyalSummonItem(() -> DSEntities.PRINCE_ON_HORSE, defaultProperties), "prince_summon");
-		princessSummon = registerItem(event, new RoyalSummonItem(() -> DSEntities.PRINCESS_ON_HORSE, defaultProperties), "princess_summon");
+     	princeSummon = registerItem(event, new RoyalSummonItem(DSEntities.castToMob(DSEntities.PRINCE_ON_HORSE), defaultProperties), "prince_summon");
+		princessSummon = registerItem(event, new RoyalSummonItem(DSEntities.castToMob(DSEntities.PRINCESS_ON_HORSE), defaultProperties), "princess_summon");
 
 		dragonHeartShard = registerItem(event, "heart_element", "ds.description.heartElement");
 		weakDragonHeart = registerItem(event, "weak_dragon_heart", "ds.description.weakDragonHeart");

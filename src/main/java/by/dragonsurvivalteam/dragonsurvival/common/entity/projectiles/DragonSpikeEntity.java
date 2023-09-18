@@ -17,7 +17,6 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -31,7 +30,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 	public static final EntityDataAccessor<Integer> ARROW_LEVEL = SynchedEntityData.defineId(DragonSpikeEntity.class, EntityDataSerializers.INT);
 
 	public DragonSpikeEntity(Level p_i50172_2_){
-		super(DSEntities.DRAGON_SPIKE, p_i50172_2_);
+		super(DSEntities.DRAGON_SPIKE.get(), p_i50172_2_);
 	}
 
 	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level worldIn){

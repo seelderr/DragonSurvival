@@ -330,7 +330,7 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 		// Renders default buttons (e.g. `Done`)
 		super.render(guiGraphics, mouseX, mouseY, partialTicks);
 
-		setTooltipForNextRenderPass(tooltipAt(this.list, mouseX, mouseY)); // TODO 1.20 :: Check - mouse positioner?
+		setTooltipForNextRenderPass(tooltipAt(this.list, mouseX, mouseY));
 	}
 
 	public static List<FormattedCharSequence> tooltipAt(final OptionsList options, int mouseX, int mouseY) {

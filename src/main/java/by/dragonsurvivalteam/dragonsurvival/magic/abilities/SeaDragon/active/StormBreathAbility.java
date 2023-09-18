@@ -324,7 +324,7 @@ public class StormBreathAbility extends BreathAbility{
 
 
 	@Override
-	@OnlyIn( Dist.CLIENT ) // FIXME :: dist
+	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
 		list.add(Component.translatable("ds.skill.damage", "+" + stormBreathDamage));
@@ -347,7 +347,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 
-	@OnlyIn( Dist.CLIENT ) // FIXME :: dist
+	@OnlyIn( Dist.CLIENT )
 	public void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
@@ -470,7 +470,7 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public void castComplete(Player player){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound); // FIXME :: dist
+		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
 	}
 
 	@Override

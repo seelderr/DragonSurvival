@@ -21,7 +21,7 @@ import java.util.List;
 
 public class FireBallEntity extends DragonBallEntity{
 	public FireBallEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
-		super(DSEntities.FIREBALL, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
+		super(DSEntities.FIREBALL.get(), p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
 
 	public FireBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){

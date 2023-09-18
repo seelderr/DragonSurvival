@@ -27,7 +27,7 @@ public class FakeClientPlayerUtils {
 	public static DragonEntity getFakeDragon(int index, final DragonStateHandler handler) {
 		FakeClientPlayer clientPlayer = getFakePlayer(index, handler);
 
-		FAKE_DRAGONS.computeIfAbsent(index, key -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level()) {
+		FAKE_DRAGONS.computeIfAbsent(index, key -> new DragonEntity(DSEntities.DRAGON.get(), clientPlayer.level()) {
 			@Override
 			public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
 				controllers.add(new AnimationController<DragonEntity>(this, "fake_player_controller", 2, state -> {

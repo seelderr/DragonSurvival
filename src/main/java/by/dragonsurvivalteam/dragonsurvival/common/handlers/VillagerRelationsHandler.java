@@ -47,10 +47,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Supplier;
 
 @Mod.EventBusSubscriber
 public class VillagerRelationsHandler{
-	public static List<? extends EntityType<? extends PathfinderMob>> dragonHunters;
+	public static List<Supplier<EntityType<? extends PathfinderMob>>> dragonHunters;
 
 	private static int timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
 
@@ -226,7 +227,7 @@ public class VillagerRelationsHandler{
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
 								for(int i = 0; i < levelOfEvil; i++){
-									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverLevel.random.nextInt(dragonHunters.size())).create(serverLevel)), spawnPosition, serverLevel);
+									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverLevel.random.nextInt(dragonHunters.size())).get().create(serverLevel)), spawnPosition, serverLevel);
 								}
 								if(serverLevel.isCloseToVillage(player.blockPosition(), 3)){
 									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
@@ -325,7 +326,7 @@ public class VillagerRelationsHandler{
 								if (serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_WATER)) {
 									return;
 								}
-								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE : DSEntities.PRINCE_ON_HORSE;
+								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE.get() : DSEntities.PRINCE_ON_HORSE.get();
 								PrincesHorseEntity princessEntity = entityType.create(world);
 								princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 								princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
@@ -333,7 +334,7 @@ public class VillagerRelationsHandler{
 
 								int knights = world.random.nextInt(3) + 3;
 								for(int i = 0; i < knights; i++){
-									KnightEntity knightHunter = DSEntities.KNIGHT.create(serverWorld);
+									KnightEntity knightHunter = DSEntities.KNIGHT.get().create(serverWorld);
 									knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 									knightHunter.goalSelector.addGoal(5, new FollowMobGoal(PrincesHorseEntity.class, knightHunter, 8));
 									knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);

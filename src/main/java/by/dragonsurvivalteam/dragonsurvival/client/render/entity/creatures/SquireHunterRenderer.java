@@ -7,20 +7,15 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
-import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
-
 
 public class SquireHunterRenderer extends MobRenderer<SquireEntity, HunterModel<SquireEntity>>{
 	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_squire.png");
 
 	public SquireHunterRenderer(EntityRendererProvider.Context rendererManager){
-		// Insecure modification
 		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
 		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
-		// addLayer(new ItemInHandLayer<>(this));
 	}
-
 
 	@Override
 	public ResourceLocation getTextureLocation(SquireEntity squireHunter){

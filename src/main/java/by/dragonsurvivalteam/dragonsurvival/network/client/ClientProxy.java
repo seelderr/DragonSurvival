@@ -328,7 +328,7 @@ public class ClientProxy {
 
                 // Refresh instances
                 if (player != localPlayer) {
-                    DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level());
+                    DragonEntity dragon = DSEntities.DRAGON.get().create(localPlayer.level());
                     dragon.playerId = player.getId();
                     ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
                 }
@@ -370,7 +370,7 @@ public class ClientProxy {
     public static void handleRefreshDragons(final RefreshDragons message) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-        ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(localPlayer.level());
+        ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(localPlayer.level());
 
         if (ClientDragonRender.dragonArmor != null) {
             ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
@@ -379,7 +379,7 @@ public class ClientProxy {
         Entity entity = localPlayer.level().getEntity(message.playerId);
 
         if (entity instanceof Player player) {
-            DragonEntity dragon = DSEntities.DRAGON.create(localPlayer.level());
+            DragonEntity dragon = DSEntities.DRAGON.get().create(localPlayer.level());
             dragon.playerId = player.getId();
             ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
         }

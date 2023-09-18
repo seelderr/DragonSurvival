@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SourceOfMagicScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
@@ -18,7 +17,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.HelmetEntityRen
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BolasEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
@@ -30,11 +28,9 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -42,24 +38,6 @@ import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 @Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
 public class ClientModEvents{
-
-	@SubscribeEvent
-	public static void onTextureStitchEvent(TextureStitchEvent event){
-		if (event.getAtlas().location() == TextureAtlas.LOCATION_BLOCKS) {
-			// TODO 1.20 :: texture atlas json...? SpriteSourceProvider datagen?
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"));
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"));
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"));
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind_vertical"));
-//
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe"));
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe"));
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel"));
-//			event.addSprite(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword"));
-		}
-
-		DragonSurvivalMod.LOGGER.info("Successfully added sprites!");
-	}
 	@SubscribeEvent
 	public static void setup(FMLClientSetupEvent event)
 	{
@@ -82,14 +60,14 @@ public class ClientModEvents{
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.birchSmallDoor, RenderType.cutout());
 		ItemBlockRenderTypes.setRenderLayer(DSBlocks.acaciaSmallDoor, RenderType.cutout());
 
-		EntityRenderers.register(DSEntities.DRAGON_SPIKE, DragonSpikeRenderer::new);
+		EntityRenderers.register(DSEntities.DRAGON_SPIKE.get(), DragonSpikeRenderer::new);
 
-		EntityRenderers.register(DSEntities.BOLAS_ENTITY, BolasEntityRenderer::new);
+//		EntityRenderers.register(DSEntities.BOLAS_ENTITY.get(), BolasEntityRenderer::new);
 
-		EntityRenderers.register(DSEntities.PRINCESS, PrincessRenderer::new);
-		EntityRenderers.register(DSEntities.HUNTER_HOUND, HunterHoundRenderer::new);
-		EntityRenderers.register(DSEntities.SHOOTER_HUNTER, ShooterHunterRenderer::new);
-		EntityRenderers.register(DSEntities.SQUIRE_HUNTER, SquireHunterRenderer::new);
+		EntityRenderers.register(DSEntities.PRINCESS.get(), PrincessRenderer::new);
+		EntityRenderers.register(DSEntities.HUNTER_HOUND.get(), HunterHoundRenderer::new);
+		EntityRenderers.register(DSEntities.SHOOTER_HUNTER.get(), ShooterHunterRenderer::new);
+		EntityRenderers.register(DSEntities.SQUIRE_HUNTER.get(), SquireHunterRenderer::new);
 
 		BlockEntityRenderers.register(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
 		BlockEntityRenderers.register(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
@@ -100,14 +78,14 @@ public class ClientModEvents{
 		MenuScreens.register(DSContainers.dragonContainer, DragonScreen::new);
 
 		//Gecko renderers
-		EntityRenderers.register(DSEntities.BALL_LIGHTNING, manager -> new BallLightningRenderer(manager, new LightningBallModel()));
-		EntityRenderers.register(DSEntities.FIREBALL, manager -> new FireBallRenderer(manager, new FireballModel()));
+		EntityRenderers.register(DSEntities.BALL_LIGHTNING.get(), manager -> new BallLightningRenderer(manager, new LightningBallModel()));
+		EntityRenderers.register(DSEntities.FIREBALL.get(), manager -> new FireBallRenderer(manager, new FireballModel()));
 
-		EntityRenderers.register(DSEntities.DRAGON, manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
-		EntityRenderers.register(DSEntities.DRAGON_ARMOR, manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
-		EntityRenderers.register(DSEntities.KNIGHT, manager -> new KnightRenderer(manager, new KnightModel()));
-		EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE, manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
-		EntityRenderers.register(DSEntities.PRINCE_ON_HORSE, manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
+		EntityRenderers.register(DSEntities.DRAGON.get(), manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
+		EntityRenderers.register(DSEntities.DRAGON_ARMOR.get(), manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
+		EntityRenderers.register(DSEntities.KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));
+		EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE.get(), manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
+		EntityRenderers.register(DSEntities.PRINCE_ON_HORSE.get(), manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
 	}
 
 	@SubscribeEvent

@@ -9,9 +9,10 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 
 import java.util.List;
-import java.util.Objects;
 
 public class TooltipUtils {
+    private static final String EMPTY = Component.empty().getString();
+
     public static Tooltip createTooltip(final Component tooltip, int maxWidth) {
         List<FormattedText> formattedTexts = Minecraft.getInstance().font.getSplitter().splitLines(tooltip, maxWidth, Style.EMPTY);
         MutableComponent base = Component.empty();
@@ -31,6 +32,6 @@ public class TooltipUtils {
         }
 
         Component message = tooltip.message;
-        return message == null || Objects.equals(message, Component.empty());
+        return message == null || message.getString().equals(EMPTY);
     }
 }

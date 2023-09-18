@@ -15,7 +15,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Objects;
 
-public abstract class DragonAbility { // FIXME :: dist
+public abstract class DragonAbility {
 	protected static NumberFormat nf = NumberFormat.getInstance();
 
 	public Player player;

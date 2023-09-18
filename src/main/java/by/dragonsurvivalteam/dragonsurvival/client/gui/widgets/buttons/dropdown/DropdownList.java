@@ -98,7 +98,6 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		int k1 = getMaxScroll();
 
 		if (k1 > 0) {
-//			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			int l1 = (int) ((float) ((y1 - y0) * (y1 - y0)) / (float) getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, y1 - y0 - 8);
@@ -124,7 +123,6 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		}
 
 		renderDecorations(guiGraphics, mouseX, mouseY);
-//		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
 

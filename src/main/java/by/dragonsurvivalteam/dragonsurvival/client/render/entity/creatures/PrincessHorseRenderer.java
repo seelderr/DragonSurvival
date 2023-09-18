@@ -14,6 +14,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 public class PrincessHorseRenderer extends GeoEntityRenderer<PrincesHorseEntity> {
 	public PrincessHorseRenderer(final EntityRendererProvider.Context context, final GeoModel<PrincesHorseEntity> model) {
 		super(context, model);
+		getRenderLayers().add(new CustomBlockAndItemGeoLayer<>(this));
 	}
 
 	@Override

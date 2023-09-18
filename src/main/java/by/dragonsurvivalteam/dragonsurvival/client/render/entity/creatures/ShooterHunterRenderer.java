@@ -7,22 +7,19 @@ import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
-import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
-
-public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shooter>>{
+public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shooter>>{ // TODO :: Use Geckolib and CustomBlockAndItemGeoLayer?
 	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_hunter.png");
 
 	public ShooterHunterRenderer(EntityRendererProvider.Context rendererManager){
-		// Insecure modification
 		super(rendererManager, new HunterModel<>(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
 		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
-		// addLayer(new ItemInHandLayer<>(this));
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(Shooter p_110775_1_){
+	public @NotNull ResourceLocation getTextureLocation(@NotNull final Shooter ignored) {
 		return TEXTURE;
 	}
 

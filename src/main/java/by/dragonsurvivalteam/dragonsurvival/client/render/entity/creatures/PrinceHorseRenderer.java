@@ -13,6 +13,7 @@ import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
 public class PrinceHorseRenderer extends DynamicGeoEntityRenderer<PrinceHorseEntity> {
 	public PrinceHorseRenderer(final EntityRendererProvider.Context context, final GeoModel<PrinceHorseEntity> model) {
 		super(context, model);
+		getRenderLayers().add(new CustomBlockAndItemGeoLayer<>(this));
 	}
 
 	@Override
@@ -27,19 +28,6 @@ public class PrinceHorseRenderer extends DynamicGeoEntityRenderer<PrinceHorseEnt
 		Minecraft.getInstance().getProfiler().pop();
 	}
 
-
-	// TODO 1.20 :: FIX
-//	@Override
-//	protected boolean isArmorBone(GeoBone bone){
-//		return false;
-//	}
-//
-//	@Nullable
-//	@Override
-//	protected ResourceLocation getTextureForBone(String boneName, PrinceHorseEntity currentEntity){
-//		return null;
-//	}
-//
 //	@Override
 //	protected ItemStack getHeldItemForBone(String boneName, PrinceHorseEntity currentEntity){
 //		if(boneName.equalsIgnoreCase("left_item")){
@@ -49,23 +37,7 @@ public class PrinceHorseRenderer extends DynamicGeoEntityRenderer<PrinceHorseEnt
 //
 //		return null;
 //	}
-//
-//	@Override
-//	protected TransformType getCameraTransformForItemAtBone(ItemStack boneItem, String boneName){
-//		if(boneName.equalsIgnoreCase("left_item")){
-//			return TransformType.THIRD_PERSON_LEFT_HAND;
-//		}else if(boneName.equalsIgnoreCase("right_item")){
-//			return TransformType.THIRD_PERSON_RIGHT_HAND;
-//		}
-//		return null;
-//	}
-//
-//	@Nullable
-//	@Override
-//	protected BlockState getHeldBlockForBone(String boneName, PrinceHorseEntity currentEntity){
-//		return null;
-//	}
-//
+
 //	@Override
 //	protected void preRenderItem(PoseStack matrixStack, ItemStack item, String boneName, PrinceHorseEntity currentEntity, IBone bone){
 ////		matrixStack.last().normal().mul(bone.getWorldSpaceNormal());

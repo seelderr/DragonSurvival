@@ -53,12 +53,11 @@ import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.joml.Quaternionf;
@@ -194,7 +193,7 @@ public class ClientDragonRender{
 	}
 
 	/** Called for every player */
-	@SubscribeEvent // TODO :: This is heavy on render performance (even in first person) due to renderRecursively -> renderChildBones
+	@SubscribeEvent
 	public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
 		if (!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)) {
 			return;
@@ -203,85 +202,90 @@ public class ClientDragonRender{
 		Minecraft minecraft = Minecraft.getInstance();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(!playerDragonHashMap.containsKey(player.getId())){
-			DragonEntity dummyDragon = DSEntities.DRAGON.create(player.level());
+		if (!playerDragonHashMap.containsKey(player.getId())) {
+			DragonEntity dummyDragon = DSEntities.DRAGON.get().create(player.level());
 			dummyDragon.playerId = player.getId();
 			playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
 		}
 
-		if(dragonArmor == null){
-			dragonArmor = DSEntities.DRAGON_ARMOR.create(player.level());
+		if (dragonArmor == null) {
+			dragonArmor = DSEntities.DRAGON_ARMOR.get().create(player.level());
 			assert dragonArmor != null;
 			dragonArmor.playerId = player.getId();
 		}
 
-		if(dummyDragon == null){
-			dummyDragon = DSEntities.DRAGON.create(player.level());
+		if (dummyDragon == null) {
+			dummyDragon = DSEntities.DRAGON.get().create(player.level());
 			assert dummyDragon != null;
 			dummyDragon.playerId = player.getId();
 		}
 
-		if(handler.isDragon()){
+		if (handler.isDragon()) {
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
 
 			DragonLevel dragonStage = handler.getLevel();
 			ResourceLocation texture = DragonSkins.getPlayerSkin(player, handler.getType(), dragonStage);
-			PoseStack matrixStack = renderPlayerEvent.getPoseStack();
+			PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
-			try{
-				matrixStack.pushPose();
+			try {
+				poseStack.pushPose();
 
 				Vector3f lookVector = Functions.getDragonCameraOffset(player);
-				matrixStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
+				poseStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 
 				double size = handler.getSize() * handler.getSkinData().skinPreset.sizeMul;
-				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
-				float scale = (float)Math.max(size / 40.0D, 0.4D); // FIXME
 				String playerModelType = player.getModelName();
-				EntityRenderer<? extends Player> playerRenderer = ((AccessorEntityRendererManager)minecraft.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
+				EntityRenderer<? extends Player> playerRenderer = /* TODO :: Why not use renderPlayerEvent.getRenderer() */ ((AccessorEntityRendererManager) minecraft.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
-				if(dragonNameTags){
-					net.minecraftforge.client.event.RenderNameTagEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
-					net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-					if(renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || ((AccessorLivingRenderer)playerRenderer).callShouldShowName(player))){
-						((AccessorEntityRenderer)playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), matrixStack, renderTypeBuffer, eventLight);
+
+				if (dragonNameTags) {
+					RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, poseStack, renderTypeBuffer, eventLight, partialRenderTick);
+					MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
+
+					if (renderNameplateEvent.getResult() != Event.Result.DENY && (renderNameplateEvent.getResult() == Event.Result.ALLOW || ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player))) {
+						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight);
 					}
 				}
 
-				matrixStack.mulPose(Axis.YN.rotationDegrees((float)handler.getMovementData().bodyYaw));
-				matrixStack.scale(scale, scale, scale);
-				((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius((float)((3.0F * size + 62.0F) / 260.0F));
+				poseStack.mulPose(Axis.YN.rotationDegrees((float) handler.getMovementData().bodyYaw));
+
+				// FIXME :: This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
+				float scale = (float) Math.max(size / 40.0D, 0.4D);
+				poseStack.scale(scale, scale, scale);
+
+				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
 				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
 				EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
-				if(player.isCrouching() && handler.isWingsSpread() && !player.onGround()){
-					matrixStack.translate(0, -0.15, 0);
-				}else if(player.isCrouching()){
-					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
-				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()){
- 					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+				if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
+					poseStack.translate(0, -0.15, 0);
+				} else if (player.isCrouching()) {
+					poseStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+				} else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
+					poseStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 				}
-				if(!player.isInvisible()){
-					if(ServerFlightHandler.isGliding(player)){
-						if(renderOtherPlayerRotation || minecraft.player == player){
-							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
-     							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
+				if (!player.isInvisible()) {
+					if (ServerFlightHandler.isGliding(player)) {
+						if (renderOtherPlayerRotation || minecraft.player == player) {
+							float upRot = Mth.clamp((float) (player.getDeltaMovement().y * 20), -80, 80);
+
+							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
 							dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
 
-							if(Float.isNaN(dummyDragon.prevXRot)){
+							if (Float.isNaN(dummyDragon.prevXRot)) {
 								dummyDragon.prevXRot = upRot;
 							}
 
-							if(Float.isNaN(dummyDragon.prevXRot)){
+							if (Float.isNaN(dummyDragon.prevXRot)) {
 								dummyDragon.prevXRot = 0;
 							}
 
-							matrixStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
+							poseStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
 
 							Vec3 vector3d1 = player.getDeltaMovement();
 							Vec3 vector3d = player.getViewVector(1f);
@@ -290,26 +294,26 @@ public class ClientDragonRender{
 							double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
 							double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
 
-							float rot = Mth.clamp((float)(Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
+							float rot = Mth.clamp((float) (Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
 
 							dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
 							dummyDragon.prevZRot = Mth.clamp(dummyDragon.prevZRot, -1, 1);
 
-							if(Float.isNaN(dummyDragon.prevZRot)){
+							if (Float.isNaN(dummyDragon.prevZRot)) {
 								dummyDragon.prevZRot = rot;
 							}
 
-							if(Float.isNaN(dummyDragon.prevZRot)){
+							if (Float.isNaN(dummyDragon.prevZRot)) {
 								dummyDragon.prevZRot = 0;
 							}
 
-							matrixStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
+							poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
 						}
 					}
-					if(player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight){
-						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, matrixStack, renderTypeBuffer, eventLight);
+					if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight) {
+						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
 
-						if(!armorRenderLayer){
+						if (!armorRenderLayer) {
 							ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
 							ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
 							ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
@@ -320,37 +324,38 @@ public class ClientDragonRender{
 							ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
 							ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
 
-							renderArmorPiece(helmet, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
-							renderArmorPiece(chestPlate, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
-							renderArmorPiece(legs, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
-							renderArmorPiece(boots, matrixStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
+							renderArmorPiece(helmet, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
+							renderArmorPiece(chestPlate, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
+							renderArmorPiece(legs, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
+							renderArmorPiece(boots, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
 						}
 					}
 				}
 
-				if(!player.isSpectator()){
-					((AccessorLivingRenderer)playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
-						matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
-						matrixStack.mulPose(Axis.XN.rotationDegrees(180.0F));
+				if (!player.isSpectator()) {
+					// Render the parrot on the players shoulder
+					((AccessorLivingRenderer) playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+						poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
+						poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
 						double forward = 0.3 * scale;
-						float parrotHeadYaw = Mth.clamp(-1.0F * ((float)handler.getMovementData().bodyYaw - (float)handler.getMovementData().headYaw), -75.0F, 75.0F);
-						matrixStack.translate(0, -height, -forward);
-						renderLayer.render(matrixStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float)player.tickCount + partialRenderTick, parrotHeadYaw, (float)handler.getMovementData().headPitch);
-						matrixStack.translate(0, height, forward);
-						matrixStack.mulPose(Axis.XN.rotationDegrees(-180.0F));
-						matrixStack.scale(scale, scale, scale);
+						float parrotHeadYaw = Mth.clamp(-1.0F * ((float) handler.getMovementData().bodyYaw - (float) handler.getMovementData().headYaw), -75.0F, 75.0F);
+						poseStack.translate(0, -height, -forward);
+						renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) handler.getMovementData().headPitch);
+						poseStack.translate(0, height, forward);
+						poseStack.mulPose(Axis.XN.rotationDegrees(-180.0F));
+						poseStack.scale(scale, scale, scale);
 					});
 
-					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
-					if(player.hasEffect(DragonEffects.TRAPPED)){
-						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack, player.level());
+					if (player.hasEffect(DragonEffects.TRAPPED)) {
+						int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
+						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, poseStack, player.level());
 					}
 				}
 			} catch (Throwable throwable) {
 				DragonSurvivalMod.LOGGER.error("A problem occurred while rendering a dragon in third person", throwable);
 			} finally {
-				matrixStack.popPose();
+				poseStack.popPose();
 			}
 		}else{
 			((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
@@ -545,13 +550,13 @@ public class ClientDragonRender{
 
 		if(entity instanceof DragonEntity){
 			if(ClientDragonRender.dragonArmor == null){
-				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.create(Minecraft.getInstance().player.level());
+				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(Minecraft.getInstance().player.level());
 				assert dragonArmor != null;
 				ClientDragonRender.dragonArmor.playerId = Minecraft.getInstance().player.getId();
 			}
 
 			if(!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())){
-				DragonEntity dummyDragon = DSEntities.DRAGON.create(Minecraft.getInstance().player.level());
+				DragonEntity dummyDragon = DSEntities.DRAGON.get().create(Minecraft.getInstance().player.level());
 				dummyDragon.playerId = Minecraft.getInstance().player.getId();
 				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
 			}

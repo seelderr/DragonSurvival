@@ -27,15 +27,15 @@ public class Bolas extends ThrowableItemProjectile{
 	public static final UUID DISABLE_JUMP = UUID.fromString("d7c976cd-edba-46aa-9002-294d429d7741");
 
 	public Bolas(Level world){
-		super(DSEntities.BOLAS_ENTITY, world);
+		super(DSEntities.BOLAS_ENTITY.get(), world);
 	}
 
 	public Bolas(double p_i50156_2_, double p_i50156_4_, double p_i50156_6_, Level world){
-		super(DSEntities.BOLAS_ENTITY, p_i50156_2_, p_i50156_4_, p_i50156_6_, world);
+		super(DSEntities.BOLAS_ENTITY.get(), p_i50156_2_, p_i50156_4_, p_i50156_6_, world);
 	}
 
 	public Bolas(LivingEntity shooter, Level world){
-		super(DSEntities.BOLAS_ENTITY, shooter, world);
+		super(DSEntities.BOLAS_ENTITY.get(), shooter, world);
 	}
 
 

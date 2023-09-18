@@ -211,7 +211,7 @@ public class NetherBreathAbility extends BreathAbility{
 		}
 
 		if(player.level().isClientSide() && castDuration <= 0){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound); // FIXME dist
+			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
 		if(player.level().isClientSide()){
@@ -252,7 +252,7 @@ public class NetherBreathAbility extends BreathAbility{
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new FireBreathSound(this));
 	}
 
-	@OnlyIn( Dist.CLIENT ) // FIXME :: dist
+	@OnlyIn( Dist.CLIENT )
 	public  void stopSound(){
 		if(SoundRegistry.fireBreathEnd != null){
 			Vec3 pos = player.getEyePosition(1.0F);
