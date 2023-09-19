@@ -34,7 +34,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public boolean shouldRenderLayers = true;
 	public boolean isRenderLayers = false;
 
-	// TODO :: Not sure what this is used for, disabling it doesn't seem to make a difference
+	/** Used when rendering dyeable armor pieces in {@link ClientDragonRender#renderArmorPiece} */
 	public Color renderColor = Color.ofRGB(255, 255, 255);
 
 	public DragonRenderer(final EntityRendererProvider.Context context, final GeoModel<DragonEntity> model) {
@@ -89,15 +89,16 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
 	@Override
 	public void renderRecursively(final PoseStack poseStack, final DragonEntity animatable, final GeoBone bone, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-//		if (!isReRender) {
+		if (isReRender) {
 			super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-//			return;
-//		}
+			return;
+		}
 
 		if (!isRenderLayers) {
 			Player player = animatable.getPlayer();
 
-//			ResourceLocation currentTexture = getTextureLocation(animatable);
+			ResourceLocation currentTexture = getTextureLocation(animatable);
+			VertexConsumer customBuffer = buffer;
 
 			if (renderHeldItem) {
 				if (player != Minecraft.getInstance().player || ClientDragonRender.alternateHeldItem || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
@@ -108,7 +109,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 						RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
 
 						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
-//						buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
+						customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 						poseStack.popPose();
 					}
 
@@ -118,17 +119,17 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 						RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
 
 						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
-//						buffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
+						customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 						poseStack.popPose();
 					}
 				}
 			}
 
-//			poseStack.pushPose();
-//			RenderUtils.prepMatrixForBone(poseStack, bone);
-//			super.renderCubesOfBone(poseStack, bone, buffer, packedLight, packedOverlay, red, green, blue, alpha);
-//			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-//			poseStack.popPose();
+			poseStack.pushPose();
+			RenderUtils.prepMatrixForBone(poseStack, bone);
+			super.renderCubesOfBone(poseStack, bone, customBuffer, packedLight, packedOverlay, red, green, blue, alpha);
+			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, customBuffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			poseStack.popPose();
 		}
 	}
 

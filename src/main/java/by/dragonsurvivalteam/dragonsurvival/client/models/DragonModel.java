@@ -25,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
+	private final ResourceLocation model = new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
+	private final ResourceLocation animation = new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
+
 	private ResourceLocation currentTexture = defaultTexture;
 
 	private final ConcurrentHashMap<String, ResourceLocation> cache = new ConcurrentHashMap<>();
@@ -122,13 +125,13 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		dragon.tail_motion_side = query_tail_motion_side;
 	}
 
-	public void setCurrentTexture(final ResourceLocation currentTexture){
+	public void setCurrentTexture(final ResourceLocation currentTexture) {
 		this.currentTexture = currentTexture;
 	}
 
 	@Override
 	public ResourceLocation getModelResource(final DragonEntity dragon) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
+		return model;
 	}
 
 	@Override
@@ -164,7 +167,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			}
 		}
 
-		if (id != null) { // TODO :: Add timestamp to clean cache?
+		if (id != null) {
 			// Dragon editor skins
 			return cache.computeIfAbsent(id, key -> new ResourceLocation(DragonSurvivalMod.MODID, key));
 		}
@@ -175,6 +178,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
+		return animation;
 	}
 }

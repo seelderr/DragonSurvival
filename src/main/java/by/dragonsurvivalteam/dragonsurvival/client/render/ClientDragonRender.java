@@ -367,8 +367,8 @@ public class ClientDragonRender{
 
 		if(stack == null || stack.isEmpty()) return;
 
-		if(stack.getItem() instanceof DyeableArmorItem){
-			int colorCode = ((DyeableArmorItem)stack.getItem()).getColor(stack);
+		if (stack.getItem() instanceof DyeableArmorItem dyeableArmorItem) {
+			int colorCode = dyeableArmorItem.getColor(stack);
 			armorColor = Color.ofOpaque(colorCode);
 		}
 
