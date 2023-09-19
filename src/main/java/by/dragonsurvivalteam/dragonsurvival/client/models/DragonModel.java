@@ -21,10 +21,13 @@ import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Locale;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private ResourceLocation currentTexture = defaultTexture;
+
+	private final ConcurrentHashMap<String, ResourceLocation> cache = new ConcurrentHashMap<>();
 
 	@Override
 	public void applyMolangQueries(final DragonEntity dragon, double currentTick) {
@@ -130,6 +133,8 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getTextureResource(final DragonEntity dragon) {
+		String id = null;
+
 		if (dragon.playerId != null || dragon.getPlayer() != null) {
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
@@ -139,32 +144,34 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			}
 
 			if (handler.getSkinData().blankSkin) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
-			}
-
-			if (ageGroup.defaultSkin) {
+				id = "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png";
+			} else if (ageGroup.defaultSkin) {
 				if (currentTexture != null) {
-					return currentTexture;
+					id = currentTexture.getPath();
+				} else {
+					id = "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png";
 				}
-
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
-			}
-
-			if (handler.getSkinData().isCompiled && currentTexture == null) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+			} else if (handler.getSkinData().isCompiled && currentTexture == null) {
+				id = "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name;
 			}
 		}
 
-		if (currentTexture == null && dragon.getPlayer() instanceof FakeClientPlayer) {
+		if (id == null && dragon.getPlayer() instanceof FakeClientPlayer) {
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-			if (localPlayer != null) { // TODO :: Check if skin is compiled?
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonUtils.getHandler(dragon.getPlayer()).getLevel().name);
+			if (localPlayer != null) {
+				id = "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonUtils.getHandler(dragon.getPlayer()).getLevel().name;
 			}
 		}
 
-		return currentTexture == null ? defaultTexture : currentTexture;
-	}
+		if (id != null) { // TODO :: Add timestamp to clean cache?
+			// Dragon texture
+			return cache.computeIfAbsent(id, key -> new ResourceLocation(DragonSurvivalMod.MODID, key));
+		}
+
+		// Usually layer (e.g. armor) texture
+        return currentTexture == null ? defaultTexture : currentTexture;
+    }
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity dragon) {

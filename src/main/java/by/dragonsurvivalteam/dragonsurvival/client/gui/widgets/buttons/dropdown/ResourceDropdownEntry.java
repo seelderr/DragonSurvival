@@ -106,8 +106,6 @@ public class ResourceDropdownEntry extends DropdownEntry {
                                 guiGraphics.drawString(Minecraft.getInstance().font, Component.empty().append("#"), getX() + 14, getY() + 10, DyeColor.WHITE.getTextColor(), true);
                             }
 
-                            guiGraphics.pose().popPose();
-
                             if (isHovered) {
                                 guiGraphics.pose().pushPose();
                                 guiGraphics.pose().translate(0, 0, 450);
@@ -117,6 +115,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
                             }
                         }
 
+                        guiGraphics.pose().popPose();
                         RenderSystem.disableDepthTest();
                     }
                 }

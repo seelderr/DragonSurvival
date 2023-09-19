@@ -21,8 +21,4 @@ public class DSRegistryProvider extends DatapackBuiltinEntriesProvider {
     public DSRegistryProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> registries) {
         super(output, registries, BUILDER, Collections.singleton(DragonSurvivalMod.MODID));
     }
-
-    public static HolderLookup.Provider createLookup() {
-        return BUILDER.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), VanillaRegistries.createLookup());
-    }
 }

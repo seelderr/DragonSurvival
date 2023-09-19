@@ -280,7 +280,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public void hurtTarget(LivingEntity entity){
-		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.DRAGON_BREATH, player), getDamage()), entity);
+		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(DSDamageTypes.entityDamageSource(player.level(), this, player), getDamage()), entity);
 		onDamage(entity);
 
 		if(player.getRandom().nextInt(100) < 50){

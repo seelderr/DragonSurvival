@@ -78,6 +78,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	public void setSize(double size, final Player player) {
 		setSize(size);
 		updateModifiers(size, player);
+		player.refreshDimensions();
 	}
 
 	private void updateModifiers(double size, final Player player) {

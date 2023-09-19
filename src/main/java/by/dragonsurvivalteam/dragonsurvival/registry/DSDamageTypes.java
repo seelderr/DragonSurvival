@@ -1,45 +1,68 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstapContext;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.Level;
 
 public class DSDamageTypes {
-	public static final ResourceKey<DamageType> STAR_DRAIN = createKey("star_drain");
-	public static final ResourceKey<DamageType> WATER_BURN = createKey("water_burn");
-	public static final ResourceKey<DamageType> RAIN_BURN = createKey("rain_burn");
-	public static final ResourceKey<DamageType> DEHYDRATION = createKey("dehydration");
-	public static final ResourceKey<DamageType> SPECTRA_IMPACT = createKey("spectra_impact"); // TODO 1.20 :: tags -> BYPASSES_ARMOR
-	public static final ResourceKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
-	public static final ResourceKey<DamageType> FOREST_DRAGON_DRAIN = createKey("forest_dragon_drain"); // TODO 1.20 :: tags -> BYPASSES_ARMOR / setMagic()
-	public static final ResourceKey<DamageType> CAVE_DRAGON_BURN = createKey("cave_dragon_burn"); // TODO 1.20 :: tags -> BYPASSES_ARMOR / DamageTypeTags.IS_FIRE
+    public static final ResourceKey<DamageType> WATER_BURN = createKey("water_burn");
+    public static final ResourceKey<DamageType> RAIN_BURN = createKey("rain_burn");
+    public static final ResourceKey<DamageType> DEHYDRATION = createKey("dehydration");
+    /* FIXME 1.20 :: Use */ public static final ResourceKey<DamageType> SPECTRAL_IMPACT = createKey("spectral_impact");
+    public static final ResourceKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
+    public static final ResourceKey<DamageType> CAVE_DRAGON_BREATH = createKey("cave_dragon_breath");
+    /* TODO :: Unused */ public static final ResourceKey<DamageType> FOREST_DRAGON_BREATH = createKey("forest_dragon_breath");
+    public static final ResourceKey<DamageType> SEA_DRAGON_BREATH = createKey("sea_dragon_breath");
+    public static final ResourceKey<DamageType> FOREST_DRAGON_DRAIN = createKey("forest_dragon_drain"); // TODO 1.20 :: tags -> setMagic()
+    public static final ResourceKey<DamageType> CAVE_DRAGON_BURN = createKey("cave_dragon_burn");
 
-	public static void bootstrap(final BootstapContext<DamageType> context) {
-		/* FIXME :: Unused - still needed? */ context.register(STAR_DRAIN, new DamageType("dragonsurvival.star_drain", 0.1F));
-		context.register(WATER_BURN, new DamageType("dragonsurvival.water_burn", 0.1F));
-		context.register(RAIN_BURN, new DamageType("dragonsurvival.rain_burn", 0.1F));
-		context.register(DEHYDRATION, new DamageType("dragonsurvival.dehydration", 0.1F));
-		context.register(DRAGON_BREATH, new DamageType("dragonsurvival.dragon_breath", 0.1F)); // TODO :: Split per dragon type?
-		context.register(FOREST_DRAGON_DRAIN, new DamageType("dragonsurvival.forest_dragon_drain", 0.1F));
-		context.register(CAVE_DRAGON_BURN, new DamageType("dragonsurvival.cave_dragon_burn", 0.1F));
-	}
+    public static void bootstrap(final BootstapContext<DamageType> context) {
+        context.register(WATER_BURN, new DamageType("dragonsurvival.water_burn", 0.1F));
+        context.register(RAIN_BURN, new DamageType("dragonsurvival.rain_burn", 0.1F));
+        context.register(DEHYDRATION, new DamageType("dragonsurvival.dehydration", 0.1F));
+        context.register(SPECTRAL_IMPACT, new DamageType("dragonsurvival.spectral_impact", 0.1F));
+        context.register(DRAGON_BREATH, new DamageType("dragonsurvival.dragon_breath", 0.1F));
+        context.register(CAVE_DRAGON_BREATH, new DamageType("cave_dragon_breath", 0.1F));
+        context.register(FOREST_DRAGON_BREATH, new DamageType("forest_dragon_breath", 0.1F));
+        context.register(SEA_DRAGON_BREATH, new DamageType("sea_dragon_breath", 0.1F));
+        context.register(FOREST_DRAGON_DRAIN, new DamageType("dragonsurvival.forest_dragon_drain", 0.1F));
+        context.register(CAVE_DRAGON_BURN, new DamageType("dragonsurvival.cave_dragon_burn", 0.1F));
+    }
 
-	public static DamageSource damageSource(final Level level, final ResourceKey<DamageType> damageType) {
-		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType));
-	}
+    public static DamageSource damageSource(final Level level, final ResourceKey<DamageType> damageType) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType));
+    }
 
-	public static DamageSource entityDamageSource(final Level level, final ResourceKey<DamageType> damageType, final Entity entity) {
-		return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), entity);
-	}
+    public static DamageSource entityDamageSource(final Level level, final ResourceKey<DamageType> damageType, final Entity entity) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType), entity);
+    }
 
-	private static ResourceKey<DamageType> createKey(final String name) {
-		return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(DragonSurvivalMod.MODID, name));
-	}
+    public static DamageSource entityDamageSource(final Level level, final BreathAbility breathAbility, final Entity entity) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(getBreathDamageType(breathAbility)), entity);
+    }
+
+    public static ResourceKey<DamageType> getBreathDamageType(final BreathAbility breathAbility) {
+        if (DragonUtils.isDragonType(breathAbility.getDragonType(), DragonTypes.CAVE)) {
+            return CAVE_DRAGON_BREATH;
+        } else if (DragonUtils.isDragonType(breathAbility.getDragonType(), DragonTypes.FOREST)) {
+            return FOREST_DRAGON_BREATH;
+        } else if (DragonUtils.isDragonType(breathAbility.getDragonType(), DragonTypes.SEA)) {
+            return SEA_DRAGON_BREATH;
+        }
+
+        return DRAGON_BREATH;
+    }
+
+    private static ResourceKey<DamageType> createKey(final String name) {
+        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(DragonSurvivalMod.MODID, name));
+    }
 }

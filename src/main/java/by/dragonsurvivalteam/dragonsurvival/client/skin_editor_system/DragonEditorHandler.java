@@ -214,8 +214,8 @@ public class DragonEditorHandler{
 			}
 
 //			System.out.println("Compiled skin " + key);
-		}catch(Exception e){
-			e.printStackTrace();
+		} catch (Exception e) {
+			DragonSurvivalMod.LOGGER.error(e);
 		}
 	}
 }

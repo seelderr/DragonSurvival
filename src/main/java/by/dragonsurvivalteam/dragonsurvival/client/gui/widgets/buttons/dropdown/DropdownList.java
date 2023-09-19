@@ -120,6 +120,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 			bufferbuilder.vertex(j - 1, i2, z).color(192, 192, 192, 255).endVertex();
 			bufferbuilder.vertex(i, i2, z).color(192, 192, 192, 255).endVertex();
 			tesselator.end();
+			guiGraphics.pose().popPose();
 		}
 
 		renderDecorations(guiGraphics, mouseX, mouseY);

@@ -36,6 +36,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.LocalPlayer;
@@ -205,29 +206,28 @@ public class ClientEvents{
 			}
 		}
 
-		// TODO 1.20
-//		if(sc instanceof CreativeModeInventoryScreen screen){
-//			if(inventoryToggle){
-//				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-//					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
-//				}){
-//					@Override
-//					public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-//						active = visible = screen.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId();
-//						super.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
-//					}
-//
-//					@Override
-//					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-//						super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
-//						if(isHoveredOrFocused()){
-//							ArrayList<Component> description = new ArrayList<>(Arrays.asList(Component.translatable("ds.gui.toggle_inventory.dragon")));
-//							Minecraft.getInstance().screen.renderComponentTooltip(p_230431_1_, description, p_230431_2_, p_230431_3_);
-//						}
-//					}
-//				});
-//			}
-//		}
+		if (sc instanceof CreativeModeInventoryScreen screen) {
+			if (inventoryToggle) {
+				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+				}) {
+					@Override
+					public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+						active = visible = screen.isInventoryOpen();
+						super.render(guiGraphics, mouseX, mouseY, partialTick);
+					}
+
+					@Override
+					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
+						super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTick);
+
+						if (isHovered()) {
+							guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.toggle_inventory.dragon"), mouseX, mouseY);
+						}
+					}
+				});
+			}
+		}
 	}
 
 	@SubscribeEvent

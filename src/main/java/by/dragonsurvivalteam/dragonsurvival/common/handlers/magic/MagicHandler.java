@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.data.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
@@ -248,7 +249,7 @@ public class MagicHandler{
 
 	@SubscribeEvent
 	public static void livingHurt(final LivingAttackEvent event) {
-		if (event.getSource().is(DSDamageTypes.DRAGON_BREATH)) {
+		if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_BREATH)) {
 			return;
 		}
 

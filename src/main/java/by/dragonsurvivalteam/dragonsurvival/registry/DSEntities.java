@@ -37,6 +37,7 @@ import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.registries.RegistryObject;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings( "rawtypes,unchecked" )
 @Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
@@ -44,7 +45,7 @@ public class DSEntities {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, DragonSurvivalMod.MODID);
 
 	// Player related
-	public static RegistryObject<EntityType<DragonEntity>> DRAGON = ENTITY_TYPES.register("dummy_dragon", () -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
+	public static RegistryObject<EntityType<DragonEntity>> DRAGON = ENTITY_TYPES.register("dummy_dragon", () -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 1, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 	public static RegistryObject<EntityType<DragonEntity>> DRAGON_ARMOR = ENTITY_TYPES.register("dragon_armor", () -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 
 	// Fake entities
@@ -134,6 +135,8 @@ public class DSEntities {
 		PRINCE_PROFESSION = new VillagerProfession("prince", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
 	}
 
+	public static List<Item> SPAWN_EGGS = new ArrayList<>();
+
 	public static void registerSpawnEggs(RegisterEvent event){
 		registerSpawnEgg(event, castToMob(HUNTER_HOUND), 10510648, 8934192);
 		registerSpawnEgg(event, castToMob(SHOOTER_HUNTER), 12486764, 2690565);
@@ -146,5 +149,6 @@ public class DSEntities {
 	private static void registerSpawnEgg(final RegisterEvent event, final RegistryObject<EntityType<? extends Mob>> entity, int eggPrimary, int eggSecondary) {
 		Item spawnEgg = new ForgeSpawnEggItem(entity, eggPrimary, eggSecondary, new Item.Properties()/*.tab(DragonSurvivalMod.items)*/);
 		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(DragonSurvivalMod.MODID, entity.getKey().location().getPath() + "_spawn_egg"), () -> spawnEgg);
+		SPAWN_EGGS.add(spawnEgg);
 	}
 }

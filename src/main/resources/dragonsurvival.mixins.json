@@ -29,8 +29,8 @@
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",
     "MixinWorldRenderer",
-    "MixinGeoModel",
-    "MixinScreen"
+    "MixinScreen",
+    "MixinMinecraft"
   ],
   "minVersion": "0.8"
 }

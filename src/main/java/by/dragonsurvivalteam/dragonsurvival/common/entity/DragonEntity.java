@@ -141,6 +141,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			builder = renderAbility(state, currentCast);
 		}
 
+		/* TODO 1.20
+		This always added the animation to the builder without a loop type - is this needed?
+		animationTimer.putAnimation("...", ..., animation);
+		*/
+
 		if (!ClientDragonRender.renderItemsInMouth /*&& animationExists("use_item")*/ && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
 			// When the player is using an item
 			handler.getMovementData().bite = false;

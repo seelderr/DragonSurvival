@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @EventBusSubscriber(Dist.CLIENT)
 public class FakeClientPlayerUtils {
 	private static final ConcurrentHashMap<Integer, FakeClientPlayer> FAKE_PLAYERS = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Integer, DragonEntity> FAKE_DRAGONS = new ConcurrentHashMap<>();
+	public static final ConcurrentHashMap<Integer, DragonEntity> FAKE_DRAGONS = new ConcurrentHashMap<>();
 
 	public static DragonEntity getFakeDragon(int index, final DragonStateHandler handler) {
 		FakeClientPlayer clientPlayer = getFakePlayer(index, handler);

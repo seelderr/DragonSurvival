@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandle
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
@@ -33,8 +34,6 @@ import software.bernie.geckolib.GeckoLib;
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
-	// FIXME 1.20
-//	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
 
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
@@ -53,6 +52,7 @@ public class DragonSurvivalMod{
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
 		DSEntities.ENTITY_TYPES.register(modEventBus);
+		DSCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());

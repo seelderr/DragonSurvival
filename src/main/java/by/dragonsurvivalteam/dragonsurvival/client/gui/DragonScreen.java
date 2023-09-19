@@ -130,10 +130,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 //				RenderSystem.disableDepthTest();
-//				guiGraphics.pose().pushPose();
-//				guiGraphics.pose().translate(0, 0, 350);
 				guiGraphics.blit(DRAGON_CLAW_BUTTON, getX(), getY(), 0, 0, 11, 11, 11, 11);
-//				guiGraphics.pose().popPose();
 //				RenderSystem.enableDepthTest();
 			}
 		});
