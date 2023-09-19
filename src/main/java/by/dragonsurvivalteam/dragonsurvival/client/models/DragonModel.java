@@ -165,11 +165,11 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		if (id != null) { // TODO :: Add timestamp to clean cache?
-			// Dragon texture
+			// Dragon editor skins
 			return cache.computeIfAbsent(id, key -> new ResourceLocation(DragonSurvivalMod.MODID, key));
 		}
 
-		// Usually layer (e.g. armor) texture
+		// Layers (e.g. armor) or player skins
         return currentTexture == null ? defaultTexture : currentTexture;
     }
 

@@ -20,6 +20,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class DataDamageTypeTagsProvider extends TagsProvider<DamageType> {
     public static TagKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
+    public static TagKey<DamageType> NO_KNOCKBACK = createKey("no_knockback");
 
     public DataDamageTypeTagsProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookupProvider, final String modId, @Nullable final ExistingFileHelper existingFileHelper) {
         super(output, Registries.DAMAGE_TYPE, lookupProvider.thenApply(provider -> DSRegistryProvider.BUILDER.buildPatch(RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY), provider)), modId, existingFileHelper);
@@ -44,6 +45,10 @@ public class DataDamageTypeTagsProvider extends TagsProvider<DamageType> {
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
                 .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
                 .add(DSDamageTypes.SEA_DRAGON_BREATH);
+
+        tag(NO_KNOCKBACK)
+                .add(DSDamageTypes.CAVE_DRAGON_BURN)
+                .add(DSDamageTypes.FOREST_DRAGON_DRAIN);
     }
 
     private static TagKey<DamageType> createKey(@NotNull final String name) {

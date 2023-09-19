@@ -81,12 +81,6 @@ public class CategoryEntry extends OptionListEntry{
 		return super.mouseClicked(p_231044_1_, p_231044_3_, p_231044_5_);
 	}
 
-	// TODO 1.20 :: Check
-//	@Override
-//	public boolean changeFocus(boolean p_231049_1_){
-//		return false;
-//	}
-
 	@Override
 	public int getHeight(){
 		return parent == null || parent.enabled ? 20 : 0;

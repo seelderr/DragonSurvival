@@ -114,7 +114,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), handler.getType());
 				awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
 				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, random.nextFloat() * 0.1F + 0.9F);
-				callback.setReturnValue(super.eat(level, itemStack)); // TODO :: Not sure why it's handled this way - are all dragon foods correctly tagged as edible?
+				callback.setReturnValue(super.eat(level, itemStack));
 			}
 		});
 	}

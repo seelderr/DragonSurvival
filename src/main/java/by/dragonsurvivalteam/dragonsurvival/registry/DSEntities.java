@@ -45,7 +45,7 @@ public class DSEntities {
 	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, DragonSurvivalMod.MODID);
 
 	// Player related
-	public static RegistryObject<EntityType<DragonEntity>> DRAGON = ENTITY_TYPES.register("dummy_dragon", () -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 1, FeatureFlagSet.of(FeatureFlags.VANILLA)));
+	public static RegistryObject<EntityType<DragonEntity>> DRAGON = ENTITY_TYPES.register("dummy_dragon", () -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 	public static RegistryObject<EntityType<DragonEntity>> DRAGON_ARMOR = ENTITY_TYPES.register("dragon_armor", () -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 
 	// Fake entities

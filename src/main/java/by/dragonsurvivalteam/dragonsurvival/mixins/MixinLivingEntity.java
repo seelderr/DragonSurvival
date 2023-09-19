@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.dragonsurvivalteam.dragonsurvival.data.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
@@ -202,10 +203,7 @@ public abstract class MixinLivingEntity extends Entity{
 
 	@ModifyArg(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"), index = 0)
 	public double disableKnockbackForMagic(double strength) {
-		// TODO 1.20 :: Unsure - use tags?
-		boolean disableKnockback = dragonSurvival$damageSource.getMsgId().startsWith("dragonsurvival");
-
-		if (disableKnockback) {
+		if (dragonSurvival$damageSource.is(DataDamageTypeTagsProvider.NO_KNOCKBACK)) {
 			return 0;
 		}
 

@@ -89,8 +89,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	public DragonScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
-		// TODO 1.20 :: Check
-//		passEvents = true;
 		player = inv.player;
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());

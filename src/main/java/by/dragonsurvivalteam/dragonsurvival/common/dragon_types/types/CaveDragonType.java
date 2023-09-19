@@ -115,7 +115,7 @@ public class CaveDragonType extends AbstractDragonType{
 		}
 
 		if(!player.level().isClientSide()){
-			if(player.isEyeInFluid(FluidTags.LAVA)
+			if(player.isEyeInFluidType(ForgeMod.LAVA_TYPE.get())
 			   && ServerConfig.bonuses
 			   && ServerConfig.caveLavaSwimming
 			   && ServerConfig.caveLavaSwimmingTicks != 0){
@@ -131,7 +131,7 @@ public class CaveDragonType extends AbstractDragonType{
 				if(!player.level().isClientSide() && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(ForgeMod.WATER_TYPE.get(), player)){
 					player.stopRiding();
 				}
-			}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluid(FluidTags.WATER)){
+			}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())){
 				lavaAirSupply = Math.min(lavaAirSupply + (int)Math.ceil(ServerConfig.caveLavaSwimmingTicks * 0.0133333F), ServerConfig.caveLavaSwimmingTicks);
 			}
 		}

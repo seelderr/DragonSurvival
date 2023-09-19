@@ -58,7 +58,6 @@ public class SmallPoisonParticle extends TextureSheetParticle{
 			float pitch = (float)Math.atan2(motionVec.y(), 1);
 			float swirlRadius = 1f * (age / (float)lifetime) * spread;
 
-			// TODO 1.20 :: Unsure
 			Quaternionf quatSpin = new Quaternionf(new AxisAngle4f(swirlTick * 0.2f, motionVec.x(), motionVec.y(), motionVec.z()));
 			Quaternionf quatOrient = new Quaternionf().rotateXYZ(pitch, yaw, 0);
 

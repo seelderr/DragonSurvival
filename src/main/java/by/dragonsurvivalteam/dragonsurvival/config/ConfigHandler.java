@@ -467,7 +467,7 @@ public class ConfigHandler{
 	 * @return List of the resource element and the resolved tag
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
-	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) {
+	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) { // TODO :: Filter duplicates
 		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 		ArrayList<T> list = new ArrayList<>();
 

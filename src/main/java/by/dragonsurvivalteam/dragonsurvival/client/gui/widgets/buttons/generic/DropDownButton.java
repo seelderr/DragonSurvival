@@ -21,8 +21,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 
-
-public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*/ {
+public class DropDownButton extends ExtendedButton {
 	public static final int maxItems = 4;
 	public String[] values;
 	public String current;
@@ -58,7 +57,6 @@ public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*
 			screen.children.removeIf(s -> s == renderButton);
 			screen.renderables.removeIf(s -> s == list);
 			screen.renderables.removeIf(s -> s == renderButton);
-			//screen.buttons.removeIf((s) -> s == renderButton);
 		}
 
 
@@ -72,9 +70,8 @@ public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
-		int k = /*getYImage(isHoveredOrFocused())*/ !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
+		int k = !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
 		guiGraphics.blitWithBorder(WIDGETS_LOCATION, getX(), getY(), 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2/*, getBlitOffset()*/);
-//		renderBg(poseStack, mc, mouseX, mouseY);
 
 		Component buttonText = getMessage();
 		int strWidth = mc.font.width(buttonText);
@@ -84,7 +81,7 @@ public class DropDownButton extends ExtendedButton /*implements TooltipAccessor*
 			buttonText = Component.empty().append(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, /*getBlitOffset()*/ 20); // TODO 1.20 :: Check
+		guiGraphics.pose().translate(0, 0, 20);
 		guiGraphics.drawCenteredString(mc.font, buttonText, getX() + width / 2, getY() + (height - 8) / 2, getFGColor());
 		guiGraphics.pose().popPose();
 	}

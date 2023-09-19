@@ -28,8 +28,6 @@ public class BolasEntityRenderer extends EntityRenderer<Bolas> {
 			poseStack.scale(2.0F, 2.0F, 2.0F);
 			poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
 			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-			// TODO 1.20 :: Check
-//			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.huntingNet), TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_, 0);
 			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.lightningTextureItem), ItemDisplayContext.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, poseStack, bufferSource, bolas.level(), 0);
 
 			poseStack.popPose();

@@ -42,10 +42,9 @@ public class AltarTypeButton extends Button implements TooltipRender{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_icons.png");
 	private final DragonAltarGUI gui;
 	public AbstractDragonType type;
-	private boolean atTheTopOrBottom;
 
 	public AltarTypeButton(DragonAltarGUI gui, AbstractDragonType type, int x, int y){
-		super(x, y, 49, 147, Component.empty(), /* TODO 1.20 :: Unsure */ Button::onPress, DEFAULT_NARRATION);
+		super(x, y, 49, 147, Component.empty(), Button::onPress, DEFAULT_NARRATION);
 		this.gui = gui;
 		this.type = type;
 	}
@@ -87,7 +86,7 @@ public class AltarTypeButton extends Button implements TooltipRender{
 
 	@Override
 	protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		atTheTopOrBottom = mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153;
+		boolean atTheTopOrBottom = mouseY > getY() + 6 && mouseY < getY() + 26 || mouseY > getY() + 133 && mouseY < getY() + 153;
 
 		if (isHovered() && atTheTopOrBottom) {
 			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, altarDragonInfoLocalized(type == null ? "human" : type.getTypeName().toLowerCase() + "_dragon", type == null ? Collections.emptyList() : DragonFoodHandler.getEdibleFoods(type)), mouseX, mouseY);

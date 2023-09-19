@@ -110,9 +110,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		if (!tailLocked || !ClientConfig.enableTailPhysics) {
 			return state.setAndContinue(TAIL_TURN);
 		} else {
-			// TODO 1.20 :: Check
-//			controllers.remove("tail_turn");
-//			state.getController().stop();
 			return PlayState.STOP;
 		}
 	}
@@ -121,10 +118,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		if (!neckLocked) {
 			return state.setAndContinue(HEAD_TURN);
 		} else {
-			// TODO 1.20 :: Check
-//			controllers.remove("head_turn");
-//			state.getController().stop();
-
 			return PlayState.STOP;
 		}
 	}
@@ -193,13 +186,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 		return PlayState.STOP;
 	}
-
-	// TODO 1.20 :: Check
-//	public static boolean animationExists(String key){
-//		Animation animation = GeckoLibCache.getInstance().getAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(ClientDragonRender.dragonArmor)).getAnimation(key);
-//
-//		return animation != null;
-//	}
 
 	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
 		DragonStateHandler handler = DragonUtils.getHandler(getPlayer());

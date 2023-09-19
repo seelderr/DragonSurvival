@@ -88,7 +88,7 @@ public class DragonContainer extends AbstractContainerMenu {
 				}
 
 				@Override
-				@OnlyIn(Dist.CLIENT) // TODO :: Is this needed?
+				@OnlyIn(Dist.CLIENT)
 				public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 					return Pair.of(InventoryMenu.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[equipmentSlot.getIndex()]);
 				}

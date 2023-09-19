@@ -40,8 +40,6 @@ public class BallLightningRenderer extends GeoEntityRenderer<BallLightningEntity
 			poseStack.scale(2.0F, 2.0F, 2.0F);
 			poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
 			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-			// TODO 1.20 :: Check
-//			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.lightningTextureItem), TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, poseStack, buffer, 0);
 			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.lightningTextureItem), ItemDisplayContext.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, poseStack, buffer, entity.level(), 0);
 			poseStack.popPose();
 

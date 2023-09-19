@@ -80,11 +80,12 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 			return;
 		}
 
+		int zTranslation = 350;
+
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 350);
+		guiGraphics.pose().translate(0, 0, zTranslation);
 		// Background square which contains all dragon editor part buttons
 		renderBackground(guiGraphics);
-		guiGraphics.pose().popPose();
 		int i = getScrollbarPosition();
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
@@ -97,14 +98,13 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 
 		int k1 = getMaxScroll();
 
+		// Render the scroll bar
 		if (k1 > 0) {
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
 			int l1 = (int) ((float) ((y1 - y0) * (y1 - y0)) / (float) getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, y1 - y0 - 8);
 			int i2 = Math.max(y0, (int) getScrollAmount() * (y1 - y0 - l1) / k1 + y0);
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().translate(0, 0, 400);
-			double z = /* getBlitOffset() + 10 */ 20; // TODO 1.20 :: Unsure
+			double z = zTranslation + 10;
 
 			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
 			bufferbuilder.vertex(i, y1, z).color(0, 0, 0, 255).endVertex();
@@ -120,11 +120,11 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 			bufferbuilder.vertex(j - 1, i2, z).color(192, 192, 192, 255).endVertex();
 			bufferbuilder.vertex(i, i2, z).color(192, 192, 192, 255).endVertex();
 			tesselator.end();
-			guiGraphics.pose().popPose();
 		}
 
 		renderDecorations(guiGraphics, mouseX, mouseY);
 		RenderSystem.disableBlend();
+		guiGraphics.pose().popPose();
 	}
 
 	@Override

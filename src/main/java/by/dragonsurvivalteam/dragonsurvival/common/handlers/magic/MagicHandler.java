@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.data.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
@@ -22,7 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -32,6 +32,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -109,22 +110,25 @@ public class MagicHandler{
 				ability.player = player;
 			}
 
-			if(player.hasEffect(DragonEffects.WATER_VISION) && (player.isEyeInFluid(FluidTags.WATER) || SeaEyesAbility.seaEyesOutOfWater)){
+			if(player.hasEffect(DragonEffects.WATER_VISION) && (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || SeaEyesAbility.seaEyesOutOfWater)){
 				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 10, 0, false, false));
 			}
 
-			if(player.hasEffect(DragonEffects.HUNTER)){
-//				BlockState blockStateFeet = player.getFeetBlockState();
-//				BlockState blockStateBelow = player.level().getBlockState(player.blockPosition().below());
+			if (player.hasEffect(DragonEffects.HUNTER)) {
+				BlockState blockStateFeet = player.getFeetBlockState();
+				BlockState blockStateBelow = player.level().getBlockState(player.blockPosition().below());
 
-				// TODO 1.20 :: Move to tags
-//				if(blockStateFeet.getMaterial() == Material.PLANT || blockStateFeet.getMaterial() == Material.REPLACEABLE_PLANT || blockStateFeet.getMaterial() == Material.GRASS || blockStateBelow.getMaterial() == Material.PLANT || blockStateBelow.getMaterial() == Material.REPLACEABLE_PLANT){
-//					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
-//				}
+				if (isHunterRelevant(blockStateFeet) || isHunterRelevant(blockStateBelow)) {
+					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
+				}
 
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
 		});
+	}
+
+	private static boolean isHunterRelevant(final BlockState blockState) {
+		return blockState.is(DataBlockTagProvider.HUNTER_ABILITY_BLOCKS);
 	}
 
 	@SubscribeEvent
@@ -148,7 +152,7 @@ public class MagicHandler{
 		EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
 
 		if(entity.hasEffect(DragonEffects.BURN)){
-			if(entity.isEyeInFluid(FluidTags.WATER) || entity.isInWaterRainOrBubble()){
+			if(entity.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || entity.isInWaterRainOrBubble()){
 				entity.removeEffect(DragonEffects.BURN);
 			}
 		}
@@ -266,6 +270,7 @@ public class MagicHandler{
 					if (hit) {
 						// FIXME 1.20
 						// event.getSource().bypassArmor();
+						event.getEntity().hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.SPECTRAL_IMPACT, player), (float) (event.getAmount() * 0.15));
 						double d0 = -Mth.sin(player.yRot * ((float) Math.PI / 180F));
 						double d1 = Mth.cos(player.yRot * ((float) Math.PI / 180F));
 

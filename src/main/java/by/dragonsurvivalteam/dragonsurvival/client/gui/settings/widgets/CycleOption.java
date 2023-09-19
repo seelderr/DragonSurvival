@@ -7,7 +7,6 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -44,21 +43,6 @@ public class CycleOption<T> extends Option {
 
     public static <T> CycleOption<T> create(String pCaptionKey, T[] pValues, Function<T, Component> pValueStringifier, Function<Options, T> pGetter, CycleOption.OptionSetter<T> pSetter) {
         return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.builder(pValueStringifier).withValues(pValues));
-    }
-
-    public static CycleOption<Boolean> createBinaryOption(String pCaptionKey, Component pDefaultValue, Component pSelectedValue, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, () -> CycleButton.booleanBuilder(pDefaultValue, pSelectedValue));
-    }
-
-    public static CycleOption<Boolean> createOnOff(String pCaptionKey, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
-        return new CycleOption<>(pCaptionKey, pGetter, pSetter, CycleButton::onOffBuilder);
-    }
-
-    public static CycleOption<Boolean> createOnOff(String pCaptionKey, Component pDefaultValue, Function<Options, Boolean> pGetter, CycleOption.OptionSetter<Boolean> pSetter) {
-        return createOnOff(pCaptionKey, pGetter, pSetter).setTooltip((p_167791_) -> {
-            List<FormattedCharSequence> list = p_167791_.font.split(pDefaultValue, 200);
-            return ignored -> Tooltip.create(Component.literal(list.toString())); // FIXME 1.20
-        });
     }
 
     public CycleOption<T> setTooltip(Function<Minecraft, OptionInstance.TooltipSupplier<T>> pTooltip) {

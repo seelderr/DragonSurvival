@@ -10,6 +10,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.data.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -21,6 +22,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS = createKey("wooden_dragon_doors");
 	public static final TagKey<Block> DRAGON_ALTARS = createKey("dragon_altars");
 	public static final TagKey<Block> DRAGON_TREASURES = createKey("dragon_treasures");
+	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = createKey("hunter_ability_blocks");
 
 	public DataBlockTagProvider(final PackOutput output, final CompletableFuture<HolderLookup.Provider> lookupProvider, final String modId, @Nullable final ExistingFileHelper existingFileHelper) {
 		super(output, lookupProvider, modId, existingFileHelper);
@@ -63,13 +65,11 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				/* FIXME :: Should be stone? */.add(DSBlocks.murdererDoor)
 				/* FIXME :: Should be stone? */.add(DSBlocks.sleeperDoor)
 				/* FIXME :: Should be stone? */.add(DSBlocks.stoneDoor)
-				.add(DSBlocks.legacyDoor)
-		;
+				.add(DSBlocks.legacyDoor);
 
 		tag(BlockTags.MINEABLE_WITH_AXE)
 				.addTag(WOODEN_DRAGON_DOORS)
-				.add(DSBlocks.forestPressurePlate)
-		;
+				.add(DSBlocks.forestPressurePlate);
 
 		tag(BlockTags.MINEABLE_WITH_PICKAXE)
 				.add(DSBlocks.dragon_altar_stone)
@@ -111,8 +111,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.dragonPressurePlate)
 				.add(DSBlocks.humanPressurePlate)
 				.add(DSBlocks.seaPressurePlate)
-				.add(DSBlocks.cavePressurePlate)
-		;
+				.add(DSBlocks.cavePressurePlate);
 
 		tag(BlockTags.NEEDS_STONE_TOOL)
 				.add(DSBlocks.ironDoor)
@@ -123,8 +122,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.treasureIron)
 				.add(DSBlocks.helmet1)
 				.add(DSBlocks.helmet2)
-				.add(DSBlocks.helmet3)
-		;
+				.add(DSBlocks.helmet3);
 
 		tag(BlockTags.NEEDS_IRON_TOOL)
 				.add(DSBlocks.treasureDiamond)
@@ -134,12 +132,27 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.dragonMemoryBlock)
 				.add(DSBlocks.peaceDragonBeacon)
 				.add(DSBlocks.magicDragonBeacon)
-				.add(DSBlocks.fireDragonBeacon)
-		;
+				.add(DSBlocks.fireDragonBeacon);
 
 		tag(BlockTags.NEEDS_DIAMOND_TOOL)
-				.add(DSBlocks.treasureDebris)
-		;
+				.add(DSBlocks.treasureDebris);
+
+		tag(HUNTER_ABILITY_BLOCKS)
+				.addTag(BlockTags.FLOWERS)
+				.addTag(BlockTags.SAPLINGS)
+				.add(Blocks.GRASS_BLOCK)
+				.add(Blocks.MYCELIUM)
+				.add(Blocks.PODZOL)
+				.add(Blocks.WARPED_NYLIUM)
+				.add(Blocks.CRIMSON_NYLIUM)
+				.add(Blocks.GRASS)
+				.add(Blocks.TALL_GRASS)
+				.add(Blocks.GLOW_LICHEN)
+				.add(Blocks.CRIMSON_ROOTS)
+				.add(Blocks.WARPED_ROOTS)
+				.add(Blocks.NETHER_SPROUTS)
+				.add(Blocks.BIG_DRIPLEAF)
+				.add(Blocks.SMALL_DRIPLEAF);
 	}
 
 	private static TagKey<Block> createKey(@NotNull final String name) {

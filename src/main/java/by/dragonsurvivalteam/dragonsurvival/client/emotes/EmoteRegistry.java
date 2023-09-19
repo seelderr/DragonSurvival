@@ -74,7 +74,7 @@ public class EmoteRegistry{
 		}
 	}
 
-	// FIXME 1.20 :: ?
+	// FIXME 1.20 :: Not sure what this was meant to do
 	public static void initEmoteRotation(){
 //		for(Emote emt : EMOTES){
 //			if(emt.mirror != null && emt.animation != null){
