@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
+@Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DragonConfigHandler{
 	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS = List.of();
 	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = List.of();
@@ -30,8 +30,10 @@ public class DragonConfigHandler{
 	public static Map<String, List<Block>> DRAGON_MANA_BLOCKS;
 
 	@SubscribeEvent
-	public static void onConfigLoad(ModConfigEvent.Loading event){ // TODO :: Listen to reload event
-		if(event.getConfig().getType() == ModConfig.Type.SERVER){
+	public static void onConfigLoad(final ModConfigEvent event) {
+		if (event.getConfig().getSpec() == ConfigHandler.serverSpec) {
+			DragonSurvivalMod.LOGGER.info("Rebuilding configuration...");
+
 			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();
 			rebuildBreathBlocks();
@@ -40,7 +42,7 @@ public class DragonConfigHandler{
 		}
 	}
 
-	private static void rebuildSpeedupBlocksMap(){
+	public static void rebuildSpeedupBlocksMap() {
 		HashMap<String, List<Block>> speedupMap = new HashMap<>();
 		speedupMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveSpeedupBlocks));
 		speedupMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestSpeedupBlocks));
@@ -64,12 +66,12 @@ public class DragonConfigHandler{
 		DRAGON_MANA_BLOCKS = map;
 	}
 
-	private static void rebuildSeaDragonConfigs(){
+	public static void rebuildSeaDragonConfigs(){
 		SEA_DRAGON_HYDRATION_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.seaHydrationBlocks);
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.getResourceElements(Item.class, ServerConfig.seaAdditionalWaterUseables);
 	}
 
-	private static void rebuildForestDragonConfigs(){
+	public static void rebuildForestDragonConfigs(){
 		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
 	}
 }

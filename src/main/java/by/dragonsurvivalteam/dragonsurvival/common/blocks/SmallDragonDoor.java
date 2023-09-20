@@ -2,14 +2,19 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -141,27 +146,24 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 			boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
 			if(blockIn != this && flag != state.getValue(POWERED)){
 				if(flag != state.getValue(OPEN)){
-					playSound(worldIn, pos, flag);
+					playSound(null, worldIn, pos, state, flag);
 				}
 
-				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
+				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), Block.UPDATE_CLIENTS);
 			}
 		}
 	}
 
-	private void playSound(Level worldIn, BlockPos pos, boolean isOpening){
-		worldIn.levelEvent(null, isOpening ? getOpenSound() : getCloseSound(), pos, 0);
+	private void playSound(@Nullable final Entity entity, final Level level, final BlockPos blockPosition, final BlockState blockState, boolean isOpening) {
+		level.playSound(entity, blockPosition, getSound(blockState, isOpening), SoundSource.BLOCKS, 1, level.getRandom().nextFloat() * 0.1F + 0.9F);
 	}
 
-	// TODO 1.20 :: Use tags? or sound type?
-	protected int getCloseSound(){
-//		return material == Material.METAL ? 1011 : 1012;
-		return 1011;
-	}
+	private SoundEvent getSound(final BlockState blockState, boolean isOpening) {
+		if (blockState.is(DataBlockTagProvider.WOODEN_DRAGON_DOORS)) {
+			return isOpening ? SoundEvents.WOODEN_DOOR_OPEN : SoundEvents.WOODEN_DOOR_CLOSE;
+		}
 
-	protected int getOpenSound(){
-//		return material == Material.METAL ? 1005 : 1006;
-		return 1005;
+		return isOpening ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.IRON_DOOR_CLOSE;
 	}
 
 	@Override
@@ -179,8 +181,8 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 
 		if (canOpen) {
 			blockState = blockState.cycle(OPEN);
-			level.setBlock(blockPos, blockState, 10);
-			level.levelEvent(player, blockState.getValue(OPEN) ? getOpenSound() : getCloseSound(), blockPos, 0);
+			level.setBlock(blockPos, blockState, /* Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE */ 10);
+			playSound(player, level, blockPos, blockState, blockState.getValue(OPEN));
 			return InteractionResult.SUCCESS;
 		}
 

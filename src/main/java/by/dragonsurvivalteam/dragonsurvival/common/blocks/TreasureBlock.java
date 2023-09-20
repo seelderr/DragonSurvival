@@ -251,9 +251,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 							level().setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + newLayers))));
 
 							if(leftOver > 0){
-								p_225534_2_.setBlock(blockPosition(), getBlockState().setValue(LAYERS, Integer.valueOf(Math.min(8, leftOver))), 3);
+								p_225534_2_.setBlock(blockPosition(), getBlockState().setValue(LAYERS, Integer.valueOf(Math.min(8, leftOver))), Block.UPDATE_ALL);
 							}else{
-								p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), 3);
+								p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
 							}
 
 							remove(RemovalReason.DISCARDED);
@@ -264,7 +264,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 					super.tick();
 				}
 			};
-			p_225534_2_.setBlock(p_225534_3_, p_225534_1_.getFluidState().createLegacyBlock(), 3);
+			p_225534_2_.setBlock(p_225534_3_, p_225534_1_.getFluidState().createLegacyBlock(), Block.UPDATE_ALL);
 			p_225534_2_.addFreshEntity(fallingblockentity);
 			falling(fallingblockentity);
 		}

@@ -2,14 +2,19 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -103,27 +108,24 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 			boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
 			if(blockIn != this && flag != state.getValue(POWERED)){
 				if(flag != state.getValue(OPEN)){
-					playSound(worldIn, pos, flag);
+					playSound(null, worldIn, pos, state, flag);
 				}
 
-				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
+				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), Block.UPDATE_CLIENTS);
 			}
 		}
 	}
 
-	private void playSound(Level worldIn, BlockPos pos, boolean isOpening){
-		worldIn.levelEvent(null, isOpening ? getOpenSound() : getCloseSound(), pos, 0);
+	private void playSound(@Nullable final Entity entity, final Level level, final BlockPos blockPosition, final BlockState blockState, boolean isOpening) {
+		level.playSound(entity, blockPosition, getSound(blockState, isOpening), SoundSource.BLOCKS, 1, level.getRandom().nextFloat() * 0.1F + 0.9F);
 	}
 
-	// TODO 1.20 :: tags or sth. else?
-	private int getCloseSound(){
-//		return material == Material.METAL ? 1011 : 1012;
-		return 1011;
-	}
+	private SoundEvent getSound(final BlockState blockState, boolean isOpening) {
+		if (blockState.is(DataBlockTagProvider.WOODEN_DRAGON_DOORS)) {
+			return isOpening ? SoundEvents.WOODEN_DOOR_OPEN : SoundEvents.WOODEN_DOOR_CLOSE;
+		}
 
-	private int getOpenSound(){
-//		return material == Material.METAL ? 1005 : 1006;
-		return 1005;
+		return isOpening ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.IRON_DOOR_CLOSE;
 	}
 
 	@Override
@@ -143,11 +145,11 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 			blockState = blockState.cycle(OPEN).setValue(WATERLOGGED, level.getFluidState(blockPos).getType() == Fluids.WATER);
 
 			level.setBlock(blockPos, blockState, 10);
-			level.levelEvent(player, blockState.getValue(OPEN) ? getOpenSound() : getCloseSound(), blockPos, 0);
+			playSound(player, level, blockPos, blockState, blockState.getValue(OPEN));
 
 			if (blockState.getValue(PART) == Part.TOP) {
-				level.setBlock(blockPos.below(2), blockState.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, level.getFluidState(blockPos.below(2)).getType() == Fluids.WATER), 10);
-				level.setBlock(blockPos.below(), blockState.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, level.getFluidState(blockPos.below()).getType() == Fluids.WATER), 10);
+				level.setBlock(blockPos.below(2), blockState.setValue(PART, Part.BOTTOM).setValue(WATERLOGGED, level.getFluidState(blockPos.below(2)).getType() == Fluids.WATER), /* Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE */ 10);
+				level.setBlock(blockPos.below(), blockState.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, level.getFluidState(blockPos.below()).getType() == Fluids.WATER), /* Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE */ 10);
 			}
 
 			return InteractionResult.SUCCESS;
@@ -268,8 +270,8 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	@Override
 	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack){
-		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER), 3);
-		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER), 3);
+		worldIn.setBlock(pos.above(), state.setValue(PART, Part.MIDDLE).setValue(WATERLOGGED, worldIn.getFluidState(pos.above()).getType() == Fluids.WATER), Block.UPDATE_ALL);
+		worldIn.setBlock(pos.above(2), state.setValue(PART, Part.TOP).setValue(WATERLOGGED, worldIn.getFluidState(pos.above(2)).getType() == Fluids.WATER), Block.UPDATE_ALL);
 	}
 
 	@Override
@@ -280,14 +282,14 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 				BlockPos middlePos = part == Part.BOTTOM ? pos.above() : pos.below();
 				BlockState middleState = worldIn.getBlockState(middlePos);
 				if(middleState.getBlock() == state.getBlock()){
-					worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), 35);
+					worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), /* Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_SUPPRESS_DROPS */ 35);
 					worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
 				}
 			}else if(part != Part.BOTTOM && player.isCreative()){
 				BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
 				BlockState bottomState = worldIn.getBlockState(bottomPos);
 				if(bottomState.getBlock() == state.getBlock()){
-					worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), 35);
+					worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), /* Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_SUPPRESS_DROPS */ 35);
 					worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
 				}
 			}

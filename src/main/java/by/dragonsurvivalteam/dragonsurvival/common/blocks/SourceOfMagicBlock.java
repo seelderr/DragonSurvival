@@ -365,7 +365,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 
 		if(!p_204509_3_.getValue(BlockStateProperties.WATERLOGGED) && p_204509_4_.getType() == Fluids.WATER){
 			if(!p_204509_1_.isClientSide()){
-				p_204509_1_.setBlock(p_204509_2_, p_204509_3_.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE), 3);
+				p_204509_1_.setBlock(p_204509_2_, p_204509_3_.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE), Block.UPDATE_ALL);
 				p_204509_1_.scheduleTick(p_204509_2_, p_204509_4_.getType(), p_204509_4_.getType().getTickDelay(p_204509_1_));
 
 				if(rootPos != null){
@@ -389,7 +389,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		}
 
 		if(p_204508_3_.getValue(BlockStateProperties.WATERLOGGED)){
-			p_204508_1_.setBlock(p_204508_2_, p_204508_3_.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), 3);
+			p_204508_1_.setBlock(p_204508_2_, p_204508_3_.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), Block.UPDATE_ALL);
 
 			if(rootPos != null){
 				SourceOfMagicPlaceholder placeHolder = (SourceOfMagicPlaceholder)p_204508_1_.getBlockEntity(p_204508_2_);

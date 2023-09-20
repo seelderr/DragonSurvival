@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.config;
 
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
@@ -80,7 +81,17 @@ public class SyncListConfig implements IMessage<SyncListConfig> {
 
 				// In case the config event does not get triggered
 				if (message.path.startsWith("food")) {
-					context.enqueueWork(DragonFoodHandler::rebuildFoodMap);
+					DragonFoodHandler.rebuildFoodMap();
+				} else if (message.path.contains("SpeedupBlocks")) {
+					DragonConfigHandler.rebuildSpeedupBlocksMap();
+				} else if (message.path.contains("seaHydrationBlocks") || message.path.contains("seaHydrationItems")) {
+					DragonConfigHandler.rebuildSeaDragonConfigs();
+				} else if (message.path.contains("forestBreathGrowBlacklist")) {
+					DragonConfigHandler.rebuildForestDragonConfigs();
+				} else if (message.path.contains("BreathBlockBreaks")) {
+					DragonConfigHandler.rebuildBreathBlocks();
+				} else if (message.path.contains("DragonManaBlocks")) {
+					DragonConfigHandler.rebuildManaBlocks();
 				}
 			});
 		}
