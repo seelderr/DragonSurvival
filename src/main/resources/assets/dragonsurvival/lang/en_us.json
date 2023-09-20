@@ -216,6 +216,7 @@
   "ds.sea.dragon.food": "§3■ Sea dragon food§r",
   "dragonsurvival:config.category.general.tooltip": "General config options for Dragon Survival",
   "dragonsurvival:config.category.spawnchances.tooltip": "Configurable spawn chances for entities",
+  "dragonsurvival.config.reset_button": "Reset settings to their default value.",
   "ds.endmessage.1": "Have you come here for the spin wings, {0}? Get out, before its too late.",
   "ds.endmessage.2": "This is my land, {0}, show some respect. Go away, but first answer, why have you come here. Is it for spin wings?",
   "ds.endmessage.3": "You have gone through lot to get here, {0}, what do you wish?",

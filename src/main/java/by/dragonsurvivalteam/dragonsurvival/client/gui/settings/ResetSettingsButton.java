@@ -17,10 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractOptionSliderButton;
-import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.CycleButton;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
@@ -77,6 +74,7 @@ public class ResetSettingsButton extends Button {
 		}, Supplier::get);
 
 		this.option = option;
+		setTooltip(Tooltip.create(Component.translatable("dragonsurvival.config.reset_button")));
 	}
 
 	// TODO :: Generalize numeric values (one method for all types)
@@ -126,8 +124,8 @@ public class ResetSettingsButton extends Button {
 	}
 
 	private static void handleBooleanValue(final AbstractWidget widget, final Object defaultValues, final ConfigOption configOption, final String configKey) {
-		if (widget != null) {
-			((CycleButton) widget).setValue(defaultValues);
+		if (widget instanceof CycleButton cycleButton) {
+			cycleButton.setValue(defaultValues);
 		}
 
 		if (configOption.side() == ConfigSide.SERVER) {
@@ -139,7 +137,7 @@ public class ResetSettingsButton extends Button {
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 		if (visible) {
 			active = false;
-			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
+			isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 
 			if (OptionsList.configMap.containsKey(option)) {
 				String key = OptionsList.configMap.get(option);
@@ -152,8 +150,8 @@ public class ResetSettingsButton extends Button {
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableDepthTest();
-			guiGraphics.blit(WIDGETS_LOCATION, getX(), getY(), 0, 46 + i * 20, width / 2, height);
-			guiGraphics.blit(WIDGETS_LOCATION, getX() + width / 2, getY(), 200 - width / 2, 46 + i * 20, width / 2, height);
+			guiGraphics.blit(WIDGETS_LOCATION, getX(), getY(), 0, 46 + i * 20, getWidth() / 2, getHeight());
+			guiGraphics.blit(WIDGETS_LOCATION, getX() + getWidth() / 2, getY(), 200 - getWidth() / 2, 46 + i * 20, getWidth() / 2, getHeight());
 
 			guiGraphics.blit(texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 		}

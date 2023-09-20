@@ -62,23 +62,25 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap> {
 
 		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
 			context.enqueueWork(() -> ClientProxy.handleSynchronizeDragonCap(message));
-		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) { // enqueue work
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 
-			ServerPlayer sender = context.getSender();
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
-				if (message.dragonType == null && handler.getType() != null) {
-					DragonCommand.reInsertClawTools(sender, handler);
-				}
+			context.enqueueWork(() -> {
+				ServerPlayer sender = context.getSender();
+				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+					if (message.dragonType == null && handler.getType() != null) {
+						DragonCommand.reInsertClawTools(sender, handler);
+					}
 
-				handler.setIsHiding(message.hiding);
-				handler.setType(message.dragonType);
-				handler.setSize(message.size, sender);
-				handler.setHasWings(message.hasWings);
-				handler.setPassengerId(message.passengerId);
+					handler.setIsHiding(message.hiding);
+					handler.setType(message.dragonType);
+					handler.setSize(message.size, sender);
+					handler.setHasWings(message.hasWings);
+					handler.setPassengerId(message.passengerId);
 
-				sender.setForcedPose(null);
-				sender.refreshDimensions();
+					sender.setForcedPose(null);
+					sender.refreshDimensions();
+				});
 			});
 		}
 

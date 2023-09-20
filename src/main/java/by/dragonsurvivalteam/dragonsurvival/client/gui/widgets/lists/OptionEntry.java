@@ -25,8 +25,6 @@ import java.util.Map;
 public class OptionEntry extends OptionListEntry{
 	public final AbstractWidget widget;
 	final Map<Option, AbstractWidget> options;
-	private final int width;
-	private final Option option;
 	public AbstractWidget resetButton;
 	public Component key;
 	public CategoryEntry category;
@@ -36,8 +34,6 @@ public class OptionEntry extends OptionListEntry{
 		this.widget = widget;
 		category = categoryEntry;
 		key = textComponent;
-		this.option = option;
-		width = Minecraft.getInstance().font.width(key);
 		options = pOptions;
 
 		resetButton = new ResetSettingsButton(widget.getX() + 3 + widget.getWidth() + (categoryEntry != null && categoryEntry.parent != null ? 0 : 1), 0, option);

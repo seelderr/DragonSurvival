@@ -92,13 +92,13 @@ public class DragonEditorHandler{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if (!RenderSystem.isOnRenderThreadOrInit()) {
-			RenderSystem.recordRenderCall(() -> genTextures(dragon, player, handler));
+			RenderSystem.recordRenderCall(() -> genTextures(player, handler));
 		} else {
-			genTextures(dragon, player, handler);
+			genTextures(player, handler);
 		}
 	}
 
-	private static void genTextures(final DragonEntity dragon, final Player player, final DragonStateHandler handler) {
+	private static void genTextures(final Player player, final DragonStateHandler handler) {
 		Set<DragonLevel> dragonLevels = handler.getSkinData().skinPreset.skinAges.keySet();
 
 		for (DragonLevel dragonLevel : dragonLevels) {
@@ -156,7 +156,7 @@ public class DragonEditorHandler{
 				}
 			}
 
-			String uuid = dragon.getPlayer().getStringUUID();
+			String uuid = player.getStringUUID();
 			ResourceLocation dynamicNormalKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
 			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
 
@@ -212,8 +212,6 @@ public class DragonEditorHandler{
 				DynamicTexture layer = new DynamicTexture(image);
 				Minecraft.getInstance().getTextureManager().register(key, layer);
 			}
-
-//			System.out.println("Compiled skin " + key);
 		} catch (Exception e) {
 			DragonSurvivalMod.LOGGER.error(e);
 		}

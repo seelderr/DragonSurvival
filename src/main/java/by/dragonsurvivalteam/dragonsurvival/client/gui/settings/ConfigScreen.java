@@ -338,6 +338,10 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 		OptionListEntry entry = options.getEntryAtPos(mouseX, mouseY);
 
 		if (optional.isEmpty() && entry instanceof OptionEntry optionEntry) {
+			if (optionEntry.resetButton.isHovered()) {
+				return optionEntry.resetButton.getTooltip().toCharSequence(Minecraft.getInstance());
+			}
+
 			optional = Optional.of(optionEntry.widget);
 		}
 

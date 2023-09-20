@@ -78,7 +78,6 @@ public class DragonStateHandler extends EntityStateHandler {
 	public void setSize(double size, final Player player) {
 		setSize(size);
 		updateModifiers(size, player);
-		player.refreshDimensions();
 	}
 
 	private void updateModifiers(double size, final Player player) {
@@ -247,6 +246,21 @@ public class DragonStateHandler extends EntityStateHandler {
 			this.size = size;
 
 			if (oldLevel != getLevel()) {
+				requestClientData();
+			}
+
+			if (dragonType != null) {
+				setSavedDragonSize(dragonType.getTypeName(), size);
+			}
+		}
+	}
+
+	public void setSize(double size, boolean isUpdateRequired) {
+		if (size != this.size) {
+			DragonLevel oldLevel = getLevel();
+			this.size = size;
+
+			if (isUpdateRequired && oldLevel != getLevel()) {
 				requestClientData();
 			}
 
