@@ -90,7 +90,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			return new Vec3(0, 0, 0);
 		}
 
-		if (player == Minecraft.getInstance().player) {
+		if (true/*player == Minecraft.getInstance().player*/) {
 			return player.getDeltaMovement();
 		}
 
