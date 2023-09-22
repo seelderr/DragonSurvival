@@ -129,8 +129,9 @@ public class ResourceDropdownEntry extends DropdownEntry {
                         }
 
                         RenderSystem.disableDepthTest();
-                        poseStack.popPose();
                     }
+
+                    poseStack.popPose();
                 }
             };
         } else {
