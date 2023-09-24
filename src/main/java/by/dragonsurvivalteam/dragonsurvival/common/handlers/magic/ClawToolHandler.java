@@ -225,21 +225,16 @@ public class ClawToolHandler{
 			BlockState blockState = event.getState();
 			float originalSpeed = event.getOriginalSpeed();
 
-			float bonus = 1F;
-			float unlockedBonus = 1F;
-
-			/* TODO ::
-			Setting the the bonus or base harvest level to diamond doesn't improve the speed here
-			Should the speed bonus scale with the bonus harvest level or stay at these static values?
-			*/
+			float bonus = 0;
+			float unlockedBonus = 0;
 
 			if (handler.getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-				unlockedBonus = 2F;
+				unlockedBonus = 2;
 			} else if (handler.getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-				unlockedBonus = 2F;
+				unlockedBonus = 2;
 			} else if (handler.getLevel() == DragonLevel.ADULT) {
-				unlockedBonus = 4F;
-				bonus = 2F;
+				unlockedBonus = 4;
+				bonus = 2;
 			}
 
 			for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
@@ -250,7 +245,8 @@ public class ClawToolHandler{
 				}
 			}
 
-			event.setNewSpeed(originalSpeed * bonus);
+			// Don't discard the changes other mods already did to the harvest speed
+			event.setNewSpeed(event.getNewSpeed() + originalSpeed * bonus);
 		}
 	}
 }
