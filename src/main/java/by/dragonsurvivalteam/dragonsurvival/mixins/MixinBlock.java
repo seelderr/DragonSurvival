@@ -1,55 +1,50 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import javax.annotation.Nullable;
+@Mixin(Block.class)
+public class MixinBlock {
+	@Unique private static Player dragonSurvival$player;
 
-@Mixin( Block.class )
-public class MixinBlock{
-	@Inject( at = @At( "HEAD" ), method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", cancellable = true )
-	private static void dropResources(BlockState state, Level level, BlockPos pos, @Nullable BlockEntity blockEntity, Entity entity, ItemStack stack, CallbackInfo ci) {
-        if (!(level instanceof ServerLevel)) {
-            return;
-        }
+	@Inject(method = "dropResources(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/entity/BlockEntity;Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/item/ItemStack;)V", at = @At("HEAD"))
+	private static void storeData(final BlockState blockState, final Level level, final BlockPos blockPosition, final BlockEntity blockEntity, final Entity entity, final ItemStack tool, final CallbackInfo callback) {
+		if (entity instanceof Player player && DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
+			dragonSurvival$player = player;
+		}
+	}
 
-		if(!DragonUtils.isDragonType(DragonUtils.getHandler(entity), DragonTypes.CAVE)){
-			return;
+	@Inject(method = "lambda$popResource$5", at = @At("HEAD"), cancellable = true)
+	private static void test(final Level level, double x, double y, double z, final ItemStack itemStack, final CallbackInfoReturnable<ItemEntity> callback) {
+		ItemEntity result;
+
+		if (dragonSurvival$player != null) {
+			result = new ItemEntity(level, x, y, z, itemStack) {
+				@Override
+				public boolean fireImmune() {
+					return true;
+				}
+			};
+		} else {
+			result = new ItemEntity(level, x, y, z, itemStack);
 		}
 
-		Block.getDrops(state, (ServerLevel)level, pos, blockEntity, entity, stack).forEach(droppedStack -> {
-			if(!level.isClientSide && !droppedStack.isEmpty() && level.getGameRules().getBoolean(GameRules.RULE_DOBLOCKDROPS) && !level.restoringBlockSnapshots) {
-				double d0 = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
-				double d1 = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
-				double d2 = (double)(level.random.nextFloat() * 0.5F) + 0.25D;
-				ItemEntity itementity = new ItemEntity(level, (double)pos.getX() + d0, (double)pos.getY() + d1, (double)pos.getZ() + d2, droppedStack){
-					@Override
-					public boolean fireImmune(){
-						return true;
-					}
-				};
-				itementity.setDefaultPickUpDelay();
-				level.addFreshEntity(itementity);
-			}
-		});
-
-		state.spawnAfterBreak((ServerLevel)level, pos, stack, true);
-
-		ci.cancel();
+		dragonSurvival$player = null;
+		callback.setReturnValue(result);
 	}
 }
