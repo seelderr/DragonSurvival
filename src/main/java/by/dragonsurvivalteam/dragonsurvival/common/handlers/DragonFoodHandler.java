@@ -298,7 +298,7 @@ public class DragonFoodHandler {
 					}
 				}
 
-				if (isSafe) {
+				if (isSafe && !keepEffects.contains(ResourceHelper.getKey(item).toString())) {
 					foods.add(item);
 				}
 			}
