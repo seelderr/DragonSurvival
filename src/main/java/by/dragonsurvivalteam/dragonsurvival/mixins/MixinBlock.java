@@ -11,13 +11,15 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+@Debug(export = true)
 @Mixin(Block.class)
 public class MixinBlock {
 	@Unique private static Player dragonSurvival$player;
@@ -29,22 +31,20 @@ public class MixinBlock {
 		}
 	}
 
-	@Inject(method = "lambda$popResource$5", at = @At("HEAD"), cancellable = true)
-	private static void test(final Level level, double x, double y, double z, final ItemStack itemStack, final CallbackInfoReturnable<ItemEntity> callback) {
-		ItemEntity result;
-
+	// TODO :: Items are still dead on relog not sure if that's a problem
+	@ModifyVariable(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "STORE"))
+	private static ItemEntity makeDropsSafe(final ItemEntity itemEntity) {
 		if (dragonSurvival$player != null) {
-			result = new ItemEntity(level, x, y, z, itemStack) {
+			dragonSurvival$player = null;
+
+			return new ItemEntity(itemEntity.level, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
 				@Override
 				public boolean fireImmune() {
 					return true;
 				}
 			};
-		} else {
-			result = new ItemEntity(level, x, y, z, itemStack);
 		}
 
-		dragonSurvival$player = null;
-		callback.setReturnValue(result);
+		return itemEntity;
 	}
 }
