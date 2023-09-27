@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
@@ -141,6 +142,39 @@ public class ClawToolHandler{
 		return harvestTool;
 	}
 
+	public static Pair<ItemStack, Integer> getDragonHarvestToolAndSlot(final Player player, final BlockState state) {
+		ItemStack mainStack = player.getInventory().getSelected();
+		float newSpeed = 0F;
+
+		if (!ToolUtils.shouldUseDragonTools(mainStack)) {
+			return Pair.of(mainStack, -1);
+		}
+
+		ItemStack harvestTool = mainStack;
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		int toolSlot = -1;
+
+		for (int i = 1; i < 4; i++) {
+			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
+
+			if (!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)) {
+				float tempSpeed = breakingItem.getDestroySpeed(state);
+
+				if (breakingItem.getItem() instanceof DiggerItem item) {
+					tempSpeed = item.getDestroySpeed(breakingItem, state);
+				}
+
+				if (tempSpeed > newSpeed) {
+					newSpeed = tempSpeed;
+					harvestTool = breakingItem;
+					toolSlot = i;
+				}
+			}
+		}
+
+		return Pair.of(harvestTool, toolSlot);
+	}
+
 	public static ItemStack getDragonHarvestTool(final Player player) {
 		ItemStack mainStack = player.getInventory().getSelected();
 
@@ -223,13 +257,13 @@ public class ClawToolHandler{
 
 			Player player = event.getEntity();
 			ItemStack mainStack = player.getMainHandItem();
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if (!ToolUtils.shouldUseDragonTools(mainStack)) {
+			if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
 				// Bonus does not apply to held tools
+				// TODO :: Maybe the bonus shouldn't apply when you have a tool in the claw inventory?
 				return;
 			}
-
-			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if (!handler.isDragon()) {
 				return;

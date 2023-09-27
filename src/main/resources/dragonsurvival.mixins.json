@@ -15,7 +15,11 @@
     "MixinPlayerStart",
     "MixinPlayerEnd",
     "MixinServerPlayerGameMode",
-    "MixinSleepStatus"
+    "MixinSleepStatus",
+    "tool_swap.MixinServerPlayerGameModeStart",
+    "tool_swap.MixinServerPlayerGameModeEnd",
+    "tool_swap.MixinPlayerStart",
+    "tool_swap.MixinPlayerEnd"
   ],
   "client": [
     "AccessorEntityRenderer",
