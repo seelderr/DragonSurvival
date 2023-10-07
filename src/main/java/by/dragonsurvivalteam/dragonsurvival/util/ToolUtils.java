@@ -58,6 +58,10 @@ public class ToolUtils {
     public static void swapStart(final Player player, final BlockState blockState) {
         // TODO :: Add a keybind to prevent tool swap as a fallback?
 
+        if (player.isCreative() || player.isSpectator()) {
+            return;
+        }
+
         DragonStateHandler handler = DragonUtils.getHandler(player);
 
         if (!handler.isDragon()) {
@@ -84,6 +88,10 @@ public class ToolUtils {
 
     /** Puts the stored main hand back into the main hand and the claw tool into its slot */
     public static void swapFinish(final Player player) {
+        if (player.isCreative() || player.isSpectator()) {
+            return;
+        }
+
         DragonStateHandler handler = DragonUtils.getHandler(player);
 
         if (!handler.isDragon()) {

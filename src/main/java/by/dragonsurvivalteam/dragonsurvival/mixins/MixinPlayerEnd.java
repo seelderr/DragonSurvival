@@ -32,7 +32,7 @@ public class MixinPlayerEnd {
             player.setItemInHand(InteractionHand.MAIN_HAND, originalMainHand);
 
             handler.getClawToolData().getClawsInventory().setItem(0, originalToolSlot);
-            handler.storedMainHandWeapon = ItemStack.EMPTY; // There is no real need to reset it here but doesn't hurt to do it
+            handler.storedMainHandWeapon = ItemStack.EMPTY;
             handler.switchedWeapon = false;
         }
     }

@@ -29,7 +29,6 @@ public class MixinBlock {
 		}
 	}
 
-	// TODO :: Items are still dead on relog not sure if that's a problem
 	@ModifyVariable(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "STORE"))
 	private static ItemEntity makeDropsSafe(final ItemEntity itemEntity) {
 		if (dragonSurvival$player != null) {
