@@ -77,7 +77,7 @@ public class ToolUtils {
         if (toolSlot != -1 && !handler.switchedTool) {
             player.setItemInHand(InteractionHand.MAIN_HAND, dragonHarvestTool);
 
-            handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY);
+            handler.getClawToolData().getClawsInventory().setItem(toolSlot, ItemStack.EMPTY);
             handler.storedMainHandTool = mainHand;
             handler.switchedTool = true;
             handler.switchedToolSlot = toolSlot;
