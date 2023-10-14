@@ -235,7 +235,7 @@ public class ClawToolHandler{
 					for (int i = 0; i < 4; i++) {
 						ItemStack dragonTool = clawsInventory.getItem(i);
 
-						if (clawTool.getItem() == dragonTool.getItem()) {
+						if (event.getOriginal().getItem() == dragonTool.getItem()) {
 							clawsInventory.setItem(i, ItemStack.EMPTY);
 							break;
 						}

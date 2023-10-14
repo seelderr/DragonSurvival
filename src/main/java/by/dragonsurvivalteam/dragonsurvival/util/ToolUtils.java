@@ -55,10 +55,8 @@ public class ToolUtils {
      <br>
      When using this make sure you call {@link ToolUtils#swapFinish(Player)} to restore the initial state
     */
-    public static void swapStart(final Player player, final BlockState blockState) {
-        // TODO :: Add a keybind to prevent tool swap as a fallback?
-
-        if (player.isCreative() || player.isSpectator()) {
+    public static void swapStart(@Nullable final Player player, final BlockState blockState) {
+        if (player == null || player.isCreative() || player.isSpectator()) {
             return;
         }
 
@@ -87,8 +85,8 @@ public class ToolUtils {
     }
 
     /** Puts the stored main hand back into the main hand and the claw tool into its slot */
-    public static void swapFinish(final Player player) {
-        if (player.isCreative() || player.isSpectator()) {
+    public static void swapFinish(@Nullable final Player player) {
+        if (player == null || player.isCreative() || player.isSpectator()) {
             return;
         }
 
