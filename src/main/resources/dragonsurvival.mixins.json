@@ -14,8 +14,9 @@
     "MixinPlayerEntity",
     "MixinPlayerStart",
     "MixinPlayerEnd",
-    "MixinServerPlayerGameMode",
-    "MixinSleepStatus"
+    "MixinSleepStatus",
+    "tool_swap.MixinServerPlayerGameModeStart",
+    "tool_swap.MixinServerPlayerGameModeEnd"
   ],
   "client": [
     "AccessorEntityRenderer",
@@ -28,7 +29,9 @@
     "MixinInventoryScreen",
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",
-    "MixinWorldRenderer"
+    "MixinWorldRenderer",
+    "tool_swap.MixinMultiPlayerGameModeStart",
+    "tool_swap.MixinMultiPlayerGameModeEnd"
   ],
   "minVersion": "0.8"
 }

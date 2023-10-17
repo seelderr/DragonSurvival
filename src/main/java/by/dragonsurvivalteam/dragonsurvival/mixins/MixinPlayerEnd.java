@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = Player.class, priority = 10000) // To make sure it's the last call in the method
+@Mixin(value = Player.class, /* Make sure it happens at the end */ priority = 10_000)
 public class MixinPlayerEnd {
     /** Put the switched-out items (dragon claw tool and main hand item) back to their original places */
     @Inject(method = "attack", at = @At("RETURN"))
@@ -25,15 +25,15 @@ public class MixinPlayerEnd {
 
         DragonStateHandler handler = DragonUtils.getHandler(player);
 
-        if (handler.switchedItems) {
-            ItemStack originalMainHand = handler.storedMainHand;
+        if (handler.switchedWeapon) {
+            ItemStack originalMainHand = handler.storedMainHandWeapon;
             ItemStack originalToolSlot = player.getItemInHand(InteractionHand.MAIN_HAND);
 
             player.setItemInHand(InteractionHand.MAIN_HAND, originalMainHand);
 
             handler.getClawToolData().getClawsInventory().setItem(0, originalToolSlot);
-            handler.storedMainHand = ItemStack.EMPTY; // There is no real need to reset it here but doesn't hurt to do it
-            handler.switchedItems = false;
+            handler.storedMainHandWeapon = ItemStack.EMPTY;
+            handler.switchedWeapon = false;
         }
     }
 }

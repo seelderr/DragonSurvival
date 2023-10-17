@@ -74,6 +74,10 @@ public class DragonFoodHandler {
 	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaFoodLevel", comment = "Re-enable the vanilla hud for the food level")
 	public static Boolean vanillaFoodLevel = false;
 
+	@ConfigType(Item.class)
+	@ConfigOption(side = ConfigSide.SERVER, key = "keepEffects", category = "food", comment = "Food items which should keep their effects even if they're not a valid food for the dragon (foodHungerEffect will be disabled for these items as well)")
+	public static List<String> keepEffects = List.of();
+
 	// Tooltip maps
 	public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD;
 	public static CopyOnWriteArrayList<Item> FOREST_DRAGON_FOOD;
@@ -217,6 +221,8 @@ public class DragonFoodHandler {
 		FoodProperties.Builder builder = new FoodProperties.Builder();
 		FoodProperties humanFoodProperties = item.getFoodProperties();
 
+		boolean shouldKeepEffects = keepEffects.contains(item.getRegistryName().toString());
+
 		// Copy the configurations and effects from the initial food properties
 		if (humanFoodProperties != null) {
 			if (humanFoodProperties.isMeat()) {
@@ -237,13 +243,13 @@ public class DragonFoodHandler {
 				}
 
 				// Hunger and Poison effects will be skipped
-				if (isDragonFood && effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON) {
+				if ((shouldKeepEffects || isDragonFood) && effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON) {
 					builder.effect(effect::getFirst, effect.getSecond());
 				}
 			}
 		}
 
-		if (!isDragonFood && foodHungerEffect) {
+		if (!shouldKeepEffects && !isDragonFood && foodHungerEffect) {
 			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
 		}
 
@@ -293,7 +299,7 @@ public class DragonFoodHandler {
 					}
 				}
 
-				if (isSafe) {
+				if (isSafe && !keepEffects.contains(item.getRegistryName().toString())) {
 					foods.add(item);
 				}
 			}
