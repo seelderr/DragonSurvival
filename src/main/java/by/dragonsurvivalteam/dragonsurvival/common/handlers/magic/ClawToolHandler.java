@@ -154,7 +154,7 @@ public class ClawToolHandler{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		int toolSlot = -1;
 
-		for (int i = 1; i < 4; i++) {
+		for (int i = 0; i < 4; i++) {
 			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
 
 			if (!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)) {

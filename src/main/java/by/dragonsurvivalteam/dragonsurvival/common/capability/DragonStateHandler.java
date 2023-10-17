@@ -344,8 +344,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			return false;
 		}
 
-		for (int i = 1; i < 4; i++) {
-			// FIXME :: Why is the sword ignored? It can harvest cobwebs (and due to other mods maybe other things as well)
+		for (int i = 0; i < 4; i++) {
 			ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
 
 			if (stack.isCorrectToolForDrops(state)) {
