@@ -336,8 +336,11 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	/** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
 	public boolean canHarvestWithPaw(final BlockState state) {
-		for (int i = 1; i < 4; i++) {
-			// FIXME :: Why is the sword ignored? It can harvest cobwebs (and due to other mods maybe other things as well)
+		if (!isDragon()) {
+			return false;
+		}
+
+		for (int i = 0; i < 4; i++) {
 			ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
 
 			if (stack.isCorrectToolForDrops(state)) {

@@ -14,6 +14,7 @@
     "MixinPlayerEntity",
     "MixinPlayerStart",
     "MixinPlayerEnd",
+    "MixinServerPlayerGameMode",
     "MixinSleepStatus",
     "tool_swap.MixinServerPlayerGameModeStart",
     "tool_swap.MixinServerPlayerGameModeEnd"
