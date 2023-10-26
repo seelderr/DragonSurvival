@@ -78,11 +78,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> REDO_QUEUES = new ConcurrentHashMap<>();
 	private final Screen source;
-	private final String[] animations = {"sit",
-	                                     "idle",
-	                                     "fly",
+	private final String[] animations = {"sit_dentist",
+	                                     "sit_head_locked",
+	                                     "idle_head_locked",
+	                                     "fly_head_locked",
 	                                     "swim_fast",
-	                                     "run"};
+	                                     "run_head_locked"};
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "editorHistory", comment = "The amount of undos and redos that are saved in the dragon editor." )
 	public static Integer editorHistory = 10;
@@ -337,7 +338,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
 
 
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? width / 2 - 100 - 100 : width / 2 + 83, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30), 90, 15, curValue, values, layers){
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 7 ? width / 2 - 210 : width / 2 + 80, guiTop + 10 + (i >= 7 ? (i - 7) * 20 : i * 20), 100, 15, curValue, values, layers){
 				@Override
 				public void updateMessage(){
 					if(current != null){
@@ -398,7 +399,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			});
 
-			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 15 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), s -> {
+			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 10 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), s -> {
 				doAction();
 				preset.skinAges.get(level).get().layerSettings.get(layers).get().hue = s.floatValue();
 				handler.getSkinData().compileSkin();
@@ -407,7 +408,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			i++;
 		}
 
-		addRenderableWidget(new Button(width / 2 + 30, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
+		addRenderableWidget(new Button(width / 2 + 45, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
 			curAnimation += 1;
 
 			if(curAnimation >= animations.length){
@@ -432,7 +433,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new Button(width / 2 - 30 - 15, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
+		addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
 			curAnimation -= 1;
 
 			if(curAnimation < 0){
@@ -491,14 +492,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 16, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width, height, 0, 0, 0, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().wings;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 31, 120, 14, 14, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 19, 19, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().defaultSkin;
@@ -720,7 +721,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		addRenderableWidget(new CopySettingsButton(this, width / 2 + 198 + 15, guiTop + 10, 16, 16, Component.empty(), p -> {}));
 
-		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
+		/*addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
 			dragonRender.yRot = -3;
 			dragonRender.xRot = -5;
 			dragonRender.xOffset = 0;
@@ -743,7 +744,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				active = visible = showUi;
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
-		});
+		});*/
 
 		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
 		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, Component.empty(), s -> {}, this));
@@ -846,3 +847,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		return false;
 	}
 }
+
+// TODO add a warning to the logs that any custom textures are incorrectly registered in customization.json or are not used.
+// TODO add dragon body types (western, eastern, southern). They will only be realized with a set of animations. The model, textures and other things will not be affected. Body selection should appear after the species selection. Email me on discord for details if you want to help add this (I can't do it on my own)

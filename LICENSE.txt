@@ -1,23 +1,22 @@
 
                             Dragon Survival License
-                           Version 1.0, January 2022
+                           Version 1.1, October 2023
 
    TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
-   The author and owner of Dragon Survival is Viktoria Ershova (BlackAures1)
+   Allowed uses: personal use, creating public commercial servers with Dragon Survival,
+      creating and share modpacks what posted on Curseforge, selling and painting skins,
+      creating and share java addons for Dragon Survival, creating public forks of this Dragon Survival
+      repository to work on improving Dragon Survival or for personal private use.
 
-   Allowed use of content: private use, modification, distribution, view and fork repository,
-     making pull request or suggestions to improve the project. Other uses are negotiated with the author separately.
-     The author retains full rights to the project. Only "Minecraft Mod: Dragons Survival"
-     participants are free to make changes may freely modify, distribute and use all project
-     content except for the creation of third-party projects using any Dragon Survival content.
-     List of participants "Minecraft Mod: Dragons Survival" on the GitHub:
-                https://github.com/orgs/DragonSurvivalTeam/people
+   Any other uses not described or questionable may be permitted only by the project owner - Black Aures.
 
-    This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
+    This License does not grant permission to use Dragon Survival content
+      in other projects, reupload Dragon Survival to other sites without the
+      express permitted of the owner of Dragon Survival, publicly publish
+      porting to other versions, porting to bedrock and other platforms,
+      create and trade names, trademarks, service marks, or product names
+      of the Licensor, except as required for fair use.
 
     Disclaimer of Warranty. Unless required by applicable law or
       agreed to in writing, Licensor provides the Work (and each
@@ -41,6 +40,4 @@
       other commercial damages or losses), even if such Contributor
       has been advised of the possibility of such damages.
 
-   END OF TERMS AND CONDITIONS
-
-   Copyright 2020-2023 Black Aures
+   Copyright 2020-2023 BlackAures1 (Виктория Ершова)

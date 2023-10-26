@@ -388,6 +388,20 @@
 		  "loops": true,
 		  "locksHead": true,
 		  "thirdPerson": true
+	  },
+	  {
+		  "name": "ds.emote.shaking_standing",
+		  "animation": "shaking_standing",
+		  "loops": true,
+		  "locksHead": false,
+		  "thirdPerson": true,
+		  "duration":45,
+		  "sound": {
+			  "key": "minecraft:entity.wolf.shake",
+			  "interval": 23,
+			  "volume": 1.0,
+			  "pitch": 0.1
+		  }
 	  }
     ]
 }
