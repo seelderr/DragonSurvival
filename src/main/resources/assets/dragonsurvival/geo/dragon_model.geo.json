@@ -4491,7 +4491,7 @@
 					"name": "FrontLegRightHandClawsAdvanced2",
 					"parent": "FrontLegRightHandClawsAdvanced",
 					"pivot": [-1.98742, 7.27385, -12.08663],
-					"rotation": [0, -15, 0],
+					"rotation": [-0.53577, -14.99065, 2.07049],
 					"cubes": [
 						{
 							"origin": [-2.074, 5.47385, -16.87715],
@@ -4761,7 +4761,7 @@
 					"name": "FrontLegLeftHandClawsAdvanced2",
 					"parent": "FrontLegLeftHandClawsAdvanced",
 					"pivot": [1.98742, 7.27385, -12.08663],
-					"rotation": [0, 15, 0],
+					"rotation": [-0.53577, 14.99065, -2.07049],
 					"cubes": [
 						{
 							"origin": [2.074, 5.47385, -16.87715],
@@ -5033,7 +5033,7 @@
 					"name": "FrontLegRightHandClawsAdvanced5",
 					"parent": "BackLegRightFootClawsAdvanced",
 					"pivot": [-1.48742, 6.7, 1.61451],
-					"rotation": [0, -10, 0],
+					"rotation": [-0.52872, -9.98615, 3.04619],
 					"cubes": [
 						{
 							"origin": [-1.574, 4.9, -3.17601],
@@ -5305,7 +5305,7 @@
 					"name": "FrontLegRightHandClawsAdvanced9",
 					"parent": "BackLegLeftFootClawsAdvanced",
 					"pivot": [1.48742, 6.7, 1.61451],
-					"rotation": [0, 10, 0],
+					"rotation": [-0.35258, 9.99385, -2.03083],
 					"cubes": [
 						{
 							"origin": [1.574, 4.9, -3.17601],
