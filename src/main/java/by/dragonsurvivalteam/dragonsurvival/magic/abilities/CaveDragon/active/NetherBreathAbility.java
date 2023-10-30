@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFir
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -22,7 +21,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -43,6 +41,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.event.ForgeEventFactory;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 
@@ -135,32 +134,38 @@ public class NetherBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(!player.level.isClientSide){
-			if(fireBreathSpreadsFire){
-				BlockPos blockPos = pos.relative(direction);
+	public void onBlock(final BlockPos blockPosition, final BlockState blockState, final Direction direction) {
+		if (!player.level.isClientSide) {
+			if (fireBreathSpreadsFire) {
+				BlockPos firePosition = blockPosition.relative(direction);
 
-				if(FireBlock.canBePlacedAt(player.level, blockPos, direction)){
-					boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(player.level, player);
+				if (FireBlock.canBePlacedAt(player.level, firePosition, direction)) {
+					boolean allowPlacement = ForgeEventFactory.getMobGriefingEvent(player.level, player);
 
-					if(flag){
-						if(player.getRandom().nextInt(100) < 50){
-							BlockState blockstate1 = FireBlock.getState(player.level, blockPos);
-							player.level.setBlock(blockPos, blockstate1, 3);
+					if (allowPlacement) {
+						if (player.getRandom().nextInt(100) < 50) {
+							BlockState fireBlockState = FireBlock.getState(player.level, firePosition);
+							player.level.setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
+
+							blockState.onCaughtFire(player.level, blockPosition, direction, player);
+
+							if (blockState.getBlock() == Blocks.TNT) {
+								player.level.setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+							}
 						}
 					}
 				}
 			}
-			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
-			if(player.getRandom().nextInt(100) < burnAbility.level * 15){
-				BlockState blockAbove = player.level.getBlockState(pos.above());
 
-				if(blockAbove.getBlock() == Blocks.AIR){
+			if (player.getRandom().nextInt(100) < burnAbility.level * 15) {
+				BlockState blockAbove = player.level.getBlockState(blockPosition.above());
+
+				if (blockAbove.getBlock() == Blocks.AIR) {
 					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
-					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
+					entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
 					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
@@ -168,22 +173,17 @@ public class NetherBreathAbility extends BreathAbility{
 					player.level.addFreshEntity(entity);
 				}
 			}
-		}
-
-
-		if(player.level.isClientSide){
-			for(int z = 0; z < 4; ++z){
-				if(player.getRandom().nextInt(100) < 20){
-					player.level.addParticle(ParticleTypes.LAVA, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
+		} else {
+			for (int i = 0; i < 4; i++) {
+				if (player.getRandom().nextInt(100) < 20) {
+					player.level.addParticle(ParticleTypes.LAVA, blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ(), 0, 0.05, 0);
 				}
 			}
-		}
 
-		if(player.level.isClientSide){
-			if(blockState.getBlock() == Blocks.WATER){
-				for(int z = 0; z < 4; ++z){
-					if(player.getRandom().nextInt(100) < 90){
-						player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, pos.above().getX(), pos.above().getY(), pos.above().getZ(), 0, 0.05, 0);
+			if (blockState.getBlock() == Blocks.WATER) {
+				for (int i = 0; i < 4; i++) {
+					if (player.getRandom().nextInt(100) < 90) {
+						player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ(), 0, 0.05, 0);
 					}
 				}
 			}

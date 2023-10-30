@@ -1,9 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
+import com.mojang.datafixers.util.Pair;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.event.level.BlockEvent;
+import net.minecraftforge.eventbus.api.Event;
+import org.jetbrains.annotations.Nullable;
 
 public class ToolUtils {
     public static boolean shouldUseDragonTools(final ItemStack itemStack) {
@@ -36,5 +47,94 @@ public class ToolUtils {
 
     public static boolean isShears(final ItemStack itemStack) {
         return itemStack.canPerformAction(ToolActions.SHEARS_CARVE) || itemStack.canPerformAction(ToolActions.SHEARS_DIG) || itemStack.canPerformAction(ToolActions.SHEARS_DISARM) || itemStack.canPerformAction(ToolActions.SHEARS_HARVEST) || itemStack.is(Tags.Items.SHEARS);
+    }
+
+    /**
+     Puts the relevant claw tool in the main hand and stores said main hand in the dragon state handler<br>
+     This way modded enchantments etc. which check the currently held item will be directly compatible<br>
+     <br>
+     When using this make sure you call {@link ToolUtils#swapFinish(Player)} to restore the initial state
+    */
+    public static void swapStart(@Nullable final Player player, final BlockState blockState) {
+        if (player == null || player.isCreative() || player.isSpectator()) {
+            return;
+        }
+
+        DragonStateHandler handler = DragonUtils.getHandler(player);
+
+        if (!handler.isDragon()) {
+            return;
+        }
+
+        Pair<ItemStack, Integer> data = ClawToolHandler.getDragonHarvestToolAndSlot(player, blockState);
+        ItemStack dragonHarvestTool = data.getFirst();
+        int toolSlot = data.getSecond();
+
+        ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+
+        if (toolSlot != -1 && !handler.switchedTool) {
+            player.setItemInHand(InteractionHand.MAIN_HAND, dragonHarvestTool);
+
+            handler.getClawToolData().getClawsInventory().setItem(toolSlot, ItemStack.EMPTY);
+            handler.storedMainHandTool = mainHand;
+            handler.switchedTool = true;
+            handler.switchedToolSlot = toolSlot;
+        }
+
+        handler.toolSwapLayer++;
+    }
+
+    /** Puts the stored main hand back into the main hand and the claw tool into its slot */
+    public static void swapFinish(@Nullable final Player player) {
+        if (player == null || player.isCreative() || player.isSpectator()) {
+            return;
+        }
+
+        DragonStateHandler handler = DragonUtils.getHandler(player);
+
+        if (!handler.isDragon()) {
+            return;
+        }
+
+        handler.toolSwapLayer--;
+
+        if (handler.toolSwapLayer < 0) {
+            DragonSurvivalMod.LOGGER.warn("Tool swap layer was lower than 0 - this should not happen");
+            handler.toolSwapLayer = 0;
+        }
+
+        if (handler.switchedTool && handler.toolSwapLayer == 0) {
+            ItemStack originalMainHand = handler.storedMainHandTool;
+            ItemStack originalToolSlot = player.getItemInHand(InteractionHand.MAIN_HAND);
+
+            player.setItemInHand(InteractionHand.MAIN_HAND, originalMainHand);
+
+            handler.getClawToolData().getClawsInventory().setItem(handler.switchedToolSlot, originalToolSlot);
+            handler.storedMainHandTool = ItemStack.EMPTY;
+            handler.switchedTool = false;
+            handler.switchedToolSlot = -1;
+        }
+    }
+
+    public static @Nullable Pair<Player, BlockState> getEventData(final Event event) {
+        Player player = null;
+        BlockState blockState = null;
+
+        if (event instanceof BlockEvent.BreakEvent breakEvent) {
+            player = breakEvent.getPlayer();
+            blockState = breakEvent.getState();
+        } else if (event instanceof PlayerEvent.BreakSpeed breakSpeed) {
+            player = breakSpeed.getEntity();
+            blockState = breakSpeed.getState();
+        } else if (event instanceof PlayerEvent.HarvestCheck harvestCheck) {
+            player = harvestCheck.getEntity();
+            blockState = harvestCheck.getTargetBlock();
+        }
+
+        if (player != null) {
+            return Pair.of(player, blockState);
+        }
+
+        return null;
     }
 }

@@ -9,8 +9,10 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -140,6 +142,39 @@ public class ClawToolHandler{
 		return harvestTool;
 	}
 
+	public static Pair<ItemStack, Integer> getDragonHarvestToolAndSlot(final Player player, final BlockState state) {
+		ItemStack mainStack = player.getInventory().getSelected();
+		float newSpeed = 0F;
+
+		if (!ToolUtils.shouldUseDragonTools(mainStack)) {
+			return Pair.of(mainStack, -1);
+		}
+
+		ItemStack harvestTool = mainStack;
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+		int toolSlot = -1;
+
+		for (int i = 0; i < 4; i++) {
+			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
+
+			if (!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)) {
+				float tempSpeed = breakingItem.getDestroySpeed(state);
+
+				if (breakingItem.getItem() instanceof DiggerItem item) {
+					tempSpeed = item.getDestroySpeed(breakingItem, state);
+				}
+
+				if (tempSpeed > newSpeed) {
+					newSpeed = tempSpeed;
+					harvestTool = breakingItem;
+					toolSlot = i;
+				}
+			}
+		}
+
+		return Pair.of(harvestTool, toolSlot);
+	}
+
 	public static ItemStack getDragonHarvestTool(final Player player) {
 		ItemStack mainStack = player.getInventory().getSelected();
 
@@ -194,7 +229,19 @@ public class ClawToolHandler{
 			} else {
 				if (!player.level.isClientSide) {
 					DragonStateHandler handler = DragonUtils.getHandler(player);
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
+					SimpleContainer clawsInventory = handler.getClawToolData().getClawsInventory();
+
+					// When a tool breaks its data (the item with its tags etc.) stay there, only the stack gets set to air (and reduced by 1)
+					for (int i = 0; i < 4; i++) {
+						ItemStack dragonTool = clawsInventory.getItem(i);
+
+						if (event.getOriginal().getItem() == dragonTool.getItem()) {
+							clawsInventory.setItem(i, ItemStack.EMPTY);
+							break;
+						}
+					}
+
+					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isMenuOpen(), clawsInventory));
 				}
 			}
 		}
@@ -210,13 +257,13 @@ public class ClawToolHandler{
 
 			Player player = event.getEntity();
 			ItemStack mainStack = player.getMainHandItem();
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			if (!ToolUtils.shouldUseDragonTools(mainStack)) {
+			if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
 				// Bonus does not apply to held tools
+				// TODO :: Maybe the bonus shouldn't apply when you have a tool in the claw inventory?
 				return;
 			}
-
-			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			if (!handler.isDragon()) {
 				return;
@@ -225,21 +272,16 @@ public class ClawToolHandler{
 			BlockState blockState = event.getState();
 			float originalSpeed = event.getOriginalSpeed();
 
-			float bonus = 1F;
-			float unlockedBonus = 1F;
-
-			/* TODO ::
-			Setting the the bonus or base harvest level to diamond doesn't improve the speed here
-			Should the speed bonus scale with the bonus harvest level or stay at these static values?
-			*/
+			float bonus = 0;
+			float unlockedBonus = 0;
 
 			if (handler.getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-				unlockedBonus = 2F;
+				unlockedBonus = 2;
 			} else if (handler.getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-				unlockedBonus = 2F;
+				unlockedBonus = 2;
 			} else if (handler.getLevel() == DragonLevel.ADULT) {
-				unlockedBonus = 4F;
-				bonus = 2F;
+				unlockedBonus = 4;
+				bonus = 2;
 			}
 
 			for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
@@ -250,7 +292,8 @@ public class ClawToolHandler{
 				}
 			}
 
-			event.setNewSpeed(originalSpeed * bonus);
+			// Don't discard the changes other mods already did to the harvest speed
+			event.setNewSpeed(event.getNewSpeed() + originalSpeed * bonus);
 		}
 	}
 }

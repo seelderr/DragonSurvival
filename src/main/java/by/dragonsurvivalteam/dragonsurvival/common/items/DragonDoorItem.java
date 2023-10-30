@@ -14,6 +14,7 @@ public class DragonDoorItem extends BlockItem{
 
 	@Override
 	protected boolean placeBlock(BlockPlaceContext context, BlockState state){
+		// 27: Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE + Block.UPDATE_KNOWN_SHAPE
 		context.getLevel().setBlock(context.getClickedPos().above(), Blocks.AIR.defaultBlockState(), 27);
 		context.getLevel().setBlock(context.getClickedPos().above(2), Blocks.AIR.defaultBlockState(), 27);
 		return super.placeBlock(context, state);

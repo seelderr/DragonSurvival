@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
@@ -71,6 +72,10 @@ public class DragonFoodHandler {
 
 	@ConfigOption(side = ConfigSide.SERVER, key = "foodHungerEffect", category = "food", comment = "Should eating wrong food items give hunger effect?")
 	public static boolean foodHungerEffect = true;
+
+	@ConfigType(Item.class)
+	@ConfigOption(side = ConfigSide.SERVER, key = "keepEffects", category = "food", comment = "Food items which should keep their effects even if they're not a valid food for the dragon (foodHungerEffect will be disabled for these items as well)")
+	public static List<String> keepEffects = List.of();
 
 	// Tooltip maps
 	public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD;
@@ -215,6 +220,8 @@ public class DragonFoodHandler {
 		FoodProperties.Builder builder = new FoodProperties.Builder();
 		FoodProperties humanFoodProperties = item.getFoodProperties();
 
+		boolean shouldKeepEffects = keepEffects.contains(ResourceHelper.getKey(item).toString());
+
 		// Copy the configurations and effects from the initial food properties
 		if (humanFoodProperties != null) {
 			if (humanFoodProperties.isMeat()) {
@@ -235,13 +242,13 @@ public class DragonFoodHandler {
 				}
 
 				// Hunger and Poison effects will be skipped
-				if (isDragonFood && effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON) {
+				if ((shouldKeepEffects || isDragonFood) && effect.getFirst().getEffect() != MobEffects.HUNGER && effect.getFirst().getEffect() != MobEffects.POISON) {
 					builder.effect(effect::getFirst, effect.getSecond());
 				}
 			}
 		}
 
-		if (!isDragonFood && foodHungerEffect) {
+		if (!shouldKeepEffects && !isDragonFood && foodHungerEffect) {
 			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
 		}
 
@@ -291,7 +298,7 @@ public class DragonFoodHandler {
 					}
 				}
 
-				if (isSafe) {
+				if (isSafe && !keepEffects.contains(ResourceHelper.getKey(item).toString())) {
 					foods.add(item);
 				}
 			}
