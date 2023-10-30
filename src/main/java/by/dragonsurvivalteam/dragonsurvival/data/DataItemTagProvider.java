@@ -36,7 +36,7 @@ public class DataItemTagProvider extends ItemTagsProvider{
 		tag(mod("copper")).addTag(forge("ingots/copper")).addOptional(new ResourceLocation("cavesandcliffs:raw_copper"));
 
 		tag(mod("dragon_altars")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonAltarBlock).map(Item::asItem).toList().toArray(new Item[0]));
-		tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonDoor || s.getBlock() instanceof SmallDragonDoor).filter(s -> s.getBlock().defaultBlockState().getMaterial() == Material.WOOD).map(Item::asItem).toList().toArray(new Item[0]));
+		tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonDoor).filter(s -> s.getBlock().defaultBlockState().getMaterial() == Material.WOOD).map(Item::asItem).toList().toArray(new Item[0]));
 	}
 
 
