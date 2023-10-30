@@ -190,7 +190,7 @@ public class PrincesHorseEntity extends Villager implements IAnimatable, CommonT
 	protected void registerGoals(){
 		super.registerGoals();
 		this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6, 1, 1, living -> DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE)));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 2.0));
 		this.targetSelector.addGoal(4, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
 		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));

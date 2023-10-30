@@ -1,25 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DragonEditorDropdownEntry;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.AbstractSelectionList;
-import net.minecraft.client.gui.components.events.GuiEventListener;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
-
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
 public class DragonEditorDropdownButton extends DropDownButton{
 	private final DragonEditorScreen dragonEditorScreen;
@@ -63,7 +52,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		}
 	}
 
-	@Override
+/*	@Override
 	public void onPress(){
 		Screen screen = Minecraft.getInstance().screen;
 
@@ -142,5 +131,5 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 		toggled = !toggled;
 		updateMessage();
-	}
+	}*/
 }
