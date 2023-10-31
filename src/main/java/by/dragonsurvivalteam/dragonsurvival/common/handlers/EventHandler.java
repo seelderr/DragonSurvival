@@ -176,10 +176,6 @@ public class EventHandler{
 		if(entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)){
 			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonUtils.isDragon((Player)living) && !((Player)living).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, s -> true));
 		}
-		if(entity instanceof Horse horse){
-			horse.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(horse, Player.class, 0, true, false, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElseGet(null).getLevel() != ADULT));
-			horse.targetSelector.addGoal(4, new AvoidEntityGoal<>(horse, Player.class, living -> living.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getLevel() == ADULT && !living.hasEffect(DragonEffects.ANIMAL_PEACE), 20, 1.3, 1.5, s -> true));
-		}
 	}
 
 	@SubscribeEvent( priority = EventPriority.HIGHEST )

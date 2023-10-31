@@ -22,7 +22,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
-version =  property("mc_version")+"-"+property("mod_version")
+version =  property("mc_version")+"-"+new Date().format("dd.MM.yyyy")
 group = property("mod_group")
 archivesBaseName = property("mod_name")
 
