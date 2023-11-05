@@ -8,6 +8,7 @@
         "HORNS": "horns_44",
         "CLAWS": "claw_3_cave_1",
         "TEETH": "teeth_1",
+        "MAGIC": "cave_magic_3",
         "EXTRA": "cave_extra_paws_1",
         "EXTRA1": "cave_extra_tail_1",
         "EXTRA2": "extra_horns_3"
@@ -20,6 +21,7 @@
         "SPIKES": "spikes_3",
         "CLAWS": "claw_3_cave_2",
         "TEETH": "teeth_2",
+        "MAGIC": "cave_magic_3",
         "EXTRA": "cave_extra_paws_2",
         "EXTRA1": "cave_extra_tail_2",
         "EXTRA2": "extra_horns_20"
@@ -32,6 +34,7 @@
         "SPIKES": "spikes_2",
         "CLAWS": "claw_3_cave_3",
         "TEETH": "teeth_3",
+        "MAGIC": "cave_magic_3",
         "EXTRA": "cave_extra_mouth_1",
         "EXTRA1": "cave_extra_paws_3",
         "EXTRA2": "cave_extra_tail_3",
@@ -46,6 +49,7 @@
         "HORNS": "horns_45",
 		"CLAWS": "claw_3_sea_1",
         "TEETH": "teeth_1",
+        "MAGIC": "sea_magic_3",
         "SPIKES": "spikes_1"
       },
       "YOUNG": {
@@ -56,6 +60,7 @@
         "SPIKES": "spikes_2",
 		"CLAWS": "claw_3_sea_2",
         "TEETH": "teeth_2",
+        "MAGIC": "sea_magic_3",
         "EXTRA": "sea_extra_1"
       },
       "ADULT": {
@@ -66,6 +71,7 @@
         "SPIKES": "spikes_3",
 		"CLAWS": "claw_3_sea_3",
         "TEETH": "teeth_3",
+        "MAGIC": "sea_magic_3",
         "EXTRA": "sea_extra_2"
       }
     },
@@ -78,6 +84,7 @@
         "SPIKES": "spikes_4",
         "CLAWS": "claw_3_forest_1",
         "TEETH": "teeth_1",
+        "MAGIC": "forest_magic_4",
         "EXTRA": "forest_extra_body_2",
         "EXTRA1": "forest_extra_wings_2"
       },
@@ -89,6 +96,7 @@
         "SPIKES": "spikes_5",
         "CLAWS": "claw_3_forest_1",
         "TEETH": "teeth_2",
+        "MAGIC": "forest_magic_4",
         "EXTRA": "forest_extra_wings_2",
         "EXTRA1": "forest_extra_body_2",
         "EXTRA2": "forest_extra_tail_8"
@@ -101,6 +109,7 @@
         "SPIKES": "spikes_2",
         "CLAWS": "claw_3_forest",
         "TEETH": "teeth_3",
+        "MAGIC": "forest_magic_4",
         "EXTRA": "forest_extra_wings_2",
         "EXTRA1": "forest_extra_tail_11"
       }
@@ -220,6 +229,32 @@
         {
           "key": "claw_7_cave",
           "texture": "dragonsurvival:textures/dragon/custom/claw_7_cave.png"
+        }
+      ],
+      "MAGIC": [
+        {
+          "key": "cave_magic_1",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_magic_1.png"
+        },
+        {
+          "key": "cave_magic_2",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_magic_2.png"
+        },
+        {
+          "key": "cave_magic_3",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_magic_3.png"
+        },
+        {
+          "key": "cave_magic_4",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_magic_4.png"
+        },
+        {
+          "key": "cave_magic_5",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_magic_5.png"
+        },
+        {
+          "key": "cave_magic_6",
+          "texture": "dragonsurvival:textures/dragon/custom/cave_magic_6.png"
         }
       ],
       "TEETH": [
@@ -1123,6 +1158,32 @@
           "key": "claw_3_sea_3",
           "texture": "dragonsurvival:textures/dragon/custom/claw_3_sea_3.png",
           "randomHue": false
+        }
+      ],
+      "MAGIC": [
+        {
+          "key": "sea_magic_1",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_magic_1.png"
+        },
+        {
+          "key": "sea_magic_2",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_magic_2.png"
+        },
+        {
+          "key": "sea_magic_3",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_magic_3.png"
+        },
+        {
+          "key": "sea_magic_4",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_magic_4.png"
+        },
+        {
+          "key": "sea_magic_5",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_magic_5.png"
+        },
+        {
+          "key": "sea_magic_6",
+          "texture": "dragonsurvival:textures/dragon/custom/sea_magic_6.png"
         }
       ],
       "TEETH": [
@@ -2081,6 +2142,32 @@
         {
           "key": "teeth_12",
           "texture": "dragonsurvival:textures/dragon/custom/teeth_12.png"
+        }
+      ],
+      "MAGIC": [
+        {
+          "key": "forest_magic_1",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_magic_1.png"
+        },
+        {
+          "key": "forest_magic_2",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_magic_2.png"
+        },
+        {
+          "key": "forest_magic_3",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_magic_3.png"
+        },
+        {
+          "key": "forest_magic_4",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_magic_4.png"
+        },
+        {
+          "key": "forest_magic_5",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_magic_5.png"
+        },
+        {
+          "key": "forest_magic_6",
+          "texture": "dragonsurvival:textures/dragon/custom/forest_magic_6.png"
         }
       ],
       "EXTRA": [

@@ -75,7 +75,7 @@ public class DragonFoodHandler {
 
 	@ConfigType(Item.class)
 	@ConfigOption(side = ConfigSide.SERVER, key = "keepEffects", category = "food", comment = "Food items which should keep their effects even if they're not a valid food for the dragon (foodHungerEffect will be disabled for these items as well)")
-	public static List<String> keepEffects = List.of();
+	public static List<String> keepEffects = List.of("gothic:elixir_of_speed", "gothic:elixir_of_health", "gothic:elixir_of_mental_cleansing");
 
 	// Tooltip maps
 	public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD;
@@ -298,7 +298,7 @@ public class DragonFoodHandler {
 					}
 				}
 
-				if (isSafe && !keepEffects.contains(ResourceHelper.getKey(item).toString())) {
+				if (isSafe && (foodProperties.getNutrition() > 0 || foodProperties.getSaturationModifier() > 0)) {
 					foods.add(item);
 				}
 			}

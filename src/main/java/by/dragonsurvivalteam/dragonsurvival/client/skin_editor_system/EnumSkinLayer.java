@@ -8,13 +8,15 @@ public enum EnumSkinLayer{
 	SPIKES("Spikes", true),
 	CLAWS("Claws", true),
 	TEETH("Teeth", true),
+	MAGIC("Magic", true),
 	EXTRA("Extra", false),
 	EXTRA1("Extra", false),
 	EXTRA2("Extra", false),
 	EXTRA3("Extra", false),
 	EXTRA4("Extra", false),
 	EXTRA5("Extra", false),
-	EXTRA6("Extra", false);
+	EXTRA6("Extra", false),
+	EXTRA7("Extra", false);
 
 	public String name;
 	public boolean base;

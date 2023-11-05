@@ -604,3 +604,5 @@ public class ClientDragonRender{
 		entity.yHeadRot = f6;
 	}
 }
+
+//TODO Fix the problem that causes the dragon to take a T pose after disappearing from view. It doesn't matter if it's its own body or another player's. Occurs with forest dragon effect and in flight for any dragon. Also on the server when you turn away from the flying player and look at him again.
