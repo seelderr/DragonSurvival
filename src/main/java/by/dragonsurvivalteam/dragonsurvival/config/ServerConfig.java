@@ -427,7 +427,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge");
+	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:fire", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "dragonAbilities", comment = "Whether dragon abilities should be enabled" )
