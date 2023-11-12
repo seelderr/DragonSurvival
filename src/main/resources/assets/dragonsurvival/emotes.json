@@ -102,7 +102,13 @@
 		  "name": "ds.emote.sit_magic",
 		  "animation": "sit_on_magic_source",
 		  "loops": true,
-		  "locksHead": true
+		  "locksHead": true,
+		  "sound": {
+			  "key": "minecraft:block.beacon.ambient",
+			  "interval": 40,
+			  "volume": 5.0,
+			  "pitch": 0.25
+		  }
 	  },
 	  {
 		  "name": "ds.emote.vibe_stand",
