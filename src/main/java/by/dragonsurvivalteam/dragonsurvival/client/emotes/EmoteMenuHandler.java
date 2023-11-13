@@ -24,6 +24,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -360,14 +361,12 @@ public class EmoteMenuHandler{
 	}
 
 	public static void clearEmotes(final Entity entity){
-		if(entity == null) {
-			return;
+		if (entity instanceof Player) {
+			DragonStateHandler handler = DragonUtils.getHandler(entity);
+			handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
+			handler.getEmoteData().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
+			NetworkHandler.CHANNEL.sendToServer(new SyncEmote(entity.getId(), handler.getEmoteData()));
 		}
-
-		DragonStateHandler handler = DragonUtils.getHandler(entity);
-		handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
-		handler.getEmoteData().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(entity.getId(), handler.getEmoteData()));
 	}
 
 	public static void addEmote(Emote emote){
