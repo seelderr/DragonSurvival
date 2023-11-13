@@ -23,6 +23,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.InputEvent;
@@ -218,7 +220,7 @@ public class EmoteMenuHandler{
 					}
 
 					if(emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend)){
-						clearEmotes();
+						clearEmotes(Minecraft.getInstance().player);
 					}
 
 					addEmote(emote);
@@ -358,15 +360,13 @@ public class EmoteMenuHandler{
 		}
 	}
 
-	public static void clearEmotes(){
-		if(Minecraft.getInstance().player == null){
-			return;
+	public static void clearEmotes(final Entity entity){
+		if (entity instanceof Player) {
+			DragonStateHandler handler = DragonUtils.getHandler(entity);
+			handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
+			handler.getEmoteData().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
+			NetworkHandler.CHANNEL.sendToServer(new SyncEmote(entity.getId(), handler.getEmoteData()));
 		}
-
-		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
-		handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
-		handler.getEmoteData().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
 	}
 
 	public static void addEmote(Emote emote){
@@ -503,7 +503,7 @@ public class EmoteMenuHandler{
 						}
 
 						if(emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend)){
-							clearEmotes();
+							clearEmotes(Minecraft.getInstance().player);
 						}
 
 						addEmote(emote);
