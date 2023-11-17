@@ -133,6 +133,8 @@ public class DragonGrowthHandler{
 			return -2;
 		}
 
+//TODO Add the ability to control this numbers with configs
+
 		switch(level){
 			case NEWBORN:
 				if(adultList.contains(item)){

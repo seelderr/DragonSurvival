@@ -309,6 +309,9 @@ public class ServerConfig{
 			, "infernalexp:glowsilk_bow"
 			, "upgradednetherite_ultimate:ultimate_upgraded_netherite_crossbow"
 			, "upgradednetherite_ultimate:ultimate_upgraded_netherite_bow"
+			, "cataclysm:ignitium_elytra_chestplate"
+			, "revised_phantoms:phantom_wings_chestplate"
+			, "deeperdarker:soul_elytra"
 	);
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItemsRegex", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:<regular_expression>. Example: minecraft:.*?_wool" )
@@ -323,7 +326,7 @@ public class ServerConfig{
 
 	// FIXME :: Currently lists of integer are not properly supported - they get converted to string lists or sth
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
-	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45);
+	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45, 38);
 
 	// Cave Dragon Penalties
 	@ConfigRange( min = 0.0, max = 100.0 )
