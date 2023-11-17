@@ -112,14 +112,18 @@ public class DragonEditorRegistry{
 			}catch(IOException e){
 				e.printStackTrace();
 			}
-		}else {
-			try{
+		} else {
+			try {
 				Gson gson = GsonFactory.getDefault();
 				InputStream in = new FileInputStream(savedFile);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
-			}catch(FileNotFoundException e){
-				e.printStackTrace();
+
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+					savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
+				} catch (IOException exception) {
+					DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+				}
+			} catch (FileNotFoundException exception) {
+				DragonSurvivalMod.LOGGER.error("Saved customization [" + savedFile.getName() + "] could not be found", exception);
 			}
 		}
 
@@ -136,6 +140,7 @@ public class DragonEditorRegistry{
 
 			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 			DragonEditorObject je = gson.fromJson(reader, DragonEditorObject.class);
+			reader.close();
 
 			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.SEA.getTypeName().toUpperCase(), type -> new HashMap<>());
 			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.CAVE.getTypeName().toUpperCase(), type -> new HashMap<>());

@@ -265,14 +265,20 @@ public class DragonSkins{
 			while(true){
 				Gson gson = GsonFactory.getDefault();
 				URL url = new URL(GITCODE_API + page);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(url, 2*1000)));
-				SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
-				if (je.length == 0)
-					break;
 
-				parseSkinObjects(je);
-				++page;
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(url, 2*1000)))) {
+					SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
+
+					if (je.length == 0)
+						break;
+
+					parseSkinObjects(je);
+					++page;
+				} catch (IOException exception) {
+					DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+				}
 			}
+
 			useInChina = true;
 			return true;
 		}catch(IOException e){
@@ -297,9 +303,14 @@ public class DragonSkins{
 		try{
 			Gson gson = GsonFactory.getDefault();
 			URL url = new URL(GITHUB_API);
-			BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(url, 2*1000)));
-			SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
-			parseSkinObjects(je);
+
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(url, 2*1000)))) {
+				SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
+				parseSkinObjects(je);
+			} catch (IOException exception) {
+				DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+			}
+
 			useInChina = false;
 			return true;
 		}catch(IOException e) {
