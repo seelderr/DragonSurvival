@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
@@ -21,19 +22,23 @@ public class BurnAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "burn", comment = "Whether the burn ability should be enabled" )
 	public static Boolean burn = true;
 
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "burnProcChance", comment = "The percentage chance that burn will proc. This is multiplied by the level of the skill." )
+	public static Integer burnProcChance = 15;
+
 	@Override
 	public Component getDescription(){
 		return new TranslatableComponent("ds.skill.description." + getName(), getChance());
 	}
 
 	@Override
-	public int getSortOrder(){
-		return 4;
+	public String getName(){
+		return "burn";
 	}
 
 	@Override
-	public String getName(){
-		return "burn";
+	public int getSortOrder(){
+		return 4;
 	}
 
 	@Override
@@ -51,14 +56,14 @@ public class BurnAbility extends PassiveDragonAbility{
 
 
 	public int getChance(){
-		return 15 * getLevel();
+		return burnProcChance * getLevel();
 	}
 
 	@Override
 	@OnlyIn( Dist.CLIENT )
 	public ArrayList<Component> getLevelUpInfo(){
 		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(new TranslatableComponent("ds.skill.chance", "+15"));
+		list.add(new TranslatableComponent("ds.skill.chance", "+" + burnProcChance));
 		return list;
 	}
 

@@ -47,7 +47,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -79,11 +78,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> UNDO_QUEUES = new ConcurrentHashMap<>();
 	public final ConcurrentHashMap<Integer, EvictingQueue<CompoundTag>> REDO_QUEUES = new ConcurrentHashMap<>();
 	private final Screen source;
-	private final String[] animations = {"sit",
-	                                     "idle",
-	                                     "fly",
+	private final String[] animations = {"sit_dentist",
+	                                     "sit_head_locked",
+	                                     "idle_head_locked",
+	                                     "fly_head_locked",
 	                                     "swim_fast",
-	                                     "run"};
+	                                     "run_head_locked"};
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "editorHistory", comment = "The amount of undos and redos that are saved in the dragon editor." )
 	public static Integer editorHistory = 10;
@@ -344,7 +344,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
 
 
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 5 ? width / 2 - 100 - 100 : width / 2 + 83, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30), 90, 15, curValue, values, layers){
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers){
 				@Override
 				public void updateMessage(){
 					if(current != null){
@@ -595,7 +595,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new ExtendedButton(guiLeft + 290, 11, 18, 18, TextComponent.EMPTY, btn -> {
 			doAction();
 			preset.skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, dragonType)));
 			handler.getSkinData().compileSkin();
@@ -614,7 +614,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		});
 
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, TextComponent.EMPTY, btn -> {
+		addRenderableWidget(new ExtendedButton(guiLeft + 260, 11, 18, 18, TextComponent.EMPTY, btn -> {
 			doAction();
 
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
@@ -674,7 +674,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new UndoRedoButton(guiLeft + 327, 11, 16, 16, false, s -> {
+		addRenderableWidget(new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, s -> {
 			undoAction();
 		}){
 			@Override
@@ -689,7 +689,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new UndoRedoButton(guiLeft + 347, 11, 16, 16, true, s -> {
+		addRenderableWidget(new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, s -> {
 			redoAction();
 		}){
 			@Override
@@ -704,7 +704,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 198 + 15, guiTop - 26, 16, 16, TextComponent.EMPTY, p -> {}){
+		addRenderableWidget(new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, TextComponent.EMPTY, p -> {}){
 			@Override
 			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
@@ -725,9 +725,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){}
 		});
 
-		addRenderableWidget(new CopySettingsButton(this, width / 2 + 198 + 15, guiTop + 10, 16, 16, TextComponent.EMPTY, p -> {}));
+		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, TextComponent.EMPTY, p -> {}));
 
-		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, TextComponent.EMPTY, btn -> {
+		/*addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, TextComponent.EMPTY, btn -> {
 			dragonRender.yRot = -3;
 			dragonRender.xRot = -5;
 			dragonRender.xOffset = 0;
@@ -750,10 +750,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				active = visible = showUi;
 				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
-		});
+		});*/
 
-		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, new TranslatableComponent("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
-		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, TextComponent.EMPTY, s -> {}, this));
+		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, new TranslatableComponent("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
+		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, TextComponent.EMPTY, s -> {}, this));
 		addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
 		//addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, TextComponent.EMPTY, (s) -> {}, this));
 

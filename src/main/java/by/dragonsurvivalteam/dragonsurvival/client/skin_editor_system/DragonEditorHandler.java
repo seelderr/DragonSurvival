@@ -124,12 +124,12 @@ public class DragonEditorHandler{
 							Resource resource = Minecraft.getInstance().getResourceManager().getResource(textureLocation);
 
 							InputStream textureStream = resource.getInputStream();
-							NativeImage img = NativeImage.read(textureStream);
+							NativeImage tempColorPicker = NativeImage.read(textureStream);
 							textureStream.close();
 
-							for (int x = 0; x < img.getWidth(); x++) {
-								for (int y = 0; y < img.getHeight(); y++) {
-									Color color = getColor(settings, skinTexture, hueVal, satVal, brightVal, img, x, y);
+							for (int x = 0; x < tempColorPicker.getWidth(); x++) {
+								for (int y = 0; y < tempColorPicker.getHeight(); y++) {
+									Color color = getColor(settings, skinTexture, hueVal, satVal, brightVal, tempColorPicker, x, y);
 
 									if (color == null) {
 										continue;
@@ -145,6 +145,8 @@ public class DragonEditorHandler{
 									}
 								}
 							}
+
+							tempColorPicker.close();
 						} catch (IOException e) {
 							DragonSurvivalMod.LOGGER.error("An error occured while compiling the dragon skin texture", e);
 						}

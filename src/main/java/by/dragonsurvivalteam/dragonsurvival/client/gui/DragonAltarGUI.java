@@ -17,7 +17,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -31,7 +30,7 @@ public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
-	private final String[] animations = {"sit", "idle", "fly", "swim_fast", "run", "fly_spin", "dig", "sit_on_magic_source", "sitting_blep", "resting_left", "vibing_sitting", "shy_sitting", "vibing_sitting", "flapping_wings_standing_biped", "rocking_on_back" };
+	private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast", "run_head_locked", "fly_spin", "dig_head_locked", "sit_on_magic_source", "sitting_blep", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "flapping_wings_standing_biped", "rocking_on_back" };
 	public DragonStateHandler handler1 = new DragonStateHandler();
 	public DragonStateHandler handler2 = new DragonStateHandler();
 	private int guiLeft;

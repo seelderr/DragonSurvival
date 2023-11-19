@@ -1,3 +1,4 @@
+/*
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -61,4 +62,4 @@ public class EditorPartButton extends ExtendedButton{
 		source.onPress();
 		setter.accept(value);
 	}
-}
+}*/

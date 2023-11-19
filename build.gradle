@@ -22,7 +22,7 @@ apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
-version =  property("mc_version")+"-"+property("mod_version")
+version =  property("mc_version")+"-"+new Date().format("dd.MM.yyyy")
 group = property("mod_group")
 archivesBaseName = property("mod_name")
 
@@ -83,7 +83,7 @@ minecraft {
         }
 
         data {
-            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"'
+            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output'
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -92,11 +92,6 @@ minecraft {
         }
     }
 }
-
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
-
 processResources {
     from sourceSets.main.resources
     inputs.property "version", project.version
