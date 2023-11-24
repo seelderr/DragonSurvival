@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.handlers;
+package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
@@ -14,10 +14,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.AddReloadListenerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
@@ -25,27 +21,10 @@ import org.apache.logging.log4j.Level;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
 
-@Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT )
 public class DragonSkins{
-	public static class SkinObject{
-		public String id;
-		public String name;
-		public String short_name;
-		public int size;
-		public boolean glow;
-	}
-
-	public static boolean useInChina = false;
-	public static final String SKINS = "https://raw.githubusercontent.com/DragonSurvivalTeam/DragonSurvival/master/src/test/resources/";
-	private static final String GITHUB_API = "https://api.github.com/repositories/280658566/contents/src/test/resources?ref=master";
-	public static final String CHINA_SKINS = "https://gitcode.net/api/v4/projects/mirrors%%2FDragonSurvivalTeam%%2FDragonSurvival/repository/blobs/%s/raw?ref=master";
-	private static final String GITCODE_API = "https://gitcode.net/api/v4/projects/mirrors%2FDragonSurvivalTeam%2FDragonSurvival/repository/tree?ref=master&path=src/test/resources&per_page=100&page=";
-	private static final String CONNECTIVITY_TEST_URL = "https://raw.githubusercontent.com/DragonSurvivalTeam/DragonSurvival/master/README.md";
-
+	public static NetSkinLoader skinLoader = new GithubSkinLoader();
 	private static final ArrayList<String> hasFailedFetch = new ArrayList<>();
 	public static HashMap<DragonLevel, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerSkinCache = new HashMap<>();
@@ -104,7 +83,7 @@ public class DragonSkins{
 		return texture;
 	}
 
-	protected static ResourceLocation fetchSkinFileInGitcode(String playerName, DragonLevel dragonStage, String... extra) {
+	public static ResourceLocation fetchSkinFile(String playerName, DragonLevel dragonStage, String... extra) {
 		ResourceLocation resourceLocation;
 		String playerKey = playerName + "_" + dragonStage.name;
 		String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
@@ -120,58 +99,22 @@ public class DragonSkins{
 			return null;
 
 		resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, resourceName.toLowerCase(Locale.ROOT));
-		try (SimpleTexture simpleTexture =new SimpleTexture(resourceLocation)){
+		try (SimpleTexture simpleTexture = new SimpleTexture(resourceLocation)){
 			if (Minecraft.getInstance().getTextureManager().getTexture(resourceLocation, simpleTexture) != simpleTexture)
 				return resourceLocation;
 		}
-
-		try{
-			InputStream inputStream = getStream(new URL(String.format(CHINA_SKINS, skin.id)), 15 * 1000);
-			NativeImage customTexture = NativeImage.read(inputStream);
+		try(InputStream imageStream = skinLoader.querySkinImage(skin)) {
+			NativeImage customTexture = NativeImage.read(imageStream);
 			Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(customTexture));
-		}catch(IOException e){
+			return resourceLocation;
+		} catch (IOException e) {
 			if(extra == null || extra.length == 0){ //Fetching glow layer failing must not affect normal skin fetches
 				if(!hasFailedFetch.contains(playerKey)){
 					DragonSurvivalMod.LOGGER.info("Custom skin for user {} doesn't exist", playerKey);
 					hasFailedFetch.add(playerKey);
 				}
 			}
-
 			return null;
-		}
-		return resourceLocation;
-	}
-
-	protected static ResourceLocation fetchSkinFileInGithub(String playerName, DragonLevel dragonStage, String... extra) {
-		ResourceLocation resourceLocation;
-		String playerKey = playerName + "_" + dragonStage.name;
-		String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
-		String searchText = StringUtils.join(text, "_");
-
-		try{
-			InputStream inputStream = getStream(new URL(SKINS + searchText + ".png"), 15 * 1000);
-			NativeImage customTexture = NativeImage.read(inputStream);
-			resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, searchText.toLowerCase(Locale.ROOT));
-			Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(customTexture));
-		}catch(IOException e){
-			if(extra == null || extra.length == 0){ //Fetching glow layer failing must not affect normal skin fetches
-				if(!hasFailedFetch.contains(playerKey)){
-					DragonSurvivalMod.LOGGER.info("Custom skin for user {} doesn't exist", playerKey);
-					hasFailedFetch.add(playerKey);
-				}
-			}
-
-			return null;
-		}
-		return resourceLocation;
-	}
-
-	public static ResourceLocation fetchSkinFile(String playerName, DragonLevel dragonStage, String... extra) {
-
-		if (useInChina){
-			return fetchSkinFileInGitcode(playerName, dragonStage, extra);
-		}else{
-			return fetchSkinFileInGithub(playerName, dragonStage, extra);
 		}
 	}
 
@@ -211,25 +154,33 @@ public class DragonSkins{
 		return texture;
 	}
 
-	@SubscribeEvent
-	public static void onReloadEvent(AddReloadListenerEvent reloadEvent)
-	{
-		DragonSkins.init();
-	}
 	public static void init() {
+		Collection<SkinObject> skins;
 		invalidateSkins();
 		String currentLanguage = Minecraft.getInstance().getLanguageManager().getSelected().getCode();
-		if (!currentLanguage.equals("zh_cn"))
-		{
-			if (!initFromGithub())
-				initFromGitcode();
-		}else{
-			if (!initFromGitcode())
-				initFromGithub();
+		NetSkinLoader first, second;
+		if (currentLanguage.equals("zh_cn")) {
+			first = new GitcodeSkinLoader();
+			second = new GithubSkinLoader();
+		} else{
+			first = new GithubSkinLoader();
+			second = new GitcodeSkinLoader();
 		}
+		if (!first.ping()) {
+			if (!second.ping())
+			{
+				DragonSurvivalMod.LOGGER.warn("Unable to connect to skin database.");
+				return;
+			}
+			first = second;
+		}
+		skinLoader = first;
+        skins = skinLoader.querySkinList();
+		if (skins != null)
+			parseSkinObjects(skins);
 	}
 
-	public static void parseSkinObjects(SkinObject[] skinObjects) {
+	public static void parseSkinObjects(Collection<SkinObject> skinObjects) {
 		for(SkinObject skin : skinObjects){
 			boolean isGlow = false;
 			String skinName = skin.name;
@@ -259,81 +210,7 @@ public class DragonSkins{
 		}
 	}
 
-	public static boolean initFromGitcode() {
-		int page = 1;
-		try{
-			while(true){
-				Gson gson = GsonFactory.getDefault();
-				URL url = new URL(GITCODE_API + page);
-
-				InputStream stream = getStream(url, 2 * 1000);
-
-				try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-					SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
-
-					if (je.length == 0)
-						break;
-
-					parseSkinObjects(je);
-					++page;
-				} catch (IOException exception) {
-					DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
-				}
-			}
-
-			useInChina = true;
-			return true;
-		}catch(IOException e){
-			DragonSurvivalMod.LOGGER.log(Level.WARN, "Failed to get skin information in Gitcode.");
-			return false;
-		}
-	}
-
-	public static boolean tryConnectGithub()
-	{
-		try {
-			int ignored = getStream(new URL(CONNECTIVITY_TEST_URL), 1000).read();
-			return true;
-		} catch (IOException e) {
-			return false;
-		}
-	}
-
-	public static boolean initFromGithub(){
-		if (!tryConnectGithub())
-			return false;
-		try{
-			Gson gson = GsonFactory.getDefault();
-			URL url = new URL(GITHUB_API);
-
-			InputStream stream = getStream(url, 2 * 1000);
-
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
-				SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
-				parseSkinObjects(je);
-			} catch (IOException exception) {
-				DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
-			}
-
-			useInChina = false;
-			return true;
-		}catch(IOException e) {
-			DragonSurvivalMod.LOGGER.log(Level.WARN, "Failed to get skin information in Github.");
-			return false;
-		}
-	}
-
-	private static InputStream getStream(URL url, int timeout) throws IOException{
-		HttpURLConnection huc = (HttpURLConnection) url.openConnection();
-		huc.setConnectTimeout(timeout);
-		huc.setDoInput(true);
-		huc.setRequestMethod("GET");
-		huc.connect();
-		return huc.getInputStream();
-	}
-
-	private static void invalidateSkins()
-	{
+	private static void invalidateSkins() {
 		SKIN_USERS.clear();
 		playerSkinCache.clear();
 		playerGlowCache.clear();

@@ -3,10 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonSkins;
+import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -332,8 +333,8 @@ public class SkinsScreen extends Screen{
 			HashSet<String> users = new HashSet<>();
 			Random random = new Random();
 
-			for (Map.Entry<DragonLevel, HashMap<String, DragonSkins.SkinObject>> ent : DragonSkins.SKIN_USERS.entrySet()){
-				for (Map.Entry<String,DragonSkins.SkinObject> user : ent.getValue().entrySet()){
+			for (Map.Entry<DragonLevel, HashMap<String, SkinObject>> ent : DragonSkins.SKIN_USERS.entrySet()){
+				for (Map.Entry<String, SkinObject> user : ent.getValue().entrySet()){
 					if (!user.getValue().glow){
 						skins.add(Pair.of(ent.getKey(), user.getKey()));
 						users.add(user.getKey());
