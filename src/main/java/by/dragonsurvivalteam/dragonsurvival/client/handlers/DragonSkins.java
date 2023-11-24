@@ -266,7 +266,9 @@ public class DragonSkins{
 				Gson gson = GsonFactory.getDefault();
 				URL url = new URL(GITCODE_API + page);
 
-				try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(url, 2*1000)))) {
+				InputStream stream = getStream(url, 2 * 1000);
+
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
 					SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
 
 					if (je.length == 0)
@@ -290,7 +292,7 @@ public class DragonSkins{
 	public static boolean tryConnectGithub()
 	{
 		try {
-			int data = getStream(new URL(CONNECTIVITY_TEST_URL), 1000).read();
+			int ignored = getStream(new URL(CONNECTIVITY_TEST_URL), 1000).read();
 			return true;
 		} catch (IOException e) {
 			return false;
@@ -304,7 +306,9 @@ public class DragonSkins{
 			Gson gson = GsonFactory.getDefault();
 			URL url = new URL(GITHUB_API);
 
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(getStream(url, 2*1000)))) {
+			InputStream stream = getStream(url, 2 * 1000);
+
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream))) {
 				SkinObject[] je = gson.fromJson(reader, SkinObject[].class);
 				parseSkinObjects(je);
 			} catch (IOException exception) {
