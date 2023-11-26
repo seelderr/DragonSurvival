@@ -65,8 +65,6 @@ public class GithubSkinLoader extends NetSkinLoader{
             SkinFileMetaInfo skinMetaInfo = gson.fromJson(new BufferedReader(new InputStreamReader(skinMetadataStream)), SkinFileMetaInfo.class);
             String base64Content = skinMetaInfo.content.replace("\n", "");
             return new ByteArrayInputStream(Base64.getDecoder().decode(base64Content));
-        }catch(IOException e){
-            return null;
         }
     }
     @Override
