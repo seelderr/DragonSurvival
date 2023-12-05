@@ -16,7 +16,10 @@ import com.mojang.blaze3d.platform.InputConstants.Type;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -66,10 +69,10 @@ public class EmoteMenuHandler {
 
 	@SubscribeEvent
 	public static void addEmoteButton(ScreenEvent.Init.Post initGuiEvent){
-		Screen sc = initGuiEvent.getScreen();
+		Screen screen = initGuiEvent.getScreen();
 		currentlyKeybinding = null;
-		if(sc instanceof ChatScreen screen && DragonUtils.isDragon(Minecraft.getInstance().player)){
-			
+
+		if (screen instanceof ChatScreen chatScreen && DragonUtils.isDragon(Minecraft.getInstance().player)) {
 			emotePage = Mth.clamp(emotePage, 0, maxPages() - 1);
 			List<Emote> emotes = getEmotes();
 
@@ -80,8 +83,8 @@ public class EmoteMenuHandler {
 			int width = 160;
 			int height = 10;
 
-			int startX = screen.width - width;
-			int startY = screen.height - 55;
+			int startX = chatScreen.width - width;
+			int startY = chatScreen.height - 55;
 
 			startX += emoteXOffset;
 			startY += emoteYOffset;
@@ -105,7 +108,10 @@ public class EmoteMenuHandler {
 				}
 
 				@Override
-				public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){return false;}
+				public boolean mouseClicked(double mouseX, double mouseY, int button) {
+					handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
+					return false;
+				}
 			});
 
 			// Emote left scroll button
@@ -136,6 +142,11 @@ public class EmoteMenuHandler {
 					guiGraphics.pose().translate(15, (float) getHeight() / 2 - 2, 0);
 					guiGraphics.blit(BUTTON_LEFT, getX(), getY(), 0, 0, 32, 32, 32, 32);
 					guiGraphics.pose().popPose();
+				}
+
+				@Override
+				public boolean mouseClicked(double mouseX, double mouseY, int button) {
+					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 				}
 			});
 
@@ -169,6 +180,11 @@ public class EmoteMenuHandler {
 					guiGraphics.blit(BUTTON_RIGHT, getX(), getY(), 0, 0, 32, 32, 32, 32);
 					guiGraphics.pose().popPose();
 				}
+
+				@Override
+				public boolean mouseClicked(double mouseX, double mouseY, int button) {
+					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
+				}
 			});
 
 			// Button to open / close the Emote menu
@@ -201,6 +217,11 @@ public class EmoteMenuHandler {
 					}
 
 					guiGraphics.pose().popPose();
+				}
+
+				@Override
+				public boolean mouseClicked(double mouseX, double mouseY, int button) {
+					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 				}
 			});
 
@@ -241,6 +262,11 @@ public class EmoteMenuHandler {
 							guiGraphics.blit(emote.loops ? PLAY_LOOPED : PLAY_ONCE, getX(), getY(), 0, 0, 10, 10, 10, 10);
 							guiGraphics.blit(emote.sound != null ? SOUND : NO_SOUND, getX() + 10, getY(), 0, 0, 10, 10, 10, 10);
 						}
+					}
+
+					@Override
+					public boolean mouseClicked(double mouseX, double mouseY, int button) {
+						return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 					}
 				});
 
@@ -283,8 +309,8 @@ public class EmoteMenuHandler {
 					}
 
 					@Override
-					public boolean mouseClicked(double pMouseX, double pMouseY, int pButton){
-						if(pButton == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
+					public boolean mouseClicked(double mouseX, double mouseY, int button){
+						if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
 							DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
 							Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
@@ -294,7 +320,8 @@ public class EmoteMenuHandler {
 								return true;
 							}
 						}
-						return super.mouseClicked(pMouseX, pMouseY, pButton);
+
+						return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 					}
 				});
 
@@ -325,6 +352,11 @@ public class EmoteMenuHandler {
 						guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
 						guiGraphics.blit(resetTexture, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
 					}
+
+					@Override
+					public boolean mouseClicked(double mouseX, double mouseY, int button) {
+						return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
+					}
 				});
 			}
 
@@ -349,8 +381,27 @@ public class EmoteMenuHandler {
 					int foregroundColor = getFGColor();
 					guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.emote.keybinds"), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, foregroundColor | Mth.ceil(alpha * 255.0F) << 24);
 				}
+
+				@Override
+				public boolean mouseClicked(double mouseX, double mouseY, int button) {
+					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
+				}
 			});
 		}
+	}
+
+	/** Give the focus back to the chat box */
+	private static boolean handleClicked(final Screen screen, final AbstractWidget widget, boolean clicked) {
+		if (widget == screen.getFocused() && !clicked) {
+			for (GuiEventListener element : screen.children()) {
+				if (element instanceof EditBox) {
+					screen.setFocused(element);
+					break;
+				}
+			}
+		}
+
+		return clicked;
 	}
 
 	public static void clearEmotes(){
