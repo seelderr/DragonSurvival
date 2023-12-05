@@ -27,6 +27,7 @@ import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.CycleButton.Builder;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.OptionsSubScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -339,14 +340,16 @@ public abstract class ConfigScreen extends OptionsSubScreen{
 
 		if (optional.isEmpty() && entry instanceof OptionEntry optionEntry) {
 			if (optionEntry.resetButton.isHovered()) {
-				return optionEntry.resetButton.getTooltip().toCharSequence(Minecraft.getInstance());
+				Tooltip tooltip = optionEntry.resetButton.getTooltip();
+				return tooltip != null ? tooltip.toCharSequence(Minecraft.getInstance()) : List.of();
 			}
 
 			optional = Optional.of(optionEntry.widget);
 		}
 
 		if (optional.isPresent() && optional.get().visible && !optional.get().isHoveredOrFocused()) {
-			return optional.get().getTooltip().toCharSequence(Minecraft.getInstance());
+			Tooltip tooltip = optional.get().getTooltip();
+			return tooltip != null ? tooltip.toCharSequence(Minecraft.getInstance()) : List.of();
 		}
 
 		return ImmutableList.of();

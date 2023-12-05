@@ -145,7 +145,8 @@ public class AbilityButton extends Button implements TooltipRender{
 				int yPos = getY() - description.size() * 7;
 
 				guiGraphics.pose().pushPose();
-				guiGraphics.pose().translate(0, 0, 300);
+				// Render above the other UI elements
+				guiGraphics.pose().translate(0, 0, 150);
 				MagicDragonRender.drawAbilityHover(guiGraphics, getX() + width * 2, yPos, ability);
 				guiGraphics.pose().popPose();
 			}

@@ -16,15 +16,10 @@ public class UndoRedoButton extends ArrowButton{
 
 	@Override
 	public void renderWidget(@NonNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 200);
-
 		if (next) {
 			guiGraphics.blit(redo, getX(), getY(), 0, 0, width, height, width, height);
 		} else {
 			guiGraphics.blit(undo, getX(), getY(), 0, 0, width, height, width, height);
 		}
-
-		guiGraphics.pose().popPose();
 	}
 }

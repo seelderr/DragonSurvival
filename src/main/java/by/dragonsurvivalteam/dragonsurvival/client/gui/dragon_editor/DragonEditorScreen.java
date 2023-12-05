@@ -201,6 +201,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 
 		guiGraphics.pose().pushPose();
+		// Avoid overlapping parts of the rendered entity (dragon)
 		guiGraphics.pose().translate(0, 0, -300);
 		renderBackground(guiGraphics);
 		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent)s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
@@ -209,7 +210,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		DragonAltarGUI.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 300);
 
 		TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
@@ -346,7 +346,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
 
 
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 7 ? width / 2 - 210 : width / 2 + 80, guiTop + 10 + (i >= 7 ? (i - 7) * 20 : i * 20), 100, 15, curValue, values, layers){
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers){
 				@Override
 				public void updateMessage(){
 					if(current != null){
@@ -516,7 +516,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHoveredOrFocused()) {
+				if (isHovered()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.default_skin.tooltip"), pMouseX, pMouseY);
 				}
 			}
@@ -562,8 +562,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 								if(conf != null && confirmation){
 									guiGraphics.pose().pushPose();
-									// To render above the dragon
-									guiGraphics.pose().translate(0, 0, 400);
+									// Render the pop-up message above the dragon
+									guiGraphics.pose().translate(0, 0, 150);
 									conf.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 									guiGraphics.pose().popPose();
 								}
@@ -611,7 +611,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 16, 9, 19, 19, Component.empty(), btn -> {
+		addRenderableWidget(new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
 			doAction();
 			preset.skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, dragonType)));
 			handler.getSkinData().compileSkin();
@@ -621,7 +621,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHoveredOrFocused()) {
+				if (isHovered()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
 				}
 			}
@@ -633,7 +633,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		});
 
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 256 + 30 + 16, 9, 19, 19, Component.empty(), btn -> {
+		addRenderableWidget(new ExtendedButton(guiLeft + 260, 11, 18, 18, Component.empty(), btn -> {
 			doAction();
 
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
@@ -685,7 +685,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHoveredOrFocused()) {
+				if (isHovered()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.random"), pMouseX, pMouseY);
 				}
 			}
@@ -696,7 +696,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new UndoRedoButton(guiLeft + 327, 11, 16, 16, false, s -> {
+		addRenderableWidget(new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, s -> {
 			undoAction();
 		}){
 			@Override
@@ -710,9 +710,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new UndoRedoButton(guiLeft + 347, 11, 16, 16, true, s -> {
-			redoAction();
-		}){
+		addRenderableWidget(new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, s -> redoAction()){
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = REDO_QUEUES.containsKey(currentSelected) && !REDO_QUEUES.get(currentSelected).isEmpty();
@@ -724,7 +722,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 198 + 15, guiTop - 26, 16, 16, Component.empty(), p -> {}){
+		addRenderableWidget(new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), p -> {}){
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
@@ -743,7 +741,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){}
 		});
 
-		addRenderableWidget(new CopySettingsButton(this, width / 2 + 198 + 15, guiTop + 10, 16, 16, Component.empty(), p -> {}));
+		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), p -> {}));
 
 		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
 			dragonRender.yRot = -3;
@@ -762,14 +760,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				active = visible = showUi;
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-				if (isHoveredOrFocused()) {
+				if (isHovered()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
 				}
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 16, 16, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
-		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 10, 18, 18, Component.empty(), s -> {}, this));
+		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
+		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), s -> {}, this));
 		addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
 		//addRenderableWidget(new ScreenshotButton(guiLeft + 240, 10, 18, 18, Component.empty(), (s) -> {}, this));
 	}

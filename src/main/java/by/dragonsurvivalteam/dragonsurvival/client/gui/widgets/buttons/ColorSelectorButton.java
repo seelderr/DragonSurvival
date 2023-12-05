@@ -72,10 +72,7 @@ public class ColorSelectorButton extends ExtendedButton{
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 100);
 		super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-		guiGraphics.pose().popPose();
 	}
 
 	@Override
@@ -88,9 +85,6 @@ public class ColorSelectorButton extends ExtendedButton{
 				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
-					guiGraphics.pose().pushPose();
-					guiGraphics.pose().translate(0, 0, 300);
-
 					if (hueComponent != null && text.defaultColor == null) {
 						hueComponent.visible = ColorSelectorButton.this.visible && text.defaultColor == null;
 						if (hueComponent.visible)
@@ -102,8 +96,6 @@ public class ColorSelectorButton extends ExtendedButton{
 						if (colorComponent.visible)
 							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
-
-					guiGraphics.pose().popPose();
 				}
 			};
 

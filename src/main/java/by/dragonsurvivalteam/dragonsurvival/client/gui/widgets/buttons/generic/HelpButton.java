@@ -59,7 +59,7 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 		}
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 200);
+//		guiGraphics.pose().translate(0, 0, 200);
 
 		guiGraphics.pose().translate(getX() - getX() * xSize, getY() - getY() * ySize, 0);
 		guiGraphics.pose().scale(xSize, ySize, 0);
@@ -75,10 +75,10 @@ public class HelpButton extends ExtendedButton implements TooltipRender{
 
 	/** To prevent the tooltip from getting overlayed by the screen */
 	public void renderTooltip(final GuiGraphics guiGraphics, int mouseX, int mouseY) {
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 450);
+//		guiGraphics.pose().pushPose();
+//		guiGraphics.pose().translate(0, 0, 450);
 		guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, tooltip, mouseX, mouseY);
-		guiGraphics.pose().popPose();
+//		guiGraphics.pose().popPose();
 	}
 
 	@Override

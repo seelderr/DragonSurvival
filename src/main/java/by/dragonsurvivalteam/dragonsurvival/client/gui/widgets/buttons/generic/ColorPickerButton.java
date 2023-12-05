@@ -31,11 +31,8 @@ public class ColorPickerButton extends ExtendedButton{
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 		RenderingUtils.renderColorSquare(guiGraphics, getX(), getY(), width, height);
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 200);
 		RenderingUtils.fill(guiGraphics, getX() + selectorX - 2, getY() + selectorY - 2, getX() + selectorX + 2, getY() + selectorY + 2, Color.black.getRGB());
 		RenderingUtils.fill(guiGraphics, getX() + selectorX - 1, getY() + selectorY - 1, getX() + selectorX + 1, getY() + selectorY + 1, getColor().getRGB());
-		guiGraphics.pose().popPose();
 	}
 
 	public Color getColor(){

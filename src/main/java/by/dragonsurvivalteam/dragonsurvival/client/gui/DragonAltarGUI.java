@@ -53,6 +53,7 @@ public class DragonAltarGUI extends Screen{
 		}
 
 		guiGraphics.pose().pushPose();
+		// Avoid overlapping parts of the rendered entity (dragon)
 		guiGraphics.pose().translate(0, 0, -300);
 		renderBackground(guiGraphics);
 		guiGraphics.pose().popPose();
@@ -151,7 +152,6 @@ public class DragonAltarGUI extends Screen{
 		matrixStack.pushPose();
 		float scale = size * 1.5f;
 		matrixStack.scale(scale, scale, scale);
-		matrixStack.translate(0, 0, 300);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
 		ClientDragonRender.renderEntityInInventory(DragonUtils.isDragon(player) ? dragon : player, x, y, scale, xrot, -3);
 		matrixStack.popPose();

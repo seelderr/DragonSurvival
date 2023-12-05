@@ -32,6 +32,7 @@
     "MixinItemInHandRenderer",
     "MixinWorldRenderer",
     "MixinGeoModel",
+    "MixinAbstractContainerEventHandler",
     "tool_swap.MixinMultiPlayerGameModeStart",
     "tool_swap.MixinMultiPlayerGameModeEnd"
   ],

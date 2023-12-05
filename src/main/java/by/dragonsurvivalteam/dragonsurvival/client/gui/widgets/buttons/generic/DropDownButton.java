@@ -77,13 +77,11 @@ public class DropDownButton extends ExtendedButton {
 		int strWidth = mc.font.width(buttonText);
 		int ellipsisWidth = mc.font.width("...");
 
-		if (strWidth > width - 6 && strWidth > ellipsisWidth)
+		if (strWidth > width - 6 && strWidth > ellipsisWidth) {
 			buttonText = Component.empty().append(mc.font.substrByWidth(buttonText, width - 6 - ellipsisWidth).getString() + "...");
+		}
 
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 20);
 		guiGraphics.drawCenteredString(mc.font, buttonText, getX() + width / 2, getY() + (height - 8) / 2, getFGColor());
-		guiGraphics.pose().popPose();
 	}
 
 

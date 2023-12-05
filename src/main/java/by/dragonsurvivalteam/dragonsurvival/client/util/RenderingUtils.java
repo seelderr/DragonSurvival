@@ -50,6 +50,7 @@ public class RenderingUtils{
 		RenderSystem.disableBlend();
 	}
 
+	// FIXME :: There is a mismatch between the dragon color and the chosen color
 	public static void renderPureColorSquare(PoseStack mStack, int x, int y, int width, int height){
 		Matrix4f mat = mStack.last().pose();
 		int zLevel = 100;

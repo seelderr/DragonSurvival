@@ -82,7 +82,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkinData().compileSkin();
+				DragonEditorScreen.handler.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -99,6 +99,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			protected void applyValue(){
 				super.applyValue();
+
 				float value = (hueSlider.getValueInt() + 180) / 360f;
 				float value1 = (saturationSlider.getValueInt() + 180) / 360f;
 				float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
@@ -108,7 +109,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkinData().compileSkin();
+				DragonEditorScreen.handler.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -146,6 +147,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			protected void applyValue(){
 				super.applyValue();
+
 				float value = (hueSlider.getValueInt() + 180) / 360f;
 				float value1 = (saturationSlider.getValueInt() + 180) / 360f;
 				float value2 = (brightnessSlider.getValueInt() + 180) / 360f;
@@ -155,7 +157,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = true;
 
-				screen.handler.getSkinData().compileSkin();
+				DragonEditorScreen.handler.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -187,12 +189,10 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 300);
+		// Render pop-up menu content above the other elements
+		guiGraphics.pose().translate(0, 0, 150);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
-		guiGraphics.pose().popPose();
 
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 350);
 		glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
 		hueReset.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);

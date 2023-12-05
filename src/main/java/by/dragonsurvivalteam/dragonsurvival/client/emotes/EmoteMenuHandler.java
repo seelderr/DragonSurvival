@@ -16,7 +16,6 @@ import com.mojang.blaze3d.platform.InputConstants.Type;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -111,7 +110,6 @@ public class EmoteMenuHandler {
 
 				@Override
 				public boolean mouseClicked(double mouseX, double mouseY, int button) {
-					handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 					return false;
 				}
 			});
@@ -145,11 +143,6 @@ public class EmoteMenuHandler {
 					guiGraphics.blit(BUTTON_LEFT, getX(), getY(), 0, 0, 32, 32, 32, 32);
 					guiGraphics.pose().popPose();
 				}
-
-				@Override
-				public boolean mouseClicked(double mouseX, double mouseY, int button) {
-					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
-				}
 			});
 
 			// Emote right scroll button
@@ -181,11 +174,6 @@ public class EmoteMenuHandler {
 					guiGraphics.pose().translate(20, (float) getHeight() / 2 - 2, 0);
 					guiGraphics.blit(BUTTON_RIGHT, getX(), getY(), 0, 0, 32, 32, 32, 32);
 					guiGraphics.pose().popPose();
-				}
-
-				@Override
-				public boolean mouseClicked(double mouseX, double mouseY, int button) {
-					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 				}
 			});
 
@@ -219,11 +207,6 @@ public class EmoteMenuHandler {
 					}
 
 					guiGraphics.pose().popPose();
-				}
-
-				@Override
-				public boolean mouseClicked(double mouseX, double mouseY, int button) {
-					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 				}
 			});
 
@@ -264,11 +247,6 @@ public class EmoteMenuHandler {
 							guiGraphics.blit(emote.loops ? PLAY_LOOPED : PLAY_ONCE, getX(), getY(), 0, 0, 10, 10, 10, 10);
 							guiGraphics.blit(emote.sound != null ? SOUND : NO_SOUND, getX() + 10, getY(), 0, 0, 10, 10, 10, 10);
 						}
-					}
-
-					@Override
-					public boolean mouseClicked(double mouseX, double mouseY, int button) {
-						return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
 					}
 				});
 
@@ -323,7 +301,7 @@ public class EmoteMenuHandler {
 							}
 						}
 
-						return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
+						return super.mouseClicked(mouseX, mouseY, button);
 					}
 				});
 
@@ -354,11 +332,6 @@ public class EmoteMenuHandler {
 						guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
 						guiGraphics.blit(resetTexture, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
 					}
-
-					@Override
-					public boolean mouseClicked(double mouseX, double mouseY, int button) {
-						return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
-					}
 				});
 			}
 
@@ -383,27 +356,17 @@ public class EmoteMenuHandler {
 					int foregroundColor = getFGColor();
 					guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.emote.keybinds"), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, foregroundColor | Mth.ceil(alpha * 255.0F) << 24);
 				}
-
-				@Override
-				public boolean mouseClicked(double mouseX, double mouseY, int button) {
-					return handleClicked(screen, this, super.mouseClicked(mouseX, mouseY, button));
-				}
 			});
 		}
 	}
 
-	/** Give the focus back to the chat box */
-	private static boolean handleClicked(final Screen screen, final AbstractWidget widget, boolean clicked) {
-		if (widget == screen.getFocused() && !clicked) {
-			for (GuiEventListener element : screen.children()) {
-				if (element instanceof EditBox) {
-					screen.setFocused(element);
-					break;
-				}
+	public static void focusChatBox(final ChatScreen screen) {
+		for (GuiEventListener element : screen.children()) {
+			if (element instanceof EditBox) {
+				screen.setFocused(element);
+				break;
 			}
 		}
-
-		return clicked;
 	}
 
 	public static void clearEmotes(final Entity entity){

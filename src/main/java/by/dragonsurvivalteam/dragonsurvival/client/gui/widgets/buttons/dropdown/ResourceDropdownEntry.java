@@ -70,7 +70,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
                     guiGraphics.pose().pushPose();
                     RenderSystem.enableDepthTest();
                     // Make sure it gets rendered above the other resource text fields
-                    guiGraphics.pose().translate(0, 0, 200);
+//                    guiGraphics.pose().translate(0, 0, 200);
 
                     if (entry != null) {
                         if (tick >= 1) {
@@ -93,7 +93,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
                         }
 
                         guiGraphics.pose().pushPose();
-                        guiGraphics.pose().translate(0, 0, 400);
+//                        guiGraphics.pose().translate(0, 0, 400);
 
                         // Draws the background per entry
                         guiGraphics.fill(getX(), getY(), getX() + width, getY() + height, color);
@@ -108,7 +108,7 @@ public class ResourceDropdownEntry extends DropdownEntry {
 
                             if (isHovered) {
                                 guiGraphics.pose().pushPose();
-                                guiGraphics.pose().translate(0, 0, 450);
+//                                guiGraphics.pose().translate(0, 0, 450);
                                 List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, TooltipFlag.Default.NORMAL);
                                 guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, lines, mouseX, mouseY);
                                 guiGraphics.pose().popPose();

@@ -200,13 +200,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	@Override
 	protected void renderBg(@NotNull final GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
-		renderBackground(guiGraphics);
-
-		RenderSystem.setShader(GameRenderer::getPositionTexShader);
 		RenderSystem.enableBlend();
 		guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		RenderSystem.disableBlend();
-		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		if(clawsMenu){
 			guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
@@ -216,6 +212,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			if (textures == null || textures.isEmpty()) {
 				initResources();
 			}
+
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			double curSize = handler.getSize();
 			float progress = 0;
@@ -238,24 +236,21 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			int radius = size / 2;
 
-//			RenderSystem.disableTexture();
 			Color c = new Color(99, 99, 99);
 
 			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, sides, 1, 0);
 
-//			RenderSystem.enableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 			RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "circle", "")));
 			RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
-//			RenderSystem.disableTexture();
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-//			RenderSystem.enableTexture();
 
 			guiGraphics.pose().pushPose();
+			// Avoid getting overlapped
 			guiGraphics.pose().translate(0, 0, 150);
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
@@ -289,19 +284,19 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+		super.renderBackground(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
+		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		int sizeOffset = (int)(handler.getSize() - handler.getLevel().size) / 2;
-		float sizef = Math.min(30 - sizeOffset, 30);
+		float size = Math.min(30 - sizeOffset, 30);
 
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0f, sizef / 10f, 0);
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,leftPos + 65, topPos + 65, (int) sizef, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
+		guiGraphics.pose().translate(0f, size / 10f, 0);
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,leftPos + 65, topPos + 65, (int) size, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
 		guiGraphics.pose().popPose();
-		RenderSystem.disableScissor();
 
 		if (isGrowthIconHovered) {
 			String age = (int)handler.getSize() - handler.getLevel().size + "/";

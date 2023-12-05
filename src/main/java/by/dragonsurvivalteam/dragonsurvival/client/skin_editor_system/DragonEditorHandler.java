@@ -115,6 +115,7 @@ public class DragonEditorHandler{
 					Texture skinTexture = getSkin(player, layer, selectedSkin, handler.getType());
 
 					if (skinTexture != null) {
+						// TODO :: Why the static 0.5 offset?
 						float hueVal = settings.hue - 0.5f;
 						float satVal = settings.saturation - 0.5f;
 						float brightVal = settings.brightness - 0.5f;

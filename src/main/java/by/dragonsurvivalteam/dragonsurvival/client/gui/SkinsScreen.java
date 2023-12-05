@@ -18,7 +18,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkin
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -98,6 +97,7 @@ public class SkinsScreen extends Screen{
 		}
 
 		guiGraphics.pose().pushPose();
+		// Avoid overlapping parts of the rendered entity (dragon)
 		guiGraphics.pose().translate(0F, 0F, -300);
 		renderBackground(guiGraphics);
 		guiGraphics.pose().popPose();
@@ -141,7 +141,6 @@ public class SkinsScreen extends Screen{
 
 			guiGraphics.pose().pushPose();
 			guiGraphics.pose().scale(scale, scale, scale);
-			guiGraphics.pose().translate(0, 0, 100);
 			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
 			guiGraphics.pose().popPose();
 		}
@@ -149,11 +148,6 @@ public class SkinsScreen extends Screen{
 		((DragonRenderer)dragonRenderer).glowTexture = null;
 
 		guiGraphics.pose().popPose();
-
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0F, 0F, 300);
-
-		RenderSystem.setShaderTexture(0, BACKGROUND_TEXTURE);
 		guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
 
 		drawNonShadowString(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
@@ -171,8 +165,6 @@ public class SkinsScreen extends Screen{
 		}
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-		guiGraphics.pose().popPose();
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
@@ -315,14 +307,6 @@ public class SkinsScreen extends Screen{
 				if (isHovered()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Minecraft.getInstance().font.split(Component.translatable("ds.gui.skins.tooltip.wiki"), screenWidth / 2), mouseX, mouseY);
 				}
-			}
-
-			@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-				guiGraphics.pose().pushPose();
-				guiGraphics.pose().translate(0, 0, 300);
-				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
-				guiGraphics.pose().popPose();
 			}
 		});
 

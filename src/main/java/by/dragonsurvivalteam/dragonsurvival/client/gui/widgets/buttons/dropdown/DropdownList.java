@@ -80,7 +80,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 			return;
 		}
 
-		int zTranslation = 350;
+		int zTranslation = 150;
 
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, zTranslation);
