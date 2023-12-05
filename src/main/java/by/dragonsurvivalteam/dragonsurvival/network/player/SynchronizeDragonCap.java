@@ -62,7 +62,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap> {
 
 		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
 			context.enqueueWork(() -> ClientProxy.handleSynchronizeDragonCap(message));
-		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) { // enqueue work
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
 			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), message);
 
 			context.enqueueWork(() -> {

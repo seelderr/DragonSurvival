@@ -146,7 +146,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "Si quieres texturas antiguas o utilizas un §6paquete de texturas§r, marca esta casilla.",
   "ds.gui.dragon_editor.glowing": "¿Brillo?",
   "ds.gui.dragon_editor.default_skin": "Textura antigua",
-  "ds.gui.dragon_editor.wings": "¿Mostrar alas?",
+  "ds.gui.dragon_editor.wings": "",
   "ds.gui.dragon_editor.size": "Tamaño: ",
   "ds.gui.dragon_editor.tooltip.done": "Confirmar cambios",
   "ds.gui.dragon_editor.tooltip.cancel": "Cancelar",

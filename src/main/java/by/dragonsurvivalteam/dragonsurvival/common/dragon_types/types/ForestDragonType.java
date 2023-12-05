@@ -103,8 +103,8 @@ public class ForestDragonType extends AbstractDragonType{
 
 	@Override
 	public boolean isInManaCondition(Player player, DragonStateHandler cap){
-		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-		BlockState feetBlock = player.getFeetBlockState();
+//		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
+//		BlockState feetBlock = player.getFeetBlockState();
 
 		if(player.level().canSeeSky(player.blockPosition())){
 			int light = player.level().getBrightness(LightLayer.SKY, player.blockPosition()) - player.level().getSkyDarken();

@@ -20,6 +20,7 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -87,9 +88,18 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 	}
 
 	@Override
-	@Nullable
-	public BlockState getStateForPlacement(BlockPlaceContext pContext){
-		return super.getStateForPlacement(pContext).setValue(FACING, pContext.getHorizontalDirection()).setValue(WATERLOGGED, pContext.getLevel().getFluidState(pContext.getClickedPos()).getType() == Fluids.WATER);
+	public @Nullable BlockState getStateForPlacement(@NotNull final BlockPlaceContext context) {
+		BlockState state = super.getStateForPlacement(context);
+
+		if (state == null) {
+			return null;
+		}
+
+		if (state.hasProperty(FACING)) {
+			state = state.setValue(FACING, context.getHorizontalDirection());
+		}
+
+		return state.setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 	}
 
 	@Override
@@ -98,12 +108,20 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 	}
 
 	@Override
-	public BlockState rotate(BlockState pState, Rotation pRotation){
-		return pState.setValue(FACING, pRotation.rotate(pState.getValue(FACING)));
+	public @NotNull BlockState rotate(final BlockState state, @NotNull final Rotation rotation) {
+		if (state.hasProperty(FACING)) {
+			return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+		}
+
+		return state;
 	}
 
 	@Override
-	public BlockState mirror(BlockState pState, Mirror pMirror){
-		return pState.rotate(pMirror.getRotation(pState.getValue(FACING)));
+	public @NotNull BlockState mirror(final BlockState state, @NotNull final Mirror mirror) {
+		if (state.hasProperty(FACING)) {
+			return state.rotate(mirror.getRotation(state.getValue(FACING)));
+		}
+
+		return state;
 	}
 }

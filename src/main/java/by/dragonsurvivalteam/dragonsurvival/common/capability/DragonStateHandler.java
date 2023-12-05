@@ -41,9 +41,18 @@ public class DragonStateHandler extends EntityStateHandler {
 	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
 
     /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
-    public ItemStack storedMainHand = ItemStack.EMPTY;
+    public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
+	public boolean switchedWeapon;
 
-	public boolean switchedItems;
+	public ItemStack storedMainHandTool = ItemStack.EMPTY;
+	public boolean switchedTool;
+	public int switchedToolSlot = -1;
+	/**
+	 * Since {@link Player#hasCorrectToolForDrops(BlockState)} has its own swap<br>
+	 * Which would close the swap of {@link net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)}
+	 */
+	public int toolSwapLayer = 0;
+
 	public boolean hasFlown;
 	public boolean growing = true;
 
@@ -255,21 +264,6 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 	}
 
-	public void setSize(double size, boolean isUpdateRequired) {
-		if (size != this.size) {
-			DragonLevel oldLevel = getLevel();
-			this.size = size;
-
-			if (isUpdateRequired && oldLevel != getLevel()) {
-				requestClientData();
-			}
-
-			if (dragonType != null) {
-				setSavedDragonSize(dragonType.getTypeName(), size);
-			}
-		}
-	}
-
 	public double getSavedDragonSize(final String type) {
 		Double value = savedDragonSize.get(type);
 		value = value == null ? 0 : value;
@@ -334,8 +328,11 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	/** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
 	public boolean canHarvestWithPaw(final BlockState state) {
-		for (int i = 1; i < 4; i++) {
-			// FIXME :: Why is the sword ignored? It can harvest cobwebs (and due to other mods maybe other things as well)
+		if (!isDragon()) {
+			return false;
+		}
+
+		for (int i = 0; i < 4; i++) {
 			ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
 
 			if (stack.isCorrectToolForDrops(state)) {
@@ -348,7 +345,16 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	/** Determines if the current dragon type can harvest the supplied block without a tool (configured harvest bonuses are taken into account) */
 	public boolean canHarvestWithPawNoTools(final BlockState blockState) {
-		// FIXME :: Not the most accurate check
+		if (!isDragon()) {
+			return false;
+		}
+
+		boolean initialCheck = getFakeTool(blockState).isCorrectToolForDrops(blockState);
+
+		if (initialCheck) {
+			return true;
+		}
+
 		int harvestLevel = blockState.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : blockState.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : blockState.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
 
 		if (harvestLevel <= ServerConfig.baseHarvestLevel) {
@@ -365,6 +371,8 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	/**
+	 * Returns an effective tool for the supplied block state<br>
+	 * The tier of the tool is based on the current harvest level of the dragon
 	 * @param blockState The block for which the tool is required for
 	 * @return The appropriate harvest tool for the supplied block<br>
 	 * The tier depends on the dragon and configured harvest bonuses
@@ -414,6 +422,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	/**
+	 * Returns a tiered item for the supplied slot - useful to fake checks regarding block breaking
 	 * @param tier The tier which the returned item is supposed to have
 	 * @param toolSlot To determine the type of harvest tool (e.g. `1` for Pickaxe)
 	 * @return A default instance of the tool (or {@link ItemStack#EMPTY} if nothing matches / some problem occurs)

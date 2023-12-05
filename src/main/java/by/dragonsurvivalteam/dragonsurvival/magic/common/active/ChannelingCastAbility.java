@@ -29,7 +29,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 			onCharging(player, chargeTime);
 
 			if(chargeTime == getSkillChargeTime() / 2){
-				ManaHandler.consumeMana(player, getInitManaCost()); // TODO :: Only consume mana when skill actually casts?
+				ManaHandler.consumeMana(player, getInitManaCost());
 			}
 		}
 	}

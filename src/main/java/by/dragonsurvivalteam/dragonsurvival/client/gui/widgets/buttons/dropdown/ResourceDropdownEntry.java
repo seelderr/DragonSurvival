@@ -115,9 +115,10 @@ public class ResourceDropdownEntry extends DropdownEntry {
                             }
                         }
 
-                        guiGraphics.pose().popPose();
                         RenderSystem.disableDepthTest();
                     }
+
+                    guiGraphics.pose().popPose();
                 }
             };
         } else {

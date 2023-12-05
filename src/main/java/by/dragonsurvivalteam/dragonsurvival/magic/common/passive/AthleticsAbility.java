@@ -39,7 +39,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 
 	@Override
 	public void onTick(Player player){
-		BlockState feetBlock = player.getFeetBlockState();
+//		BlockState feetBlock = player.getFeetBlockState();
 		BlockState blockUnder = player.level().getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
 

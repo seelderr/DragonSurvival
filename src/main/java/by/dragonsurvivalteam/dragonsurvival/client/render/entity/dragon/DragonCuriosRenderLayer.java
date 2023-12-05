@@ -70,7 +70,7 @@ public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
     private ArrayList<ResourceLocation> getCurioTextures(Player player) {
         ArrayList<ResourceLocation> resources = new ArrayList<>();
         // mostly taken from https://github.com/TheIllusiveC4/Curios/blob/1.18.x/src/main/java/top/theillusivec4/curios/client/render/CuriosLayer.java
-        CuriosApi.getCuriosHelper().getCuriosHandler(player).ifPresent(handler -> handler.getCurios().forEach(
+        CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getCurios().forEach(
                 (id, stacksHandler) -> {
                     IDynamicStackHandler stackHandler = stacksHandler.getStacks();
                     IDynamicStackHandler cosmeticStacksHandler = stacksHandler.getCosmeticStacks();

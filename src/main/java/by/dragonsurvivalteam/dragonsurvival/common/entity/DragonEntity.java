@@ -16,7 +16,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
@@ -86,7 +85,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			return new Vec3(0, 0, 0);
 		}
 
-		if (player == Minecraft.getInstance().player) {
+		if (true/*player == Minecraft.getInstance().player*/) {
 			return player.getDeltaMovement();
 		}
 
@@ -429,6 +428,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	@Override
 	public @NotNull HumanoidArm getMainArm(){
 		return playerId != null ? getPlayer().getMainArm() : HumanoidArm.LEFT;
+	}
+
+	@Override
+	public boolean isAlwaysTicking() {
+		return true;
 	}
 
 	// Animations

@@ -60,9 +60,6 @@ public class CompleteDataSync extends ISidedMessage<CompleteDataSync> {
 
 	@Override
 	public void runClient(final CompleteDataSync message, final NetworkEvent.Context context, final Player player) {
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
-			handler.readNBT(message.nbt);
-			player.refreshDimensions();
-		});
+		DragonStateProvider.getCap(player).ifPresent(handler -> handler.readNBT(message.nbt));
 	}
 }

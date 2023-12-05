@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandle
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -34,14 +35,14 @@ public abstract class MixinInventory{
 
 	@Shadow public abstract ItemStack getItem(int pIndex);
 
-	@Inject( at = @At( "HEAD" ), method = "getDestroySpeed", cancellable = true )
-	public void getDestroySpeed(BlockState state, CallbackInfoReturnable<Float> ci){
+	@Inject(at = @At("HEAD"), method = "getDestroySpeed", cancellable = true)
+	public void getDestroySpeed(final BlockState blockState, final CallbackInfoReturnable<Float> callback) {
 		ItemStack mainStack = player.getInventory().getSelected();
-		ItemStack breakStack = ClawToolHandler.getDragonHarvestTool(player, state);
+		ItemStack breakStack = ClawToolHandler.getDragonHarvestTool(player, blockState);
 
-		if(!ItemStack.isSameItem(mainStack, breakStack)){
-			float tempSpeed = breakStack.getDestroySpeed(state);
-			ci.setReturnValue(tempSpeed);
+		if (!ItemStack.isSameItem(mainStack, breakStack) && !ToolUtils.shouldUseDragonTools(mainStack)) {
+			float tempSpeed = breakStack.getDestroySpeed(blockState);
+			callback.setReturnValue(tempSpeed);
 		}
 	}
 

@@ -76,7 +76,7 @@ public class ForestBreathAbility extends BreathAbility{
 	public static List<String> forestBreathBlockBreaks = List.of("minecraft:banners");
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id" )
-	public static List<String> forestBreathGrowBlacklist = List.of();
+	public static List<String> forestBreathGrowBlacklist = List.of("minecraft:grass", "minecraft:grass_block");
 
 	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "allowDirtTransformation", comment = "Allow the forest breath to transform dirt into nature related blocks")
 	public static Boolean allowDirtTransformation = true;

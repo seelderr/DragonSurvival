@@ -1,3 +1,4 @@
+/*
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -48,7 +49,7 @@ public class EditorPartButton extends ExtendedButton{
 
 		int u = !active ? 32 : 0;
 		int v = isHoveredOrFocused() && active ? 32 : 0;
-		guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), u, v, width, height, 32, 32, 10, 10, 10, 10/*, (float)getBlitOffset()*/);
+		guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY(), u, v, width, height, 32, 32, 10, 10, 10, 10);
 
 		if(texture != null){
 			guiGraphics.blit(texture, getX() + 3, getY() + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
@@ -66,4 +67,4 @@ public class EditorPartButton extends ExtendedButton{
 		source.onPress();
 		setter.accept(value);
 	}
-}
+}*/

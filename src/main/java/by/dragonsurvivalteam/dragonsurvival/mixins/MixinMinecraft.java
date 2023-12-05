@@ -25,7 +25,7 @@ public abstract class MixinMinecraft {
     )
     public void tickDragon(final CallbackInfo callback) {
         // For animation purposes - alternative to MixinGeoModel
-        FakeClientPlayerUtils.FAKE_DRAGONS.forEach((playerId, dragon) -> dragon.tickCount++);
-        ClientDragonRender.playerDragonHashMap.forEach((playerId, dragon) -> dragon.get().tickCount++);
+//        FakeClientPlayerUtils.FAKE_DRAGONS.forEach((playerId, dragon) -> dragon.tickCount++);
+//        ClientDragonRender.playerDragonHashMap.forEach((playerId, dragon) -> dragon.get().tickCount++);
     }
 }

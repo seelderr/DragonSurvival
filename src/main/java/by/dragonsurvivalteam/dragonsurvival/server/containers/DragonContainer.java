@@ -164,7 +164,8 @@ public class DragonContainer extends AbstractContainerMenu {
 
 			if (index == craftingResultIndex) { // Index 45
 				// Move item from the crafting slot into the inventory / hotbar
-				if (!moveItemStackTo(slotItemStack, 4, 45, true)) {
+				// Claw menu slots will be prioritized if it's open / visible
+				if (menuStatus == 1 ? !moveItemStackTo(slotItemStack, 4, 44, true) : !moveItemStackTo(slotItemStack, 4, 40, true)) {
 					return ItemStack.EMPTY;
 				}
 

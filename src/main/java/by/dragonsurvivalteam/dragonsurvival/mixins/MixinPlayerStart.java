@@ -12,10 +12,8 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = Player.class, priority = 1) // To make sure it's the first call in the method
+@Mixin(value = Player.class, /* Make sure it happens at the start */ priority = 1)
 public class MixinPlayerStart {
-    // Did not notice any problems running on a server - but you could exclude the client thread from running this by checking `player instanceof ServerPlayer`
-
     @Inject(method = "attack", at = @At("HEAD"))
     public void switchStart(Entity target, CallbackInfo ci) {
         Object self = this;
@@ -32,9 +30,9 @@ public class MixinPlayerStart {
             player.setItemInHand(InteractionHand.MAIN_HAND, toolSlot);
 
             DragonStateHandler handler = DragonUtils.getHandler(player);
-            handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY); // There is no real need to reset it here but doesn't hurt to do it
-            handler.storedMainHand = mainHand;
-            handler.switchedItems = true;
+            handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY);
+            handler.storedMainHandWeapon = mainHand;
+            handler.switchedWeapon = true;
         }
     }
 }
