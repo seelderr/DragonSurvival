@@ -21,6 +21,7 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -207,11 +208,18 @@ public class DragonEditorHandler{
 	}
 
 	private static void registerCompiledTexture(NativeImage image, ResourceLocation key){
-		try(image){
-			if(Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture){
+		try (image) {
+			// DEBUG :: Export the texture
+//			if (key.toString().contains("dynamic_normal")) {
+//				File file = new File(Minecraft.getInstance().gameDirectory, "texture");
+//				file.mkdirs();
+//				file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
+//				image.writeToFile(file);
+//			}
+			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
 				texture.setPixels(image);
 				texture.upload();
-			}else{
+			} else {
 				DynamicTexture layer = new DynamicTexture(image);
 				Minecraft.getInstance().getTextureManager().register(key, layer);
 			}
