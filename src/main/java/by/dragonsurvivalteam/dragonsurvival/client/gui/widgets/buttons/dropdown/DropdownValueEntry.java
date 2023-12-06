@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.GuiGraphics;
@@ -27,7 +28,7 @@ public class DropdownValueEntry extends DropdownEntry{
 		this.value = value;
 		this.setter = setter;
 		this.source = source;
-		message = Component.empty().append(value.substring(0, 1).toUpperCase(Locale.ROOT) + value.substring(1).toLowerCase(Locale.ROOT));
+		message = Component.translatable(DragonEditorScreen.partToTranslation(value));
 	}
 
 	@Override

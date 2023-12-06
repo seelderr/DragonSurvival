@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.AnimationController;
@@ -138,11 +139,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		animationTimer.putAnimation("...", ..., animation);
 		*/
 
-		if (!ClientDragonRender.renderItemsInMouth /*&& animationExists("use_item")*/ && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
+		if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
 			// When the player is using an item
 			handler.getMovementData().bite = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM));
-		} else if (!ClientDragonRender.renderItemsInMouth /*&& animationExists("eat_item_right")*/ && player.isUsingItem() && player.getMainHandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_right") && player.isUsingItem() && player.getMainHandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0) {
 			// When the player is eating the main hand item
 			if (animationTimer.getDuration("eat_item_right") <= 0) {
 				handler.getMovementData().bite = false;
@@ -150,7 +151,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_RIGHT));
-		} else if (!ClientDragonRender.renderItemsInMouth /*&& animationExists("eat_item_left")*/ && player.isUsingItem() && player.getOffhandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_left") && player.isUsingItem() && player.getOffhandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0) {
 			// When the player is eating the offhand item
 			if (animationTimer.getDuration("eat_item_left") <= 0) {
 				handler.getMovementData().bite = false;
@@ -158,7 +159,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_LEFT));
-		} else if (!ClientDragonRender.renderItemsInMouth /*&& animationExists("use_item_right")*/ && !player.getMainHandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("use_item_right") && !player.getMainHandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
 			// When the player is using the main hand item
 			if (animationTimer.getDuration("use_item_right") <= 0) {
 				handler.getMovementData().bite = false;
@@ -166,7 +167,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM_RIGHT));
-		} else if (!ClientDragonRender.renderItemsInMouth /*&& animationExists("use_item_left")*/ && !player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("use_item_left") && !player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
 			// When the player is using the offhand item
 			if (animationTimer.getDuration("use_item_left") <= 0) {
 				handler.getMovementData().bite = false;
@@ -184,6 +185,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		}
 
 		return PlayState.STOP;
+	}
+
+	private boolean doesAnimationExist(final String animation) {
+		return GeckoLibCache.getBakedAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(ClientDragonRender.dragonArmor)).getAnimation(animation) != null;
 	}
 
 	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
@@ -242,6 +247,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		Vec3 motion = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 		boolean isMovingHorizontal = Math.sqrt(Math.pow(motion.x, 2) + Math.pow(motion.z, 2)) > 0.005;
 
+		Integer jumpingTicks = ClientEvents.dragonsJumpingTicks.getOrDefault(playerId, 0);
+
 		if (handler.getMagicData().onMagicSource) {
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT_ON_MAGIC_SOURCE));
 		} else if (player.isSleeping() || handler.treasureResting) {
@@ -286,12 +293,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			return swimOrSpin(state, player, AnimationUtils.createAnimation(builder, SWIM_FAST));
 		} else if ((player.isInLava() || player.isInWaterOrBubble()) && !player.onGround()) {
 			return swimOrSpin(state, player, AnimationUtils.createAnimation(builder, SWIM));
-		} else if (!player.onGround() && motion.y() < 0 && player.fallDistance >= 2) {
+		} else if (jumpingTicks <= 0 && !player.onGround() && motion.y() < 0 && player.fallDistance >= 2) {
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, FALL_LOOP));
 		} /* else if (player.onGround() && controller.getCurrentAnimation() != null && (controller.getCurrentAnimation().animation().name().equals("fall_loop") || controller.getCurrentAnimation().animation().name().equals("land") && controller.getAnimationState() == AnimationController.State.RUNNING)) {
 			// Doesn't work and is not needed for now
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, LAND));
-		} */else if (ClientEvents.dragonsJumpingTicks.getOrDefault(playerId, 0) > 0){
+		} */else if (jumpingTicks > 0){
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, JUMP));
 		} else if (player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)) {
 			// Player is sneaking

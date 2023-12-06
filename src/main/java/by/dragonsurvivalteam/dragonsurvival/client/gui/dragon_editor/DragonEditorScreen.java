@@ -53,6 +53,7 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -335,22 +336,21 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}
 
 		int i = 0;
-		for(EnumSkinLayer layers : EnumSkinLayer.values()){
+		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 			ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonType, layers);
 
-			if(layers != EnumSkinLayer.BASE){
+			if (layers != EnumSkinLayer.BASE) {
 				valueList.add(0, SkinCap.defaultSkinValue);
 			}
 
 			String[] values = valueList.toArray(new String[0]);
 			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
 
-
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers){
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers) {
 				@Override
 				public void updateMessage(){
 					if(current != null){
-						message = Component.translatable("ds.skin_part." + dragonType.getTypeName().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
+						message = Component.translatable(partToTranslation(current));
 					}
 				}
 			};
@@ -696,9 +696,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, s -> {
-			undoAction();
-		}){
+		addRenderableWidget(new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, button -> undoAction()){
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = UNDO_QUEUES.containsKey(currentSelected) && !UNDO_QUEUES.get(currentSelected).isEmpty();
@@ -710,7 +708,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, s -> redoAction()){
+		addRenderableWidget(new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, button -> redoAction()){
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = REDO_QUEUES.containsKey(currentSelected) && !REDO_QUEUES.get(currentSelected).isEmpty();
@@ -722,7 +720,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), p -> {}){
+		addRenderableWidget(new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }){
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				active = visible = showUi;
@@ -738,10 +736,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){}
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) { /* Nothing to do */ }
 		});
 
-		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), p -> {}));
+		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), button -> { /* Nothing to do */ }));
 
 		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
 			dragonRender.yRot = -3;
@@ -865,5 +863,19 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}
 
 		return false;
+	}
+
+	public static String partToTranslation(final String part) {
+		String text = "ds.skin_part." + DragonEditorScreen.handler.getTypeName().toLowerCase(Locale.ROOT) + "." + part.toLowerCase(Locale.ROOT);
+
+		if (I18n.exists(text)) {
+			return text;
+		}
+
+		return part;
+	}
+
+	public static String partToTechnical(final String part) {
+		return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.handler.getTypeName().toLowerCase(Locale.ROOT) + ".", "");
 	}
 }

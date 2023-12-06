@@ -9,8 +9,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.Locale;
+import java.util.List;
 import java.util.Objects;
 
 public class DragonEditorDropdownButton extends DropDownButton{
@@ -18,8 +17,8 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	private final EnumSkinLayer layers;
 
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
-		super(x, y, xSize, ySize, current, values, s -> {
-			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin = s;
+		super(x, y, xSize, ySize, current, values, selected -> {
+			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin = DragonEditorScreen.partToTechnical(selected);
 			dragonEditorScreen.handler.getSkinData().compileSkin();
 			dragonEditorScreen.update();
 		});
@@ -31,18 +30,20 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		active = visible = dragonEditorScreen.showUi;
 		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
-		String curValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin;
+		String currentValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin;
 
-		if(!Objects.equals(curValue, current)){
-			current = curValue;
+		if (!Objects.equals(currentValue, current)) {
+			current = DragonEditorScreen.partToTranslation(currentValue);
 			updateMessage();
 		}
 
-		ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
+		List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
 
 		if(layers != EnumSkinLayer.BASE){
 			valueList.add(0, SkinCap.defaultSkinValue);
 		}
+
+		valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
 
 		values = valueList.toArray(new String[0]);
 		active = !dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().defaultSkin;
@@ -51,7 +52,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	@Override
 	public void updateMessage(){
 		if(current != null){
-			message = Component.empty().append((current.substring(0, 1).toUpperCase(Locale.ROOT) + current.substring(1).toLowerCase(Locale.ROOT)).replace("_", " "));
+			message = Component.translatable(DragonEditorScreen.partToTranslation(current));
 		}
 	}
 
