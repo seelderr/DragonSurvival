@@ -29,8 +29,8 @@ import software.bernie.geckolib3.util.GeckoLibUtil;
 public class DragonBallEntity extends Fireball implements IAnimatable{
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
-	protected boolean isDead;
-	protected int deadTicks;
+	protected boolean isDead = false;
+	protected int deadTicks = 0;
 
 	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
 		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
@@ -59,7 +59,7 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 		if(isDead){
 			deadTicks++;
 
-			if(deadTicks >= 26){
+			if(deadTicks >= 3){
 				remove(RemovalReason.DISCARDED);
 			}
 			return;

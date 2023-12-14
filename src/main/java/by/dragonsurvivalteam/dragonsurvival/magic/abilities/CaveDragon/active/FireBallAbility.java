@@ -31,13 +31,13 @@ public class FireBallAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireball", comment = "Whether the fireball ability should be enabled" )
 	public static Boolean fireball = true;
 
-	@ConfigRange( min = 1, max = 10000 )
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in seconds of the fireball ability" )
-	public static Integer fireballCooldown = 7;
+	public static Double fireballCooldown = 7.0;
 
-	@ConfigRange( min = 1, max = 10000 )
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCasttime", comment = "The cast time in seconds of the fireball ability" )
-	public static Integer fireballCasttime = 2;
+	public static Double fireballCasttime = 2.0;
 
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballDamage", comment = "The amount of damage the fireball ability deals. This value is multiplied by the skill level." )
@@ -67,7 +67,7 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return fireballCooldown * 20;
+		return Functions.secondsToTicks(fireballCooldown);
 	}
 
 	@Override

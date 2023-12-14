@@ -17,27 +17,39 @@ import java.util.function.Supplier;
 public class SyncAbilityCasting implements IMessage<SyncAbilityCasting> {
 	public int playerId;
 	public boolean isCasting;
+	public int abilitySlot;
 	public CompoundTag nbt;
+	public long castStartTime;
 
 	public SyncAbilityCasting() { /* Nothing to do */ }
 
-	public SyncAbilityCasting(int playerId, boolean isCasting, final CompoundTag nbt) {
+//	public SyncAbilityCasting(int playerId, boolean isCasting, final CompoundTag nbt) {
+//		this.playerId = playerId;
+//		this.isCasting = isCasting;
+//		this.nbt = nbt;
+//	}
+	
+	public SyncAbilityCasting(int playerId, boolean isCasting, int abilitySlot, final CompoundTag nbt, long castStartTime) {
 		this.playerId = playerId;
 		this.isCasting = isCasting;
+		this.abilitySlot = abilitySlot;
 		this.nbt = nbt;
+		this.castStartTime = castStartTime;
 	}
 
 	@Override
 	public void encode(final SyncAbilityCasting message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.isCasting);
+		buffer.writeInt(message.abilitySlot);
 		buffer.writeNbt(message.nbt);
+		buffer.writeLong(message.castStartTime);
 	}
 
 	@Override
 	public SyncAbilityCasting decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
-		return new SyncAbilityCasting(playerId, buffer.readBoolean(), buffer.readNbt());
+		return new SyncAbilityCasting(playerId, buffer.readBoolean(), buffer.readInt(), buffer.readNbt(), buffer.readLong());
 	}
 
 	@Override
@@ -51,18 +63,18 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting> {
 				ServerPlayer sender = context.getSender();
 
 				DragonStateProvider.getCap(sender).ifPresent(handler -> {
-					ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
+					ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot);
 					ability.loadNBT(message.nbt);
 					handler.getMagicData().isCasting = message.isCasting;
 
 					if (message.isCasting) {
-						ability.onKeyPressed(sender, () -> {});
+						ability.onKeyPressed(sender, () -> {}, message.castStartTime);
 					} else {
 						ability.onKeyReleased(sender);
 					}
 				});
 
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncAbilityCasting(sender.getId(), message.isCasting, message.nbt));
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncAbilityCasting(sender.getId(), message.isCasting, message.abilitySlot, message.nbt, message.castStartTime));
 			});
 		}
 

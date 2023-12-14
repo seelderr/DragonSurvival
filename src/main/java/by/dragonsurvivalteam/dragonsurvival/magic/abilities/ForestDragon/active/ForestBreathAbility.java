@@ -53,27 +53,35 @@ import java.util.List;
 public class ForestBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreath", comment = "Whether the forest breath ability should be enabled" )
 	public static Boolean forestBreath = true;
-	@ConfigRange( min = 0, max = 100.0 )
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathDamage", comment = "The amount of damage the forest breath ability deals. This value is multiplied by the skill level." )
 	public static Double forestBreathDamage = 2.0;
-	@ConfigRange( min = 1, max = 10000 )
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in seconds of the forest breath ability" )
-	public static Integer forestBreathCooldown = 5;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double forestBreathCooldown = 5.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in seconds of the forest breath ability" )
-	public static Integer forestBreathCasttime = 1;
+	public static Double forestBreathCasttime = 1.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathInitialMana", comment = "The mana cost for starting the forest breath ability" )
 	public static Integer forestBreathInitialMana = 2;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathOvertimeMana", comment = "The mana cost of sustaining the forest breath ability" )
 	public static Integer forestBreathOvertimeMana = 1;
-	@ConfigRange( min = 0, max = 100 )
+
+	@ConfigRange( min = 0.5, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in seconds, mana is consumed while using forest breath" )
-	public static Integer forestBreathManaTicks = 2;
+	public static Double forestBreathManaTicks = 2.0;
+
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathBlockBreaks", comment = "Blocks that have a chance to be broken by forest breath. Formatting: block/modid:id" )
 	public static List<String> forestBreathBlockBreaks = List.of("minecraft:banners");
+
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id" )
 	public static List<String> forestBreathGrowBlacklist = List.of("minecraft:grass", "minecraft:grass_block");
@@ -148,6 +156,7 @@ public class ForestBreathAbility extends BreathAbility{
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(1);
 				entity.setParticle(new LargePoisonParticleData(37, false));
+				entity.setOwner(player);
 				serverLevel.addFreshEntity(entity);
 			}
 		}

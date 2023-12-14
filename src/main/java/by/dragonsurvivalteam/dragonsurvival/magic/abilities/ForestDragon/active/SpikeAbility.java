@@ -31,9 +31,16 @@ public class SpikeAbility extends InstantCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spike", comment = "Whether the spike ability should be enabled" )
 	public static Boolean spike = true;
 
-	@ConfigRange( min = 1, max = 10000 )
+	@ConfigRange( min = 0.0, max = 100.0)
+	@ConfigOption (side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeSpread", comment = "The amount each additional spike fired will add to its inaccuracy")
+	public static Float spikeSpread = 1.0F;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeMultishot", comment = "Whether the spike ability will fire an additional shot per level")
+	public static Boolean spikeMultishot = false;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in seconds of the spike ability" )
-	public static Integer spikeCooldown = 3;
+	public static Double spikeCooldown = 3.0;
 
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeDamage", comment = "The amount of damage the spike ability deals. This value is multiplied by the skill level." )
@@ -148,13 +155,25 @@ public class SpikeAbility extends InstantCastAbility{
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		handler.getMovementData().bite = true;
+		
+		for (int i = 0; i < getLevel(); i++) {
+			DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE, player.level, player);
+			entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
+			entity.setArrow_level(getLevel());
+			entity.setBaseDamage(getDamage());
+			entity.pickup = AbstractArrow.Pickup.DISALLOWED;
+			entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, i * spikeSpread);
+			player.level.addFreshEntity(entity);
+			if (!spikeMultishot)
+				break;
+		}
 
-		DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE, player.level, player);
-		entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
-		entity.setArrow_level(getLevel());
-		entity.setBaseDamage(getDamage());
-		entity.pickup = AbstractArrow.Pickup.DISALLOWED;
-		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, 1.0F);
-		player.level.addFreshEntity(entity);
+		//DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE, player.level, player);
+		//entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
+		//entity.setArrow_level(getLevel());
+		//entity.setBaseDamage(getDamage());
+		//entity.pickup = AbstractArrow.Pickup.DISALLOWED;
+		//entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, 1.0F);
+		//player.level.addFreshEntity(entity);
 	}
 }
