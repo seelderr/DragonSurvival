@@ -21,7 +21,6 @@ public abstract class InstantCastAbility extends ActiveDragonAbility {
 	
 	public void onKeyReleased(Player player) {
 		//System.out.println("Key released for ability " + getName() + " and castFinished = " + castFinished);
-		if (canCastSkill(player))
-			castFinished = false;
+		castFinished = false;
 	}
 }

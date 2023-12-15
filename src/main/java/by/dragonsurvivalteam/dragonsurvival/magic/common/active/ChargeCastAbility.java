@@ -39,10 +39,9 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
 	@Override
 	public void onKeyReleased(Player player){
 		//System.out.println("Key released for ability " + getName() + " and castFinished = " + castFinished + " with cast time = " + castTime);
-		if (castFinished) {
-			castTime = 0;
-			castFinished = false;
-		}
+		//if (castFinished && castTime >= getSkillCastingTime()) {
+		castFinished = false;
+		castTime = 0;
 	}
 
 	public abstract void onCasting(Player player, int currentCastTime);

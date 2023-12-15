@@ -20,9 +20,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 	@Override
 	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){
 		long curTime = player.level.dayTime();
-		//chargeTime++;
-		//if (chargeTime > 0)
-		//	chargeTime = (int) (curTime - castStartTime);
+
 		chargeTime = (int) (curTime - castStartTime);
 		if(curTime - castStartTime >= getSkillChargeTime() && castStartTime != -1)
 		{
@@ -55,7 +53,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 
 	@Override
 	public void onKeyReleased(Player player){
-		if(chargeTime >= getSkillChargeTime() && (getCurrentCooldown() == 0 || player.isCreative())){
+		if(chargeTime >= getSkillChargeTime()){
 			castComplete(player);
 			startCooldown();
 		}

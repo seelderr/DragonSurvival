@@ -53,17 +53,20 @@ public class ClientCastingHandler{
 
 		if (castSlot != slot) { // ability slot has been changed, cancel any casts and put skills on cooldown if needed
 			status = StatusIdle;
-			//System.out.println("Ability changed from " + ability.getName() + " to " + dragonStateHandler.getMagicData().getAbilityFromSlot(slot).getName() + ".");
-			if (castStartTime != -1 && ability.getCurrentCooldown() == 0) {
-				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, castSlot, ability.saveNBT(), castStartTime));
+			//System.out.println(player + " ability changed from " + ability.getName() + " to " + dragonStateHandler.getMagicData().getAbilityFromSlot(slot).getName() + ".");
+			if (castStartTime != -1 && ability.canCastSkill(player)) {
+				NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, castSlot, ability.saveNBT(), castStartTime));
 				//System.out.println(ability.getName() + " finished casting due to swap.");
 			}
+			hasCast = false;
+			ability.onKeyReleased(player);
 			castStartTime = -1;
 			castSlot = slot;
 			return;
 		}
 
 		if(status == StatusIdle && isKeyDown) {
+			castStartTime = -1;
 			status = StatusInProgress;
 		}
 
@@ -81,7 +84,7 @@ public class ClientCastingHandler{
 			if (castStartTime == -1)
 				castStartTime = player.level.dayTime();
 			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, castSlot, ability.saveNBT(), castStartTime));
-		}else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player) && castStartTime != -1){
+		} else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player) && castStartTime != -1){
 			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, castSlot, ability.saveNBT(), castStartTime));
 			ability.onKeyReleased(player);
 			status = StatusIdle;
