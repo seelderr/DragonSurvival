@@ -39,7 +39,6 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	public BallLightningEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
 		super(p_i50166_1_, p_i50166_2_);
-		System.out.println(this);
 	}
 
 	@Override
