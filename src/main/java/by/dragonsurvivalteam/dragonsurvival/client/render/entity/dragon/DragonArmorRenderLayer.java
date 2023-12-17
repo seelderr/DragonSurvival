@@ -97,59 +97,55 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
 		String texture = "textures/armor/";
-		try {
-			Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
-			String texture2 = itemToResLoc(item);
-			if (texture2 != null) {
-				texture2 = texture + texture2;
-				if (Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2)).isPresent()) {
-					return texture2;
-				}
+		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
+		String texture2 = itemToResLoc(item);
+		if (texture2 != null) {
+			texture2 = texture + texture2;
+			if (Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2)).isPresent()) {
+				return texture2;
 			}
-			if(item instanceof ArmorItem armorItem){
-				ArmorMaterial armorMaterial = armorItem.getMaterial();
-				if(armorMaterial instanceof ArmorMaterials){
-					if(armorMaterial == ArmorMaterials.NETHERITE)
-						texture += "netherite_";
-					else if(armorMaterial == ArmorMaterials.DIAMOND)
-						texture += "diamond_";
-					else if(armorMaterial == ArmorMaterials.IRON)
-						texture += "iron_";
-					else if(armorMaterial == ArmorMaterials.LEATHER)
-						texture += "leather_";
-					else if(armorMaterial == ArmorMaterials.GOLD)
-						texture += "gold_";
-					else if(armorMaterial == ArmorMaterials.CHAIN)
-						texture += "chainmail_";
-					else if(armorMaterial == ArmorMaterials.TURTLE)
-						texture += "turtle_";
-					else
-						return texture + "empty_armor.png";
-	
-					texture += "dragon_";
-					switch(equipmentSlot){
-						case HEAD -> texture += "helmet";
-						case CHEST -> texture += "chestplate";
-						case LEGS -> texture += "leggings";
-						case FEET -> texture += "boots";
-					}
-					texture += ".png";
-					return texture;
-				}
-				int defense = armorItem.getDefense();
+		}
+		if(item instanceof ArmorItem armorItem){
+			ArmorMaterial armorMaterial = armorItem.getMaterial();
+			if(armorMaterial instanceof ArmorMaterials){
+				if(armorMaterial == ArmorMaterials.NETHERITE)
+					texture += "netherite_";
+				else if(armorMaterial == ArmorMaterials.DIAMOND)
+					texture += "diamond_";
+				else if(armorMaterial == ArmorMaterials.IRON)
+					texture += "iron_";
+				else if(armorMaterial == ArmorMaterials.LEATHER)
+					texture += "leather_";
+				else if(armorMaterial == ArmorMaterials.GOLD)
+					texture += "gold_";
+				else if(armorMaterial == ArmorMaterials.CHAIN)
+					texture += "chainmail_";
+				else if(armorMaterial == ArmorMaterials.TURTLE)
+					texture += "turtle_";
+				else
+					return texture + "empty_armor.png";
+
+				texture += "dragon_";
 				switch(equipmentSlot){
-					case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
-					case CHEST -> texture += Mth.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
-					case HEAD -> texture += Mth.clamp(defense, 1, 4) + "_dragon_helmet";
-					case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
+					case HEAD -> texture += "helmet";
+					case CHEST -> texture += "chestplate";
+					case LEGS -> texture += "leggings";
+					case FEET -> texture += "boots";
 				}
 				texture += ".png";
-				return texture;
+				return stripInvalidPathChars(texture);
 			}
-			return texture + "empty_armor.png";
-		} catch (ResourceLocationException e) {
-			return texture + "empty_armor.png";
+			int defense = armorItem.getDefense();
+			switch(equipmentSlot){
+				case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";
+				case CHEST -> texture += Mth.clamp(defense / 2, 1, 4) + "_dragon_chestplate";
+				case HEAD -> texture += Mth.clamp(defense, 1, 4) + "_dragon_helmet";
+				case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
+			}
+			texture += ".png";
+			return stripInvalidPathChars(texture);
 		}
+		return texture + "empty_armor.png";
 	}
 	
 	public static String itemToResLoc(Item item) {
@@ -159,14 +155,18 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		if (registryName != null) {
 			String[] reg = registryName.toString().split(":");
 			String loc = reg[0] + "/" + reg[1] + ".png";
-			// filters certain characters (non [a-z0-9/._-]) to prevent crashes
-			// this probably should never be relevant, but you can never be too safe
-			loc = loc.chars()
-				.filter(ch -> ResourceLocation.validPathChar((char) ch))
-				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-				.toString();
-			return loc;
+			return stripInvalidPathChars(loc);
 		}
 		return null;
+	}
+	
+	public static String stripInvalidPathChars(String loc) {
+		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
+		// this probably should never be relevant, but you can never be too safe
+		loc = loc.chars()
+			.filter(ch -> ResourceLocation.validPathChar((char) ch))
+			.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+			.toString();
+		return loc;
 	}
 }

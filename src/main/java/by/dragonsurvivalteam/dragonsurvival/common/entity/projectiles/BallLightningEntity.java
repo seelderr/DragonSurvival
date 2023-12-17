@@ -90,21 +90,21 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	public void attackMobs(){
-		int rn;
-		try {
-			rn = DragonAbilities.getSelfAbility((Player)getOwner(), BallLightningAbility.class).getRange();
-		} catch (java.lang.ClassCastException error) {
-			rn = 4;
-		}
+		int rn = 4;
+		Entity owner = getOwner();
+		
+		if (owner instanceof Player)
+			rn = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
+
 		int range = rn;
 		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
-		entities.removeIf(e -> e == getOwner() || e instanceof BallLightningEntity);
+		entities.removeIf(e -> e == owner || e instanceof BallLightningEntity);
 		entities.removeIf(e -> e.distanceTo(this) > range);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
 			if(!level.isClientSide){
-				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
+				TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
 					if(livingEntity.getRandom().nextInt(100) < 40){
@@ -116,8 +116,8 @@ public class BallLightningEntity extends DragonBallEntity{
 					level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 2.0F, 0.5f, true);
 				}
 
-				if(getOwner() instanceof LivingEntity){
-					doEnchantDamageEffects((LivingEntity)getOwner(), ent);
+				if(owner instanceof LivingEntity){
+					doEnchantDamageEffects((LivingEntity) owner, ent);
 				}
 			}
 			if(level.isClientSide){

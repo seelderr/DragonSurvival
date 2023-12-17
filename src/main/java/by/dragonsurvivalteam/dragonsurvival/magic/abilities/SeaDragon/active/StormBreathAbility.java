@@ -399,7 +399,7 @@ public class StormBreathAbility extends BreathAbility{
 		}
 		
 		if (blockState.getMaterial().equals(Material.WATER)) {
-			if (/* 50% */player.getRandom().nextInt(100) < 30) {
+			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 				entity.setWaitTime(0);
 				entity.setPos(pos.getX(), pos.getY(), pos.getZ());

@@ -167,13 +167,5 @@ public class SpikeAbility extends InstantCastAbility{
 			if (!spikeMultishot)
 				break;
 		}
-
-		//DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE, player.level, player);
-		//entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
-		//entity.setArrow_level(getLevel());
-		//entity.setBaseDamage(getDamage());
-		//entity.pickup = AbstractArrow.Pickup.DISALLOWED;
-		//entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, 1.0F);
-		//player.level.addFreshEntity(entity);
 	}
 }
