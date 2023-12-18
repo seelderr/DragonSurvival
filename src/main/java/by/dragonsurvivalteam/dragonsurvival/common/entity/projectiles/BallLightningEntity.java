@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
@@ -37,7 +38,6 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	public BallLightningEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
-
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
@@ -68,6 +68,11 @@ public class BallLightningEntity extends DragonBallEntity{
 				}
 			}
 			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			if (!(getOwner() instanceof Player))
+			{
+				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+				return;
+			}
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
@@ -75,23 +80,31 @@ public class BallLightningEntity extends DragonBallEntity{
 			attackMobs();
 		}
 	}
+	
+	@Override
+	public void tick() {
+		super.tick();
+		if (level.dayTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
+			attackMobs();
+	}
 
 	@Override
 	public void attackMobs(){
-		if (!(getOwner() instanceof Player))
-		{
-			level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
-			return;
-		}
-		int range = DragonAbilities.getSelfAbility((Player)getOwner(), BallLightningAbility.class).getRange();
+		int rn = 4;
+		Entity owner = getOwner();
+		
+		if (owner instanceof Player)
+			rn = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
+
+		int range = rn;
 		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
-		entities.removeIf(e -> e == getOwner() || e instanceof BallLightningEntity);
+		entities.removeIf(e -> e == owner || e instanceof BallLightningEntity);
 		entities.removeIf(e -> e.distanceTo(this) > range);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
 			if(!level.isClientSide){
-				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
+				TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
 					if(livingEntity.getRandom().nextInt(100) < 40){
@@ -99,19 +112,28 @@ public class BallLightningEntity extends DragonBallEntity{
 							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
 					}
+
+					level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 2.0F, 0.5f, true);
 				}
 
-				if(getOwner() instanceof LivingEntity){
-					doEnchantDamageEffects((LivingEntity)getOwner(), ent);
+				if(owner instanceof LivingEntity){
+					doEnchantDamageEffects((LivingEntity) owner, ent);
 				}
 			}
-
 			if(level.isClientSide){
-				for(int i = 0; i < 10; i++){
-					double d1 = level.random.nextFloat();
-					double d2 = level.random.nextFloat();
-					double d3 = level.random.nextFloat();
-					level.addParticle(new LargeLightningParticleData(37F, false), ent.getX() + d1, ent.getY() + 0.5 + d2, ent.getZ() + d3, 0.0D, 0.0D, 0.0D);
+				// Creates a trail of particles between the entity and target(s)
+				int steps = 10;
+				for (int i = 0; i < steps; i++) {
+					Vec3 distV = new Vec3(getX() - ent.getX(), getY() - ent.getY(), getZ() - ent.getZ());
+					double distFrac = (steps - (double)(i)) / steps;
+					// the current entity coordinate + ((the distance between it and the target) * (the fraction of the total))
+					double stepX = ent.getX() + (distV.x * distFrac);
+					double stepY = ent.getY() + (distV.y * distFrac);
+					double stepZ = ent.getZ() + (distV.z * distFrac);
+					if (level.random.nextInt() > 25)
+						level.addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
+					else
+						level.addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
 				}
 			}
 		}
@@ -128,21 +150,5 @@ public class BallLightningEntity extends DragonBallEntity{
 				}
 			}
 		}
-
-		if(level.isClientSide){
-			float f = range;
-			float f5 = (float)Math.PI * f * f;
-
-			for(int k1 = 0; (float)k1 < f5; ++k1){
-				float f6 = random.nextFloat() * ((float)Math.PI * 2F);
-				float f7 = Mth.sqrt(random.nextFloat()) * f;
-				float f8 = Mth.cos(f6) * f7;
-				float f9 = Mth.sin(f6) * f7;
-				level.addParticle(new LargeLightningParticleData(37F, false), getX() + (double)f8, getY(), getZ() + (double)f9, 0, 0, 0);
-			}
-		}
-
-
-		level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 	}
 }

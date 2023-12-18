@@ -28,15 +28,19 @@ import java.util.Locale;
 public class LavaVisionAbility extends ChargeCastAbility {
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVision", comment = "Whether the lava vision ability should be enabled" )
 	public static Boolean lavaVision = true;
-	@ConfigRange( min = 0, max = 10000 )
+
+	@ConfigRange( min = 1.0, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionDuration", comment = "The duration in seconds of the lava vision effect given when the ability is used" )
-	public static Integer lavaVisionDuration = 100;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double lavaVisionDuration = 100.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCooldown", comment = "The cooldown in seconds of the lava vision ability" )
-	public static Integer lavaVisionCooldown = 30;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double lavaVisionCooldown = 30.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCasttime", comment = "The cast time in seconds of the lava vision ability" )
-	public static Integer lavaVisionCasttime = 1;
+	public static Double lavaVisionCasttime = 1.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionManaCost", comment = "The mana cost for using the lava vision ability" )
 	public static Integer lavaVisionManaCost = 1;

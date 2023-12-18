@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -131,7 +133,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 					case FEET -> texture += "boots";
 				}
 				texture += ".png";
-				return texture;
+				return stripInvalidPathChars(texture);
 			}
 			int defense = armorItem.getDefense();
 			switch(equipmentSlot){
@@ -141,7 +143,7 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 				case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
 			}
 			texture += ".png";
-			return texture;
+			return stripInvalidPathChars(texture);
 		}
 		return texture + "empty_armor.png";
 	}
@@ -153,14 +155,18 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 		if (registryName != null) {
 			String[] reg = registryName.toString().split(":");
 			String loc = reg[0] + "/" + reg[1] + ".png";
-			// filters certain characters (non [a-z0-9/._-]) to prevent crashes
-			// this probably should never be relevant, but you can never be too safe
-			loc = loc.chars()
-				.filter(ch -> ResourceLocation.validPathChar((char) ch))
-				.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-				.toString();
-			return loc;
+			return stripInvalidPathChars(loc);
 		}
 		return null;
+	}
+	
+	public static String stripInvalidPathChars(String loc) {
+		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
+		// this probably should never be relevant, but you can never be too safe
+		loc = loc.chars()
+			.filter(ch -> ResourceLocation.validPathChar((char) ch))
+			.collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+			.toString();
+		return loc;
 	}
 }

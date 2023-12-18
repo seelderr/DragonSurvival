@@ -105,24 +105,24 @@ public class DragonFoodHandler {
 		map.put(DragonTypes.FOREST.getTypeName(), buildDragonFoodMap(DragonTypes.FOREST));
 		map.put(DragonTypes.SEA.getTypeName(), buildDragonFoodMap(DragonTypes.SEA));
 
-		clearTooltipMaps();
+        clearTooltipMaps();
 
 		DRAGON_FOODS = new ConcurrentHashMap<>(map);
 	}
 
-	public static void clearTooltipMaps() {
-		if (CAVE_DRAGON_FOOD != null) {
-			CAVE_DRAGON_FOOD.clear();
-		}
+    public static void clearTooltipMaps() {
+        if (CAVE_DRAGON_FOOD != null) {
+            CAVE_DRAGON_FOOD.clear();
+        }
 
-		if (FOREST_DRAGON_FOOD != null) {
-			FOREST_DRAGON_FOOD.clear();
-		}
+        if (FOREST_DRAGON_FOOD != null) {
+            FOREST_DRAGON_FOOD.clear();
+        }
 
-		if (SEA_DRAGON_FOOD != null) {
-			SEA_DRAGON_FOOD.clear();
-		}
-	}
+        if (SEA_DRAGON_FOOD != null) {
+            SEA_DRAGON_FOOD.clear();
+        }
+    }
 
 	private static ConcurrentHashMap<Item, FoodProperties> buildDragonFoodMap(final AbstractDragonType type) {
 		ConcurrentHashMap<Item, FoodProperties> map = new ConcurrentHashMap<>();
@@ -266,15 +266,15 @@ public class DragonFoodHandler {
 			return new CopyOnWriteArrayList<>();
 		}
 
-		if (Objects.equals(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD != null && !FOREST_DRAGON_FOOD.isEmpty()) {
-			return FOREST_DRAGON_FOOD;
-		} else if (Objects.equals(type, DragonTypes.SEA) && SEA_DRAGON_FOOD != null && !SEA_DRAGON_FOOD.isEmpty()) {
-			return SEA_DRAGON_FOOD;
-		} else if (Objects.equals(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD != null && !CAVE_DRAGON_FOOD.isEmpty()) {
-			return CAVE_DRAGON_FOOD;
-		}
+        if (Objects.equals(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD != null && !FOREST_DRAGON_FOOD.isEmpty()) {
+            return FOREST_DRAGON_FOOD;
+        } else if (Objects.equals(type, DragonTypes.SEA) && SEA_DRAGON_FOOD != null && !SEA_DRAGON_FOOD.isEmpty()) {
+            return SEA_DRAGON_FOOD;
+        } else if (Objects.equals(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD != null && !CAVE_DRAGON_FOOD.isEmpty()) {
+            return CAVE_DRAGON_FOOD;
+        }
 
-		if (DRAGON_FOODS == null) {
+        if (DRAGON_FOODS == null) {
 			rebuildFoodMap();
 		}
 

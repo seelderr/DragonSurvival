@@ -10,26 +10,37 @@ import java.util.ArrayList;
 
 public abstract class ChargeCastAbility extends ActiveDragonAbility {
 	public int castTime = 0;
+	public boolean castFinished = false;
 
 	public abstract int getSkillCastingTime();
-
+	
 	@Override
-	public void onKeyPressed(Player player, Runnable onFinish){
-		if(castTime >= getSkillCastingTime()){
-			castTime = 0;
+	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){
+		if (castFinished)
+			return;
+
+		long curTime = player.level.dayTime();
+		castTime = (int) (curTime - castStartTime);
+
+		if(castTime >= getSkillCastingTime() && castStartTime != -1 && !castFinished){
 			castingComplete(player);
 			startCooldown();
+			castStartTime = curTime;
+			castFinished = true;
 
 			ManaHandler.consumeMana(player, getManaCost());
 			onFinish.run();
 		}else{
-			castTime++;
+			saveNBT();
 			onCasting(player, castTime);
 		}
 	}
 
 	@Override
 	public void onKeyReleased(Player player){
+		//System.out.println("Key released for ability " + getName() + " and castFinished = " + castFinished + " with cast time = " + castTime);
+		//if (castFinished && castTime >= getSkillCastingTime()) {
+		castFinished = false;
 		castTime = 0;
 	}
 

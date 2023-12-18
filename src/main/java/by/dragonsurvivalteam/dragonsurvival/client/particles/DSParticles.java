@@ -64,7 +64,7 @@ public class DSParticles{
 		event.register(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
 		event.register(DSParticles.LIGHTNING.get(), SeaFactory::new);
 		event.register(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
-		event.register(DSParticles.TREASURE.get(), by.jackraidenph.dragonsurvival.client.particles.TreasureParticle.Factory::new);
+		event.register(DSParticles.TREASURE.get(), by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticle.Factory::new);
 	}
 
 	public static final RegistryObject<ParticleType<SmallFireParticleData>> FIRE = REGISTRY.register("fire", () -> new ParticleType<SmallFireParticleData>(false, SmallFireParticleData.DESERIALIZER){

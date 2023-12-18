@@ -309,7 +309,7 @@ public class ServerConfig{
 			, "spartanshields:shield_.*"
 			, "spartanweaponry:heavy_crossbow_.*"
 			, "spartanweaponry:longbow_.*"
-	);
+		);
 
 	// FIXME :: Currently lists of integer are not properly supported - they get converted to string lists or sth
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
@@ -566,10 +566,10 @@ public class ServerConfig{
 	@ConfigRange( min = 0d, max = 20d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
 	public static Double hunterArmor = 0d;
-	/*
-        @ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-        public static Boolean hunterHasBolas = false;
-    */
+/*
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
+	public static Boolean hunterHasBolas = false;
+*/
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
 	public static Double squireHealth = 24d;
