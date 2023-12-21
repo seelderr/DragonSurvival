@@ -339,7 +339,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
 	public static Boolean ridingBlacklist = true;
 
-	@ConfigType(Item.class)
+	@ConfigType(Item.class) // TODO :: Use tag
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
 	public static List<String> blacklistedItems = List.of(
 			"minecraft:bow"
@@ -357,6 +357,8 @@ public class ServerConfig{
 			, "cataclysm:ignitium_elytra_chestplate"
 			, "revised_phantoms:phantom_wings_chestplate"
 			, "deeperdarker:soul_elytra"
+			, "born_in_chaos_v1:staffof_magic_arrows"
+			, "magistuarmory:heavy_crossbow"
 	);
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItemsRegex", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:<regular_expression>. Example: minecraft:.*?_wool" )
@@ -367,6 +369,7 @@ public class ServerConfig{
 			, "spartanshields:shield_.*"
 			, "spartanweaponry:heavy_crossbow_.*"
 			, "spartanweaponry:longbow_.*"
+			, "magistuarmory:.*?_.*?shield"
 	);
 
 	// FIXME :: Currently lists of integer are not properly supported - they get converted to string lists or sth
@@ -624,10 +627,7 @@ public class ServerConfig{
 	@ConfigRange( min = 0d, max = 20d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
 	public static Double hunterArmor = 0d;
-/*
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-	public static Boolean hunterHasBolas = false;
-*/
+
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
 	public static Double squireHealth = 24d;

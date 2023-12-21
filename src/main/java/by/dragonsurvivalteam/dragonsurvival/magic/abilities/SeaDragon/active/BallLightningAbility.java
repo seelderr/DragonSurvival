@@ -29,15 +29,19 @@ import java.util.Locale;
 public class BallLightningAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightning", comment = "Whether the lightning ball ability should be enabled" )
 	public static Boolean ballLightning = true;
-	@ConfigRange( min = 1, max = 10000 )
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCooldown", comment = "The cooldown in seconds of the ball lightning ability" )
-	public static Integer ballLightningCooldown = 20;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double ballLightningCooldown = 20.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningCasttime", comment = "The cast time in seconds of the ball lightning ability" )
-	public static Integer ballLightningCasttime = 2;
-	@ConfigRange( min = 0, max = 100.0 )
+	public static Double ballLightningCasttime = 2.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningDamage", comment = "The amount of damage the lightning ball ability deals. This value is multiplied by the skill level." )
 	public static Double ballLightningDamage = 4.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightningManaCost", comment = "The mana cost for using the lightning ball ability" )
 	public static Integer ballLightningManaCost = 1;

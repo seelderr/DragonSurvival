@@ -29,17 +29,17 @@ public class SeaEyesAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVision", comment = "Whether the sea vision ability should be enabled" )
 	public static Boolean seaEyes = true;
 
-	@ConfigRange( min = 0, max = 10000 )
+	@ConfigRange( min = 1.0, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used" )
-	public static Integer seaEyesDuration = 100;
+	public static Double seaEyesDuration = 100.0;
 
-	@ConfigRange( min = 1, max = 10000 )
+	@ConfigRange( min = 0.05, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in seconds of the sea vision ability" )
-	public static Integer seaEyesCooldown = 60;
+	public static Double seaEyesCooldown = 60.0;
 
-	@ConfigRange( min = 1, max = 10000 )
+	@ConfigRange( min = 0.05, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in seconds of the sea vision ability" )
-	public static Integer seaEyesCasttime = 1;
+	public static Double seaEyesCasttime = 1.0;
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability" )
@@ -66,7 +66,7 @@ public class SeaEyesAbility extends ChargeCastAbility{
 	@Override
 	public void castingComplete(Player player){
 		player.addEffect(new MobEffectInstance(DragonEffects.WATER_VISION, getDuration()));
-		player.level().playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
+		player.level().playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, true);
 	}
 
 	@Override

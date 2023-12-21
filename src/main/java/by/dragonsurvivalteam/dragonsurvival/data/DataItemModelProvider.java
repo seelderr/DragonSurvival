@@ -1,7 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.PressurePlateBlock;
 import net.minecraftforge.client.model.generators.ItemModelProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -14,10 +20,13 @@ public class DataItemModelProvider extends ItemModelProvider{
 
 	@Override
 	protected void registerModels(){
-		DSItems.DS_ITEMS.forEach((key, value) -> {
-			getBuilder(key)
-				.parent(new ModelFile.UncheckedModelFile("item/generated"))
-				.texture("layer0", modLoc("item/" + key));
+		DSItems.DS_ITEMS.forEach((key, item) -> basicItem(item));
+
+		DSBlocks.DS_BLOCKS.forEach((key, block) -> {
+			if (block instanceof DragonPressurePlates || block instanceof DragonAltarBlock) {
+				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/" + key);
+				withExistingParent(key, resource);
+			}
 		});
 	}
 

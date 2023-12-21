@@ -14,16 +14,20 @@ public class Functions{
 		return secondsToTicks(minutes) * 60;
 	}
 
+	public static int secondsToTicks(double seconds) {
+		return (int) (seconds * 20);
+	}
+
 	public static int secondsToTicks(int seconds){
 		return seconds * 20;
 	}
 
-	public static int ticksToMinutes(int ticks){
+	public static double ticksToMinutes(int ticks){
 		return ticksToSeconds(ticks) / 60;
 	}
 
-	public static int ticksToSeconds(int ticks){
-		return ticks / 20;
+	public static double ticksToSeconds(int ticks){
+		return ticks / 20d;
 	}
 
 	public static float angleDifference(float angle1, float angle2){

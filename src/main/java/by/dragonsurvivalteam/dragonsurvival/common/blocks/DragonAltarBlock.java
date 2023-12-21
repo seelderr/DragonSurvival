@@ -68,8 +68,8 @@ public class DragonAltarBlock extends Block{
 		if(handler.altarCooldown > 0){
 			if(worldIn.isClientSide()){
 				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
-				int mins = Functions.ticksToMinutes(handler.altarCooldown);
-				int secs = Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins));
+				int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
+				int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
 				player.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
 			}
 			return InteractionResult.CONSUME;

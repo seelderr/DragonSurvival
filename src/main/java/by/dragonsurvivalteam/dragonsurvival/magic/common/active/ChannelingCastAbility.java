@@ -14,22 +14,33 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 	public abstract int getSkillChargeTime();
 	public abstract int getContinuousManaCostTime();
 	public abstract int getInitManaCost();
+	public long lastManaSpentTime = 0;
+	public long timeSinceStartChannel = -1;
 
 	@Override
-	public void onKeyPressed(Player player, Runnable onFinish){
-		chargeTime++;
+	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){
+		long curTime = player.level().dayTime();
 
-		if(chargeTime >= getSkillChargeTime()){
-			onChanneling(player, chargeTime - getSkillChargeTime());
+		chargeTime = (int) (curTime - castStartTime);
+		if(curTime - castStartTime >= getSkillChargeTime() && castStartTime != -1)
+		{
+			timeSinceStartChannel = curTime - castStartTime - getSkillChargeTime();
+			onChanneling(player, (int)(timeSinceStartChannel));
+			if (chargeTime < getSkillChargeTime())
+				chargeTime = getSkillChargeTime();
 
-			if(chargeTime % getContinuousManaCostTime() == 0){
+			if (curTime - lastManaSpentTime >= getContinuousManaCostTime()) {
+				lastManaSpentTime = curTime;
 				ManaHandler.consumeMana(player, getManaCost());
 			}
 		}else{
 			onCharging(player, chargeTime);
 
-			if(chargeTime == getSkillChargeTime() / 2){
-				ManaHandler.consumeMana(player, getInitManaCost());
+			if(curTime - castStartTime >= getSkillChargeTime() / 2 && castStartTime != -1){
+				if (curTime - lastManaSpentTime >= getSkillChargeTime() / 2) {
+					ManaHandler.consumeMana(player, getInitManaCost());
+					lastManaSpentTime = curTime;
+				}
 			}
 		}
 	}

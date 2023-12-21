@@ -25,7 +25,7 @@ public abstract class DragonAbility {
 		nf.setMaximumFractionDigits(1);
 	}
 
-	public void onKeyPressed(Player player, Runnable onFinish){}
+	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){}
 	public void onKeyReleased(Player player){}
 
 	public Player getPlayer(){

@@ -27,15 +27,19 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -55,13 +59,15 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreath", comment = "Whether the storm breath ability should be enabled" )
 	public static Boolean stormBreath = true;
-	@ConfigRange( min = 0, max = 100.0 )
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathDamage", comment = "The amount of damage the storm breath ability deals. This value is multiplied by the skill level." )
 	public static Double stormBreathDamage = 1.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -69,20 +75,23 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathInitialMana", comment = "The mana cost for starting the storm breath ability" )
 	public static Integer stormBreathInitialMana = 2;
-	@ConfigRange( min = 1, max = 10000 )
+
+	@ConfigRange( min = 0.05, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in seconds of the storm breath ability" )
-	public static Integer stormBreathCooldown = 10;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double stormBreathCooldown = 10.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in seconds of the storm breath ability" )
-	public static Integer stormBreathCasttime = 1;
+	public static Double stormBreathCasttime = 1.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -90,13 +99,15 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathOvertimeMana", comment = "The mana cost of sustaining the storm breath ability" )
 	public static Integer stormBreathOvertimeMana = 1;
-	@ConfigRange( min = 0, max = 100 )
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in seconds, mana is consumed while using storm breath" )
-	public static Integer stormBreathManaTicks = 2;
+	public static Double stormBreathManaTicks = 2.0;
+
 	@ConfigType( Block.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -112,6 +123,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "stormBreathChainCount", comment = "How many mobs stormbreath is able to chain to at once" )
 	public static Integer stormBreathChainCount = 2;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -119,6 +131,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedEffectChainCount", comment = "How many mobs the charged effect is able to chain to at once" )
 	public static Integer chargedEffectChainCount = 2;
+
 	@ConfigRange( min = -1, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -126,6 +139,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain." )
 	public static Integer chargedEffectMaxChain = 5;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -133,13 +147,15 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedChainRange", comment = "The max distance in blocks the storm breath and charged effect is able to chain to mobs" )
 	public static Integer chargedChainRange = 4;
-	@ConfigRange( min = 0, max = 100 )
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
 	                                                     "actives",
 	                                                     "storm_breath"}, key = "chargedEffectDamage", comment = "The amount of damage the charged effect deals each second" )
-	public static Integer chargedEffectDamage = 1;
+	public static Double chargedEffectDamage = 1.0;
+
 	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
@@ -208,7 +224,7 @@ public class StormBreathAbility extends BreathAbility{
 		return Functions.secondsToTicks(stormBreathCooldown);
 	}
 
-	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, int damage){
+	public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, double damage){
 		List<LivingEntity> secondaryTargets = getEntityLivingBaseNearby(source, chainRange);
 		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
 
@@ -221,9 +237,9 @@ public class StormBreathAbility extends BreathAbility{
 
 		for(LivingEntity target : secondaryTargets){
 			if(player != null){
-				TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(player.damageSources()/* TODO 1.20 :: Unsure */.mobProjectile(source, player), damage), target);
+				TargetingFunctions.attackTargets(player, eTarget -> eTarget.hurt(player.damageSources()/* TODO 1.20 :: Unsure */.mobProjectile(source, player), (float) damage), target);
 			}else{
-				target.hurt(target.damageSources().mobAttack(source), damage);
+				target.hurt(target.damageSources().mobAttack(source), (float) damage);
 			}
 
 			onDamageChecks(target);
@@ -364,17 +380,47 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(!player.level().isClientSide()){
-			if(player.tickCount % 40 == 0){
-				if(player.level().isThundering()){
-					if(player.getRandom().nextInt(100) < 30){
-						if(player.level().canSeeSky(pos)){
-							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
-							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-							lightningboltentity.setCause((ServerPlayer)player);
-							player.level().addFreshEntity(lightningboltentity);
-							player.level().playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
-						}
+		if (!(player.level() instanceof ServerLevel serverLevel)) {
+			return;
+		}
+
+		if (blockState.isSolid()) {
+			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+				entity.setWaitTime(0);
+				entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
+				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setDuration(Functions.secondsToTicks(2));
+				entity.setRadius(1);
+				entity.setParticle(new SmallLightningParticleData(37, false));
+				entity.setOwner(player);
+				serverLevel.addFreshEntity(entity);
+			}
+		}
+
+		if (blockState.getFluidState().is(FluidTags.WATER)) {
+			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+				entity.setWaitTime(0);
+				entity.setPos(pos.getX(), pos.getY(), pos.getZ());
+				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setDuration(Functions.secondsToTicks(2));
+				entity.setRadius(0.45f);
+				entity.setParticle(new SmallLightningParticleData(37, true));
+				entity.setOwner(player);
+				serverLevel.addFreshEntity(entity);
+			}
+		}
+
+		if (player.tickCount % 40 == 0) {
+			if (player.level().isThundering()) {
+				if (player.getRandom().nextInt(100) < 30) {
+					if (player.level().canSeeSky(pos)) {
+						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
+						lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+						lightningboltentity.setCause((ServerPlayer) player);
+						player.level().addFreshEntity(lightningboltentity);
+						player.level().playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
 					}
 				}
 			}

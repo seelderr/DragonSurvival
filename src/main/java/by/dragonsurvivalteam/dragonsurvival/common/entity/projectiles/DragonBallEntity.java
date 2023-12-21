@@ -60,7 +60,7 @@ public class DragonBallEntity extends Fireball implements GeoEntity {
 		if(isDead){
 			deadTicks++;
 
-			if(deadTicks >= 26){
+			if(deadTicks >= 3){
 				remove(RemovalReason.DISCARDED);
 			}
 			return;
@@ -72,7 +72,6 @@ public class DragonBallEntity extends Fireball implements GeoEntity {
 			HitResult raytraceresult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
 
 			if(raytraceresult.getType() != HitResult.Type.MISS){
-
 				onHit(raytraceresult);
 			}
 

@@ -19,15 +19,19 @@ import net.minecraft.world.effect.MobEffects;
 public class InspirationAbility extends AoeBuffAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspiration", comment = "Whether the inspiration ability should be enabled" )
 	public static Boolean inspiration = true;
-	@ConfigRange( min = 1, max = 10000 )
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in seconds of the inspiration ability" )
-	public static Integer inspirationCooldown = 60;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double inspirationCooldown = 60.0;
+
+	@ConfigRange( min = 0.05, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in seconds of the inspiration ability" )
-	public static Integer inspirationCasttime = 1;
-	@ConfigRange( min = 0, max = 10000 )
+	public static Double inspirationCasttime = 1.0;
+
+	@ConfigRange( min = 1.0, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer inspirationDuration = 200;
+	public static Double inspirationDuration = 200.0;
+
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability" )
 	public static Integer inspirationManaCost = 1;

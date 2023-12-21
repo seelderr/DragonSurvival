@@ -5,12 +5,19 @@ import net.minecraft.world.entity.player.Player;
 
 public abstract class InstantCastAbility extends ActiveDragonAbility {
 	public abstract void onCast(Player player);
+	public boolean castFinished = false;
 
 	@Override
-	public void onKeyPressed(Player player, Runnable onFinish){
-		onCast(player);
-		ManaHandler.consumeMana(player, getManaCost());
-		startCooldown();
-		onFinish.run();
+	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){
+		if (!castFinished) {
+			onCast(player);
+			ManaHandler.consumeMana(player, getManaCost());
+			startCooldown();
+			onFinish.run();
+		}
+	}
+
+	public void onKeyReleased(Player player) {
+		castFinished = false;
 	}
 }

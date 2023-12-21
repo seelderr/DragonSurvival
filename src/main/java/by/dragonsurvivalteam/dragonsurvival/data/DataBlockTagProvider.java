@@ -40,6 +40,18 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.toList()
 				.toArray(new Block[0]));
 
+		TagKey<Block> woodenDragonDoorsSmall = createKey("wooden_dragon_doors_small");
+
+		tag(woodenDragonDoorsSmall)
+				.add(DSBlocks.oakSmallDoor)
+				.add(DSBlocks.spruceSmallDoor)
+				.add(DSBlocks.acaciaSmallDoor)
+				.add(DSBlocks.birchSmallDoor)
+				.add(DSBlocks.jungleSmallDoor)
+				.add(DSBlocks.darkOakSmallDoor)
+				.add(DSBlocks.warpedSmallDoor)
+				.add(DSBlocks.crimsonSmallDoor);
+
 		tag(WOODEN_DRAGON_DOORS)
 				.add(DSBlocks.dragon_altar_oak_log)
 				.add(DSBlocks.dragon_altar_birch_log)
@@ -52,20 +64,8 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.warpedDoor)
 				.add(DSBlocks.crimsonDoor)
 				.add(DSBlocks.forestDoor)
-				.add(DSBlocks.oakSmallDoor)
-				.add(DSBlocks.spruceSmallDoor)
-				.add(DSBlocks.acaciaSmallDoor)
-				.add(DSBlocks.birchSmallDoor)
-				.add(DSBlocks.jungleSmallDoor)
-				.add(DSBlocks.darkOakSmallDoor)
-				.add(DSBlocks.warpedSmallDoor)
-				.add(DSBlocks.crimsonSmallDoor)
-				/* FIXME :: Should be stone? */.add(DSBlocks.stoneSmallDoor)
-				/* FIXME :: Should be stone? */.add(DSBlocks.sleeperSmallDoor)
-				/* FIXME :: Should be stone? */.add(DSBlocks.murdererDoor)
-				/* FIXME :: Should be stone? */.add(DSBlocks.sleeperDoor)
-				/* FIXME :: Should be stone? */.add(DSBlocks.stoneDoor)
-				.add(DSBlocks.legacyDoor);
+				.add(DSBlocks.legacyDoor)
+				.addOptionalTag(woodenDragonDoorsSmall.location()); // FIXME :: Has problems finding the tag?
 
 		tag(BlockTags.MINEABLE_WITH_AXE)
 				.addTag(WOODEN_DRAGON_DOORS)
@@ -82,15 +82,15 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.caveDoor)
 				.add(DSBlocks.seaDoor)
 				.add(DSBlocks.ironDoor)
-				/*.add(DSBlocks.stoneSmallDoor)*/
-				/*.add(DSBlocks.sleeperSmallDoor)*/
+				.add(DSBlocks.stoneSmallDoor)
+				.add(DSBlocks.sleeperSmallDoor)
 				.add(DSBlocks.caveSmallDoor)
 				.add(DSBlocks.seaSmallDoor)
 				.add(DSBlocks.ironSmallDoor)
 				.add(DSBlocks.murdererSmallDoor)
-				/*.add(DSBlocks.murdererDoor)*/
-				/*.add(DSBlocks.sleeperDoor)*/
-				/*.add(DSBlocks.stoneDoor)*/
+				.add(DSBlocks.murdererDoor)
+				.add(DSBlocks.sleeperDoor)
+				.add(DSBlocks.stoneDoor)
 				.add(DSBlocks.caveSourceOfMagic)
 				.add(DSBlocks.forestSourceOfMagic)
 				.add(DSBlocks.seaSourceOfMagic)
@@ -114,9 +114,13 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.cavePressurePlate);
 
 		tag(BlockTags.NEEDS_STONE_TOOL)
+				.add(DSBlocks.treasureGold)
+				.add(DSBlocks.treasureEmerald)
+				.add(DSBlocks.treasureDiamond)
+				.add(DSBlocks.treasureDebris)
 				.add(DSBlocks.ironDoor)
 				.add(DSBlocks.ironSmallDoor)
-				/*.add(DSBlocks.murdererDoor)*/
+				.add(DSBlocks.murdererDoor)
 				.add(DSBlocks.murdererSmallDoor)
 				.add(DSBlocks.treasureCopper)
 				.add(DSBlocks.treasureIron)
@@ -125,27 +129,22 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.helmet3);
 
 		tag(BlockTags.NEEDS_IRON_TOOL)
-				.add(DSBlocks.treasureDiamond)
-				.add(DSBlocks.treasureEmerald)
-				.add(DSBlocks.treasureGold)
 				.add(DSBlocks.dragonBeacon)
 				.add(DSBlocks.dragonMemoryBlock)
 				.add(DSBlocks.peaceDragonBeacon)
 				.add(DSBlocks.magicDragonBeacon)
 				.add(DSBlocks.fireDragonBeacon);
 
-		tag(BlockTags.NEEDS_DIAMOND_TOOL)
-				.add(DSBlocks.treasureDebris);
-
 		tag(HUNTER_ABILITY_BLOCKS)
 				.addTag(BlockTags.FLOWERS)
 				.addTag(BlockTags.SAPLINGS)
-				.add(Blocks.GRASS_BLOCK)
-				.add(Blocks.MYCELIUM)
-				.add(Blocks.PODZOL)
 				.add(Blocks.WARPED_NYLIUM)
 				.add(Blocks.CRIMSON_NYLIUM)
 				.add(Blocks.GRASS)
+				.add(Blocks.FERN)
+				.add(Blocks.LARGE_FERN)
+				.add(Blocks.DEAD_BUSH)
+				.add(Blocks.SWEET_BERRY_BUSH)
 				.add(Blocks.TALL_GRASS)
 				.add(Blocks.GLOW_LICHEN)
 				.add(Blocks.CRIMSON_ROOTS)

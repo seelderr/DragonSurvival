@@ -28,22 +28,26 @@ import java.util.Locale;
 public class HunterAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunter", comment = "Whether the hunter ability should be enabled" )
 	public static Boolean hunter = true;
-	@ConfigRange( min = 0, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
-	public static Integer hunterDuration = 30;
-	@ConfigRange( min = 1, max = 10000 )
+
+	@ConfigRange( min = 1.0, max = 10000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the hunter effect given when the ability is used" )
+	public static Double hunterDuration = 30.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in seconds of the hunter ability" )
-	public static Integer hunterCooldown = 30;
-	@ConfigRange( min = 1, max = 10000 )
+	public static Double hunterCooldown = 30.0;
+
+	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCasttime", comment = "The cast time in seconds of the hunter ability" )
-	public static Integer hunterCasttime = 3;
-	@ConfigRange( min = 0, max = 100.0 )
+	public static Double hunterCasttime = 3.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level." )
 	public static Double hunterDamageBonus = 1.5;
-	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the inspiration ability" )
-	public static Integer hunterManaCost = 1;
 
+	@ConfigRange( min = 0, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the hunter ability" )
+	public static Integer hunterManaCost = 1;
 
 	@Override
 	public int getSortOrder(){

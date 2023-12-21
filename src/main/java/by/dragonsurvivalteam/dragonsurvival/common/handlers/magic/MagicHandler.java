@@ -116,9 +116,8 @@ public class MagicHandler{
 
 			if (player.hasEffect(DragonEffects.HUNTER)) {
 				BlockState blockStateFeet = player.getFeetBlockState();
-				BlockState blockStateBelow = player.level().getBlockState(player.blockPosition().below());
 
-				if (isHunterRelevant(blockStateFeet) || isHunterRelevant(blockStateBelow)) {
+				if (isHunterRelevant(blockStateFeet)) {
 					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
 				}
 

@@ -185,7 +185,7 @@ public class ClientProxy {
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
+                    ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot);
                     ability.loadNBT(message.nbt);
                     handler.getMagicData().isCasting = message.isCasting;
 
@@ -195,7 +195,7 @@ public class ClientProxy {
                                 ClientCastingHandler.hasCast = true;
                                 ClientCastingHandler.status = ClientCastingHandler.StatusStop;
                             }
-                        });
+                        }, message.castStartTime);
                     } else {
                         ability.onKeyReleased(player);
                     }
