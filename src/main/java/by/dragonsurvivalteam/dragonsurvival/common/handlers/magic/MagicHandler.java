@@ -120,7 +120,7 @@ public class MagicHandler{
 				BlockState bl = player.getFeetBlockState();
 				BlockState below = player.level.getBlockState(player.blockPosition().below());
 
-				if(bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.REPLACEABLE_PLANT || bl.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT){
+				if(bl.getMaterial() == Material.PLANT || bl.getMaterial() == Material.REPLACEABLE_PLANT || below.getMaterial() == Material.GRASS || below.getMaterial() == Material.PLANT || below.getMaterial() == Material.REPLACEABLE_PLANT){
 					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
 				}
 
@@ -243,7 +243,7 @@ public class MagicHandler{
 			if(player.hasEffect(DragonEffects.HUNTER)){
 				MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 				player.removeEffect(DragonEffects.HUNTER);
-				event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
+				event.setDamageModifier(event.getDamageModifier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 				event.setResult(Result.ALLOW);
 			}
 		});
