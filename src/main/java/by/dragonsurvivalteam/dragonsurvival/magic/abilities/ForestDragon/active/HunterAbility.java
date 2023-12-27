@@ -123,7 +123,7 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public Component getDescription(){
-		return Component.translatable("ds.skill.description." + getName(), hunterDamageBonus * getLevel() + "x", getDuration());
+		return Component.translatable("ds.skill.description." + getName(), "+" + hunterDamageBonus * getLevel() + "x", getDuration());
 	}
 
 	@Override
