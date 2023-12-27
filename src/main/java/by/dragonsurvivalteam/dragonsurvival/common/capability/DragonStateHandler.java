@@ -104,6 +104,9 @@ public class DragonStateHandler extends EntityStateHandler {
 
             AttributeModifier reach = DragonModifiers.buildReachMod(size);
 			DragonModifiers.updateReachModifier(player, reach);
+			
+			AttributeModifier attackRange = DragonModifiers.buildAttackRangeMod(size);
+			DragonModifiers.updateAttackRangeModifier(player, attackRange);
 		} else {
             // Remove the dragon attribute modifiers
 			AttributeModifier oldMod = DragonModifiers.getHealthModifier(player);
@@ -127,6 +130,12 @@ public class DragonStateHandler extends EntityStateHandler {
 			oldMod = DragonModifiers.getReachModifier(player);
 			if (oldMod != null) {
 				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
+				max.removeModifier(oldMod);
+			}
+			
+			oldMod = DragonModifiers.getAttackRangeModifier(player);
+			if (oldMod != null) {
+				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
 				max.removeModifier(oldMod);
 			}
 		}

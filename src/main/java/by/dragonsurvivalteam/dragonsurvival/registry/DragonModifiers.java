@@ -119,7 +119,6 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses) {
 			return;
 		}
-		System.out.println("Setting attack range bonus to " + mod + ".");
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
@@ -141,7 +140,6 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses || !ServerConfig.attackDamage){
 			return;
 		}
-		System.out.println("Setting attack damage bonus to " + mod + ".");
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
