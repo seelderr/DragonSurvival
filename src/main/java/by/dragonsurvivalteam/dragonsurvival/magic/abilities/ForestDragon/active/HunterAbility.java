@@ -42,8 +42,8 @@ public class HunterAbility extends ChargeCastAbility{
 	public static Double hunterCasttime = 3.0;
 
 	@ConfigRange( min = 0.0, max = 100.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The damage bonus the hunter effect gives when invisible. This value is multiplied by the skill level." )
-	public static Double hunterDamageBonus = 1.5;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The bonus damage multiplier the hunter effect gives when invisible. This value is multiplied by the skill level." )
+	public static Double hunterDamageBonus = 1.0;
 
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the hunter ability" )
@@ -123,7 +123,7 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public Component getDescription(){
-		return Component.translatable("ds.skill.description." + getName(), 1.5 * getLevel() + "x", getDuration());
+		return Component.translatable("ds.skill.description." + getName(), "+" + hunterDamageBonus * getLevel() + "x", getDuration());
 	}
 
 	@Override

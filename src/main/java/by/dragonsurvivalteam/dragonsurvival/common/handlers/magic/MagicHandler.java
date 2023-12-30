@@ -243,7 +243,7 @@ public class MagicHandler{
 			if(player.hasEffect(DragonEffects.HUNTER)){
 				MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 				player.removeEffect(DragonEffects.HUNTER);
-				event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
+				event.setDamageModifier(event.getDamageModifier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 				event.setResult(Result.ALLOW);
 			}
 		});
