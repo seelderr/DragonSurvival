@@ -159,11 +159,12 @@ public class DragonSkins{
 		invalidateSkins();
 		String currentLanguage = Minecraft.getInstance().getLanguageManager().getSelected().getCode();
 		NetSkinLoader first, second;
+		// FIXME :: Add config to choose between new and old GitHub API
 		if (currentLanguage.equals("zh_cn")) {
 			first = new GitcodeSkinLoader();
-			second = new GithubSkinLoader();
+			second = new GithubSkinLoaderOld();
 		} else{
-			first = new GithubSkinLoader();
+			first = new GithubSkinLoaderOld();
 			second = new GitcodeSkinLoader();
 		}
 		if (!first.ping()) {
