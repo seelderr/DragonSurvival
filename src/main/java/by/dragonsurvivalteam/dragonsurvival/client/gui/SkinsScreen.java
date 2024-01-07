@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
@@ -31,7 +31,9 @@ import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
+import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -343,7 +345,7 @@ public class SkinsScreen extends Screen{
 			}
 
 			skins.removeIf(c -> seenSkins.contains(c.second));
-			if(skins.size() > 0){
+			if(!skins.isEmpty()){
 				Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 
 				if(skin != null){
@@ -413,7 +415,7 @@ public class SkinsScreen extends Screen{
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 
-		if(!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName() || skinTexture == null){
+		if(!DragonSkins.renderStage(minecraft.player, level) && playerName.equals(minecraft.player.getGameProfile().getName()) || skinTexture == null){
 			skinTexture = null;
 			defaultSkin = true;
 		}
