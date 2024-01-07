@@ -150,7 +150,7 @@ public class SkinsScreen extends Screen{
 
 		if(!loading){
 			if(noSkin){
-				if(playerName == minecraft.player.getGameProfile().getName()){
+				if(playerName.equals(minecraft.player.getGameProfile().getName())){
 					drawNonShadowLineBreak(stack, minecraft.font, Component.translatable("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
 				}else{
 					drawNonShadowLineBreak(stack, minecraft.font, Component.translatable("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
@@ -161,8 +161,8 @@ public class SkinsScreen extends Screen{
 		super.render(stack, mouseX, mouseY, partialTicks);
 
 		for(Widget btn : renderables){
-			if(btn instanceof AbstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
-				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
+			if(btn instanceof AbstractWidget widget && widget.isHoveredOrFocused()){
+				widget.renderToolTip(stack, mouseX, mouseY);
 			}
 		}
 

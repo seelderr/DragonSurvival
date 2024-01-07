@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
@@ -13,8 +13,9 @@ import java.util.Base64;
 import java.util.Collection;
 
 public class GithubSkinLoaderOld extends NetSkinLoader {
-    public static final String SKINS_LIST_LINK = "https://api.github.com/repositories/280658566/contents/src/test/resources?ref=master";
-    private static final String SKINS_PING = "https://api.github.com/repositories/280658566";
+    public static final String SKIN_LIST_API = "https://api.github.com/repositories/280658566/git/trees/6597d654e16568d2d9e2cdf0dc372041cb081c35?ref=master";
+    public static final String SKIN = "https://raw.githubusercontent.com/DragonSurvivalTeam/DragonSurvival/master/src/test/resources/";
+    private static final String SKINS_PING = "https://raw.githubusercontent.com/DragonSurvivalTeam/DragonSurvival/master/README.md";
 
     private static class SkinFileMetaInfo {
         String content;
@@ -27,30 +28,33 @@ public class GithubSkinLoaderOld extends NetSkinLoader {
         String url;
     }
 
+    private static class SkinListApiResponse {
+        SkinResponseItem[] tree;
+    }
+
     @Override
     public Collection<SkinObject> querySkinList() {
         ArrayList<SkinObject> result = new ArrayList<>();
         try {
             Gson gson = GsonFactory.getDefault();
-            URL url = new URL(SKINS_LIST_LINK);
+            URL url = new URL(SKIN_LIST_API);
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(internetGetStream(url, 2 * 1000)))) {
-                SkinResponseItem[] responseItems = gson.fromJson(reader, new TypeToken<SkinResponseItem[]>() {}.getType());
+                SkinListApiResponse skinListResponse = gson.fromJson(reader, SkinListApiResponse.class);
 
-                for (SkinResponseItem skinResponse : responseItems) {
+                for (SkinResponseItem skinResponse : skinListResponse.tree) {
                     SkinObject skinObject = new SkinObject();
-                    skinObject.name = skinResponse.path.replace("src/test/resources/", "");
+                    skinObject.name = skinResponse.path;
                     skinObject.id = skinResponse.sha;
                     skinObject.user_extra = skinResponse;
                     result.add(skinObject);
                 }
-
                 return result;
             } catch (IOException exception) {
                 DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
             }
-        } catch (IOException e) {
-            DragonSurvivalMod.LOGGER.log(Level.WARN, "Failed to get skin information in Github.");
+        } catch (IOException exception) {
+            DragonSurvivalMod.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub");
         }
 
         return null;
@@ -74,5 +78,16 @@ public class GithubSkinLoaderOld extends NetSkinLoader {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    public InputStream querySkin(final String skinName, final DragonLevel level) {
+        try {
+            URL url = new URL(SKIN + skinName + "_" + level.name + ".png");
+            return internetGetStream(url, 15 * 1000);
+        } catch (IOException exception) {
+            DragonSurvivalMod.LOGGER.error("Failed to get skin information in GitHub");
+        }
+
+        return null;
     }
 }

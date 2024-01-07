@@ -82,55 +82,81 @@ public class DragonSkins{
 		return texture;
 	}
 
-	public static ResourceLocation fetchSkinFile(String playerName, DragonLevel dragonStage, String... extra) {
-		ResourceLocation resourceLocation;
-		String playerKey = playerName + "_" + dragonStage.name;
+	public static ResourceLocation fetchSkinFile(final String playerName, final DragonLevel level, final String... extra) {
+		String playerKey = playerName + "_" + level.name;
 		String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
-		String resourceName = StringUtils.join(text, "_");
 
-		HashMap<String, SkinObject> playerSkinMap = SKIN_USERS.getOrDefault(dragonStage, null);
+		String resourceName = StringUtils.join(text, "_");
+		ResourceLocation resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, resourceName.toLowerCase(Locale.ROOT));
+
+		try (SimpleTexture simpleTexture = new SimpleTexture(resourceLocation)) {
+			if (Minecraft.getInstance().getTextureManager().getTexture(resourceLocation, simpleTexture) != simpleTexture) {
+				return resourceLocation;
+			}
+		}
+
+		HashMap<String, SkinObject> playerSkinMap = SKIN_USERS.getOrDefault(level, null);
 
 		if (playerSkinMap == null) {
-			DragonSurvivalMod.LOGGER.warn("Skins are not yet fetched, re-fetching...");
+			DragonSurvivalMod.LOGGER.warn("Customs skins are not yet fetched, re-fetching...");
 			init();
 
-			playerSkinMap = SKIN_USERS.getOrDefault(dragonStage, null);
+			playerSkinMap = SKIN_USERS.getOrDefault(level, null);
 
 			if (playerSkinMap == null) {
-				DragonSurvivalMod.LOGGER.warn("Custom skins were not successfully fetched from the repository");
-				return null;
+				DragonSurvivalMod.LOGGER.error("Custom skins could not be fetched");
 			}
 		}
 
 		String skinName = StringUtils.join(ArrayUtils.addAll(new String[]{playerName}, extra), "_");
-		SkinObject skin = playerSkinMap.getOrDefault(skinName, null);
+		SkinObject skin = null;
+
+		if (playerSkinMap != null) {
+			skin = playerSkinMap.getOrDefault(skinName, null);
+		}
 
 		if (skin == null) {
-			return null;
-		}
-
-		resourceLocation = new ResourceLocation(DragonSurvivalMod.MODID, resourceName.toLowerCase(Locale.ROOT));
-
-		try (SimpleTexture simpleTexture = new SimpleTexture(resourceLocation)){
-			if (Minecraft.getInstance().getTextureManager().getTexture(resourceLocation, simpleTexture) != simpleTexture)
-				return resourceLocation;
-		}
-
-		try(InputStream imageStream = skinLoader.querySkinImage(skin)) {
-			NativeImage customTexture = NativeImage.read(imageStream);
-			Minecraft.getInstance().getTextureManager().register(resourceLocation, new DynamicTexture(customTexture));
-			return resourceLocation;
-		} catch (IOException exception) {
-			if (extra == null || extra.length == 0) { //Fetching glow layer failing must not affect normal skin fetches
-				if (!hasFailedFetch.contains(playerKey)) {
-					DragonSurvivalMod.LOGGER.info("Custom skin for user {} doesn't exist", playerKey);
-					hasFailedFetch.add(playerKey);
+			// The old GitHub variant only gets the first 1.000 skins
+			if (skinLoader instanceof GithubSkinLoaderOld gitHubOld) {
+				try (InputStream imageStream = gitHubOld.querySkin(skinName, level)) {
+					return readSkin(imageStream, resourceLocation);
+				} catch (IOException exception) {
+					boolean isNormalSkin = extra == null || extra.length == 0;
+					handleSkinFetchError(playerKey, isNormalSkin);
+					return null;
 				}
 			}
 
-			DragonSurvivalMod.LOGGER.warn("Skin could not be read", exception);
-
 			return null;
+		}
+
+		try (InputStream imageStream = skinLoader.querySkinImage(skin)) {
+			return readSkin(imageStream, resourceLocation);
+		} catch (IOException exception) {
+			// TODO :: If old github variant, retry with non-api
+			boolean isNormalSkin = extra == null || extra.length == 0;
+			handleSkinFetchError(playerKey, isNormalSkin);
+			return null;
+		}
+	}
+
+	private static ResourceLocation readSkin(final InputStream imageStream, final ResourceLocation location) throws IOException {
+		if (imageStream == null) {
+			throw new IOException("Skin was not successfully fetched for [" + location + "]");
+		}
+
+		NativeImage customTexture = NativeImage.read(imageStream);
+		Minecraft.getInstance().getTextureManager().register(location, new DynamicTexture(customTexture));
+		return location;
+	}
+
+	private static void handleSkinFetchError(final String playerKey, boolean isNormalSkin) {
+		// A failed attempt for fetching a glow skin should not result in no longer attempting to fetch the normal skin
+		if (isNormalSkin) {
+			if (!hasFailedFetch.contains(playerKey)) {
+				DragonSurvivalMod.LOGGER.info("Custom skin for user {} doesn't exist", playerKey);
+				hasFailedFetch.add(playerKey);
+			}
 		}
 	}
 
