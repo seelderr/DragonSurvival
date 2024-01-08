@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
-import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
@@ -31,9 +31,7 @@ import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
-import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
@@ -150,7 +148,7 @@ public class SkinsScreen extends Screen{
 
 		if(!loading){
 			if(noSkin){
-				if(playerName.equals(minecraft.player.getGameProfile().getName())){
+				if(playerName == minecraft.player.getGameProfile().getName()){
 					drawNonShadowLineBreak(stack, minecraft.font, Component.translatable("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
 				}else{
 					drawNonShadowLineBreak(stack, minecraft.font, Component.translatable("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
@@ -161,8 +159,8 @@ public class SkinsScreen extends Screen{
 		super.render(stack, mouseX, mouseY, partialTicks);
 
 		for(Widget btn : renderables){
-			if(btn instanceof AbstractWidget widget && widget.isHoveredOrFocused()){
-				widget.renderToolTip(stack, mouseX, mouseY);
+			if(btn instanceof AbstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
+				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
 			}
 		}
 
@@ -345,7 +343,7 @@ public class SkinsScreen extends Screen{
 			}
 
 			skins.removeIf(c -> seenSkins.contains(c.second));
-			if(!skins.isEmpty()){
+			if(skins.size() > 0){
 				Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 
 				if(skin != null){
@@ -415,7 +413,7 @@ public class SkinsScreen extends Screen{
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 
-		if(!DragonSkins.renderStage(minecraft.player, level) && playerName.equals(minecraft.player.getGameProfile().getName()) || skinTexture == null){
+		if(!DragonSkins.renderStage(minecraft.player, level) && playerName == minecraft.player.getGameProfile().getName() || skinTexture == null){
 			skinTexture = null;
 			defaultSkin = true;
 		}
