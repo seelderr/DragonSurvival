@@ -7,7 +7,7 @@ plugins {
     id 'org.spongepowered.mixin' version '0.7.+'
 }
 
-version = minecraft_version + "-" + mod_version
+version = minecraft_version + "-" + new Date().format("dd.MM.yyyy")
 group = mod_group
 
 base {
