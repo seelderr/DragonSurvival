@@ -23,7 +23,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 public class DragonSkins{
-	public static NetSkinLoader skinLoader = new GithubSkinLoader();
+	public static NetSkinLoader skinLoader = new GithubSkinLoaderAPI();
 	private static final ArrayList<String> hasFailedFetch = new ArrayList<>();
 	public static HashMap<DragonLevel, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerSkinCache = new HashMap<>();
@@ -115,25 +115,24 @@ public class DragonSkins{
 			skin = playerSkinMap.getOrDefault(skinName, null);
 		}
 
-		if (skin == null) {
-			// The old GitHub variant only gets the first 1.000 skins
-			if (skinLoader instanceof GithubSkinLoaderOld gitHubOld) {
-				try (InputStream imageStream = gitHubOld.querySkin(skinName, level)) {
-					return readSkin(imageStream, resourceLocation);
-				} catch (IOException exception) {
-					boolean isNormalSkin = extra == null || extra.length == 0;
-					handleSkinFetchError(playerKey, isNormalSkin);
-					return null;
-				}
+		// Only use the API to get the names (for the random button)
+		if (skinLoader instanceof GithubSkinLoader gitHubOld) {
+			try (InputStream imageStream = gitHubOld.querySkinImage(skinName, level)) {
+				return readSkin(imageStream, resourceLocation);
+			} catch (IOException exception) {
+				boolean isNormalSkin = extra == null || extra.length == 0;
+				handleSkinFetchError(playerKey, isNormalSkin);
+				return null;
 			}
+		}
 
+		if (skin == null) {
 			return null;
 		}
 
 		try (InputStream imageStream = skinLoader.querySkinImage(skin)) {
 			return readSkin(imageStream, resourceLocation);
 		} catch (IOException exception) {
-			// TODO :: If old github variant, retry with non-api
 			boolean isNormalSkin = extra == null || extra.length == 0;
 			handleSkinFetchError(playerKey, isNormalSkin);
 			return null;
@@ -204,9 +203,9 @@ public class DragonSkins{
 		// FIXME :: Add config to choose between new and old GitHub API
 		if (currentLanguage.equals("zh_cn")) {
 			first = new GitcodeSkinLoader();
-			second = new GithubSkinLoaderOld();
+			second = new GithubSkinLoader();
 		} else{
-			first = new GithubSkinLoaderOld();
+			first = new GithubSkinLoader();
 			second = new GitcodeSkinLoader();
 		}
 		if (!first.ping()) {
