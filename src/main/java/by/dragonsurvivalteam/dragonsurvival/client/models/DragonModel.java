@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -179,5 +180,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
 		return animation;
+	}
+
+	@Override
+	public RenderType getRenderType(final DragonEntity animatable, final ResourceLocation texture) {
+		return RenderType.entityCutout(texture);
 	}
 }
