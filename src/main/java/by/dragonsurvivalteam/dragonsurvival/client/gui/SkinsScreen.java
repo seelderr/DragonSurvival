@@ -75,7 +75,7 @@ public class SkinsScreen extends Screen{
 	protected int imageHeight = 128;
 
 	// To avoid having to retrieve the player capabilities every render tick
-	private boolean renderNewBorn;
+	private boolean renderNewborn;
 	private boolean renderYoung;
 	private boolean renderAdult;
 
@@ -85,7 +85,7 @@ public class SkinsScreen extends Screen{
 
 		LocalPlayer localPlayer = sourceScreen.getMinecraft().player;
 		SkinCap skinData = DragonUtils.getHandler(localPlayer).getSkinData();
-		renderNewBorn = skinData.renderNewborn;
+		renderNewborn = skinData.renderNewborn;
 		renderYoung = skinData.renderYoung;
 		renderAdult = skinData.renderAdult;
 	}
@@ -147,9 +147,7 @@ public class SkinsScreen extends Screen{
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;
 
-		guiGraphics.pose().popPose();
 		guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
-
 		drawNonShadowString(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
 		guiGraphics.drawCenteredString(minecraft.font, Component.translatable("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
 		drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - " + level.getName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
@@ -207,7 +205,7 @@ public class SkinsScreen extends Screen{
 			boolean newValue = !handler.getSkinData().renderNewborn;
 
 			handler.getSkinData().renderNewborn = newValue;
-			renderNewBorn = newValue;
+			renderNewborn = newValue;
 			ConfigHandler.updateConfigValue("renderNewbornSkin", newValue);
 
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
@@ -216,7 +214,7 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-				guiGraphics.blit(renderNewBorn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13 );
+				guiGraphics.blit(renderNewborn ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13 );
 			}
 		});
 
@@ -235,7 +233,7 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-				guiGraphics.blit(renderYoung ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
+				guiGraphics.blit(renderYoung ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
@@ -254,7 +252,7 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-				guiGraphics.blit(renderAdult ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
+				guiGraphics.blit(renderAdult ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
