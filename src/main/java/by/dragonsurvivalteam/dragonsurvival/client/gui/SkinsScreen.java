@@ -388,7 +388,7 @@ public class SkinsScreen extends Screen{
 		ResourceLocation glowTexture = null;
 		boolean defaultSkin = false;
 
-		if(!DragonSkins.renderStage(minecraft.player, level) && minecraft.player.getGameProfile().getName().equals(playerName) || skinTexture == null){
+		if(!DragonSkins.renderStage(minecraft.player, level) && playerName.equals(minecraft.player.getGameProfile().getName()) || skinTexture == null){
 			skinTexture = null;
 			defaultSkin = true;
 		}
