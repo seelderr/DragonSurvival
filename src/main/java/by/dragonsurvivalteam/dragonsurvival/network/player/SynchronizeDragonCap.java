@@ -77,9 +77,6 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap> {
 					handler.setSize(message.size, sender);
 					handler.setHasWings(message.hasWings);
 					handler.setPassengerId(message.passengerId);
-
-					sender.setForcedPose(null);
-					sender.refreshDimensions();
 				});
 			});
 		}
