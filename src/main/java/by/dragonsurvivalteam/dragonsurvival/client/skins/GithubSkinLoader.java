@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.Level;
-import org.lwjgl.opengl.GL;
 
 import java.io.*;
 import java.net.URL;
