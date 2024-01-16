@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.Level;
+import org.lwjgl.opengl.GL;
 
 import java.io.*;
 import java.net.URL;
@@ -80,9 +81,20 @@ public class GithubSkinLoader extends NetSkinLoader {
         }
     }
 
+    private static final String GLOW = "_glow";
+
     public InputStream querySkinImage(final String skinName, final DragonLevel level) {
         try {
-            URL url = new URL(SKIN + skinName + "_" + level.name + ".png");
+            String fetchName;
+
+            if (skinName.endsWith(GLOW)) {
+                fetchName = skinName.replace(GLOW, "");
+                fetchName = SKIN + fetchName + "_" + level.name + GLOW + ".png";
+            } else {
+                fetchName = SKIN + skinName + "_" + level.name + ".png";
+            }
+
+            URL url = new URL(fetchName);
             return internetGetStream(url, 15 * 1000);
         } catch (IOException exception) {
             DragonSurvivalMod.LOGGER.error("Failed to get skin information in GitHub");
