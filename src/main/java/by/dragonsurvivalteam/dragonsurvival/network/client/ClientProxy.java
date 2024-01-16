@@ -332,8 +332,6 @@ public class ClientProxy {
                     dragon.playerId = player.getId();
                     ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
                 }
-
-                player.setForcedPose(null);
             }
         }
     }
