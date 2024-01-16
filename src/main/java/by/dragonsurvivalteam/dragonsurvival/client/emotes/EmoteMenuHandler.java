@@ -478,6 +478,9 @@ public class EmoteMenuHandler{
 	public static void onKey(InputEvent.Key keyInputEvent){
 		Screen sc = Minecraft.getInstance().screen;
 		int pKeyCode = keyInputEvent.getKey();
+		if (pKeyCode == -1) {
+			return;
+		}
 
 		if(DragonUtils.isDragon(Minecraft.getInstance().player)){
 			if(sc instanceof ChatScreen){
