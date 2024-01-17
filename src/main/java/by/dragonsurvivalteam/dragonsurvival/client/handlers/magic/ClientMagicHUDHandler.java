@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -25,7 +26,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 
 import java.awt.*;
-import java.util.Objects;
 
 public class ClientMagicHUDHandler {
 	public static final ResourceLocation VANILLA_WIDGETS = new ResourceLocation("textures/gui/widgets.png");
@@ -179,8 +179,8 @@ public class ClientMagicHUDHandler {
 					int manaSlot = i * 10 + x;
 					if (manaSlot < maxMana) {
 						boolean goodCondi = ManaHandler.isPlayerInGoodConditions(localPlayer);
-						int condiXPos = Objects.equals(handler.getType(), DragonTypes.SEA) ? 0 : Objects.equals(handler.getType(), DragonTypes.FOREST) ? 18 : 36;
-						int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : Objects.equals(handler.getType(), DragonTypes.SEA) ? 0 : Objects.equals(handler.getType(), DragonTypes.FOREST) ? 18 : 36;
+						int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
+						int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
 						float rescale = 2.15F;
 						Screen.blit(poseStack, manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 204 / rescale, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
 					}
@@ -204,8 +204,8 @@ public class ClientMagicHUDHandler {
 				poseStack.pushPose();
 				poseStack.scale(0.5F, 0.5F, 0);
 
-				int yPos1 = Objects.equals(handler.getType(), DragonTypes.CAVE) ? 0 : Objects.equals(handler.getType(), DragonTypes.FOREST) ? 47 : 94;
-				int yPos2 = Objects.equals(handler.getType(), DragonTypes.CAVE) ? 142 : Objects.equals(handler.getType(), DragonTypes.FOREST) ? 147 : 152;
+				int yPos1 = DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 47 : 94;
+				int yPos2 = DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 142 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 147 : 152;
 
 				float perc = Math.min((float) currentCastTime / (float) skillCastTime, 1);
 
