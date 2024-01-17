@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ToolTipHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -35,7 +36,6 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -344,57 +344,48 @@ public class DragonFoodHandler {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void onRenderFoodBar(final ForgeGui forgeGUI, final PoseStack poseStack, float partialTicks, int width, int height) {
-		LocalPlayer player = Minecraft.getInstance().player;
+	public static void renderFoodBar(final DragonStateHandler handler, final ForgeGui forgeGUI, final PoseStack poseStack, int width, int height) {
+		LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-		if (Minecraft.getInstance().options.hideGui || !forgeGUI.shouldDrawSurvivalElements()) {
+		if (localPlayer == null || !forgeGUI.shouldDrawSurvivalElements()) {
 			return;
 		}
 
-		if (!customDragonFoods || !DragonUtils.isDragon(player)) {
-			VanillaGuiOverlay.FOOD_LEVEL.type().overlay().render(forgeGUI, poseStack, partialTicks, width, height);
-			return;
-		}
+		RANDOM.setSeed(localPlayer.tickCount * 312871L);
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon()) {
-				RANDOM.setSeed(player.tickCount * 312871L);
+		RenderSystem.enableBlend();
+		RenderSystem.setShaderTexture(0, FOOD_ICONS);
 
-				RenderSystem.enableBlend();
-				RenderSystem.setShaderTexture(0, FOOD_ICONS);
+		rightHeight = forgeGUI.rightHeight;
+		forgeGUI.rightHeight += 10;
 
-				rightHeight = forgeGUI.rightHeight;
-				forgeGUI.rightHeight += 10;
+		final int left = width / 2 + 91;
+		final int top = height - rightHeight;
+		rightHeight += 10;
+		final FoodData food = localPlayer.getFoodData();
+		final int type = DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
+		final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
 
-				final int left = width / 2 + 91;
-				final int top = height - rightHeight;
-				rightHeight += 10;
-				final FoodData food = player.getFoodData();
-				final int type = Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? 0 : Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? 9 : 18;
-				final boolean hunger = player.hasEffect(MobEffects.HUNGER);
+		for (int i = 0; i < 10; i++) {
+			int icon = i * 2 + 1; // there can be 10 icons (food level maximum is 20)
+			int y = top;
 
-				for (int i = 0; i < 10; i++) {
-					int icon = i * 2 + 1; // there can be 10 icons (food level maximum is 20)
-					int y = top;
-
-					if (food.getSaturationLevel() <= 0.0F && player.tickCount % (food.getFoodLevel() * 3 + 1) == 0) {
-						// Animate the food icons (moving up / down)
-						y = top + RANDOM.nextInt(3) - 1;
-					}
-
-					forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
-
-					if (icon < food.getFoodLevel()) {
-						forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
-					} else if (icon == food.getFoodLevel()) {
-						forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
-					}
-				}
-
-				RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
-				RenderSystem.disableBlend();
+			if (food.getSaturationLevel() <= 0.0F && localPlayer.tickCount % (food.getFoodLevel() * 3 + 1) == 0) {
+				// Animate the food icons (moving up / down)
+				y = top + RANDOM.nextInt(3) - 1;
 			}
-		});
+
+			forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
+
+			if (icon < food.getFoodLevel()) {
+				forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
+			} else if (icon == food.getFoodLevel()) {
+				forgeGUI.blit(poseStack, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
+			}
+		}
+
+		RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
+		RenderSystem.disableBlend();
 	}
 
 	@SubscribeEvent
