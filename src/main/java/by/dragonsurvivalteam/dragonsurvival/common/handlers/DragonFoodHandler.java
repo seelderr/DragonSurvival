@@ -9,14 +9,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -28,6 +27,7 @@ import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -344,11 +344,17 @@ public class DragonFoodHandler {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void renderFoodBar(final DragonStateHandler handler, final ForgeGui forgeGUI, final PoseStack poseStack, int width, int height) {
-		LocalPlayer localPlayer = Minecraft.getInstance().player;
+	public static boolean renderFoodBar(final ForgeGui forgeGUI, final PoseStack poseStack, int width, int height) {
+		Player localPlayer = ClientProxy.getLocalPlayer();
 
 		if (localPlayer == null || !forgeGUI.shouldDrawSurvivalElements()) {
-			return;
+			return false;
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
+
+		if (handler == null || !handler.isDragon()) {
+			return false;
 		}
 
 		RANDOM.setSeed(localPlayer.tickCount * 312871L);
@@ -386,6 +392,8 @@ public class DragonFoodHandler {
 
 		RenderSystem.setShaderTexture(0, Gui.GUI_ICONS_LOCATION);
 		RenderSystem.disableBlend();
+
+		return true;
 	}
 
 	@SubscribeEvent

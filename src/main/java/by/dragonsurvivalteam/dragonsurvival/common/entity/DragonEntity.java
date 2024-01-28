@@ -35,6 +35,7 @@ import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.resource.GeckoLibCache;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -222,7 +223,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		return PlayState.STOP;
 	}
 
-	public Player getPlayer(){
+	public @Nullable Player getPlayer(){
 		return (Player) level.getEntity(playerId);
 	}
 

@@ -4,11 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientGrowthHudHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -38,23 +39,29 @@ public class RenderHudEvents {
             return;
         }
 
-        DragonStateHandler handler = DragonUtils.getHandler(minecraft.player);
-
-        if (!handler.isDragon()) {
-            return;
-        }
-
         int screenWidth = event.getWindow().getGuiScaledWidth();
         int screenHeight = event.getWindow().getGuiScaledHeight();
         ResourceLocation id = event.getOverlay().id();
 
         if (DragonFoodHandler.customDragonFoods && !vanillaFoodLevel && id == VanillaGuiOverlay.FOOD_LEVEL.id()) {
-            event.setCanceled(true);
-            DragonFoodHandler.renderFoodBar(handler, getForgeGUI(), event.getPoseStack(), screenWidth, screenHeight);
+            boolean wasRendered = DragonFoodHandler.renderFoodBar(getForgeGUI(), event.getPoseStack(), screenWidth, screenHeight);
+
+            if (wasRendered) {
+                event.setCanceled(true);
+            }
         } else if (ServerConfig.consumeEXPAsMana && !vanillaExperienceBar && id == VanillaGuiOverlay.EXPERIENCE_BAR.id()) {
-            event.setCanceled(true);
-            ClientMagicHUDHandler.renderExperienceBar(handler, getForgeGUI(), event.getPoseStack(), screenWidth);
+            boolean wasRendered = ClientMagicHUDHandler.renderExperienceBar(getForgeGUI(), event.getPoseStack(), screenWidth);
+
+            if (wasRendered) {
+                event.setCanceled(true);
+            }
         } else if (id == VanillaGuiOverlay.AIR_LEVEL.id()) {
+            DragonStateHandler handler = DragonStateProvider.getHandler(ClientProxy.getLocalPlayer());
+
+            if (handler == null || !handler.isDragon()) {
+                return;
+            }
+
             // Render dragon specific hud elements (e.g. time in rain for cave dragons or time without water for sea dragons)
             ClientEvents.renderOverlay(handler, getForgeGUI(), event.getPoseStack());
             // Renders the abilities

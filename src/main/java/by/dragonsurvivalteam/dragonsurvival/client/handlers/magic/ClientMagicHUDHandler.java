@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
@@ -11,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -62,11 +64,17 @@ public class ClientMagicHUDHandler {
 	                                                     "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
-	public static void renderExperienceBar(final DragonStateHandler handler, final ForgeGui gui, final PoseStack poseStack, int width) {
-		Player localPlayer = Minecraft.getInstance().player;
+	public static boolean renderExperienceBar(final ForgeGui gui, final PoseStack poseStack, int width) {
+		Player localPlayer = ClientProxy.getLocalPlayer();
 
 		if (localPlayer == null || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience()) {
-			return;
+			return false;
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
+
+		if (handler == null || !handler.isDragon()) {
+			return false;
 		}
 
 		int x = width / 2 - 91;
@@ -75,7 +83,7 @@ public class ClientMagicHUDHandler {
 
 		if (ability == null || ability.canConsumeMana(localPlayer)) {
 			gui.renderExperienceBar(poseStack, x);
-			return;
+			return true;
 		}
 
 		Window window = Minecraft.getInstance().getWindow();
@@ -103,6 +111,8 @@ public class ClientMagicHUDHandler {
 			Minecraft.getInstance().font.draw(poseStack, s, (float) i1, (float) (j1 - 1), 0);
 			Minecraft.getInstance().font.draw(poseStack, s, (float) i1, (float) j1, new Color(243, 48, 59).getRGB());
 		}
+
+		return true;
 	}
 
 	public static void blit(PoseStack p_238474_1_, int p_238474_2_, int p_238474_3_, int p_238474_4_, int p_238474_5_, int p_238474_6_, int p_238474_7_){
