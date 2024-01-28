@@ -22,8 +22,8 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
+import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -48,7 +48,6 @@ public class Capabilities{
 
 			DragonStateProvider provider = new DragonStateProvider();
 			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
-			event.addListener(provider::invalidate);
 		} else if (entity instanceof LivingEntity) {
 			EntityStateProvider provider = new EntityStateProvider();
 			event.addCapability(new ResourceLocation("dragonsurvival", "entitystatehandler"), provider);
@@ -58,11 +57,6 @@ public class Capabilities{
 	@OnlyIn( Dist .CLIENT)
 	private static boolean isFakePlayer(Player player){
 		return player instanceof FakeClientPlayer;
-	}
-
-	@SubscribeEvent
-	public static void register(RegisterCapabilitiesEvent ev){
-		ev.register(DragonStateHandler.class);
 	}
 
 	/** Ony called on the server-side */
@@ -113,8 +107,8 @@ public class Capabilities{
 		Player original = e.getOriginal();
 		original.reviveCaps();
 
-
-		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
+		// Need to call the old capability directly, otherwise the cache will return the value of the new capability (which is empty)
+		DragonStateProvider.getCap(player).ifPresent(capNew -> original.getCapability(DRAGON_CAPABILITY).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
 			capNew.readNBT(nbt);
 			capNew.getSkinData().compileSkin();
@@ -129,5 +123,12 @@ public class Capabilities{
 		original.invalidateCaps();
 		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
+	}
+
+	@SubscribeEvent
+	public static void clearCache(final EntityLeaveLevelEvent event) {
+		if (event.getEntity() instanceof Player player) {
+			DragonStateProvider.clearCache(player);
+		}
 	}
 }

@@ -71,11 +71,12 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 	@Override
 	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
-		if(entity.getPlayer().hasEffect(MobEffects.INVISIBILITY)){
+		Player player = entity.getPlayer();
+
+		if (player == null || player.hasEffect(MobEffects.INVISIBILITY)) {
 			return;
 		}
 
-		Player player = entity.getPlayer();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
