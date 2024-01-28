@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.containers.slots;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
@@ -34,13 +35,12 @@ public class ClawToolSlot extends Slot {
 
 	@Override
 	public boolean mayPlace(@NotNull final ItemStack itemStack) {
-		return switch(clawSlot) {
-			case 0 -> ToolUtils.isWeapon(itemStack);
-			case 1 -> ToolUtils.isPickaxe(itemStack);
-			case 2 -> ToolUtils.isAxe(itemStack);
-			case 3 -> ToolUtils.isShovel(itemStack);
-			default -> false;
-		};
+		return switch(ClawInventory.Slot.values()[clawSlot]) {
+			case SWORD -> ToolUtils.isWeapon(itemStack);
+			case PICKAXE -> ToolUtils.isPickaxe(itemStack);
+			case AXE -> ToolUtils.isAxe(itemStack);
+			case SHOVEL -> ToolUtils.isShovel(itemStack);
+        };
 	}
 
 	@Override

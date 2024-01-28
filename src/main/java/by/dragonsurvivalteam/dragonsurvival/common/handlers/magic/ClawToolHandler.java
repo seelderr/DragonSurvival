@@ -272,7 +272,7 @@ public class ClawToolHandler{
 
 			if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
 				// Bonus does not apply to held tools
-				// TODO :: Maybe the bonus shouldn't apply when you have a tool in the claw inventory?
+
 				return;
 			}
 
@@ -280,23 +280,32 @@ public class ClawToolHandler{
 				return;
 			}
 
-			BlockState blockState = event.getState();
+			BlockState state = event.getState();
 			float originalSpeed = event.getOriginalSpeed();
 
 			float bonus = 0;
 			float unlockedBonus = 0;
 
 			if (handler.getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-				unlockedBonus = 2;
+				unlockedBonus = ServerConfig.bonusBreakSpeed;
 			} else if (handler.getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-				unlockedBonus = 2;
+				unlockedBonus = ServerConfig.bonusBreakSpeed;
 			} else if (handler.getLevel() == DragonLevel.ADULT) {
-				unlockedBonus = 4;
-				bonus = 2;
+				unlockedBonus = ServerConfig.bonusBreakSpeedAdult;
+				bonus = ServerConfig.baseBreakSpeedAdult;
+			}
+
+			for (int i = 0; i < ClawInventory.Slot.size(); i++) {
+				ItemStack clawTool = handler.getClawToolData().getClawsInventory().getItem(i);
+
+				if (state.requiresCorrectToolForDrops() && clawTool.isCorrectToolForDrops(state) || clawTool.getDestroySpeed(state) > 1) {
+					bonus /= ServerConfig.bonusBreakSpeedReduction;
+					break;
+				}
 			}
 
 			for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
-				if (blockState.is(tagKey)) {
+				if (state.is(tagKey)) {
 					bonus = unlockedBonus;
 
 					break;
@@ -304,7 +313,7 @@ public class ClawToolHandler{
 			}
 
 			// Don't discard the changes other mods already did to the harvest speed
-			event.setNewSpeed(event.getNewSpeed() + originalSpeed * bonus);
+			event.setNewSpeed(event.getNewSpeed() * Math.max(1, bonus));
 		}
 	}
 }

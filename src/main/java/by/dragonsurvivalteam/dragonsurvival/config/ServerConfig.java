@@ -238,6 +238,22 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonusHarvestLevel", comment = "The harvest level to apply to a dragons specific tool type once unlocked." )
 	public static Integer bonusHarvestLevel = 1;
 
+	@ConfigRange(min = 1, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusBreakSpeed", comment = "Bonus break speed against blocks which are effective for the dragon type (break speed * bonus) - only applied if the bonus is unlocked")
+	public static Float bonusBreakSpeed = 2f;
+
+	@ConfigRange(min = 1, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusBreakSpeedAdult", comment = "Bonus break speed against blocks which are effective for the dragon type (break speed * bonus) - only applied if the bonus is unlocked and the dragon is fully grown")
+	public static Float bonusBreakSpeedAdult = 2.5f;
+
+	@ConfigRange(min = 1, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "baseBreakSpeedAdult", comment = "Bonus break speed against all blocks (break speed * bonus) - only applied if the dragon is fully grown (unlocked bonus value will overwrite this one for effective blocks)")
+	public static Float baseBreakSpeedAdult = 1.5f;
+
+	@ConfigRange(min = 1, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusBreakSpeedReduction", comment = "Value the bonus will be divided by if an effective claw tool is present for the block")
+	public static Float bonusBreakSpeedReduction = 2f;
+
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonusUnlockedAt", comment = "The stage that dragons unlock the bonus harvest level." )
 	public static DragonLevel bonusUnlockedAt = DragonLevel.YOUNG;
 
