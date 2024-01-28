@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.network;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.DragonClawsMenuToggle;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncBooleanConfig;
@@ -91,6 +92,8 @@ public class NetworkHandler{
 		register(SyncNumberConfig.class, new SyncNumberConfig());
 		register(SyncEnumConfig.class, new SyncEnumConfig());
 		register(SyncListConfig.class, new SyncListConfig());
+
+		CHANNEL.registerMessage(nextPacketId++, SyncBrokenTool.class, SyncBrokenTool::encode, SyncBrokenTool::decode, SyncBrokenTool::handle);
 	}
 
 	public static <T> void register(Class<T> clazz, IMessage<T> message){

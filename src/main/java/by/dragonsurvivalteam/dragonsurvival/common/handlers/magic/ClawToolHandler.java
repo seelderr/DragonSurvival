@@ -3,8 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -17,7 +19,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
@@ -47,7 +51,7 @@ public class ClawToolHandler{
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			ArrayList<ItemStack> stacks = new ArrayList<>();
 
-			for(int i = 0; i < 4; i++){
+			for(int i = 0; i < ClawInventory.Slot.size(); i++){
 				ItemStack clawStack = cap.getClawToolData().getClawsInventory().getItem(i);
 				int mending = clawStack.getEnchantmentLevel(Enchantments.MENDING);
 
@@ -79,7 +83,7 @@ public class ClawToolHandler{
 			if(!player.level.getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 
-				for(int i = 0; i < handler.getClawToolData().getClawsInventory().getContainerSize(); i++){
+				for(int i = 0; i < ClawInventory.Slot.size(); i++){
 					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
 					if(!stack.isEmpty()){
@@ -122,7 +126,7 @@ public class ClawToolHandler{
 		ItemStack harvestTool = mainStack;
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		for (int i = 1; i < 4; i++) {
+		for (int i = 1; i < ClawInventory.Slot.size(); i++) {
 			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
 
 			if (!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)) {
@@ -154,7 +158,7 @@ public class ClawToolHandler{
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		int toolSlot = -1;
 
-		for (int i = 0; i < 4; i++) {
+		for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
 
 			if (!breakingItem.isEmpty() && breakingItem.isCorrectToolForDrops(state)) {
@@ -199,7 +203,7 @@ public class ClawToolHandler{
 	 * @return Only the sword in the dragon tool slot <br>
 	 * Returns {@link ItemStack#EMPTY} if the player is holding any sort of tool
 	 */
-	public static ItemStack getDragonSword(final LivingEntity player) { // TODO :: Return main hand item when `switched` is true (i.e. within the attack method)?
+	public static ItemStack getDragonSword(final LivingEntity player) {
 		if (!(player instanceof Player)) {
 			return ItemStack.EMPTY;
 		}
@@ -229,10 +233,17 @@ public class ClawToolHandler{
 			} else {
 				if (!player.level.isClientSide) {
 					DragonStateHandler handler = DragonUtils.getHandler(player);
+
+					if (handler.switchedTool || handler.switchedWeapon) {
+						player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncBrokenTool(player.getId(), handler.switchedTool ? handler.switchedToolSlot : ClawInventory.Slot.SWORD.ordinal()));
+						return;
+					}
+
 					SimpleContainer clawsInventory = handler.getClawToolData().getClawsInventory();
 
 					// When a tool breaks its data (the item with its tags etc.) stay there, only the stack gets set to air (and reduced by 1)
-					for (int i = 0; i < 4; i++) {
+					for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 						ItemStack dragonTool = clawsInventory.getItem(i);
 
 						if (event.getOriginal().getItem() == dragonTool.getItem()) {
