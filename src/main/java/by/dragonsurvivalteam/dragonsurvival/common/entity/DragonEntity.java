@@ -23,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -214,7 +215,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		return PlayState.STOP;
 	}
 
-	public Player getPlayer() {
+	public @Nullable Player getPlayer() {
 		return (Player) level().getEntity(playerId);
 	}
 

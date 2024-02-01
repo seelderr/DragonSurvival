@@ -5,8 +5,11 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallP
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
@@ -17,7 +20,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.ComputeFovModifierEvent;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -27,8 +29,10 @@ import net.minecraftforge.fml.common.Mod;
 import java.util.Arrays;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber( Dist.CLIENT )
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler{
+	@ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "particles_on_dragons", comment = "Particles (from the dragon type effects) will be rendered on dragons if this is enabled")
+	public static Boolean particlesOnDragons = true;
 
 	@SubscribeEvent
 	public static void onFovEvent(ComputeFovModifierEvent event){
@@ -58,54 +62,57 @@ public class ClientMagicHandler{
 		});
 	}
 
-	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void livingTick(LivingEvent.LivingTickEvent event){
+	public static void livingTick(final LivingEvent.LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
 
-		if(!entity.level().isClientSide()){
+		if (!entity.level().isClientSide()) {
 			return;
 		}
 
-		if(entity == Minecraft.getInstance().player || DragonUtils.isDragon(entity)){
+		if (!particlesOnDragons && DragonUtils.isDragon(entity)) {
 			return;
 		}
 
-		if(entity.hasEffect(DragonEffects.BURN)){
+		if (entity.hasEffect(DragonEffects.BURN)) {
 			ParticleOptions data = new SmallFireParticleData(37F, false);
-			for(int i = 0; i < 4; i++){
+			for (int i = 0; i < 4; i++) {
 				renderEffectParticle(entity, data);
 			}
 		}
 
-		if(entity.hasEffect(DragonEffects.DRAIN)){
+		if (entity.hasEffect(DragonEffects.DRAIN)) {
 			ParticleOptions data = new SmallPoisonParticleData(37F, false);
-			for(int i = 0; i < 4; i++){
+			for (int i = 0; i < 4; i++) {
 				renderEffectParticle(entity, data);
 			}
 		}
 
-		if(entity.hasEffect(DragonEffects.CHARGED)){
+		if (entity.hasEffect(DragonEffects.CHARGED)) {
 			ParticleOptions data = new LargeLightningParticleData(37F, false);
-			for(int i = 0; i < 4; i++){
+			for (int i = 0; i < 4; i++) {
 				renderEffectParticle(entity, data);
 			}
 		}
 	}
 
-	public static void renderEffectParticle(LivingEntity entity, ParticleOptions data){
-		double d0 = (double)entity.getRandom().nextFloat() * entity.getBbWidth();
-		double d1 = (double)entity.getRandom().nextFloat() * entity.getBbHeight();
-		double d2 = (double)entity.getRandom().nextFloat() * entity.getBbWidth();
-		double x = entity.getX() + d0 - entity.getBbWidth() / 2;
-		double y = entity.getY() + d1;
-		double z = entity.getZ() + d2 - entity.getBbWidth() / 2;
-		Minecraft.getInstance().player.level().addParticle(data, x, y, z, 0, 0, 0);
+	public static void renderEffectParticle(final LivingEntity entity, final ParticleOptions particle) {
+		Player localPlayer = ClientProxy.getLocalPlayer();
+
+		if (localPlayer != null) {
+			double d0 = (double) entity.getRandom().nextFloat() * entity.getBbWidth();
+			double d1 = (double) entity.getRandom().nextFloat() * entity.getBbHeight();
+			double d2 = (double) entity.getRandom().nextFloat() * entity.getBbWidth();
+			double x = entity.getX() + d0 - entity.getBbWidth() / 2;
+			double y = entity.getY() + d1;
+			double z = entity.getZ() + d2 - entity.getBbWidth() / 2;
+
+			localPlayer.level().addParticle(particle, x, y, z, 0, 0, 0);
+		}
 	}
 
 	@SubscribeEvent
-	@OnlyIn( Dist.CLIENT )
-	public static void removeLavaAndWaterFog(ViewportEvent.RenderFog event){ // TODO :: Check for fluid first
+	public static void removeLavaAndWaterFog(ViewportEvent.RenderFog event){
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()){

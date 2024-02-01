@@ -22,6 +22,7 @@ import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.PacketSyncCapabilityMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
@@ -192,6 +193,10 @@ public class ClientDragonRender{
 		}
 	}
 
+	/** Amount of client ticks the player model will not be rendered if the player was recently a dragon (to avoid player model pop-up after respawning) */
+	private static final int MAX_DELAY = 10;
+	private static int renderDelay;
+
 	/** Called for every player */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
@@ -220,7 +225,11 @@ public class ClientDragonRender{
 			dummyDragon.playerId = player.getId();
 		}
 
-		if (handler.isDragon()) {
+		if(handler.isDragon()){
+			if (player == ClientProxy.getLocalPlayer()) {
+				renderDelay = MAX_DELAY;
+			}
+
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
@@ -358,7 +367,12 @@ public class ClientDragonRender{
 				poseStack.popPose();
 			}
 		}else{
-			((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+			if (renderDelay > 0 && player == ClientProxy.getLocalPlayer()) {
+				renderDelay--;
+				renderPlayerEvent.setCanceled(true);
+			} else {
+				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+			}
 		}
 	}
 

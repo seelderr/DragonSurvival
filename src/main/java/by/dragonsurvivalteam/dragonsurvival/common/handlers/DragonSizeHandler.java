@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -130,10 +131,13 @@ public class DragonSizeHandler{
 	}
 
 	public static boolean canPoseFit(LivingEntity player, Pose pose){
-		if(!DragonStateProvider.getCap(player).isPresent()){
+		LazyOptional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
+
+		if (!capability.isPresent()){
 			return false;
 		}
-		double size = player.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getSize();
+
+		double size = capability.orElseThrow(() -> new IllegalStateException("Dragon State was not valid")).getSize();
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
 		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
 		return player.level().noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));

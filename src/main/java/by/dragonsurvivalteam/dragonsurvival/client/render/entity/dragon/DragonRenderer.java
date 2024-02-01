@@ -65,7 +65,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		Player player = animatable.getPlayer();
 
-		if (player.hasEffect(MobEffects.INVISIBILITY)) {
+		if (player == null || player.hasEffect(MobEffects.INVISIBILITY)) {
 			return;
 		}
 
