@@ -50,7 +50,7 @@ public class DragonAbilities{
 			ABILITY_LOOKUP.put(ability.getName(), ability);
 
 			if(ability.getDragonType() == null){
-				for(String type : DragonTypes.getTypes()){
+				for(String type : DragonTypes.getAllSubtypes()){
 					ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
 					ABILITIES.get(type).add(ability);
 
@@ -68,18 +68,26 @@ public class DragonAbilities{
 					}
 				}
 			}else{
-				ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
-				ABILITIES.get(ability.getDragonType().getTypeName()).add(ability);
+				for (AbstractDragonType type : DragonTypes.getSubtypesOfType(ability.getDragonType().getTypeName())) {
+					// Add all non-active abilities to each subtype, and active abilities only to the matching subtype.
+					if (!(ability instanceof ActiveDragonAbility)) {
+						ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+						ABILITIES.get(type.getSubtypeName()).add(ability);
+					}
+					if(ability instanceof InnateDragonAbility ab){
+						INNATE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+						INNATE_ABILITIES.get(type.getSubtypeName()).add(ab);
 
-				if(ability instanceof InnateDragonAbility ab){
-					INNATE_ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
-					INNATE_ABILITIES.get(ability.getDragonType().getTypeName()).add(ab);
-				}else if(ability instanceof PassiveDragonAbility ab){
-					PASSIVE_ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
-					PASSIVE_ABILITIES.get(ability.getDragonType().getTypeName()).add(ab);
-				}else if(ability instanceof ActiveDragonAbility ab){
-					ACTIVE_ABILITIES.computeIfAbsent(ability.getDragonType().getTypeName(), s -> new ArrayList<>());
-					ACTIVE_ABILITIES.get(ability.getDragonType().getTypeName()).add(ab);
+					}else if(ability instanceof PassiveDragonAbility ab){
+						PASSIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+						PASSIVE_ABILITIES.get(type.getSubtypeName()).add(ab);
+
+					}else if (ability instanceof ActiveDragonAbility ab && ability.getDragonType().getSubtypeName() == type.getSubtypeName()){
+						ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+						ABILITIES.get(type.getSubtypeName()).add(ability);
+						ACTIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+						ACTIVE_ABILITIES.get(type.getSubtypeName()).add(ab);
+					}
 				}
 			}
 		}
@@ -157,12 +165,14 @@ public class DragonAbilities{
 		}
 	}
 
-	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c, @Nullable String dragonType) {
+	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c, @Nullable AbstractDragonType type) {
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 		return handler.getMagicData().abilities.values().stream().anyMatch(s-> {
 			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
 				return false;
-			if (dragonType != null && !dragonType.equals(s.getDragonType().getTypeName()))
+			if (type == null)
+				return false;
+			if (type.getSubtypeName() != null && !type.getSubtypeName().equals(s.getDragonType().getSubtypeName()))
 				return false;
 			return true;
 		});
@@ -175,7 +185,7 @@ public class DragonAbilities{
 		if (dragonType == null)
 			return hasAbility(player, c, null);
 		else
-			return hasAbility(player, c, dragonType.getTypeName());
+			return hasAbility(player, c, dragonType);
 	}
 	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
 		DragonStateHandler handler = DragonUtils.getHandler(player);
@@ -257,7 +267,7 @@ public class DragonAbilities{
 		Vec3 vector3d2 = eyePosition.add(viewVector);
 
 		BlockPos pos = null;
-		BlockHitResult result = player.level.clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility instanceof StormBreathAbility ? ClipContext.Fluid.NONE : ClipContext.Fluid.ANY, null));
+		BlockHitResult result = player.level.clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility.clipContext(), null));
 
 		if (result.getType() == HitResult.Type.MISS) {
 			pos = new BlockPos(vector3d2.x, vector3d2.y, vector3d2.z);

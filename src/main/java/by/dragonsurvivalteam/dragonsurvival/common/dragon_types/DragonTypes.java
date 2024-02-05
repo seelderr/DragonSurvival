@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragon
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.Supplier;
@@ -11,6 +12,8 @@ import java.util.function.Supplier;
 public class DragonTypes {
 	private static final HashMap<String, Supplier<AbstractDragonType>> classMappings = new HashMap<>();
 	public static final HashMap<String, AbstractDragonType> staticTypes = new HashMap<>();
+	public static final HashMap<String, AbstractDragonType> staticSubtypes = new HashMap<>();
+	public static final HashMap<String, ArrayList<AbstractDragonType>> subtypeMap = new HashMap<>();
 
 	public static CaveDragonType CAVE;
 	public static SeaDragonType SEA;
@@ -24,17 +27,55 @@ public class DragonTypes {
 
 	public static <T extends AbstractDragonType> T registerType(Supplier<T> constructor){
 		T type = constructor.get();
-		classMappings.put(type.getTypeName().toLowerCase(), (Supplier<AbstractDragonType>)constructor);
-		staticTypes.put(type.getTypeName().toLowerCase(), type);
+		String lcName = type.getTypeName().toLowerCase();
+		classMappings.put(lcName, (Supplier<AbstractDragonType>)constructor);
+		staticTypes.put(lcName, type);
+		staticSubtypes.put(lcName, type);
+		subtypeMap.computeIfAbsent(lcName, s -> new ArrayList<AbstractDragonType>());
+		subtypeMap.get(lcName).add(type);
 		return type;
+	}
+	
+	public static <T extends AbstractDragonType> T registerSubtype(Supplier<T> constructor) {
+		T subtype = constructor.get();
+		String lcSubName = subtype.getSubtypeName().toLowerCase();
+		String lcTypeName = subtype.getTypeName().toLowerCase();
+		classMappings.put(lcSubName, (Supplier<AbstractDragonType>) constructor);
+		
+		staticSubtypes.put(lcSubName, subtype);
+		subtypeMap.computeIfAbsent(lcTypeName, s -> new ArrayList<AbstractDragonType>());
+		subtypeMap.get(lcTypeName).add(subtype);
+		return subtype;
 	}
 
 	public static AbstractDragonType getStatic(String name){
 		return staticTypes.get(name.toLowerCase());
 	}
+	
+	public static AbstractDragonType getStaticSubtype(String name) {
+		return staticSubtypes.get(name.toLowerCase());
+	}
 
 	public static List<String> getTypes(){
 		return staticTypes.keySet().stream().toList();
+	}
+
+	public static List<String> getAllSubtypes(){
+		ArrayList<String> res = new ArrayList<String>();
+		for (String type : getTypes()) {
+			for (AbstractDragonType subtype : subtypeMap.get(type)) {
+				res.add(subtype.getSubtypeName());
+			}
+		}
+		return res;
+	}
+
+	public static AbstractDragonType getSupertype(AbstractDragonType type) {
+		return getStatic(type.getTypeName());
+	}
+	
+	public static List<AbstractDragonType> getSubtypesOfType(String name) {
+		return subtypeMap.getOrDefault(staticTypes.getOrDefault(name, null).getTypeName(), new ArrayList<AbstractDragonType>());
 	}
 
 	public static AbstractDragonType newDragonTypeInstance(String name){
