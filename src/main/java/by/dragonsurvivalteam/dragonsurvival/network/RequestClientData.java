@@ -32,7 +32,7 @@ public class RequestClientData implements IMessage<RequestClientData> {
 	@Override
 	public RequestClientData decode(final FriendlyByteBuf buffer) {
 		String type = buffer.readUtf();
-		return new RequestClientData(type.equals("none") ? null : DragonTypes.getStatic(type), buffer.readEnum(DragonLevel.class));
+		return new RequestClientData(type.equals("none") ? null : DragonTypes.getStaticSubtype(type), buffer.readEnum(DragonLevel.class));
 	}
 
 	@Override
