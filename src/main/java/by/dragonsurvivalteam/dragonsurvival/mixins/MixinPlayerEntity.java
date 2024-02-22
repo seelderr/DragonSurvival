@@ -8,6 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.advancements.CriteriaTriggers;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
@@ -98,6 +100,9 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), handler.getType());
 				awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
 				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, random.nextFloat() * 0.1F + 0.9F);
+				if ((Player)(Object)this instanceof ServerPlayer) {
+					CriteriaTriggers.CONSUME_ITEM.trigger((ServerPlayer)(Object)this, itemStack);
+				}
 				callback.setReturnValue(super.eat(level, itemStack));
 			}
 		});
