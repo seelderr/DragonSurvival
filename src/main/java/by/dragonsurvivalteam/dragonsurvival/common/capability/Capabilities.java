@@ -7,9 +7,11 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -65,7 +67,7 @@ public class Capabilities{
 		ev.register(DragonStateHandler.class);
 	}
 
-	/** Ony called on the server-side */
+	/** Only called on the server-side */
 	@SubscribeEvent
 	public static void onPlayerLoggedIn(final PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
@@ -86,6 +88,11 @@ public class Capabilities{
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
 		Player player = playerRespawnEvent.getEntity();
 		syncCapability(player);
+
+		// Fixes dragon size upon respawn if size is less than default player
+		DragonStateProvider.getCap(player).ifPresent(cap -> {
+			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), cap.getSize()));
+		});
 	}
 
 	@SubscribeEvent
@@ -112,7 +119,6 @@ public class Capabilities{
 		Player player = e.getEntity();
 		Player original = e.getOriginal();
 		original.reviveCaps();
-
 
 		DragonStateProvider.getCap(player).ifPresent(capNew -> DragonStateProvider.getCap(original).ifPresent(capOld -> {
 			CompoundTag nbt = capOld.writeNBT();
