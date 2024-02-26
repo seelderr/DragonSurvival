@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;

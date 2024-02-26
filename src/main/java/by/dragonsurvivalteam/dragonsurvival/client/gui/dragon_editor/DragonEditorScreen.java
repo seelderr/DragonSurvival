@@ -36,7 +36,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
@@ -65,7 +64,6 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.client.gui.widget.ForgeSlider;
 import net.minecraftforge.common.util.Lazy;
-import net.minecraftforge.network.PacketDistributor;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
