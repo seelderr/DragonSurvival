@@ -321,6 +321,14 @@ public class DragonStateHandler extends EntityStateHandler {
 			return "human";
 		}
 
+		return dragonType.getTypeName();
+	}
+
+	public String getSubtypeName() {
+		if (dragonType == null) {
+			return "human";
+		}
+
 		return dragonType.getSubtypeName();
 	}
 
