@@ -39,6 +39,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
@@ -318,6 +320,11 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public String getName(){
 		return "storm_breath";
+	}
+
+	@Override
+	public Fluid clipContext() {
+		return ClipContext.Fluid.NONE;
 	}
 
 	@Override

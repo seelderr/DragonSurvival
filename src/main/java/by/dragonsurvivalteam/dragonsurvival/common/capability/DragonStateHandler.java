@@ -145,6 +145,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	public CompoundTag writeNBT() {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
+		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
 
 		if (isDragon()) {
 			tag.put("typeData", dragonType.writeNBT());
@@ -199,7 +200,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	@Override
 	public void readNBT(final CompoundTag tag) {
-		dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
+		if (tag.getAllKeys().contains("subtype"))
+			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("subtype"));
+		else
+			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
 		if (dragonType != null) {
 			if (tag.contains("typeData")) {
@@ -320,6 +324,14 @@ public class DragonStateHandler extends EntityStateHandler {
 		return dragonType.getTypeName();
 	}
 
+	public String getSubtypeName() {
+		if (dragonType == null) {
+			return "human";
+		}
+
+		return dragonType.getSubtypeName();
+	}
+
 	public void setType(final AbstractDragonType type) {
 		if (type != null && !Objects.equals(dragonType, type)) {
 			growing = true;
@@ -331,7 +343,7 @@ public class DragonStateHandler extends EntityStateHandler {
 				return;
 			}
 
-			dragonType = DragonTypes.newDragonTypeInstance(type.getTypeName());
+			dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
 		} else {
 			dragonType = null;
 		}

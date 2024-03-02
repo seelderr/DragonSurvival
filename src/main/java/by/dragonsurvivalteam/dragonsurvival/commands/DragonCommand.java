@@ -47,7 +47,7 @@ public class DragonCommand{
 
 		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
 			SuggestionsBuilder builder1 = null;
-			for(String value : DragonTypes.getTypes()){
+			for(String value : DragonTypes.getAllSubtypes()){
 				String val = value.toLowerCase();
 				builder1 = builder1 == null ? builder.suggest(val) : builder1.suggest(val);
 			}
@@ -95,7 +95,7 @@ public class DragonCommand{
 
 	private static int runCommand(String type, int stage, boolean wings, ServerPlayer player){
 		DragonStateHandler cap = DragonUtils.getHandler(player);
-		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStatic(type);
+		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
 
 		if(dragonType1 == null && cap.getType() != null){
 			reInsertClawTools(player, cap);
