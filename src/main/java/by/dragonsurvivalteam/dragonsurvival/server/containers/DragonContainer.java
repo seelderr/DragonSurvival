@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -121,7 +122,7 @@ public class DragonContainer extends AbstractContainerMenu {
 
 		// Claw tool slots
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
-			for (int i = 0; i < 4; i++) {
+			for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 				ClawToolSlot clawToolSlot = new ClawToolSlot(this, handler.getClawToolData().getClawsInventory(), i, -50, 35 + i * 18, i);
 				addSlot(clawToolSlot);
 				inventorySlots.add(clawToolSlot);
