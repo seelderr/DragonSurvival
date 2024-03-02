@@ -150,13 +150,9 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "storm_breath"}, key = "chargedChainRange", comment = "The max distance in blocks the storm breath and charged effect is able to chain to mobs" )
 	public static Integer chargedChainRange = 4;
 
-	@ConfigRange( min = 0.0, max = 100.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
-	                                                     "abilities",
-	                                                     "sea_dragon",
-	                                                     "actives",
-	                                                     "storm_breath"}, key = "chargedEffectDamage", comment = "The amount of damage the charged effect deals each second" )
-	public static Double chargedEffectDamage = 1.0;
+	@ConfigRange(min = 0.0, max = 100.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectDamageMultiplier", comment = "The charged effect damage (starts at 1, scaling with effect level) will get multiplied by this amount")
+	public static Double chargedEffectDamageMultiplier = 1.0;
 
 	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -499,7 +495,7 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		chargedEffectSparkle(player, entityHit, chargedChainRange, stormBreathChainCount, chargedEffectDamage);
+		chargedEffectSparkle(player, entityHit, chargedChainRange, stormBreathChainCount, chargedEffectDamageMultiplier);
 	}
 
 

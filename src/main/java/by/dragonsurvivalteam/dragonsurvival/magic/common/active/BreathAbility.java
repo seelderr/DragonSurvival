@@ -262,8 +262,9 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	}
 
 	public static class BreathDamage extends EntityDamageSource {
-		public BreathDamage(@Nullable final Entity entity) {
+		public BreathDamage(@NotNull final Entity entity) {
 			super("player", entity);
+			setMagic();
 		}
 	}
 
