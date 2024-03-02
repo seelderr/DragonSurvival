@@ -1,0 +1,68 @@
+name: Play as Dragon Problems
+description: For bug reports about my modpacks it's better to use Discord Server, but if you urgently need to send it here specifically...
+title: "[Play as Dragon]: "
+labels: ["compatibility", "triage"]
+assignees:
+  - octocat
+body:
+  - type: markdown
+    attributes:
+      value: |
+        It's best to ask about this in the discord server, but since you're here, fill out this form and I'll help you when I have time.
+        
+  - type: input
+    id: contact
+    attributes:
+      label: ■ Your Discord ID
+      description: How can we get in touch with you if we need more info?
+      placeholder: BlackAures#7759
+    validations:
+      required: false
+      
+  - type: textarea
+    id: version
+    attributes:
+      label: ■ Modpack version
+      description: Copy the full name of modpack.
+      placeholder: Example - Play as Dragon Gothic Edition - 26.01.2024 - READ CHANGELOG
+    validations:
+      required: true
+
+  - type: textarea
+    id: modloader_version
+    attributes:
+      label: ■ Forge/Neoforge version
+      description: Copy the full name of modloader and version.
+      placeholder: Example - Neoforge 47.1.101
+    validations:
+      required: true
+
+  - type: dropdown
+    id: server
+    attributes:
+      label: ■ Single game or server?
+      description: There can be huge differences between the single-player game and the server.
+      options:
+        - Single-player (Default)
+        - Self-made dedicated server
+        - Host site
+        - Local network (LAN, Hamachi, etc.)
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: ■ Describe the problem
+      description: Write down exactly what your problem is. Have you added any other mods? Have you edited the configs? Transferred files from Curseforge and everything is broken? Specify it!
+      placeholder: I only moved the mods folder and the modpack doesn't look the same as on your Curseforge page :(((((((((((( Can't connect to a friend and it writes that Apotheosis is the wrong version!
+    validations:
+      required: true
+
+  - type: textarea
+    id: crash-report
+    attributes:
+      label: ■ Crash Report File and Logs
+      description: If your game or server crashes, the game creates a file in crash-reports folder. Just drag and drop file here. Latest logs is good too. No need to copy all text inside.
+    validations:
+      required: false
