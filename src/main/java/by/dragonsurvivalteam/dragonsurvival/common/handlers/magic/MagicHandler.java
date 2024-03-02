@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
@@ -148,6 +147,7 @@ public class MagicHandler{
 	@SubscribeEvent
 	public static void livingTick(LivingUpdateEvent event){
 		LivingEntity entity = event.getEntityLiving();
+		EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
 
 		if(entity.hasEffect(DragonEffects.BURN)){
 			if(entity.isEyeInFluid(FluidTags.WATER) || entity.isInWaterRainOrBubble()){
@@ -155,13 +155,9 @@ public class MagicHandler{
 			}
 		}
 
-
-		if(entity.hasEffect(DragonEffects.DRAIN)){
-			AbstractDragonType type = DragonUtils.getDragonType(entity);
-
-			if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
-				if(entity.tickCount % 20 == 0){
-					DragonStateHandler cap = DragonUtils.getHandler(entity);
+		if(entity.tickCount % 20 == 0){
+			if(entity.hasEffect(DragonEffects.DRAIN)){
+				if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
 					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 					if(player != null){
 						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
@@ -170,26 +166,13 @@ public class MagicHandler{
 					}
 				}
 			}
-		}
 
-		if(entity.hasEffect(DragonEffects.CHARGED)){
-			if(entity.tickCount % 20 == 0){
-				DragonStateHandler cap = DragonUtils.getHandler(entity);
+			if(entity.hasEffect(DragonEffects.CHARGED)){
 				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
 				if(!DragonUtils.isDragonType(entity, DragonTypes.SEA)){
 					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
 				}
 			}
-		}else{
-			DragonStateHandler cap = DragonUtils.getHandler(entity);
-
-			if(cap.lastAfflicted != -1){
-				cap.lastAfflicted = -1;
-			}
-		}
-
-		if(entity.tickCount % 20 == 0){
-			DragonStateHandler cap = DragonUtils.getHandler(entity);
 
 			if(entity.hasEffect(DragonEffects.BURN)){
 				if(!entity.fireImmune()){
@@ -198,8 +181,8 @@ public class MagicHandler{
 						float damage = Mth.clamp((float)distance, 0, 10);
 
 						if(damage > 0){
-							//Short enough fire duration to not cause fire damage but still drop cooked items
 							if(!entity.isOnFire()){
+								// Short enough fire duration to not cause fire damage but still drop cooked items
 								entity.setRemainingFireTicks(1);
 							}
 							Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level.getEntity(cap.lastAfflicted) : null;
@@ -215,6 +198,7 @@ public class MagicHandler{
 
 			cap.lastPos = entity.position();
 		}
+
 	}
 
 	@SubscribeEvent
@@ -236,7 +220,6 @@ public class MagicHandler{
 	@SubscribeEvent
 	public static void playerDamaged(LivingDamageEvent event){
 		if(event.getEntityLiving() instanceof Player player){
-			LivingEntity target = event.getEntityLiving();
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -252,7 +235,7 @@ public class MagicHandler{
 	@SubscribeEvent
 	public static void playerHitEntity(CriticalHitEvent event){
 		if(event.getEntityLiving() instanceof Player player){
-			
+
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
 					return;
@@ -271,10 +254,9 @@ public class MagicHandler{
 	@SubscribeEvent
 	public static void livingHurt(LivingAttackEvent event){
 		if(event.getSource() instanceof EntityDamageSource && !(event.getSource() instanceof IndirectEntityDamageSource) && !(event.getSource() instanceof BreathDamage)){
-			if(event.getEntity() instanceof LivingEntity){
+			if(event.getEntity() != null){
 				if(event.getSource() != null && event.getSource().getEntity() != null){
 					if(event.getSource().getEntity() instanceof Player player){
-						LivingEntity target = (LivingEntity)event.getEntity();
 						DragonStateProvider.getCap(player).ifPresent(cap -> {
 							if(!cap.isDragon()){
 								return;
@@ -298,14 +280,14 @@ public class MagicHandler{
 								boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
 								if(hit){
-									DragonStateHandler cap1 = DragonUtils.getHandler(event.getEntity());
+									EntityStateHandler entityCap = DragonUtils.getEntityHandler(event.getEntity());
 
-									if(cap1 != null){
-										cap1.lastAfflicted = player.getId();
+									if(entityCap != null){
+										entityCap.lastAfflicted = player.getId();
 									}
 
-									if(!player.level.isClientSide){
-										((LivingEntity)event.getEntity()).addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
+									if (!player.level.isClientSide && event.getEntity() instanceof LivingEntity livingEntity) {
+										livingEntity.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
 									}
 								}
 							}

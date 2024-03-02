@@ -5,8 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
@@ -14,7 +12,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stat;
 import net.minecraft.stats.Stats;
-import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -24,23 +21,18 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.animal.FlyingAnimal;
-import net.minecraft.world.entity.player.Abilities;
-import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -49,19 +41,10 @@ import java.util.Objects;
 import java.util.UUID;
 
 
-@Mixin( Player.class )
+@Mixin(Player.class)
 public abstract class MixinPlayerEntity extends LivingEntity{
-
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
 	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
-	@Shadow
-	@Final
-	private Abilities abilities;
-	@Shadow
-	@Final
-	private Inventory inventory;
-	@Shadow
-	private int sleepCounter;
 
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_){
 		super(p_20966_, p_20967_);
@@ -97,39 +80,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 
-	@Redirect( method = "attack", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ) )
-	private ItemStack getDragonSword(Player entity){
-		ItemStack mainStack = entity.getMainHandItem();
-		DragonStateHandler cap = DragonUtils.getHandler(entity);
-
-		if(!(mainStack.getItem() instanceof TieredItem) && cap != null){
-			ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
-
-			if(!sword.isEmpty()){
-				return sword;
-			}
-		}
-
-		return mainStack;
-	}
-	@Redirect(method = "attack", at = @At(value="INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setItemInHand(Lnet/minecraft/world/InteractionHand;Lnet/minecraft/world/item/ItemStack;)V"))
-	public void setItemInHand(Player entity, InteractionHand interactionHand, ItemStack itemStack)
-	{
-		DragonStateHandler cap = DragonUtils.getHandler(entity);
-		if (cap == null || interactionHand != InteractionHand.MAIN_HAND){
-			entity.setItemInHand(interactionHand, itemStack);
-			return;
-		}
-		ItemStack mainStack = entity.getMainHandItem();
-		if (mainStack.getItem() instanceof TieredItem)
-			entity.setItemInHand(interactionHand, itemStack);
-
-	}
-	@Redirect( method = "getDigSpeed(Lnet/minecraft/world/level/block/state/BlockState;Lnet/minecraft/core/BlockPos;)F", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;getMainHandItem()Lnet/minecraft/world/item/ItemStack;" ), remap = false )
-	private ItemStack getDragonTools(Player entity){
-		return ClawToolHandler.getDragonTools(entity);
-	}
-
 	@Inject( method = "isSleepingLongEnough", at = @At( "HEAD" ), cancellable = true )
 	public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> ci){
 		if(DragonUtils.isDragon(this)){
@@ -141,15 +91,14 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 
-
-	@Inject( at = @At( "HEAD" ), method = "eat", cancellable = true )
-	public void dragonEat(Level level, ItemStack itemStack, CallbackInfoReturnable<ItemStack> ci){
-		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), itemStack, dragonStateHandler.getType());
+	@Inject(at = @At("HEAD"), method = "eat", cancellable = true)
+	public void dragonEat(final Level level, final ItemStack itemStack, final CallbackInfoReturnable<ItemStack> callback) {
+		DragonStateProvider.getCap(this).ifPresent(handler -> {
+			if (handler.isDragon()) {
+				DragonFoodHandler.dragonEat(getFoodData(), itemStack.getItem(), handler.getType());
 				awardStat(Stats.ITEM_USED.get(itemStack.getItem()));
 				level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
-				ci.setReturnValue(super.eat(level, itemStack));
+				callback.setReturnValue(super.eat(level, itemStack)); // TODO :: Not sure why it's handled this way - are all dragon foods correctly tagged as edible?
 			}
 		});
 	}
@@ -158,7 +107,6 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 	public FoodData getFoodData(){
 		throw new IllegalStateException("Mixin failed to shadow getFoodData()");
 	}
-
 
 	@Shadow
 	public void awardStat(Stat<Item> stat){
@@ -174,13 +122,13 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		});
 	}
 
-	@Inject( method = "travel", at = @At( "HEAD" ), cancellable = true )
+	@Inject( method = "travel", at = @At( "HEAD" ))
 	public void travel(Vec3 pTravelVector, CallbackInfo ci){
 		if(DragonUtils.isDragon(this)){
 			double d01 = getX();
 			double d11 = getY();
 			double d21 = getZ();
-			if(DragonStateProvider.getCap(this).isPresent() && ConfigHandler.SERVER.bonuses && ConfigHandler.SERVER.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()){
+			if(DragonStateProvider.getCap(this).isPresent() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(this, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()){
 				double d3 = getLookAngle().y;
 				double d4 = d3 < -0.2D ? 0.185D : 0.06D;
 				if(d3 <= 0.0D || jumping || !level.getBlockState(new BlockPos(getX(), getY() + 1.0D - 0.1D, getZ())).getFluidState().isEmpty()){
@@ -193,14 +141,15 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 					AttributeInstance gravity = getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
 					boolean flag = getDeltaMovement().y <= 0.0D;
 					if(flag && hasEffect(MobEffects.SLOW_FALLING)){
-						if(!gravity.hasModifier(SLOW_FALLING)){
+						if(gravity != null && !gravity.hasModifier(SLOW_FALLING)){
 							gravity.addTransientModifier(SLOW_FALLING);
 						}
 						fallDistance = 0.0F;
-					}else if(gravity.hasModifier(SLOW_FALLING)){
+					}else if(gravity != null && gravity.hasModifier(SLOW_FALLING)){
 						gravity.removeModifier(SLOW_FALLING);
 					}
-					d0 = gravity.getValue();
+					if (gravity != null)
+						d0 = gravity.getValue();
 
 					FluidState fluidstate = level.getFluidState(blockPosition());
 					if(isInLava() && isAffectedByFluids() && !canStandOnFluid(fluidstate)

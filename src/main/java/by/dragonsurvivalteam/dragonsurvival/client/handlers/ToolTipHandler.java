@@ -15,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -22,8 +23,12 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
@@ -37,22 +42,30 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber( Dist.CLIENT )
+@Mod.EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler{
 	private static final ResourceLocation tooltip_1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_0.png");
 	private static final ResourceLocation tooltip_2 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_1.png");
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?")
 	public static Boolean tooltipChanges = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideUnsafeFood", comment = "Should the tooltip be hidden for unsafe (negative effects) food?")
+	public static Boolean hideUnsafeFood = true;
+
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
 	public static Boolean dragonFoodTooltips = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "helpTooltips", comment = "Should the effect of the help tooltips be enabled?" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "helpTooltips", comment = "Should the effect of the help tooltips be enabled?")
 	public static Boolean helpTooltips = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border" )
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border")
 	public static Boolean alwaysShowHelpTooltip = false;
+
+	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
+	public static Boolean hideAppleskinTooltip = true;
+
+	private final static ResourceLocation ICONS = new ResourceLocation(DragonSurvivalMod.MODID, "food_tooltip_icon_font");
 
 
 	private static boolean blink = false;
@@ -61,25 +74,52 @@ public class ToolTipHandler{
 
 	@SubscribeEvent
 	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent){
-		if(tooltipEvent.getPlayer() != null){
+		if(tooltipEvent.getEntity() != null){
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(item)){
-				toolTip.add(new TranslatableComponent("ds.cave.dragon.food"));
+
+			if(DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)){
+				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
 			}
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(item)){
-				toolTip.add(new TranslatableComponent("ds.forest.dragon.food"));
+
+			if(DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)){
+				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
 			}
-			if(DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(item)){
-				toolTip.add(new TranslatableComponent("ds.sea.dragon.food"));
+
+			if(DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)){
+				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
 			}
 		}
 	}
 
+	private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String nutritionIcon, final String saturationIcon) {
+		MutableComponent component = new TranslatableComponent("ds." + type.getTypeName() + ".dragon.food");
+		FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
+
+		String nutrition = "0";
+		String saturation = "0";
+
+		if (properties != null) {
+			float nutritionValue = properties.getNutrition();
+			float saturationValue = properties.getNutrition() * properties.getSaturationModifier() * 2f;
+
+			// 1 Icon = 2 points (e.g. 10 nutrition icons for a maximum food level of 20)
+			nutrition = String.format("%.1f", nutritionValue / 2);
+			saturation = String.format("%.1f", saturationValue / 2);
+		}
+
+		MutableComponent nutritionIconComponent = new TextComponent(nutritionIcon).withStyle(Style.EMPTY.withFont(ICONS));
+		MutableComponent nutritionComponent = new TextComponent(": " + nutrition + " ").withStyle(color);
+
+		MutableComponent saturationIconComponent = new TextComponent(saturationIcon).withStyle(Style.EMPTY.withFont(ICONS));
+		MutableComponent saturationComponent = new TextComponent(" / " + saturation + " ").withStyle(color);
+
+		return component.append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
+	}
 
 	@SubscribeEvent
 	public static void itemDescriptions(ItemTooltipEvent event){
-		if(event.getPlayer() != null){
+		if(event.getEntity() != null){
 			Item item = event.getItemStack().getItem();
 			List<Component> toolTip = event.getToolTip();
 
@@ -264,9 +304,9 @@ public class ToolTipHandler{
 
 		ItemStack stack = event.getItemStack();
 
-		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
-		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
-		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getSafeEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
+		boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
+		boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
+		boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
 		int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 
 		boolean isFood = foodCount == 1;

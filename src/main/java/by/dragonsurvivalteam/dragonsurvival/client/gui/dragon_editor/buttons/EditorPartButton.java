@@ -1,3 +1,4 @@
+/*
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -5,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.TextComponent;
@@ -21,8 +21,6 @@ public class EditorPartButton extends ExtendedButton{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public TranslatableComponent message;
 	private DragonEditorScreen screen;
-	private final DragonStateHandler handler = new DragonStateHandler();
-	private EnumSkinLayer layer;
 	public String value;
 	public Consumer<String> setter;
 	public DropDownButton source;
@@ -34,11 +32,10 @@ public class EditorPartButton extends ExtendedButton{
 		this.setter = setter;
 		this.source = source;
 		this.screen = screen;
-		this.layer = layer;
-		message = new TranslatableComponent("ds.skin_part." + screen.type.getTypeName().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
+		message = new TranslatableComponent("ds.skin_part." + screen.dragonType.getTypeName().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
 
 		if(!value.equals("None")){
-			texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/editor_icons/" + screen.type.getTypeName().toLowerCase(Locale.ROOT) + "/" + layer.name.toLowerCase(Locale.ROOT) + "/" + value.toLowerCase(Locale.ROOT) + ".png");
+			texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/editor_icons/" + screen.dragonType.getTypeName().toLowerCase(Locale.ROOT) + "/" + layer.name.toLowerCase(Locale.ROOT) + "/" + value.toLowerCase(Locale.ROOT) + ".png");
 		}
 	}
 
@@ -65,4 +62,4 @@ public class EditorPartButton extends ExtendedButton{
 		source.onPress();
 		setter.accept(value);
 	}
-}
+}*/

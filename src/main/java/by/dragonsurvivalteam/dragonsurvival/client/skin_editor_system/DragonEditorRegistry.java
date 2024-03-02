@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ReloadableResourceManager;
@@ -110,14 +109,18 @@ public class DragonEditorRegistry{
 			}catch(IOException e){
 				e.printStackTrace();
 			}
-		}else {
-			try{
+		} else {
+			try {
 				Gson gson = GsonFactory.getDefault();
 				InputStream in = new FileInputStream(savedFile);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-				savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
-			}catch(FileNotFoundException e){
-				e.printStackTrace();
+
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+					savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
+				} catch (IOException exception) {
+					DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+				}
+			} catch (FileNotFoundException exception) {
+				DragonSurvivalMod.LOGGER.error("Saved customization [" + savedFile.getName() + "] could not be found", exception);
 			}
 		}
 
@@ -129,20 +132,22 @@ public class DragonEditorRegistry{
 			Gson gson = GsonFactory.getDefault();
 			InputStream in = manager.getResource(location).getInputStream();
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			DragonEditorObject je = gson.fromJson(reader, DragonEditorObject.class);
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+				DragonEditorObject je = gson.fromJson(reader, DragonEditorObject.class);
+				CUSTOMIZATIONS.computeIfAbsent(DragonTypes.SEA.getTypeName().toUpperCase(), type -> new HashMap<>());
+				CUSTOMIZATIONS.computeIfAbsent(DragonTypes.CAVE.getTypeName().toUpperCase(), type -> new HashMap<>());
+				CUSTOMIZATIONS.computeIfAbsent(DragonTypes.FOREST.getTypeName().toUpperCase(), type -> new HashMap<>());
 
-			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.SEA.getTypeName().toUpperCase(), type -> new HashMap<>());
-			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.CAVE.getTypeName().toUpperCase(), type -> new HashMap<>());
-			CUSTOMIZATIONS.computeIfAbsent(DragonTypes.FOREST.getTypeName().toUpperCase(), type -> new HashMap<>());
+				dragonType(DragonTypes.SEA, je.sea_dragon);
+				dragonType(DragonTypes.CAVE, je.cave_dragon);
+				dragonType(DragonTypes.FOREST, je.forest_dragon);
 
-			dragonType(DragonTypes.SEA, je.sea_dragon);
-			dragonType(DragonTypes.CAVE, je.cave_dragon);
-			dragonType(DragonTypes.FOREST, je.forest_dragon);
-
-			defaultSkinValues = je.defaults;
-		}catch(IOException e){
-			e.printStackTrace();
+				defaultSkinValues = je.defaults;
+			} catch (IOException exception) {
+				DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+			}
+		} catch (IOException exception) {
+			DragonSurvivalMod.LOGGER.error("Resource [" + location + "] could not be opened", exception);
 		}
 	}
 

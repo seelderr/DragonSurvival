@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Vi
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
@@ -14,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -32,20 +34,25 @@ import net.minecraftforge.network.PacketDistributor;
 public class Capabilities{
 	public static Capability<VillageRelationShips> VILLAGE_RELATIONSHIP = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> GENERIC_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
+	public static Capability<EntityStateHandler> ENTITY_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 	public static Capability<DragonStateHandler> DRAGON_CAPABILITY = CapabilityManager.get(new CapabilityToken<>(){});
 
 	@SubscribeEvent
 	public static void attachCapabilities(AttachCapabilitiesEvent<Entity> event){
-		if(event.getObject() instanceof Player player){
-			if(event.getObject().level.isClientSide){
-				if(isFakePlayer(player))
-					return;
-			}
-		}
+		Entity entity = event.getObject();
 
-		DragonStateProvider provider = new DragonStateProvider();
-		event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
-		event.addListener(provider::invalidate);
+		if (entity instanceof Player player) {
+			if (entity.getLevel().isClientSide && isFakePlayer(player)) {
+				return;
+			}
+
+			DragonStateProvider provider = new DragonStateProvider();
+			event.addCapability(new ResourceLocation("dragonsurvival", "playerstatehandler"), provider);
+			event.addListener(provider::invalidate);
+		} else if (entity instanceof LivingEntity) {
+			EntityStateProvider provider = new EntityStateProvider();
+			event.addCapability(new ResourceLocation("dragonsurvival", "entitystatehandler"), provider);
+		}
 	}
 
 	@OnlyIn( Dist .CLIENT)
@@ -58,15 +65,20 @@ public class Capabilities{
 		ev.register(DragonStateHandler.class);
 	}
 
+	/** Ony called on the server-side */
 	@SubscribeEvent
-	public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent loggedInEvent){
-		Player player = loggedInEvent.getPlayer();
-		DragonStateProvider.getCap(player).ifPresent(cap -> NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)player), new RequestClientData(cap.getType(), cap.getLevel())));
-		syncCapability(player);
+	public static void onPlayerLoggedIn(final PlayerEvent.PlayerLoggedInEvent event) {
+		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
+			DragonStateProvider.getCap(serverPlayer).ifPresent(handler -> {
+				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new RequestClientData(handler.getType(), handler.getLevel()));
+				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncDragonClawsMenu(serverPlayer.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
+			});
+
+			syncCapability(serverPlayer);
+		}
 	}
 
-	public static void syncCapability(Player player){
-		//player.reviveCaps();
+	public static void syncCapability(final Player player) {
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
 	}
 
@@ -78,6 +90,7 @@ public class Capabilities{
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
+		// TODO :: Might not needed if EntityJoinLevelEvent is used instead of PlayerLoggedInEvent?
 		Player player = event.getPlayer();
 		syncCapability(player);
 		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkinData().compileSkin());

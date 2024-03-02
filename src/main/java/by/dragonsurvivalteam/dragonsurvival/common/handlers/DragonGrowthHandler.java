@@ -55,9 +55,9 @@ public class DragonGrowthHandler{
 
 			boolean canContinue = false;
 
-			List<Item> newbornList = ConfigHandler.configList(Item.class, ServerConfig.growNewborn);
-			List<Item> youngList = ConfigHandler.configList(Item.class, ServerConfig.growYoung);
-			List<Item> adultList = ConfigHandler.configList(Item.class, ServerConfig.growAdult);
+			List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+			List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+			List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
 			List<Item> allowedItems = new ArrayList<>();
 
@@ -123,9 +123,9 @@ public class DragonGrowthHandler{
 	}
 
 	public static int getIncrement(Item item, DragonLevel level){
-		List<Item> newbornList = ConfigHandler.configList(Item.class, ServerConfig.growNewborn);
-		List<Item> youngList = ConfigHandler.configList(Item.class, ServerConfig.growYoung);
-		List<Item> adultList = ConfigHandler.configList(Item.class, ServerConfig.growAdult);
+		List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+		List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+		List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
 		int increment = 0;
 

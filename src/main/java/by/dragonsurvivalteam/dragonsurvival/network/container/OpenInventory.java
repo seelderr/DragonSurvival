@@ -8,26 +8,31 @@ import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class OpenInventory implements IMessage<OpenInventory>{
+public class OpenInventory implements IMessage<OpenInventory> {
 	@Override
-	public void encode(OpenInventory message, FriendlyByteBuf buffer){}
+	public void encode(final OpenInventory message, final FriendlyByteBuf buffer) { /* Nothing to do */ }
 
 	@Override
-	public OpenInventory decode(FriendlyByteBuf buffer){
+	public OpenInventory decode(final FriendlyByteBuf buffer) {
 		return new OpenInventory();
 	}
 
 	@Override
-	public void handle(OpenInventory message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final OpenInventory message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		ServerPlayer player = context.getSender();
+		ServerPlayer sender = context.getSender();
 
-		if(player.containerMenu != null){
-			player.containerMenu.removed(player);
+		if (sender != null) {
+			context.enqueueWork(() -> {
+				if (sender.containerMenu != null) { // TODO :: container might never be null?
+					sender.containerMenu.removed(sender);
+				}
+
+				InventoryMenu inventory = sender.inventoryMenu;
+				sender.initMenu(inventory);
+			});
 		}
 
-		InventoryMenu container = player.inventoryMenu;
-		player.initMenu(container);
 		context.setPacketHandled(true);
 	}
 }

@@ -40,7 +40,6 @@ import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.LiquidBlockRenderer;
@@ -55,6 +54,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -272,24 +272,41 @@ public class ClientEvents{
 	}
 
 	public static String getMaterial(String texture, ItemStack clawItem){
-		TieredItem item = (TieredItem)clawItem.getItem();
-		Tier tier = item.getTier();
-		if(tier == Tiers.NETHERITE){
-			texture += "netherite_";
-		}else if(tier == Tiers.DIAMOND){
-			texture += "diamond_";
-		}else if(tier == Tiers.IRON){
-			texture += "iron_";
-		}else if(tier == Tiers.GOLD){
-			texture += "gold_";
-		}else if(tier == Tiers.STONE){
-			texture += "stone_";
-		}else if(tier == Tiers.WOOD){
-			texture += "wooden_";
-		}else{
-			texture += "moded_";
+		if (clawItem.getItem() instanceof TieredItem item) {
+			Tier tier = item.getTier();
+
+			if (tier == Tiers.NETHERITE) {
+				texture += "netherite_";
+			} else if (tier == Tiers.DIAMOND) {
+				texture += "diamond_";
+			} else if (tier == Tiers.IRON) {
+				texture += "iron_";
+			} else if (tier == Tiers.GOLD) {
+				texture += "gold_";
+			} else if (tier == Tiers.STONE) {
+				texture += "stone_";
+			} else if (tier == Tiers.WOOD) {
+				texture += "wooden_";
+			} else {
+				texture += "moded_";
+			}
+
+			return texture;
 		}
-		return texture;
+
+		return texture + "moded_";
+	}
+
+	public static RenderType onRenderFluidLayer(FluidState fluidState)
+	{
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player == null){
+			return null;
+		}
+
+		if ((fluidState.is(Fluids.LAVA) || fluidState.is(Fluids.FLOWING_LAVA)) && player.hasEffect(DragonEffects.LAVA_VISION))
+			return RenderType.translucent();
+		return null;
 	}
 
 	@SubscribeEvent
@@ -306,13 +323,11 @@ public class ClientEvents{
 			return;
 		}
 
+		// FIXME :: Check backport
 		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 			if(playerStateHandler.isDragon() && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
 				if(!wasCaveDragon){
 					if(player.hasEffect(DragonEffects.LAVA_VISION)){
-						RenderType lavaType = RenderType.translucent();
-						ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
-						ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 						prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
 						minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
 						minecraft.levelRenderer.allChanged();
@@ -320,9 +335,6 @@ public class ClientEvents{
 				}else{
 					if(!player.hasEffect(DragonEffects.LAVA_VISION)){
 						if(prevFluidRenderer != null){
-							RenderType lavaType = RenderType.solid();
-							ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
-							ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 							minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
 						}
 						minecraft.levelRenderer.allChanged();
@@ -331,9 +343,6 @@ public class ClientEvents{
 			}else{
 				if(wasCaveDragon){
 					if(prevFluidRenderer != null){
-						RenderType lavaType = RenderType.solid();
-						ItemBlockRenderTypes.setRenderLayer(Fluids.LAVA, lavaType);
-						ItemBlockRenderTypes.setRenderLayer(Fluids.FLOWING_LAVA, lavaType);
 						minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
 					}
 					minecraft.levelRenderer.allChanged();
@@ -413,7 +422,7 @@ public class ClientEvents{
 					int maxRainTime = 0;
 
 					if(contrastShower != null){
-						maxRainTime += Functions.secondsToTicks(((ContrastShowerAbility)contrastShower).getDuration());
+						maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
 					}
 
 

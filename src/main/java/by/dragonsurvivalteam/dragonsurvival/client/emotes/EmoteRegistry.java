@@ -56,23 +56,26 @@ public class EmoteRegistry{
 			Gson gson = GsonFactory.getDefault();
 			InputStream in = manager.getResource(location).getInputStream();
 
-			BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-			EmoteRegistryClass je = gson.fromJson(reader, EmoteRegistryClass.class);
+			try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+				EmoteRegistryClass je = gson.fromJson(reader, EmoteRegistryClass.class);
 
-			if(je != null){
-				List<Emote> emts = Arrays.asList(je.emotes);
-				HashMap<String, Integer> nameCount = new HashMap<>();
+				if (je != null) {
+					List<Emote> emts = Arrays.asList(je.emotes);
+					HashMap<String, Integer> nameCount = new HashMap<>();
 
-				for(Emote emt : emts){
-					nameCount.putIfAbsent(emt.name, 0);
-					nameCount.put(emt.name, nameCount.get(emt.name) + 1);
-					emt.id = emt.name + "_" + nameCount.get(emt.name);
+					for (Emote emt : emts) {
+						nameCount.putIfAbsent(emt.name, 0);
+						nameCount.put(emt.name, nameCount.get(emt.name) + 1);
+						emt.id = emt.name + "_" + nameCount.get(emt.name);
+					}
+
+					EMOTES.addAll(emts);
 				}
-
-				EMOTES.addAll(emts);
+			} catch (IOException exception) {
+				DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
 			}
-		}catch(IOException e){
-			e.printStackTrace();
+		} catch (IOException exception) {
+			DragonSurvivalMod.LOGGER.error("Resource [" + location + "] could not be opened", exception);
 		}
 	}
 

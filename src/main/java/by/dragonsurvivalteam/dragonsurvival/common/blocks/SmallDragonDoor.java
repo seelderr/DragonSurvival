@@ -147,7 +147,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 					playSound(worldIn, pos, flag);
 				}
 
-				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), 2);
+				worldIn.setBlock(pos, state.setValue(POWERED, flag).setValue(OPEN, flag), Block.UPDATE_CLIENTS);
 			}
 		}
 	}
@@ -172,7 +172,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 			if(state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || dragonStateHandler.isDragon() && state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) || state.getValue(
 					OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA)){
 				state = state.cycle(OPEN);
-				worldIn.setBlock(pos, state, 10);
+				worldIn.setBlock(pos, state, /* Block.UPDATE_CLIENTS + Block.UPDATE_IMMEDIATE */ 10);
 				worldIn.levelEvent(player, state.getValue(OPEN) ? getOpenSound() : getCloseSound(), pos, 0);
 				return InteractionResult.SUCCESS;
 			}

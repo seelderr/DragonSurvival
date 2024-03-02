@@ -35,6 +35,10 @@ import java.util.List;
 public class SeaDragonType extends AbstractDragonType {
 	public double timeWithoutWater;
 
+	public SeaDragonType() {
+		slotForBonus = 3;
+	}
+
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag tag = new CompoundTag();
@@ -127,34 +131,35 @@ public class SeaDragonType extends AbstractDragonType {
 
 
 	@Override
-	public boolean isInManaCondition(Player player, DragonStateHandler cap){
+	public boolean isInManaCondition(final Player player, final DragonStateHandler cap) {
 		BlockState blockBelow = player.level.getBlockState(player.blockPosition().below());
-		BlockState feetBlock = player.getFeetBlockState();
+		BlockState blockAtFeet = player.getFeetBlockState();
 
-		if(player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)){
+		if (player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)) {
 			return true;
 		}
-		if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.SEA.getTypeName())){
-			if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA.getTypeName()).contains(blockBelow.getBlock())){
-				if(blockBelow.getBlock() instanceof LayeredCauldronBlock){
-					if(blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)){
-						int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);
 
-						if(level > 0){
-							return true;
-						}
+		if (DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.SEA.getTypeName())) {
+			boolean containsBlockAtFeet = DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA.getTypeName()).contains(blockAtFeet.getBlock());
+			boolean containsBlockBelow = DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA.getTypeName()).contains(blockBelow.getBlock());
+
+			if ((containsBlockAtFeet || containsBlockBelow) && DragonTraitHandler.isInCauldron(blockAtFeet, blockBelow)) {
+				if (blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)) {
+					int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);
+
+					if (level > 0) {
+						return true;
 					}
 				}
 
-				if(feetBlock.getBlock() instanceof LayeredCauldronBlock){
-					if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)){
-						int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
-						
-						return level > 0;
-					}
+				if (blockAtFeet.hasProperty(LayeredCauldronBlock.LEVEL)) {
+					int level = blockAtFeet.getValue(LayeredCauldronBlock.LEVEL);
+
+					return level > 0;
 				}
 			}
 		}
+
 		return false;
 	}
 
@@ -169,7 +174,7 @@ public class SeaDragonType extends AbstractDragonType {
 	}
 
 	@Override
-	public List<TagKey<Block>> mineableBlocks(Player player){
+	public List<TagKey<Block>> mineableBlocks(){
 		return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
 	}
 }

@@ -17,16 +17,12 @@ buildscript {
     }
 }
 
-plugins {
-    id "io.freefair.lombok" version "6.5.0.2"
-}
-
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'maven-publish'
 
-version =  property("mc_version")+"-"+property("mod_version")
+version =  property("mc_version")+"-"+new Date().format("dd.MM.yyyy")
 group = property("mod_group")
 archivesBaseName = property("mod_name")
 
@@ -51,6 +47,13 @@ minecraft {
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${buildDir}/createSrgToMcp/output.srg"
         }
+
+        clientRandom {
+            parent runs.client
+            // #### will be replaced with a random number | UUID is a randomly generated one
+            args '--username', 'Dev####', '--uuid', 'fdb0e318-1ac3-4049-b6f8-d024c0b87a56'
+        }
+
         server {
             workingDirectory file('run/server')
             property 'forge.enabledGameTestNamespaces', 'dragonsurvival'
@@ -80,7 +83,7 @@ minecraft {
         }
 
         data {
-            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output', '"' + file('src/generated/resources/') + '"'
+            args '--mod', 'dragonsurvival', '--all', '--existing', '"' + file('src/main/resources/') + '"', '--output'
             mods {
                 dragonsurvival {
                     source sourceSets.main
@@ -89,11 +92,6 @@ minecraft {
         }
     }
 }
-
-sourceSets.main.resources {
-    srcDir 'src/generated/resources'
-}
-
 processResources {
     from sourceSets.main.resources
     inputs.property "version", project.version
@@ -120,19 +118,19 @@ repositories {
     	name = "Gecholib maven"
     	url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
     }
+    // JEI
     maven {
-        // location of the maven that hosts JEI files since January 2023
-        name = "Jared's maven"
-        url = "https://maven.blamejared.com/"
+        name 'Blamejared Maven'
+        url 'https://maven.blamejared.com'
     }
-    maven {
-        // location of a maven mirror for JEI files, as a fallback
-        name = "ModMaven"
-        url = "https://modmaven.dev"
-    }
-    maven {
-        url = "https://maven.theillusivec4.top/"
-    }
+
+    maven { url = "https://maven.theillusivec4.top/" }
+
+    // AppleSkin
+    maven { url "https://maven.ryanliptak.com/" }
+
+    // Curseforge
+    maven { url "https://cursemaven.com" }
 }
 dependencies {
     minecraft "net.minecraftforge:forge:$mc_version-$forge_version"
@@ -145,6 +143,9 @@ dependencies {
     compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${property('mc_version')}-${curios_version}:api")
     runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${property('mc_version')}-${curios_version}")
 
+    compileOnly fg.deobf("squeek.appleskin:appleskin-forge:${appleskin_version}:api")
+
+    // Mixin
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 

@@ -9,8 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -20,9 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 
 public abstract class ActiveDragonAbility extends DragonAbility{
-
-	@Setter
-	@Getter
 	private int currentCooldown;
 
 	public abstract int getManaCost();
@@ -144,5 +139,13 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 			components.add(new TranslatableComponent("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
 		return components;
+	}
+
+	public void setCurrentCooldown(int currentCooldown) {
+		this.currentCooldown = currentCooldown;
+	}
+
+	public int getCurrentCooldown() {
+		return currentCooldown;
 	}
 }

@@ -14,13 +14,14 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.client.gui.GuiUtils;
+import org.jetbrains.annotations.NotNull;
 
-public class DropdownList extends AbstractSelectionList<DropdownEntry>{
+public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public int listWidth;
 	public boolean visible;
 
-	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight){
+	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight) {
 		super(Minecraft.getInstance(), 0, 0, 0, 0, itemHeight);
 		listWidth = xSize;
 		setRenderBackground(false);
@@ -42,63 +43,67 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 	}
 
 	@Override
-	public int addEntry(DropdownEntry p_230513_1_){
-		return super.addEntry(p_230513_1_);
+	public int addEntry(@NotNull final DropdownEntry entry) {
+		return super.addEntry(entry);
 	}
 
 	@Override
-	public void updateNarration(NarrationElementOutput pNarrationElementOutput){}	@Override
-	public void centerScrollOn(DropdownEntry pEntry){
-		setScrollAmount(children().indexOf(pEntry) * itemHeight + itemHeight / 2 - (y1 - y0) / 2);
+	public void updateNarration(@NotNull final NarrationElementOutput narration) { /* Nothing to do */ }
+
+	@Override
+	public void centerScrollOn(@NotNull final DropdownEntry entry) {
+		setScrollAmount(children().indexOf(entry) * itemHeight + (double) itemHeight / 2 - (double) (y1 - y0) / 2);
 	}
-
-
-
 
 	@Override
 	public int getScrollbarPosition(){
 		return x1 - 6 - 3;
 	}
 
-
 	@Override
-	protected void renderBackground(PoseStack stack){
-		GuiUtils.drawContinuousTexturedBox(stack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
+	protected void renderBackground(@NotNull final PoseStack poseStack) {
+		// Renders the black background
+		GuiUtils.drawContinuousTexturedBox(poseStack, BACKGROUND_TEXTURE, x0, y0 - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10, (float)0);
 
-		if(children().size() > 0){
+		if (!children().isEmpty()) {
 			RenderSystem.enableScissor((int)(x0 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - (y1 - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
 		}
 	}
 
 	@Override
-	protected int getMaxPosition(){
+	protected int getMaxPosition() {
 		return getItemCount() * itemHeight + headerHeight + itemHeight / 4;
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
-		renderBackground(pPoseStack);
+	public void render(@NotNull final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+		if (!visible) {
+			return;
+		}
+
+		poseStack.translate(0, 0, -150);
+		renderBackground(poseStack);
+		poseStack.translate(0, 0, 150);
 		int i = getScrollbarPosition();
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
-		int j1 = getRowLeft();
-		int k = y0 + 4 - (int)getScrollAmount();
-		renderList(pPoseStack, j1, k, pMouseX, pMouseY, pPartialTicks);
+		int pX = getRowLeft();
+		int pY = y0 + 4 - (int) getScrollAmount();
+		renderList(poseStack, pX, pY, mouseX, mouseY, partialTicks);
 
-		if(children().size() > 0){
+		if (!children().isEmpty()) {
 			RenderSystem.disableScissor();
 		}
 
 		int k1 = getMaxScroll();
-		if(k1 > 0){
+
+		if (k1 > 0) {
 			RenderSystem.disableTexture();
 			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			int l1 = (int)((float)((y1 - y0) * (y1 - y0)) / (float)getMaxPosition());
+			int l1 = (int) ((float) ((y1 - y0) * (y1 - y0)) / (float) getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, y1 - y0 - 8);
-			int i2 = (int)getScrollAmount() * (y1 - y0 - l1) / k1 + y0;
-			if(i2 < y0)
-				i2 = y0;
+			int i2 = Math.max(y0, (int) getScrollAmount() * (y1 - y0 - l1) / k1 + y0);
 			double z = getBlitOffset() + 10;
 
 			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
@@ -117,13 +122,13 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry>{
 			tesselator.end();
 		}
 
-		renderDecorations(pPoseStack, pMouseX, pMouseY);
+		renderDecorations(poseStack, mouseX, mouseY);
 		RenderSystem.enableTexture();
 		RenderSystem.disableBlend();
 	}
 
 	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)y0 - 3 && pMouseY <= (double)y1 + 3 && pMouseX >= (double)x0 && pMouseX <= (double)x1;
+	public boolean isMouseOver(double mouseX, double mouseY) {
+		return visible && mouseY >= (double) y0 - 3 && mouseY <= (double) y1 + 3 && mouseX >= (double) x0 && mouseX <= (double) x1;
 	}
 }

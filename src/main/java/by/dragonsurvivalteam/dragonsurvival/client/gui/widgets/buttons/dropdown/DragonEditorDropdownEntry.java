@@ -1,3 +1,4 @@
+/*
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -42,4 +43,4 @@ public class DragonEditorDropdownEntry extends DropdownEntry{
 	public List<? extends NarratableEntry> narratables(){
 		return children;
 	}
-}
+}*/

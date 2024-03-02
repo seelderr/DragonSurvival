@@ -1,84 +1,56 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
-
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 
 import java.util.function.Supplier;
 
-public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu>{
+public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu> {
 	public int playerId;
 	public boolean state;
 
-	public SimpleContainer inv;
+	public SimpleContainer clawInventory;
 
-	public SyncDragonClawsMenu(){}
+	public SyncDragonClawsMenu() { /* Nothing to do */ }
 
-	public SyncDragonClawsMenu(int playerId, boolean state, SimpleContainer inv){
-
+	public SyncDragonClawsMenu(int playerId, boolean state, final SimpleContainer clawInventory) {
 		this.playerId = playerId;
 		this.state = state;
-		this.inv = inv;
+		this.clawInventory = clawInventory;
 	}
 
 	@Override
-
-	public void encode(SyncDragonClawsMenu message, FriendlyByteBuf buffer){
-
+	public void encode(final SyncDragonClawsMenu message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
 		buffer.writeBoolean(message.state);
 		CompoundTag nbt = new CompoundTag();
-		nbt.put("inv", ClawInventory.saveClawInventory(message.inv));
+		nbt.put("inv", ClawInventory.saveClawInventory(message.clawInventory));
 		buffer.writeNbt(nbt);
 	}
 
 	@Override
-
-	public SyncDragonClawsMenu decode(FriendlyByteBuf buffer){
-
+	public SyncDragonClawsMenu decode(final FriendlyByteBuf buffer) {
 		int playerId = buffer.readInt();
 		boolean state = buffer.readBoolean();
 		CompoundTag tag = buffer.readNbt();
-		SimpleContainer inventory = ClawInventory.readClawInventory(tag.getList("inv", 10));
+		SimpleContainer inventory = ClawInventory.readClawInventory(tag.getList("inv", 10)); // TODO :: What type is 10?
 		return new SyncDragonClawsMenu(playerId, state, inventory);
 	}
 
 	@Override
-	public void handle(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> run(message, supplier));
-	}
-
-	@OnlyIn( Dist.CLIENT )
-	public void run(SyncDragonClawsMenu message, Supplier<NetworkEvent.Context> supplier){
+	public void handle(final SyncDragonClawsMenu message, final Supplier<NetworkEvent.Context> supplier) {
 		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
 
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			context.enqueueWork(() -> ClientProxy.handleSyncDragonClawsMenu(message));
+		}
 
-					DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-						dragonStateHandler.getClawToolData().setClawsMenuOpen(message.state);
-						dragonStateHandler.getClawToolData().setClawsInventory(message.inv);
-					});
-				}
-			}
-			context.setPacketHandled(true);
-		});
+		context.setPacketHandled(true);
 	}
 }

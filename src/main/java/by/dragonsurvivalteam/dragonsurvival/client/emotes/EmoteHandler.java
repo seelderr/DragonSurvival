@@ -69,7 +69,7 @@ public class EmoteHandler{
 
 					if(Minecraft.getInstance().player != null && player.getId() == Minecraft.getInstance().player.getId()){
 						if(player.isCrouching() || player.swinging){
-							EmoteMenuHandler.clearEmotes();
+							EmoteMenuHandler.clearEmotes(player);
 							return;
 						}
 
@@ -121,7 +121,7 @@ public class EmoteHandler{
 
 	@SubscribeEvent
 	public static void playerAttacked(LivingHurtEvent event){
-		EmoteMenuHandler.clearEmotes();
+		EmoteMenuHandler.clearEmotes(event.getEntity());
 	}
 
 	@SubscribeEvent

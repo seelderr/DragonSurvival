@@ -1,63 +1,46 @@
 package by.dragonsurvivalteam.dragonsurvival.network;
 
-import net.minecraft.client.Minecraft;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public abstract class ISidedMessage<T extends ISidedMessage> implements IMessage<T>{
+public abstract class ISidedMessage<T extends ISidedMessage<T>> implements IMessage<T> {
 	public int playerId;
 
-	public ISidedMessage(int playerId){
+	public ISidedMessage(int playerId) {
 		this.playerId = playerId;
 	}
 
 	@Override
-	public void handle(T message, Supplier<NetworkEvent.Context> supplier){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)() -> runClientThread(message, supplier));
+	public void handle(final T message, final Supplier<NetworkEvent.Context> supplier) {
+		NetworkEvent.Context context = supplier.get();
 
-		if(supplier.get().getDirection() == NetworkDirection.PLAY_TO_SERVER){
-			ServerPlayer entity = supplier.get().getSender();
-			if(entity != null){
-				runServer(message, supplier, entity);
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> entity), create(message));
+		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
+			ClientProxy.handleRunClient(message, context);
+		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
+			ServerPlayer sender = context.getSender();
+
+			if (sender != null) {
+				runServer(message, context, sender);
+				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), create(message));
 			}
 		}
 
-		runCommon(message, supplier);
+		runCommon(message, context);
+		context.setPacketHandled(true);
 	}
 
 	public abstract T create(T message);
 
-	public abstract void runCommon(T message, Supplier<NetworkEvent.Context> supplier);
+	/** Gets handled within enqueueWork() */
+	public abstract void runClient(T message, NetworkEvent.Context context, Player targetPlayer);
 
-	public abstract void runServer(T message, Supplier<NetworkEvent.Context> supplier, ServerPlayer sender);
+	public abstract void runCommon(T message, NetworkEvent.Context context);
 
-	@OnlyIn( Dist.CLIENT )
-	private void runClientThread(T message, Supplier<NetworkEvent.Context> supplier){
-		NetworkEvent.Context context = supplier.get();
-		context.enqueueWork(() -> {
-			Player thisPlayer = Minecraft.getInstance().player;
-			if(thisPlayer != null){
-				Level world = thisPlayer.level;
-				Entity entity = world.getEntity(message.playerId);
-				if(entity instanceof Player){
-					runClient(message, supplier, (Player)entity);
-				}
-			}
-			context.setPacketHandled(true);
-		});
-	}
-
-	public abstract void runClient(T message, Supplier<NetworkEvent.Context> supplier, Player targetPlayer);
+	public abstract void runServer(T message, NetworkEvent.Context context, ServerPlayer sender);
 }

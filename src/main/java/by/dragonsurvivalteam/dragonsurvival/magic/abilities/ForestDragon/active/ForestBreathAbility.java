@@ -19,8 +19,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
-import net.minecraft.client.resources.sounds.SoundInstance;
-import net.minecraft.client.resources.sounds.TickableSoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -46,6 +44,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,11 +57,11 @@ public class ForestBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathDamage", comment = "The amount of damage the forest breath ability deals. This value is multiplied by the skill level." )
 	public static Double forestBreathDamage = 2.0;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in ticks of the forest breath ability" )
-	public static Integer forestBreathCooldown = 100;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in seconds of the forest breath ability" )
+	public static Integer forestBreathCooldown = 5;
 	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in ticks of the forest breath ability" )
-	public static Integer forestBreathCasttime = 20;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in seconds of the forest breath ability" )
+	public static Integer forestBreathCasttime = 1;
 	@ConfigRange( min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathInitialMana", comment = "The mana cost for starting the forest breath ability" )
 	public static Integer forestBreathInitialMana = 2;
@@ -70,14 +69,26 @@ public class ForestBreathAbility extends BreathAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathOvertimeMana", comment = "The mana cost of sustaining the forest breath ability" )
 	public static Integer forestBreathOvertimeMana = 1;
 	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in ticks, mana is consumed while using forest breath" )
-	public static Integer forestBreathManaTicks = 40;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in seconds, mana is consumed while using forest breath" )
+	public static Integer forestBreathManaTicks = 2;
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathBlockBreaks", comment = "Blocks that have a chance to be broken by forest breath. Formatting: block/modid:id" )
 	public static List<String> forestBreathBlockBreaks = List.of("minecraft:banners");
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id" )
-	public static List<String> forestBreathGrowBlacklist =List.of();
+	public static List<String> forestBreathGrowBlacklist = List.of("minecraft:grass", "minecraft:grass_block");
+
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "allowDirtTransformation", comment = "Allow the forest breath to transform dirt into nature related blocks")
+	public static Boolean allowDirtTransformation = true;
+
+	@ConfigType(Block.class)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "dirtTransformationBlocks", comment = "Blocks which dirt can be transformed into. Formatting: mod_id:block_id:chance (e.g. minecraft:podzol:7) (The chance is x out of 100)")
+	public static List<String> dirtTransformationBlocks = List.of(
+			"minecraft:moss_block:3",
+			"minecraft:podzol:7",
+			"minecraft:mycelium:7",
+			"minecraft:grass_block:25"
+	);
 
 	@Override
 	public String getName(){
@@ -123,52 +134,72 @@ public class ForestBreathAbility extends BreathAbility{
 	}
 
 	@Override
-	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if(blockState.getMaterial().isSolidBlocking()){
-			if(!player.level.isClientSide){
-				if(player.getRandom().nextInt(100) < 30){
-					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
-					entity.setWaitTime(0);
-					entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
-					entity.setDuration(Functions.secondsToTicks(2));
-					entity.setRadius(1);
-					entity.setParticle(new LargePoisonParticleData(37, false));
-					player.level.addFreshEntity(entity);
-				}
+	public void onBlock(final BlockPos blockPosition, final BlockState blockState, final Direction direction) {
+		if (!(player.level instanceof ServerLevel serverLevel)) {
+			return;
+		}
+
+		if (blockState.getMaterial().isSolidBlocking()) {
+			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
+				entity.setWaitTime(0);
+				entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
+				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.DRAIN, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setDuration(Functions.secondsToTicks(2));
+				entity.setRadius(1);
+				entity.setParticle(new LargePoisonParticleData(37, false));
+				serverLevel.addFreshEntity(entity);
 			}
 		}
-		if(blockState.getBlock() == Blocks.POTATOES){
-			if(player.getRandom().nextInt(100) < 10){
-				PotatoBlock bl = (PotatoBlock)blockState.getBlock();
-				if(bl.isMaxAge(blockState)){
-					player.level.destroyBlock(pos, false);
-					player.level.addFreshEntity(new ItemEntity(player.level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, new ItemStack(Items.POISONOUS_POTATO)));
+
+		if (blockState.getBlock() == Blocks.POTATOES) {
+			if (/* 10% */ player.getRandom().nextInt(100) < 10) {
+				if (((PotatoBlock) blockState.getBlock()).isMaxAge(blockState)) {
+					serverLevel.destroyBlock(blockPosition, false);
+					serverLevel.addFreshEntity(new ItemEntity(serverLevel, blockPosition.getX() + 0.5, blockPosition.getY(), blockPosition.getZ() + 0.5, new ItemStack(Items.POISONOUS_POTATO)));
 				}
 			}
 		}
 
-
-		if(blockState.getBlock() != Blocks.GRASS_BLOCK && blockState.getBlock() != Blocks.GRASS){
-			if(player.getRandom().nextInt(100) < 50){
-				if(blockState.getBlock() instanceof BonemealableBlock){
-					if(!DragonConfigHandler.FOREST_DRAGON_BREATH_GROW_BLACKLIST.contains(blockState.getBlock())){
-						BonemealableBlock igrowable = (BonemealableBlock)blockState.getBlock();
-						if(igrowable.isValidBonemealTarget(player.level, pos, blockState, player.level.isClientSide)){
-							if(player.level instanceof ServerLevel){
-								if(igrowable.isBonemealSuccess(player.level, player.getRandom(), pos, blockState)){
-									for(int i = 0; i < 3; i++){
-										if(igrowable instanceof DoublePlantBlock plant){
-											if(!blockState.hasProperty(DoublePlantBlock.HALF)){
-												continue;
-											}
-										}
-										igrowable.performBonemeal((ServerLevel)player.level, player.getRandom(), pos, blockState);
+		if (/* 50% */ player.getRandom().nextInt(100) < 50) {
+			if (blockState.getBlock() instanceof BonemealableBlock bonemealableBlock) {
+				if (!DragonConfigHandler.FOREST_DRAGON_BREATH_GROW_BLACKLIST.contains(bonemealableBlock)) {
+					if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockPosition, blockState, false)) {
+						if (bonemealableBlock.isBonemealSuccess(serverLevel, player.getRandom(), blockPosition, blockState)) {
+							for (int i = 0; i < 3; i++) {
+								if (bonemealableBlock instanceof DoublePlantBlock) {
+									if (!blockState.hasProperty(DoublePlantBlock.HALF)) {
+										continue;
 									}
 								}
+
+								bonemealableBlock.performBonemeal(serverLevel, player.getRandom(), blockPosition, blockState);
 							}
 						}
 					}
+				}
+			}
+		}
+
+		if (allowDirtTransformation) {
+			if ((blockState.is(Blocks.DIRT) || blockState.is(Blocks.COARSE_DIRT)) && serverLevel.getBlockState(blockPosition.above()).is(Blocks.AIR)) {
+				List<String> toProcess = new ArrayList<>(dirtTransformationBlocks);
+
+				while (!toProcess.isEmpty()) {
+					int index = player.getRandom().nextInt(toProcess.size());
+					String element = toProcess.get(index);
+					String[] data = element.split(":");
+
+					if (player.getRandom().nextInt(100) < Integer.parseInt(data[2])) {
+						ResourceLocation resourceLocation = new ResourceLocation(data[0], data[1]);
+
+						if (ForgeRegistries.BLOCKS.containsKey(resourceLocation)) {
+							serverLevel.setBlock(blockPosition, ForgeRegistries.BLOCKS.getValue(resourceLocation).defaultBlockState(), Block.UPDATE_ALL);
+							break;
+						}
+					}
+
+					toProcess.remove(index);
 				}
 			}
 		}
@@ -235,7 +266,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillCooldown(){
-		return forestBreathCooldown;
+		return Functions.secondsToTicks(forestBreathCooldown);
 	}
 
 
@@ -268,7 +299,7 @@ public class ForestBreathAbility extends BreathAbility{
 
 		if(!entityHit.level.isClientSide){
 			if(entityHit.getRandom().nextInt(100) < 30){
-				DragonUtils.getHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
+				DragonUtils.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
@@ -303,11 +334,16 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public int getSkillChargeTime(){
-		return forestBreathCasttime;
+		return Functions.secondsToTicks(forestBreathCasttime);
 	}
 
 	@Override
-	public int getChargingManaCost(){
+	public int getContinuousManaCostTime() {
+		return Functions.secondsToTicks(forestBreathManaTicks);
+	}
+
+	@Override
+	public int getInitManaCost(){
 		return forestBreathInitialMana;
 	}
 

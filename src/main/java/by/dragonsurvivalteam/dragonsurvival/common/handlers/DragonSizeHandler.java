@@ -22,8 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Mod.EventBusSubscriber
 public class DragonSizeHandler{
-	private static final ConcurrentHashMap<Integer, Boolean> wasDragon = new ConcurrentHashMap<Integer, Boolean>(20);
-	public static ConcurrentHashMap<Integer, Double> lastSize = new ConcurrentHashMap<Integer, Double>(20);
+	// TODO :: Add timestamp and clear cache
+	private static final ConcurrentHashMap<String, Boolean> WAS_DRAGON = new ConcurrentHashMap<>(20);
+	private static final ConcurrentHashMap<String, Double> LAST_SIZE = new ConcurrentHashMap<>(20);
 
 	@SubscribeEvent
 	public static void getDragonSize(EntityEvent.Size event){
@@ -87,17 +88,20 @@ public class DragonSizeHandler{
 		return new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false);
 	}
 
-	public static Pose overridePose(Player player){
-		if(player == null) return Pose.STANDING;
+	public static Pose overridePose(final Player player) {
+		if (player == null) {
+			return Pose.STANDING;
+		}
 
 		Pose overridePose = getOverridePose(player);
-		if(player.getForcedPose() != overridePose){
+
+		if (player.getForcedPose() != overridePose) {
 			player.setForcedPose(overridePose);
-			if(player.level.isClientSide() && Minecraft.getInstance().getCameraEntity() != player){
+
+			if (player.level.isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
 				player.refreshDimensions();
 			}
 		}
-
 
 		return overridePose;
 	}
@@ -151,25 +155,32 @@ public class DragonSizeHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerTick(TickEvent.PlayerTickEvent event){
+	public static void playerTick(final TickEvent.PlayerTickEvent event) {
 		Player player = event.player;
-		if(player == null || event.phase == TickEvent.Phase.END || !ServerConfig.sizeChangesHitbox){
+
+		if (player == null || event.phase == TickEvent.Phase.END || !ServerConfig.sizeChangesHitbox) {
 			return;
 		}
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
+
+		// In cases where client and server runs on the same machine
+		// Only using the player id results in one side not refreshing the dimensions
+		String playerIdSide = player.getId() + event.side.name();
+
+		DragonStateProvider.getCap(player).ifPresent(handler -> {
+			if (handler.isDragon()) {
 				overridePose(player);
-				if(!wasDragon.getOrDefault(player.getId(), false)){
+
+				if (!WAS_DRAGON.getOrDefault(playerIdSide, false)) {
 					player.refreshDimensions();
-					wasDragon.put(player.getId(), true);
-				}else if(lastSize.getOrDefault(player.getId(), 20.0) != dragonStateHandler.getSize()){
+					WAS_DRAGON.put(playerIdSide, true);
+				} else if (LAST_SIZE.getOrDefault(playerIdSide, 20.0) != handler.getSize()) {
 					player.refreshDimensions();
-					lastSize.put(player.getId(), dragonStateHandler.getSize());
+					LAST_SIZE.put(playerIdSide, handler.getSize());
 				}
-			}else if(wasDragon.getOrDefault(player.getId(), false)){
+			} else if (WAS_DRAGON.getOrDefault(playerIdSide, false)) {
 				player.setForcedPose(null);
 				player.refreshDimensions();
-				wasDragon.put(player.getId(), false);
+				WAS_DRAGON.put(playerIdSide, false);
 			}
 		});
 	}

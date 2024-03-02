@@ -151,12 +151,12 @@ public class ServerConfig{
 	public static Boolean treasureHealthRegen = true;
 
 	@ConfigRange( min = 1, max = 10000000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicks", comment = "The time in ticks it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time." )
-	public static Integer treasureRegenTicks = 24010;
+	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicks", comment = "The time in seconds it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time." )
+	public static Integer treasureRegenTicks = 241;
 
 	@ConfigRange( min = 1, max = 10000000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicksReduce", comment = "The amount of ticks each additional treasure reduces the regen time by" )
-	public static Integer treasureRegenTicksReduce = 100;
+	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicksReduce", comment = "The amount of seconds each additional treasure reduces the regen time by" )
+	public static Integer treasureRegenTicksReduce = 1;
 
 	@ConfigRange( min = 1, max = 10000000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "maxTreasures", comment = "The max amount of additional treasure that can be used to reduce the regen time" )
@@ -230,11 +230,11 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "clawsAreTools", comment = "Whether dragon claws function as tools." )
 	public static Boolean clawsAreTools = true;
 
-	@ConfigRange( min = -1, max = 100 )
+	@ConfigRange(min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "baseHarvestLevel", comment = "The harvest level to apply when dragons breaks a block, regardless of dragon/tool type." )
 	public static Integer baseHarvestLevel = 0;
 
-	@ConfigRange( min = -1, max = 100 )
+	@ConfigRange(min = 0, max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "bonusHarvestLevel", comment = "The harvest level to apply to a dragons specific tool type once unlocked." )
 	public static Integer bonusHarvestLevel = 1;
 
@@ -295,11 +295,38 @@ public class ServerConfig{
 	public static Boolean ridingBlacklist = true;
 
 	@ConfigType(Item.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that disallowed to be used by dragons. Format: item/modid:id" )
-	public static List<String> blacklistedItems = List.of("minecraft:bow", "spartanshields:shield_basic_nickel", "spartanshields:shield_basic_invar", "spartanshields:shield_basic_constantan", "spartanshields:shield_basic_platinum", "spartanshields:shield_mekanism_refined_glowstone", "spartanshields:shield_tower_wood", "spartanshields:shield_tower_stone", "spartanshields:shield_tower_iron", "spartanshields:shield_tower_gold", "spartanshields:shield_tower_diamond", "spartanshields:shield_tower_netherite", "spartanshields:shield_tower_obsidian", "spartanshields:shield_tower_copper", "spartanshields:shield_tower_tin", "spartanshields:shield_tower_bronze", "spartanshields:shield_tower_steel", "spartanshields:shield_tower_silver", "spartanshields:shield_tower_lead", "spartanshields:shield_tower_nickel", "spartanshields:shield_tower_constantan", "spartanshields:shield_tower_invar", "spartanshields:shield_tower_platinum", "spartanshields:shield_tower_electrum", "spartanshields:shield_mekanism_powered_ultimate", "quark:flamerang", "quark:pickarang", "spartanshields:shield_botania_manasteel", "spartanshields:shield_botania_elementium", "spartanshields:shield_mekanism_osmium", "spartanshields:shield_mekanism_lapis_lazuli", "spartanshields:shield_basic_electrum", "spartanshields:shield_mekanism_refined_obsidian", "spartanshields:shield_mekanism_powered_basic", "spartanshields:shield_mekanism_powered_advanced", "spartanshields:shield_mekanism_powered_elite", "spartanweaponry:boomerang_steel", "spartanweaponry:boomerang_invar", "spartanweaponry:boomerang_platinum", "spartanweaponry:boomerang_electrum", "spartanshields:shield_basic_bronze", "spartanshields:shield_basic_tin", "spartanshields:shield_basic_copper", "spartanshields:shield_basic_obsidian", "spartanshields:shield_basic_netherite", "spartanshields:shield_basic_diamond", "spartanshields:shield_basic_gold", "spartanshields:shield_basic_iron", "spartanshields:shield_basic_stone", "spartanshields:shield_basic_wood", "spartanweaponry:boomerang_lead", "spartanweaponry:boomerang_nickel", "spartanshields:shield_basic_steel", "spartanshields:shield_basic_silver", "spartanshields:shield_basic_lead", "spartanweaponry:boomerang_bronze", "spartanweaponry:boomerang_tin", "spartanweaponry:boomerang_copper", "spartanweaponry:boomerang_netherite", "spartanweaponry:boomerang_gold", "spartanweaponry:boomerang_iron", "spartanweaponry:boomerang_stone", "spartanweaponry:heavy_crossbow_bronze", "mowziesmobs:wrought_axe", "spartanshields:shield_botania_terrasteel", "spartanweaponry:heavy_crossbow_leather", "spartanweaponry:heavy_crossbow_iron", "spartanweaponry:heavy_crossbow_gold", "spartanweaponry:heavy_crossbow_diamond", "spartanweaponry:heavy_crossbow_netherite", "spartanweaponry:heavy_crossbow_copper", "spartanweaponry:heavy_crossbow_tin", "spartanweaponry:boomerang_wood", "nethers_exoticism:rambutan_shield", "minecraft:shield", "minecraft:trident", "spartanweaponry:heavy_crossbow_lead", "spartanweaponry:heavy_crossbow_nickel", "spartanweaponry:heavy_crossbow_electrum", "spartanweaponry:heavy_crossbow_platinum", "spartanweaponry:heavy_crossbow_invar", "spartanweaponry:heavy_crossbow_silver", "spartanweaponry:heavy_crossbow_steel", "spartanweaponry:boomerang_diamond", "spartanweaponry:heavy_crossbow_wood", "minecraft:crossbow", "aquaculture:neptunium_bow", "spartanweaponry:longbow_electrum", "spartanweaponry:longbow_invar", "infernalexp:glowsilk_bow", "spartanweaponry:longbow_wood", "spartanweaponry:longbow_leather", "spartanweaponry:longbow_silver", "spartanweaponry:longbow_steel", "spartanweaponry:longbow_bronze", "spartanweaponry:longbow_tin", "spartanweaponry:longbow_copper", "spartanweaponry:longbow_netherite", "spartanweaponry:longbow_diamond", "spartanweaponry:longbow_gold", "spartanweaponry:longbow_iron", "spartanweaponry:boomerang_diamond", "spartanweaponry:boomerang_iron", "spartanweaponry:boomerang_wood", "spartanweaponry:boomerang_gold", "spartanweaponry:boomerang_netherite", "spartanweaponry:boomerang_copper", "spartanweaponry:boomerang_tin", "spartanweaponry:boomerang_bronze", "spartanweaponry:boomerang_stone", "spartanweaponry:boomerang_platinum", "spartanweaponry:boomerang_electrum", "spartanweaponry:boomerang_steel", "spartanweaponry:boomerang_lead", "spartanweaponry:boomerang_invar", "spartanweaponry:boomerang_nickel");
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
+	public static List<String> blacklistedItems = List.of(
+			"minecraft:bow"
+			, "minecraft:crossbow"
+			, "minecraft:shield"
+			, "minecraft:trident"
+			, "quark:flamerang"
+			, "quark:pickarang"
+			, "mowziesmobs:wrought_axe"
+			, "nethers_exoticism:rambutan_shield"
+			, "aquaculture:neptunium_bow"
+			, "infernalexp:glowsilk_bow"
+			, "upgradednetherite_ultimate:ultimate_upgraded_netherite_crossbow"
+			, "upgradednetherite_ultimate:ultimate_upgraded_netherite_bow"
+			, "cataclysm:ignitium_elytra_chestplate"
+			, "revised_phantoms:phantom_wings_chestplate"
+			, "deeperdarker:soul_elytra"
+	);
 
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItemsRegex", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:<regular_expression>. Example: minecraft:.*?_wool" )
+	public static List<String> blacklistedItemsRegex = List.of(
+			"upgradednetherite:.*?_bow"
+			, "upgradednetherite:.*?_crossbow"
+			, "spartanweaponry:boomerang_.*"
+			, "spartanshields:shield_.*"
+			, "spartanweaponry:heavy_crossbow_.*"
+			, "spartanweaponry:longbow_.*"
+	);
+
+	// FIXME :: Currently lists of integer are not properly supported - they get converted to string lists or sth
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
-	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45);
+	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45, 38);
 
 	// Cave Dragon Penalties
 	@ConfigRange( min = 0.0, max = 100.0 )
@@ -342,7 +369,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationBlocks", comment = "When sea dragons stand on these blocks, hydration is restored. Format: block/modid:id" )
-	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:powder_snow", "minecraft:snow_block", "minecraft:muddy_mangrove_roots", "minecraft:mud", "minecraft:wet_sponge", "dragonsurvival:sea_source_of_magic", "immersive_weathering:thin_ice", "immersive_weathering:cryosol", "immersive_weathering:permafrost", "immersive_weathering:frosty_grass", "immersive_weathering:frosty_fern", "ecologics:thin_ice", "ecologics:ice_bricks", "ecologics:ice_brick_stairs", "ecologics:ice_brick_slab", "ecologics:ice_brick_wall", "ecologics:snow_bricks", "ecologics:snow_brick_stairs", "ecologics:snow_brick_slab", "ecologics:snow_brick_wall", "architects_palette:poliched_packed_ice", "architects_palette:poliched_packed_ice_slab", "architects_palette:poliched_packed_ice_vertical_slab", "architects_palette:poliched_packed_ice_stairs", "architects_palette:poliched_packed_ice_wall", "architects_palette:chiseled_packed_ice", "architects_palette:packed_ice_pillar", "architects_palette:coarse_snow", "fantasyfurniture:decorations/snowballs", "immersive_weathering:icicle", "regions_unexplored:plains_mud", "regions_unexplored:forest_mud");
+	public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:powder_snow", "minecraft:snow_block", "minecraft:muddy_mangrove_roots", "minecraft:mud", "minecraft:wet_sponge", "dragonsurvival:sea_source_of_magic", "immersive_weathering:thin_ice", "immersive_weathering:cryosol", "immersive_weathering:permafrost", "immersive_weathering:frosty_grass", "immersive_weathering:frosty_fern", "ecologics:thin_ice", "ecologics:ice_bricks", "ecologics:ice_brick_stairs", "ecologics:ice_brick_slab", "ecologics:ice_brick_wall", "ecologics:snow_bricks", "ecologics:snow_brick_stairs", "ecologics:snow_brick_slab", "ecologics:snow_brick_wall", "architects_palette:poliched_packed_ice", "architects_palette:poliched_packed_ice_slab", "architects_palette:poliched_packed_ice_vertical_slab", "architects_palette:poliched_packed_ice_stairs", "architects_palette:poliched_packed_ice_wall", "architects_palette:chiseled_packed_ice", "architects_palette:packed_ice_pillar", "architects_palette:coarse_snow", "fantasyfurniture:decorations/snowballs", "immersive_weathering:icicle", "regions_unexplored:plains_mud", "regions_unexplored:forest_mud", "naturearchitect:snow_block_0", "naturearchitect:snow_block_2", "naturearchitect:snow_cover_1", "naturearchitect:snow_cover_2", "naturearchitect:snow_cover_3", "naturearchitect:snow_block_2", "immersive_weathering:snowy_stone_brick_wall", "immersive_weathering:snowy_stone_brick_stairs", "immersive_weathering:snowy_chiseled_stone_bricks", "immersive_weathering:snowy_stone_bricks", "immersive_weathering:snowy_cobblestone_wall", "immersive_weathering:snowy_cobblestone_slab", "immersive_weathering:snowy_cobblestone_stairs", "immersive_weathering:snowy_cobblestone", "immersive_weathering:snowy_stone_wall", "immersive_weathering:snowy_stone_slab", "immersive_weathering:snowy_stone_stairs", "immersive_weathering:snowy_stone", "immersive_weathering:snow_brick_wall", "immersive_weathering:snow_brick_slab", "immersive_weathering:snow_brick_stairs", "immersive_weathering:snow_bricks", "frozenup:compacted_snow_foundation", "frozenup:compacted_snow_brick_vertical_slab", "frozenup:compacted_snow_brick_slab", "frozenup:compacted_snow_brick_stairs", "frozenup:compacted_snow_bricks", "frozenup:compacted_snow_brick_stairs");
 
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "allowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration." )
 	public static Boolean seaAllowWaterBottles = true;
@@ -372,20 +399,18 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore." )
 	public static Double dragonOreBoneChance = 0.01;
 
+	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "oresTag", comment = "The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id" )
 	public static String oresTag = "forge:ores";
 
-	@IgnoreConfigCheck
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToCaveDragon", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage" )
 	public static List<String> caveDragonHurtfulItems = Arrays.asList("minecraft:potion:2", "minecraft:water_bottle:2", "minecraft:milk_bucket:2");
 
-	@IgnoreConfigCheck
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToSeaDragon", comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage" )
 	public static List<String> seaDragonHurtfulItems = Collections.emptyList();
 
-	@IgnoreConfigCheck
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "food", key = "hurtfulToForestDragon", comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage" )
 	public static List<String> forestDragonHurtfulItems = Collections.emptyList();
@@ -397,15 +422,15 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:powder_snow", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron");
+	public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:powder_snow", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron", "naturearchitect:snow_block_0", "naturearchitect:snow_block_2", "naturearchitect:snow_cover_1", "naturearchitect:snow_cover_2", "naturearchitect:snow_cover_3", "naturearchitect:snow_block_2", "immersive_weathering:snowy_stone_brick_wall", "immersive_weathering:snowy_stone_brick_stairs", "immersive_weathering:snowy_chiseled_stone_bricks", "immersive_weathering:snowy_stone_bricks", "immersive_weathering:snowy_cobblestone_wall", "immersive_weathering:snowy_cobblestone_slab", "immersive_weathering:snowy_cobblestone_stairs", "immersive_weathering:snowy_cobblestone", "immersive_weathering:snowy_stone_wall", "immersive_weathering:snowy_stone_slab", "immersive_weathering:snowy_stone_stairs", "immersive_weathering:snowy_stone", "immersive_weathering:snow_brick_wall", "immersive_weathering:snow_brick_slab", "immersive_weathering:snow_brick_stairs", "immersive_weathering:snow_bricks", "frozenup:compacted_snow_foundation", "frozenup:compacted_snow_brick_vertical_slab", "frozenup:compacted_snow_brick_slab", "frozenup:compacted_snow_brick_stairs", "frozenup:compacted_snow_bricks", "frozenup:compacted_snow_brick_stairs");
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:grass_block", "minecraft:grass_block", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers", "minecraft:lily_pad", "minecraft:red_mushroom", "minecraft:brown_mushroom", "minecraft:sweet_berry_bush", "minecraft:oak_leaves");
+	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:grass_block", "minecraft:grass_block", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers", "minecraft:lily_pad", "minecraft:red_mushroom", "minecraft:brown_mushroom", "minecraft:sweet_berry_bush", "minecraft:oak_leaves", "naturearchitect:grass_cover_stairs", "naturearchitect:grass_cover_slab", "farmersdelight:brown_mushroom_colony", "farmersdelight:red_mushroom_colony", "gothic:black_mushroom", "gothic:tall_mushrooms", "gothic:cave_mushrooms", "naturearchitect:grass_carpet", "regions_unexplored:mycotoxic_mushrooms", "naturearchitect:moss_cover_3", "naturearchitect:moss_cover_2", "naturearchitect:moss_cover_1", "naturearchitect:mycelium_block_2", "naturearchitect:mycelium_cover_3", "naturearchitect:mycelium_cover_1", "naturearchitect:mycelium_cover_2", "naturearchitect:mycelium_block_1", "naturearchitect:moss_plant_1", "naturearchitect:moss_plant_2", "naturearchitect:moss_plant_3", "naturearchitect:moss_patch", "naturearchitect:moss_patch_dense", "regions_unexplored:spanish_moss", "minecraft:mycelium", "minecraft:moss_block", "minecraft:moss_carpet", "regions_unexplored:alpha_grass_block", "regions_unexplored:chalk_grass_block", "regions_unexplored:peat_grass_block", "regions_unexplored:silt_grass_block", "regions_unexplored:argillite_grass_block", "regions_unexplored:stone_grass_block", "regions_unexplored:deepslate_grass_block", "immersive_weathering:rooted_grass_block", "naturearchitect:grass_block", "naturearchitect:grass_cover", "naturearchitect:crimson_92", "naturearchitect:grass_1", "naturearchitect:grass_2", "naturearchitect:grass_3", "naturearchitect:grass_4", "naturearchitect:grass_windy", "naturearchitect:grass_stalk", "naturearchitect:grass_fern", "naturearchitect:grass_sapling", "phantasm:vivid_nihilium_grass", "vinery:grass_slab", "naturearchitect:grass_liana", "naturearchitect:grass_ivy", "naturearchitect:grass_bean_stalk");
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
-	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge");
+	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:fire", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge", "regions_unexplored:brimwood_log_magma", "infernalexp:magmatic_chiseled_basalt_bricks", "infernalexp:basaltic_magma", "regions_unexplored:brimwood_log_magma", "naturearchitect:magma_inactive", "naturearchitect:magma_cracks", "netherdepthsupgrade:lava_sponge");
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "dragonAbilities", comment = "Whether dragon abilities should be enabled" )
@@ -554,10 +579,10 @@ public class ServerConfig{
 	@ConfigRange( min = 0d, max = 20d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
 	public static Double hunterArmor = 0d;
-	/*
-        @ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-        public static Boolean hunterHasBolas = false;
-    */
+/*
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
+	public static Boolean hunterHasBolas = false;
+*/
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
 	public static Double squireHealth = 24d;

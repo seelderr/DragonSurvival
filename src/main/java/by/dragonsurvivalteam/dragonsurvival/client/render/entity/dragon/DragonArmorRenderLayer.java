@@ -54,10 +54,10 @@ public class DragonArmorRenderLayer extends GeoLayerRenderer<DragonEntity>{
 
 		GeoModel model = ClientDragonRender.dragonModel.getModel(ClientDragonRender.dragonModel.getModelLocation(null));
 
-		renderArmorPiece(model, renderer.helmet, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
-		renderArmorPiece(model, renderer.chestplate, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
-		renderArmorPiece(model, renderer.leggings, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
-		renderArmorPiece(model, renderer.boots, matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.HEAD), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, helmetTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.CHEST), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, chestPlateTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.LEGS), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, legsTexture);
+		renderArmorPiece(model, player.getItemBySlot(EquipmentSlot.FEET), matrixStackIn, bufferIn, packedLightIn, entitylivingbaseIn, partialTicks, bootsTexture);
 
 		((DragonRenderer)renderer).isRenderLayers = false;
 	}

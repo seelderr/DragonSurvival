@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -65,7 +66,7 @@ public class BallLightningEntity extends DragonBallEntity{
 					attackerEntity.setLastHurtMob(attacker);
 				}
 			}
-			level.explode(null, damagesource,null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
 
 			isDead = true;
 			setDeltaMovement(0, 0, 0);
@@ -93,7 +94,7 @@ public class BallLightningEntity extends DragonBallEntity{
 
 				if(ent instanceof LivingEntity livingEntity){
 					if(livingEntity.getRandom().nextInt(100) < 40){
-						if(!livingEntity.level.isClientSide){
+						if(!livingEntity.level.isClientSide && !StormBreathAbility.chargedBlacklist.contains(livingEntity.getType().getRegistryName().toString())){
 							livingEntity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 						}
 					}

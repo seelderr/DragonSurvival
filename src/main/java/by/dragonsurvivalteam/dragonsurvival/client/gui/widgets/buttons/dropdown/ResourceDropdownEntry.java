@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipRendering;
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -13,14 +14,15 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.TooltipFlag.Default;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
+import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Consumer;
 
-public class ResourceDropdownEntry extends DropdownEntry{
+public class ResourceDropdownEntry extends DropdownEntry {
 	private final int num;
 	private final ResourceEntry entry;
 	private final Consumer<ResourceEntry> setter;
@@ -35,102 +37,112 @@ public class ResourceDropdownEntry extends DropdownEntry{
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public @NotNull List<? extends GuiEventListener> children() {
 		return button != null ? ImmutableList.of(button) : new ArrayList<>();
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
-		if(button == null){
-			if(list != null)
-				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight, null, null){
-					private int tick = 0;
+    public void render(@NotNull final PoseStack poseStack, int index, int top, int left, int width, int height, int mouseX, int mouseY, boolean isMouseOver, float partialTicks) {
+        if (button == null) {
+            button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, height, null, null) {
+                private int tick = 0;
 
-					@Override
-					public TextComponent getMessage(){
-						return (TextComponent)TextComponent.EMPTY;
-					}
+                @Override
+                public @NotNull Component getMessage() {
+                    return TextComponent.EMPTY;
+                }
 
-					@Override
-					public void onPress(){
-						if(!source.isFocused()){
-							return;
-						}
-						setter.accept(entry);
-					}
+                @Override
+                public void onPress() {
+                    if (!source.isFocused()) {
+                        return;
+                    }
 
-					@Override
-					public int getBlitOffset(){
-						return 10;
-					}
+                    setter.accept(entry);
+                }
 
-					@Override
-					public void renderButton(PoseStack mStack, int mouseX, int mouseY, float partial){
-						if(!source.isFocused()){
-							return;
-						}
-						if(y + height > list.getBottom() - 3 || y < list.getTop() + 3){
-							return;
-						}
+                @Override
+                public int getBlitOffset() {
+                    return 10;
+                }
 
-						if(entry != null){
-							if(tick >= 1){
-								entry.tick();
-								tick = 0;
-							}else{
-								tick++;
-							}
+                @Override
+                public void renderButton(final PoseStack poseStack, int mouseX, int mouseY, float partialTicks) {
+                    if (!source.isFocused()) {
+                        return;
+                    }
 
-							mStack.pushPose();
-							mStack.translate(0, 0, 200);
+                    if (y + height > list.getBottom() - 3 || y < list.getTop() + 3) {
+                        return;
+                    }
 
-							int color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
+                    poseStack.pushPose();
+                    RenderSystem.enableDepthTest();
+                    // Make sure it gets rendered above the other resource text fields
+                    poseStack.translate(0, 0, 200);
 
-							if(num % 2 == 0){
-								color = new Color(0.2F, 0.2F, 0.2F, 1F).getRGB();
-							}
+                    if (entry != null) {
+                        if (tick >= 1) {
+                            entry.tick();
+                            tick = 0;
+                        } else {
+                            tick++;
+                        }
 
-							if(isHovered){
-								color = new Color(color).brighter().getRGB();
-							}
+                        int color;
 
-							Gui.fill(mStack, x, y, x + width, y + height, color);
+                        if (num % 2 == 0) {
+                            color = new Color(0.2F, 0.2F, 0.2F, 1F).getRGB();
+                        } else {
+                             color = new Color(0.1F, 0.1F, 0.1F, 1F).getRGB();
+                        }
 
-							String text = entry.id;
-							Minecraft.getInstance().font.drawShadow(mStack, new TextComponent( Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
+                        if (isHovered) {
+                            color = new Color(color).brighter().getRGB();
+                        }
 
-							if(!entry.isEmpty()){
-								ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
-								itemRenderer.blitOffset = 100;
-								itemRenderer.renderAndDecorateItem(entry.getDisplayItem(), x + 3, y + 1);
+                        // Draws the background per entry
+                        Gui.fill(poseStack, x, y, x + width, y + height, color);
 
-								if(entry.tag){
-									mStack.translate(0, 0, 200);
-									Minecraft.getInstance().font.drawShadow(mStack, new TextComponent("#"), x + 14, y + 10, DyeColor.WHITE.getTextColor());
-									mStack.translate(0, 0, -200);
-								}
+                        String text = entry.id;
+                        Minecraft.getInstance().font.drawShadow(poseStack, new TextComponent(Minecraft.getInstance().font.substrByWidth(new TextComponent(text), width - 20).getString()), x + 25, y + 5, DyeColor.WHITE.getTextColor());
 
-								itemRenderer.blitOffset = 0;
+                        if (!entry.isEmpty()) {
+                            ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
+                            itemRenderer.blitOffset = 100;
+                            itemRenderer.renderAndDecorateItem(entry.getDisplayItem(), x + 3, y + 1);
 
-								if(isHovered){
-									List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
-									TooltipRendering.drawHoveringText(mStack, lines, mouseX, mouseY);
-								}
-							}
+                            if (entry.tag) {
+                                poseStack.translate(0, 0, 200);
+                                Minecraft.getInstance().font.drawShadow(poseStack, new TextComponent("#"), x + 14, y + 10, DyeColor.WHITE.getTextColor());
+                                poseStack.translate(0, 0, -200);
+                            }
 
-							mStack.popPose();
-						}
-					}
-				};
-		}else{
-			button.y = pTop;
-			button.visible = source.visible;
-			button.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
-		}
-	}
+                            itemRenderer.blitOffset = 0;
+
+                            if (isHovered) {
+                                poseStack.translate(0, 0, 200);
+                                List<Component> lines = entry.getDisplayItem().getTooltipLines(Minecraft.getInstance().player, Default.NORMAL);
+                                TooltipRendering.drawHoveringText(poseStack, lines, mouseX, mouseY);
+                                poseStack.translate(0, 0, -200);
+                            }
+                        }
+
+                        RenderSystem.disableDepthTest();
+                    }
+
+                    poseStack.popPose();
+                }
+            };
+        } else {
+            button.y = top;
+            button.visible = source.visible;
+            button.render(poseStack, mouseX, mouseY, partialTicks);
+        }
+    }
 
 	@Override
-	public List<? extends NarratableEntry> narratables(){
+	public @NotNull List<? extends NarratableEntry> narratables(){
 		return Collections.emptyList();
 	}
 }
