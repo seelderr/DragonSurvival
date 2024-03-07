@@ -19,7 +19,7 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
 		if (castFinished)
 			return;
 
-		long curTime = player.level.dayTime();
+		long curTime = player.level.getGameTime();
 		castTime = (int) (curTime - castStartTime);
 
 		if(castTime >= getSkillCastingTime() && castStartTime != -1 && !castFinished){

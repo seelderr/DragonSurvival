@@ -84,7 +84,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	public void tick() {
 		super.tick();
-		if (level.dayTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
+		if (level.getGameTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
 			attackMobs();
 	}
 
