@@ -27,10 +27,10 @@ public class DragonModifiers {
     public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
     public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 
-    public static final Function<Player, AttributeModifier> HEALTH_MODIFIER = player -> buildHealthMod(DragonStateProvider.getCap(player).orElseThrow(() -> new IllegalStateException("Dragon State is not present")).getSize());
-    public static final Function<Player, AttributeModifier> REACH_MODIFIER = player -> buildReachMod(DragonStateProvider.getCap(player).orElseThrow(() -> new IllegalStateException("Dragon State is not present")).getSize());
-    public static final Function<Player, AttributeModifier> DAMAGE_MODIFIER = player -> buildDamageMod(DragonStateProvider.getCap(player).orElseThrow(() -> new IllegalStateException("Dragon State is not present")));
-    public static final Function<Player, AttributeModifier> SWIM_SPEED_MODIFIER = player -> buildSwimSpeedMod(DragonStateProvider.getCap(player).orElseThrow(() -> new IllegalStateException("Dragon State is not present")).getType());
+    public static final Function<Player, AttributeModifier> HEALTH_MODIFIER = player -> buildHealthMod(DragonStateProvider.getUnsafeHandler(player).getSize());
+    public static final Function<Player, AttributeModifier> REACH_MODIFIER = player -> buildReachMod(DragonStateProvider.getUnsafeHandler(player).getSize());
+    public static final Function<Player, AttributeModifier> DAMAGE_MODIFIER = player -> buildDamageMod(DragonStateProvider.getUnsafeHandler(player));
+    public static final Function<Player, AttributeModifier> SWIM_SPEED_MODIFIER = player -> buildSwimSpeedMod(DragonStateProvider.getUnsafeHandler(player).getType());
 
     public static AttributeModifier buildHealthMod(double size) {
         double healthModifier = (float) ServerConfig.minHealth + (size - 14) / 26F * ((float) ServerConfig.maxHealth - (float) ServerConfig.minHealth) - 20;

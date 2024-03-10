@@ -49,6 +49,10 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 		return null;
 	}
 
+	public static @NotNull DragonStateHandler getUnsafeHandler(final Player player) throws IllegalStateException {
+		return getCap(player).orElseThrow(() -> new IllegalStateException("Dragon State was not present"));
+	}
+
 	public static LazyOptional<DragonStateHandler> getCap(final Entity entity) {
 		if (entity == null) {
 			return LazyOptional.empty();
