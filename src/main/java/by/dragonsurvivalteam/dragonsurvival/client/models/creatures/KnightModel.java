@@ -18,6 +18,6 @@ public class KnightModel extends AnimatedGeoModel<KnightEntity>{
 
 	@Override
 	public ResourceLocation getAnimationResource(KnightEntity animatable){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_knight.animations.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/knight.animations.json");
 	}
 }
