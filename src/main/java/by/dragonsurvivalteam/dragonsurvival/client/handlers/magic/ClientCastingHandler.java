@@ -82,7 +82,7 @@ public class ClientCastingHandler{
 
 		if(status == StatusInProgress && ability.canCastSkill(player) ){
 			if (castStartTime == -1)
-				castStartTime = player.level.dayTime();
+				castStartTime = player.level.getGameTime();
 			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, castSlot, ability.saveNBT(), castStartTime));
 		} else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player) && castStartTime != -1){
 			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, castSlot, ability.saveNBT(), castStartTime));
