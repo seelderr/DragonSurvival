@@ -1202,7 +1202,7 @@
   "ds.gui.dragon_editor.body_types.fly_rotation": "■ Turning speed in flight: §2{0}§r",
   "ds.gui.dragon_editor.body_types.swim_speed": "■ Swimming speed: §2{0}§r",
   "ds.gui.dragon_editor.body_types.step_height": "■ Step height: §2{0}§r",
-  "ds.gui.dragon_editor.body_types.all_damage": "■ Множитель всего урона: §2{0}§r",
+  "ds.gui.dragon_editor.body_types.all_damage": "■ All damage multiplier: §2{0}§r",
   "ds.gui.dragon_editor.body_types.claw_damage": "■ Claw Damage: §2{0}§r",
   "ds.gui.dragon_editor.body_types.health": "■ Health: §2{0}§r",
   "ds.gui.dragon_editor.body_types.armor": "■ Armor: §2{0}§r",
