@@ -163,7 +163,7 @@ public class MagicHandler{
 					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level.getEntity(cap.lastAfflicted) : null;
 
 					if (player != null) {
-						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), 1f), entity);
+						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), drainEffect.getAmplifier() + 1), entity);
 					} else {
 						entity.hurt(DamageSource.MAGIC, drainEffect.getAmplifier() + 1);
 					}
