@@ -107,7 +107,7 @@ public class ClientMagicHandler{
 			double y = entity.getY() + d1;
 			double z = entity.getZ() + d2 - entity.getBbWidth() / 2;
 
-			localPlayer.getLevel().addParticle(particle, x, y, z, 0, 0, 0);
+			localPlayer.level().addParticle(particle, x, y, z, 0, 0, 0);
 		}
 	}
 

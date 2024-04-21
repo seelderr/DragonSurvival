@@ -6,13 +6,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -24,43 +24,37 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
+import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 
 import java.awt.*;
 
-public class ClientMagicHUDHandler {
-	public static final ResourceLocation VANILLA_WIDGETS = new ResourceLocation("textures/gui/widgets.png");
+public class ClientMagicHUDHandler{
 	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
 	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
 	public static final ResourceLocation widgets = new ResourceLocation("textures/gui/widgets.png");
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
 	public static Integer castbarXOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position" )
 	public static Integer castbarYOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position" )
 	public static Integer skillbarXOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position" )
 	public static Integer skillbarYOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position" )
 	public static Integer manabarXOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
 	public static void cancelExpBar(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height){ // TODO :: Should have a different name
@@ -74,16 +68,18 @@ public class ClientMagicHUDHandler {
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
+		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
+			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
 
 			if (ability == null || ability.canConsumeMana(playerEntity)) {
 				gui.renderExperienceBar(guiGraphics, x);
 				return;
 			}
 
-		int x = width / 2 - 91;
+			Window window = Minecraft.getInstance().getWindow();
 
-		ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
+			int screenWidth = window.getGuiScaledWidth();
+			int screenHeight = window.getGuiScaledHeight();
 
 			int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
 			if(i > 0){

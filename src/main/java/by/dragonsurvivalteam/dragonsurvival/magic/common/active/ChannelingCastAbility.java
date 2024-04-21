@@ -19,7 +19,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 
 	@Override
 	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){
-		long curTime = player.level.getGameTime();
+		long curTime = player.level().getGameTime();
 
 		chargeTime = (int) (curTime - castStartTime);
 		if(curTime - castStartTime >= getSkillChargeTime() && castStartTime != -1)

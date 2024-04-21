@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinServerPlayerGameModeStart {
     @Inject(method = "handleBlockBreakAction", at = @At("HEAD"))
     private void startSwap(final BlockPos blockPosition, final ServerboundPlayerActionPacket.Action action, final Direction face, int maxBuildHeight, int sequence, final CallbackInfo callback) {
-        ToolUtils.swapStart(player, player.level.getBlockState(blockPosition));
+        ToolUtils.swapStart(player, player.level().getBlockState(blockPosition));
     }
 
     @Shadow @Final protected ServerPlayer player;

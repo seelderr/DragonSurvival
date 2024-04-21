@@ -16,6 +16,8 @@ import net.minecraftforge.common.ForgeMod;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.jetbrains.annotations.Nullable;
+
 public class DragonModifiers{
 	public static final UUID REACH_MODIFIER_UUID = UUID.fromString("7455d5c7-4e1f-4cca-ab46-d79353764020");
 	public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
@@ -70,13 +72,13 @@ public class DragonModifiers{
 		if(oldMod != null){
 			updateSwimSpeedModifier(newPlayer, oldMod);
 		}
-		oldMod = getReachModifier(oldPlayer);
+		oldMod = getBlockReachModifier(oldPlayer);
 		if(oldMod != null){
-			updateReachModifier(newPlayer, oldMod);
+			updateBlockReachModifier(newPlayer, oldMod);
 		}
-		oldMod = getAttackRangeModifier(oldPlayer);
-		if (oldMod != null){
-			updateAttackRangeModifier(newPlayer, oldMod);
+		oldMod = getEntityReachModifier(oldPlayer);
+		if(oldMod != null){
+			updateEntityReachModifier(newPlayer, oldMod);
 		}
 	}
 
@@ -99,26 +101,12 @@ public class DragonModifiers{
 	public static AttributeModifier getSwimSpeedModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get())).getModifier(SWIM_SPEED_MODIFIER_UUID);
 	}
-	
-	@Nullable
-	public static AttributeModifier getAttackRangeModifier(Player player) {
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get())).getModifier(ATTACK_RANGE_MODIFIER_UUID);
-	}
 
 	public static void updateBlockReachModifier(Player player, AttributeModifier mod){
 		if(!ServerConfig.bonuses){
 			return;
 		}
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
-		max.removeModifier(mod);
-		max.addPermanentModifier(mod);
-	}
-	
-	public static void updateAttackRangeModifier(Player player, AttributeModifier mod) {
-		if(!ServerConfig.bonuses) {
-			return;
-		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}

@@ -41,7 +41,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			updateMessage();
 		}
 
-		ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
+		List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
 
 		if(layers != EnumSkinLayer.BASE){
 			valueList.add(0, SkinCap.defaultSkinValue);

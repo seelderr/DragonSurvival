@@ -12,6 +12,7 @@ import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -102,7 +103,7 @@ public class DragonSizeHandler{
 		if (player.getForcedPose() != overridePose) {
 			player.setForcedPose(overridePose);
 
-			if (player.level.isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
+			if (player.level().isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
 				player.refreshDimensions();
 			}
 		}

@@ -53,7 +53,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 		if (entity == null) {
 			return LazyOptional.empty();
 		} else {
-			if (entity.level.isClientSide) {
+			if (entity.level().isClientSide) {
 				Pair<Boolean, LazyOptional<DragonStateHandler>> fakeState = getFakePlayer(entity);
 
 				if (fakeState.first) {
@@ -65,7 +65,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 				return LazyOptional.empty();
 			}
 
-			Map<String, LazyOptional<DragonStateHandler>> sidedCache = entity.getLevel().isClientSide() ? CLIENT_CACHE : SERVER_CACHE;
+			Map<String, LazyOptional<DragonStateHandler>> sidedCache = entity.level().isClientSide() ? CLIENT_CACHE : SERVER_CACHE;
 			LazyOptional<DragonStateHandler> cachedCapability = sidedCache.get(entity.getStringUUID());
 
 			if (cachedCapability != null) {
@@ -92,7 +92,7 @@ public class DragonStateProvider implements ICapabilitySerializable<CompoundTag>
 	}
 
 	public static void clearCache(final Player player) {
-		if (player.getLevel().isClientSide()) {
+		if (player.level().isClientSide()) {
 			if (player == ClientProxy.getLocalPlayer()) {
 				CLIENT_CACHE.clear();
 			} else {

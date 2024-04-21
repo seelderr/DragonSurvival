@@ -216,7 +216,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	}
 
 	public @Nullable Player getPlayer(){
-		return (Player) level.getEntity(playerId);
+		return (Player) level().getEntity(playerId);
 	}
 
 	private PlayState predicate(final AnimationState<DragonEntity> state) {

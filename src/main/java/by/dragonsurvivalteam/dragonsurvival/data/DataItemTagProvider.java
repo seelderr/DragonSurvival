@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -37,8 +38,6 @@ public class DataItemTagProvider extends ItemTagsProvider {
 		this.copy(DataBlockTagProvider.DRAGON_ALTARS, createKey("dragon_altars"));
 		this.copy(DataBlockTagProvider.DRAGON_TREASURES, createKey("dragon_treasures"));
 		this.copy(DataBlockTagProvider.WOODEN_DRAGON_DOORS, createKey("wooden_dragon_doors"));
-		tag(mod("dragon_altars")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonAltarBlock).map(Item::asItem).toList().toArray(new Item[0]));
-		tag(mod("wooden_dragon_doors")).add(DSBlocks.DS_BLOCK_ITEMS.values().stream().filter(s -> s.getBlock() instanceof DragonDoor).filter(s -> s.getBlock().defaultBlockState().getMaterial() == Material.WOOD).map(Item::asItem).toList().toArray(new Item[0]));
 	}
 
 	private static TagKey<Item> createKey(@NotNull final String name) {

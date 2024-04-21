@@ -143,13 +143,13 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(final BlockPos blockPosition, final BlockState blockState, final Direction direction) {
-		if (!(player.level instanceof ServerLevel serverLevel)) {
+		if (!(player.level() instanceof ServerLevel serverLevel)) {
 			return;
 		}
 
-		if (blockState.getMaterial().isSolidBlocking()) {
+		if (blockState.isSolid()) {
 			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
 				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.DRAIN, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));

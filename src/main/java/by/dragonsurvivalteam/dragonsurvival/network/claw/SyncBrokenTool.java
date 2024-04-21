@@ -31,7 +31,7 @@ public record SyncBrokenTool(int playerId, int slot) {
                 Player localPlayer = ClientProxy.getLocalPlayer();
 
                 if (localPlayer != null) {
-                    Entity entity = localPlayer.getLevel().getEntity(message.playerId);
+                    Entity entity = localPlayer.level().getEntity(message.playerId);
 
                     if (entity instanceof Player) {
                         DragonStateHandler handler = DragonUtils.getHandler(entity);

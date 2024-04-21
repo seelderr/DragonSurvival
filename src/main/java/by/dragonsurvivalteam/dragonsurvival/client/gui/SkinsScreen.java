@@ -163,14 +163,6 @@ public class SkinsScreen extends Screen{
 		}
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-
-		for(Widget btn : renderables){
-			if(btn instanceof AbstractWidget widget && widget.isHoveredOrFocused()){
-				widget.renderToolTip(stack, mouseX, mouseY);
-			}
-		}
-
-		stack.translate(0F, 0F, -400f);
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {

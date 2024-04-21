@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
+public class ClientGrowthHudHandler {
 	@ConfigRange( min = -1000, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthXOffset", comment = "Offset the x position of the item growth icon in relation to its normal position" )
 	public static Integer growthXOffset = 0;
@@ -76,7 +79,7 @@ import java.awt.*;
 			circleY += growthYOffset;
 
 			RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
-			Color color = new Color(99, 99, 99);
+			Color c = new Color(99, 99, 99);
 
 			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
@@ -115,9 +118,5 @@ import java.awt.*;
 
 			guiGraphics.blit(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 		}
-	}
-
-	private static ResourceLocation getOrCreate(final String path) {
-		return CACHE.computeIfAbsent(path, key -> new ResourceLocation(DragonSurvivalMod.MODID, path));
 	}
 }

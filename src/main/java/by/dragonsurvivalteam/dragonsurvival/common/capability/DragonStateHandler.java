@@ -105,7 +105,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			AttributeModifier reach = DragonModifiers.buildReachMod(size);
 			DragonModifiers.updateBlockReachModifier(player, reach);
 			DragonModifiers.updateEntityReachModifier(player, reach);
-			DragonModifiers.updateAttackRangeModifier(player, attackRange);
+
 		} else {
 			// Remove the dragon attribute modifiers
 			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));

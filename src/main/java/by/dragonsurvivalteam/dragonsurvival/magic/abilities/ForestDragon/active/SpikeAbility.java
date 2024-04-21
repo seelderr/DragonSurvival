@@ -163,7 +163,7 @@ public class SpikeAbility extends InstantCastAbility{
 			entity.setBaseDamage(getDamage());
 			entity.pickup = AbstractArrow.Pickup.DISALLOWED;
 			entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, i * spikeSpread);
-			player.level.addFreshEntity(entity);
+			player.level().addFreshEntity(entity);
 			if (!spikeMultishot)
 				break;
 		}

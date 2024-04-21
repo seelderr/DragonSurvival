@@ -42,9 +42,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -384,13 +384,13 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if (!(player.level instanceof ServerLevel serverLevel)) {
+		if (!(player.level() instanceof ServerLevel serverLevel)) {
 			return;
 		}
 
-		if (blockState.getMaterial().isSolidBlocking()) {
+		if (blockState.isSolid()) {
 			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
 				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
@@ -401,10 +401,10 @@ public class StormBreathAbility extends BreathAbility{
 				serverLevel.addFreshEntity(entity);
 			}
 		}
-		
-		if (blockState.getMaterial().equals(Material.WATER)) {
+
+		if (blockState.getFluidState().is(FluidTags.WATER)) {
 			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(pos.getX(), pos.getY(), pos.getZ());
 				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
@@ -416,16 +416,17 @@ public class StormBreathAbility extends BreathAbility{
 			}
 		}
 
-		if(!player.level.isClientSide){
+		Level level = player.level();
+		if(level.isClientSide){
 			if(player.tickCount % 40 == 0){
-				if(player.level.isThundering()){
+				if(level.isThundering()){
 					if(player.getRandom().nextInt(100) < 30){
-						if(player.level.canSeeSky(pos)){
-							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
+						if(level.canSeeSky(pos)){
+							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
 							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
 							lightningboltentity.setCause((ServerPlayer)player);
-							player.level.addFreshEntity(lightningboltentity);
-							player.level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
+							level.addFreshEntity(lightningboltentity);
+							level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
 						}
 					}
 				}

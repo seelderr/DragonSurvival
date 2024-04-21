@@ -62,32 +62,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	}
 
 	@Override
-	public void render(DragonEntity entity, float entityYaw, float partialTicks, PoseStack stack, MultiBufferSource bufferIn, int packedLightIn){
-		Player player = entity.getPlayer();
-
-		if (player == null || player.hasEffect(MobEffects.INVISIBILITY)) {
-			return;
-		}
-
-		DragonStateHandler handler = DragonUtils.getHandler(player);
-
-		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
-
-		CoreGeoBone wingLeft = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
-		CoreGeoBone wingRight = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
-
-		if (wingLeft != null) {
-			wingLeft.setHidden(!hasWings);
-		}
-
-		if (wingRight != null) {
-			wingRight.setHidden(!hasWings);
-		}
-
-		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
-	}
-
-	@Override
 	public void renderRecursively(final PoseStack poseStack, final DragonEntity animatable, final GeoBone bone, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
 		if (isReRender) {
 			super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);

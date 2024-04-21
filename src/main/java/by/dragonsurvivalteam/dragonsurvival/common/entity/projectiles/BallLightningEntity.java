@@ -81,7 +81,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	public void tick() {
 		super.tick();
-		if (level.getGameTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
+		if (level().getGameTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
 			attackMobs();
 	}
 
@@ -94,14 +94,14 @@ public class BallLightningEntity extends DragonBallEntity{
 			rn = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
 
 		int range = rn;
-		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		List<Entity> entities = level().getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e == owner || e instanceof BallLightningEntity);
 		entities.removeIf(e -> e.distanceTo(this) > range);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!level.isClientSide){
-				TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(DamageSource.LIGHTNING_BOLT, BallLightningAbility.getDamage(getSkillLevel())), ent);
+			if(this.level().isClientSide){
+				TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(damageSources().lightningBolt(), BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
 					if(livingEntity.getRandom().nextInt(100) < 40){
@@ -129,10 +129,10 @@ public class BallLightningEntity extends DragonBallEntity{
 					double stepX = ent.getX() + (distV.x * distFrac);
 					double stepY = ent.getY() + (distV.y * distFrac);
 					double stepZ = ent.getZ() + (distV.z * distFrac);
-					if (level.random.nextInt() > 25)
-						level.addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
+					if (level().random.nextInt() > 25)
+						level().addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
 					else
-						level.addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
+						level().addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
 				}
 			}
 		}

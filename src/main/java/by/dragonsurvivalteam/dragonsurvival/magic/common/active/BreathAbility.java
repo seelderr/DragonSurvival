@@ -260,13 +260,6 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		return components;
 	}
 
-	public static class BreathDamage extends EntityDamageSource {
-		public BreathDamage(@NotNull final Entity entity) {
-			super("player", entity);
-			setMagic();
-		}
-	}
-
 	public static int calculateCurrentBreathRange(@NotNull final DragonLevel dragonLevel) {
 		return baseBreathRange + switch (dragonLevel) {
 			case NEWBORN -> 0;

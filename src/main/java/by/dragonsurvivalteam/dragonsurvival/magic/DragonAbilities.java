@@ -268,7 +268,7 @@ public class DragonAbilities{
 		Vec3 vector3d2 = eyePosition.add(viewVector);
 
 		BlockPos pos = null;
-		BlockHitResult result = player.level.clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility.clipContext(), null));
+		BlockHitResult result = player.level().clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility.clipContext(), null));
 
 		if (result.getType() == HitResult.Type.MISS) {
 			pos = BlockPosHelper.get(vector3d2);

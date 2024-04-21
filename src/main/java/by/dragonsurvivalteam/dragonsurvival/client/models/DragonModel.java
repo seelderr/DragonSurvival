@@ -36,107 +36,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	@Override
 	public void applyMolangQueries(final DragonEntity dragon, double currentTick) {
 		super.applyMolangQueries(dragon, currentTick);
-	}
-
-	public ResourceLocation getTextureResource(final DragonEntity dragon) {
-		if (dragon.playerId != null || dragon.getPlayer() != null) {
-			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
-			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
-
-			if (handler.getSkinData().recompileSkin) {
-				DragonEditorHandler.generateSkinTextures(dragon);
-			}
-
-			if (handler.getSkinData().blankSkin) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
-			}
-
-			if (ageGroup.defaultSkin) {
-				if (currentTexture != null) {
-					return currentTexture;
-				}
-
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
-			}
-
-			if (handler.getSkinData().isCompiled && currentTexture == null) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
-			}
-		}
-
-		if (currentTexture == null && dragon.getPlayer() instanceof FakeClientPlayer) {
-			LocalPlayer localPlayer = Minecraft.getInstance().player;
-
-			if (localPlayer != null) { // TODO :: Check if skin is compiled?
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonUtils.getHandler(dragon.getPlayer()).getLevel().name);
-			}
-		}
-
-		return currentTexture == null ? defaultTexture : currentTexture;
-	}
-
-	public void setCurrentTexture(final ResourceLocation currentTexture) {
-		this.currentTexture = currentTexture;
-	}
-
-	@Override
-	public ResourceLocation getAnimationResource(final DragonEntity ignored) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_centre.json");
-	}
-
-	/**TODO Body Types Update
-	Required:
-	- First for 1.19.2, then other versions as desired.
-	- Make a choice in the editor menu between 5 Body Types. The selection menu appears before editing the appearance. The menu itself looks like 3d models with random animations (like the ones to the left and right of the dragon appearance selection).
-	- The body types is ONLY a set of animations. Models and textures do not depend on the build type in any way. Custom Skins do not need to be redone.
-	- Remove the disappearance of wings on the model, if the start with wings is turned off in the configs. (startWithWings)
-	- Tweaking the animations in the dragon editor to match the selected body type.
-
-	 Extras:
-	 - Fix bug with T-pose appearing intermittently (especially in multiplayer)
-	 - customization.json - Ability to disallow some details in the editor for some Body Types (for example, wing details are not required for wingless).
-	 - emotes.json - Ability to disallow some emotions for certain Body Types.
-	 - Additional argument for `/dragon cave 3 true centre Black_Aures` command or separate `/dragon centre` command.
-	 - Add `/dragon-body` command for body types gui.
-	 - A config that allows you to adjust modifier multipliers for the following Body Types: jump height, running speed, flying speed, flying turn speed, swimming speed, step height, damage, bonus amount of damage, bonus amount of xp, bonus amount of armour, bonus amount of mana. Ability to add negative values. Default parameters or from other configs are taken as the base value (1.0).
-	 - Change rider sit position height for each Body Types (or bind the rider more dynamically with code and complex rendering).
-	 - Change the height of the Breath Source for each Body Types (or make this dependent on the BreathSource position on the model)
-	 - Ability to expand the number of Body Types.
-	*/
-
-	/**
-	 * Copied code from Geckolib pre version 3.0.47 which broke dragon rendering
-	 * @link <a href="https://github.com/bernie-g/geckolib/blob/4e864bd2d4a0a8dceea01f600b7031cb2fba3a3b/Forge/src/main/java/software/bernie/geckolib3/model/AnimatedGeoModel.java#L51">Github link</a>
-	 */
-	@Override
-	public void setCustomAnimations(final DragonEntity dragon, int uniqueID, final AnimationEvent customPredicate) {
-		AnimationData manager = dragon.getFactory().getOrCreateAnimationData(uniqueID);
-
-		if (manager.startTick == -1) {
-			manager.startTick = dragon.tickCount + Minecraft.getInstance().getFrameTime();
-		}
-
-		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			manager.tick = getCurrentTick() - manager.startTick;
-			double gameTick = manager.tick;
-			double deltaTicks = gameTick - lastGameTickTime;
-			seekTime += deltaTicks;
-			lastGameTickTime = gameTick;
-		}
-
-		AnimationEvent<DragonEntity> predicate = Objects.requireNonNullElseGet(customPredicate, () -> new AnimationEvent<>(dragon, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList()));
-		predicate.animationTick = seekTime;
-
-		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
-
-		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
-			getAnimationProcessor().tickAnimation(dragon, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
-		}
-	}
-
-	@Override
-	public void setMolangQueries(final IAnimatable animatable, double currentTick) {
-		super.setMolangQueries(animatable, currentTick);
 
 		// In case the Integer (id of the player) is null
 		if (dragon.playerId == null || dragon.getPlayer() == null) {
@@ -227,19 +126,12 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		dragon.tail_motion_side = query_tail_motion_side;
 	}
 
-	public void setCurrentTexture(final ResourceLocation currentTexture) {
-		this.currentTexture = currentTexture;
-	}
-
 	@Override
 	public ResourceLocation getModelResource(final DragonEntity dragon) {
 		return model;
 	}
 
-	@Override
 	public ResourceLocation getTextureResource(final DragonEntity dragon) {
-		String id = null;
-
 		if (dragon.playerId != null || dragon.getPlayer() != null) {
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
@@ -249,38 +141,40 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			}
 
 			if (handler.getSkinData().blankSkin) {
-				id = "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png";
-			} else if (ageGroup.defaultSkin) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
+			}
+
+			if (ageGroup.defaultSkin) {
 				if (currentTexture != null) {
-					id = currentTexture.getPath();
-				} else {
-					id = "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png";
+					return currentTexture;
 				}
-			} else if (handler.getSkinData().isCompiled && currentTexture == null) {
-				id = "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name;
+
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+			}
+
+			if (handler.getSkinData().isCompiled && currentTexture == null) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 			}
 		}
 
-		if (id == null && dragon.getPlayer() instanceof FakeClientPlayer) {
+		if (currentTexture == null && dragon.getPlayer() instanceof FakeClientPlayer) {
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-			if (localPlayer != null) {
-				id = "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonUtils.getHandler(dragon.getPlayer()).getLevel().name;
+			if (localPlayer != null) { // TODO :: Check if skin is compiled?
+				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonUtils.getHandler(dragon.getPlayer()).getLevel().name);
 			}
 		}
 
-		if (id != null) {
-			// Dragon editor skins
-			return cache.computeIfAbsent(id, key -> new ResourceLocation(DragonSurvivalMod.MODID, key));
-		}
+		return currentTexture == null ? defaultTexture : currentTexture;
+	}
 
-		// Layers (e.g. armor) or player skins
-        return currentTexture == null ? defaultTexture : currentTexture;
-    }
+	public void setCurrentTexture(final ResourceLocation currentTexture) {
+		this.currentTexture = currentTexture;
+	}
 
 	@Override
-	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
-		return animation;
+	public ResourceLocation getAnimationResource(final DragonEntity ignored) {
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_centre.json");
 	}
 
 	@Override
