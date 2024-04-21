@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,7 +20,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
-public class ClientGrowthHudHandler{
 	@ConfigRange( min = -1000, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthXOffset", comment = "Offset the x position of the item growth icon in relation to its normal position" )
 	public static Integer growthXOffset = 0;
@@ -46,24 +44,24 @@ public class ClientGrowthHudHandler{
 
 		int increment = DragonGrowthHandler.getIncrement(stack.getItem(), handler.getLevel());
 
-		if(increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= DragonLevel.NEWBORN.size + 1)){
-			float curSize = (float)handler.getSize();
-			float nextSize = (float)(handler.getSize() + increment);
+		if (increment != 0 && (handler.getSize() < ServerConfig.maxGrowthSize && increment > 0 || increment < 0 && handler.getSize() >= DragonLevel.NEWBORN.size + 1)) {
+			float curSize = (float) handler.getSize();
+			float nextSize = (float) (handler.getSize() + increment);
 			float progress = 0;
 			float nextProgess = 0;
 
-			if(handler.getLevel() == DragonLevel.NEWBORN){
+			if (handler.getLevel() == DragonLevel.NEWBORN) {
 				progress = (curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size);
 				nextProgess = (nextSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size);
-			}else if(handler.getLevel() == DragonLevel.YOUNG){
+			} else if (handler.getLevel() == DragonLevel.YOUNG) {
 				progress = (curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size);
 				nextProgess = (nextSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size);
-			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40){
+			} else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
 				progress = (curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size);
 				nextProgess = (nextSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size);
-			}else if(handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40){
-				progress = (float)((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
-				nextProgess = (float)((nextSize - 40) / (ServerConfig.maxGrowthSize - 40));
+			} else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() >= 40) {
+				progress = (float) ((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
+				nextProgess = (float) ((nextSize - 40) / (ServerConfig.maxGrowthSize - 40));
 			}
 
 			progress = Math.min(1.0f, progress);
@@ -78,7 +76,7 @@ public class ClientGrowthHudHandler{
 			circleY += growthYOffset;
 
 			RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
-			Color c = new Color(99, 99, 99);
+			Color color = new Color(99, 99, 99);
 
 			RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
@@ -86,14 +84,14 @@ public class ClientGrowthHudHandler{
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
-			if(nextProgess > progress){
+			if (nextProgess > progress) {
 				int num = 1;
 				double perSide = 1.0 / 6.0;
-				if(nextProgess < progress + perSide){
-					nextProgess = (float)(progress + perSide);
+
+				if (nextProgess < progress + perSide) {
+					nextProgess = (float) (progress + perSide);
 					num = 2;
 				}
-				// FIXME :: Initialize them once
 
 				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/circle_" + num + ".png"));
 				RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, 6, nextProgess, -0.5);
@@ -117,5 +115,9 @@ public class ClientGrowthHudHandler{
 
 			guiGraphics.blit(new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
 		}
+	}
+
+	private static ResourceLocation getOrCreate(final String path) {
+		return CACHE.computeIfAbsent(path, key -> new ResourceLocation(DragonSurvivalMod.MODID, path));
 	}
 }

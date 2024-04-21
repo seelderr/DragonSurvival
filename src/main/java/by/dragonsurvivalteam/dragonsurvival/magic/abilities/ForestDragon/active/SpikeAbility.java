@@ -36,7 +36,7 @@ public class SpikeAbility extends InstantCastAbility{
 	public static Float spikeSpread = 1.0F;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeMultishot", comment = "Whether the spike ability will fire an additional shot per level")
-	public static Boolean spikeMultishot = false;
+	public static Boolean spikeMultishot = true;
 
 	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in seconds of the spike ability" )
@@ -163,7 +163,7 @@ public class SpikeAbility extends InstantCastAbility{
 			entity.setBaseDamage(getDamage());
 			entity.pickup = AbstractArrow.Pickup.DISALLOWED;
 			entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, i * spikeSpread);
-			player.level().addFreshEntity(entity);
+			player.level.addFreshEntity(entity);
 			if (!spikeMultishot)
 				break;
 		}

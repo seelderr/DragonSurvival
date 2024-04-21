@@ -22,6 +22,7 @@ import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.PacketSyncCapabilityMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
@@ -192,6 +193,10 @@ public class ClientDragonRender{
 		}
 	}
 
+	/** Amount of client ticks the player model will not be rendered if the player was recently a dragon (to avoid player model pop-up after respawning) */
+	private static final int MAX_DELAY = 10;
+	private static int renderDelay;
+
 	/** Called for every player */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
@@ -318,11 +323,16 @@ public class ClientDragonRender{
 							ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
 							ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
 							ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
+							
+							ResourceLocation helmetTexture;
+							ResourceLocation chestPlateTexture;
+							ResourceLocation legsTexture;
+							ResourceLocation bootsTexture;
 
-							ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.HEAD));
-							ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.CHEST));
-							ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
-							ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
+							helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.HEAD));
+							chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.CHEST));
+							legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
+							bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
 
 							renderArmorPiece(helmet, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
 							renderArmorPiece(chestPlate, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
@@ -358,7 +368,12 @@ public class ClientDragonRender{
 				poseStack.popPose();
 			}
 		}else{
-			((AccessorEntityRenderer)renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+			if (renderDelay > 0 && player == ClientProxy.getLocalPlayer()) {
+				renderDelay--;
+				renderPlayerEvent.setCanceled(true);
+			} else {
+				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+			}
 		}
 	}
 
@@ -611,3 +626,5 @@ public class ClientDragonRender{
 		entity.yHeadRot = f6;
 	}
 }
+
+//TODO Fix the problem that causes the dragon to take a T pose after disappearing from view. It doesn't matter if it's its own body or another player's. Occurs with forest dragon effect and in flight for any dragon. Also on the server when you turn away from the flying player and look at him again.

@@ -157,40 +157,48 @@ public class MagicHandler{
 		}
 
 		if(entity.tickCount % 20 == 0){
-			if(entity.hasEffect(DragonEffects.DRAIN)){
-				if(!DragonUtils.isDragonType(entity, DragonTypes.FOREST)){
-					Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
-					if(player != null){
-						TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN, player), 1f), entity);
-					}else{
-						entity.hurt(entity.damageSources().magic(), 1.0F);
+			MobEffectInstance drainEffect = entity.getEffect(DragonEffects.DRAIN);
+
+			if (drainEffect != null) {
+				if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
+					Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level.getEntity(cap.lastAfflicted) : null;
+
+					if (player != null) {
+						TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("magic", player).bypassArmor().setMagic(), drainEffect.getAmplifier() + 1), entity);
+					} else {
+						entity.hurt(DamageSource.MAGIC, drainEffect.getAmplifier() + 1);
 					}
 				}
 			}
 
-			if(entity.hasEffect(DragonEffects.CHARGED)){
-				Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
-				if(!DragonUtils.isDragonType(entity, DragonTypes.SEA)){
-					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, StormBreathAbility.chargedEffectDamage);
+			MobEffectInstance chargedEffect = entity.getEffect(DragonEffects.CHARGED);
+
+			if (chargedEffect != null) {
+				Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level.getEntity(cap.lastAfflicted) : null;
+
+				if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
+					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
 				}
 			}
 
-			if(entity.hasEffect(DragonEffects.BURN)){
-				if(!entity.fireImmune()){
-					if(cap.lastPos != null){
-						double distance = entity.distanceToSqr(cap.lastPos);
-						float damage = Mth.clamp((float)distance, 0, 10);
+			MobEffectInstance burnEffect = entity.getEffect(DragonEffects.BURN);
 
-						if(damage > 0){
-							if(!entity.isOnFire()){
+			if (burnEffect != null) {
+				if (!entity.fireImmune()) {
+					if (cap.lastPos != null) {
+						double distance = entity.distanceToSqr(cap.lastPos);
+						float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
+
+						if (damage > 0) {
+							if (!entity.isOnFire()) {
 								// Short enough fire duration to not cause fire damage but still drop cooked items
 								entity.setRemainingFireTicks(1);
 							}
-							Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player)entity.level().getEntity(cap.lastAfflicted) : null;
-							if(player != null){
-								TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
-							}else{
-								entity.hurt(entity.damageSources().onFire(), damage);
+							Player player = cap.lastAfflicted != -1 && entity.level.getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level.getEntity(cap.lastAfflicted) : null;
+							if (player != null) {
+								TargetingFunctions.attackTargets(player, ent -> ent.hurt(new EntityDamageSource("onFire", player).bypassArmor().setIsFire(), damage), entity);
+							} else {
+								entity.hurt(DamageSource.ON_FIRE, damage);
 							}
 						}
 					}
@@ -244,7 +252,7 @@ public class MagicHandler{
 			if(player.hasEffect(DragonEffects.HUNTER)){
 				MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 				player.removeEffect(DragonEffects.HUNTER);
-				event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
+				event.setDamageModifier(event.getDamageModifier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 				event.setResult(Result.ALLOW);
 			}
 		});

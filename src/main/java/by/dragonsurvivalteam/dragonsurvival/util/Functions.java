@@ -17,7 +17,7 @@ public class Functions{
 	public static int secondsToTicks(double seconds) {
 		return (int) (seconds * 20);
 	}
-
+	
 	public static int secondsToTicks(int seconds){
 		return seconds * 20;
 	}
@@ -27,7 +27,7 @@ public class Functions{
 	}
 
 	public static double ticksToSeconds(int ticks){
-		return ticks / 20d;
+		return ticks / 20;
 	}
 
 	public static float angleDifference(float angle1, float angle2){

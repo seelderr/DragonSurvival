@@ -34,7 +34,7 @@ public class MixinBlock {
 		if (dragonSurvival$player != null) {
 			dragonSurvival$player = null;
 
-			return new ItemEntity(itemEntity.level(), itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
+			return new ItemEntity(itemEntity.level, itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
 				@Override
 				public boolean fireImmune() {
 					return true;

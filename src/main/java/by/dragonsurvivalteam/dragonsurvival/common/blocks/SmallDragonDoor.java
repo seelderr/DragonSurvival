@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
@@ -35,7 +36,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 

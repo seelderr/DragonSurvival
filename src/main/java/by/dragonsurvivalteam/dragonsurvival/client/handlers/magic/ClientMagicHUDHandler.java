@@ -6,13 +6,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -24,11 +24,11 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 
 import java.awt.*;
 
-public class ClientMagicHUDHandler{
+public class ClientMagicHUDHandler {
+	public static final ResourceLocation VANILLA_WIDGETS = new ResourceLocation("textures/gui/widgets.png");
 	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
 	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
 	public static final ResourceLocation widgets = new ResourceLocation("textures/gui/widgets.png");
@@ -74,18 +74,16 @@ public class ClientMagicHUDHandler{
 			return;
 		}
 
-		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
+		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
 
 			if (ability == null || ability.canConsumeMana(playerEntity)) {
 				gui.renderExperienceBar(guiGraphics, x);
 				return;
 			}
 
-			Window window = Minecraft.getInstance().getWindow();
+		int x = width / 2 - 91;
 
-			int screenWidth = window.getGuiScaledWidth();
-			int screenHeight = window.getGuiScaledHeight();
+		ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
 
 			int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
 			if(i > 0){

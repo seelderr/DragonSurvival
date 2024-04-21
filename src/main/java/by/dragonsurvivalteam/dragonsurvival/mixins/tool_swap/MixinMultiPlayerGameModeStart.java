@@ -18,7 +18,7 @@ public class MixinMultiPlayerGameModeStart {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            ToolUtils.swapStart(localPlayer, localPlayer.level().getBlockState(blockPosition));
+            ToolUtils.swapStart(localPlayer, localPlayer.level.getBlockState(blockPosition));
         }
     }
 }

@@ -11,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Objects;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.Component;
+import java.util.ArrayList;
+import java.util.Locale;
 
 public class DragonEditorDropdownButton extends DropDownButton{
 	private final DragonEditorScreen dragonEditorScreen;
@@ -37,7 +41,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			updateMessage();
 		}
 
-		List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
+		ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
 
 		if(layers != EnumSkinLayer.BASE){
 			valueList.add(0, SkinCap.defaultSkinValue);

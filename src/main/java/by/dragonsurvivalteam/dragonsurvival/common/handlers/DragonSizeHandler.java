@@ -27,12 +27,17 @@ public class DragonSizeHandler{
 
 	@SubscribeEvent
 	public static void getDragonSize(EntityEvent.Size event){
-		if(!(event.getEntity() instanceof Player player) || !DragonUtils.isDragon(player)){
+		if (!(event.getEntity() instanceof Player player)) {
 			return;
 		}
-		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 
-		double size = dragonStateHandler.getSize();
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		if (!handler.isDragon()) {
+			return;
+		}
+
+		double size = handler.getSize();
 		// Calculate base values
 		double height = calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman);
 		double width = calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman);
@@ -97,7 +102,7 @@ public class DragonSizeHandler{
 		if (player.getForcedPose() != overridePose) {
 			player.setForcedPose(overridePose);
 
-			if (player.level().isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
+			if (player.level.isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
 				player.refreshDimensions();
 			}
 		}
@@ -106,10 +111,8 @@ public class DragonSizeHandler{
 	}
 
 	public static Pose getOverridePose(LivingEntity player){
-		DragonStateHandler handler = DragonUtils.getHandler(player);
-
 		if(player != null){
-			boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(handler, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
+			boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(player, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
 			boolean flying = ServerFlightHandler.isFlying(player);
 			boolean spinning = player.isAutoSpinAttack();
 			boolean crouching = player.isShiftKeyDown();
@@ -127,10 +130,13 @@ public class DragonSizeHandler{
 	}
 
 	public static boolean canPoseFit(LivingEntity player, Pose pose){
-		if(!DragonStateProvider.getCap(player).isPresent()){
+		LazyOptional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
+
+		if (!capability.isPresent()){
 			return false;
 		}
-		double size = player.getCapability(Capabilities.DRAGON_CAPABILITY).orElse(null).getSize();
+
+		double size = capability.orElseThrow(() -> new IllegalStateException("Dragon State was not valid")).getSize();
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox);
 		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
 		return player.level().noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));

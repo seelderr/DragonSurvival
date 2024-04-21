@@ -40,8 +40,11 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -148,13 +151,9 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "storm_breath"}, key = "chargedChainRange", comment = "The max distance in blocks the storm breath and charged effect is able to chain to mobs" )
 	public static Integer chargedChainRange = 4;
 
-	@ConfigRange( min = 0.0, max = 100.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
-	                                                     "abilities",
-	                                                     "sea_dragon",
-	                                                     "actives",
-	                                                     "storm_breath"}, key = "chargedEffectDamage", comment = "The amount of damage the charged effect deals each second" )
-	public static Double chargedEffectDamage = 1.0;
+	@ConfigRange(min = 0.0, max = 100.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectDamageMultiplier", comment = "The charged effect damage (starts at 1, scaling with effect level) will get multiplied by this amount")
+	public static Double chargedEffectDamageMultiplier = 1.0;
 
 	@ConfigType( EntityType.class )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
@@ -325,6 +324,11 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	@Override
+	public Fluid clipContext() {
+		return ClipContext.Fluid.NONE;
+	}
+
+	@Override
 	public AbstractDragonType getDragonType(){
 		return DragonTypes.SEA;
 	}
@@ -380,13 +384,13 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(BlockPos pos, BlockState blockState, Direction direction){
-		if (!(player.level() instanceof ServerLevel serverLevel)) {
+		if (!(player.level instanceof ServerLevel serverLevel)) {
 			return;
 		}
 
-		if (blockState.isSolid()) {
+		if (blockState.getMaterial().isSolidBlocking()) {
 			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 				entity.setWaitTime(0);
 				entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
 				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
@@ -397,10 +401,10 @@ public class StormBreathAbility extends BreathAbility{
 				serverLevel.addFreshEntity(entity);
 			}
 		}
-
-		if (blockState.getFluidState().is(FluidTags.WATER)) {
+		
+		if (blockState.getMaterial().equals(Material.WATER)) {
 			if (/* 30% */ player.getRandom().nextInt(100) < 30) {
-				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 				entity.setWaitTime(0);
 				entity.setPos(pos.getX(), pos.getY(), pos.getZ());
 				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
@@ -412,15 +416,17 @@ public class StormBreathAbility extends BreathAbility{
 			}
 		}
 
-		if (player.tickCount % 40 == 0) {
-			if (player.level().isThundering()) {
-				if (player.getRandom().nextInt(100) < 30) {
-					if (player.level().canSeeSky(pos)) {
-						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
-						lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-						lightningboltentity.setCause((ServerPlayer) player);
-						player.level().addFreshEntity(lightningboltentity);
-						player.level().playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
+		if(!player.level.isClientSide){
+			if(player.tickCount % 40 == 0){
+				if(player.level.isThundering()){
+					if(player.getRandom().nextInt(100) < 30){
+						if(player.level.canSeeSky(pos)){
+							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level);
+							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+							lightningboltentity.setCause((ServerPlayer)player);
+							player.level.addFreshEntity(lightningboltentity);
+							player.level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
+						}
 					}
 				}
 			}
@@ -490,7 +496,7 @@ public class StormBreathAbility extends BreathAbility{
 	@Override
 	public void onEntityHit(LivingEntity entityHit){
 		hurtTarget(entityHit);
-		chargedEffectSparkle(player, entityHit, chargedChainRange, stormBreathChainCount, chargedEffectDamage);
+		chargedEffectSparkle(player, entityHit, chargedChainRange, stormBreathChainCount, chargedEffectDamageMultiplier);
 	}
 
 

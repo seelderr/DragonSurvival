@@ -3,9 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.client;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientGrowthHudHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,8 +35,7 @@ public class RenderHudEvents {
     public static void onRenderOverlay(final RenderGuiOverlayEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (event.isCanceled() ||
-            minecraft.options.hideGui){
+        if (event.isCanceled() || minecraft.options.hideGui){
             return;
         }
 
@@ -47,6 +50,12 @@ public class RenderHudEvents {
             event.setCanceled(true);
             ClientMagicHUDHandler.cancelExpBar(getForgeGUI(), event.getGuiGraphics(), event.getPartialTick(),screenWidth, screenHeight);
         } else if (id == VanillaGuiOverlay.AIR_LEVEL.id()) {
+            DragonStateHandler handler = DragonStateProvider.getHandler(ClientProxy.getLocalPlayer());
+
+            if (handler == null || !handler.isDragon()) {
+                return;
+            }
+
             // Render dragon specific hud elements (e.g. time in rain for cave dragons or time without water for sea dragons)
             ClientEvents.onRenderOverlayPreTick(getForgeGUI(), event.getGuiGraphics());
             // Renders the abilities

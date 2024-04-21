@@ -143,22 +143,22 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(final BlockPos blockPosition, final BlockState blockState, final Direction direction) {
-		if (!player.level().isClientSide()) {
+		if (!player.level.isClientSide) {
 			if (fireBreathSpreadsFire) {
 				BlockPos firePosition = blockPosition.relative(direction);
 
-				if (FireBlock.canBePlacedAt(player.level(), firePosition, direction)) {
-					boolean allowPlacement = ForgeEventFactory.getMobGriefingEvent(player.level(), player);
+				if (FireBlock.canBePlacedAt(player.level, firePosition, direction)) {
+					boolean allowPlacement = ForgeEventFactory.getMobGriefingEvent(player.level, player);
 
 					if (allowPlacement) {
 						if (player.getRandom().nextInt(100) < 50) {
-							BlockState fireBlockState = FireBlock.getState(player.level(), firePosition);
-							player.level().setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
+							BlockState fireBlockState = FireBlock.getState(player.level, firePosition);
+							player.level.setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
 
-							blockState.onCaughtFire(player.level(), blockPosition, direction, player);
+							blockState.onCaughtFire(player.level, blockPosition, direction, player);
 
 							if (blockState.getBlock() == Blocks.TNT) {
-								player.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+								player.level.setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
 							}
 						}
 					}
@@ -168,10 +168,10 @@ public class NetherBreathAbility extends BreathAbility{
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if (player.getRandom().nextInt(100) < burnAbility.level * 15) {
-				BlockState blockAbove = player.level().getBlockState(blockPosition.above());
+				BlockState blockAbove = player.level.getBlockState(blockPosition.above());
 
 				if (blockAbove.getBlock() == Blocks.AIR) {
-					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
+					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level);
 					entity.setWaitTime(0);
 					entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
 					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
@@ -179,20 +179,20 @@ public class NetherBreathAbility extends BreathAbility{
 					entity.setRadius(1);
 					entity.setParticle(new SmallFireParticleData(37, false));
 					entity.setOwner(player);
-					player.level().addFreshEntity(entity);
+					player.level.addFreshEntity(entity);
 				}
 			}
 		} else {
 			for (int i = 0; i < 4; i++) {
 				if (player.getRandom().nextInt(100) < 20) {
-					player.level().addParticle(ParticleTypes.LAVA, blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ(), 0, 0.05, 0);
+					player.level.addParticle(ParticleTypes.LAVA, blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ(), 0, 0.05, 0);
 				}
 			}
 
 			if (blockState.getBlock() == Blocks.WATER) {
 				for (int i = 0; i < 4; i++) {
 					if (player.getRandom().nextInt(100) < 90) {
-						player.level().addParticle(ParticleTypes.BUBBLE_COLUMN_UP, blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ(), 0, 0.05, 0);
+						player.level.addParticle(ParticleTypes.BUBBLE_COLUMN_UP, blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ(), 0, 0.05, 0);
 					}
 				}
 			}

@@ -52,11 +52,10 @@ public class MagicCap extends SubCap{
 			abilities.clear();
 
 		if(type != null){
-			for(DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getTypeName(), new ArrayList<>())){
+			for(DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getSubtypeName(), new ArrayList<>())){
 				if(!abilities.containsKey(dragonAbility.getName())){
 					try{
 						DragonAbility ability = dragonAbility.getClass().newInstance();
-
 						abilities.put(ability.getName(), ability);
 					}catch(InstantiationException | IllegalAccessException e){
 						e.printStackTrace();
@@ -178,7 +177,7 @@ public class MagicCap extends SubCap{
 
 	public void loadAbilities(CompoundTag tag){
 		for(Entry<String, ArrayList<DragonAbility>> entry : DragonAbilities.ABILITIES.entrySet()){
-			if(!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getTypeName())) continue;
+			if(!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getSubtypeName())) continue;
 
 			for(DragonAbility ability : entry.getValue()){
 				if(tag.contains(ability.getName())){

@@ -37,7 +37,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap> {
 	@Override
 	public void encode(final SynchronizeDragonCap message, final FriendlyByteBuf buffer) {
 		buffer.writeInt(message.playerId);
-		buffer.writeUtf(message.dragonType != null ? message.dragonType.getTypeName() : "none");
+		buffer.writeUtf(message.dragonType != null ? message.dragonType.getSubtypeName() : "none");
 		buffer.writeBoolean(message.hiding);
 		buffer.writeDouble(message.size);
 		buffer.writeBoolean(message.hasWings);
@@ -48,7 +48,7 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap> {
 	public SynchronizeDragonCap decode(final FriendlyByteBuf buffer) {
 		int id = buffer.readInt();
 		String typeS = buffer.readUtf();
-		AbstractDragonType type = typeS.equals("none") ? null :  DragonTypes.getStatic(typeS);
+		AbstractDragonType type = typeS.equals("none") ? null :  DragonTypes.getStaticSubtype(typeS);
 		boolean hiding = buffer.readBoolean();
 		double size = buffer.readDouble();
 		boolean hasWings = buffer.readBoolean();

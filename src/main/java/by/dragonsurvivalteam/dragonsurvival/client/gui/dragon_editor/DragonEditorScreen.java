@@ -337,7 +337,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}
 
 		int i = 0;
-		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
+		for(EnumSkinLayer layers : EnumSkinLayer.values()){
 			ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonType, layers);
 
 			if (layers != EnumSkinLayer.BASE) {
@@ -347,11 +347,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			String[] values = valueList.toArray(new String[0]);
 			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
 
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers) {
+
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers){
 				@Override
 				public void updateMessage(){
 					if(current != null){
-						message = Component.translatable(partToTranslation(current));
+						message = Component.translatable("ds.skin_part." + dragonType.getTypeName().toLowerCase(Locale.ROOT) + "." + current.toLowerCase(Locale.ROOT));
 					}
 				}
 			};
@@ -688,6 +689,52 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 				if (isHovered()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.random"), pMouseX, pMouseY);
+			@Override
+			public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png"));
+				blit(stack, x, y, 0, 0, width, height, width, height);
+			}
+		});
+
+		addRenderableWidget(new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, s -> {
+			undoAction();
+		}){
+			@Override
+			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.undo"), p_230443_2_, p_230443_3_);
+			}
+
+			@Override
+			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				active = UNDO_QUEUES.containsKey(currentSelected) && UNDO_QUEUES.get(currentSelected).size() > 0;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+		});
+
+		addRenderableWidget(new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, s -> {
+			redoAction();
+		}){
+			@Override
+			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.redo"), p_230443_2_, p_230443_3_);
+			}
+
+			@Override
+			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				active = REDO_QUEUES.containsKey(currentSelected) && REDO_QUEUES.get(currentSelected).size() > 0;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+			}
+		});
+
+		addRenderableWidget(new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), p -> {}){
+			@Override
+			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+				active = visible = showUi;
+				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+
+				if(visible){
+					RenderSystem.setShaderTexture(0, new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png"));
+					blit(pMatrixStack, x, y, 0, 0, 16, 16, 16, 16);
 				}
 			}
 
@@ -740,9 +787,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) { /* Nothing to do */ }
 		});
 
-		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), button -> { /* Nothing to do */ }));
+		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), p -> {}));
 
-		addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
+		/*addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
 			dragonRender.yRot = -3;
 			dragonRender.xRot = -5;
 			dragonRender.xOffset = 0;
@@ -763,7 +810,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
 				}
 			}
-		});
+		});*/
 
 		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
 		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), s -> {}, this));
@@ -772,7 +819,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	}
 
 	public void update(){
-		if (dragonType != null) {
+		if(dragonType != null){
 			handler.setType(dragonType);
 		}
 
@@ -880,3 +927,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.handler.getTypeName().toLowerCase(Locale.ROOT) + ".", "");
 	}
 }
+}
+
+// TODO add a warning to the logs that any custom textures are incorrectly registered in customization.json or are not used.
+// TODO add dragon body types (western, eastern, southern). They will only be realized with a set of animations. The model, textures and other things will not be affected. Body selection should appear after the species selection. Email me on discord for details if you want to help add this (I can't do it on my own)
