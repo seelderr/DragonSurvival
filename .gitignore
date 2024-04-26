@@ -35,3 +35,5 @@ node_modules/.bin/cdl
 src/generated/resources/.cache/cache
 src/generated/resources/.cache
 /mcmodsrepo/
+
+src/generated
