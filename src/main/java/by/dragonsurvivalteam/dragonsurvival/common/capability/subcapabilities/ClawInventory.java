@@ -7,12 +7,18 @@ import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
 public class ClawInventory extends SubCap {
-	/*
-		Slot 0: Sword
-		Slot 1: Pickaxe
-		Slot 2: Axe
-		Slot 3: Shovel
-	 */
+	public enum Slot {
+		SWORD,
+		PICKAXE,
+		AXE,
+		SHOVEL;
+
+		/** Equivalent to the container size */
+		public static int size() {
+			return values().length;
+		}
+	}
+
 	private SimpleContainer clawsInventory = new SimpleContainer(4);
 
 	public boolean shouldRenderClaws = true;

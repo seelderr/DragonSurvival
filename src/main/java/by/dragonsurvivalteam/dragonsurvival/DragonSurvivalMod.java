@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
@@ -18,6 +20,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -80,5 +83,11 @@ public class DragonSurvivalMod{
 		DragonEditorCommand.register(commandDispatcher);
 		DragonAltarCommand.register(commandDispatcher);
 		LOGGER.info("Registered commands");
+	}
+
+	@SubscribeEvent
+	public static void register(final RegisterCapabilitiesEvent event){
+		event.register(DragonStateHandler.class);
+		event.register(EntityStateHandler.class);
 	}
 }

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
@@ -352,139 +353,120 @@ public class ClientEvents{
 		});
 	}
 
-	public static void onRenderOverlayPreTick(final ForgeGui gui, final GuiGraphics guiGraphics){
-		Minecraft mc = Minecraft.getInstance();
-		LocalPlayer player = mc.player;
+	public static void renderOverlay(final DragonStateHandler handler, final ForgeGui forgeGUI, final GuiGraphics guiGraphics) {
+		LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-		if(mc.options.hideGui || !gui.shouldDrawSurvivalElements() || player == null){
-			return;
-		}
-		
-		if(!DragonUtils.isDragon(player)){
-			//TODO Forge seems to have made OverlayRegistry.registerOverlayAbove() only add not cancel original
-			//Until a proper fix is found sea dragon will have air indicator
-			//ForgeGui.AIR_LEVEL_ELEMENT.render(gui, mStack, partialTicks, width, height);
+		if (localPlayer == null || !forgeGUI.shouldDrawSurvivalElements()) {
 			return;
 		}
 
-		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-			int rightHeight = 0;
+		int rightHeight;
 
-			if(playerStateHandler.getType() instanceof SeaDragonType seaDragonType){
-				if(seaDragonType.timeWithoutWater > 0 && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0){
-					RenderSystem.enableBlend();
+		if (handler.getType() instanceof SeaDragonType seaDragonType) {
+			if (seaDragonType.timeWithoutWater > 0 && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0) {
+				RenderSystem.enableBlend();
 
-					if(Minecraft.getInstance().gui instanceof ForgeGui gui1){
-						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
-						gui1.rightHeight += 10;
-					}
+				rightHeight = forgeGUI.rightHeight;
+				forgeGUI.rightHeight += 10;
 
-					int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
+				int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
+				WaterAbility waterAbility = DragonAbilities.getSelfAbility(localPlayer, WaterAbility.class);
 
-					WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
-
-					if(waterAbility != null){
-						maxTimeWithoutWater += Functions.secondsToTicks(waterAbility.getDuration());
-					}
-
-					double timeWithoutWater = maxTimeWithoutWater - seaDragonType.timeWithoutWater;
-					boolean flag = false;
-					if(timeWithoutWater < 0){
-						flag = true;
-						timeWithoutWater = Math.abs(timeWithoutWater);
-					}
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-					final int full = flag ? Mth.floor(timeWithoutWater * 10.0D / maxTimeWithoutWater) : Mth.ceil((timeWithoutWater - 2) * 10.0D / maxTimeWithoutWater);
-					final int partial = Mth.ceil(timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, flag ? 18 : i < full ? 0 : 9, 36, 9, 9);
-					}
-
-					RenderSystem.disableBlend();
-				}
-			}else if(playerStateHandler.getType() instanceof CaveDragonType caveDragonType){
-				if(caveDragonType.timeInRain > 0 && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0){
-					RenderSystem.enableBlend();
-
-					if(Minecraft.getInstance().gui instanceof ForgeGui){
-						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
-						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
-					}
-
-					ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(player, ContrastShowerAbility.class);
-					int maxRainTime = 0;
-
-					if(contrastShower != null){
-						maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
-					}
-
-
-					final int timeInRain = maxRainTime - Math.min(caveDragonType.timeInRain, maxRainTime);
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-					final int full = Mth.ceil((double)(timeInRain - 2) * 10.0D / maxRainTime);
-					final int partial = Mth.ceil((double)timeInRain * 10.0D / maxRainTime) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 54, 9, 9);
-					}
-
-					RenderSystem.disableBlend();
+				if (waterAbility != null) {
+					maxTimeWithoutWater += Functions.secondsToTicks(waterAbility.getDuration());
 				}
 
-				if(caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming){
-					RenderSystem.enableBlend();
+				double timeWithoutWater = maxTimeWithoutWater - seaDragonType.timeWithoutWater;
+				boolean flag = false;
 
-					if(Minecraft.getInstance().gui instanceof ForgeGui){
-						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
-						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
-					}
-
-					int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-					int full = Mth.ceil((double)(caveDragonType.lavaAirSupply - 2) * 10.0D / ServerConfig.caveLavaSwimmingTicks);
-					int partial = Mth.ceil((double)caveDragonType.lavaAirSupply * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 27, 9, 9);
-					}
-
-					RenderSystem.disableBlend();
+				if (timeWithoutWater < 0) {
+					flag = true;
+					timeWithoutWater = Math.abs(timeWithoutWater);
 				}
-			}else if(playerStateHandler.getType() instanceof ForestDragonType forestDragonType){
-				if(forestDragonType.timeInDarkness > 0 && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !player.hasEffect(DragonEffects.STRESS)){
-					RenderSystem.enableBlend();
 
-					if(Minecraft.getInstance().gui instanceof ForgeGui){
-						rightHeight = ((ForgeGui)Minecraft.getInstance().gui).rightHeight;
-						((ForgeGui)Minecraft.getInstance().gui).rightHeight += 10;
-					}
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = flag ? Mth.floor(timeWithoutWater * 10.0D / maxTimeWithoutWater) : Mth.ceil((timeWithoutWater - 2) * 10.0D / maxTimeWithoutWater);
+				final int partial = Mth.ceil(timeWithoutWater * 10.0D / maxTimeWithoutWater) - full;
 
-					int maxTimeInDarkness = ServerConfig.forestStressTicks;
-					LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
-
-					if(lightInDarkness != null){
-						maxTimeInDarkness += Functions.secondsToTicks(lightInDarkness.getDuration());
-					}
-
-					final int timeInDarkness = maxTimeInDarkness - Math.min(forestDragonType.timeInDarkness, maxTimeInDarkness);
-
-					final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-					final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-					final int full = Mth.ceil((double)(timeInDarkness - 2) * 10.0D / maxTimeInDarkness);
-					final int partial = Mth.ceil((double)timeInDarkness * 10.0D / maxTimeInDarkness) - full;
-
-					for(int i = 0; i < full + partial; ++i){
-						guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 45, 9, 9);
-					}
-
-					RenderSystem.disableBlend();
+				for (int i = 0; i < full + partial; ++i) {
+					guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, flag ? 18 : i < full ? 0 : 9, 36, 9, 9);
 				}
+
+				RenderSystem.disableBlend();
 			}
-		});
+		} else if (handler.getType() instanceof CaveDragonType caveDragonType) {
+			if (caveDragonType.timeInRain > 0 && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0) {
+				RenderSystem.enableBlend();
+
+				rightHeight = forgeGUI.rightHeight;
+				forgeGUI.rightHeight += 10;
+
+				ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(localPlayer, ContrastShowerAbility.class);
+				int maxRainTime = 0;
+
+				if (contrastShower != null) {
+					maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
+				}
+
+				final int timeInRain = maxRainTime - Math.min(caveDragonType.timeInRain, maxRainTime);
+
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = Mth.ceil((double) (timeInRain - 2) * 10.0D / maxRainTime);
+				final int partial = Mth.ceil((double) timeInRain * 10.0D / maxRainTime) - full;
+
+				for (int i = 0; i < full + partial; ++i) {
+					guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 54, 9, 9);
+				}
+
+				RenderSystem.disableBlend();
+			}
+
+			if (caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && ServerConfig.bonuses && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming) {
+				RenderSystem.enableBlend();
+
+				rightHeight = forgeGUI.rightHeight;
+				forgeGUI.rightHeight += 10;
+
+				int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				int full = Mth.ceil((double) (caveDragonType.lavaAirSupply - 2) * 10.0D / ServerConfig.caveLavaSwimmingTicks);
+				int partial = Mth.ceil((double) caveDragonType.lavaAirSupply * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
+
+				for (int i = 0; i < full + partial; ++i) {
+					guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 27, 9, 9);
+				}
+
+				RenderSystem.disableBlend();
+			}
+		} else if (handler.getType() instanceof ForestDragonType forestDragonType) {
+			if (forestDragonType.timeInDarkness > 0 && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !localPlayer.hasEffect(DragonEffects.STRESS)) {
+				RenderSystem.enableBlend();
+
+				rightHeight = forgeGUI.rightHeight;
+				forgeGUI.rightHeight += 10;
+
+				int maxTimeInDarkness = ServerConfig.forestStressTicks;
+				LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(localPlayer, LightInDarknessAbility.class);
+
+				if (lightInDarkness != null) {
+					maxTimeInDarkness += Functions.secondsToTicks(lightInDarkness.getDuration());
+				}
+
+				final int timeInDarkness = maxTimeInDarkness - Math.min(forestDragonType.timeInDarkness, maxTimeInDarkness);
+
+				final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+				final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+				final int full = Mth.ceil((double) (timeInDarkness - 2) * 10.0D / maxTimeInDarkness);
+				final int partial = Mth.ceil((double) timeInDarkness * 10.0D / maxTimeInDarkness) - full;
+
+				for (int i = 0; i < full + partial; ++i) {
+					guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 45, 9, 9);
+				}
+
+				RenderSystem.disableBlend();
+			}
+		}
 	}
 }
