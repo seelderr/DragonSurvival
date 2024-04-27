@@ -6,13 +6,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -24,14 +24,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 
 import java.awt.*;
 
-public class ClientMagicHUDHandler{
+public class ClientMagicHUDHandler {
+	public static final ResourceLocation VANILLA_WIDGETS = new ResourceLocation("textures/gui/widgets.png");
 	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
 	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
-	public static final ResourceLocation widgets = new ResourceLocation("textures/gui/widgets.png");
+
+	public static final Color COLOR = new Color(243, 48, 59);
 
 	@ConfigRange( min = -1000, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
@@ -57,51 +58,62 @@ public class ClientMagicHUDHandler{
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
-	public static void cancelExpBar(ForgeGui gui, GuiGraphics guiGraphics, float partialTicks, int width, int height){ // TODO :: Should have a different name
-		Player playerEntity = Minecraft.getInstance().player;
-		if(Minecraft.getInstance().options.hideGui || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience())
-			return;
-		int x = width / 2 - 91;
+	public static boolean renderExperienceBar(final ForgeGui gui, GuiGraphics guiGraphics, int screenWidth) {
+		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		if(!ServerConfig.consumeEXPAsMana || !DragonUtils.isDragon(playerEntity)){
-			VanillaGuiOverlay.EXPERIENCE_BAR.type().overlay().render(gui, guiGraphics, partialTicks, width, height);
-			return;
+		if (localPlayer == null || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience()) {
+			return false;
 		}
 
-		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot());
+		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
 
-			if (ability == null || ability.canConsumeMana(playerEntity)) {
-				gui.renderExperienceBar(guiGraphics, x);
-				return;
+		if (handler == null || !handler.isDragon()) {
+			return false;
+		}
+
+		ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
+
+		if (ability == null || ability.canConsumeMana(localPlayer)) {
+			return false;
+		}
+
+		Window window = Minecraft.getInstance().getWindow();
+		int guiScaledWidth = window.getGuiScaledWidth();
+		int guiScaledHeight = window.getGuiScaledHeight();
+
+		Minecraft.getInstance().getProfiler().push("expLevel");
+
+		if (localPlayer.getXpNeededForNextLevel() > 0) {
+			int width = screenWidth / 2 - 91;
+
+			int experienceProgress = (int) (localPlayer.experienceProgress * 183.0F);
+			int height = guiScaledHeight - 32 + 3;
+			guiGraphics.blit(widgetTextures, width, height, 0, 0, 164, 182, 5, 256, 256);
+
+			if (experienceProgress > 0) {
+				guiGraphics.blit(widgetTextures, width, height, 0, 0, 169, experienceProgress, 5, 256, 256);
 			}
+		}
 
-			Window window = Minecraft.getInstance().getWindow();
+		Minecraft.getInstance().getProfiler().pop();
 
-			int screenWidth = window.getGuiScaledWidth();
-			int screenHeight = window.getGuiScaledHeight();
+		if (localPlayer.experienceLevel > 0) {
+			Minecraft.getInstance().getProfiler().push("expLevel");
 
-			int i = Minecraft.getInstance().player.getXpNeededForNextLevel();
-			if(i > 0){
-				int j = 182;
-				int k = (int)(Minecraft.getInstance().player.experienceProgress * 183.0F);
-				int l = screenHeight - 32 + 3;
-				guiGraphics.blit(widgetTextures, x, l, 0, 0, 164, 182, 5, 256, 256);
-				if(k > 0)
-					guiGraphics.blit(widgetTextures, x, l, 0, 0, 169, k, 5, 256, 256);
-			}
+			String s = "" + localPlayer.experienceLevel;
+			int width = (guiScaledWidth - Minecraft.getInstance().font.width(s)) / 2;
+			int height = guiScaledHeight - 31 - 4;
 
-			if(Minecraft.getInstance().player.experienceLevel > 0){
-				String s = "" + Minecraft.getInstance().player.experienceLevel;
-				int i1 = (screenWidth - Minecraft.getInstance().font.width(s)) / 2;
-				int j1 = screenHeight - 31 - 4;
-				guiGraphics.drawString(Minecraft.getInstance().font, s, (i1 + 1), j1, 0);
-				guiGraphics.drawString(Minecraft.getInstance().font, s, (i1 - 1), j1, 0);
-				guiGraphics.drawString(Minecraft.getInstance().font, s, i1, (j1 + 1), 0);
-				guiGraphics.drawString(Minecraft.getInstance().font, s, i1, (j1 - 1), 0);
-				guiGraphics.drawString(Minecraft.getInstance().font, s, i1, j1, new Color(243, 48, 59).getRGB());
-			}
-		});
+			guiGraphics.drawString(Minecraft.getInstance().font, s, (width + 1), height, 0, false);
+			guiGraphics.drawString(Minecraft.getInstance().font, s, (width - 1), height, 0, false);
+			guiGraphics.drawString(Minecraft.getInstance().font, s, width, (height + 1), 0, false);
+			guiGraphics.drawString(Minecraft.getInstance().font, s, width, (height - 1), 0, false);
+			guiGraphics.drawString(Minecraft.getInstance().font, s, width, height, COLOR.getRGB(), false);
+
+			Minecraft.getInstance().getProfiler().pop();
+		}
+
+		return true;
 	}
 
 	private static int errorTicks;
@@ -113,20 +125,10 @@ public class ClientMagicHUDHandler{
 		errorMessage = component;
 	}
 
-	public static void renderAbilityHud(final GuiGraphics guiGraphics, int width, int height){
-		if (Minecraft.getInstance().options.hideGui) {
-			return;
-		}
+	public static void renderAbilityHud(final DragonStateHandler handler, final GuiGraphics guiGraphics, int width, int height){
+		Player localPlayer = Minecraft.getInstance().player;
 
-		Player player = Minecraft.getInstance().player;
-
-		if (player == null || player.isSpectator()) {
-			return;
-		}
-
-		DragonStateHandler handler = DragonUtils.getHandler(player);
-
-		if (!handler.isDragon()) {
+		if (localPlayer == null || localPlayer.isSpectator()) {
 			return;
 		}
 
@@ -141,8 +143,8 @@ public class ClientMagicHUDHandler{
 		posY += skillbarYOffset;
 
 		if (handler.getMagicData().shouldRenderAbilities()) {
-			guiGraphics.blit(widgets, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
-			guiGraphics.blit(widgets, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
+			guiGraphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
+			guiGraphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
 			for (int x = 0; x < MagicCap.activeAbilitySlots; x++) {
 				ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(x);
@@ -162,10 +164,10 @@ public class ClientMagicHUDHandler{
 				}
 			}
 
-			guiGraphics.blit(widgets, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
+			guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
-			int maxMana = ManaHandler.getMaxMana(player);
-			int curMana = ManaHandler.getCurrentMana(player);
+			int maxMana = ManaHandler.getMaxMana(localPlayer);
+			int curMana = ManaHandler.getCurrentMana(localPlayer);
 
 			int manaX = i1;
 			int manaY = height - sizeY;
@@ -177,7 +179,7 @@ public class ClientMagicHUDHandler{
 				for (int x = 0; x < 10; x++) {
 					int manaSlot = i * 10 + x;
 					if (manaSlot < maxMana) {
-						boolean goodCondi = ManaHandler.isPlayerInGoodConditions(player);
+						boolean goodCondi = ManaHandler.isPlayerInGoodConditions(localPlayer);
 						int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
 						int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
 						float rescale = 2.15F;
@@ -190,12 +192,12 @@ public class ClientMagicHUDHandler{
 
 		int currentCastTime = -1, skillCastTime = -1;
 
-		if (ability instanceof ChargeCastAbility ability1) {
-			currentCastTime = ability1.getCastTime();
-			skillCastTime = ability1.getSkillCastingTime();
-		} else if (ability instanceof ChannelingCastAbility ability1) {
-			currentCastTime = ability1.getChargeTime();
-			skillCastTime = ability1.getSkillChargeTime();
+		if (ability instanceof ChargeCastAbility chargeAbility) {
+			currentCastTime = chargeAbility.getCastTime();
+			skillCastTime = chargeAbility.getSkillCastingTime();
+		} else if (ability instanceof ChannelingCastAbility channelAbility) {
+			currentCastTime = channelAbility.getChargeTime();
+			skillCastTime = channelAbility.getSkillChargeTime();
 		}
 
 		if (handler.getMagicData().isCasting) {

@@ -23,7 +23,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.AttachCapabilitiesEvent;
 import net.minecraftforge.event.entity.EntityLeaveLevelEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
@@ -59,11 +58,6 @@ public class Capabilities{
 	@OnlyIn( Dist .CLIENT)
 	private static boolean isFakePlayer(Player player){
 		return player instanceof FakeClientPlayer;
-	}
-
-	@SubscribeEvent
-	public static void register(RegisterCapabilitiesEvent ev){
-		ev.register(DragonStateHandler.class);
 	}
 
 	/** Only called on the server-side */

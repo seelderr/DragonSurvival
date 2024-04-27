@@ -159,53 +159,52 @@ public class MagicHandler{
 		}
 
 		if(entity.tickCount % 20 == 0){
-			MobEffectInstance drainEffect = entity.getEffect(DragonEffects.DRAIN);
+            MobEffectInstance drainEffect = entity.getEffect(DragonEffects.DRAIN);
 
-			if (drainEffect != null) {
-				if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
-					Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+            if (drainEffect != null) {
+                if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
+                    Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
 
-					if (player != null) {
-						TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN, player), drainEffect.getAmplifier() + 1), entity);
-					} else {
-						entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
-					}
-				}
-			}
+                    if (player != null) {
+                        TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN, player), drainEffect.getAmplifier() + 1), entity);
+                    } else {
+                        entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
+                    }
+                }
+            }
 
-			MobEffectInstance chargedEffect = entity.getEffect(DragonEffects.CHARGED);
+            MobEffectInstance chargedEffect = entity.getEffect(DragonEffects.CHARGED);
 
-			if (chargedEffect != null) {
-				Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+            if (chargedEffect != null) {
+                Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+                if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
+                    StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
+                }
+            }
 
-				if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
-					StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
-				}
-			}
+            MobEffectInstance burnEffect = entity.getEffect(DragonEffects.BURN);
 
-			MobEffectInstance burnEffect = entity.getEffect(DragonEffects.BURN);
+            if (burnEffect != null) {
+                if (!entity.fireImmune()) {
+                    if (cap.lastPos != null) {
+                        double distance = entity.distanceToSqr(cap.lastPos);
+                        float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
 
-			if (burnEffect != null) {
-				if (!entity.fireImmune()) {
-					if (cap.lastPos != null) {
-						double distance = entity.distanceToSqr(cap.lastPos);
-						float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
-
-						if (damage > 0) {
-							if (!entity.isOnFire()) {
-								// Short enough fire duration to not cause fire damage but still drop cooked items
-								entity.setRemainingFireTicks(1);
-							}
-							Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
-							if (player != null) {
-								TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
-							} else {
-								entity.hurt(entity.damageSources().onFire(), damage);
-							}
-						}
-					}
-				}
-			}
+                        if (damage > 0) {
+                            if (!entity.isOnFire()) {
+                                // Short enough fire duration to not cause fire damage but still drop cooked items
+                                entity.setRemainingFireTicks(1);
+                            }
+                            Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+                            if (player != null) {
+                                TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
+                            } else {
+                                entity.hurt(entity.damageSources().onFire(), damage);
+                            }
+                        }
+                    }
+                }
+            }
 
 			cap.lastPos = entity.position();
 		}

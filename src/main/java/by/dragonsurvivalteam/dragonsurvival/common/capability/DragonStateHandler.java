@@ -96,7 +96,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			AttributeModifier health = DragonModifiers.buildHealthMod(size);
 			DragonModifiers.updateHealthModifier(player, health);
 
-			AttributeModifier damage = DragonModifiers.buildDamageMod(this, isDragon());
+			AttributeModifier damage = DragonModifiers.buildDamageMod(this);
 			DragonModifiers.updateDamageModifier(player, damage);
 
 			AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());

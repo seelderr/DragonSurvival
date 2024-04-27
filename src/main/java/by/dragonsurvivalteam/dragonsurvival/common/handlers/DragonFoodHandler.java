@@ -21,6 +21,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -86,7 +87,7 @@ public class DragonFoodHandler {
 
 
 	private static final ResourceLocation FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
-	private static final Random RANDOM = new Random();
+	private static final RandomSource RANDOM = RandomSource.create();
 
 	private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS;
 
@@ -345,22 +346,21 @@ public class DragonFoodHandler {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static void onRenderFoodBar(final ForgeGui forgeGUI, final GuiGraphics guiGraphics, float partialTicks, int width, int height) {
-		LocalPlayer player = Minecraft.getInstance().player;
+	public static boolean renderFoodBar(final ForgeGui forgeGUI, final GuiGraphics guiGraphics, int width, int height) {
+		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		if (player == null || !forgeGUI.shouldDrawSurvivalElements()) {
-			return;
+		if (localPlayer == null || !forgeGUI.shouldDrawSurvivalElements()) {
+			return false;
 		}
 
-		if (!customDragonFoods || !DragonUtils.isDragon(player)) {
-			VanillaGuiOverlay.FOOD_LEVEL.type().overlay().render(forgeGUI, guiGraphics, partialTicks, width, height);
-			return;
+		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
+
+		if (handler == null || !handler.isDragon()) {
+			return false;
 		}
 
-		RANDOM.setSeed(player.tickCount * 312871L);
-
+		Minecraft.getInstance().getProfiler().push("food");
 		RenderSystem.enableBlend();
-		RenderSystem.setShaderTexture(0, FOOD_ICONS);
 
 		rightHeight = forgeGUI.rightHeight;
 		forgeGUI.rightHeight += 10;
@@ -368,26 +368,17 @@ public class DragonFoodHandler {
 		final int left = width / 2 + 91;
 		final int top = height - rightHeight;
 		rightHeight += 10;
-		final FoodData food = player.getFoodData();
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		final FoodData food = localPlayer.getFoodData();
 		final int type = DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
-		final boolean hunger = player.hasEffect(MobEffects.HUNGER);
+		final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
 
 		for (int i = 0; i < 10; i++) {
 			int icon = i * 2 + 1; // there can be 10 icons (food level maximum is 20)
 			int y = top;
 
-			if (food.getSaturationLevel() <= 0.0F && player.tickCount % (food.getFoodLevel() * 3 + 1) == 0) {
+			if (food.getSaturationLevel() <= 0 && localPlayer.tickCount % (food.getFoodLevel() * 3 + 1) == 0) {
 				// Animate the food icons (moving up / down)
 				y = top + RANDOM.nextInt(3) - 1;
-			}
-
-			guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
-
-			if (icon < food.getFoodLevel()) {
-				guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
-			} else if (icon == food.getFoodLevel()) {
-				guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
 			}
 
 			guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
@@ -400,6 +391,9 @@ public class DragonFoodHandler {
 		}
 
 		RenderSystem.disableBlend();
+		Minecraft.getInstance().getProfiler().pop();
+
+		return true;
 	}
 
 	@SubscribeEvent

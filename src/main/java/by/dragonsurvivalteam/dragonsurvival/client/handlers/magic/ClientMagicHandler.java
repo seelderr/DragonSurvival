@@ -63,10 +63,10 @@ public class ClientMagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingTick(final LivingEvent.LivingTickEvent event){
+	public static void livingTick(final LivingEvent.LivingTickEvent event) {
 		LivingEntity entity = event.getEntity();
 
-		if(!entity.level().isClientSide()){
+		if (!entity.level().isClientSide()) {
 			return;
 		}
 

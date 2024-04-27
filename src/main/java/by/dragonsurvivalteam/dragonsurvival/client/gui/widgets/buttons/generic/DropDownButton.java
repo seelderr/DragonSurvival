@@ -18,7 +18,6 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -27,7 +26,7 @@ public class DropDownButton extends ExtendedButton {
 	public String[] values;
 	public String current;
 	public Consumer<String> setter;
-	public List<FormattedCharSequence> tooltip;
+	public List<FormattedCharSequence> tooltip; // FIXME :: what is the tooltip supposed to be
 	public boolean toggled;
 	public DropdownList list;
 	public AbstractWidget renderButton;
@@ -120,7 +119,7 @@ public class DropDownButton extends ExtendedButton {
 				list.centerScrollOn(center);
 
 			boolean hasBorder = false;
-			if(screen.children.size() > 0){
+			if(!screen.children.isEmpty()){
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
 				screen.children.add(0, list);
@@ -174,6 +173,10 @@ public class DropDownButton extends ExtendedButton {
 
 	@Override
 	public Tooltip getTooltip(){
+		if (tooltip == null) {
+			return Tooltip.create(Component.empty());
+		}
+
 		return Tooltip.create(Component.literal(tooltip.toString()));
 	}
 }

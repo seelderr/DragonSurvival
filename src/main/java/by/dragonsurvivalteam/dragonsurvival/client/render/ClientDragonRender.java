@@ -225,7 +225,11 @@ public class ClientDragonRender{
 			dummyDragon.playerId = player.getId();
 		}
 
-		if (handler.isDragon()) {
+		if(handler.isDragon()){
+			if (player == ClientProxy.getLocalPlayer()) {
+				renderDelay = MAX_DELAY;
+			}
+
 			renderPlayerEvent.setCanceled(true);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
