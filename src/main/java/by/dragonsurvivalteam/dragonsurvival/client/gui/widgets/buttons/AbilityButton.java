@@ -38,7 +38,7 @@ public class AbilityButton extends Button implements TooltipRender{
 	public DragonAbility ability;
 
 	public AbilityButton(int x, int y, int skillType, int slot, Screen screen){
-		super(x, y, 16, 16, null, button -> {});
+		super(x, y, 32, 32, null, button -> {});
 		this.slot = slot;
 		this.skillType = skillType;
 		this.screen = screen;
@@ -121,17 +121,17 @@ public class AbilityButton extends Button implements TooltipRender{
 		}
 
 		RenderSystem.setShaderTexture(0, isDragging ? BLANK_3_TEXTURE : ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE);
-		blit(stack, x - 1, y - 1, 0, 0, 20, 20, 20, 20);
+		blit(stack, x - 1, y - 1, 0, 0, 32, 32, 32, 32);
 
 
 		if(ability != null && !dragging){
 			RenderSystem.setShaderTexture(0, ability.getIcon());
-			blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+			blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 
 			if(ability.isDisabled()){
 				RenderSystem.enableBlend();
 				RenderSystem.setShaderTexture(0, MagicDragonRender.INVALID_ICON);
-				blit(stack, x, y, 0, 0, 18, 18, 18, 18);
+				blit(stack, x, y, 0, 0, 32, 32, 32, 32);
 				RenderSystem.disableBlend();
 			}
 		}

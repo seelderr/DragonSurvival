@@ -352,7 +352,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			};
 			addRenderableWidget(btn);
-			addRenderableWidget(new ArrowButton(btn.x - 15, btn.y + 1, 13, 13, false, s -> {
+			addRenderableWidget(new ArrowButton(btn.x - 15, btn.y, 16, 16, false, s -> {
 				int index = 0;
 
 				for(int i1 = 0; i1 < btn.values.length; i1++){
@@ -378,7 +378,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			});
 
-			addRenderableWidget(new ArrowButton(btn.x + btn.getWidth() + 2, btn.y + 1, 13, 13, true, s -> {
+			addRenderableWidget(new ArrowButton(btn.x + btn.getWidth() - 1, btn.y, 16, 16, true, s -> {
 				int index = 0;
 
 				for(int i1 = 0; i1 < btn.values.length; i1++){
@@ -404,7 +404,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 			});
 
-			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 10 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), s -> {
+			addRenderableWidget(new ColorSelectorButton(this, layers, btn.x + 14 + btn.getWidth() + 2, btn.y, btn.getHeight(), btn.getHeight(), s -> {
 				doAction();
 				preset.skinAges.get(level).get().layerSettings.get(layers).get().hue = s.floatValue();
 				handler.getSkinData().compileSkin();
