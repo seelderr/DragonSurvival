@@ -18,8 +18,17 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import com.mojang.brigadier.CommandDispatcher;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.data.loading.DatagenModLoader;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -28,6 +37,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.resource.PathPackResources;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib3.GeckoLib;
@@ -37,6 +53,10 @@ public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
 	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
+
+    public static ResourceLocation res(String name) {
+        return new ResourceLocation(MODID, name);
+    }
 
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
@@ -48,6 +68,7 @@ public class DragonSurvivalMod{
 		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
+		modEventBus.addListener(this::addPackFinders);
 
 		DSParticles.register();
 		SoundRegistry.register();
@@ -81,6 +102,39 @@ public class DragonSurvivalMod{
 		DragonEditorCommand.register(commandDispatcher);
 		DragonAltarCommand.register(commandDispatcher);
 		LOGGER.info("Registered commands");
+	}
+	
+	@SubscribeEvent
+	public void addPackFinders(AddPackFindersEvent event) {
+		if (event.getPackType() == PackType.CLIENT_RESOURCES) {
+			HashMap<MutableComponent, String> resourcePacks = new HashMap<MutableComponent, String>();
+			//resourcePacks.put(Component.literal("More Eyes"), "more_eyes");
+			for (Map.Entry<MutableComponent, String> entry : resourcePacks.entrySet()) {
+				registerBuiltinResourcePack(event, entry.getKey(), entry.getValue());
+			}
+		}
+	}
+
+	private static void registerBuiltinResourcePack(AddPackFindersEvent event, MutableComponent name, String folder) {
+		LOGGER.info("Registering " + name);
+		event.addRepositorySource((consumer, constructor) -> {
+			String path = res(folder).toString();
+			IModFile file = ModList.get().getModFileById(MODID).getFile();
+			try(PathPackResources pack = new PathPackResources(path, file.findResource("resourcepacks/" + folder));) {
+				consumer.accept(constructor.create(
+					res(folder).toString(),
+					name,
+					false,
+					() -> pack,
+					pack.getMetadataSection(PackMetadataSection.SERIALIZER),
+					Pack.Position.TOP,
+					PackSource.BUILT_IN,
+					false));
+			} catch (IOException e) {
+				if (!DatagenModLoader.isRunningDataGen())
+					e.printStackTrace();
+			}
+		});
 	}
 
 	@SubscribeEvent
