@@ -201,10 +201,15 @@ public class DragonFoodHandler {
 
 	private static FoodProperties getFoodProperties(final String[] configuration, final Item item, final AbstractDragonType type) {
 		// Use configured food properties (if present), otherwise use the properties of the item (if present) otherwise use a default value of 1
-		int nutrition = configuration.length == 4 ? Integer.parseInt(configuration[2]) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1;
-		float saturation = configuration.length == 4 ? Float.parseFloat(configuration[3]) : item.getFoodProperties() != null ? (item.getFoodProperties().getNutrition() * item.getFoodProperties().getSaturationModifier() * 2) : 0;
+		try {
+			int nutrition = configuration.length == 4 ? Integer.parseInt(configuration[2].strip()) : item.getFoodProperties() != null ? item.getFoodProperties().getNutrition() : 1;
+			float saturation = configuration.length == 4 ? Float.parseFloat(configuration[3].strip()) : item.getFoodProperties() != null ? (item.getFoodProperties().getNutrition() * item.getFoodProperties().getSaturationModifier() * 2) : 0;
 
-		return calculateDragonFoodProperties(item, type, nutrition, saturation, true);
+			return calculateDragonFoodProperties(item, type, nutrition, saturation, true);
+		} catch (NumberFormatException nfe) {
+			DragonSurvivalMod.LOGGER.error(String.format("Invalid food configuration for %s, using default values.", item));
+			return calculateDragonFoodProperties(item, type, 1, 0, true);
+		}
 	}
 
 	@Nullable
