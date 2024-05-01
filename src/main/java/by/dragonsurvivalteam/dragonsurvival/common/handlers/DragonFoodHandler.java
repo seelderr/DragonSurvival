@@ -207,7 +207,7 @@ public class DragonFoodHandler {
 
 			return calculateDragonFoodProperties(item, type, nutrition, saturation, true);
 		} catch (NumberFormatException nfe) {
-			DragonSurvivalMod.LOGGER.error(String.format("Invalid food configuration for {}, using default values.", item));
+			DragonSurvivalMod.LOGGER.error(String.format("Invalid food configuration for %s, using default values.", item));
 			return calculateDragonFoodProperties(item, type, 1, 0, true);
 		}
 	}
