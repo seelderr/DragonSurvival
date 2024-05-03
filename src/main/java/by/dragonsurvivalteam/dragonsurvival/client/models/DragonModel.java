@@ -106,6 +106,8 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 	 - Reduce the hitbox for northern body types
 	 - Lower the breathing/eyes height for the northern type
 	 - Ability to expand the number of Body Types.
+	 - Additional buttons to switch between body types in Skin Tab when explore other people skins.
+	 - Add a "Body types" button to the altar menu next to the "Dragon Editor" button
 	*/
 
 	/**
