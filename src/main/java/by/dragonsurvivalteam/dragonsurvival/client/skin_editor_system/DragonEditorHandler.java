@@ -183,9 +183,9 @@ public class DragonEditorHandler{
 			}
 
 			if(hueVal > 0){
-				hsb[0] = (float)Mth.lerp(Math.abs(hueVal) * 2, hsb[0], 1.0);
+				hsb[0] = (float)(hsb[0] - hueVal + 1 % 1);
 			}else{
-				hsb[0] = (float)Mth.lerp(Math.abs(hueVal) * 2, hsb[0], 0.0);
+				hsb[0] = (float)(hsb[0] - hueVal + 1 % 1);
 			}
 
 			if(satVal > 0){
