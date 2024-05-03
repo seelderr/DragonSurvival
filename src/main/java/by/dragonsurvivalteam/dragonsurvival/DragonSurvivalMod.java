@@ -108,7 +108,12 @@ public class DragonSurvivalMod{
 	public void addPackFinders(AddPackFindersEvent event) {
 		if (event.getPackType() == PackType.CLIENT_RESOURCES) {
 			HashMap<MutableComponent, String> resourcePacks = new HashMap<MutableComponent, String>();
-			//resourcePacks.put(Component.literal("More Eyes"), "more_eyes");
+			resourcePacks.put(Component.literal("DS_East_Body_Type"), "ds_east");
+			resourcePacks.put(Component.literal("DS_North_Body_Type"), "ds_north");
+			resourcePacks.put(Component.literal("DS_South_Body_Type"), "ds_south");
+			resourcePacks.put(Component.literal("DS_West_Body_Type"), "ds_west");
+			resourcePacks.put(Component.literal("DS_Old_Magic_Icons"), "ds_old_magic");
+			resourcePacks.put(Component.literal("DS_Dark_Gui"), "ds_dark_gui");
 			for (Map.Entry<MutableComponent, String> entry : resourcePacks.entrySet()) {
 				registerBuiltinResourcePack(event, entry.getKey(), entry.getValue());
 			}
