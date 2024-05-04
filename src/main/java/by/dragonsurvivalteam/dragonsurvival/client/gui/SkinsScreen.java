@@ -118,6 +118,7 @@ public class SkinsScreen extends Screen{
 			handler.setHasWings(true);
 			handler.setSize(level.size);
 			handler.setType(DragonUtils.getDragonType(minecraft.player));
+			handler.setBody(DragonUtils.getDragonBody(minecraft.player));
 
 			handler.getSkinData().skinPreset.initDefaults(handler);
 

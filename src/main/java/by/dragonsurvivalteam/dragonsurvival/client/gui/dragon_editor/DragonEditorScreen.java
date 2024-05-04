@@ -29,6 +29,7 @@ import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -98,6 +99,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 	public DragonLevel level;
 	public AbstractDragonType dragonType;
+	public AbstractDragonBody dragonBody;
 	public SkinPreset preset;
 	public int currentSelected;
 
@@ -271,6 +273,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		if (dragonType == null) {
 			return;
 		}
+		
+		if (dragonBody == null) {
+			dragonBody = localHandler.getBody();;
+		}
 
 		if (level == null) {
 			level = DragonLevel.NEWBORN;
@@ -301,6 +307,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		handler.setHasWings(true);
 		handler.setType(dragonType);
+		handler.setBody(dragonBody);
 	}
 
 	@Override
@@ -762,6 +769,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		if(dragonType != null){
 			handler.setType(dragonType);
 		}
+		handler.setBody(dragonBody);
 		handler.getSkinData().skinPreset = preset;
 		handler.setSize(level.size);
 		handler.setHasWings(true);
@@ -814,6 +822,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				}
 
 				cap.setType(dragonType);
+				cap.setBody(dragonBody);
 
 				double size = cap.getSavedDragonSize(cap.getTypeName());
 
@@ -830,7 +839,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getLevel()));
+				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getBody(), cap.getLevel()));
 			}
 
 			if (minecraft != null && minecraft.player != null) {

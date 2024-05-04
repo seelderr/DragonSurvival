@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
@@ -61,6 +62,7 @@ public class DragonSurvivalMod{
 	public DragonSurvivalMod(){
 		GeckoLib.initialize();
 		DragonTypes.registerTypes();
+		DragonBodies.registerBodies();
 
 		ConfigHandler.initConfig();
 		DragonAbilities.initAbilities();

@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -75,11 +76,13 @@ public class DragonAltarGUI extends Screen{
 			if(btn instanceof AltarTypeButton button){
 				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
+					handler1.setBody(DragonBodies.CENTER);
 					handler1.setHasWings(true);
 					handler1.setSize(DragonLevel.NEWBORN.size);
 					handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).get().defaultSkin = true;
 
 					handler2.setType(button.type);
+					handler2.setBody(DragonBodies.CENTER);
 					handler2.setHasWings(true);
 					handler2.setSize(button.type == null ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
 					handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).get().defaultSkin = true;

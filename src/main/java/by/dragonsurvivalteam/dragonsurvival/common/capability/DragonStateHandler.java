@@ -2,7 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -77,6 +79,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	private final Map<String, Double> savedDragonSize = new ConcurrentHashMap<>();
 
 	private AbstractDragonType dragonType;
+	private AbstractDragonBody dragonBody;
 
 	private int passengerId;
 	private boolean isHiding;
@@ -146,6 +149,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
 		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
+		tag.putString("body", dragonBody != null ? dragonBody.getBodyName() : "none");
 
 		if (isDragon()) {
 			tag.put("typeData", dragonType.writeNBT());
@@ -212,6 +216,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		if (isDragon()) {
+			dragonBody = DragonBodies.newDragonBodyInstance(tag.getString("dragonBody"));
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;
 			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
@@ -315,6 +320,10 @@ public class DragonStateHandler extends EntityStateHandler {
 	public AbstractDragonType getType(){
 		return dragonType;
 	}
+	
+	public AbstractDragonBody getBody() {
+		return dragonBody;
+	}
 
 	public String getTypeName() {
 		if (dragonType == null) {
@@ -346,6 +355,15 @@ public class DragonStateHandler extends EntityStateHandler {
 			dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
 		} else {
 			dragonType = null;
+		}
+	}
+	
+	public void setBody(final AbstractDragonBody body) {
+		System.out.println("Setting body to: " + body);
+		if (body != null) {
+			dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
+		} else {
+			dragonBody = null;
 		}
 	}
 

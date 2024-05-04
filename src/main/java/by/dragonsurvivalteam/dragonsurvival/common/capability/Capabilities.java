@@ -64,7 +64,7 @@ public class Capabilities{
 	public static void onPlayerLoggedIn(final PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer serverPlayer) {
 			DragonStateProvider.getCap(serverPlayer).ifPresent(handler -> {
-				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new RequestClientData(handler.getType(), handler.getLevel()));
+				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new RequestClientData(handler.getType(), handler.getBody(), handler.getLevel()));
 				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncDragonClawsMenu(serverPlayer.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
 			});
 
