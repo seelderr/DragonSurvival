@@ -149,10 +149,13 @@ public class DragonStateHandler extends EntityStateHandler {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
 		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
-		tag.putString("body", dragonBody != null ? dragonBody.getBodyName() : "none");
+		tag.putString("dragonBody", dragonBody != null ? dragonBody.getBodyName() : "none");
 
 		if (isDragon()) {
 			tag.put("typeData", dragonType.writeNBT());
+			if (dragonBody != null) {
+				tag.put("bodyData", dragonBody.writeNBT());
+			}
 
 			//Rendering
 			DragonMovementData movementData = getMovementData();
@@ -215,8 +218,14 @@ public class DragonStateHandler extends EntityStateHandler {
 			}
 		}
 
+		dragonBody = DragonBodies.newDragonBodyInstance(tag.getString("dragonBody"));
+		if (dragonBody != null) {
+			if (tag.contains("bodyData")) {
+				dragonBody.readNBT(tag.getCompound("bodyData"));
+			}
+		}
+
 		if (isDragon()) {
-			dragonBody = DragonBodies.newDragonBodyInstance(tag.getString("dragonBody"));
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;
 			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
@@ -359,7 +368,6 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 	
 	public void setBody(final AbstractDragonBody body) {
-		System.out.println("Setting body to: " + body);
 		if (body != null) {
 			dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
 		} else {

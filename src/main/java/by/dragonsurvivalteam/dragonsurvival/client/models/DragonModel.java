@@ -83,14 +83,10 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
-		//System.out.println("Getting animation resource...");
 		if (dragon.playerId != null || dragon.getPlayer() != null) {
-			//System.out.println("Player is non-null...");
 			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
 			AbstractDragonBody body = handler.getBody();
-			System.out.println(body);
 			if (body != null) {
-				System.out.println("Current body type: " + body.getBodyName());
 				return new ResourceLocation(DragonSurvivalMod.MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
 			}
 		}

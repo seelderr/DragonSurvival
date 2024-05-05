@@ -32,7 +32,7 @@ public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
-	private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast", "run_head_locked", "fly_spin", "dig_head_locked", "sit_on_magic_source", "sitting_blep", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "flapping_wings_standing_biped", "rocking_on_back" };
+	private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast", "run_head_locked", "fly_spin", "dig_head_locked", "sit_on_magic_source", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "flapping_wings_standing_biped", "rocking_on_back" };
 	public DragonStateHandler handler1 = new DragonStateHandler();
 	public DragonStateHandler handler2 = new DragonStateHandler();
 	private int guiLeft;
@@ -47,7 +47,7 @@ public class DragonAltarGUI extends Screen{
 	}
 
 	@Override
-	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks){
+	public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks){;
 		if(minecraft == null){
 			return;
 		}
@@ -63,6 +63,18 @@ public class DragonAltarGUI extends Screen{
 			animation1++;
 			animation2++;
 
+			//double randD = Math.random();
+			//int res = (int) (randD * DragonBodies.bodyMappings.size());
+			//System.out.println("randD: " + randD + " and res: " + res);;
+			int randBody = (int) (Math.random() * (DragonBodies.bodyMappings.size()));
+			System.out.println("body num: " + randBody + " and: " + DragonBodies.bodyMappings.keySet().toArray()[randBody]);
+
+			if (handler1.getBody() == null) {
+				handler1.setBody(DragonBodies.CENTER);
+			}
+			handler2.setBody(DragonBodies.staticBodies.get(handler1.getBody().getBodyName()));
+			handler1.setBody(DragonBodies.staticBodies.get(DragonBodies.bodyMappings.keySet().toArray()[randBody]));
+
 			if(animation1 >= animations.length){
 				animation1 = 0;
 			}
@@ -76,13 +88,11 @@ public class DragonAltarGUI extends Screen{
 			if(btn instanceof AltarTypeButton button){
 				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
-					handler1.setBody(DragonBodies.CENTER);
 					handler1.setHasWings(true);
 					handler1.setSize(DragonLevel.NEWBORN.size);
 					handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).get().defaultSkin = true;
 
 					handler2.setType(button.type);
-					handler2.setBody(DragonBodies.CENTER);
 					handler2.setHasWings(true);
 					handler2.setSize(button.type == null ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
 					handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).get().defaultSkin = true;
