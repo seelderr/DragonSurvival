@@ -323,12 +323,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		conf = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 141 / 2, 130, 154);
 		initDragonRender();
-		
-		Minecraft minecraft = getMinecraft();
-		DragonStateHandler handler = DragonUtils.getHandler(minecraft.player);
 
+		Minecraft minecraft = getMinecraft();
 		if (!hasInit) {
-			initialize(handler);
+			DragonStateHandler dshandler = DragonUtils.getHandler(minecraft.player);
+			
+			initialize(dshandler);
 			update();
 
 			hasInit = true;
@@ -639,6 +639,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 			extraKeys.removeIf(s -> {
 				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA, s, dragonType);
+				if (text == null) { DragonSurvivalMod.LOGGER.error("Key " + s + " not found!"); return true; }
 				return !text.random;
 			});
 
