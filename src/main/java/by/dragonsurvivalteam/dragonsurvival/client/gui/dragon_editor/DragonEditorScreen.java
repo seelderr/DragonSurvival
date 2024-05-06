@@ -556,7 +556,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 					minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-					if(cap.getType() != dragonType && cap.getType() != null){
+					if(!cap.getType().equals(dragonType) && cap.getType() != null){
 						if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
 							confirmation = true;
 							return;
