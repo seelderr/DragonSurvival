@@ -31,6 +31,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -83,7 +84,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	                                     "idle_head_locked",
 	                                     "fly_head_locked",
 	                                     "swim_fast",
-	                                     "run_head_locked"};
+	                                     "run_head_locked",
+	                                     "spinning_on_back"};
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "editorHistory", comment = "The amount of undos and redos that are saved in the dragon editor." )
 	public static Integer editorHistory = 10;
@@ -109,9 +111,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	private int lastSelected;
 	private boolean hasInit;
 	private DragonEditorConfirmComponent conf;
+	private boolean isEditor; 
 
 	public DragonEditorScreen(Screen source){
 		this(source, null);
+		this.isEditor = true;
 	}
 
 	public DragonEditorScreen(Screen source, AbstractDragonType dragonType){
@@ -221,7 +225,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}
 
 		if(showUi){
-			SkinsScreen.drawNonShadowLineBreak(stack, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72, DyeColor.GRAY.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(stack, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 72 - 20, DyeColor.GRAY.getTextColor());
 		}
 
 		for(Widget widget : new CopyOnWriteArrayList<>(renderables)){
@@ -275,7 +279,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}
 		
 		if (dragonBody == null) {
-			dragonBody = localHandler.getBody();;
+			dragonBody = localHandler.getBody();
 		}
 
 		if (level == null) {
@@ -319,9 +323,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		conf = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 141 / 2, 130, 154);
 		initDragonRender();
+		
+		Minecraft minecraft = getMinecraft();
+		DragonStateHandler handler = DragonUtils.getHandler(minecraft.player);
 
 		if (!hasInit) {
-			initialize(DragonUtils.getHandler(getMinecraft().player));
+			initialize(handler);
 			update();
 
 			hasInit = true;
@@ -330,6 +337,11 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		addRenderableWidget(new NewbornEditorButton(this));
 		addRenderableWidget(new YoungEditorButton(this));
 		addRenderableWidget(new AdultEditorButton(this));
+
+		// TODO: return here when needed
+		for (int i1 = 0;  i1 < DragonBodies.ORDER.length; i1++) {
+			addRenderableWidget(new DragonBodyButton(this, width / 2 - 71 + (i1 * 27), height / 2 + 69, 25, 25, DragonBodies.getStatic(DragonBodies.ORDER[i1]), i1, isEditor));
+		}
 
 		int maxWidth = -1;
 
@@ -420,7 +432,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			i++;
 		}
 
-		addRenderableWidget(new Button(width / 2 + 45, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
+		addRenderableWidget(new Button(width / 2 + 45, height / 2 + 75 - 27, 15, 15, Component.empty(), btn -> {
 			curAnimation += 1;
 
 			if(curAnimation >= animations.length){
@@ -445,7 +457,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 + 75 - 7, 15, 15, Component.empty(), btn -> {
+		addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 + 75 - 27, 15, 15, Component.empty(), btn -> {
 			curAnimation -= 1;
 
 			if(curAnimation < 0){

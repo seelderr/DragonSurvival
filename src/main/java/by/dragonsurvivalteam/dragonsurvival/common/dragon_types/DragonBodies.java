@@ -19,7 +19,8 @@ public class DragonBodies {
 	public static EastBodyType EAST;
 	public static SouthBodyType SOUTH;
 	public static WestBodyType WEST;
-	
+	public static final String[] ORDER = {"CENTER", "NORTH", "EAST", "SOUTH", "WEST"};
+
 	public static void registerBodies() {
 		CENTER = registerType(CenterBodyType::new);
 		NORTH = registerType(NorthBodyType::new);
