@@ -60,7 +60,6 @@ public class DragonBodyButton extends Button {
 			i = 1;
 		}
 		this.blit(pPoseStack, this.x, this.y, pos * this.width, i * this.height, this.width, this.height);
-		//this.blit(pPoseStack, this.x + this.width / 2, this.y, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
 		RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 	}
 }
