@@ -283,6 +283,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		
 		if (dragonBody == null) {
 			dragonBody = localHandler.getBody();
+			if (dragonBody == null) {
+				dragonBody = DragonBodies.getStatic("center");
+			}
 		}
 
 		if (level == null) {
@@ -830,7 +833,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level.playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-			if(!cap.getType().equals(dragonType) || !cap.getBody().equals(dragonBody)){
+			if((cap.getType() != null && !cap.getType().equals(dragonType)) || (cap.getBody() != null && !cap.getBody().equals(dragonBody))){
 				minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeName().toLowerCase() + "_dragon_choice"));
 
 				if(dragonType == null && cap.getType() != null){
