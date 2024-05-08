@@ -56,7 +56,7 @@ public class SkinsScreen extends Screen{
 	private static final String DISCORD_URL = "https://discord.gg/8SsB8ar";
 	private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
 	private static final ArrayList<String> seenSkins = new ArrayList<>();
-	private final DragonStateHandler handler = new DragonStateHandler();
+	public final DragonStateHandler handler = new DragonStateHandler();
 	public static ResourceLocation skinTexture = null;
 	public static ResourceLocation glowTexture = null;
 	private static String playerName = null;

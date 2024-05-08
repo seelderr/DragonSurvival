@@ -57,6 +57,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Widget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.multiplayer.chat.LoggedChatMessage.Player;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -327,7 +328,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		guiLeft = (width - 256) / 2;
 		guiTop = (height - 120) / 2;
 
-		conf = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 141 / 2, 130, 154);
+		conf = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
 		initDragonRender();
 
 		Minecraft minecraft = getMinecraft();
@@ -647,7 +648,12 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				if (text == null) { DragonSurvivalMod.LOGGER.error("Key " + s + " not found!"); return true; }
 				return !text.random;
 			});
-
+			
+			if (!isEditor) {
+				int bodytype = minecraft.player.getRandom().nextInt(DragonBodies.ORDER.length);
+				dragonBody = DragonBodies.bodyMappings.get(DragonBodies.ORDER[bodytype].toLowerCase()).get();
+			}
+			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
 
