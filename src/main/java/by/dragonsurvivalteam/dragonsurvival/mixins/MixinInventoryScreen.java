@@ -61,7 +61,6 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		}
 	}
 
-	// TODO: There is still an issue where the dragon entity very slowly begins to clip with the black background of the inventory scene as it gets very large. This only matters for *very* large sizes though, so not urgent to fix.
 	private static float dragonScreenEntityRescaler(float pX){
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateHandler handler = DragonUtils.getHandler(player);
@@ -85,5 +84,10 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 1)
 	private static float dragonScreenEntityRescalerY(float pY) {
 		return dragonScreenEntityRescaler(pY);
+	}
+
+	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 2)
+	private static float dragonScreenEntityRescalerZ(float pZ) {
+		return dragonScreenEntityRescaler(pZ);
 	}
 }
