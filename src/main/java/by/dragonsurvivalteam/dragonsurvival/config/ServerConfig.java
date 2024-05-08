@@ -66,14 +66,14 @@ public class ServerConfig{
 	public static Boolean allowLargeBlockDestruction = false;
 
 	@ConfigRange( min = 0.0, max = 1.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockDestructionRemovePercentage", comment = "The percentage of blocks removed when a dragon instantly destroys blocks. If a block is removed, it doesn't make a sound or particle effect. This is to minimize lag from particle VFX and audio spam.")
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockDestructionRemovePercentage", comment = "The percentage of blocks removed instead of destroyed when a dragon instantly destroys blocks. If a block is removed, it doesn't make a sound or particle effect. This is to minimize lag from particle VFX and audio spam.")
 	public static Double largeBlockDestructionRemovePercentage = 0.96;
 
 	@ConfigRange( min = 14.0, max = 1000000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockDestructionSize", comment = "The size threshold for a dragon to start instantly destroying blocks.")
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockDestructionSize", comment = "The size threshold for a dragon to start instantly destroying blocks. Crouching prevents destruction from occurring.")
 	public static Double largeBlockDestructionSize = 120.0;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "allowCrushing", comment = "Allow a dragon to crush entities beneath it after being above a certain size.")
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "allowCrushing", comment = "Allow a dragon to crush entities beneath it after being above a certain size. Crouching prevents crushing from occurring.")
 	public static Boolean allowCrushing = false;
 
 	@ConfigRange( min = 14.0, max = 1000000.0 )
@@ -108,7 +108,7 @@ public class ServerConfig{
 	public static Double largeStepHeightScalar = 1.0;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled. A block radius of 0 disables this feature. Crouching allows you to mine one block at a time.")
 	public static Double largeBlockBreakRadiusScalar = 0.7;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "sizeChangesHitbox", comment = "Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used." )
