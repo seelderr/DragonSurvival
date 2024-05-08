@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -9,10 +11,12 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin( InventoryScreen.class )
@@ -55,5 +59,31 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		}else{
 			RenderSystem.runAsFancy(p_runAsFancy_0_);
 		}
+	}
+
+	// TODO: There is still an issue where the dragon entity very slowly begins to clip with the black background of the inventory scene as it gets very large. This only matters for *very* large sizes though, so not urgent to fix.
+	private static float dragonScreenEntityRescaler(float pX){
+		LocalPlayer player = Minecraft.getInstance().player;
+		DragonStateHandler handler = DragonUtils.getHandler(player);
+
+		if(handler.isDragon()){
+			double size = handler.getSize();
+			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE){
+				// Scale the matrix back to the MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
+				pX *= Mth.sqrt(((float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size)));
+			}
+		}
+
+		return pX;
+	}
+
+	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 0)
+	private static float dragonScreenEntityRescalerX(float pX) {
+		return dragonScreenEntityRescaler(pX);
+	}
+
+	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 1)
+	private static float dragonScreenEntityRescalerY(float pY) {
+		return dragonScreenEntityRescaler(pY);
 	}
 }

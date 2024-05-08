@@ -14,6 +14,7 @@ import java.util.List;
 
 
 public class ServerConfig{
+	public static final Double DEFAULT_MAX_GROWTH_SIZE = 60.0;
 	ServerConfig(Builder builder){
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
@@ -49,6 +50,64 @@ public class ServerConfig{
 	public static Boolean startWithDragonChoice = true;
 
 	// Growth
+	@ConfigType(Block.class)
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "destructibleBlocks", comment = "Blocks that are destructible when block destruction is enabled. Blocks that can be harvested with an axe are also destroyable by default on whitelist mode. Formatting: block/modid:id" )
+	public static List<String> destructibleBlocks = List.of(
+			"minecraft:leaves"
+	);
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
+	public static Boolean useBlacklistForDestructibleBlocks = false;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "allowLargeBlockDestruction", comment = "Allow a dragon to instantly destroy certain colliding blocks if they are above a certain size.")
+	public static Boolean allowLargeBlockDestruction = false;
+
+	@ConfigRange( min = 0.0, max = 1.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockDestructionRemovePercentage", comment = "The percentage of blocks removed instead of destroyed when a dragon instantly destroys blocks. If a block is removed, it doesn't make a sound or particle effect. This is to minimize lag from particle VFX and audio spam.")
+	public static Double largeBlockDestructionRemovePercentage = 0.96;
+
+	@ConfigRange( min = 14.0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockDestructionSize", comment = "The size threshold for a dragon to start instantly destroying blocks. Crouching prevents destruction from occurring.")
+	public static Double largeBlockDestructionSize = 120.0;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "allowCrushing", comment = "Allow a dragon to crush entities beneath it after being above a certain size. Crouching prevents crushing from occurring.")
+	public static Boolean allowCrushing = false;
+
+	@ConfigRange( min = 14.0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "crushingSize", comment = "The size at which a dragon can begin to crush entities.")
+	public static Double crushingSize = 120.0;
+
+	@ConfigRange( min = 0.0, max = 20.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "crushingDamageScalar", comment = "The amount damage dealt per dragon size when crushing entities.")
+	public static Double crushingDamageScalar = 0.05;
+
+	@ConfigRange( min = 0, max = 20 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "crushingSize", comment = "The amount of ticks before entities can be crushed again after they were already crushed.")
+	public static Integer crushingTickDelay = 20;
+
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "allowLargeScaling", comment = "Allow a dragon's max health, damage, reach, and step height to continue to scale with growth beyond its normal limits.")
+	public static Boolean allowLargeScaling = false;
+
+	@ConfigRange( min = 1, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeMaxHealth", comment = "The maximum health when the dragon is at maximum growth size if large scaling is enabled.")
+	public static Integer largeMaxHealth = 80;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeDamageBonus", comment = "The bonus damage when the dragon is at maximum growth size if large scaling is enabled.")
+	public static Double largeDamageBonus = 6.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeReachScalar", comment = "The bonus reach given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+	public static Double largeReachScalar = 0.5;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeStepHeightScalar", comment = "The bonus step height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+	public static Double largeStepHeightScalar = 1.0;
+
+	@ConfigRange( min = 0.0, max = 10.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled. A block radius of 0 disables this feature. Crouching allows you to mine one block at a time.")
+	public static Double largeBlockBreakRadiusScalar = 0.7;
+
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "sizeChangesHitbox", comment = "Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used." )
 	public static Boolean sizeChangesHitbox = true;
 
@@ -72,10 +131,10 @@ public class ServerConfig{
 
 	@ConfigRange( min = 14.0, max = 1000000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxGrowthSize", comment = "Defines the max size your dragon can grow to. Values that are too high can break your game. It is not advisable to set a number higher than 60." )
-	public static Double maxGrowthSize = 60.0;
+	public static Double maxGrowthSize = DEFAULT_MAX_GROWTH_SIZE;
 
 	@ConfigRange( min = 0, max = 1000000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "reachBonus", comment = "The bonus that is given to dragons at every 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to block mining." )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "reachBonus", comment = "The bonus that is given to dragons at 60 size. The bonus gradually scales up to the maximum size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default values.")
 	public static Double reachBonus = 0.5;
 	
 	@ConfigRange( min = 0, max = 1000000.0 )
@@ -90,8 +149,12 @@ public class ServerConfig{
 	public static Integer minHealth = 14;
 
 	@ConfigRange( min = 1, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxHealth", comment = "Maximum health dragons can grow to." )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxHealth", comment = "The maximum health when the dragon is fully grown." )
 	public static Integer maxHealth = 40;
+
+	@ConfigRange( min = 1, max = 100 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "maxHealthSize", comment = "The size at which the maximum health is reached." )
+	public static Integer maxHealthSize = 40;
 
 	@ConfigRange( min = 0.0, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "growth", key = "newbornGrowthModifier", comment = "A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon." )
