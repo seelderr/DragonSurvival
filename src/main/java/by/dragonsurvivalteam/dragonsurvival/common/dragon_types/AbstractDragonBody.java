@@ -26,4 +26,44 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public String toString(){
 		return getBodyName();
 	}
+
+	public Double getJumpBonus() {
+		return 0.0;
+	}
+	
+	public Double getRunBonus() {
+		return 0.0;
+	}
+	
+	public Double getFlightBonus() {
+		return 0.0;
+	}
+	
+	public Double getStepBonus() {
+		return 0.0;
+	}
+	
+	public Double getDamageBonus() {
+		return 0.0;
+	}
+	
+	public Double getArmorBonus() {
+		return 0.0;
+	}
+	
+	public Double getManaBonus() {
+		return 0.0;
+	}
+
+	public Double getSwimSpeedBonus() {
+		return 0.0;
+	}
+	
+	public Double getDamageMult() {
+		return 1.0;
+	}
+	
+	public Double getExpMult() {
+		return 1.0;
+	}
 }
