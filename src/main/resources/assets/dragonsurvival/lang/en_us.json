@@ -156,6 +156,8 @@
   "death.attack.rainBurn.player": "%1$s spent too much time in the rain trying to escape %2$s.",
   "death.attack.dehydration": "%1$s dried out.",
   "death.attack.dehydration.player": "%1$s dried out to escape %2$s.",
+  "death.attack.crushed": "%1$s was crushed.",
+  "death.attack.crushed.player": "%1$s was crushed by %2$s.",
   "ds.cave_dragon_choice": "In the depths of your soul the lava began to roar. You have become a §cCave dragon.§r",
   "ds.forest_dragon_choice": "You feel the need for raw meat and are covered in grass scales. You have chosen to be a §aForest dragon.§r",
   "ds.sea_dragon_choice": "The stormy sea and fishes beckon you. Now you are a §3Sea dragon.§r",
