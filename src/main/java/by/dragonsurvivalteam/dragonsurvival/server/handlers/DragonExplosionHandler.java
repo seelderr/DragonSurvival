@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -29,7 +31,12 @@ public class DragonExplosionHandler {
                 DragonStateProvider.getCap(source).ifPresent(targetCap -> {
                     if(targetCap.isDragon()){
                         if(source == target) {
-                            event.setCanceled(true);
+                            if(targetCap.getType() == DragonTypes.CAVE && ServerConfig.allowSelfDamageFromFireball) {
+                                event.setCanceled(true);
+                            }
+                            else if (targetCap.getType() == DragonTypes.SEA && ServerConfig.allowSelfDamageFromBallLightning) {
+                                event.setCanceled(true);
+                            }
                         }
                     }
                 });
