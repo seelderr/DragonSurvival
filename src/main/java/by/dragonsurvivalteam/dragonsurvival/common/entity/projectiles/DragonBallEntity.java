@@ -21,16 +21,18 @@ import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
+import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
 
 
-public class DragonBallEntity extends Fireball implements IAnimatable{
+public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
+	public static final float DRAGON_BALL_DISTANCE = 32.f;
 	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
-	protected boolean isDead = false;
-	protected int deadTicks = 0;
+	AnimationBuilder animationBuilder = new AnimationBuilder();
+	float moveDistance = 0;
 
 	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
 		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
@@ -55,56 +57,6 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	@Override
-	public void tick(){
-		if(isDead){
-			deadTicks++;
-
-			if(deadTicks >= 3){
-				remove(RemovalReason.DISCARDED);
-			}
-			return;
-		}
-
-		Entity entity = getOwner();
-
-		if(level.isClientSide || (entity == null || !entity.isRemoved()) && level.hasChunkAt(blockPosition())){
-			HitResult raytraceresult = ProjectileUtil.getHitResult(this, this::canHitEntity);
-
-			if(raytraceresult.getType() != HitResult.Type.MISS){
-
-				onHit(raytraceresult);
-			}
-
-			checkInsideBlocks();
-			Vec3 vector3d = getDeltaMovement();
-			double d0 = getX() + vector3d.x;
-			double d1 = getY() + vector3d.y;
-			double d2 = getZ() + vector3d.z;
-			ProjectileUtil.rotateTowardsMovement(this, 0.2F);
-			float f = getInertia();
-			if(isInWater()){
-				f = 0.8F;
-			}
-			moveDist += (float)distanceToSqr(d0, d1, d2);
-			setDeltaMovement(vector3d.add(xPower, yPower, zPower).scale(f));
-			level.addParticle(getTrailParticle(), d0, d1, d2, 0.0D, 0.0D, 0.0D);
-			setPos(d0, d1, d2);
-		}else{
-			isDead = true;
-			//this.remove();
-		}
-
-		if(moveDist >= 32){
-			onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
-		}
-	}
-
-	@Override
-	protected ParticleOptions getTrailParticle(){
-		return ParticleTypes.WHITE_ASH;
-	}
-
-	@Override
 	public Packet<?> getAddEntityPacket(){
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
@@ -115,33 +67,24 @@ public class DragonBallEntity extends Fireball implements IAnimatable{
 	}
 
 	@Override
-	protected boolean shouldBurn(){
-		return false;
+	public void tick() {
+		super.tick();
+		moveDistance += (float)getDeltaMovement().length();
+		if (moveDistance > DRAGON_BALL_DISTANCE) {
+			this.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
+		}
 	}
 
-	@Override
-	protected void onHit(HitResult p_70227_1_){
-		attackMobs();
-		setDeltaMovement(0, 0, 0);
-		isDead = true;
+	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
+	{
+		event.getController().setAnimation(animationBuilder);
+		return PlayState.CONTINUE;
 	}
-
-	public void attackMobs(){}
 
 	@Override
 	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController<>(this, "everything", 3, event -> {
-			AnimationBuilder animationBuilder = new AnimationBuilder();
-
-			if(isDead){
-				animationBuilder.addAnimation("explosion", EDefaultLoopTypes.LOOP);
-			}else{
-				animationBuilder.addAnimation("idle", EDefaultLoopTypes.LOOP);
-			}
-
-			event.getController().setAnimation(animationBuilder);
-			return PlayState.CONTINUE;
-		}));
+		data.addAnimationController(new AnimationController(this, "everything", 0, this::predicate));
+		animationBuilder.addAnimation("idle", EDefaultLoopTypes.LOOP);
 	}
 
 	@Override

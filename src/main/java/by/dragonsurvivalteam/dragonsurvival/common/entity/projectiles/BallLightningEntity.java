@@ -29,6 +29,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import software.bernie.geckolib3.core.builder.ILoopType;
 
 import java.util.List;
 
@@ -43,7 +44,6 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected ParticleOptions getTrailParticle(){
-
 		return ParticleTypes.WHITE_ASH;
 	}
 
@@ -54,7 +54,7 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult p_70227_1_){
-		if(!level.isClientSide && !isDead){
+		if(!level.isClientSide){
 			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
 			float explosivePower = getSkillLevel() / 1.25f;
 			Entity attacker = getOwner();
@@ -67,28 +67,28 @@ public class BallLightningEntity extends DragonBallEntity{
 					attackerEntity.setLastHurtMob(attacker);
 				}
 			}
-			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			level.explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
+			animationBuilder.clearAnimations();
+			animationBuilder.addAnimation("explosion", ILoopType.EDefaultLoopTypes.LOOP);
+
 			if (!(getOwner() instanceof Player))
 			{
 				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 				return;
 			}
 
-			isDead = true;
-			setDeltaMovement(0, 0, 0);
-
 			attackMobs();
+			this.discard();
 		}
 	}
 	
 	@Override
 	public void tick() {
 		super.tick();
-		if (level.getGameTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
+		if (level.getGameTime() % 5 == 0) // Once per 5 ticks (0.25 seconds)
 			attackMobs();
 	}
 
-	@Override
 	public void attackMobs(){
 		int rn = 4;
 		Entity owner = getOwner();
