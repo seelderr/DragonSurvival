@@ -38,7 +38,7 @@ public class DragonConfigHandler{
 			rebuildBreathBlocks();
 			rebuildManaBlocks();
 			rebuildForestDragonConfigs();
-			rebuildDestructibleBlocksAndTags();
+			rebuildDestructibleBlocks();
 		}
 	}
 
@@ -75,7 +75,7 @@ public class DragonConfigHandler{
 		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
 	}
 
-	public static void rebuildDestructibleBlocksAndTags(){
+	public static void rebuildDestructibleBlocks(){
 		DRAGON_DESTRUCTIBLE_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.destructibleBlocks);
 	}
 }

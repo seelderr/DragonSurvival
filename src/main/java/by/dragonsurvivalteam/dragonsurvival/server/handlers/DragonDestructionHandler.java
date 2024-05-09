@@ -162,7 +162,7 @@ public class DragonDestructionHandler {
 
 
     @SubscribeEvent
-    public static void checkAndDestroyCollidingBlocks(TickEvent.PlayerTickEvent event) {
+    public static void checkAndDestroyCollidingBlocksAndCrushedEntities(TickEvent.PlayerTickEvent event) {
         if(!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
