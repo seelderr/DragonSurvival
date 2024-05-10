@@ -333,7 +333,7 @@ public class ClientProxy {
                     handler.setType(message.dragonType);
                     handler.setBody(message.dragonBody);
                     handler.setIsHiding(message.hiding);
-                    handler.setHasWings(message.hasWings);
+                    handler.setHasFlight(message.hasWings);
                     handler.setSize(message.size);
                     handler.setPassengerId(message.passengerId);
                 });

@@ -113,7 +113,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	private int lastSelected;
 	private boolean hasInit;
 	private DragonEditorConfirmComponent conf;
-	private boolean isEditor; 
+	private boolean isEditor;
 
 	public DragonEditorScreen(Screen source){
 		this(source, null);
@@ -316,7 +316,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		dragonRender.zoom = (float) (level.size * preset.sizeMul);
 
-		handler.setHasWings(true);
+		handler.setHasFlight(true);
 		handler.setType(dragonType);
 		handler.setBody(dragonBody);
 	}
@@ -522,14 +522,14 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(width, height, 0, 0, 0, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 19, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().wings;
 				super.renderButton(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
 			}
 		});
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 19, 19, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
+		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 38, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
 			@Override
 			public void renderButton(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().defaultSkin;
@@ -796,7 +796,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		handler.setBody(dragonBody);
 		handler.getSkinData().skinPreset = preset;
 		handler.setSize(level.size);
-		handler.setHasWings(true);
+		handler.setHasFlight(true);
 
 		if(currentSelected != lastSelected){
 			preset = new SkinPreset();
@@ -843,7 +843,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeName().toLowerCase() + "_dragon_choice"));
 
 				if(dragonType == null && cap.getType() != null){
-					DragonCommand.reInsertClawTools(Minecraft.getInstance().player, cap);
+					DragonCommand.reInsertClawTools(minecraft.player, cap);
 				}
 
 				cap.setType(dragonType);
@@ -857,13 +857,13 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 					cap.setSize(size);
 				}
 
-				cap.setHasWings(ServerConfig.saveGrowthStage ? cap.hasWings() || ServerFlightHandler.startWithWings : ServerFlightHandler.startWithWings);
+				cap.setHasFlight(ServerConfig.saveGrowthStage ? cap.hasFlight() || ServerFlightHandler.startWithLevitation : ServerFlightHandler.startWithLevitation);
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
-				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(Minecraft.getInstance().player.getId(), cap.writeNBT()));
-				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(Minecraft.getInstance().player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
-				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(Minecraft.getInstance().player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
+				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(minecraft.player.getId(), cap.writeNBT()));
+				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
+				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getBody(), cap.getLevel()));
 			}
 

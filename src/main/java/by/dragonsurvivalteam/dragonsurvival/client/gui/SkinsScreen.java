@@ -120,7 +120,7 @@ public class SkinsScreen extends Screen{
 		stack.scale(scale, scale, scale);
 
 		if(!loading){
-			handler.setHasWings(true);
+			handler.setHasFlight(true);
 			handler.setSize(level.size);
 			handler.setType(DragonUtils.getDragonType(minecraft.player));
 			handler.setBody(dragonBody);

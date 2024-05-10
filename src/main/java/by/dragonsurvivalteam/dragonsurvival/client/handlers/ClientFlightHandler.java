@@ -546,7 +546,7 @@ public class ClientFlightHandler {
 		if(jumpToFly && !player.isCreative() && !player.isSpectator()){
 			if(minecraft.options.keyJump.isDown()){
 				if(keyInputEvent.getAction() == GLFW.GLFW_PRESS){
-					if(handler.hasWings() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
+					if(handler.hasFlight() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
 						if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
 							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger){
 								NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
@@ -563,7 +563,7 @@ public class ClientFlightHandler {
 		}
 
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
-			if(handler.hasWings()){
+			if(handler.hasFlight()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
 				if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState || ServerFlightHandler.allowFlyingWithoutHunger){
 					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));

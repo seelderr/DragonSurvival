@@ -86,23 +86,23 @@ public class DragonCommand{
 			return runCommand(type, body, stage, false, serverPlayer);
 		}).build();
 
-		ArgumentCommandNode<CommandSourceStack, Boolean> giveWings = argument("wings", BoolArgumentType.bool()).executes(context -> {
+		ArgumentCommandNode<CommandSourceStack, Boolean> giveFlight = argument("flight", BoolArgumentType.bool()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			String body = context.getArgument("dragon_body", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
-			boolean wings = context.getArgument("wings", Boolean.TYPE);
+			boolean flight = context.getArgument("flight", Boolean.TYPE);
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-			return runCommand(type, body, stage, wings, serverPlayer);
+			return runCommand(type, body, stage, flight, serverPlayer);
 		}).build();
 
 		ArgumentCommandNode<CommandSourceStack, EntitySelector> target = argument("target", EntityArgument.players()).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			String body = context.getArgument("dragon_body", String.class);
 			int stage = context.getArgument("dragon_stage", Integer.TYPE);
-			boolean wings = context.getArgument("wings", Boolean.TYPE);
+			boolean flight = context.getArgument("flight", Boolean.TYPE);
 			EntitySelector selector = context.getArgument("target", EntitySelector.class);
 			List<ServerPlayer> serverPlayers = selector.findPlayers(context.getSource());
-			serverPlayers.forEach(player -> runCommand(type, body, stage, wings, player));
+			serverPlayers.forEach(player -> runCommand(type, body, stage, flight, player));
 			return 1;
 		}).build();
 
@@ -110,11 +110,11 @@ public class DragonCommand{
 		dragon.addChild(dragonType);
 		dragonType.addChild(dragonBody);
 		dragonBody.addChild(dragonStage);
-		dragonStage.addChild(giveWings);
-		giveWings.addChild(target);
+		dragonStage.addChild(giveFlight);
+		giveFlight.addChild(target);
 	}
 
-	private static int runCommand(String type, String body, int stage, boolean wings, ServerPlayer player){
+	private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player){
 		DragonStateHandler cap = DragonUtils.getHandler(player);
 		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
 		AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
@@ -125,8 +125,8 @@ public class DragonCommand{
 
 		cap.setType(dragonType1);
 		cap.setBody(dragonBody);
-		cap.setHasWings(wings);
-		cap.getMovementData().spinLearned = wings;
+		cap.setHasFlight(flight);
+		cap.getMovementData().spinLearned = flight;
 		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
 		float size = stage == 4 ? 40f : dragonLevel.size;
 		cap.setSize(size, player);
@@ -134,7 +134,7 @@ public class DragonCommand{
 		cap.growing = true;
 
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SyncAltarCooldown(player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
-		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getBody(), cap.getSize(), cap.hasWings(), 0));
+		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SynchronizeDragonCap(player.getId(), cap.isHiding(), cap.getType(), cap.getBody(), cap.getSize(), cap.hasFlight(), 0));
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player),new SyncSpinStatus(player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
 		NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new RequestClientData(cap.getType(), cap.getBody(), cap.getLevel()));

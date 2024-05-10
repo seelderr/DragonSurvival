@@ -85,12 +85,12 @@ public class DragonAltarGUI extends Screen{
 			if(btn instanceof AltarTypeButton button){
 				if(button.isHoveredOrFocused()){
 					handler1.setType(button.type);
-					handler1.setHasWings(true);
+					handler1.setHasFlight(true);
 					handler1.setSize(DragonLevel.NEWBORN.size);
 					handler1.getSkinData().skinPreset.skinAges.get(DragonLevel.NEWBORN).get().defaultSkin = true;
 
 					handler2.setType(button.type);
-					handler2.setHasWings(true);
+					handler2.setHasFlight(true);
 					handler2.setSize(button.type == null ? DragonLevel.NEWBORN.size : DragonLevel.ADULT.size);
 					handler2.getSkinData().skinPreset.skinAges.get(button.type == null ? DragonLevel.NEWBORN : DragonLevel.ADULT).get().defaultSkin = true;
 
