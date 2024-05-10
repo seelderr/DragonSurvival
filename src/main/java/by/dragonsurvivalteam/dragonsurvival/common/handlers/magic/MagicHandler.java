@@ -36,6 +36,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -49,18 +50,17 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+
+import com.mojang.datafixers.util.Pair;
+
 
 @EventBusSubscriber
 public class MagicHandler{
 	private static final UUID DRAGON_PASSIVE_MOVEMENT_SPEED = UUID.fromString("cdc3be6e-e17d-4efa-90f4-9dd838e9b000");
-	private static final UUID DRAGON_BODY_MOVEMENT_SPEED = UUID.fromString("114fe18b-60fd-4284-b6ce-14d090454402");
-	private static final UUID DRAGON_BODY_ARMOR = UUID.fromString("8728438d-c838-4968-9382-efb95a36d72a");
-	private static final UUID DRAGON_BODY_STRENGTH = UUID.fromString("f591516e-749d-41f3-ba5a-b94cdf506193");
-	private static final UUID DRAGON_BODY_STRENGTH_MULT = UUID.fromString("05a4e0c8-f76b-45db-a244-3d588146a4ab");
-	//private static final UUID DRAGON_BODY_SWIM_SPEED = UUID.fromString("244edf11-e535-4dc1-b8a0-4f56a5a80e0c");
-	//private static final UUID DRAGON_BODY_STEP_HEIGHT = UUID.fromString("df2b333e-46c8-4315-a50d-096785e4f592");
 
 	@SubscribeEvent
 	public static void magicUpdate(PlayerTickEvent event){
@@ -79,48 +79,6 @@ public class MagicHandler{
 				}
 			}
 			if(cap.isDragon()) {
-				AbstractDragonBody body = cap.getBody();
-				if (body != null) {
-					
-					if (body.getRunBonus() != 0.0) {
-						if (moveSpeed.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || moveSpeed.getModifier(DRAGON_BODY_MOVEMENT_SPEED).getAmount() != body.getRunBonus()) {
-							if (moveSpeed.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) { moveSpeed.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
-							moveSpeed.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED", cap.getBody().getRunBonus(), AttributeModifier.Operation.ADDITION));
-						}
-					} else { moveSpeed.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
-					
-					AttributeInstance armorAttr = player.getAttribute(Attributes.ARMOR);
-					if (body.getArmorBonus() != 0.0) {
-						if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).getAmount() != body.getArmorBonus()) {
-							if (armorAttr.getModifier(DRAGON_BODY_ARMOR) != null) { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
-							armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, "BODY_ARMOR", body.getArmorBonus(), AttributeModifier.Operation.ADDITION));
-						}
-					} else { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
-					
-					AttributeInstance strengthAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
-					if (body.getDamageBonus() != 0.0) {
-						if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH).getAmount() != body.getDamageBonus()) {
-							if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
-							strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, "BODY_STRENGTH", body.getDamageBonus(), AttributeModifier.Operation.ADDITION));
-						}
-					} else { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
-
-					if (body.getDamageMult() != 1.0) {
-						if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT).getAmount() != body.getDamageBonus()) {
-							if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
-							strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT, "BODY_STRENGTH_MULT", body.getDamageBonus(), AttributeModifier.Operation.MULTIPLY_TOTAL));
-						}
-					} else { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
-
-					if (body.getSwimSpeedBonus() != 0.0) {
-						//AttributeModifier body_swim = new AttributeModifier(DRAGON_BODY_SWIM_SPEED, "BODY_SWIM_SPEED", body.getSwimSpeedBonus(), AttributeModifier.Operation.ADDITION);
-						// TODO: Swim speed is not implemented in Forge at this time.
-					} else { }
-					if (body.getStepBonus() != 0.0) {
-						//AttributeModifier body_swim = new AttributeModifier(DRAGON_BODY_STEP_HEIGHT, "BODY_STEP_HEIGHT", body.getStepBonus(), AttributeModifier.Operation.ADDITION);
-						// TODO: Step height is not implemented in Forge at this time.
-					} else { }
-				}
 				if(cap.getLevel() == DragonLevel.ADULT){
 					AttributeModifier move_speed = new AttributeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED, "DRAGON_MOVE_SPEED", 0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL);
 	
@@ -140,10 +98,6 @@ public class MagicHandler{
 					if(ability != null){
 						ability.tickCooldown();
 					}
-				}
-			} else {
-				if (moveSpeed.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) {
-					moveSpeed.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); 
 				}
 			}
 		});

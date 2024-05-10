@@ -315,6 +315,10 @@ public class ServerFlightHandler{
 							float moveSpeedReq = 1.0F;
 							float minFoodReq = l / 10f;
 							float drain = Math.max(minFoodReq, (float)(Math.min(1.0, Math.max(0, Math.max(moveSpeedReq - moveSpeed, 0) / moveSpeedReq)) * l));
+							if (dragonStateHandler.getBody() != null) {
+								drain *= dragonStateHandler.getBody().getFlightStaminaMult();
+							}
+							
 
 							player.causeFoodExhaustion(drain);
 						}
