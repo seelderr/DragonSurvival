@@ -99,8 +99,8 @@ public class DragonModifiers{
 	
 	@SubscribeEvent
 	public static void updateBodyModifiers(LivingTickEvent event) {
-		if (event.getEntity().tickCount % 100 != 0) {
-			return; // Every 5 seconds
+		if (event.getEntity().tickCount % 20 != 0) {
+			return; // Every 1 second
 		}
 		LivingEntity entity = event.getEntity();
 		if (entity instanceof Player player) {
