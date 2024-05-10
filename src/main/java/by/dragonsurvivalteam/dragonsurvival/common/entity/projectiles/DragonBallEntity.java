@@ -1,30 +1,38 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
 import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
 import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
 import software.bernie.geckolib3.core.controller.AnimationController;
 import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
 import software.bernie.geckolib3.core.manager.AnimationData;
 import software.bernie.geckolib3.core.manager.AnimationFactory;
 import software.bernie.geckolib3.util.GeckoLibUtil;
+
+import javax.annotation.Nullable;
 
 
 public abstract class DragonBallEntity extends Fireball implements IAnimatable{
@@ -44,6 +52,10 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 
 	public int getSkillLevel(){
 		return entityData.get(SKILL_LEVEL);
+	}
+
+	public float getExplosivePower(){
+		return getSkillLevel();
 	}
 
 	public void setLevel(int level){
@@ -66,12 +78,45 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 		return true;
 	}
 
+	protected boolean canSelfDamage(){
+		return true;
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
 		moveDistance += (float)getDeltaMovement().length();
 		if (moveDistance > DRAGON_BALL_DISTANCE) {
 			this.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
+		}
+	}
+
+	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){
+		return DamageSource.fireball(pFireball, pIndirectEntity);
+	}
+
+	@Override
+	protected void onHit(HitResult hitResult){
+		if (!level.isClientSide) {
+			HitResult.Type hitresult$type = hitResult.getType();
+			if (hitresult$type == HitResult.Type.ENTITY && canHitEntity(((EntityHitResult) hitResult).getEntity())) {
+				onHitEntity((EntityHitResult) hitResult);
+			}
+
+			float explosivePower = getExplosivePower();
+			DamageSource damagesource;
+			if(getOwner() == null){
+				damagesource = getDamageSource(this, this);
+			} else {
+				damagesource = getDamageSource(this, getOwner());
+			}
+			// We are intentionally not setting ourselves as the attacker to make sure we are
+			// included in the fireball damage. This is because explode() will not include the
+			// "attacker" in the damage calculation when gathering entities to damage.
+			Entity attacker = canSelfDamage() ? this : getOwner();
+			level.explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, true, Explosion.BlockInteraction.DESTROY);
+			animationBuilder.clearAnimations();
+			animationBuilder.addAnimation("explosion", ILoopType.EDefaultLoopTypes.LOOP);
 		}
 	}
 

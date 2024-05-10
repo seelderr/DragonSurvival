@@ -3,10 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -15,7 +17,6 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -31,6 +32,7 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib3.core.builder.ILoopType;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 public class BallLightningEntity extends DragonBallEntity{
@@ -53,28 +55,28 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	@Override
-	protected void onHit(HitResult p_70227_1_){
-		if(!level.isClientSide){
-			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
-			float explosivePower = getSkillLevel() / 1.25f;
-			Entity attacker = getOwner();
-			DamageSource damagesource;
-			if(attacker == null){
-				damagesource = DamageSource.fireball(this, this);
-			}else{
-				damagesource = DamageSource.fireball(this, attacker);
-				if(attacker instanceof LivingEntity attackerEntity){
-					attackerEntity.setLastHurtMob(attacker);
-				}
-			}
-			level.explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
-			animationBuilder.clearAnimations();
-			animationBuilder.addAnimation("explosion", ILoopType.EDefaultLoopTypes.LOOP);
+	protected boolean canSelfDamage(){
+		return ServerConfig.allowSelfDamageFromBallLightning;
+	}
 
+	@Override
+	public float getExplosivePower(){
+		return getSkillLevel() / 1.25f;
+	}
+
+	@Override
+	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){
+		// This damage source is used since it is specifically not fire damage, so that cave dragons don't ignore the ball lightning damage
+		return DamageSources.dragonBallLightning(pFireball, pIndirectEntity);
+	}
+
+	@Override
+	protected void onHit(HitResult hitResult){
+		super.onHit(hitResult);
+		if(!level.isClientSide){
 			if (!(getOwner() instanceof Player))
 			{
 				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
-				return;
 			}
 
 			attackMobs();
@@ -90,16 +92,14 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	public void attackMobs(){
-		int rn = 4;
+		int range = 4;
 		Entity owner = getOwner();
 		
 		if (owner instanceof Player)
-			rn = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
+			range = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
 
-		int range = rn;
-		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
-		entities.removeIf(e -> e == owner || e instanceof BallLightningEntity);
-		entities.removeIf(e -> e.distanceTo(this) > range);
+		List<Entity> entities = level.getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+		entities.removeIf(e -> e instanceof BallLightningEntity);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
@@ -123,17 +123,12 @@ public class BallLightningEntity extends DragonBallEntity{
 			if(level.isClientSide){
 				// Creates a trail of particles between the entity and target(s)
 				int steps = 10;
+				float stepSize = 1.f / steps;
+				Vec3 distV = new Vec3(getX() - ent.getX(), getY() - ent.getY(), getZ() - ent.getZ());
 				for (int i = 0; i < steps; i++) {
-					Vec3 distV = new Vec3(getX() - ent.getX(), getY() - ent.getY(), getZ() - ent.getZ());
-					double distFrac = (steps - (double)(i)) / steps;
 					// the current entity coordinate + ((the distance between it and the target) * (the fraction of the total))
-					double stepX = ent.getX() + (distV.x * distFrac);
-					double stepY = ent.getY() + (distV.y * distFrac);
-					double stepZ = ent.getZ() + (distV.z * distFrac);
-					if (level.random.nextInt() > 25)
-						level.addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
-					else
-						level.addParticle(new LargeLightningParticleData(16F, false), stepX, stepY, stepZ, 0.0, 0.0, 0.0);
+					Vec3 step = ent.position().add(distV.scale(stepSize * i));
+					level.addParticle(new LargeLightningParticleData(16F, false), step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
 				}
 			}
 		}

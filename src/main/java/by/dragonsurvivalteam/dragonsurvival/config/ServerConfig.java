@@ -348,9 +348,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "cave"}, key = "splashDamage", comment = "The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage." )
 	public static Double caveSplashDamage = 2.0;
 
-	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "cave"}, key = "allowSelfDamageFromFireball", comment = "Whether a cave dragon can take self-damage from the fireball explosion." )
-	public static Boolean allowSelfDamageFromFireball = false;
-
 	// Forest Dragon Penalties
 	@ConfigRange( min = 0, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "forest"}, key = "ticksBeforeStressed", comment = "The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect." )

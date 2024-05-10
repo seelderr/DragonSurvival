@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
@@ -34,27 +36,18 @@ public class FireBallEntity extends DragonBallEntity{
 	}
 
 	@Override
-	protected void onHit(HitResult pResult){
-		if (!level.isClientSide) {
-			HitResult.Type hitresult$type = pResult.getType();
-			if (hitresult$type == HitResult.Type.ENTITY && canHitEntity(((EntityHitResult) pResult).getEntity())) {
-				onHitEntity((EntityHitResult) pResult);
-			}
+	protected boolean canSelfDamage(){
+		return false;
+		// This config would only work if I added a way to ignore the fire resistance of the cave dragon
+		// that shot the fireball. Since the default would be to not damage them anyways, I'm not
+		// going to bother to implement this for now.
+		//return ServerConfig.allowSelfDamageFromFireball;
+	}
 
-			float explosivePower = getSkillLevel();
-			Entity attacker = getOwner();
-			DamageSource damagesource;
-			if(attacker == null){
-				damagesource = DamageSource.fireball(this, this);
-			} else {
-				damagesource = DamageSource.fireball(this, attacker);
-				if(attacker instanceof LivingEntity attackerEntity){
-					attackerEntity.setLastHurtMob(attacker);
-				}
-			}
-			level.explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, true, Explosion.BlockInteraction.DESTROY);
-			animationBuilder.clearAnimations();
-			animationBuilder.addAnimation("explosion", ILoopType.EDefaultLoopTypes.LOOP);
+	@Override
+	protected void onHit(HitResult pResult){
+		super.onHit(pResult);
+		if (!level.isClientSide) {
 			this.discard();
 		}
 	}
@@ -72,6 +65,6 @@ public class FireBallEntity extends DragonBallEntity{
 		float damage = 7.0f * explosivePower * 2.0f + 1.0f;
 
 		Entity attacker = getOwner();
-		hitResult.getEntity().hurt(DamageSource.fireball(this, attacker), damage);
+		hitResult.getEntity().hurt(getDamageSource(this, attacker), damage);
 	}
 }
