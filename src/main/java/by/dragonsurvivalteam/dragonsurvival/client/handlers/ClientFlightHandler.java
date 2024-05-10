@@ -295,8 +295,8 @@ public class ClientFlightHandler {
 
 							double maxFlightSpeed = ServerFlightHandler.maxFlightSpeed;
 							// FIXME :: Magic numbers at various places
-							ax = Mth.clamp(ax, -0.2 * maxFlightSpeed, 0.2 * maxFlightSpeed);
-							az = Mth.clamp(az, -0.2 * maxFlightSpeed, 0.2 * maxFlightSpeed);
+							ax = Mth.clamp(ax, -0.4 * maxFlightSpeed, 0.4 * maxFlightSpeed);
+							az = Mth.clamp(az, -0.4 * maxFlightSpeed, 0.4 * maxFlightSpeed);
 
 							// Increase acceleration depending on how sharply the player turns their character
 							ax += Math.cos(yaw) / 500 * 50 * 2;
@@ -323,7 +323,7 @@ public class ClientFlightHandler {
 
 							if (!hasFood) {
 								// TODO :: If you use Math.abs you always get a positive number, shouldn't this be max() instead of clamp()?
-								ay = Mth.clamp(Math.abs(ay * 4), -0.2 * ServerFlightHandler.maxFlightSpeed, 0.2 * ServerFlightHandler.maxFlightSpeed);
+								ay = Mth.clamp(Math.abs(ay * 4), -0.4 * ServerFlightHandler.maxFlightSpeed, 0.4 * ServerFlightHandler.maxFlightSpeed);
 							}
 
 							if (ServerFlightHandler.isFlying(player)) {
@@ -370,8 +370,8 @@ public class ClientFlightHandler {
 
 									// Increase speed while flying down or height when flying up
 									if (viewVector.y < 0) {
-										ax += (Math.cos(yaw) * flightMult) / 500;
-										az += (Math.sin(yaw) * flightMult) / 500;
+										ax += (Math.cos(yaw) * flightMult * 2) / 500;
+										az += (Math.sin(yaw) * flightMult * 2) / 500;
 									} else {
 										ay = viewVector.y / 4;
 										ax *= 0.98;
@@ -379,12 +379,12 @@ public class ClientFlightHandler {
 									}
 
 									double speedLimit = ServerFlightHandler.maxFlightSpeed * flightMult;
-									ax = Mth.clamp(ax, -0.2 * speedLimit, 0.2 * speedLimit);
-									az = Mth.clamp(az, -0.2 * speedLimit, 0.2 * speedLimit);
+									ax = Mth.clamp(ax, -0.4 * speedLimit, 0.4 * speedLimit);
+									az = Mth.clamp(az, -0.4 * speedLimit, 0.4 * speedLimit);
 
 									if (ServerFlightHandler.isSpin(player)) { // TODO :: If the spin move is used in water won't the acceleration be applied twice?
-										ax += (Math.cos(yaw) * flightMult * 100) / 500;
-										az += (Math.sin(yaw) * flightMult * 100) / 500;
+										ax += (Math.cos(yaw) * flightMult * 100 * 2) / 500;
+										az += (Math.sin(yaw) * flightMult * 100 * 2) / 500;
 										ay = viewVector.y / 4;
 									}
 
@@ -406,16 +406,16 @@ public class ClientFlightHandler {
 
 								if (!ServerFlightHandler.isGliding(player)) {
 									wasGliding = false;
-									double maxForward = 0.5 * flightMult;
+									double maxForward = 0.5 * flightMult * 2;
 
 									Vec3 moveVector = ClientDragonRender.getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.yRot);
-									moveVector.multiply(1.3 * flightMult, 0, 1.3 * flightMult);
+									moveVector.multiply(1.3 * flightMult * 2, 0, 1.3 * flightMult * 2);
 
 									boolean moving = movement.up || movement.down || movement.left || movement.right;
 
 									if (ServerFlightHandler.isSpin(player)) {
-										ax += (Math.cos(yaw) * flightMult * 200) / 500;
-										az += (Math.sin(yaw) * flightMult * 200) / 500;
+										ax += (Math.cos(yaw) * flightMult * 200 * 2) / 500;
+										az += (Math.sin(yaw) * flightMult * 200 * 2) / 500;
 										ay = viewVector.y / 8;
 									}
 
@@ -424,8 +424,8 @@ public class ClientFlightHandler {
 									}
 
 									if (moving && !movement.jumping && !movement.shiftKeyDown) {
-										maxForward = 0.8 * flightMult;
-										moveVector.multiply(1.4 * flightMult, 0, 1.4 * flightMult);
+										maxForward = 0.8 * flightMult * 2;
+										moveVector.multiply(1.4 * flightMult * 2, 0, 1.4 * flightMult * 2);
 										deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
 										deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
 
