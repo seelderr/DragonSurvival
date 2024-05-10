@@ -82,6 +82,10 @@ public class CenterBodyType extends AbstractDragonBody {
 		return "center";
 	}
 
+	public Boolean canHideWings() {
+		return false;
+	}
+
 	@Override
 	public void onPlayerUpdate() {}
 

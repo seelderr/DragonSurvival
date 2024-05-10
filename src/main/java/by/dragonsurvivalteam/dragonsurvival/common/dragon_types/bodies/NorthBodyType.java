@@ -82,6 +82,18 @@ public class NorthBodyType extends AbstractDragonBody {
 		return "north";
 	}
 
+	public Double getHeightMult() {
+		return 0.55;
+	}
+
+	public Double getEyeHeightMult() {
+		return 0.55;
+	}
+
+	public Boolean isSquish() {
+		return true;
+	}
+
 	@Override
 	public void onPlayerUpdate() {}
 

@@ -23,8 +23,24 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return getBodyName();
+	}
+	
+	public Boolean canHideWings() {
+		return true;
+	}
+
+	public Double getHeightMult() {
+		return 1.0;
+	}
+	
+	public Boolean isSquish() {
+		return false;
+	}
+
+	public Double getEyeHeightMult() {
+		return 1.0;
 	}
 
 	public Double getJumpBonus() {

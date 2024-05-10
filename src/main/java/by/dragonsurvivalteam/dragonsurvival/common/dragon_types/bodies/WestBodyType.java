@@ -82,6 +82,10 @@ public class WestBodyType extends AbstractDragonBody {
 		return "west";
 	}
 
+	public Boolean canHideWings() {
+		return false;
+	}
+
 	@Override
 	public void onPlayerUpdate() {}
 

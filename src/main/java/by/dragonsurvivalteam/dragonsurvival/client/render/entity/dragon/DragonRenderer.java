@@ -87,8 +87,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 		IBone smallRightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
 
 		if (handler.getBody() != null) {
-			String bodyName = handler.getBody().getBodyName().toLowerCase();
-			if (bodyName != "center" && bodyName != "west") {
+			if (handler.getBody().canHideWings()) {
 				if(leftWing != null)
 					leftWing.setHidden(!hasWings);
 		
