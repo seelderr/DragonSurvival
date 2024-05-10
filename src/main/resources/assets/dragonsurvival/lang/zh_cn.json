@@ -146,7 +146,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "如果你想使用旧的纹理或是正在使用§6资源包§r，请点击这个按钮。",
   "ds.gui.dragon_editor.glowing": "发光",
   "ds.gui.dragon_editor.default_skin": "旧的纹理",
-  "ds.gui.dragon_editor.wings": "",
+  "ds.gui.dragon_editor.wings": "显示翅膀",
   "ds.gui.dragon_editor.size": "大小：",
   "ds.gui.dragon_editor.tooltip.done": "确认更改",
   "ds.gui.dragon_editor.tooltip.cancel": "取消",

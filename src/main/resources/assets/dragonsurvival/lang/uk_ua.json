@@ -185,7 +185,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "Якщо ви хочете старі текстури або використовуєте §6пакет текстур§r, встановіть прапорець.",
   "ds.gui.dragon_editor.glowing": "Сяяння?",
   "ds.gui.dragon_editor.default_skin": "Стара текстура",
-  "ds.gui.dragon_editor.wings": "",
+  "ds.gui.dragon_editor.wings": "Показати крила?",
   "ds.gui.dragon_editor.size": "Розмір: ",
   "ds.gui.dragon_editor.tooltip.done": "Підтвердити зміни",
   "ds.gui.dragon_editor.tooltip.cancel": "Скасувати",
