@@ -121,63 +121,57 @@ public class DragonModifiers{
 					if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) { speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
 					speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", cap.getBody().getRunBonus(), AttributeModifier.Operation.ADDITION));
 				}
-			} else { speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
 			
-			if (body != null && cap.isDragon()) {
 				if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).getAmount() != body.getArmorBonus()) {
 					if (armorAttr.getModifier(DRAGON_BODY_ARMOR) != null) { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
 					armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, "BODY_ARMOR_BONUS", body.getArmorBonus(), AttributeModifier.Operation.ADDITION));
 				}
-			} else { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
 			
-			if (body != null && cap.isDragon()) {
 				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH).getAmount() != body.getDamageBonus()) {
 					if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
 					strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, "BODY_STRENGTH_BONUS", body.getDamageBonus(), AttributeModifier.Operation.ADDITION));
 				}
-			} else { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
 
-			if (body != null && cap.isDragon()) {
 				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT).getAmount() != (body.getDamageMult()  - 1)) {
 					if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
 					strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT, "BODY_STRENGTH_MULT", body.getDamageMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
 				}
-			} else { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
 
-			if (body != null && cap.isDragon()) {
 				if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) == null || attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS).getAmount() != body.getKnockbackBonus()) {
 					if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) != null) { attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS); }
 					attackKnockbackAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_KNOCKBACK_BONUS, "BODY_KNOCKBACK_BONUS", body.getKnockbackBonus(), AttributeModifier.Operation.ADDITION));
 				}
-			} else { attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS); }
 
-			if (body != null && cap.isDragon()) {
 				if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) == null || swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS).getAmount() != body.getSwimSpeedBonus()) {
 					if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) != null) { swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS); }
 					swimSpeedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SWIM_SPEED_BONUS, "BODY_SWIM_SPEED_BONUS", body.getSwimSpeedBonus(), AttributeModifier.Operation.ADDITION));
 				}
-			} else { swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS); }
 
-			if (body != null && cap.isDragon()) {
 				if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) == null || stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS).getAmount() != body.getStepBonus()) {
 					if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) != null) { stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS); }
 					stepAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS, "BODY_STEP_HEIGHT_BONUS", body.getStepBonus(), AttributeModifier.Operation.ADDITION));
 				}
-			} else { stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS); }
 			
-			if (body != null && cap.isDragon()) {
 				if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) == null || gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT).getAmount() != (body.getGravityMult() - 1)) {
 					if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) != null) { gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT); }
 					gravityAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_GRAVITY_MULT, "BODY_GRAVITY_MULT", body.getGravityMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
 				}
-			} else { gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT); }
 			
-			if (body != null && cap.isDragon()) {
 				if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) == null || healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT).getAmount() != (body.getHealthMult() - 1)) {
 					if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) != null) { healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT); }
 					healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, "BODY_HEALTH_MULT", body.getHealthMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
 				}
-			} else { healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT); }
+			} else { 
+				speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED);
+				armorAttr.removeModifier(DRAGON_BODY_ARMOR); 
+				strengthAttr.removeModifier(DRAGON_BODY_STRENGTH);
+				strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT);
+				attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS);
+				swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS);
+				stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS);
+				gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT);
+				healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT);
+			}
 		}
 	}
 

@@ -649,10 +649,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				return !text.random;
 			});
 			
-			if (!isEditor) {
-				int bodytype = minecraft.player.getRandom().nextInt(DragonBodies.ORDER.length);
-				dragonBody = DragonBodies.bodyMappings.get(DragonBodies.ORDER[bodytype].toLowerCase()).get();
-			}
+			//if (!isEditor) {
+			//	int bodytype = minecraft.player.getRandom().nextInt(DragonBodies.ORDER.length);
+			//	dragonBody = DragonBodies.bodyMappings.get(DragonBodies.ORDER[bodytype].toLowerCase()).get();
+			//}
 			
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);

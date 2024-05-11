@@ -365,7 +365,7 @@ public class ClientFlightHandler {
 									}
 
 									if (horizontalView > 0) {
-										deltaMovement = deltaMovement.add((viewVector.x / horizontalView * horizontalMovement - deltaMovement.x) * 0.1D, 0.0D, (viewVector.z / horizontalView * horizontalMovement - deltaMovement.z) * 0.1D);
+										deltaMovement = deltaMovement.add((viewVector.x * flightMult / horizontalView * horizontalMovement - deltaMovement.x) * 0.1D, 0.0D, (viewVector.z * flightMult / horizontalView * horizontalMovement - deltaMovement.z) * 0.1D);
 									}
 
 									// Increase speed while flying down or height when flying up
