@@ -99,7 +99,6 @@ public class BallLightningEntity extends DragonBallEntity{
 		if(isLingering) {
 			lingerTicks--;
 			if(lingerTicks <= 0) {
-				super.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
 				this.discard();
 			}
 		}
