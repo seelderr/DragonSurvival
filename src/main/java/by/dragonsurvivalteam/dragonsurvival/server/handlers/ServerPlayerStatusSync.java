@@ -33,7 +33,6 @@ public class ServerPlayerStatusSync {
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 				if(handler.lastSync == 0 || player.tickCount >= handler.lastSync + serverSyncTime){
 					handler.lastSync = player.tickCount;
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new CompleteDataSync(player.getId(), handler.writeNBT()));
 				}
 			}
 		}

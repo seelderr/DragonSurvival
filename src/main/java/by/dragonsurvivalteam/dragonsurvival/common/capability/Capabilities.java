@@ -67,26 +67,18 @@ public class Capabilities{
 				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new RequestClientData(handler.getType(), handler.getLevel()));
 				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncDragonClawsMenu(serverPlayer.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
 			});
-
-			syncCapability(serverPlayer);
 		}
-	}
-
-	public static void syncCapability(final Player player) {
-		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
 	}
 
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
 		Player player = playerRespawnEvent.getEntity();
-		syncCapability(player);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
 		// TODO :: Might not needed if EntityJoinLevelEvent is used instead of PlayerLoggedInEvent?
 		Player player = event.getEntity();
-		syncCapability(player);
 		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkinData().compileSkin());
 	}
 
