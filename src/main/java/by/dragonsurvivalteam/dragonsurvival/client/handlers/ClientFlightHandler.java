@@ -256,7 +256,7 @@ public class ClientFlightHandler {
 	}
 
 	/** Controls acceleration */
-	@SubscribeEvent // FIXME :: Currently runs twice per tick (START and END)
+	@SubscribeEvent
 	public static void flightControl(final ClientTickEvent event) {
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
@@ -354,13 +354,13 @@ public class ClientFlightHandler {
 									deltaMovement = player.getDeltaMovement().add(0.0D, gravity * (-1.0D + (double) verticalDelta * 0.75D), 0.0D);
 
 									if (deltaMovement.y < 0 && horizontalView > 0) {
-										double downwardMomentum = deltaMovement.y * -0.1D * (double) verticalDelta;
+										double downwardMomentum = deltaMovement.y * -0.1D * (double) verticalDelta * flightMult;
 										deltaMovement = deltaMovement.add(viewVector.x * downwardMomentum / horizontalView, downwardMomentum, viewVector.z * downwardMomentum / horizontalView);
 									}
 
 									if (pitch < 0 && horizontalView > 0) {
 										// Handle movement when the player makes turns
-										double delta = horizontalMovement * -Mth.sin(pitch) * 0.04D;
+										double delta = horizontalMovement * -Mth.sin(pitch) * 0.04D * flightMult;
 										deltaMovement = deltaMovement.add(-viewVector.x * delta / horizontalView, delta * 3.2D, -viewVector.z * delta / horizontalView);
 									}
 
