@@ -389,9 +389,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "seaHydrationItems", comment = "Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/modid:id" )
 	public static List<String> seaAdditionalWaterUseables = List.of("immersive_weathering:icicle");
 
-	@ConfigOption( side = ConfigSide.SERVER, category  = {"penalties", "sea"}, key = "allowSelfDamageFromBallLightning", comment = "Whether a sea dragon can take self-damage from the ball lightning explosion." )
-	public static Boolean allowSelfDamageFromBallLightning = true;
-
 	// Ore Loot
 	@ConfigRange( min = 0.0, max = 1.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "ore", key = "humanOreDustChance", comment = "The odds of dust dropping when a human harvests an ore." )

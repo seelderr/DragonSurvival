@@ -59,11 +59,6 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	@Override
-	protected boolean canSelfDamage(){
-		return ServerConfig.allowSelfDamageFromBallLightning;
-	}
-
-	@Override
 	public float getExplosivePower(){
 		return getSkillLevel() / 1.25f;
 	}
