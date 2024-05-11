@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
@@ -25,6 +26,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
@@ -36,6 +38,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class BallLightningEntity extends DragonBallEntity{
+	protected boolean isLingering = false;
+	protected int lingerTicks = 100;
 	public BallLightningEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
 		super(DSEntities.BALL_LIGHTNING, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
@@ -72,15 +76,18 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult hitResult){
-		super.onHit(hitResult);
-		if(!level.isClientSide){
+		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
 			if (!(getOwner() instanceof Player))
 			{
 				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 			}
 
-			attackMobs();
-			this.discard();
+			isLingering = true;
+			// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
+			xPower = 0;
+			zPower = 0;
+			yPower = 0;
+			setDeltaMovement(Vec3.ZERO);
 		}
 	}
 	
@@ -89,6 +96,13 @@ public class BallLightningEntity extends DragonBallEntity{
 		super.tick();
 		if (level.getGameTime() % 5 == 0) // Once per 5 ticks (0.25 seconds)
 			attackMobs();
+		if(isLingering) {
+			lingerTicks--;
+			if(lingerTicks <= 0) {
+				super.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
+				this.discard();
+			}
+		}
 	}
 
 	public void attackMobs(){

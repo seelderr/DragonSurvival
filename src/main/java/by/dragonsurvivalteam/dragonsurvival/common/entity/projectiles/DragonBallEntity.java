@@ -85,9 +85,11 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 	@Override
 	public void tick() {
 		super.tick();
-		moveDistance += (float)getDeltaMovement().length();
-		if (moveDistance > DRAGON_BALL_DISTANCE) {
-			this.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
+		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
+			moveDistance += (float)getDeltaMovement().length();
+			if (moveDistance > DRAGON_BALL_DISTANCE) {
+				this.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
+			}
 		}
 	}
 
