@@ -5,8 +5,13 @@ import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 
 public abstract class AbstractDragonBody implements NBTInterface, Comparable<AbstractDragonBody> {
+	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body"}, key = "bodyAffectsHitbox", comment = "Whether the hitbox is affected by your body type")
+	public static Boolean bodyAffectsHitbox = true;
+
 	public abstract String getBodyName();
 	public abstract void onPlayerUpdate();
 	public abstract void onPlayerDeath();

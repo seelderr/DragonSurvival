@@ -91,7 +91,7 @@ public class NorthBodyType extends AbstractDragonBody {
 	}
 
 	public Boolean isSquish() {
-		return true;
+		return AbstractDragonBody.bodyAffectsHitbox;
 	}
 
 	@Override
