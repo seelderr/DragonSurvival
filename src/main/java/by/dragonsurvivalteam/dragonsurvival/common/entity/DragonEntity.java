@@ -17,6 +17,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.contents.LiteralContents;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -367,8 +369,18 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		}else if(playerStateHandler.getMovementData().dig){
 			builder.addAnimation("dig", EDefaultLoopTypes.LOOP);
 		}
-
+		
 		builder.addAnimation("idle", EDefaultLoopTypes.LOOP);
+		if (builder.getRawAnimationList().size() == 1) {
+			builder.addAnimation("idle", EDefaultLoopTypes.LOOP);
+		}
+		//System.out.println(animationController.getAnimationState().toString());
+		if (animationController.getAnimationState().toString() == "Stopped") {
+			//Minecraft minecraft = Minecraft.getInstance();
+			//minecraft.player.sendSystemMessage(Component.literal("It just happened!"));
+			//System.out.println(animationController.getCurrentAnimation());
+			animationController.markNeedsReload();
+		}
 
 		animationController.setAnimation(builder);
 		return PlayState.CONTINUE;
