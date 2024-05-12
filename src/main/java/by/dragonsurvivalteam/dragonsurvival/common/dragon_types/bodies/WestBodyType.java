@@ -13,10 +13,6 @@ public class WestBodyType extends AbstractDragonBody {
 	public static Double westJumpBonus = 0.0;
 
 	@ConfigRange(min = -10.0, max = 100)
-	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westRunBonus", comment = "The run bonus given to West-type dragons")
-	public static Double westRunBonus = 0.0;
-
-	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westStepBonus", comment = "The step bonus given to West-type dragons")
 	public static Double westStepBonus = 0.0;
 
@@ -43,6 +39,10 @@ public class WestBodyType extends AbstractDragonBody {
 	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westKnockbackBonus", comment = "The knockback bonus given to West-type dragons")
 	public static Double westKnockbackBonus = 0.0;
+	
+	@ConfigRange(min = -10.0, max = 100)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westRunMult", comment = "The run speed multiplier given to West-type dragons")
+	public static Double westRunMult = 1.0;
 
 	@ConfigRange(min = 0.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westDamageMult", comment = "The damage multiplier given to West-type dragons")
@@ -95,9 +95,6 @@ public class WestBodyType extends AbstractDragonBody {
 	public Double getJumpBonus() {
 		return westJumpBonus;
 	}
-	public Double getRunBonus() {
-		return westRunBonus;
-	}
 	public Double getStepBonus() {
 		return westStepBonus;
 	}
@@ -118,6 +115,9 @@ public class WestBodyType extends AbstractDragonBody {
 	}
 	public Double getKnockbackBonus() {
 		return westKnockbackBonus;
+	}
+	public Double getRunMult() {
+		return westRunMult;
 	}
 	public Double getDamageMult() {
 		return westDamageMult;

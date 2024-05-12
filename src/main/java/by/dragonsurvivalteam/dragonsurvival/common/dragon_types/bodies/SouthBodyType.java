@@ -13,10 +13,6 @@ public class SouthBodyType extends AbstractDragonBody {
 	public static Double southJumpBonus = 0.0;
 
 	@ConfigRange(min = -10.0, max = 100)
-	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southRunBonus", comment = "The run bonus given to South-type dragons")
-	public static Double southRunBonus = 0.0;
-
-	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southStepBonus", comment = "The step bonus given to South-type dragons")
 	public static Double southStepBonus = 0.0;
 
@@ -43,6 +39,10 @@ public class SouthBodyType extends AbstractDragonBody {
 	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southKnockbackBonus", comment = "The knockback bonus given to South-type dragons")
 	public static Double southKnockbackBonus = 0.0;
+
+	@ConfigRange(min = -10.0, max = 100)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southRunMult", comment = "The run speed multiplier given to South-type dragons")
+	public static Double southRunMult = 1.0;
 
 	@ConfigRange(min = 0.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southDamageMult", comment = "The damage multiplier given to South-type dragons")
@@ -91,9 +91,6 @@ public class SouthBodyType extends AbstractDragonBody {
 	public Double getJumpBonus() {
 		return southJumpBonus;
 	}
-	public Double getRunBonus() {
-		return southRunBonus;
-	}
 	public Double getStepBonus() {
 		return southStepBonus;
 	}
@@ -114,6 +111,9 @@ public class SouthBodyType extends AbstractDragonBody {
 	}
 	public Double getKnockbackBonus() {
 		return southKnockbackBonus;
+	}
+	public Double getRunMult() {
+		return southRunMult;
 	}
 	public Double getDamageMult() {
 		return southDamageMult;

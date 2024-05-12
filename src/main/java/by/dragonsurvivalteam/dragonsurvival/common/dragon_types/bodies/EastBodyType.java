@@ -13,10 +13,6 @@ public class EastBodyType extends AbstractDragonBody {
 	public static Double eastJumpBonus = 0.0;
 
 	@ConfigRange(min = -10.0, max = 100)
-	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastRunBonus", comment = "The run bonus given to East-type dragons")
-	public static Double eastRunBonus = 0.0;
-
-	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastStepBonus", comment = "The step bonus given to East-type dragons")
 	public static Double eastStepBonus = 0.0;
 
@@ -43,6 +39,10 @@ public class EastBodyType extends AbstractDragonBody {
 	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastKnockbackBonus", comment = "The knockback bonus given to East-type dragons")
 	public static Double eastKnockbackBonus = 0.0;
+
+	@ConfigRange(min = -10.0, max = 100)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastRunMult", comment = "The run speed multiplier given to East-type dragons")
+	public static Double eastRunMult = 1.0;
 
 	@ConfigRange(min = 0.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastDamageMult", comment = "The damage multiplier given to East-type dragons")
@@ -91,9 +91,6 @@ public class EastBodyType extends AbstractDragonBody {
 	public Double getJumpBonus() {
 		return eastJumpBonus;
 	}
-	public Double getRunBonus() {
-		return eastRunBonus;
-	}
 	public Double getFlightMult() {
 		return eastFlightMult;
 	}
@@ -117,6 +114,9 @@ public class EastBodyType extends AbstractDragonBody {
 	}
 	public Double getKnockbackBonus() {
 		return eastKnockbackBonus;
+	}
+	public Double getRunMult() {
+		return eastRunMult;
 	}
 	public Double getDamageMult() {
 		return eastDamageMult;

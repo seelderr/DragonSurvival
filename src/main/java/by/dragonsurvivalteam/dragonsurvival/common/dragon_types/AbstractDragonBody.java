@@ -52,10 +52,6 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 		return 0.0;
 	}
 	
-	public Double getRunBonus() {
-		return 0.0;
-	}
-	
 	public Double getStepBonus() {
 		return 0.0;
 	}
@@ -80,6 +76,10 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 		return 0.0;
 	}
 	
+	public Double getRunMult() {
+		return 1.0;
+	}
+
 	public Double getDamageMult() {
 		return 1.0;
 	}

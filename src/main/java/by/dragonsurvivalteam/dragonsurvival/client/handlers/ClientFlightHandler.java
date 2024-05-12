@@ -426,7 +426,7 @@ public class ClientFlightHandler {
 									if (moving && !movement.jumping && !movement.shiftKeyDown) {
 										maxForward = 0.8 * flightMult * 2;
 										moveVector.multiply(1.4 * flightMult * 2, 0, 1.4 * flightMult * 2);
-										deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
+										deltaMovement = new Vec3(Mth.lerp(0.14, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.14, deltaMovement.z, moveVector.z));
 										deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
 
 										deltaMovement = deltaMovement.add(ax, ay, az);
@@ -444,7 +444,7 @@ public class ClientFlightHandler {
 										player.setDeltaMovement(deltaMovement);
 									} else {
 										deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
-										deltaMovement = new Vec3(Mth.lerp(0.1, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.1, deltaMovement.z, moveVector.z));
+										deltaMovement = new Vec3(Mth.lerp(0.14, deltaMovement.x, moveVector.x), 0, Mth.lerp(0.14, deltaMovement.z, moveVector.z));
 										deltaMovement = new Vec3(Mth.clamp(deltaMovement.x, -maxForward, maxForward), 0, Mth.clamp(deltaMovement.z, -maxForward, maxForward));
 
 										deltaMovement = deltaMovement.add(ax, ay, az);

@@ -117,9 +117,9 @@ public class DragonModifiers{
 			AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
 
 			if (body != null && cap.isDragon()) {
-				if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).getAmount() != body.getRunBonus()) {
+				if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).getAmount() != body.getRunMult()) {
 					if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) { speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
-					speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", cap.getBody().getRunBonus(), AttributeModifier.Operation.ADDITION));
+					speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", body.getRunMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
 				}
 			
 				if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).getAmount() != body.getArmorBonus()) {
