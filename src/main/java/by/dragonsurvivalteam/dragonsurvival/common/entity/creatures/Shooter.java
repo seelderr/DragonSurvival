@@ -1,16 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
@@ -31,14 +39,21 @@ import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 
 public class Shooter extends Hunter implements CrossbowAttackMob{
 	private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Shooter.class, EntityDataSerializers.BOOLEAN);
 
-	protected int bolasCooldown = Functions.secondsToTicks(30);
+	protected int bolasCooldown;
 
 	public Shooter(EntityType<? extends PathfinderMob> entityType, Level world){
 		super(entityType, world);
+		// Vary the cooldown per mob so they don't all throw the bolas at the same time
+		bolasCooldown = Functions.secondsToTicks(ServerConfig.hunterBolasFrequency + ((random.nextDouble() - 0.5) * ServerConfig.hunterBolasFrequency) / 5.0);
+	}
+
+	protected int getBolasCooldown() {
+		return Functions.secondsToTicks(ServerConfig.hunterBolasFrequency + ((random.nextDouble() - 0.5) * ServerConfig.hunterBolasFrequency) / 5.0);
 	}
 
 	@Override
@@ -52,21 +67,13 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
-				double x = Shooter.this.getX();
-				double y = Shooter.this.getY();
-				double z = Shooter.this.getZ();
 				Entity entity = Shooter.this;
-				Level world = Shooter.this.level;
 				return super.canUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 
 			@Override
 			public boolean canContinueToUse() {
-				double x = Shooter.this.getX();
-				double y = Shooter.this.getY();
-				double z = Shooter.this.getZ();
 				Entity entity = Shooter.this;
-				Level world = Shooter.this.level;
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});
@@ -76,34 +83,59 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 	}
 
-	/*		@Override
-        public void tick(){
-            super.tick();
-            if(ServerConfig.hunterHasBolas){
-                LivingEntity target = getTarget();
-                if(target instanceof Player && DragonUtils.isDragon(target)){
-                    if(bolasCooldown == 0){
-                        performBolasThrow(target);
-                        bolasCooldown = Functions.secondsToTicks(60);
-                    }else{
-                        bolasCooldown--;
-                    }
-                }
-            }
-        }
+	@Override
+	public void tick(){
+		super.tick();
+
+		if(!ServerConfig.hunterHasBolas) {
+			return;
+		}
+
+		LivingEntity target = getTarget();
+		if(target instanceof Player){
+			if(bolasCooldown == 0){
+				if(target.hasEffect(DragonEffects.TRAPPED)) {
+					// Wait to throw the bolas until the player is no longer trapped
+					return;
+				}
+				performBolasThrow(target);
+				bolasCooldown = getBolasCooldown();
+			} else {
+				bolasCooldown--;
+			}
+		}
+	}
 
     public void performBolasThrow(LivingEntity target){
             Bolas bolas = new Bolas(this, level);
-            double d0 = target.getEyeY() - (double)1.1F;
-            double d1 = target.getX() - getX();
-            double d2 = d0 - bolas.getY();
-            double d3 = target.getZ() - getZ();
-            float f = Mth.sqrt((float)(d1 * d1 + d3 * d3)) * 0.2F;
-            bolas.shoot(d1, d2 + f, d3, 1.6F, 1.0F);
+			Vec3 targetPos = target.position();
+			if(target instanceof Player player)
+			{
+				DragonStateHandler handler = DragonStateProvider.getHandler(ClientProxy.getLocalPlayer());
+
+				if (handler == null || !handler.isDragon()) {
+					targetPos = targetPos.add(0, player.getEyeHeight(), 0);
+				} else {
+					targetPos = targetPos.add(0, DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman), 0);
+				}
+			}
+
+			Vec3 rawShootDirection = targetPos.subtract(bolas.getEyePosition());
+			float distance = (float) rawShootDirection.length();
+
+			// Adjust the launch angle to account for gravity as the target is further away (could be much smarter but this works good enough for now)
+			targetPos = targetPos.add(0, distance / 10.f, 0);
+
+			// Also lead their shot a bit
+			targetPos = targetPos.add(target.getDeltaMovement().scale(distance / 5.f));
+
+			Vec3 shootDirection = targetPos.subtract(bolas.getEyePosition()).normalize();
+			// TODO: Maybe add an inaccuracy config option? Or calculate it based off of difficulty level in some way like for skeletons?
+            bolas.shoot(shootDirection.x, shootDirection.y, shootDirection.z, 1.6F, 0.98f);
             playSound(SoundEvents.WITCH_THROW, 1.0F, 0.4F);
             level.addFreshEntity(bolas);
-        }
-    */
+	}
+
 	@Override
 	public IllagerArmPose getArmPose(){
 		if(isChargingCrossbow()){

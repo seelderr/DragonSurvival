@@ -586,10 +586,18 @@ public class ServerConfig{
 	@ConfigRange( min = 0d, max = 20d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
 	public static Double hunterArmor = 0d;
-/*
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterThrowsBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-	public static Boolean hunterHasBolas = false;
-*/
+
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterHasBolas", comment = "Is Dragon hunter able to throw a bolas?" )
+	public static Boolean hunterHasBolas = true;
+
+	@ConfigRange( min = 1.0, max = 60.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterBolasFrequency", comment = "How frequently does the dragon hunter throw the bolas?" )
+	public static Double hunterBolasFrequency = 10.0;
+
+	@ConfigRange( min = 1.0, max = 60.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterTrappedDebuffDuration", comment = "How long does the trapped debuff last?" )
+	public static Double hunterTrappedDebuffDuration = 5.0;
+
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
 	public static Double squireHealth = 24d;

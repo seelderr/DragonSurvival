@@ -245,15 +245,12 @@ public class ClientEvents{
 	@SubscribeEvent
 	public static void renderTrap(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> postEvent){
 		LivingEntity entity = postEvent.getEntity();
-		if(!(entity instanceof Player) && entity.getAttributes().hasAttribute(Attributes.MOVEMENT_SPEED)){
-			AttributeModifier bolasTrap = new AttributeModifier(Bolas.DISABLE_MOVEMENT, "Bolas trap", -entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue(), AttributeModifier.Operation.ADDITION);
-			if(entity.getAttribute(Attributes.MOVEMENT_SPEED).hasModifier(bolasTrap)){
-				int light = postEvent.getPackedLight();
-				int overlayCoords = LivingEntityRenderer.getOverlayCoords(entity, 0);
-				MultiBufferSource buffers = postEvent.getMultiBufferSource();
-				PoseStack matrixStack = postEvent.getPoseStack();
-				renderBolas(light, overlayCoords, buffers, matrixStack);
-			}
+		if(entity.getEffect(DragonEffects.TRAPPED) != null) {
+			int light = postEvent.getPackedLight();
+			int overlayCoords = LivingEntityRenderer.getOverlayCoords(entity, 0);
+			MultiBufferSource buffers = postEvent.getMultiBufferSource();
+			PoseStack matrixStack = postEvent.getPoseStack();
+			renderBolas(light, overlayCoords, buffers, matrixStack);
 		}
 	}
 
