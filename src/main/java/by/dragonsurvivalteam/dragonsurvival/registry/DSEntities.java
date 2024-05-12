@@ -103,7 +103,7 @@ public class DSEntities{
 		DRAGON = register(event, "dummy_dragon", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
 		DRAGON_ARMOR = register(event, "dragon_armor", new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 0, 0));
 
-		BOLAS_ENTITY = register(event, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new Bolas(p_create_2_), MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build("bolas")));
+		BOLAS_ENTITY = register(event, "bolas", cast(EntityType.Builder.of((p_create_1_, p_create_2_) -> new Bolas(p_create_2_), MobCategory.MISC).sized(0.8F, 0.8F).clientTrackingRange(4).updateInterval(10).build("bolas")));
 
 		DRAGON_SPIKE = register(event, "dragon_spike", EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(1).build("dragon_spike"));
 		BALL_LIGHTNING = register(event, "ball_lightning", EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, MobCategory.MISC).sized(1F, 1F).clientTrackingRange(4).updateInterval(1).build("ball_lightning"));

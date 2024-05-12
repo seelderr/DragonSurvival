@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragon
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -250,14 +251,21 @@ public class ClientEvents{
 			int overlayCoords = LivingEntityRenderer.getOverlayCoords(entity, 0);
 			MultiBufferSource buffers = postEvent.getMultiBufferSource();
 			PoseStack matrixStack = postEvent.getPoseStack();
-			renderBolas(light, overlayCoords, buffers, matrixStack);
+			float scale = entity.getEyeHeight();
+			if(entity instanceof Player) {
+				DragonStateHandler handler = DragonUtils.getHandler(entity);
+				if(handler != null && handler.isDragon()) {
+					scale = (float)DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
+				}
+			}
+			renderBolas(light, overlayCoords, buffers, matrixStack, scale);
 		}
 	}
 
-	public static void renderBolas(int light, int overlayCoords, MultiBufferSource buffers, PoseStack matrixStack){
+	public static void renderBolas(int light, int overlayCoords, MultiBufferSource buffers, PoseStack matrixStack, float eyeHeight){
 		matrixStack.pushPose();
-		matrixStack.scale(3, 3, 3);
-		matrixStack.translate(0, 0.5, 0);
+		matrixStack.translate(0, 0.9f + eyeHeight / 8.f, 0);
+		matrixStack.scale(1.6f + eyeHeight / 8.f, 1.6f + eyeHeight / 8.f, 1.6f + eyeHeight / 8.f);
 		if(BOLAS == null){
 			BOLAS = new ItemStack(DSItems.huntingNet);
 		}

@@ -13,7 +13,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -357,7 +359,11 @@ public class ClientDragonRender{
 
 					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
 					if(player.hasEffect(DragonEffects.TRAPPED)){
-						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
+						float bolasScale = player.getEyeHeight();
+						if(handler != null && handler.isDragon()) {
+							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
+						}
+						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack, bolasScale);
 					}
 				}
 			} catch (Throwable throwable) {
