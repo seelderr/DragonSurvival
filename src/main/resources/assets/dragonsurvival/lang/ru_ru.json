@@ -470,7 +470,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "Если вам нужны старые текстуры или вы используете §6текстурпаки§r, поставьте галочку тут.",
   "ds.gui.dragon_editor.glowing": "Свечение",
   "ds.gui.dragon_editor.default_skin": "Старая текстура",
-  "ds.gui.dragon_editor.wings": "",
+  "ds.gui.dragon_editor.wings": "Показать крылья?",
   "ds.gui.dragon_editor.size": "Размер: ",
   "ds.gui.dragon_editor.tooltip.done": "Подтвердить",
   "ds.gui.dragon_editor.tooltip.cancel": "Отменить",

@@ -185,7 +185,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "If you want old textures or are using a §6texture pack§r, check this box.",
   "ds.gui.dragon_editor.glowing": "Glowing?",
   "ds.gui.dragon_editor.default_skin": "Old texture",
-  "ds.gui.dragon_editor.wings": "",
+  "ds.gui.dragon_editor.wings": "Show wings?",
   "ds.gui.dragon_editor.size": "Size: ",
   "ds.gui.dragon_editor.tooltip.done": "Confirm changes",
   "ds.gui.dragon_editor.tooltip.cancel": "Cancel",

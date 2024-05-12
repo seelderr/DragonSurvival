@@ -379,10 +379,14 @@ public class EventHandler{
 
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
+				Double jumpBonus = 0.0;
+				if (dragonStateHandler.getBody() != null) {
+					jumpBonus = dragonStateHandler.getBody().getJumpBonus();
+				}
 				switch(dragonStateHandler.getLevel()){
-					case NEWBORN -> living.push(0, ServerConfig.newbornJump, 0); //1+ block
-					case YOUNG -> living.push(0, ServerConfig.youngJump, 0); //1.5+ block
-					case ADULT -> living.push(0, ServerConfig.adultJump, 0); //2+ blocks
+					case NEWBORN -> living.push(0, ServerConfig.newbornJump + jumpBonus, 0); //1+ block
+					case YOUNG -> living.push(0, ServerConfig.youngJump + jumpBonus, 0); //1.5+ block
+					case ADULT -> living.push(0, ServerConfig.adultJump + jumpBonus, 0); //2+ blocks
 				}
 				if(living instanceof ServerPlayer){
 					if(living.getServer().isSingleplayer()){
