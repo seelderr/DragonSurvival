@@ -81,7 +81,6 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});
-		this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
 	}
 
 	@Override
