@@ -24,17 +24,18 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
+import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.entity.monster.AbstractIllager.IllagerArmPose;
 import net.minecraft.world.entity.monster.CrossbowAttackMob;
 import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
+import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -49,7 +50,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	public Shooter(EntityType<? extends PathfinderMob> entityType, Level world){
 		super(entityType, world);
 		// Vary the cooldown per mob so they don't all throw the bolas at the same time
-		bolasCooldown = Functions.secondsToTicks(ServerConfig.hunterBolasFrequency + ((random.nextDouble() - 0.5) * ServerConfig.hunterBolasFrequency) / 5.0);
+		bolasCooldown = getBolasCooldown();
 	}
 
 	protected int getBolasCooldown() {
@@ -59,12 +60,15 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	@Override
 	protected void registerGoals() {
 		super.registerGoals();
-
-		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
-		goalSelector.addGoal(3, new CrossbowAttackGoal<>(this, 1.0D, 5.0F));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
-		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
+		this.goalSelector.addGoal(0, new FloatGoal(this));
+		this.goalSelector.addGoal(3, new CrossbowAttackGoal(this, 1.0, 8.0F));
+		this.goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
+		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
+		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
+		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 15.0F));
+		this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
+		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
 				Entity entity = Shooter.this;
@@ -77,10 +81,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});
-		this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
-		this.goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
-		this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.5));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.targetSelector.addGoal(5, new HurtByTargetGoal(this));
 	}
 
 	@Override
