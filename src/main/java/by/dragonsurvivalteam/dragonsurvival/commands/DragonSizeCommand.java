@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -25,8 +26,8 @@ public class DragonSizeCommand {
 
         LiteralCommandNode<CommandSourceStack> dragonSetSize = literal("dragon-set-size").requires(commandSource -> commandSource.hasPermission(2)).build();
 
-        // Would prefer to restrict this between 1.0 and ServerConfig.maxGrowthSize, but the maxGrowthSize is not initialized at the time of this command's registration
-        ArgumentCommandNode<CommandSourceStack, Double> dragonSize = argument("dragon_size", DoubleArgumentType.doubleArg(1.0, 1000000.0)).requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
+        // Would prefer to restrict this between newborn size and ServerConfig.maxGrowthSize, but the maxGrowthSize is not initialized at the time of this command's registration
+        ArgumentCommandNode<CommandSourceStack, Double> dragonSize = argument("dragon_size", DoubleArgumentType.doubleArg(DragonLevel.NEWBORN.size, 1000000.0)).requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
             double size = Mth.clamp(context.getArgument("dragon_size", Double.TYPE), 1.0, ServerConfig.maxGrowthSize);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             DragonStateHandler cap = DragonUtils.getHandler(serverPlayer);

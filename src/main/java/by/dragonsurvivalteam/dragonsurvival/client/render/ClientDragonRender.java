@@ -163,7 +163,7 @@ public class ClientDragonRender{
 			poseStack.pushPose();
 			poseStack.translate(-camera.x(), -camera.y(), -camera.z());
 
-			int range = BreathAbility.calculateCurrentBreathRange(handler.getLevel());
+			int range = BreathAbility.calculateCurrentBreathRange(handler.getSize());
 			AbstractDragonType dragonType = handler.getType();
 
 			int red = DragonUtils.isDragonType(dragonType, DragonTypes.CAVE) ? 1 : 0;
