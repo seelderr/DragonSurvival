@@ -120,6 +120,7 @@ public class Capabilities{
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
 		}));
 
+		DragonModifiers.updateModifiers(player);
 		original.invalidateCaps();
 		player.refreshDimensions();
 	}
