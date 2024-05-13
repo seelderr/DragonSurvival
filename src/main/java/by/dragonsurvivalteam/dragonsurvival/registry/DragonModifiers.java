@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -29,6 +30,7 @@ public class DragonModifiers{
 	public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
 	public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 	public static final UUID ATTACK_RANGE_MODIFIER_UUID = UUID.fromString("a2e9a028-4bef-48d4-a25b-9cfdcac99480");
+	public static final UUID STEP_HEIGHT_MODIFIER_UUID = UUID.fromString("f3b0b3e3-3b7d-4b1b-8f3d-3b7d4b1b8f3d");
 
 	private static final UUID DRAGON_BODY_MOVEMENT_SPEED = UUID.fromString("114fe18b-60fd-4284-b6ce-14d090454402");
 	private static final UUID DRAGON_BODY_ARMOR = UUID.fromString("8728438d-c838-4968-9382-efb95a36d72a");
@@ -41,33 +43,59 @@ public class DragonModifiers{
 	private static final UUID DRAGON_BODY_HEALTH_MULT = UUID.fromString("9068f914-511d-44cf-a2a3-0808f7c67326");
 
 	public static AttributeModifier buildHealthMod(double size){
-		double healthMod = (float)ServerConfig.minHealth + (size - 14) / 26F * ((float)ServerConfig.maxHealth - (float)ServerConfig.minHealth) - 20;
-		healthMod = Math.min(healthMod, ServerConfig.maxHealth - 20);
-
-
-		return new AttributeModifier(HEALTH_MODIFIER_UUID, "Dragon Health Adjustment", healthMod, AttributeModifier.Operation.ADDITION);
+		double healthModifier;
+		if(ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
+			double healthModifierPercentage = Math.max(1.0, (size - ServerConfig.maxHealthSize) / (ServerConfig.maxGrowthSize - DragonLevel.ADULT.size));
+			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.maxHealth, ServerConfig.largeMaxHealth) - 20;
+		}
+		else {
+			double healthModifierPercentage = Math.max(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));
+			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.minHealth, ServerConfig.maxHealth) - 20;
+		}
+		return new AttributeModifier(HEALTH_MODIFIER_UUID, "Dragon Health Adjustment", healthModifier, AttributeModifier.Operation.ADDITION);
 	}
 
 	public static AttributeModifier buildReachMod(double size){
-		double reachMod = (size - DragonLevel.NEWBORN.size) / (60.0 - DragonLevel.NEWBORN.size) * ServerConfig.reachBonus;
-
-		return new AttributeModifier(REACH_MODIFIER_UUID, "Dragon Reach Adjustment", reachMod, Operation.MULTIPLY_BASE);
+		double reachModifier;
+		if(ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+			reachModifier = ServerConfig.reachBonus + ServerConfig.largeReachScalar * (size / ServerConfig.DEFAULT_MAX_GROWTH_SIZE);
+		}
+		else {
+			reachModifier = Math.max(ServerConfig.reachBonus, (size - DragonLevel.NEWBORN.size) / (ServerConfig.DEFAULT_MAX_GROWTH_SIZE - DragonLevel.NEWBORN.size) * ServerConfig.reachBonus);
+		}
+		return new AttributeModifier(REACH_MODIFIER_UUID, "Dragon Reach Adjustment", reachModifier, Operation.MULTIPLY_BASE);
 	}
 	
 	public static AttributeModifier buildAttackRangeMod(double size) {
-		double rangeMod = (size - DragonLevel.NEWBORN.size) / (60.0 - DragonLevel.NEWBORN.size) * ServerConfig.attackRangeBonus;
-		
+		double rangeMod;
+		if(ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+			rangeMod = ServerConfig.attackRangeBonus + ServerConfig.largeReachScalar * (size / ServerConfig.DEFAULT_MAX_GROWTH_SIZE);
+		}
+		else {
+			rangeMod = Math.max(ServerConfig.attackRangeBonus, (size - DragonLevel.NEWBORN.size) / (ServerConfig.DEFAULT_MAX_GROWTH_SIZE - DragonLevel.NEWBORN.size) * ServerConfig.attackRangeBonus);
+		}
 		return new AttributeModifier(ATTACK_RANGE_MODIFIER_UUID, "Dragon Attack Range Adjustment", rangeMod, Operation.MULTIPLY_BASE);
 	}
 
 	public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon){
 		double ageBonus = isDragon ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
-
+		if(ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+			double damageModPercentage = Math.max(1.0, (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / (ServerConfig.maxGrowthSize - ServerConfig.DEFAULT_MAX_GROWTH_SIZE));
+			ageBonus = Mth.lerp(damageModPercentage, ageBonus, ServerConfig.largeDamageBonus);
+		}
 		return new AttributeModifier(DAMAGE_MODIFIER_UUID, "Dragon Damage Adjustment", ageBonus, Operation.ADDITION);
 	}
 
 	public static AttributeModifier buildSwimSpeedMod(AbstractDragonType dragonType){
 		return new AttributeModifier(SWIM_SPEED_MODIFIER_UUID, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADDITION);
+	}
+
+	public static AttributeModifier buildStepHeightMod(double size) {
+		double stepHeightBonus = 0;
+		if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling)  {
+			stepHeightBonus = ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+		}
+		return new AttributeModifier(STEP_HEIGHT_MODIFIER_UUID, "Dragon Step Height Adjustment", stepHeightBonus, Operation.ADDITION);
 	}
 
 	public static void updateModifiers(Player oldPlayer, Player newPlayer){
@@ -94,6 +122,10 @@ public class DragonModifiers{
 		oldMod = getAttackRangeModifier(oldPlayer);
 		if (oldMod != null){
 			updateAttackRangeModifier(newPlayer, oldMod);
+		}
+		oldMod = getStepHeightModifier(oldPlayer);
+		if (oldMod != null){
+			updateStepHeightModifier(newPlayer, oldMod);
 		}
 	}
 	
@@ -200,6 +232,11 @@ public class DragonModifiers{
 		return Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get())).getModifier(ATTACK_RANGE_MODIFIER_UUID);
 	}
 
+	@Nullable
+	public static AttributeModifier getStepHeightModifier(Player player) {
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get())).getModifier(STEP_HEIGHT_MODIFIER_UUID);
+	}
+
 	public static void updateReachModifier(Player player, AttributeModifier mod){
 		if(!ServerConfig.bonuses){
 			return;
@@ -244,6 +281,15 @@ public class DragonModifiers{
 			return;
 		}
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
+		max.removeModifier(mod);
+		max.addPermanentModifier(mod);
+	}
+
+	public static void updateStepHeightModifier(Player player, AttributeModifier mod) {
+		if(!ServerConfig.bonuses) {
+			return;
+		}
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}
