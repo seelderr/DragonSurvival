@@ -189,6 +189,7 @@ public class DragonDestructionHandler {
                 if (ServerConfig.sizeChangesHitbox) {
                     double size = dragonStateHandler.getSize();
                     double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), event.player.getPose(), ServerConfig.sizeChangesHitbox, dragonStateHandler.getBody().isSquish());
+                    double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
                     boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
                 } else {
                     boundingBox = player.getBoundingBox();
