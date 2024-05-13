@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
@@ -35,6 +36,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
+import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
@@ -48,8 +50,13 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
+import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.Callable;
+
+import com.mojang.datafixers.util.Pair;
+
 
 @EventBusSubscriber
 public class MagicHandler{
@@ -71,25 +78,26 @@ public class MagicHandler{
 					moveSpeed.removeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED);
 				}
 			}
-
-			if(cap.getLevel() == DragonLevel.ADULT){
-				AttributeModifier move_speed = new AttributeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED, "DRAGON_MOVE_SPEED", 0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL);
-
-				if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) == null){
-					moveSpeed.addTransientModifier(move_speed);
+			if(cap.isDragon()) {
+				if(cap.getLevel() == DragonLevel.ADULT){
+					AttributeModifier move_speed = new AttributeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED, "DRAGON_MOVE_SPEED", 0.2F, AttributeModifier.Operation.MULTIPLY_TOTAL);
+	
+					if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) == null){
+						moveSpeed.addTransientModifier(move_speed);
+					}
 				}
-			}
-
-
-			if(cap.getMagicData().abilities.isEmpty() || cap.getMagicData().innateDragonAbilities.isEmpty() || cap.getMagicData().activeDragonAbilities.isEmpty()){
-				cap.getMagicData().initAbilities(cap.getType());
-			}
-
-			for(int i = 0; i < MagicCap.activeAbilitySlots; i++){
-				ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(i);
-
-				if(ability != null){
-					ability.tickCooldown();
+	
+	
+				if(cap.getMagicData().abilities.isEmpty() || cap.getMagicData().innateDragonAbilities.isEmpty() || cap.getMagicData().activeDragonAbilities.isEmpty()){
+					cap.getMagicData().initAbilities(cap.getType());
+				}
+	
+				for(int i = 0; i < MagicCap.activeAbilitySlots; i++){
+					ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(i);
+	
+					if(ability != null){
+						ability.tickCooldown();
+					}
 				}
 			}
 		});
@@ -313,10 +321,16 @@ public class MagicHandler{
 				if(!cap.isDragon()){
 					return;
 				}
+				
+				double expMult = 1.0;
+				AbstractDragonBody body = DragonUtils.getDragonBody(player);
+				if (body != null) {
+					expMult = body.getExpMult();
+				}
 
 				if(player.hasEffect(DragonEffects.REVEALING_THE_SOUL)){
 					int extra = (int)Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
-					event.setDroppedExperience(event.getDroppedExperience() + extra);
+					event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
 				}
 			});
 		}

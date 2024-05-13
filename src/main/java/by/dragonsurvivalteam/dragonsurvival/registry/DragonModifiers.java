@@ -1,23 +1,29 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
+@EventBusSubscriber
 public class DragonModifiers{
 	public static final UUID REACH_MODIFIER_UUID = UUID.fromString("7455d5c7-4e1f-4cca-ab46-d79353764020");
 	public static final UUID HEALTH_MODIFIER_UUID = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
@@ -25,6 +31,16 @@ public class DragonModifiers{
 	public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 	public static final UUID ATTACK_RANGE_MODIFIER_UUID = UUID.fromString("a2e9a028-4bef-48d4-a25b-9cfdcac99480");
 	public static final UUID STEP_HEIGHT_MODIFIER_UUID = UUID.fromString("f3b0b3e3-3b7d-4b1b-8f3d-3b7d4b1b8f3d");
+
+	private static final UUID DRAGON_BODY_MOVEMENT_SPEED = UUID.fromString("114fe18b-60fd-4284-b6ce-14d090454402");
+	private static final UUID DRAGON_BODY_ARMOR = UUID.fromString("8728438d-c838-4968-9382-efb95a36d72a");
+	private static final UUID DRAGON_BODY_STRENGTH = UUID.fromString("f591516e-749d-41f3-ba5a-b94cdf506193");
+	private static final UUID DRAGON_BODY_STRENGTH_MULT = UUID.fromString("05a4e0c8-f76b-45db-a244-3d588146a4ab");
+	private static final UUID DRAGON_BODY_KNOCKBACK_BONUS = UUID.fromString("f33f6ac0-2dd8-41a6-abe0-37e5cd0a383c");
+	private static final UUID DRAGON_BODY_SWIM_SPEED_BONUS = UUID.fromString("244edf11-e535-4dc1-b8a0-4f56a5a80e0c");
+	private static final UUID DRAGON_BODY_STEP_HEIGHT_BONUS = UUID.fromString("df2b333e-46c8-4315-a50d-096785e4f592");
+	private static final UUID DRAGON_BODY_GRAVITY_MULT = UUID.fromString("de994497-1cca-45e6-b398-a1736f43e5ec");
+	private static final UUID DRAGON_BODY_HEALTH_MULT = UUID.fromString("9068f914-511d-44cf-a2a3-0808f7c67326");
 
 	public static AttributeModifier buildHealthMod(double size){
 		double healthModifier;
@@ -110,6 +126,84 @@ public class DragonModifiers{
 		oldMod = getStepHeightModifier(oldPlayer);
 		if (oldMod != null){
 			updateStepHeightModifier(newPlayer, oldMod);
+		}
+	}
+	
+	@SubscribeEvent
+	public static void updateBodyModifiers(LivingTickEvent event) {
+		if (event.getEntity().tickCount % 20 != 0) {
+			return; // Every 1 second
+		}
+		LivingEntity entity = event.getEntity();
+		if (entity instanceof Player player) {
+			AbstractDragonBody body = DragonUtils.getDragonBody(player);
+			DragonStateHandler cap = DragonUtils.getHandler(player);
+
+			AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
+			AttributeInstance armorAttr = player.getAttribute(Attributes.ARMOR);
+			AttributeInstance strengthAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
+			AttributeInstance attackKnockbackAttr = player.getAttribute(Attributes.ATTACK_KNOCKBACK);
+			AttributeInstance swimSpeedAttr = player.getAttribute(ForgeMod.SWIM_SPEED.get());
+			AttributeInstance stepAttr = player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
+			AttributeInstance gravityAttr = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
+			AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
+
+			if (body != null && cap.isDragon()) {
+				if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).getAmount() != body.getRunMult()) {
+					if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) { speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
+					speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", body.getRunMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				}
+			
+				if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).getAmount() != body.getArmorBonus()) {
+					if (armorAttr.getModifier(DRAGON_BODY_ARMOR) != null) { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
+					armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, "BODY_ARMOR_BONUS", body.getArmorBonus(), AttributeModifier.Operation.ADDITION));
+				}
+			
+				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH).getAmount() != body.getDamageBonus()) {
+					if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
+					strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, "BODY_STRENGTH_BONUS", body.getDamageBonus(), AttributeModifier.Operation.ADDITION));
+				}
+
+				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT).getAmount() != (body.getDamageMult()  - 1)) {
+					if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
+					strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT, "BODY_STRENGTH_MULT", body.getDamageMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				}
+
+				if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) == null || attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS).getAmount() != body.getKnockbackBonus()) {
+					if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) != null) { attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS); }
+					attackKnockbackAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_KNOCKBACK_BONUS, "BODY_KNOCKBACK_BONUS", body.getKnockbackBonus(), AttributeModifier.Operation.ADDITION));
+				}
+
+				if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) == null || swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS).getAmount() != body.getSwimSpeedBonus()) {
+					if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) != null) { swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS); }
+					swimSpeedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SWIM_SPEED_BONUS, "BODY_SWIM_SPEED_BONUS", body.getSwimSpeedBonus(), AttributeModifier.Operation.ADDITION));
+				}
+
+				if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) == null || stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS).getAmount() != body.getStepBonus()) {
+					if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) != null) { stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS); }
+					stepAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS, "BODY_STEP_HEIGHT_BONUS", body.getStepBonus(), AttributeModifier.Operation.ADDITION));
+				}
+			
+				if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) == null || gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT).getAmount() != (body.getGravityMult() - 1)) {
+					if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) != null) { gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT); }
+					gravityAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_GRAVITY_MULT, "BODY_GRAVITY_MULT", body.getGravityMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				}
+			
+				if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) == null || healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT).getAmount() != (body.getHealthMult() - 1)) {
+					if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) != null) { healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT); }
+					healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, "BODY_HEALTH_MULT", body.getHealthMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				}
+			} else { 
+				speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED);
+				armorAttr.removeModifier(DRAGON_BODY_ARMOR); 
+				strengthAttr.removeModifier(DRAGON_BODY_STRENGTH);
+				strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT);
+				attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS);
+				swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS);
+				stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS);
+				gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT);
+				healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT);
+			}
 		}
 	}
 

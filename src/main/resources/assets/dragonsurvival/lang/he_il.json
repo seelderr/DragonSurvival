@@ -185,7 +185,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "אם אתה רוצה טקסטורות ישנות או משתמש ב§6חבילת משאבים§r, סמן את התיבה הזו.",
   "ds.gui.dragon_editor.glowing": "זוהר?",
   "ds.gui.dragon_editor.default_skin": "להשתמש בסקין הישן?",
-  "ds.gui.dragon_editor.wings": "",
+  "ds.gui.dragon_editor.wings": "להציג כנפיים?",
   "ds.gui.dragon_editor.size": "גודל: ",
   "ds.gui.dragon_editor.tooltip.done": "אשר שינויים",
   "ds.gui.dragon_editor.tooltip.cancel": "בטל",

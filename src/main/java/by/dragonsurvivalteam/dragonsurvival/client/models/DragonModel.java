@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -81,7 +82,14 @@ public class DragonModel extends AnimatedGeoModel<DragonEntity> {
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(final DragonEntity ignored) {
+	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
+		if (dragon.playerId != null || dragon.getPlayer() != null) {
+			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
+			AbstractDragonBody body = handler.getBody();
+			if (body != null) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
+			}
+		}
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 

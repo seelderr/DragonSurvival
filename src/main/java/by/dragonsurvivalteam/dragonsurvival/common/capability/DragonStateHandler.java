@@ -2,7 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -77,10 +79,11 @@ public class DragonStateHandler extends EntityStateHandler {
 	private final Map<String, Double> savedDragonSize = new ConcurrentHashMap<>();
 
 	private AbstractDragonType dragonType;
+	private AbstractDragonBody dragonBody;
 
 	private int passengerId;
 	private boolean isHiding;
-	private boolean hasWings;
+	private boolean hasFlight;
 	private boolean areWingsSpread;
 	private double size;
 
@@ -149,9 +152,13 @@ public class DragonStateHandler extends EntityStateHandler {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
 		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
+		tag.putString("dragonBody", dragonBody != null ? dragonBody.getBodyName() : "none");
 
 		if (isDragon()) {
 			tag.put("typeData", dragonType.writeNBT());
+			if (dragonBody != null) {
+				tag.put("bodyData", dragonBody.writeNBT());
+			}
 
 			//Rendering
 			DragonMovementData movementData = getMovementData();
@@ -178,7 +185,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		if (isDragon() || ServerConfig.saveAllAbilities) { // FIXME :: Is this growing or abilities?
 			tag.putBoolean("spinLearned", getMovementData().spinLearned);
-			tag.putBoolean("hasWings", hasWings());
+			tag.putBoolean("hasWings", hasFlight());
 		}
 
 		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
@@ -214,6 +221,13 @@ public class DragonStateHandler extends EntityStateHandler {
 			}
 		}
 
+		dragonBody = DragonBodies.newDragonBodyInstance(tag.getString("dragonBody"));
+		if (dragonBody != null) {
+			if (tag.contains("bodyData")) {
+				dragonBody.readNBT(tag.getCompound("bodyData"));
+			}
+		}
+
 		if (isDragon()) {
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
 			getMovementData().headYawLastTick = getMovementData().headYaw;
@@ -240,7 +254,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		if (isDragon() || ServerConfig.saveAllAbilities) {
 			getMovementData().spinLearned = tag.getBoolean("spinLearned");
-			setHasWings(tag.getBoolean("hasWings"));
+			setHasFlight(tag.getBoolean("hasWings"));
 		}
 
 		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
@@ -318,6 +332,10 @@ public class DragonStateHandler extends EntityStateHandler {
 	public AbstractDragonType getType(){
 		return dragonType;
 	}
+	
+	public AbstractDragonBody getBody() {
+		return dragonBody;
+	}
 
 	public String getTypeName() {
 		if (dragonType == null) {
@@ -349,6 +367,14 @@ public class DragonStateHandler extends EntityStateHandler {
 			dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
 		} else {
 			dragonType = null;
+		}
+	}
+	
+	public void setBody(final AbstractDragonBody body) {
+		if (body != null) {
+			dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
+		} else {
+			dragonBody = null;
 		}
 	}
 
@@ -571,9 +597,9 @@ public class DragonStateHandler extends EntityStateHandler {
 		this.areWingsSpread = areWingsSpread;
 	}
 
-	public void setHasWings(boolean hasWings) {
-		if (hasWings != this.hasWings) { // TODO :: Why this check?
-			this.hasWings = hasWings;
+	public void setHasFlight(boolean hasFlight) {
+		if (hasFlight != this.hasFlight) { // TODO :: Why this check?
+			this.hasFlight = hasFlight;
 		}
 	}
 
@@ -609,12 +635,12 @@ public class DragonStateHandler extends EntityStateHandler {
 		return skinData;
 	}
 
-	public boolean hasWings() {
-		return hasWings;
+	public boolean hasFlight() {
+		return hasFlight;
 	}
 
 	public boolean isWingsSpread() {
-		return hasWings && areWingsSpread;
+		return hasFlight && areWingsSpread;
 	}
 
 	public boolean isHiding(){

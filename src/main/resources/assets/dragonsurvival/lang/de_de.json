@@ -146,7 +146,7 @@
   "ds.gui.dragon_editor.default_skin.tooltip": "Wenn du alte Texturen oder ein §6Texturenpaket§r verwenden möchtest, markiere dieses Feld.",
   "ds.gui.dragon_editor.glowing": "Leuchtend?",
   "ds.gui.dragon_editor.default_skin": "Alte Textur",
-  "ds.gui.dragon_editor.wings": "",
+  "ds.gui.dragon_editor.wings": "Flügel zeigen?",
   "ds.gui.dragon_editor.size": "Größe: ",
   "ds.gui.dragon_editor.tooltip.done": "Änderungen bestätigen",
   "ds.gui.dragon_editor.tooltip.cancel": "Abbrechen",

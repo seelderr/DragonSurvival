@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -29,10 +28,8 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Wolf;
-import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
@@ -69,8 +66,6 @@ import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.List;
-
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.ADULT;
 
 @SuppressWarnings( "unused" )
 @Mod.EventBusSubscriber
@@ -372,12 +367,26 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void onJump(LivingJumpEvent jumpEvent){
 		final LivingEntity living = jumpEvent.getEntity();
+
+
+		if(living.getEffect(DragonEffects.TRAPPED) != null){
+			Vec3 deltaMovement = living.getDeltaMovement();
+			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
+			living.setJumping(false);
+			jumpEvent.setCanceled(true);
+			return;
+		}
+
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
+				Double jumpBonus = 0.0;
+				if (dragonStateHandler.getBody() != null) {
+					jumpBonus = dragonStateHandler.getBody().getJumpBonus();
+				}
 				switch(dragonStateHandler.getLevel()){
-					case NEWBORN -> living.push(0, ServerConfig.newbornJump, 0); //1+ block
-					case YOUNG -> living.push(0, ServerConfig.youngJump, 0); //1.5+ block
-					case ADULT -> living.push(0, ServerConfig.adultJump, 0); //2+ blocks
+					case NEWBORN -> living.push(0, ServerConfig.newbornJump + jumpBonus, 0); //1+ block
+					case YOUNG -> living.push(0, ServerConfig.youngJump + jumpBonus, 0); //1.5+ block
+					case ADULT -> living.push(0, ServerConfig.adultJump + jumpBonus, 0); //2+ blocks
 				}
 				if(living instanceof ServerPlayer){
 					if(living.getServer().isSingleplayer()){
