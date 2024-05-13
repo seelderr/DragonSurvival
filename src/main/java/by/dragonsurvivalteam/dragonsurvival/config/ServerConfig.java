@@ -19,6 +19,10 @@ public class ServerConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 
+	@ConfigRange(min = -1, max = 60000)
+	@ConfigOption(side = ConfigSide.SERVER, category = "general", key = "serverSyncTime", comment = "The time in seconds between server syncs. -1 to disable. Only modify this if you know exactly what you are doing. Here be dragons!")
+	public static Integer serverSyncTime = 600;
+
 	@ConfigRange( min = 0, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use." )
 	public static Integer altarUsageCooldown = 0;

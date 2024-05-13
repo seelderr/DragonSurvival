@@ -68,17 +68,24 @@ public class Capabilities{
 				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new SyncDragonClawsMenu(serverPlayer.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
 			});
 		}
+		// There used to be a call to syncCapability here, but doing so caused the client to receive the data before it was loaded, causing data loss.
+	}
+
+	public static void syncCapability(final Player player) {
+		NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player));
 	}
 
 	@SubscribeEvent
 	public static void onPlayerRespawn(PlayerEvent.PlayerRespawnEvent playerRespawnEvent){
 		Player player = playerRespawnEvent.getEntity();
+		syncCapability(player);
 	}
 
 	@SubscribeEvent
 	public static void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent event){
 		// TODO :: Might not needed if EntityJoinLevelEvent is used instead of PlayerLoggedInEvent?
 		Player player = event.getEntity();
+		syncCapability(player);
 		DragonStateProvider.getCap(player).ifPresent(cap -> cap.getSkinData().compileSkin());
 	}
 
@@ -109,11 +116,11 @@ public class Capabilities{
 				player.addEffect(new MobEffectInstance(DragonEffects.ROYAL_CHASE, capOld.getVillageRelationShips().evilStatusDuration));
 			}
 
+
 			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new CompleteDataSync(player.getId(), nbt));
 		}));
 
 		original.invalidateCaps();
-		DragonModifiers.updateModifiers(original, player);
 		player.refreshDimensions();
 	}
 
