@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -15,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.RequestSpinResync;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -150,6 +152,17 @@ public class ClientFlightHandler {
 					if(flightZoomEffect){
 						lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
 						gameRenderer.setZoom(lastZoom);
+					}
+				}
+
+
+				// Move the third person camera into a more suitable position if the player is too large (otherwise it ends up clipping inside the player)
+				if(setup.getCamera().isDetached()) {
+					if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+						// I'm not entirely sure why 20 works here, but it seems to be the magic number that
+						// keeps the dragon's size from the camera's perspective constant.
+						double offset = (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20;
+						info.move(-offset, 0, 0);
 					}
 				}
 			}
@@ -565,7 +578,7 @@ public class ClientFlightHandler {
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
 			if(handler.hasFlight()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-				if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState || ServerFlightHandler.allowFlyingWithoutHunger){
+				if(!player.hasEffect(DragonEffects.TRAPPED) && (player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState || ServerFlightHandler.allowFlyingWithoutHunger)){
 					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
 					if(notifyWingStatus){
 						if(!currentState){
@@ -575,7 +588,10 @@ public class ClientFlightHandler {
 						}
 					}
 				}else{
-					player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+					if(!player.hasEffect(DragonEffects.TRAPPED))
+					{
+						player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+					}
 				}
 			}else{
 				player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));

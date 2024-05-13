@@ -110,6 +110,9 @@ public class DragonStateHandler extends EntityStateHandler {
 			
 			AttributeModifier attackRange = DragonModifiers.buildAttackRangeMod(size);
 			DragonModifiers.updateAttackRangeModifier(player, attackRange);
+
+			AttributeModifier stepHeight = DragonModifiers.buildStepHeightMod(size);
+			DragonModifiers.updateStepHeightModifier(player, stepHeight);
 		} else {
             // Remove the dragon attribute modifiers
 			AttributeModifier oldMod = DragonModifiers.getHealthModifier(player);

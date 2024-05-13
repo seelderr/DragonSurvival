@@ -13,7 +13,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -162,7 +164,7 @@ public class ClientDragonRender{
 			poseStack.pushPose();
 			poseStack.translate(-camera.x(), -camera.y(), -camera.z());
 
-			int range = BreathAbility.calculateCurrentBreathRange(handler.getLevel());
+			int range = BreathAbility.calculateCurrentBreathRange(handler.getSize());
 			AbstractDragonType dragonType = handler.getType();
 
 			int red = DragonUtils.isDragonType(dragonType, DragonTypes.CAVE) ? 1 : 0;
@@ -269,9 +271,19 @@ public class ClientDragonRender{
 				if(player.isCrouching() && handler.isWingsSpread() && !player.isOnGround()){
 					matrixStack.translate(0, -0.15, 0);
 				}else if(player.isCrouching()){
-					matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+						matrixStack.translate(0, 0.045, 0);
+					}
+					else {
+						matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+					}
 				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
- 					matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+						matrixStack.translate(0, -0.55, 0);
+					}
+					else {
+						matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+					}
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player)){
@@ -357,7 +369,11 @@ public class ClientDragonRender{
 
 					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
 					if(player.hasEffect(DragonEffects.TRAPPED)){
-						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack);
+						float bolasScale = player.getEyeHeight();
+						if(handler != null && handler.isDragon()) {
+							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
+						}
+						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack, bolasScale);
 					}
 				}
 			} catch (Throwable throwable) {

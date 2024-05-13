@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
+import by.dragonsurvivalteam.dragonsurvival.commands.DragonSizeCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -103,6 +104,7 @@ public class DragonSurvivalMod{
 		DragonCommand.register(commandDispatcher);
 		DragonEditorCommand.register(commandDispatcher);
 		DragonAltarCommand.register(commandDispatcher);
+		DragonSizeCommand.register(commandDispatcher);
 		LOGGER.info("Registered commands");
 	}
 	

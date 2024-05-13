@@ -1,9 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.FireBallAbility;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.damagesource.DamageSource;
@@ -13,11 +12,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-
-import java.util.List;
+import software.bernie.geckolib3.core.builder.ILoopType;
 
 public class FireBallEntity extends DragonBallEntity{
 	public FireBallEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
@@ -39,47 +36,21 @@ public class FireBallEntity extends DragonBallEntity{
 	}
 
 	@Override
-	protected void onHit(HitResult p_70227_1_){
-		if(!level.isClientSide && !isDead){
-			boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(level, getOwner());
-			float explosivePower = getSkillLevel();
-			Entity attacker = getOwner();
-			DamageSource damagesource;
-			if(attacker == null){
-				damagesource = DamageSource.fireball(this, this);
-			}else{
-				damagesource = DamageSource.fireball(this, attacker);
-				if(attacker instanceof LivingEntity attackerEntity){
-					attackerEntity.setLastHurtMob(attacker);
-				}
-			}
-			level.explode(null, damagesource, null, getX(), getY(), getZ(), explosivePower, flag, flag ? Explosion.BlockInteraction.DESTROY : Explosion.BlockInteraction.NONE);
-
-			isDead = true;
-			setDeltaMovement(0, 0, 0);
-
-			aoeDamage();
-		}
+	protected boolean canSelfDamage(){
+		return false;
+		// This config would only work if I added a way to ignore the fire resistance of the cave dragon
+		// that shot the fireball. Since the default would be to not damage them anyways, I'm not
+		// going to bother to implement this for now.
+		//return ServerConfig.allowSelfDamageFromFireball;
 	}
 
-	private void aoeDamage(){
-		int range = 2;
-		List<Entity> entities = level.getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
-		entities.removeIf(e -> e == getOwner() || e instanceof FireBallEntity);
-		entities.removeIf(e -> e.distanceTo(this) > range);
-		entities.removeIf(e -> !(e instanceof LivingEntity));
-
-		for(Entity ent : entities){
-			if(!level.isClientSide){
-				TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.explosion((Explosion)null), FireBallAbility.getDamage(getSkillLevel())), ent);
-
-				if(getOwner() instanceof LivingEntity){
-					doEnchantDamageEffects((LivingEntity)getOwner(), ent);
-				}
-			}
+	@Override
+	protected void onHit(HitResult pResult){
+		super.onHit(pResult);
+		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
+			this.discard();
 		}
 	}
-
 
 	@Override
 	public boolean isInvulnerableTo(DamageSource p_180431_1_){
@@ -87,19 +58,13 @@ public class FireBallEntity extends DragonBallEntity{
 	}
 
 	@Override
-	protected void onHitEntity(EntityHitResult p_213868_1_){
-		if(!level.isClientSide && !isDead){
-			Entity entity = p_213868_1_.getEntity();
-			Entity entity1 = getOwner();
+	protected void onHitEntity(EntityHitResult hitResult){
+		// Apply the explosion damage using math from the real explosion formula
+		float explosivePower = getSkillLevel();
+		// From Explosion.class on line 215 (the left side of the formula is 1.0f if you are at the center of the explosion)
+		float damage = 7.0f * explosivePower * 2.0f + 1.0f;
 
-			TargetingFunctions.attackTargets(getOwner(), ent1 -> ent1.hurt(DamageSource.fireball(this, entity1), FireBallAbility.getDamage(getSkillLevel())), entity);
-
-			if(entity1 instanceof LivingEntity){
-				doEnchantDamageEffects((LivingEntity)entity1, entity);
-			}
-			isDead = true;
-			setDeltaMovement(0, 0, 0);
-			aoeDamage();
-		}
+		Entity attacker = getOwner();
+		hitResult.getEntity().hurt(getDamageSource(this, attacker), damage);
 	}
 }

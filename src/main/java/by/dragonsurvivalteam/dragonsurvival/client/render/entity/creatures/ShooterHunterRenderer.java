@@ -18,7 +18,7 @@ public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shoo
 		// Insecure modification
 		super(rendererManager, new HunterModel<>(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
 		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
-		// addLayer(new ItemInHandLayer<>(this));
+		addLayer(new ItemInHandLayer<>(this, rendererManager.getItemInHandRenderer()));
 	}
 
 	@Override

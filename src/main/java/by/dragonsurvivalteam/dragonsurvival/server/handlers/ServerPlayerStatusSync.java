@@ -18,11 +18,11 @@ import net.minecraftforge.network.PacketDistributor;
 @EventBusSubscriber
 public class ServerPlayerStatusSync {
 
-	@ConfigRange(min = -1, max = 60 * 60 * 20)
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "serverSyncTime", comment = "How often should player data be synced to other players? -1 disables it")
-	public static long serverSyncTime = 600;
+	// TLDR: This function is a failsafe that sync the player's data with the server after a certain period of time if it somehow gets out of sync.
 
-	@SubscribeEvent
+	// TODO: This function is removed for now, since it could potentially write to the player's NBT data before the player has read it.
+	// Once that is fixed, we should re-enable this function, but include some error reporting that says what went out of sync if the server and client data are not the same.
+	/*@SubscribeEvent
 	public static void onServerTick(PlayerTickEvent event){
 		if(event.side == LogicalSide.CLIENT || event.phase != Phase.START || serverSyncTime == -1) return;
 
@@ -33,9 +33,8 @@ public class ServerPlayerStatusSync {
 				DragonStateHandler handler = DragonUtils.getHandler(player);
 				if(handler.lastSync == 0 || player.tickCount >= handler.lastSync + serverSyncTime){
 					handler.lastSync = player.tickCount;
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new CompleteDataSync(player.getId(), handler.writeNBT()));
 				}
 			}
 		}
-	}
+	}*/
 }
