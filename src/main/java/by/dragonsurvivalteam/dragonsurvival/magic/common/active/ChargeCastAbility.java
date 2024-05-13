@@ -13,13 +13,13 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
 	public boolean castFinished = false;
 
 	public abstract int getSkillCastingTime();
-
+	
 	@Override
 	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime){
 		if (castFinished)
 			return;
 
-		long curTime = player.level().dayTime();
+		long curTime = player.level().getGameTime();
 		castTime = (int) (curTime - castStartTime);
 
 		if(castTime >= getSkillCastingTime() && castStartTime != -1 && !castFinished){

@@ -22,6 +22,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -173,6 +175,10 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	public <T extends Entity> List<T> getEntitiesNearby(final Class<T> entityClass, double dX, double dY, double dZ, double radius) {
 		return player.level().getEntitiesOfClass(entityClass, player.getBoundingBox().inflate(dX, dY, dZ), entity -> entity != player && player.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= player.getY() + dY);
+	}
+	
+	public Fluid clipContext() {
+		return ClipContext.Fluid.ANY;
 	}
 
 	public void hitBlocks() {

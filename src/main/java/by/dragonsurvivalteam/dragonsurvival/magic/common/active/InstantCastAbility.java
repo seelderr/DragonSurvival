@@ -16,7 +16,7 @@ public abstract class InstantCastAbility extends ActiveDragonAbility {
 			onFinish.run();
 		}
 	}
-
+	
 	public void onKeyReleased(Player player) {
 		castFinished = false;
 	}

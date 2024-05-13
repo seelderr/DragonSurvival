@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;

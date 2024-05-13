@@ -31,13 +31,17 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
 	@Override
 	public boolean equals(Object obj){
 		if(obj instanceof AbstractDragonType type){
-			return Objects.equals(type.getTypeName(), getTypeName());
+			return Objects.equals(type.getSubtypeName(), getSubtypeName());
 		}
 		return super.equals(obj);
 	}
 
 	@Override
 	public String toString(){
+		return getTypeName();
+	}
+
+	public String getSubtypeName() {
 		return getTypeName();
 	}
 }

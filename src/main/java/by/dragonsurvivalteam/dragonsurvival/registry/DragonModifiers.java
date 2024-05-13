@@ -28,9 +28,11 @@ public class DragonModifiers {
     public static final UUID DAMAGE_MODIFIER_UUID = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
     public static final UUID SWIM_SPEED_MODIFIER_UUID = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
     public static final UUID STEP_HEIGHT_MODIFIER_UUID = UUID.fromString("f3b0b3e3-3b7d-4b1b-8f3d-3b7d4b1b8f3d");
+	  public static final UUID ATTACK_RANGE_MODIFIER_UUID = UUID.fromString("a2e9a028-4bef-48d4-a25b-9cfdcac99480");
 
     public static final Function<Player, AttributeModifier> HEALTH_MODIFIER = player -> buildHealthMod(DragonStateProvider.getUnsafeHandler(player).getSize());
     public static final Function<Player, AttributeModifier> REACH_MODIFIER = player -> buildReachMod(DragonStateProvider.getUnsafeHandler(player).getSize());
+    public static final Function<Player, AttributeModifier> ATTACK_RANGE_MODIFIER = player -> buildAttackRangeMod(DragonStateProvider.getUnsafeHandler(player).getSize());
     public static final Function<Player, AttributeModifier> DAMAGE_MODIFIER = player -> buildDamageMod(DragonStateProvider.getUnsafeHandler(player));
     public static final Function<Player, AttributeModifier> SWIM_SPEED_MODIFIER = player -> buildSwimSpeedMod(DragonStateProvider.getUnsafeHandler(player).getType());
     public static final Function<Player, AttributeModifier> STEP_HEIGHT_MODIFIER = player -> buildStepHeightMod(DragonStateProvider.getUnsafeHandler(player).getSize());
@@ -67,6 +69,11 @@ public class DragonModifiers {
         }
         return new AttributeModifier(DAMAGE_MODIFIER_UUID, "Dragon Damage Adjustment", ageBonus, Operation.ADDITION);
     }
+	
+	public static AttributeModifier buildAttackRangeMod(double size) {
+		double rangeMod = (size - DragonLevel.NEWBORN.size) / (60.0 - DragonLevel.NEWBORN.size) * ServerConfig.attackRangeBonus;
+		return new AttributeModifier(ATTACK_RANGE_MODIFIER_UUID, "Dragon Attack Range Adjustment", rangeMod, Operation.MULTIPLY_BASE);
+	}
 
     public static AttributeModifier buildSwimSpeedMod(AbstractDragonType dragonType) {
         return new AttributeModifier(SWIM_SPEED_MODIFIER_UUID, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADDITION);

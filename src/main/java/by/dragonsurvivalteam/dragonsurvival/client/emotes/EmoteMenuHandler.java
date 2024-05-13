@@ -493,6 +493,9 @@ public class EmoteMenuHandler {
 		}
 
 		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+		if (pKeyCode == -1) {
+			return;
+		}
 
 		if(handler.isDragon()){
 			if(sc instanceof ChatScreen){

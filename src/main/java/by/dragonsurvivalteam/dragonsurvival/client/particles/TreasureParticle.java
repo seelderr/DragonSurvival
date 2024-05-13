@@ -1,5 +1,4 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
-
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.util.Mth;

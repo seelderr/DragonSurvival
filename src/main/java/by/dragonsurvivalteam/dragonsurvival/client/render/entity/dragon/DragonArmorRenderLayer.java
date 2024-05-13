@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
+import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -150,7 +152,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 		return null;
 	}
-
 	public static String stripInvalidPathChars(String loc) {
 		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 		// this probably should never be relevant, but you can never be too safe

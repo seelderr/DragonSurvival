@@ -283,14 +283,14 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 				BlockState middleState = worldIn.getBlockState(middlePos);
 				if(middleState.getBlock() == state.getBlock()){
 					worldIn.setBlock(middlePos, Blocks.AIR.defaultBlockState(), /* Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_SUPPRESS_DROPS */ 35);
-					worldIn.levelEvent(player, 2001, middlePos, Block.getId(middleState));
+					worldIn.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, middlePos, Block.getId(middleState));
 				}
 			}else if(part != Part.BOTTOM && player.isCreative()){
 				BlockPos bottomPos = part == Part.MIDDLE ? pos.below() : pos.below(2);
 				BlockState bottomState = worldIn.getBlockState(bottomPos);
 				if(bottomState.getBlock() == state.getBlock()){
 					worldIn.setBlock(bottomPos, Blocks.AIR.defaultBlockState(), /* Block.UPDATE_NEIGHBORS + Block.UPDATE_CLIENTS + Block.UPDATE_SUPPRESS_DROPS */ 35);
-					worldIn.levelEvent(player, 2001, bottomPos, Block.getId(bottomState));
+					worldIn.levelEvent(player, LevelEvent.PARTICLES_DESTROY_BLOCK, bottomPos, Block.getId(bottomState));
 				}
 			}
 		}

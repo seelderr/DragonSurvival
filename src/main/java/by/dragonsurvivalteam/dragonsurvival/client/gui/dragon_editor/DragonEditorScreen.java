@@ -517,7 +517,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHovered()) {
+				if (isHoveredOrFocused()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.default_skin.tooltip"), pMouseX, pMouseY);
 				}
 			}
@@ -622,7 +622,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHovered()) {
+				if (isHoveredOrFocused()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
 				}
 			}
@@ -686,7 +686,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-				if (isHovered()) {
+				if (isHoveredOrFocused()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.random"), pMouseX, pMouseY);
 				}
 			}
@@ -759,7 +759,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				active = visible = showUi;
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
-				if (isHovered()) {
+				if (isHoveredOrFocused()) {
 					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
 				}
 			}

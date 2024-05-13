@@ -45,6 +45,10 @@ public class DragonUtils {
 	public static AbstractDragonType getDragonType(Entity entity){
 		return getHandler(entity).getType();
 	}
+	
+	public static AbstractDragonType getDragonType(DragonStateHandler handler) {
+		return handler.getType();
+	}
 
 	public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
 		if (!(entity instanceof Player)) {
@@ -59,7 +63,7 @@ public class DragonUtils {
 			return false;
 		}
 
-		return Objects.equal(playerHandler.getType(), typeToCheck);
+		return Objects.equal(playerHandler.getType().getTypeName(), typeToCheck.getTypeName());
 	}
 
 	public static boolean isDragonType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
@@ -67,7 +71,7 @@ public class DragonUtils {
 			return false;
 		}
 
-		return Objects.equal(playerType, typeToCheck);
+		return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
 	}
 
 	public static DragonLevel getDragonLevel(Entity entity){

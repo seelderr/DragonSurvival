@@ -99,6 +99,7 @@ public class EventHandler{
 	/**
 	 * Check every 2 seconds
 	 */
+	//TODO add Elytra from other mods
 	@SubscribeEvent
 	public static void removeElytraFromDragon(TickEvent.PlayerTickEvent playerTickEvent){
 		if(!ServerConfig.dragonsAllowedToUseElytra && playerTickEvent.phase == TickEvent.Phase.START){

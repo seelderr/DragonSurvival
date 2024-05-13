@@ -26,8 +26,16 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 	}
 
 	@Override
+	public CompoundTag saveNBT(){
+		CompoundTag nbt = super.saveNBT();
+		//nbt.putInt("cooldown", currentCooldown); // Will send old cooldown data and overwrite skills currently on cooldown
+		return nbt; // Client is the only tracker of cooldown state and doesn't need to overwrite its own cooldowns
+	}
+
+	@Override
 	public void loadNBT(CompoundTag nbt){
 		super.loadNBT(nbt);
+		//currentCooldown = nbt.getInt("cooldown");
 	}
 
 	public abstract Integer[] getRequiredLevels();

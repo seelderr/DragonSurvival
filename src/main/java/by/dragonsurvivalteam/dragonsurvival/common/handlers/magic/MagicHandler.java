@@ -24,6 +24,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -251,7 +253,7 @@ public class MagicHandler{
 			if(player.hasEffect(DragonEffects.HUNTER)){
 				MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
 				player.removeEffect(DragonEffects.HUNTER);
-				event.setDamageModifier((float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
+				event.setDamageModifier(event.getDamageModifier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 				event.setResult(Result.ALLOW);
 			}
 		});

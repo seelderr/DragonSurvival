@@ -318,6 +318,10 @@
     {
       "id": "unusualprehistory:cooked_scau",
       "required": false
+    },
+    {
+      "id": "enlightened_end:cooked_stalker",
+      "required": false
     }
   ]
 }

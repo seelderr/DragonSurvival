@@ -42,7 +42,7 @@ public class DragonConfigHandler{
 		}
 	}
 
-	public static void rebuildSpeedupBlocksMap() {
+	public static void rebuildSpeedupBlocksMap(){
 		HashMap<String, List<Block>> speedupMap = new HashMap<>();
 		speedupMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveSpeedupBlocks));
 		speedupMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestSpeedupBlocks));
