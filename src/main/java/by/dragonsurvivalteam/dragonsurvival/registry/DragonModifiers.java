@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -45,11 +46,11 @@ public class DragonModifiers{
 	public static AttributeModifier buildHealthMod(double size){
 		double healthModifier;
 		if(ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
-			double healthModifierPercentage = Math.max(1.0, (size - ServerConfig.maxHealthSize) / (ServerConfig.maxGrowthSize - DragonLevel.ADULT.size));
+			double healthModifierPercentage = Math.min(1.0, (size - ServerConfig.maxHealthSize) / (ServerConfig.maxGrowthSize - DragonLevel.ADULT.size));
 			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.maxHealth, ServerConfig.largeMaxHealth) - 20;
 		}
 		else {
-			double healthModifierPercentage = Math.max(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));
+			double healthModifierPercentage = Math.min(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));
 			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.minHealth, ServerConfig.maxHealth) - 20;
 		}
 		return new AttributeModifier(HEALTH_MODIFIER_UUID, "Dragon Health Adjustment", healthModifier, AttributeModifier.Operation.ADDITION);
@@ -80,7 +81,7 @@ public class DragonModifiers{
 	public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon){
 		double ageBonus = isDragon ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
 		if(ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
-			double damageModPercentage = Math.max(1.0, (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / (ServerConfig.maxGrowthSize - ServerConfig.DEFAULT_MAX_GROWTH_SIZE));
+			double damageModPercentage = Math.min(1.0, (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / (ServerConfig.maxGrowthSize - ServerConfig.DEFAULT_MAX_GROWTH_SIZE));
 			ageBonus = Mth.lerp(damageModPercentage, ageBonus, ServerConfig.largeDamageBonus);
 		}
 		return new AttributeModifier(DAMAGE_MODIFIER_UUID, "Dragon Damage Adjustment", ageBonus, Operation.ADDITION);
@@ -98,37 +99,73 @@ public class DragonModifiers{
 		return new AttributeModifier(STEP_HEIGHT_MODIFIER_UUID, "Dragon Step Height Adjustment", stepHeightBonus, Operation.ADDITION);
 	}
 
-	public static void updateModifiers(Player oldPlayer, Player newPlayer){
-		if(!DragonUtils.isDragon(newPlayer)){
-			return;
-		}
+	public static void updateModifiers(final Player player) {
+		if (DragonStateProvider.getCap(player).isPresent()) {
+			DragonStateHandler handler = DragonStateProvider.getHandler(player);
+			if (handler.isDragon()) {
+				// Grant the dragon attribute modifiers
+				double size = handler.getSize();
+				AttributeModifier health = buildHealthMod(size);
+				updateHealthModifier(player, health);
 
-		AttributeModifier oldMod = getHealthModifier(oldPlayer);
-		if(oldMod != null){
-			updateHealthModifier(newPlayer, oldMod);
-		}
-		oldMod = getDamageModifier(oldPlayer);
-		if(oldMod != null){
-			updateDamageModifier(newPlayer, oldMod);
-		}
-		oldMod = getSwimSpeedModifier(oldPlayer);
-		if(oldMod != null){
-			updateSwimSpeedModifier(newPlayer, oldMod);
-		}
-		oldMod = getReachModifier(oldPlayer);
-		if(oldMod != null){
-			updateReachModifier(newPlayer, oldMod);
-		}
-		oldMod = getAttackRangeModifier(oldPlayer);
-		if (oldMod != null){
-			updateAttackRangeModifier(newPlayer, oldMod);
-		}
-		oldMod = getStepHeightModifier(oldPlayer);
-		if (oldMod != null){
-			updateStepHeightModifier(newPlayer, oldMod);
+				AttributeModifier damage = buildDamageMod(handler, handler.isDragon());
+				updateDamageModifier(player, damage);
+
+				AttributeModifier swimSpeed = buildSwimSpeedMod(handler.getType());
+				updateSwimSpeedModifier(player, swimSpeed);
+
+				AttributeModifier reach = buildReachMod(size);
+				updateReachModifier(player, reach);
+
+				AttributeModifier attackRange = buildAttackRangeMod(size);
+				updateAttackRangeModifier(player, attackRange);
+
+				AttributeModifier stepHeight = buildStepHeightMod(size);
+				updateStepHeightModifier(player, stepHeight);
+			} else {
+				// Remove the dragon attribute modifiers
+				AttributeModifier oldMod = getHealthModifier(player);
+				if (oldMod != null) {
+					float oldMax = player.getMaxHealth();
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
+					max.removeModifier(oldMod);
+					float newHealth = player.getHealth() * player.getMaxHealth() / oldMax;
+					player.setHealth(newHealth);
+				}
+
+				oldMod = getDamageModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getSwimSpeedModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getReachModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getAttackRangeModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getStepHeightModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()));
+					max.removeModifier(oldMod);
+				}
+			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public static void updateBodyModifiers(LivingTickEvent event) {
 		if (event.getEntity().tickCount % 20 != 0) {

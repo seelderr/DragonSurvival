@@ -852,9 +852,9 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				double size = cap.getSavedDragonSize(cap.getTypeName());
 
 				if(!ServerConfig.saveGrowthStage || size == 0){
-					cap.setSize(DragonLevel.NEWBORN.size);
+					cap.setSize(DragonLevel.NEWBORN.size, minecraft.player);
 				} else {
-					cap.setSize(size);
+					cap.setSize(size, minecraft.player);
 				}
 
 				cap.setHasFlight(ServerConfig.saveGrowthStage ? cap.hasFlight() || ServerFlightHandler.startWithLevitation : ServerFlightHandler.startWithLevitation);

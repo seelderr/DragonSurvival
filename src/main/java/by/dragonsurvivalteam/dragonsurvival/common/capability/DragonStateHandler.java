@@ -90,61 +90,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	/** Sets the size, health and base damage */
 	public void setSize(double size, final Player player) {
 		setSize(size);
-		updateModifiers(size, player);
-	}
-
-	private void updateModifiers(double size, final Player player) {
-		if (isDragon()) {
-            // Grant the dragon attribute modifiers
-			AttributeModifier health = DragonModifiers.buildHealthMod(size);
-			DragonModifiers.updateHealthModifier(player, health);
-
-            AttributeModifier damage = DragonModifiers.buildDamageMod(this, isDragon());
-			DragonModifiers.updateDamageModifier(player, damage);
-
-            AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());
-			DragonModifiers.updateSwimSpeedModifier(player, swimSpeed);
-
-            AttributeModifier reach = DragonModifiers.buildReachMod(size);
-			DragonModifiers.updateReachModifier(player, reach);
-			
-			AttributeModifier attackRange = DragonModifiers.buildAttackRangeMod(size);
-			DragonModifiers.updateAttackRangeModifier(player, attackRange);
-
-			AttributeModifier stepHeight = DragonModifiers.buildStepHeightMod(size);
-			DragonModifiers.updateStepHeightModifier(player, stepHeight);
-		} else {
-            // Remove the dragon attribute modifiers
-			AttributeModifier oldMod = DragonModifiers.getHealthModifier(player);
-            if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
-				max.removeModifier(oldMod);
-			}
-
-			oldMod = DragonModifiers.getDamageModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
-				max.removeModifier(oldMod);
-			}
-
-			oldMod = DragonModifiers.getSwimSpeedModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
-				max.removeModifier(oldMod);
-			}
-
-			oldMod = DragonModifiers.getReachModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
-				max.removeModifier(oldMod);
-			}
-			
-			oldMod = DragonModifiers.getAttackRangeModifier(player);
-			if (oldMod != null) {
-				AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
-				max.removeModifier(oldMod);
-			}
-		}
+		DragonModifiers.updateModifiers(player);
 	}
 
 	@Override
@@ -291,6 +237,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		movementData.bite = bite;
 	}
 
+	// Only call this version of setSize if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
 	public void setSize(double size) {
 		if (size != this.size) {
 			DragonLevel oldLevel = getLevel();
