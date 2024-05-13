@@ -106,6 +106,8 @@ public class DragonStateHandler extends EntityStateHandler {
 			DragonModifiers.updateBlockReachModifier(player, reach);
 			DragonModifiers.updateEntityReachModifier(player, reach);
 
+			AttributeModifier stepHeight = DragonModifiers.buildStepHeightMod(size);
+			DragonModifiers.updateStepHeightModifier(player, stepHeight);
 		} else {
 			// Remove the dragon attribute modifiers
 			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));
@@ -113,6 +115,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			checkAndRemoveModifier(player.getAttribute(ForgeMod.SWIM_SPEED.get()), DragonModifiers.getSwimSpeedModifier(player));
 			checkAndRemoveModifier(player.getAttribute(ForgeMod.BLOCK_REACH.get()), DragonModifiers.getBlockReachModifier(player));
 			checkAndRemoveModifier(player.getAttribute(ForgeMod.ENTITY_REACH.get()), DragonModifiers.getEntityReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()), DragonModifiers.getStepHeightModifier(player));
 		}
 	}
 

@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -146,6 +147,16 @@ public class ClientFlightHandler {
 					if(flightZoomEffect){
 						lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
 						gameRenderer.setZoom(lastZoom);
+					}
+				}
+
+				// Move the third person camera into a more suitable position if the player is too large (otherwise it ends up clipping inside the player)
+				if(setup.getCamera().isDetached()) {
+					if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+						// I'm not entirely sure why 20 works here, but it seems to be the magic number that
+						// keeps the dragon's size from the camera's perspective constant.
+						double offset = (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20;
+						info.move(-offset, 0, 0);
 					}
 				}
 			}

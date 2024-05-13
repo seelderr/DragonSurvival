@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -273,9 +274,19 @@ public class ClientDragonRender{
 				if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
 					poseStack.translate(0, -0.15, 0);
 				} else if (player.isCrouching()) {
-					poseStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+						poseStack.translate(0, 0.045, 0);
+					}
+					else {
+						poseStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+					}
 				} else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
-					poseStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+						poseStack.translate(0, -0.55, 0);
+					}
+					else {
+						poseStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+					}
 				}
 
 				if (!player.isInvisible()) {
