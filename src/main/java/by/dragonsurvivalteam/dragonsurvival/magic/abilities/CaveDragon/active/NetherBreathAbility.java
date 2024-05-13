@@ -143,7 +143,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void onBlock(final BlockPos blockPosition, final BlockState blockState, final Direction direction) {
-		if (!player.level().isClientSide()) {
+		if (!player.level().isClientSide) {
 			if (fireBreathSpreadsFire) {
 				BlockPos firePosition = blockPosition.relative(direction);
 

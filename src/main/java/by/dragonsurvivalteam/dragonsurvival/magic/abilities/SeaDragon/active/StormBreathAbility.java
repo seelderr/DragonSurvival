@@ -40,6 +40,9 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -321,6 +324,11 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	@Override
+	public Fluid clipContext() {
+		return ClipContext.Fluid.NONE;
+	}
+
+	@Override
 	public AbstractDragonType getDragonType(){
 		return DragonTypes.SEA;
 	}
@@ -408,15 +416,18 @@ public class StormBreathAbility extends BreathAbility{
 			}
 		}
 
-		if (player.tickCount % 40 == 0) {
-			if (player.level().isThundering()) {
-				if (player.getRandom().nextInt(100) < 30) {
-					if (player.level().canSeeSky(pos)) {
-						LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
-						lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
-						lightningboltentity.setCause((ServerPlayer) player);
-						player.level().addFreshEntity(lightningboltentity);
-						player.level().playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
+		Level level = player.level();
+		if(level.isClientSide){
+			if(player.tickCount % 40 == 0){
+				if(level.isThundering()){
+					if(player.getRandom().nextInt(100) < 30){
+						if(level.canSeeSky(pos)){
+							LightningBolt lightningboltentity = EntityType.LIGHTNING_BOLT.create(player.level());
+							lightningboltentity.moveTo(new Vec3(pos.getX(), pos.getY(), pos.getZ()));
+							lightningboltentity.setCause((ServerPlayer)player);
+							level.addFreshEntity(lightningboltentity);
+							level.playSound(player, pos, SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.WEATHER, 5F, 1.0F);
+						}
 					}
 				}
 			}

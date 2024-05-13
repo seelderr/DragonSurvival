@@ -44,7 +44,7 @@ public class ClientCastingHandler{
 
 		int slot = dragonStateHandler.getMagicData().getSelectedAbilitySlot();
 		ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(castSlot);
-
+		
 		if (ability == null) {
 			castSlot = slot;
 			ability = dragonStateHandler.getMagicData().getAbilityFromSlot(castSlot);
@@ -81,7 +81,7 @@ public class ClientCastingHandler{
 
 		if(status == StatusInProgress && ability.canCastSkill(player) ){
 			if (castStartTime == -1)
-				castStartTime = player.level().dayTime();
+				castStartTime = player.level().getGameTime();
 			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), true, castSlot, ability.saveNBT(), castStartTime));
 		} else if(status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player) && castStartTime != -1){
 			NetworkHandler.CHANNEL.sendToServer(new SyncAbilityCasting(player.getId(), false, castSlot, ability.saveNBT(), castStartTime));

@@ -7,6 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.D
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +21,7 @@ import java.util.function.Consumer;
 public class EditorPartButton extends ExtendedButton{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	public MutableComponent message;
-	private final DragonEditorScreen screen;
+	private DragonEditorScreen screen;
 	public String value;
 	public Consumer<String> setter;
 	public DropDownButton source;

@@ -272,7 +272,6 @@ public class ClawToolHandler{
 
 			if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
 				// Bonus does not apply to held tools
-
 				return;
 			}
 

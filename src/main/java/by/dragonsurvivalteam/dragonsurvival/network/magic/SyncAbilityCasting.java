@@ -23,6 +23,12 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting> {
 
 	public SyncAbilityCasting() { /* Nothing to do */ }
 
+//	public SyncAbilityCasting(int playerId, boolean isCasting, final CompoundTag nbt) {
+//		this.playerId = playerId;
+//		this.isCasting = isCasting;
+//		this.nbt = nbt;
+//	}
+	
 	public SyncAbilityCasting(int playerId, boolean isCasting, int abilitySlot, final CompoundTag nbt, long castStartTime) {
 		this.playerId = playerId;
 		this.isCasting = isCasting;

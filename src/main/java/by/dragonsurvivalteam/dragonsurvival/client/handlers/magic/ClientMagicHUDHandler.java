@@ -35,33 +35,27 @@ public class ClientMagicHUDHandler {
 	public static final Color COLOR = new Color(243, 48, 59);
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
 	public static Integer castbarXOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position" )
 	public static Integer castbarYOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position" )
 	public static Integer skillbarXOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position" )
 	public static Integer skillbarYOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position" )
 	public static Integer manabarXOffset = 0;
 
 	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui",
-	                                                     "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
 	public static boolean renderExperienceBar(final ForgeGui gui, GuiGraphics guiGraphics, int screenWidth) {

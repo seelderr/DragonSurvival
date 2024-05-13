@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
@@ -35,7 +36,6 @@ public class BallLightningEntity extends DragonBallEntity{
 	}
 
 	public BallLightningEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
-
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
@@ -81,7 +81,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	public void tick() {
 		super.tick();
-		if (level().dayTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
+		if (level().getGameTime() % 5 == 0 && !isDead) // Once per 5 ticks (0.25 seconds)
 			attackMobs();
 	}
 
@@ -100,7 +100,7 @@ public class BallLightningEntity extends DragonBallEntity{
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!level().isClientSide()){
+			if(this.level().isClientSide){
 				TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(damageSources().lightningBolt(), BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
