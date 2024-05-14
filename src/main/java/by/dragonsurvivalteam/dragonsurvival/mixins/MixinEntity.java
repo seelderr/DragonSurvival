@@ -115,11 +115,13 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	public AABB dragonPoseBB(Entity entity, Pose pose){
 		if(DragonUtils.isDragon(entity) && ServerConfig.sizeChangesHitbox){
 			boolean squish = false;
+			double heightMult = 1.0;
 			if (DragonUtils.getDragonBody(entity) != null) {
 				squish = DragonUtils.getDragonBody(entity).isSquish();
+				heightMult = DragonUtils.getDragonBody(entity).getHeightMult();
 			}
 			double size = DragonUtils.getHandler(entity).getSize();
-			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox, squish);
+			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox, squish) * heightMult;
 			double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
 			return DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(entity.position());
 		}else
