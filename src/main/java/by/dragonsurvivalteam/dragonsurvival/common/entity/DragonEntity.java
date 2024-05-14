@@ -284,7 +284,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				neckLocked = false;
 				tailLocked = false;
 
-				RenderingUtils.addAnimation(builder, "fly_land_end", EDefaultLoopTypes.LOOP, 2, animationController);
+				RenderingUtils.addAnimation(builder, "fly_land_end", EDefaultLoopTypes.PLAY_ONCE, 2, animationController);
 			}else if(player.isCrouching() && hoverLand != -1 && deltaMovement.length() < 4){
 				neckLocked = false;
 				tailLocked = false;
@@ -344,7 +344,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 				RenderingUtils.addAnimation(builder, "swim", EDefaultLoopTypes.LOOP, 2, animationController);
 			}
 		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
-			RenderingUtils.addAnimation(builder, "jump", EDefaultLoopTypes.LOOP, 2, animationController);
+			RenderingUtils.addAnimation(builder, "jump", EDefaultLoopTypes.PLAY_ONCE, 2, animationController);
 		}else if(!player.isOnGround() ){
 			RenderingUtils.addAnimation(builder, "fall_loop", EDefaultLoopTypes.LOOP, 2, animationController);
 			//Doesn't work and not needed for now
