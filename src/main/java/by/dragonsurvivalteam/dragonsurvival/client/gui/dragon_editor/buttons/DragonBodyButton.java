@@ -50,6 +50,7 @@ public class DragonBodyButton extends Button {
 	@Override
 	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
 		RenderSystem.setShaderTexture(0, texture_location);
+		RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
 
 		int i = 0;
 		if (this.dragonBody.equals(dragonEditorScreen.dragonBody)) {
@@ -60,6 +61,6 @@ public class DragonBodyButton extends Button {
 			i = 1;
 		}
 		this.blit(pPoseStack, this.x, this.y, pos * this.width, i * this.height, this.width, this.height);
-		RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
+		//RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 	}
 }
