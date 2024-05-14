@@ -1,18 +1,32 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraftforge.client.gui.widget.ExtendedButton;
+
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public class DragonEditorDropdownButton extends DropDownButton{
 	private final DragonEditorScreen dragonEditorScreen;
 	private final EnumSkinLayer layers;
+	private final String dragonType;
 
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
 		super(x, y, xSize, ySize, current, values, s -> {
@@ -22,6 +36,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		});
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.layers = layers;
+		this.dragonType = dragonEditorScreen.handler.getTypeName().toLowerCase();
 	}
 
 	@Override
@@ -52,6 +67,81 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		}
 	}
 
+	@Override
+	public void onPress(){
+		Screen screen = Minecraft.getInstance().screen;
+
+		if(!toggled){
+			int offset = screen.height - (y + height + 80);
+			list = new DropdownList(x, y + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
+			DropdownEntry center = null;
+
+			for(int i = 0; i < values.length; i++){
+				String val = values[i];
+				String localeString = String.format("ds.skin_part.%s.%s", this.dragonType, val).toLowerCase();
+				DropdownEntry ent = createEntry(i, val, localeString);
+				list.addEntry(ent);
+
+				if(Objects.equals(val, current))
+					center = ent;
+			}
+
+			if(center != null)
+				list.centerScrollOn(center);
+
+			boolean hasBorder = false;
+			if(screen.children.size() > 0){
+				screen.renderables.add(0, list);
+				screen.renderables.add(list);
+				screen.children.add(0, list);
+				screen.children.add(list);
+
+				for(GuiEventListener child : screen.children)
+					if(child instanceof ContainerObjectSelectionList){
+						if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
+							hasBorder = true;
+							break;
+						}
+					}
+			}else{
+				screen.children.add(list);
+				screen.renderables.add(list);
+			}
+
+			boolean finalHasBorder = hasBorder;
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
+				@Override
+				public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+					active = visible = false;
+					list.visible = DragonEditorDropdownButton.this.visible;
+
+					if(finalHasBorder)
+						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
+
+					if(list.visible)
+						list.render(p_230430_1_, p_230430_2_, p_230430_3_, p_230430_4_);
+
+					if(finalHasBorder)
+						RenderSystem.disableScissor();
+				}
+			};
+			screen.children.add(renderButton);
+			screen.renderables.add(renderButton);
+		}else{
+			screen.children.removeIf(s -> s == list);
+			screen.children.removeIf(s -> s == renderButton);
+			screen.renderables.removeIf(s -> s == list);
+			screen.renderables.removeIf(s -> s == renderButton);
+		}
+
+		toggled = !toggled;
+		updateMessage();
+	}
+
+	public DropdownEntry createEntry(int pos, String val, String localeString){
+		return new DragonDropdownValueEntry(this, pos, val, localeString, setter);
+	}
+}
 /*	@Override
 	public void onPress(){
 		Screen screen = Minecraft.getInstance().screen;
@@ -132,4 +222,3 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		toggled = !toggled;
 		updateMessage();
 	}*/
-}
