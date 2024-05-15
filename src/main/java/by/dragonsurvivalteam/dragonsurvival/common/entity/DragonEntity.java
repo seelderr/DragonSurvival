@@ -294,8 +294,6 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 					tailLocked = false;
 					RenderingUtils.addAnimation(builder, "fly_land", EDefaultLoopTypes.LOOP, 2, animationController);
 				} else if(ServerFlightHandler.isSpin(player)){
-					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 1, animationController);
-				}else if(deltaMovement.y > 0.25){
 					neckLocked = false;
 					tailLocked = false;
 					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
