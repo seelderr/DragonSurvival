@@ -279,14 +279,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 					animationSpeed = 2;
 					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
 				}else if(deltaMovement.y < -1){
-					RenderingUtils.addAnimation(builder, "fly_dive_alt", EDefaultLoopTypes.LOOP, 2, animationController);
+					RenderingUtils.addAnimation(builder, "fly_dive_alt", EDefaultLoopTypes.LOOP, 4, animationController);
 				}else if(deltaMovement.y < -0.25){
-					RenderingUtils.addAnimation(builder, "fly_dive", EDefaultLoopTypes.LOOP, 2, animationController);
+					RenderingUtils.addAnimation(builder, "fly_dive", EDefaultLoopTypes.LOOP, 4, animationController);
 				}else if(deltaMovement.y > 0.25){
 					animationSpeed = 2;
 					RenderingUtils.addAnimation(builder, "fly", EDefaultLoopTypes.LOOP, 2, animationController);
 				}else{
-					RenderingUtils.addAnimation(builder, "fly_soaring", EDefaultLoopTypes.LOOP, 2, animationController);
+					RenderingUtils.addAnimation(builder, "fly_soaring", EDefaultLoopTypes.LOOP, 4, animationController);
 				}
 			}else{
 				if(deltaMovement.y < 0 && ServerFlightHandler.distanceFromGround(player) < 10 && deltaMovement.length() < 4){
@@ -294,6 +294,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 					tailLocked = false;
 					RenderingUtils.addAnimation(builder, "fly_land", EDefaultLoopTypes.LOOP, 2, animationController);
 				} else if(ServerFlightHandler.isSpin(player)){
+					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 1, animationController);
+				}else if(deltaMovement.y > 0.25){
 					neckLocked = false;
 					tailLocked = false;
 					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
@@ -339,11 +341,11 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		} else if(player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)){
 			// Player is Sneaking
 			if(isMovingHorizontal && player.animationSpeed != 0f){
-				RenderingUtils.addAnimation(builder, "sneak_walk", EDefaultLoopTypes.LOOP, 2, animationController);
+				RenderingUtils.addAnimation(builder, "sneak_walk", EDefaultLoopTypes.LOOP, 5, animationController);
 			}else if(playerStateHandler.getMovementData().dig){
-				RenderingUtils.addAnimation(builder, "dig_sneak", EDefaultLoopTypes.LOOP, 2, animationController);
+				RenderingUtils.addAnimation(builder, "dig_sneak", EDefaultLoopTypes.LOOP, 5, animationController);
 			}else{
-				RenderingUtils.addAnimation(builder, "sneak", EDefaultLoopTypes.LOOP, 2, animationController);
+				RenderingUtils.addAnimation(builder, "sneak", EDefaultLoopTypes.LOOP, 5, animationController);
 			}
 		}else if(player.isSprinting()){
 			RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
