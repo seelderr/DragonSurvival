@@ -289,7 +289,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 					RenderingUtils.addAnimation(builder, "fly_soaring", EDefaultLoopTypes.LOOP, 4, animationController);
 				}
 			}else{
-				if(deltaMovement.y < 0 && ServerFlightHandler.distanceFromGround(player) < 10 && deltaMovement.length() < 4){
+				if(player.isCrouching() && deltaMovement.y < 0 && ServerFlightHandler.distanceFromGround(player) < 10 && deltaMovement.length() < 4){
 					neckLocked = false;
 					tailLocked = false;
 					RenderingUtils.addAnimation(builder, "fly_land", EDefaultLoopTypes.LOOP, 2, animationController);
