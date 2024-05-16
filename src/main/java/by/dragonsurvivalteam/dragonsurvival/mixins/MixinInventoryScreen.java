@@ -69,7 +69,7 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		if(handler.isDragon()){
 			double size = handler.getSize();
 			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE){
-				// Scale the matrix back to the DragonLevel.ADULT.size to prevent the entity from clipping in the inventory panel
+				// Scale the matrix back to the DEFAULT_MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
 				pX *= Mth.sqrt(((float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size)));
 			}
 		}
