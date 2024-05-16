@@ -296,7 +296,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0.0, max = 10.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "newbornStepHeight", comment = "Step height for a newborn dragon. Default is 1 block." )
-	public static Double newbornStepHeight = 0.5;
+	public static Double newbornStepHeight = 0.0;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngStepHeight", comment = "Step height for a young dragon. Default is 1.5 block." )
