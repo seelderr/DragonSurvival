@@ -504,15 +504,15 @@ public class ServerConfig{
 
 
 	@ConfigType(Block.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana", "sea_dragon_mana"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid" )
 	public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:powder_snow", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron", "naturearchitect:snow_block_0", "naturearchitect:snow_block_2", "naturearchitect:snow_cover_1", "naturearchitect:snow_cover_2", "naturearchitect:snow_cover_3", "naturearchitect:snow_block_2", "immersive_weathering:snowy_stone_brick_wall", "immersive_weathering:snowy_stone_brick_stairs", "immersive_weathering:snowy_chiseled_stone_bricks", "immersive_weathering:snowy_stone_bricks", "immersive_weathering:snowy_cobblestone_wall", "immersive_weathering:snowy_cobblestone_slab", "immersive_weathering:snowy_cobblestone_stairs", "immersive_weathering:snowy_cobblestone", "immersive_weathering:snowy_stone_wall", "immersive_weathering:snowy_stone_slab", "immersive_weathering:snowy_stone_stairs", "immersive_weathering:snowy_stone", "immersive_weathering:snow_brick_wall", "immersive_weathering:snow_brick_slab", "immersive_weathering:snow_brick_stairs", "immersive_weathering:snow_bricks", "frozenup:compacted_snow_foundation", "frozenup:compacted_snow_brick_vertical_slab", "frozenup:compacted_snow_brick_slab", "frozenup:compacted_snow_brick_stairs", "frozenup:compacted_snow_bricks", "frozenup:compacted_snow_brick_stairs");
 
 	@ConfigType(Block.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana", "forest_dragon_mana"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid" )
 	public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:grass_block", "minecraft:grass_block", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers", "minecraft:lily_pad", "minecraft:red_mushroom", "minecraft:brown_mushroom", "minecraft:sweet_berry_bush", "minecraft:oak_leaves", "naturearchitect:grass_cover_stairs", "naturearchitect:grass_cover_slab", "farmersdelight:brown_mushroom_colony", "farmersdelight:red_mushroom_colony", "gothic:black_mushroom", "gothic:tall_mushrooms", "gothic:cave_mushrooms", "naturearchitect:grass_carpet", "regions_unexplored:mycotoxic_mushrooms", "naturearchitect:moss_cover_3", "naturearchitect:moss_cover_2", "naturearchitect:moss_cover_1", "naturearchitect:mycelium_block_2", "naturearchitect:mycelium_cover_3", "naturearchitect:mycelium_cover_1", "naturearchitect:mycelium_cover_2", "naturearchitect:mycelium_block_1", "naturearchitect:moss_plant_1", "naturearchitect:moss_plant_2", "naturearchitect:moss_plant_3", "naturearchitect:moss_patch", "naturearchitect:moss_patch_dense", "regions_unexplored:spanish_moss", "minecraft:mycelium", "minecraft:moss_block", "minecraft:moss_carpet", "regions_unexplored:alpha_grass_block", "regions_unexplored:chalk_grass_block", "regions_unexplored:peat_grass_block", "regions_unexplored:silt_grass_block", "regions_unexplored:argillite_grass_block", "regions_unexplored:stone_grass_block", "regions_unexplored:deepslate_grass_block", "immersive_weathering:rooted_grass_block", "naturearchitect:grass_block", "naturearchitect:grass_cover", "naturearchitect:crimson_92", "naturearchitect:grass_1", "naturearchitect:grass_2", "naturearchitect:grass_3", "naturearchitect:grass_4", "naturearchitect:grass_windy", "naturearchitect:grass_stalk", "naturearchitect:grass_fern", "naturearchitect:grass_sapling", "phantasm:vivid_nihilium_grass", "vinery:grass_slab", "naturearchitect:grass_liana", "naturearchitect:grass_ivy", "naturearchitect:grass_bean_stalk");
 
 	@ConfigType(Block.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana", "cave_dragon_mana"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid" )
 	public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:fire", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge", "regions_unexplored:brimwood_log_magma", "infernalexp:magmatic_chiseled_basalt_bricks", "infernalexp:basaltic_magma", "regions_unexplored:brimwood_log_magma", "naturearchitect:magma_inactive", "naturearchitect:magma_cracks", "netherdepthsupgrade:lava_sponge");
 
 
@@ -532,7 +532,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "noEXPRequirements", comment = "Disable the exp requirements for leveling up active skills" )
 	public static Boolean noEXPRequirements = false;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "consumeEXPAsMana", comment = "Whether to use exp instead of mana if mana is empty" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "consumeEXPAsMana", comment = "Whether to use exp instead of mana if mana is empty" )
 	public static Boolean consumeEXPAsMana = true;
 
 	@ConfigRange( min = 0, max = 100 )
@@ -545,11 +545,11 @@ public class ServerConfig{
 
 
 	@ConfigRange( min = 1, max = 1000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "favorableManaRegen", comment = "How fast in seconds should mana be recovered in favorable conditions" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "favorableManaRegen", comment = "How fast in seconds should mana be recovered in favorable conditions" )
 	public static Integer favorableManaTicks = 1;
 
 	@ConfigRange( min = 1, max = 1000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "magic", key = "normalManaRegen", comment = "How fast in seconds should mana be recovered in normal conditions" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "mana"}, key = "normalManaRegen", comment = "How fast in seconds should mana be recovered in normal conditions" )
 	public static Integer normalManaTicks = 10;
 
 
