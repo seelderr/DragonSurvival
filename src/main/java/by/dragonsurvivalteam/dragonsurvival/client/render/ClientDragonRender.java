@@ -129,6 +129,15 @@ public class ClientDragonRender{
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateBodyWithCamera", comment = "Should the body rotate with the camera when turning around." )
 	public static Boolean rotateBodyWithCamera = true;
+	
+	@ConfigOption ( side = ConfigSide.CLIENT, category = "debug", key = "offsetX", comment = "")
+	public static float offsetX = 0f;
+	
+	@ConfigOption ( side = ConfigSide.CLIENT, category = "debug", key = "offsetY", comment = "")
+	public static float offsetY = 0f;
+	
+	@ConfigOption ( side = ConfigSide.CLIENT, category = "debug", key = "offsetX", comment = "")
+	public static float offsetZ = 0f;
 
 	private static boolean wasFreeLook = false;
 
@@ -286,11 +295,11 @@ public class ClientDragonRender{
 					}
 				}
 				if(!player.isInvisible()){
-					if(ServerFlightHandler.isGliding(player)){
+					if(ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonUtils.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))){
 						if(renderOtherPlayerRotation || minecraft.player == player){
 							float upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 
-     							dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
+     						dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
 							dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
 
 							if(Float.isNaN(dummyDragon.prevXRot)){
@@ -302,16 +311,23 @@ public class ClientDragonRender{
 							}
 
 							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
-
-							Vec3 vector3d1 = player.getDeltaMovement();
-							Vec3 vector3d = player.getViewVector(1f);
+							
+							Vec3 vector3d1 = new Vec3(0, 0, 0);
+							Vec3 vector3d = new Vec3(0, 0, 0);
+							if (ServerFlightHandler.isGliding(player)) {
+								vector3d1 = player.getDeltaMovement();
+								vector3d = player.getViewVector(1f);
+							} else {
+								vector3d1 = player.getVehicle().getDeltaMovement();
+								vector3d = player.getVehicle().getViewVector(1f);
+							}
 							double d0 = vector3d1.horizontalDistanceSqr();
 							double d1 = vector3d.horizontalDistanceSqr();
 							double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
 							double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
 
 							float rot = Mth.clamp((float)(Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
-
+							
 							dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
 							dummyDragon.prevZRot = Mth.clamp(dummyDragon.prevZRot, -1, 1);
 
@@ -322,6 +338,9 @@ public class ClientDragonRender{
 							if(Float.isNaN(dummyDragon.prevZRot)){
 								dummyDragon.prevZRot = 0;
 							}
+
+							handler.getMovementData().prevXRot = dummyDragon.prevXRot;
+							handler.getMovementData().prevZRot = rot;
 
 							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
 						}
