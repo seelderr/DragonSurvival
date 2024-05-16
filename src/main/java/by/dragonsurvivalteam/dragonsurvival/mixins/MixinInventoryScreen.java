@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -68,7 +69,7 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		if(handler.isDragon()){
 			double size = handler.getSize();
 			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE){
-				// Scale the matrix back to the MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
+				// Scale the matrix back to the DragonLevel.ADULT.size to prevent the entity from clipping in the inventory panel
 				pX *= Mth.sqrt(((float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size)));
 			}
 		}

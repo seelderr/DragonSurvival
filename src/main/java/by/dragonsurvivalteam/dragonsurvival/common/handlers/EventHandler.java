@@ -382,6 +382,9 @@ public class EventHandler{
 				Double jumpBonus = 0.0;
 				if (dragonStateHandler.getBody() != null) {
 					jumpBonus = dragonStateHandler.getBody().getJumpBonus();
+					if (ServerConfig.allowLargeScaling) {
+						jumpBonus += ServerConfig.largeJumpHeightScalar * (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+					}
 				}
 				switch(dragonStateHandler.getLevel()){
 					case NEWBORN -> living.push(0, ServerConfig.newbornJump + jumpBonus, 0); //1+ block
