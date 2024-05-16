@@ -1,14 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.math.Vector3f;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,6 +21,8 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -31,6 +38,8 @@ import java.util.Objects;
 public abstract class MixinEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity>{
 	@Shadow
 	private EntityDimensions dimensions;
+	@Shadow 
+	public abstract void onPassengerTurned(Entity $$0);
 
 	protected MixinEntity(Class<Entity> baseClass){
 		super(baseClass);
@@ -41,12 +50,63 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 		Object self = this;
 
 		if(DragonUtils.isDragon((Entity) self)){
-			if(hasPassenger(entity)){
-				double d0 = getY() + getPassengersRidingOffset() + entity.getMyRidingOffset();
-				Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity) self);
-				move.accept(entity, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
-				callbackInfo.cancel();
+			if(hasPassenger(entity)) {
+				if ((Object)this instanceof Player player && entity instanceof Player passenger) {
+					Vec3 offset = new Vec3(0, this.getPassengersRidingOffset(), -1.0);
+					offset = offset.yRot(
+							(float) Math.toRadians(-DragonUtils.getHandler((Entity) self).getMovementData().bodyYaw)
+						).zRot(
+							(float) Math.toRadians(DragonUtils.getHandler((Entity) self).getMovementData().prevZRot)
+						);//.xRot(
+						//	(float) Math.toRadians(DragonUtils.getHandler((Entity) self).getMovementData().prevXRot)
+						//);
+					//Vector3f cameraOffset = Functions.getDragonCameraOffset((Entity) self);
+					//offset.add(new Vec3(cameraOffset).reverse());
+					Vec3 passPos = player.position().add(offset);
+					//System.out.println(offset);
+					//System.out.println("" + DragonUtils.getHandler((Entity) self).getMovementData().bodyYaw + " and " + DragonUtils.getHandler((Entity) self).getMovementData().prevZRot);
+					//passPos = passPos.add(-cameraOffset.x(), 0, -cameraOffset.z());
+					move.accept(passenger, passPos.x(), passPos.y(), passPos.z());
+					//double d0 = getY() + getPassengersRidingOffset() + entity.getMyRidingOffset();
+					
+					//move.accept(entity, getX() - cameraOffset.x(), d0, getZ() - cameraOffset.z());
+					((Entity)(Object)this).onPassengerTurned(passenger);
+					callbackInfo.cancel();
+				}
 			}
+		}
+	}
+	
+	@Inject(method = "onPassengerTurned(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
+	private void onPassengerTurned(Entity passenger, CallbackInfo callbackInfo) {
+		this.clampRotation(passenger, DragonUtils.isDragon(passenger));
+	}
+	
+	private void clampRotation(Entity passenger, boolean isDragon) {
+		Entity self = (Entity)(Object) this;
+		DragonStateHandler selfHandler = DragonUtils.getHandler(self);
+		DragonMovementData selfmd = selfHandler.getMovementData();
+		if (isDragon) {
+			DragonStateHandler handler = DragonUtils.getHandler(passenger);
+			DragonMovementData md = handler.getMovementData();
+			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
+			passenger.yRotO += self.yRotO;
+			handler.setMovementData(selfmd.bodyYawLastTick, -facing, md.headPitchLastTick, md.bite);
+			//passenger.setYRot(passenger.getYRot());
+			//passenger.setYHeadRot(passenger.getYRot());
+			if (passenger instanceof DragonEntity de) {
+				//System.out.println(de.prevZRot);
+				de.prevZRot = ((DragonEntity) self).prevZRot;
+			}
+			
+		}
+		else {
+			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
+			float facingClamped = Mth.clamp(facing, -30.0F, 30.0F);
+			passenger.yRotO += facingClamped - facing + self.yRotO;
+			passenger.setYBodyRot(passenger.getYRot() + facingClamped - facing);
+			passenger.setYRot(passenger.getYRot() + facingClamped - facing);
+			passenger.setYHeadRot(passenger.getYRot());
 		}
 	}
 
@@ -87,10 +147,12 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;getPassengersRidingOffset()D", cancellable = true )
 	public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci){
 		if(DragonUtils.isDragon((Entity)(Object)this)){
+			//DragonStateHandler handler = DragonUtils.getHandler((Entity)(Object)this);
+			double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
 			switch(((Entity)(Object)this).getPose()){
-				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)dimensions.height * 0.6D);
-				case CROUCHING -> ci.setReturnValue((double)dimensions.height * 0.45D);
-				default -> ci.setReturnValue((double)dimensions.height * 0.5D);
+				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)height * 0.6D);
+				case CROUCHING -> ci.setReturnValue((double)height * 0.45D);
+				default -> ci.setReturnValue((double)height * 0.5D);
 			}
 		}
 	}
