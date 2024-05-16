@@ -81,7 +81,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushingSize", comment = "The amount of ticks before entities can be crushed again after they were already crushed.")
 	public static Integer crushingTickDelay = 20;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeScaling", comment = "Allow a dragon's max health, damage, reach, and step height to continue to scale with growth beyond its normal limits.")
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeScaling", comment = "Allow a dragon's max health, damage, reach, step height, and jump height to continue to scale with growth beyond its normal limits.")
 	public static Boolean allowLargeScaling = false;
 
 	@ConfigRange( min = 1, max = 1000 )
@@ -99,6 +99,10 @@ public class ServerConfig{
 	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeStepHeightScalar", comment = "The bonus step height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
 	public static Double largeStepHeightScalar = 1.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeStepHeightScalar", comment = "The bonus jump height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+	public static Double largeJumpHeightScalar = 0.15;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled. A block radius of 0 disables this feature. Crouching allows you to mine one block at a time.")
@@ -289,6 +293,19 @@ public class ServerConfig{
 	@ConfigRange( min = 0.0, max = 0.9 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultJump", comment = "Jumping height for a adult dragon. Default is 2 block." )
 	public static Double adultJump = 0.15;
+
+	@ConfigRange( min = 0.0, max = 10.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "newbornStepHeight", comment = "Step height for a newborn dragon. Default is 1 block." )
+	public static Double newbornStepHeight = 0.0;
+
+	@ConfigRange( min = 0.0, max = 10.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngStepHeight", comment = "Step height for a young dragon. Default is 1.5 block." )
+	public static Double youngStepHeight = 0.5;
+
+	@ConfigRange( min = 0.0, max = 10.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultStepHeight", comment = "Step height for a adult dragon. Default is 2 block." )
+	public static Double adultStepHeight = 1.0;
+
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "clawsAreTools", comment = "Whether dragon claws function as tools." )
 	public static Boolean clawsAreTools = true;

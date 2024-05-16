@@ -91,10 +91,10 @@ public class DragonModifiers{
 		return new AttributeModifier(SWIM_SPEED_MODIFIER_UUID, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADDITION);
 	}
 
-	public static AttributeModifier buildStepHeightMod(double size) {
-		double stepHeightBonus = 0;
+	public static AttributeModifier buildStepHeightMod(DragonStateHandler handler, double size) {
+		double stepHeightBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultStepHeight : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngStepHeight : ServerConfig.newbornStepHeight;
 		if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling)  {
-			stepHeightBonus = ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+			stepHeightBonus += ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 		}
 		return new AttributeModifier(STEP_HEIGHT_MODIFIER_UUID, "Dragon Step Height Adjustment", stepHeightBonus, Operation.ADDITION);
 	}
@@ -122,7 +122,7 @@ public class DragonModifiers{
 				AttributeModifier attackRange = buildAttackRangeMod(size);
 				updateAttackRangeModifier(player, attackRange);
 
-				AttributeModifier stepHeight = buildStepHeightMod(size);
+				AttributeModifier stepHeight = buildStepHeightMod(handler, size);
 				updateStepHeightModifier(player, stepHeight);
 			} else {
 				// Remove the dragon attribute modifiers
