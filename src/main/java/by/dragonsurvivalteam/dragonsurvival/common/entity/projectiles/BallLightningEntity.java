@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -40,6 +41,7 @@ import java.util.List;
 public class BallLightningEntity extends DragonBallEntity{
 	protected boolean isLingering = false;
 	protected int lingerTicks = 100;
+	protected LargeLightningParticleData trail = new LargeLightningParticleData(37, false);
 	public BallLightningEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
 		super(DSEntities.BALL_LIGHTNING, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
@@ -50,7 +52,8 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected ParticleOptions getTrailParticle(){
-		return ParticleTypes.WHITE_ASH;
+		//return ParticleTypes.WHITE_ASH;
+		return trail;
 		//plz, add here DSParticles.LARGE_LIGHTNING for cool effects, I cannot :(
 	}
 
