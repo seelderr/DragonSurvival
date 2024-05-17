@@ -79,23 +79,24 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	
 	@Inject(method = "onPassengerTurned(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
 	private void onPassengerTurned(Entity passenger, CallbackInfo callbackInfo) {
-		this.clampRotation(passenger, DragonUtils.isDragon(passenger));
+		this.clampRotation(passenger);
 	}
 	
-	private void clampRotation(Entity passenger, boolean isDragon) {
+	private void clampRotation(Entity passenger) {
 		Entity self = (Entity)(Object) this;
 		DragonStateHandler selfHandler = DragonUtils.getHandler(self);
 		DragonMovementData selfmd = selfHandler.getMovementData();
-		if (isDragon) {
+		if (DragonUtils.isDragon(passenger)) {
 			DragonStateHandler handler = DragonUtils.getHandler(passenger);
 			DragonMovementData md = handler.getMovementData();
 			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
-			passenger.yRotO += self.yRotO;
+			float facingClamped = Mth.clamp(facing, -150.0F, 150.0F);
+			passenger.yRotO += facingClamped - facing + self.yRotO;
+			//System.out.println("p.yRotO: " + passenger.yRotO + ", s.yRotO: " + self.yRotO + ", p.yRot: " + passenger.yRot + ", s.yRot: " + self.yRot);
 			handler.setMovementData(selfmd.bodyYawLastTick, -facing, md.headPitchLastTick, md.bite);
-			//passenger.setYRot(passenger.getYRot());
-			//passenger.setYHeadRot(passenger.getYRot());
+			passenger.setYRot(passenger.getYRot() + facingClamped - facing + (self.yRot - self.yRotO));
+			passenger.setYHeadRot(passenger.getYRot() + facingClamped - facing + (self.yRot - self.yRotO));
 			if (passenger instanceof DragonEntity de) {
-				//System.out.println(de.prevZRot);
 				de.prevZRot = ((DragonEntity) self).prevZRot;
 			}
 			
@@ -104,8 +105,8 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
 			float facingClamped = Mth.clamp(facing, -30.0F, 30.0F);
 			passenger.yRotO += facingClamped - facing + self.yRotO;
-			passenger.setYBodyRot(passenger.getYRot() + facingClamped - facing);
-			passenger.setYRot(passenger.getYRot() + facingClamped - facing);
+			passenger.setYBodyRot(passenger.getYRot() + facingClamped - facing + (self.yRot - self.yRotO));
+			passenger.setYRot(passenger.getYRot() + facingClamped - facing + (self.yRot - self.yRotO));
 			passenger.setYHeadRot(passenger.getYRot());
 		}
 	}
@@ -150,9 +151,9 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			//DragonStateHandler handler = DragonUtils.getHandler((Entity)(Object)this);
 			double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
 			switch(((Entity)(Object)this).getPose()){
-				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)height * 0.6D);
-				case CROUCHING -> ci.setReturnValue((double)height * 0.45D);
-				default -> ci.setReturnValue((double)height * 0.5D);
+				case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue((double)height * 0.65D);
+				case CROUCHING -> ci.setReturnValue((double)height * 0.48D);
+				default -> ci.setReturnValue((double)height * 0.52D);
 			}
 		}
 	}

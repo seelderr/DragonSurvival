@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
@@ -14,9 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -27,14 +22,10 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
-import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import software.bernie.geckolib3.core.builder.ILoopType;
-
 import javax.annotation.Nullable;
 import java.util.List;
 
@@ -52,9 +43,7 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected ParticleOptions getTrailParticle(){
-		//return ParticleTypes.WHITE_ASH;
 		return trail;
-		//plz, add here DSParticles.LARGE_LIGHTNING for cool effects, I cannot :(
 	}
 
 	@Override
@@ -76,7 +65,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	protected void onHit(HitResult hitResult){
 		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
-			if (!(getOwner() instanceof Player))
+			if (!(getOwner() instanceof Player) && !isLingering)
 			{
 				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 			}

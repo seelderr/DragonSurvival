@@ -1,10 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,7 +15,6 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib3.core.IAnimatable;
 import software.bernie.geckolib3.core.PlayState;
@@ -37,10 +32,12 @@ import javax.annotation.Nullable;
 
 public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
+	public static final EntityDataAccessor<Integer> LIFESPAN = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
+	public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.FLOAT);
 	public static final float DRAGON_BALL_DISTANCE = 32.f;
+	public static final int MAX_LIFESPAN = 1200; // 60 seconds
 	AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
 	AnimationBuilder animationBuilder = new AnimationBuilder();
-	float moveDistance = 0;
 
 	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
 		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
@@ -66,6 +63,8 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 	protected void defineSynchedData(){
 		super.defineSynchedData();
 		entityData.define(SKILL_LEVEL, 1);
+		entityData.define(MOVE_DISTANCE, 0f);
+		entityData.define(LIFESPAN, 0);
 	}
 
 	@Override
@@ -85,11 +84,12 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 	@Override
 	public void tick() {
 		super.tick();
-		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
-			moveDistance += (float)getDeltaMovement().length();
-			if (moveDistance > DRAGON_BALL_DISTANCE) {
-				this.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
-			}
+		if(!this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
+			entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float)getDeltaMovement().length());
+			entityData.set(LIFESPAN, entityData.get(LIFESPAN) + 1);
+		}
+		if (entityData.get(MOVE_DISTANCE) > DRAGON_BALL_DISTANCE || entityData.get(LIFESPAN) > MAX_LIFESPAN) {
+			this.onHit(ProjectileUtil.getHitResult(this, this::canHitEntity));
 		}
 	}
 
@@ -117,6 +117,8 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 			// "attacker" in the damage calculation when gathering entities to damage.
 			Entity attacker = canSelfDamage() ? this : getOwner();
 			level.explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, true, Explosion.BlockInteraction.DESTROY);
+		}
+		else {
 			animationBuilder.clearAnimations();
 			animationBuilder.addAnimation("explosion", ILoopType.EDefaultLoopTypes.LOOP);
 		}
