@@ -102,7 +102,6 @@ public class DragonBonusHandler{
 				} else if (body != null) {
 					distance *= ((body.getGravityMult() - 1) / 2) + 1;
 				}
-				System.out.println(distance);
 
 				livingFallEvent.setDistance(distance);
 			}
