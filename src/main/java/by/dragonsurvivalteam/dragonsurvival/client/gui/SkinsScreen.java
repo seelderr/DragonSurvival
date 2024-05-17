@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.DragonSkinBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
@@ -10,7 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
@@ -56,12 +58,13 @@ public class SkinsScreen extends Screen{
 	private static final String DISCORD_URL = "https://discord.gg/8SsB8ar";
 	private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
 	private static final ArrayList<String> seenSkins = new ArrayList<>();
-	private final DragonStateHandler handler = new DragonStateHandler();
+	public final DragonStateHandler handler = new DragonStateHandler();
 	public static ResourceLocation skinTexture = null;
 	public static ResourceLocation glowTexture = null;
 	private static String playerName = null;
 	private static String lastPlayerName = null;
 	private static DragonLevel level = DragonLevel.ADULT;
+	public AbstractDragonBody dragonBody = DragonBodies.getStatic("center");
 	private static boolean noSkin = false;
 	private static boolean loading = false;
 	public Screen sourceScreen;
@@ -125,9 +128,10 @@ public class SkinsScreen extends Screen{
 		float scale = zoom;
 
 		if(!loading){
-			handler.setHasWings(true);
+			handler.setHasFlight(true);
 			handler.setSize(level.size);
 			handler.setType(DragonUtils.getDragonType(minecraft.player));
+			handler.setBody(dragonBody);
 
 			handler.getSkinData().skinPreset.initDefaults(handler);
 
@@ -137,10 +141,9 @@ public class SkinsScreen extends Screen{
 				handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
 			}
 
-			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly";
-
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().scale(scale, scale, scale);
+			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
+			stack.pushPose();
+			stack.translate(0, 0, 100);
 			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
 			guiGraphics.pose().popPose();
 		}
@@ -180,6 +183,8 @@ public class SkinsScreen extends Screen{
 
 	@Override
 	public void init(){
+		Minecraft minecraft = getMinecraft();
+		LocalPlayer player = minecraft.player;
 		super.init();
 
 		guiLeft = (width - 256) / 2;
@@ -198,36 +203,38 @@ public class SkinsScreen extends Screen{
 		addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, 1, this));
 		addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, 2, this));
 		addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, 3, this));
+		
+		for (int i = 0;  i < DragonBodies.ORDER.length; i++) {
+			addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (i * 27), height / 2 + 90, 25, 25, DragonBodies.getStatic(DragonBodies.ORDER[i]), i));
+		}
 
 		// Button to enable / disable rendering of the newborn dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
-			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-			boolean newValue = !handler.getSkinData().renderNewborn;
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
-			handler.getSkinData().renderNewborn = newValue;
-			renderNewborn = newValue;
-			ConfigHandler.updateConfigValue("renderNewbornSkin", newValue);
-
+			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
+			ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
 			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
 			@Override
-			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-				guiGraphics.blit(renderNewborn ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13 );
+			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+
+				DragonStateHandler handler = DragonUtils.getHandler(player);
+				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
+				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
 		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
-			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
-			boolean newValue = !handler.getSkinData().renderYoung;
+			DragonStateHandler handler = DragonUtils.getHandler(player);
 
 			handler.getSkinData().renderYoung = newValue;
 			renderYoung = newValue;
 			ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
-
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
+			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
 			@Override

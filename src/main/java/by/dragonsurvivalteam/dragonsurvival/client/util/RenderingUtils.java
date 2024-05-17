@@ -8,6 +8,10 @@ import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+import software.bernie.geckolib3.core.IAnimatable;
+import software.bernie.geckolib3.core.builder.AnimationBuilder;
+import software.bernie.geckolib3.core.builder.ILoopType;
+import software.bernie.geckolib3.core.controller.AnimationController;
 
 import java.awt.*;
 
@@ -222,5 +226,64 @@ public class RenderingUtils{
 		RenderSystem.disableBlend();
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		tesselator.end();
+	}
+
+	public static void drawTexturedRing(PoseStack stack, double x, double y, double innerRadius, double outerRadius, double u, double v, double texInnerRadius, double texOuterRadius, int sides, double percent, double startAngle){
+		Matrix4f matrix4f = stack.last().pose();
+
+		float rad;
+		float sin;
+		float cos;
+
+		float z = 100;
+
+		RenderSystem.enableBlend();
+		RenderSystem.blendFunc(SourceFactor.SRC_ALPHA, DestFactor.ONE_MINUS_SRC_ALPHA);
+		RenderSystem.setShader(GameRenderer::getPositionTexShader);
+
+		GL11.glEnable(GL11.GL_LINE_SMOOTH);
+		GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
+
+		Tesselator tesselator = Tesselator.getInstance();
+		final BufferBuilder buffer =  tesselator.getBuilder();
+		buffer.begin(Mode.TRIANGLE_STRIP, DefaultVertexFormat.POSITION_TEX);
+
+		for(int i = 0; i <= percent * sides; i++){
+			rad = (float)(PI_TWO * ((double)i / (double)sides + startAngle));
+			sin = (float)Math.sin(rad);
+			cos = (float)-Math.cos(rad);
+
+			buffer.vertex(matrix4f, (float)(x + sin * outerRadius), (float)(y + cos * outerRadius), z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
+			buffer.vertex(matrix4f, (float)(x + sin * innerRadius), (float)(y + cos * innerRadius), z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
+		}
+
+		rad = (float)(PI_TWO * (percent + startAngle));
+		sin = (float)Math.sin(rad);
+		cos = (float)-Math.cos(rad);
+
+		buffer.vertex(matrix4f, (float)(x + sin * outerRadius), (float)(y + cos * outerRadius), z).uv((float)(u + sin * texOuterRadius), (float)(v + cos * texOuterRadius)).endVertex();
+		buffer.vertex(matrix4f, (float)(x + sin * innerRadius), (float)(y + cos * innerRadius), z).uv((float)(u + sin * texInnerRadius), (float)(v + cos * texInnerRadius)).endVertex();
+
+		tesselator.end();
+		GL11.glDisable(GL11.GL_LINE_SMOOTH);
+		RenderSystem.disableBlend();
+	}
+
+	public static <E extends IAnimatable> void addAnimation(AnimationBuilder builder, String animationName, ILoopType loopType, float transitionLength, AnimationController<E> controller){
+		builder.addAnimation(animationName, loopType);
+		controller.transitionLengthTicks = transitionLength;
+	}
+
+	public static <E extends IAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<E> controller) {
+
+		if(speed == controller.animationSpeed) {
+			return;
+		}
+
+		if(controller.getCurrentAnimation() != null) {
+			double distance = currentAnimationTick - controller.tickOffset;
+			controller.tickOffset = currentAnimationTick - distance * (controller.animationSpeed / speed);
+			controller.animationSpeed = speed;
+		}
 	}
 }

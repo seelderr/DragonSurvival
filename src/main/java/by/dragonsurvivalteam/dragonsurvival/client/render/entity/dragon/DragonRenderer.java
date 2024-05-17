@@ -71,18 +71,27 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		boolean hasWings = handler.hasWings() && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
+		boolean hasWings = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
+		if (handler.getBody() != null)
+			hasWings = hasWings || !handler.getBody().canHideWings();
 
-		CoreGeoBone wingLeft = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
-		CoreGeoBone wingRight = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
+		IBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
+		IBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
+		IBone smallLeftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingLeft");
+		IBone smallRightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
 
 		if (wingLeft != null) {
 			wingLeft.setHidden(!hasWings);
 		}
 
-		if (wingRight != null) {
-			wingRight.setHidden(!hasWings);
-		}
+		if(rightWing != null)
+			rightWing.setHidden(!hasWings);
+		
+		if (smallLeftWing != null)
+			smallLeftWing.setHidden(!hasWings);
+		
+		if (smallRightWing != null)
+			smallRightWing.setHidden(!hasWings);
 
 		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 	}

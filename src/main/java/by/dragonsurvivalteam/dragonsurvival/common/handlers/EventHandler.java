@@ -365,12 +365,29 @@ public class EventHandler{
 	@SubscribeEvent
 	public static void onJump(LivingJumpEvent jumpEvent){
 		final LivingEntity living = jumpEvent.getEntity();
+
+
+		if(living.getEffect(DragonEffects.TRAPPED) != null){
+			Vec3 deltaMovement = living.getDeltaMovement();
+			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
+			living.setJumping(false);
+			jumpEvent.setCanceled(true);
+			return;
+		}
+
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
+				Double jumpBonus = 0.0;
+				if (dragonStateHandler.getBody() != null) {
+					jumpBonus = dragonStateHandler.getBody().getJumpBonus();
+					if (ServerConfig.allowLargeScaling) {
+						jumpBonus += ServerConfig.largeJumpHeightScalar * (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+					}
+				}
 				switch(dragonStateHandler.getLevel()){
-					case NEWBORN -> living.push(0, ServerConfig.newbornJump, 0); //1+ block
-					case YOUNG -> living.push(0, ServerConfig.youngJump, 0); //1.5+ block
-					case ADULT -> living.push(0, ServerConfig.adultJump, 0); //2+ blocks
+					case NEWBORN -> living.push(0, ServerConfig.newbornJump + jumpBonus, 0); //1+ block
+					case YOUNG -> living.push(0, ServerConfig.youngJump + jumpBonus, 0); //1.5+ block
+					case ADULT -> living.push(0, ServerConfig.adultJump + jumpBonus, 0); //2+ blocks
 				}
 				if(living instanceof ServerPlayer){
 					if(living.getServer().isSingleplayer()){

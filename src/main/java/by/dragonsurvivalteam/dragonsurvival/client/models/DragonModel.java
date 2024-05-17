@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -34,8 +35,105 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	private final ConcurrentHashMap<String, ResourceLocation> cache = new ConcurrentHashMap<>();
 
 	@Override
-	public void applyMolangQueries(final DragonEntity dragon, double currentTick) {
-		super.applyMolangQueries(dragon, currentTick);
+	public ResourceLocation getTextureResource(final DragonEntity dragon) {
+		if (dragon.playerId != null || dragon.getPlayer() != null) {
+			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
+			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
+
+			if (handler.getSkinData().recompileSkin) {
+				DragonEditorHandler.generateSkinTextures(dragon);
+			}
+
+			if (handler.getSkinData().blankSkin) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
+			}
+
+			if (ageGroup.defaultSkin) {
+				if (currentTexture != null) {
+					return currentTexture;
+				}
+
+				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+			}
+
+			if (handler.getSkinData().isCompiled && currentTexture == null) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+			}
+		}
+
+		if (currentTexture == null && dragon.getPlayer() instanceof FakeClientPlayer) {
+			LocalPlayer localPlayer = Minecraft.getInstance().player;
+
+			if (localPlayer != null) { // TODO :: Check if skin is compiled?
+				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonUtils.getHandler(dragon.getPlayer()).getLevel().name);
+			}
+		}
+
+		return currentTexture == null ? defaultTexture : currentTexture;
+	}
+
+	public void setCurrentTexture(final ResourceLocation currentTexture) {
+		this.currentTexture = currentTexture;
+	}
+
+	@Override
+	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
+		if (dragon.playerId != null || dragon.getPlayer() != null) {
+			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
+			AbstractDragonBody body = handler.getBody();
+			if (body != null) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
+			}
+		}
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
+	}
+
+	/**TODO Body Types Update
+	Required:
+	 - tips for body types like for magic abilities
+
+	 Extras:
+     - customization.json - Ability to disallow some details in the editor for some Body Types (for example, wing details are not required for wingless).
+	 - emotes.json - Ability to disallow some emotions for certain Body Types.
+	 - Change rider sit position height for each Body Types (or bind the rider more dynamically with code and complex rendering).
+	 - Change the height of the Breath Source for each Body Types (or make this dependent on the BreathSource position on the model)
+	 - Lower the breathing/eyes height for the northern type
+	*/
+
+	/**
+	 * Copied code from Geckolib pre version 3.0.47 which broke dragon rendering
+	 * @link <a href="https://github.com/bernie-g/geckolib/blob/4e864bd2d4a0a8dceea01f600b7031cb2fba3a3b/Forge/src/main/java/software/bernie/geckolib3/model/AnimatedGeoModel.java#L51">Github link</a>
+	 */
+	@Override
+	public void setCustomAnimations(DragonEntity dragon, int uniqueID, final AnimationEvent customPredicate) {
+		AnimationData manager = dragon.getFactory().getOrCreateAnimationData(uniqueID);
+
+		if (manager.startTick == -1) {
+			manager.startTick = dragon.tickCount + Minecraft.getInstance().getFrameTime();
+		}
+
+		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
+			manager.tick = getCurrentTick() - manager.startTick;
+			double gameTick = manager.tick;
+			double deltaTicks = gameTick - lastGameTickTime;
+			seekTime += deltaTicks;
+			dragon.seekTime = seekTime; // Needed for dynamic speed adjustments to work correctly
+			lastGameTickTime = gameTick;
+		}
+
+		AnimationEvent<DragonEntity> predicate = Objects.requireNonNullElseGet(customPredicate, () -> new AnimationEvent<>(dragon, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList()));
+		predicate.animationTick = seekTime;
+
+		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
+
+		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
+			getAnimationProcessor().tickAnimation(dragon, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
+		}
+	}
+
+	@Override
+	public void setMolangQueries(final IAnimatable animatable, double currentTick) {
+		super.setMolangQueries(animatable, currentTick);
 
 		// In case the Integer (id of the player) is null
 		if (dragon.playerId == null || dragon.getPlayer() == null) {
