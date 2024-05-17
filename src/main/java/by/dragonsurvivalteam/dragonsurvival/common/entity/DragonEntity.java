@@ -282,8 +282,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 					RenderingUtils.addAnimation(builder, "fly_dive_alt", EDefaultLoopTypes.LOOP, 4, animationController);
 				}else if(deltaMovement.y < -0.25){
 					RenderingUtils.addAnimation(builder, "fly_dive", EDefaultLoopTypes.LOOP, 4, animationController);
-				}else if(deltaMovement.y > 0.25){
-					animationSpeed = 2;
+				}else if(deltaMovement.y > 0.5){
+					animationSpeed = 1.5;
 					RenderingUtils.addAnimation(builder, "fly", EDefaultLoopTypes.LOOP, 2, animationController);
 				}else{
 					RenderingUtils.addAnimation(builder, "fly_soaring", EDefaultLoopTypes.LOOP, 4, animationController);
