@@ -109,7 +109,6 @@
   "ds.invalid_grow_item": "§6你需要使用§r%1$s來助你生長",
   "ds.gui.tab_button.0": "物品欄",
   "ds.gui.tab_button.1": "技能欄",
-  "ds.gui.tab_button.2": "背景故事在短時間內還不能閱讀",
   "ds.gui.tab_button.3": "自定義皮膚",
   "ds.gui.tab_button.4": "設置",
   "ds.gui.settings.client": "■客戶端設置■",
@@ -385,7 +384,6 @@
   "ds.gui.claws.rendering": "切換爪與牙等級的顯示與否。",
   "ds.gui.growth_stage": "■§6階段§r§7：{0}",
   "ds.gui.growth_age": "■§6年齡§r§7：{0}",
-  "ds.gui.growth_help": "\n■龍會隨著時間的流逝而生長。當龍變老時，生長速度會慢下來。你可以使用下方這些物品來加速你的生長：§r\n§6■{0}\n\n§7■星骨會逆轉龍的生長過程，而星心則會阻斷龍的自然生長。這兩種物品都是通過將正確的物品扔進獵食之星來製作的。",
   "ds.growth.now_growing": "自然生長§2已開始§r",
   "ds.growth.no_growth": "自然生長§c已阻斷§r"
 }
