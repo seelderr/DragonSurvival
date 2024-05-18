@@ -19,7 +19,10 @@ import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -259,12 +262,12 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		return (int) Math.max(Math.min(100, size * 0.6), 12);
 	}
 
-	public static class BreathDamage extends EntityDamageSource {
+	/*public static class BreathDamage extends DamageSource {
 		public BreathDamage(@NotNull final Entity entity) {
-			super("player", entity);
+			super(DSDamageTypes.entityDamageSource(entity.level(), DSDamageTypes.DRAGON_BREATH, entity), entity);
 			setMagic();
 		}
-	}
+	}*/
 
 	public static int calculateCurrentBreathRange(double size) {
 		float sizeFactor = Math.min((float) size / DragonLevel.ADULT.size, 1.0f);

@@ -16,6 +16,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
 
 public class BolasEntityRenderer extends EntityRenderer<Bolas>{
 
@@ -28,17 +29,17 @@ public class BolasEntityRenderer extends EntityRenderer<Bolas>{
 	}
 
 	@Override
-	public void render(Bolas p_225623_1_, float p_225623_2_, float p_225623_3_, PoseStack stack, MultiBufferSource p_225623_5_, int p_225623_6_){
-		if(p_225623_1_.tickCount >= 2 || !(entityRenderDispatcher.camera.getEntity().distanceToSqr(p_225623_1_) < 12.25D)){
+	public void render(final Bolas bolas, float p_225623_2_, float p_225623_3_, @NotNull PoseStack stack, @NotNull MultiBufferSource bufferSource, int p_225623_6_){
+		if(bolas.tickCount >= 2 || !(entityRenderDispatcher.camera.getEntity().distanceToSqr(bolas) < 12.25D)){
 			stack.pushPose();
 			stack.scale(1.2F, 1.2F, 1.2F);
 			stack.mulPose(entityRenderDispatcher.cameraOrientation());
-			stack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
-			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.huntingNet), TransformType.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, p_225623_5_, 0);
+			stack.mulPose(Axis.YP.rotationDegrees(180.0F));
+			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.huntingNet), ItemDisplayContext.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, bufferSource, bolas.level(), 0);
 			stack.popPose();
 		}
 
-		super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
+		super.render(bolas, p_225623_2_, p_225623_3_, stack, bufferSource, p_225623_6_);
 	}
 
 	@Override

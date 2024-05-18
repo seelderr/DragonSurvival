@@ -75,14 +75,13 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (handler.getBody() != null)
 			hasWings = hasWings || !handler.getBody().canHideWings();
 
-		IBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
-		IBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
-		IBone smallLeftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingLeft");
-		IBone smallRightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
+		CoreGeoBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
+		CoreGeoBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
+		CoreGeoBone smallLeftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingLeft");
+		CoreGeoBone smallRightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
 
-		if (wingLeft != null) {
-			wingLeft.setHidden(!hasWings);
-		}
+		if (leftWing != null)
+			leftWing.setHidden(!hasWings);
 
 		if(rightWing != null)
 			rightWing.setHidden(!hasWings);

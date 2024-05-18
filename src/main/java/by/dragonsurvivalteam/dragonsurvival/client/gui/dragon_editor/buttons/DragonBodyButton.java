@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
@@ -29,7 +30,7 @@ public class DragonBodyButton extends Button {
 				dragonEditorScreen.dragonBody = dragonBody;
 				dragonEditorScreen.update();
 			}
-		});
+		}, DEFAULT_NARRATION);
 		texture_location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeName().toLowerCase() + ".png");
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.dragonBody = dragonBody;
@@ -42,20 +43,20 @@ public class DragonBodyButton extends Button {
 		dragonEditorScreen.update();
 	}
 
-	@Override
-	public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+	/*@Override
+	public void renderToolTip(GuiGraphics p_230443_1_, int p_230443_2_, int p_230443_3_){
 		TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.body_types." + dragonBody.getBodyName().toLowerCase() + ".tooltip"), p_230443_2_, p_230443_3_);
 		//TODO Add the same tooltip as for magic skills (similar to achievements) instead of the current one. Basic description on the main section, additional characteristics are revealed on ctrl (like Claws skill or any active skills). The main body type is centered. Changes in the positive side of other types should be highlighted in green color, and in the negative red. The localization is already in the file.
-	}
+	}*/
 
 	@Override
-	public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		active = visible = dragonEditorScreen.showUi;
-		super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
+		super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 
 	@Override
-	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+	public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 		RenderSystem.setShaderTexture(0, texture_location);
 		RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
 
@@ -67,7 +68,7 @@ public class DragonBodyButton extends Button {
 		} else if (this.isHoveredOrFocused()) {
 			i = 1;
 		}
-		this.blit(pPoseStack, this.x, this.y, pos * this.width, i * this.height, this.width, this.height);
+		guiGraphics.blit(this.texture_location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height, 256, 256);
 		//RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 	}
 }

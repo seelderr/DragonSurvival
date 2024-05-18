@@ -270,7 +270,7 @@ public class ClientEvents{
 		if(BOLAS == null){
 			BOLAS = new ItemStack(DSItems.huntingNet);
 		}
-		Minecraft.getInstance().getItemRenderer().renderStatic(BOLAS, ItemDisplayContext.NONE, light, overlayCoords, matrixStack, buffers, level, 0);
+		Minecraft.getInstance().getItemRenderer().renderStatic(BOLAS, ItemDisplayContext.NONE, light, overlayCoords, matrixStack, buffers, Minecraft.getInstance().level, 0);
 		matrixStack.popPose();
 	}
 

@@ -281,21 +281,21 @@ public class ClientDragonRender{
 				EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
 				dragonModel.setCurrentTexture(texture);
 
-				if(player.isCrouching() && handler.isWingsSpread() && !player.isOnGround()){
-					matrixStack.translate(0, -0.15, 0);
+				if(player.isCrouching() && handler.isWingsSpread() && !player.onGround()){
+					poseStack.translate(0, -0.15, 0);
 				}else if(player.isCrouching()){
 					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
-						matrixStack.translate(0, 0.045, 0);
+						poseStack.translate(0, 0.045, 0);
 					}
 					else {
-						matrixStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+						poseStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
 					}
-				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.isOnGround() && !player.isInWater() && !player.isInLava()){
+				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()){
 					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
-						matrixStack.translate(0, -0.55, 0);
+						poseStack.translate(0, -0.55, 0);
 					}
 					else {
-						matrixStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+						poseStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
 					}
 				}
 				if(!player.isInvisible()){
@@ -314,7 +314,7 @@ public class ClientDragonRender{
 								dummyDragon.prevXRot = 0;
 							}
 
-							matrixStack.mulPose(Vector3f.XN.rotationDegrees(dummyDragon.prevXRot));
+							poseStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
 							
 							Vec3 vector3d1 = new Vec3(0, 0, 0);
 							Vec3 vector3d = new Vec3(0, 0, 0);
@@ -346,7 +346,7 @@ public class ClientDragonRender{
 							handler.getMovementData().prevXRot = dummyDragon.prevXRot;
 							handler.getMovementData().prevZRot = rot;
 
-							matrixStack.mulPose(Vector3f.ZP.rotation(dummyDragon.prevZRot));
+							poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
 						}
 					}
 					if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight) {
@@ -397,7 +397,7 @@ public class ClientDragonRender{
 						if(handler != null && handler.isDragon()) {
 							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
 						}
-						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, matrixStack, bolasScale);
+						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, poseStack, bolasScale);
 					}
 				}
 			} catch (Throwable throwable) {

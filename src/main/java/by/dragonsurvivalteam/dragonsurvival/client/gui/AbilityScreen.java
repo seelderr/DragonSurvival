@@ -15,12 +15,16 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
+import org.jline.reader.Widget;
+
+import com.mojang.blaze3d.systems.RenderSystem;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -112,9 +116,9 @@ public class AbilityScreen extends Screen{
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-		for(Widget btn : renderables){
-			if(btn instanceof AbstractWidget && ((AbstractWidget)btn).isHoveredOrFocused()){
-				((AbstractWidget)btn).renderToolTip(stack, mouseX, mouseY);
+		for(Renderable btn : renderables){
+			if(btn instanceof AbstractWidget b && b.isHoveredOrFocused()){
+				//b.renderToolTip(mouseX, mouseY);
 			}
 		}
 
@@ -122,7 +126,7 @@ public class AbilityScreen extends Screen{
 			if(s instanceof AbilityButton btn){
 				if(btn.skillType == 0 && btn.dragging && btn.ability != null){
 					RenderSystem.setShaderTexture(0, btn.ability.getIcon());
-					blit(stack, mouseX, mouseY, 0, 0, 32, 32, 32, 32);
+					guiGraphics.blit(btn.ability.getIcon(), mouseX, mouseY, 0, 0, 32, 32, 32, 32);
 				}
 			}
 		});

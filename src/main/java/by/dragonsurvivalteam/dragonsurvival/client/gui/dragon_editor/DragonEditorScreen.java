@@ -531,7 +531,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
 			@Override
-			public void renderToolTip(PoseStack p_230443_1_, int p_230443_2_, int p_230443_3_){
+			public void renderToolTip(GuiGraphics p_230443_1_, int p_230443_2_, int p_230443_3_){
 				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.wings.tooltip"), p_230443_2_, p_230443_3_);
 			}
 		});

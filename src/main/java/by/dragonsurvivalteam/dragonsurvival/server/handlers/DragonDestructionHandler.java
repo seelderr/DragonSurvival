@@ -4,13 +4,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 import net.minecraft.world.level.block.Block;
@@ -49,32 +49,32 @@ public class DragonDestructionHandler {
         int i1 = Mth.ceil(boundingBox.maxY);
         int j1 = Mth.ceil(boundingBox.maxZ);
 
-        RandomSource random = new XoroshiroRandomSource(event.player.level.getGameTime());
+        RandomSource random = new XoroshiroRandomSource(event.player.level().getGameTime());
 
         for (int k1 = i; k1 <= l; ++k1) {
             for (int l1 = j; l1 <= i1; ++l1) {
                 for (int i2 = k; i2 <= j1; ++i2) {
                     BlockPos blockpos = new BlockPos(k1, l1, i2);
-                    BlockState blockstate = event.player.level.getBlockState(blockpos);
+                    BlockState blockstate = event.player.level().getBlockState(blockpos);
                     if (!blockstate.isAir()) {
                         if(ServerConfig.useBlacklistForDestructibleBlocks) {
                             if(!DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock())) {
                                 if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
-                                    event.player.level.destroyBlock(blockpos, false);
+                                    event.player.level().destroyBlock(blockpos, false);
                                 }
                                 else {
-                                    event.player.level.removeBlock(blockpos, false);
+                                    event.player.level().removeBlock(blockpos, false);
                                 }
                             }
                         }
                         else {
-                            // #TODO: Make the MINEABLE_WITH_AXE, FLOWERS and REPLACEABLE_PLANTS tag configurable in data
-                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock()) || blockstate.is(BlockTags.REPLACEABLE_PLANTS) || blockstate.is(BlockTags.MINEABLE_WITH_AXE) || blockstate.is(BlockTags.FLOWERS)) {
+                            // #TODO: Make the MINEABLE_WITH_AXE, FLOWERS and REPLACEABLE tag configurable in data
+                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock()) || blockstate.is(BlockTags.REPLACEABLE) || blockstate.is(BlockTags.MINEABLE_WITH_AXE) || blockstate.is(BlockTags.FLOWERS)) {
                                 if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
-                                    event.player.level.destroyBlock(blockpos, false);
+                                    event.player.level().destroyBlock(blockpos, false);
                                 }
                                 else {
-                                    event.player.level.removeBlock(blockpos, false);
+                                    event.player.level().removeBlock(blockpos, false);
                                 }
                             }
                         }
@@ -100,13 +100,13 @@ public class DragonDestructionHandler {
         // Get only the bounding box of the player's feet (estimate by using only the bottom 1/3 of the bounding box)
         AABB feetBoundingBox = new AABB(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY - (boundingBox.maxY - boundingBox.minY) / 3.0, boundingBox.maxZ);
 
-        for(var entity : player.level.getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, player, feetBoundingBox)){
+        for(var entity : player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, player, feetBoundingBox)){
             // If the entity being crushed is too big, don't damage it.
             if(entity.getBoundingBox().getSize() > boundingBox.getSize() / 2.0f) {
                 continue;
             }
 
-            entity.hurt(DamageSources.CRUSHED, (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
+            entity.hurt(entity.damageSources().cramming(), (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
             crushTickCounter = ServerConfig.crushingTickDelay;
         }
     }

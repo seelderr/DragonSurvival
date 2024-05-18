@@ -107,7 +107,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	}
 
     public void performBolasThrow(LivingEntity target){
-            Bolas bolas = new Bolas(this, level);
+            Bolas bolas = new Bolas(this, level());
 			Vec3 targetPos = target.position();
 			if(target instanceof Player player)
 			{
@@ -133,7 +133,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 			// TODO: Maybe add an inaccuracy config option? Or calculate it based off of difficulty level in some way like for skeletons?
             bolas.shoot(shootDirection.x, shootDirection.y, shootDirection.z, 1.6F, 0.98f);
             playSound(SoundEvents.WITCH_THROW, 1.0F, 0.4F);
-            level.addFreshEntity(bolas);
+            level().addFreshEntity(bolas);
 	}
 
 	@Override

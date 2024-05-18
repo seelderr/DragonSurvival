@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLigh
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
@@ -59,15 +60,15 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){
 		// This damage source is used since it is specifically not fire damage, so that cave dragons don't ignore the ball lightning damage
-		return DamageSources.dragonBallLightning(pFireball, pIndirectEntity);
+		return DSDamageTypes.damageSource(pFireball.level(), DSDamageTypes.DRAGON_BALL_LIGHTNING);
 	}
 
 	@Override
 	protected void onHit(HitResult hitResult){
-		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
+		if(this.level().isClientSide() || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
 			if (!(getOwner() instanceof Player) && !isLingering)
 			{
-				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+				level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 			}
 
 			isLingering = true;
@@ -82,7 +83,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	public void tick() {
 		super.tick();
-		if (level.getGameTime() % 5 == 0) // Once per 5 ticks (0.25 seconds)
+		if (level().getGameTime() % 5 == 0) // Once per 5 ticks (0.25 seconds)
 			attackMobs();
 		if(isLingering) {
 			lingerTicks--;
@@ -104,12 +105,12 @@ public class BallLightningEntity extends DragonBallEntity{
             source = DamageSource.LIGHTNING_BOLT;
         }
 
-        List<Entity> entities = level.getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+        List<Entity> entities = level().getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e instanceof BallLightningEntity);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 
 		for(Entity ent : entities){
-			if(!level.isClientSide){
+			if(!level().isClientSide()){
 				TargetingFunctions.attackTargets(owner, ent1 -> ent1.hurt(source, BallLightningAbility.getDamage(getSkillLevel())), ent);
 
 				if(ent instanceof LivingEntity livingEntity){
@@ -135,7 +136,7 @@ public class BallLightningEntity extends DragonBallEntity{
 				for (int i = 0; i < steps; i++) {
 					// the current entity coordinate + ((the distance between it and the target) * (the fraction of the total))
 					Vec3 step = ent.position().add(distV.scale(stepSize * i));
-					level.addParticle(new LargeLightningParticleData(16F, false), step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
+					level().addParticle(new LargeLightningParticleData(16F, false), step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
 				}
 			}
 		}

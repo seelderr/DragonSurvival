@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
+import by.dragonsurvivalteam.dragonsurvival.client.render.util.CustomTickAnimationController;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
@@ -21,6 +22,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity.AnimationStatus;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,7 +30,9 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationController.State;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
@@ -203,7 +207,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			neckLocked = emote.locksHead;
 			tailLocked = emote.locksTail;
 
-			animationEvent.getController().animationSpeed = emote.speed;
+			dragonAnimationController.speed = emote.speed;
 
 			if (emote.animation != null && !emote.animation.isEmpty()) {
 				if (!emote.loops) {
@@ -224,7 +228,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private PlayState predicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
 
-		AnimationController<DragonEntity> controller = state.getController();
+		AnimationController<DragonEntity> animationController = state.getController();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		double animationSpeed = 1;
@@ -250,18 +254,21 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		Vec3 motion = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 		boolean isMovingHorizontal = Math.sqrt(Math.pow(motion.x, 2) + Math.pow(motion.z, 2)) > 0.005;
 
-		if(playerStateHandler.getMagicData().onMagicSource){
+		if(handler.getMagicData().onMagicSource){
 			neckLocked = false;
 			tailLocked = false;
-			builder.addAnimation("sit_on_magic_source", EDefaultLoopTypes.LOOP);
-		}else if(player.isSleeping() || playerStateHandler.treasureResting){
+			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT_ON_MAGIC_SOURCE));
+			//builder.addAnimation("sit_on_magic_source", Animation.LoopType.LOOP);
+		}else if(player.isSleeping() || handler.treasureResting){
 			neckLocked = false;
 			tailLocked = false;
-			builder.addAnimation("sleep", EDefaultLoopTypes.LOOP);
+			return state.setAndContinue(AnimationUtils.createAnimation(builder, SLEEP));
+			//builder.addAnimation("sleep", Animation.LoopType.LOOP);
 		}else if(player.isPassenger()){
 			neckLocked = false;
 			tailLocked = false;
-			builder.addAnimation("sit", EDefaultLoopTypes.LOOP);
+			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT));
+			//builder.addAnimation("sit", Animation.LoopType.LOOP);
 		}else if(player.getAbilities().flying || ServerFlightHandler.isFlying(player)){
 			if(ServerFlightHandler.isGliding(player)){
 				neckLocked = false;
@@ -270,26 +277,33 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 					neckLocked = false;
 					tailLocked = false;
 					animationSpeed = 2;
-					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
+					RenderingUtils.addAnimation(builder, "fly_spin", Animation.LoopType.LOOP, 2, animationController);
 				}else if(deltaMovement.y < -1){
-					RenderingUtils.addAnimation(builder, "fly_dive_alt", EDefaultLoopTypes.LOOP, 4, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_DIVE_ALT));
+					RenderingUtils.addAnimation(builder, "fly_dive_alt", Animation.LoopType.LOOP, 4, animationController);
 				}else if(deltaMovement.y < -0.25){
-					RenderingUtils.addAnimation(builder, "fly_dive", EDefaultLoopTypes.LOOP, 4, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_DIVE));
+					RenderingUtils.addAnimation(builder, "fly_dive", Animation.LoopType.LOOP, 4, animationController);
 				}else if(deltaMovement.y > 0.5){
 					animationSpeed = 1.5;
-					RenderingUtils.addAnimation(builder, "fly", EDefaultLoopTypes.LOOP, 2, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY));
+					RenderingUtils.addAnimation(builder, "fly", Animation.LoopType.LOOP, 2, animationController);
 				}else{
-					RenderingUtils.addAnimation(builder, "fly_soaring", EDefaultLoopTypes.LOOP, 4, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SOARING));
+					RenderingUtils.addAnimation(builder, "fly_soaring", Animation.LoopType.LOOP, 4, animationController);
 				}
 			}else{
 				if(player.isCrouching() && deltaMovement.y < 0 && ServerFlightHandler.distanceFromGround(player) < 10 && deltaMovement.length() < 4){
 					neckLocked = false;
 					tailLocked = false;
-					RenderingUtils.addAnimation(builder, "fly_land", EDefaultLoopTypes.LOOP, 2, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_LAND));
+					RenderingUtils.addAnimation(builder, "fly_land", Animation.LoopType.LOOP, 2, animationController);
 				} else if(ServerFlightHandler.isSpin(player)){
 					neckLocked = false;
 					tailLocked = false;
-					RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
+					RenderingUtils.addAnimation(builder, "fly_spin", Animation.LoopType.LOOP, 2, animationController);
 				}else{
 					neckLocked = false;
 					tailLocked = false;
@@ -298,7 +312,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 					} else {
 						animationSpeed = 1;
 					}
-					RenderingUtils.addAnimation(builder, "fly", EDefaultLoopTypes.LOOP, 2, animationController);
+					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY));
+					RenderingUtils.addAnimation(builder, "fly", Animation.LoopType.LOOP, 2, animationController);
 				}
 			}
 		}else if(player.getPose() == Pose.SWIMMING){
@@ -306,57 +321,64 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				neckLocked = false;
 				tailLocked = false;
 				animationSpeed = 1;
-				RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
+				//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
+				RenderingUtils.addAnimation(builder, "fly_spin", Animation.LoopType.LOOP, 2, animationController);
 			}else{
 				animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
-				RenderingUtils.addAnimation(builder, "swim_fast", EDefaultLoopTypes.LOOP, 2, animationController);
+				//return state.setAndContinue(AnimationUtils.createAnimation(builder, SWIM_FAST));
+				RenderingUtils.addAnimation(builder, "swim_fast", Animation.LoopType.LOOP, 2, animationController);
 			}
-		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.isOnGround()){
+		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.onGround()){
 			if(ServerFlightHandler.isSpin(player)){
 				neckLocked = false;
 				tailLocked = false;
 				animationSpeed = 2;
-				RenderingUtils.addAnimation(builder, "fly_spin", EDefaultLoopTypes.LOOP, 2, animationController);
+				//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
+				RenderingUtils.addAnimation(builder, "fly_spin", Animation.LoopType.LOOP, 2, animationController);
 			}else{
 				animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
-				RenderingUtils.addAnimation(builder, "swim", EDefaultLoopTypes.LOOP, 2, animationController);
+				//return state.setAndContinue(AnimationUtils.createAnimation(builder, SWIM));
+				RenderingUtils.addAnimation(builder, "swim", Animation.LoopType.LOOP, 2, animationController);
 			}
-		}else if(animationController.getCurrentAnimation() != null && (Objects.equals(animationController.getCurrentAnimation().animationName, "fly_land"))) {
-			RenderingUtils.addAnimation(builder, "fly_land_end", EDefaultLoopTypes.PLAY_ONCE, 2, animationController);
-		} else if(animationController.getCurrentAnimation() != null && Objects.equals(animationController.getCurrentAnimation().animationName, "fly_land_end")) {
+		}else if(animationController.getCurrentAnimation() != null && (Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land"))) {
+			RenderingUtils.addAnimation(builder, "fly_land_end", Animation.LoopType.PLAY_ONCE, 2, animationController);
+		} else if(animationController.getCurrentAnimation() != null && Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land_end")) {
 			// Don't add any animation
 		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
-			RenderingUtils.addAnimation(builder, "jump", EDefaultLoopTypes.PLAY_ONCE, 2, animationController);
-		}else if(!player.isOnGround() ) {
-			RenderingUtils.addAnimation(builder, "fall_loop", EDefaultLoopTypes.LOOP, 2, animationController);
+			RenderingUtils.addAnimation(builder, "jump", Animation.LoopType.PLAY_ONCE, 2, animationController);
+		}else if(!player.onGround() ) {
+			RenderingUtils.addAnimation(builder, "fall_loop", Animation.LoopType.LOOP, 2, animationController);
 		} else if(player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)){
 			// Player is Sneaking
-			if(isMovingHorizontal && player.animationSpeed != 0f){
-				RenderingUtils.addAnimation(builder, "sneak_walk", EDefaultLoopTypes.LOOP, 5, animationController);
-			}else if(playerStateHandler.getMovementData().dig){
-				RenderingUtils.addAnimation(builder, "dig_sneak", EDefaultLoopTypes.LOOP, 5, animationController);
+			if(isMovingHorizontal && player.walkAnimation.speed() != 0f){
+				RenderingUtils.addAnimation(builder, "sneak_walk", Animation.LoopType.LOOP, 5, animationController);
+			}else if(handler.getMovementData().dig){
+				RenderingUtils.addAnimation(builder, "dig_sneak", Animation.LoopType.LOOP, 5, animationController);
 			}else{
-				RenderingUtils.addAnimation(builder, "sneak", EDefaultLoopTypes.LOOP, 5, animationController);
+				RenderingUtils.addAnimation(builder, "sneak", Animation.LoopType.LOOP, 5, animationController);
 			}
 		}else if(player.isSprinting()){
-			RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
-			RenderingUtils.addAnimation(builder, "run", EDefaultLoopTypes.LOOP, 2, animationController);
-		}else if(isMovingHorizontal && player.animationSpeed != 0f){
-			RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
-			RenderingUtils.addAnimation(builder, "walk", EDefaultLoopTypes.LOOP, 2, animationController);
-		}else if(playerStateHandler.getMovementData().dig){
-			RenderingUtils.addAnimation(builder, "dig", EDefaultLoopTypes.LOOP, 2, animationController);
+			//RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
+			animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
+			RenderingUtils.addAnimation(builder, "run", Animation.LoopType.LOOP, 2, animationController);
+		}else if(isMovingHorizontal && player.walkAnimation.speed() != 0f){
+			//RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
+			animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
+			RenderingUtils.addAnimation(builder, "walk", Animation.LoopType.LOOP, 2, animationController);
+		}else if(handler.getMovementData().dig){
+			RenderingUtils.addAnimation(builder, "dig", Animation.LoopType.LOOP, 2, animationController);
 		} else {
-			RenderingUtils.addAnimation(builder, "idle", EDefaultLoopTypes.LOOP, 2, animationController);
+			RenderingUtils.addAnimation(builder, "idle", Animation.LoopType.LOOP, 2, animationController);
 		}
 
-		if(animationController.getAnimationState() == AnimationState.Stopped) {
-			RenderingUtils.addAnimation(builder, "idle", EDefaultLoopTypes.LOOP, 2, animationController);
+		if(animationController.getAnimationState() == State.STOPPED) {
+			RenderingUtils.addAnimation(builder, "idle", Animation.LoopType.LOOP, 2, animationController);
 		}
 
 		animationController.setAnimation(builder);
-		if(animationController.getAnimationState() != AnimationState.Transitioning) {
-			RenderingUtils.setAnimationSpeed(animationSpeed, animationEvent.getAnimationTick(), animationController);
+		if(animationController.getAnimationState() != State.TRANSITIONING) {
+			animationController.setAnimationSpeed(animationSpeed);
+			//RenderingUtils.setAnimationSpeed(animationSpeed, animationEvent.getAnimationTick(), animationController);
 		}
 
 		return PlayState.CONTINUE;

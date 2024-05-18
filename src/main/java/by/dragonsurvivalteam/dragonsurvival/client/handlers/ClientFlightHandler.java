@@ -555,7 +555,7 @@ public class ClientFlightHandler {
 			if(minecraft.options.keyJump.isDown()){
 				if(keyInputEvent.getAction() == GLFW.GLFW_PRESS){
 					if(handler.hasFlight() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
-						if(!player.isOnGround() && !player.isInLava() && !player.isInWater()){
+						if(!player.onGround() && !player.isInLava() && !player.isInWater()){
 							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger){
 								NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
 							}else{

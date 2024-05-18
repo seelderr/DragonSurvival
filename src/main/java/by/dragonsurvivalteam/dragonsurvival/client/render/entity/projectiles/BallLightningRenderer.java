@@ -16,6 +16,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Vector3f;
+
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -39,12 +41,12 @@ public class BallLightningRenderer extends GeoEntityRenderer<BallLightningEntity
 			stack.translate(0F, -0.2F, 0F);
 			stack.scale(2.0F, 2.0F, 2.0F);
 			stack.mulPose(entityRenderDispatcher.cameraOrientation());
-			stack.mulPose(Vector3f.YP.rotationDegrees(180.0F));
+			stack.mulPose(Axis.YP.rotationDegrees(180.0F));
 			stack.popPose();
 			super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
 		}
 
-		super.render(entity, p_225623_2_, p_225623_3_, poseStack, buffer, p_225623_6_);
+		super.render(p_225623_1_, p_225623_2_, p_225623_3_, stack, p_225623_5_, p_225623_6_);
 	}
 
 	@Override

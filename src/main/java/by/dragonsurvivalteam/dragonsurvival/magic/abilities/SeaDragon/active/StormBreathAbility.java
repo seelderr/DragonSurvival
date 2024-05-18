@@ -461,7 +461,7 @@ public class StormBreathAbility extends BreathAbility{
 			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
 		}
 
-		if(player.level.isClientSide){
+		if(player.level().isClientSide()){
 			for(int i = 0; i < calculateNumberOfParticles(DragonUtils.getHandler(player).getSize()) / 6; i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;

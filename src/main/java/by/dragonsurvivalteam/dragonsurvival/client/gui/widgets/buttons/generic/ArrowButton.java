@@ -7,6 +7,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 public class ArrowButton extends Button {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_gui.png");
 	public boolean next;
@@ -17,11 +19,11 @@ public class ArrowButton extends Button {
 	}
 
 	@Override
-	public void renderButton(PoseStack stack, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+	public void renderWidget(GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 		RenderSystem.setShaderTexture(0, texture);
 
-		stack.pushPose();
-		stack.translate(0, 0, 0);
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 0);
 		float xSize = (float)width / 34F;
 		float ySize = (float)height / 34F;
 

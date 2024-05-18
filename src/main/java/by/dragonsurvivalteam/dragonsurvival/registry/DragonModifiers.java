@@ -16,7 +16,6 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeMod;
-import org.jetbrains.annotations.NotNull;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingTickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
@@ -24,7 +23,6 @@ import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.function.Function;
 
 @EventBusSubscriber
 public class DragonModifiers{
@@ -89,12 +87,9 @@ public class DragonModifiers{
 		return new AttributeModifier(DAMAGE_MODIFIER_UUID, "Dragon Damage Adjustment", ageBonus, Operation.ADDITION);
 	}
 
-        updateHealthModifier(newPlayer, getHealthModifier(oldPlayer));
-        updateDamageModifier(newPlayer, getDamageModifier(oldPlayer));
-        updateSwimSpeedModifier(newPlayer, getSwimSpeedModifier(oldPlayer));
-        updateBlockReachModifier(newPlayer, getBlockReachModifier(oldPlayer));
-        updateEntityReachModifier(newPlayer, getEntityReachModifier(oldPlayer));
-    }
+	public static AttributeModifier buildSwimSpeedMod(AbstractDragonType dragonType){
+		return new AttributeModifier(SWIM_SPEED_MODIFIER_UUID, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADDITION);
+	}
 
 	public static AttributeModifier buildStepHeightMod(DragonStateHandler handler, double size) {
 		double stepHeightBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultStepHeight : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngStepHeight : ServerConfig.newbornStepHeight;
@@ -154,13 +149,13 @@ public class DragonModifiers{
 
 				oldMod = getReachModifier(player);
 				if (oldMod != null) {
-					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
 					max.removeModifier(oldMod);
 				}
 
 				oldMod = getAttackRangeModifier(player);
 				if (oldMod != null) {
-					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
 					max.removeModifier(oldMod);
 				}
 
@@ -243,22 +238,30 @@ public class DragonModifiers{
 		}
 	}
 
-    public static @Nullable AttributeModifier getHealthModifier(final Player player) {
-        return Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getModifier(HEALTH_MODIFIER_UUID);
-    }
+	@Nullable
+	public static AttributeModifier getReachModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get())).getModifier(REACH_MODIFIER_UUID);
+	}
 
-    public static @Nullable AttributeModifier getDamageModifier(final Player player) {
-        return Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE)).getModifier(DAMAGE_MODIFIER_UUID);
-    }
+	@Nullable
+	public static AttributeModifier getHealthModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getModifier(HEALTH_MODIFIER_UUID);
+	}
 
-    public static @Nullable AttributeModifier getSwimSpeedModifier(final Player player) {
-        return Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get())).getModifier(SWIM_SPEED_MODIFIER_UUID);
-    }
+	@Nullable
+	public static AttributeModifier getDamageModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE)).getModifier(DAMAGE_MODIFIER_UUID);
+	}
 
-    public static void updateBlockReachModifier(final Player player, @Nullable final AttributeModifier modifier) {
-        if (!ServerConfig.bonuses) {
-            return;
-        }
+	@Nullable
+	public static AttributeModifier getSwimSpeedModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get())).getModifier(SWIM_SPEED_MODIFIER_UUID);
+	}
+	
+	@Nullable
+	public static AttributeModifier getAttackRangeModifier(Player player) {
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get())).getModifier(ATTACK_RANGE_MODIFIER_UUID);
+	}
 
 	@Nullable
 	public static AttributeModifier getStepHeightModifier(Player player) {
@@ -269,7 +272,7 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses){
 			return;
 		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.REACH_DISTANCE.get()));
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}
@@ -278,18 +281,31 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses) {
 			return;
 		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ATTACK_RANGE.get()));
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}
 
-    public static void updateEntityReachModifier(final Player player, @Nullable final AttributeModifier modifier) {
-        if (!ServerConfig.bonuses) {
-            return;
-        }
+	public static void updateHealthModifier(Player player, AttributeModifier mod){
+		if(!ServerConfig.healthAdjustments){
+			return;
+		}
+		float oldMax = player.getMaxHealth();
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH));
+		max.removeModifier(mod);
+		max.addPermanentModifier(mod);
+		float newHealth = player.getHealth() * player.getMaxHealth() / oldMax;
+		player.setHealth(newHealth);
+	}
 
-        swap(player, ForgeMod.ENTITY_REACH.get(), modifier != null ? modifier : REACH_MODIFIER.apply(player));
-    }
+	public static void updateDamageModifier(Player player, AttributeModifier mod){
+		if(!ServerConfig.bonuses || !ServerConfig.attackDamage){
+			return;
+		}
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE));
+		max.removeModifier(mod);
+		max.addPermanentModifier(mod);
+	}
 
 	public static void updateSwimSpeedModifier(Player player, AttributeModifier mod){
 		if(!ServerConfig.bonuses || !ServerConfig.seaSwimmingBonuses){

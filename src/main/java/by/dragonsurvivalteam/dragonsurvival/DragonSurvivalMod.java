@@ -128,10 +128,33 @@ public class DragonSurvivalMod{
 
 	private static void registerBuiltinResourcePack(AddPackFindersEvent event, MutableComponent name, String folder) {
 		LOGGER.info("Registering " + name);
-		event.addRepositorySource((consumer, constructor) -> {
+		/*try(PathPackResources pack = new PathPackResources(path, true, file.findResource("resourcepacks/" + folder));) {
+			
+		} catch (IOException e) {
+			if (!DatagenModLoader.isRunningDataGen())
+				e.printStackTrace();
+			
+			
+		}*/
+		
+		/*event.addRepositorySource((constructor) -> {
 			String path = res(folder).toString();
 			IModFile file = ModList.get().getModFileById(MODID).getFile();
-			try(PathPackResources pack = new PathPackResources(path, file.findResource("resourcepacks/" + folder));) {
+			try(PathPackResources pack = new PathPackResources(path, true, file.findResource("resourcepacks/" + folder));) {
+				constructor.create(
+					res(folder).toString(),
+					name,
+					false,
+					() -> pack,
+					pack.getMetadataSection(PackMetadataSection.TYPE),
+					Pack.Position.TOP,
+					PackSource.BUILT_IN,
+					false);
+			};
+		});*/ // -> {
+			/*String path = res(folder).toString();
+			IModFile file = ModList.get().getModFileById(MODID).getFile();
+			try(PathPackResources pack = new PathPackResources(path, true, file.findResource("resourcepacks/" + folder));) {
 				consumer.accept(constructor.create(
 					res(folder).toString(),
 					name,
@@ -145,7 +168,7 @@ public class DragonSurvivalMod{
 				if (!DatagenModLoader.isRunningDataGen())
 					e.printStackTrace();
 			}
-		});
+		});*/
 	}
 
 	@SubscribeEvent

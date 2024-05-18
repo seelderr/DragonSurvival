@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -20,6 +21,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkin
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -142,8 +145,8 @@ public class SkinsScreen extends Screen{
 			}
 
 			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
-			stack.pushPose();
-			stack.translate(0, 0, 100);
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 100);
 			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
 			guiGraphics.pose().popPose();
 		}
@@ -218,18 +221,19 @@ public class SkinsScreen extends Screen{
 			setTextures();
 		}, Supplier::get) {
 			@Override
-			public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				super.renderButton(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+			public void renderWidget(GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				super.renderWidget(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonUtils.getHandler(player);
-				RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
-				blit(p_230431_1_, x + 3, y + 3, 0, 0, 13, 13, 13, 13);
+				//RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
+				p_230431_1_.blit(!handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
 		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
 			DragonStateHandler handler = DragonUtils.getHandler(player);
+			boolean newValue = !handler.getSkinData().renderNewborn;
 
 			handler.getSkinData().renderYoung = newValue;
 			renderYoung = newValue;

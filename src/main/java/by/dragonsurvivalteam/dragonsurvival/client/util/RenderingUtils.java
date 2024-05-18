@@ -1,17 +1,22 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
+import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
+import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.controller.AnimationController;
+
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animation.Animation.LoopType;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.RawAnimation;
 
 import java.awt.*;
 
@@ -269,21 +274,22 @@ public class RenderingUtils{
 		RenderSystem.disableBlend();
 	}
 
-	public static <E extends IAnimatable> void addAnimation(AnimationBuilder builder, String animationName, ILoopType loopType, float transitionLength, AnimationController<E> controller){
-		builder.addAnimation(animationName, loopType);
-		controller.transitionLengthTicks = transitionLength;
+	public static <E extends GeoAnimatable> void addAnimation(RawAnimation builder, String animationName, LoopType loopType, float transitionLength, AnimationController<E> controller){
+		//builder.addAnimation(animationName, loopType);
+		builder.then(animationName, loopType);
+		controller.transitionLength((int) transitionLength);
+		//controller.transitionLengthTicks = transitionLength;
 	}
 
-	public static <E extends IAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<E> controller) {
-
-		if(speed == controller.animationSpeed) {
+	/*public static <E extends IAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<DragonEntity> animationController) {
+		if(speed == animationController.animationSpeed) {
 			return;
 		}
 
-		if(controller.getCurrentAnimation() != null) {
-			double distance = currentAnimationTick - controller.tickOffset;
-			controller.tickOffset = currentAnimationTick - distance * (controller.animationSpeed / speed);
-			controller.animationSpeed = speed;
+		if(animationController.getCurrentAnimation() != null) {
+			double distance = currentAnimationTick - animationController.tickOffset;
+			animationController.tickOffset = currentAnimationTick - distance * (animationController.animationSpeed / speed);
+			animationController.animationSpeed = speed;
 		}
-	}
+	}*/
 }

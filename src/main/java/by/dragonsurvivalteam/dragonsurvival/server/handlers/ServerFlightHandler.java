@@ -167,7 +167,7 @@ public class ServerFlightHandler{
 
 	public static boolean isFlying(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-		return dragonStateHandler.hasWings() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
+		return dragonStateHandler.hasFlight() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
 	}
 
 	@SubscribeEvent
@@ -274,7 +274,7 @@ public class ServerFlightHandler{
 	public static boolean canSwimSpin(LivingEntity player){
 		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
 		boolean validSwim = (Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) || Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE);
-		return validSwim && dragonStateHandler.hasWings() && !player.onGround();
+		return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
 	}
 
 	@ConfigRange(min = 1, max = 60 * 60 * 20)
@@ -335,7 +335,7 @@ public class ServerFlightHandler{
 	}
 
 	public static double distanceFromGround(Player player){
-		BlockPos blockHeight = player.level.getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
+		BlockPos blockHeight = player.level().getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
 		int height = blockHeight.getY();
 		double aboveGround = Math.max(0, player.position().y - height);
 		return aboveGround;

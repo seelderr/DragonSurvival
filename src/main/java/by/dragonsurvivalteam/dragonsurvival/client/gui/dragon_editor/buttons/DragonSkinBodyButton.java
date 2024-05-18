@@ -6,6 +6,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +20,7 @@ public class DragonSkinBodyButton extends Button {
 	public DragonSkinBodyButton(SkinsScreen screen, int x, int y, int xSize, int ySize, AbstractDragonBody body, int pos) {
 		super(x, y, xSize, ySize, Component.literal(body.toString()), btn -> {
 			screen.dragonBody = body;
-		});
+		}, DEFAULT_NARRATION);
 		texture_location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/body_type_icon_skintab.png");
 		this.screen = screen;
 		this.dragonBody = body;
@@ -27,7 +28,7 @@ public class DragonSkinBodyButton extends Button {
 	}
 
 	@Override
-	public void renderButton(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTick) {
+	public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 		RenderSystem.setShaderTexture(0, texture_location);
 
 		int i = 0;
@@ -41,7 +42,8 @@ public class DragonSkinBodyButton extends Button {
 			//this.alpha = 0.5f;
 		}
 		//RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-		this.blit(pPoseStack, this.x, this.y, pos * this.width, i * this.height, this.width, this.height);
+		guiGraphics.blit(texture_location, getX(), getY(), i * this.height, i * this.width, 256, 256);
+		//this.getX(), this.getY(), pos * this.width, i * this.height, this.width, this.height, texture_location);
 		RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 		//this.alpha = 1.0f;
 	}
