@@ -294,7 +294,6 @@ public class ClientDragonRender{
 								upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
 							} else {
 								upRot = Mth.clamp((float)(player.getVehicle().getDeltaMovement().y * 20), -80, 80);
-								System.out.println(upRot);
 							}
 
      						dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
