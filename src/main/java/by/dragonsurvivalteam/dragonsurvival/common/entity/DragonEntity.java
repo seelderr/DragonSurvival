@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
@@ -72,6 +73,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	Emote lastEmote;
 	CustomTickAnimationController dragonAnimationController;
 	public double seekTime; // Copied from DragonModel.java in order to calculate the correct tickOffset when speed is adjusted for an animation.
+	private final double defaultPlayerWalkSpeed = 0.1;
+	private final double defaultPlayerSneakSpeed = 0.03;
+	private final double defaultPlayerFastSwimSpeed = 0.13;
+	private final double defaultPlayerSwimSpeed = 0.051;
+	private final double defaultPlayerSprintSpeed = 0.165;
 
 	public DragonEntity(EntityType<? extends LivingEntity> type, Level worldIn){
 		super(type, worldIn);
@@ -231,7 +237,15 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		AnimationController<DragonEntity> animationController = state.getController();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
+		boolean useDynamicScaling = false;
 		double animationSpeed = 1;
+		double speedFactor = 1;
+		double baseSpeed = defaultPlayerWalkSpeed;
+		double smallSizeFactor = 0.3;
+		double bigSizeFactor = 1;
+		double baseSize = ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+		double distanceFromGround = ServerFlightHandler.distanceFromGround(player);
+		double height = DragonSizeHandler.calculateDragonHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
 
 		if (player == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(emote -> emote != null && !emote.blend && emote.animation != null && !emote.animation.isBlank())) {
 			state.getController().stop();
@@ -251,8 +265,9 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			builder = renderAbility(state, currentCast);
 		}
 
-		Vec3 motion = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-		boolean isMovingHorizontal = Math.sqrt(Math.pow(motion.x, 2) + Math.pow(motion.z, 2)) > 0.005;
+		// The reason the threshold is so high here is that lower thresholds cause the player to be stuck transitioning away from the walk animation longer than they should when they stop moving.
+		boolean isMovingHorizontalWalk = player.getDeltaMovement().horizontalDistance() > defaultPlayerWalkSpeed / 5;
+		boolean isMovingHorizontalSneak = player.getDeltaMovement().horizontalDistance() > defaultPlayerSneakSpeed / 5;
 
 		if(handler.getMagicData().onMagicSource){
 			neckLocked = false;
@@ -294,7 +309,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 					RenderingUtils.addAnimation(builder, "fly_soaring", Animation.LoopType.LOOP, 4, animationController);
 				}
 			}else{
-				if(player.isCrouching() && deltaMovement.y < 0 && ServerFlightHandler.distanceFromGround(player) < 10 && deltaMovement.length() < 4){
+				if(player.isCrouching() && deltaMovement.y < 0 && distanceFromGround < 10 && deltaMovement.length() < 4){
 					neckLocked = false;
 					tailLocked = false;
 					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_LAND));
@@ -309,8 +324,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 					tailLocked = false;
 					if(deltaMovement.y > 0) {
 						animationSpeed = 2;
-					} else {
-						animationSpeed = 1;
 					}
 					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY));
 					RenderingUtils.addAnimation(builder, "fly", Animation.LoopType.LOOP, 2, animationController);
@@ -320,12 +333,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			if(ServerFlightHandler.isSpin(player)){
 				neckLocked = false;
 				tailLocked = false;
-				animationSpeed = 1;
-				//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
 				RenderingUtils.addAnimation(builder, "fly_spin", Animation.LoopType.LOOP, 2, animationController);
 			}else{
-				animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
-				//return state.setAndContinue(AnimationUtils.createAnimation(builder, SWIM_FAST));
+				useDynamicScaling = true;
+				baseSpeed = defaultPlayerFastSwimSpeed; // Default base fast speed for the player
 				RenderingUtils.addAnimation(builder, "swim_fast", Animation.LoopType.LOOP, 2, animationController);
 			}
 		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.onGround()){
@@ -336,8 +347,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
 				RenderingUtils.addAnimation(builder, "fly_spin", Animation.LoopType.LOOP, 2, animationController);
 			}else{
-				animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
-				//return state.setAndContinue(AnimationUtils.createAnimation(builder, SWIM));
+				useDynamicScaling = true;
+				baseSpeed = defaultPlayerSwimSpeed;
 				RenderingUtils.addAnimation(builder, "swim", Animation.LoopType.LOOP, 2, animationController);
 			}
 		}else if(animationController.getCurrentAnimation() != null && (Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land"))) {
@@ -346,11 +357,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			// Don't add any animation
 		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
 			RenderingUtils.addAnimation(builder, "jump", Animation.LoopType.PLAY_ONCE, 2, animationController);
-		}else if(!player.onGround() ) {
+		// Extra condition to prevent the player from triggering the fall animation when falling a trivial distance (this happens when you are really big)
+		}else if(!player.onGround() && (distanceFromGround > height * 0.15)) {
 			RenderingUtils.addAnimation(builder, "fall_loop", Animation.LoopType.LOOP, 2, animationController);
 		} else if(player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)){
 			// Player is Sneaking
-			if(isMovingHorizontal && player.walkAnimation.speed() != 0f){
+			if(isMovingHorizontalSneak){
+				useDynamicScaling = true;
+				baseSpeed = defaultPlayerSneakSpeed;
 				RenderingUtils.addAnimation(builder, "sneak_walk", Animation.LoopType.LOOP, 5, animationController);
 			}else if(handler.getMovementData().dig){
 				RenderingUtils.addAnimation(builder, "dig_sneak", Animation.LoopType.LOOP, 5, animationController);
@@ -358,12 +372,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				RenderingUtils.addAnimation(builder, "sneak", Animation.LoopType.LOOP, 5, animationController);
 			}
 		}else if(player.isSprinting()){
-			//RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
-			animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
+			useDynamicScaling = true;
+			baseSpeed = defaultPlayerSprintSpeed;
 			RenderingUtils.addAnimation(builder, "run", Animation.LoopType.LOOP, 2, animationController);
-		}else if(isMovingHorizontal && player.walkAnimation.speed() != 0f){
-			//RenderingUtils.setAnimationSpeed(1 + deltaMovement.horizontalDistance() / 10, seekTime, animationController);
-			animationSpeed = 1 + deltaMovement.horizontalDistance() / 10;
+		}else if(isMovingHorizontalWalk){
+			useDynamicScaling = true;
 			RenderingUtils.addAnimation(builder, "walk", Animation.LoopType.LOOP, 2, animationController);
 		}else if(handler.getMovementData().dig){
 			RenderingUtils.addAnimation(builder, "dig", Animation.LoopType.LOOP, 2, animationController);
@@ -376,10 +389,17 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		}
 
 		animationController.setAnimation(builder);
-		if(animationController.getAnimationState() != State.TRANSITIONING) {
-			animationController.setAnimationSpeed(animationSpeed);
-			//RenderingUtils.setAnimationSpeed(animationSpeed, animationEvent.getAnimationTick(), animationController);
+		double finalAnimationSpeed = animationSpeed;
+		if(useDynamicScaling) {
+			double horizontalDistance = deltaMovement.horizontalDistance();
+			double speedComponent = (horizontalDistance - baseSpeed) / baseSpeed * speedFactor;
+			double sizeDistance = handler.getSize() - baseSize;
+			double sizeFactor = sizeDistance >= 0 ? bigSizeFactor : smallSizeFactor;
+			double sizeComponent = baseSize / (baseSize + sizeDistance * sizeFactor);
+ 			finalAnimationSpeed = (animationSpeed + speedComponent) * sizeComponent;
 		}
+		animationController.setAnimationSpeed(finalAnimationSpeed);
+		//RenderingUtils.setAnimationSpeed(finalAnimationSpeed, animationEvent.getAnimationTick(), animationController);
 
 		return PlayState.CONTINUE;
 	}

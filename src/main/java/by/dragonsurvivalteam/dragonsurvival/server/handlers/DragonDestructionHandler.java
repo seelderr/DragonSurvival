@@ -197,7 +197,7 @@ public class DragonDestructionHandler {
                     boundingBox = player.getBoundingBox();
                 }
 
-                boundingBox = boundingBox.inflate(1.25);
+                boundingBox = boundingBox.inflate(1.5 + (dragonStateHandler.getSize() / ServerConfig.DEFAULT_MAX_GROWTH_SIZE) * 0.15);
 
                 checkAndDestroyCollidingBlocks(dragonStateHandler, event, boundingBox);
                 checkAndDamageCrushedEntities(dragonStateHandler, player, boundingBox);

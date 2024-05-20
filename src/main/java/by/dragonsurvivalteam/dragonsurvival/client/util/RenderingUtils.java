@@ -275,21 +275,7 @@ public class RenderingUtils{
 	}
 
 	public static <E extends GeoAnimatable> void addAnimation(RawAnimation builder, String animationName, LoopType loopType, float transitionLength, AnimationController<E> controller){
-		//builder.addAnimation(animationName, loopType);
 		builder.then(animationName, loopType);
 		controller.transitionLength((int) transitionLength);
-		//controller.transitionLengthTicks = transitionLength;
 	}
-
-	/*public static <E extends IAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<DragonEntity> animationController) {
-		if(speed == animationController.animationSpeed) {
-			return;
-		}
-
-		if(animationController.getCurrentAnimation() != null) {
-			double distance = currentAnimationTick - animationController.tickOffset;
-			animationController.tickOffset = currentAnimationTick - distance * (animationController.animationSpeed / speed);
-			animationController.animationSpeed = speed;
-		}
-	}*/
 }
