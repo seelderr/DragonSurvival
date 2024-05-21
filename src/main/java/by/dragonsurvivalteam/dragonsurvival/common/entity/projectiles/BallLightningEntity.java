@@ -100,7 +100,7 @@ public class BallLightningEntity extends DragonBallEntity{
 			range = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
 			source = owner.damageSources().playerAttack((Player) owner);
 		} else {
-            source = owner.damageSources().lightningBolt();
+            source = damageSources().lightningBolt();
         }
 
         List<Entity> entities = level().getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));

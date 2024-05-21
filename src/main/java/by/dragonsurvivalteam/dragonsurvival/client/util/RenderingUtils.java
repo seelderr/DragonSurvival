@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorAnimationController;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -10,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
@@ -272,10 +274,5 @@ public class RenderingUtils{
 		tesselator.end();
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
-	}
-
-	public static <E extends GeoAnimatable> void addAnimation(RawAnimation builder, String animationName, LoopType loopType, float transitionLength, AnimationController<E> controller){
-		builder.then(animationName, loopType);
-		controller.transitionLength((int) transitionLength);
 	}
 }

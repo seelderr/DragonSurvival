@@ -1,14 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
@@ -39,10 +37,10 @@ public class DragonDropdownValueEntry extends DropdownValueEntry
 	}
 
 	@Override
-	public void render(PoseStack pPoseStack, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
+	public void render(GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
 		if(button == null){
-			if(list != null)
-				button = new ExtendedButton(list.getLeft() + 3, 0, list.getWidth() - 12, pHeight + 1, null, null){
+			Component displayString = Component.literal(localeString);
+			button = new ExtendedButton(pLeft + 3, 0, pWidth - 12, pHeight + 1, displayString, null){
 					@Override
 					public Component getMessage(){
 						return message;
@@ -54,16 +52,11 @@ public class DragonDropdownValueEntry extends DropdownValueEntry
 						source.onPress();
 						setter.accept(value);
 					}
-
-					@Override
-					public int getBlitOffset(){
-						return 10;
-					}
-				};
-		}else{
-			button.y = pTop;
+			};
+		} else {
+			button.setY(pTop);
 			button.visible = source.visible;
-			button.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
+			button.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		}
 	}
 }

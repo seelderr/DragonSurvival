@@ -23,7 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TooltipUtils;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -36,9 +35,9 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -53,10 +52,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.multiplayer.chat.LoggedChatMessage.Player;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -64,7 +62,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.client.gui.widget.ForgeSlider;
 import net.minecraftforge.common.util.Lazy;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
@@ -209,16 +206,10 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 		FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> animations[curAnimation];
 
-		guiGraphics.pose().pushPose();
-		// Avoid overlapping parts of the rendered entity (dragon)
-		guiGraphics.pose().translate(0, 0, -300);
 		renderBackground(guiGraphics);
 		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent)s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
-		guiGraphics.pose().popPose();
 
 		DragonAltarGUI.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
-
-		guiGraphics.pose().pushPose();
 
 		TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
@@ -234,8 +225,6 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		if(showUi){
 			SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 - 20, DyeColor.GRAY.getTextColor());
 		}
-
-		guiGraphics.pose().popPose();
 
 		for(Renderable widget : new CopyOnWriteArrayList<>(renderables)){
 			widget.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
@@ -273,7 +262,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 
 	@Override
 	public void renderBackground(@NotNull final GuiGraphics guiGraphics) {
-		guiGraphics.fill(0, 0, width, height, backgroundColor);
+		guiGraphics.fill(0, 0, width, height, -350, backgroundColor);
 	}
 
 	private void initialize(final DragonStateHandler localHandler) {
@@ -493,46 +482,20 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
 		}
 
-// The old part of the gui that allowed you to change the size of the dragon without changing the hitbox
-//		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, Component.translatable("ds.gui.dragon_editor.size"), Component.empty().append("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
-//			@Override
-//			protected void applyValue(){
-//				super.applyValue();
-//				double val = 1.0 + getValueInt() / 100.0;
-//				if(preset.sizeMul != val){
-//					preset.sizeMul = val;
-//					dragonRender.zoom = (float)(level.size * preset.sizeMul);
-//				}
-//
-//				double val1 = Math.round((preset.sizeMul - 1.0) * 100);
-//
-//				if(val1 > 0){
-//					setMessage(Component.translatable("ds.gui.dragon_editor.size").append("+").append(val1 + "%"));
-//				}else{
-//					setMessage(Component.translatable("ds.gui.dragon_editor.size").append(val1 + "%"));
-//				}
-//			}
-//
-//			@Override
-//			public void render(PoseStack pMatrixStack, int pMouseX, int pMouseY, float pPartialTicks){
-//				super.render(pMatrixStack, pMouseX, pMouseY, pPartialTicks);
-//			}
-//
-//			@Override
-//			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-//				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
-//			}
-//		});
-
 		addRenderableWidget(new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				selected = preset.skinAges.get(level).get().wings;
 				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 			}
+
 			@Override
-			public void renderToolTip(GuiGraphics p_230443_1_, int p_230443_2_, int p_230443_3_){
-				TooltipRendering.drawHoveringText(p_230443_1_, Component.translatable("ds.gui.dragon_editor.wings.tooltip"), p_230443_2_, p_230443_3_);
+			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+				super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+
+				if (isHoveredOrFocused()) {
+					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.wings.tooltip"), pMouseX, pMouseY);
+				}
 			}
 		});
 		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
@@ -591,11 +554,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 								active = visible = false;
 
 								if(conf != null && confirmation){
-									guiGraphics.pose().pushPose();
-									// Render the pop-up message above the dragon
-									guiGraphics.pose().translate(0, 0, 150);
 									conf.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
-									guiGraphics.pose().popPose();
 								}
 							}
 						};
@@ -881,7 +840,8 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(minecraft.player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getBody(), cap.getLevel()));
+
+				ClientProxy.requestClientData(handler);
 			}
 
 			if (minecraft != null && minecraft.player != null) {

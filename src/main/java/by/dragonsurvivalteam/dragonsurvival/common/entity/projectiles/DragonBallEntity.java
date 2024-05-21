@@ -129,8 +129,8 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 		}
 	}
 	
-	private PlayState predicate(final AnimationState<DragonEntity> state) {
-		AnimationController<DragonEntity> animationController = state.getController();
+	private PlayState predicate(final AnimationState<DragonBallEntity> state) {
+		AnimationController<DragonBallEntity> animationController = state.getController();
 		if(hasExploded) {
 			animationController.setAnimation(EXPLOSION);
 		} else {

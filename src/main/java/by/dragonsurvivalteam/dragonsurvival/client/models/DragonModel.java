@@ -225,7 +225,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity ignored) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_centre.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_center.json");
 	}
 
 	@Override

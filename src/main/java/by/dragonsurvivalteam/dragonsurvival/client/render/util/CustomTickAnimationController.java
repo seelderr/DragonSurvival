@@ -9,6 +9,7 @@ import software.bernie.geckolib.core.state.BoneSnapshot;
 
 import java.util.Map;
 
+// TODO: Delete this class
 public class CustomTickAnimationController extends AnimationController<DragonEntity> {
 	public double speed = 1;
 	public double lastTick = 0;
