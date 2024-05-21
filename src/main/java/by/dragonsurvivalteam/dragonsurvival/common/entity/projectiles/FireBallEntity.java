@@ -44,7 +44,7 @@ public class FireBallEntity extends DragonBallEntity{
 	@Override
 	protected void onHit(HitResult pResult){
 		super.onHit(pResult);
-		if(!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+		if(!this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
 			this.discard();
 		}
 	}

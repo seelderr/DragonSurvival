@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -63,9 +64,9 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult hitResult){
-		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-			if(this.level().isClientSide) {
-				level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+		if((getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
+			if(this.level.isClientSide) {
+				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
 			} else {
 				isLingering = true;
 				// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
@@ -97,9 +98,9 @@ public class BallLightningEntity extends DragonBallEntity{
 		
 		if (owner instanceof Player) {
 			range = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
-			source = owner.damageSources().playerAttack((Player) owner);
+			source = DamageSource.playerAttack((Player)owner);
 		} else {
-            source = owner.damageSources().lightningBolt();
+            source = DamageSource.LIGHTNING_BOLT;
         }
 
         List<Entity> entities = level.getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
