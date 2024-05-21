@@ -32,6 +32,9 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 
+import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
+import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
+
 public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
@@ -171,7 +174,7 @@ public class DragonAltarGUI extends Screen{
 		matrixStack.scale(scale, scale, scale);
 		matrixStack.translate(0, 0, 400);
 		ClientDragonRender.dragonModel.setCurrentTexture(null);
-		ClientDragonRender.renderEntityInInventory(DragonUtils.isDragon(player) ? dragon : player, x, y, scale, xrot, -3);
+		ClientDragonRender.renderEntityInInventory(DragonUtils.isDragon(player) ? dragon : player, x, y, scale, xrot, -3, 0, 0);
 		matrixStack.popPose();
 	}
 

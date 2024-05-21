@@ -137,7 +137,7 @@ public class SkinsScreen extends Screen{
 			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
 			stack.pushPose();
 			stack.translate(0, 0, 100);
-			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
+			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot, 0, 0);
 			stack.popPose();
 		}
 
