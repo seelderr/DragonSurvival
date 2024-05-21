@@ -20,11 +20,8 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.animation.Animation.LoopType;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationState;
-import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -38,15 +35,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 
 
-public abstract class DragonBallEntity extends Fireball implements GeoAnimatable{
+public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Integer> LIFESPAN = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.FLOAT);
 	public static final float DRAGON_BALL_DISTANCE = 32.f;
 	public static final int MAX_LIFESPAN = 1200; // 60 seconds
+	private boolean hasExploded = false;
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	//AnimationFactory animationFactory = GeckoLibUtil.createFactory(this);
-	RawAnimation builder;
 
 	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
 		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
@@ -129,22 +125,23 @@ public abstract class DragonBallEntity extends Fireball implements GeoAnimatable
 			level().explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, true, ExplosionInteraction.BLOCK);
 		}
 		else {
-			RenderingUtils.addAnimation(builder, "explosion", Animation.LoopType.LOOP, 2, animationController);
-			animationBuilder.clearAnimations();
-			animationBuilder.addAnimation("explosion", LoopType.LOOP);
+			hasExploded = true;
 		}
 	}
 	
 	private PlayState predicate(final AnimationState<DragonEntity> state) {
 		AnimationController<DragonEntity> animationController = state.getController();
-		animationController.setAnimation(EXPLOSION);
+		if(hasExploded) {
+			animationController.setAnimation(EXPLOSION);
+		} else {
+			animationController.setAnimation(IDLE);
+		}
 		return PlayState.CONTINUE;
 	}
 
 	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController(this, "everything", 0, this::predicate));
-		animationBuilder.addAnimation("idle", Animation.LoopType.LOOP);
+	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar){
+		registrar.add(new AnimationController<>(this, "everything", this::predicate));
 	}
 
 	@Override

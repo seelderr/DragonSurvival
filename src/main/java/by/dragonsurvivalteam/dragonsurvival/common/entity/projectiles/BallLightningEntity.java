@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Bal
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.registry.DamageSources;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -65,18 +64,17 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult hitResult){
-		if(this.level().isClientSide() || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-			if (!(getOwner() instanceof Player) && !isLingering)
-			{
+		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+			if(this.level().isClientSide) {
 				level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+			} else {
+				isLingering = true;
+				// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
+				xPower = 0;
+				zPower = 0;
+				yPower = 0;
+				setDeltaMovement(Vec3.ZERO);
 			}
-
-			isLingering = true;
-			// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
-			xPower = 0;
-			zPower = 0;
-			yPower = 0;
-			setDeltaMovement(Vec3.ZERO);
 		}
 	}
 	
@@ -100,9 +98,9 @@ public class BallLightningEntity extends DragonBallEntity{
 		
 		if (owner instanceof Player) {
 			range = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
-			source = DamageSource.playerAttack((Player)owner);
+			source = owner.damageSources().playerAttack((Player) owner);
 		} else {
-            source = DamageSource.LIGHTNING_BOLT;
+            source = owner.damageSources().lightningBolt();
         }
 
         List<Entity> entities = level().getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
