@@ -71,8 +71,8 @@ public class AbilityScreen extends Screen{
 			float progress1 = Math.min(1F, Math.min(0.5F, progress) * 2F);
 			float progress2 = Math.min(1F, Math.min(0.5F, progress - 0.5F) * 2F);
 
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().translate(0.5F, 0.75F, 0F);
+			startX += 0.5F;
+			startY += 0.75F;
 			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
 			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
 			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress1), 3, 128, 128);
@@ -105,8 +105,6 @@ public class AbilityScreen extends Screen{
 					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
 				}
 			}
-
-			guiGraphics.pose().popPose();
 
 			Component textComponent = Component.empty().append(Integer.toString(minecraft.player.experienceLevel)).withStyle(ChatFormatting.DARK_GRAY);
 			int xPos = startX + 117 + 1;

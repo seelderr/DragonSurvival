@@ -32,6 +32,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.ConfirmLinkScreen;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.locale.Language;
@@ -40,7 +41,10 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraftforge.client.event.ScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Quaternionf;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 
 import java.net.URI;
@@ -102,11 +106,9 @@ public class SkinsScreen extends Screen{
 			return;
 		}
 
-		guiGraphics.pose().pushPose();
-		// Avoid overlapping parts of the rendered entity (dragon)
-		guiGraphics.pose().translate(0F, 0F, -300);
-		renderBackground(guiGraphics);
-		guiGraphics.pose().popPose();
+		// Copied from Screen::renderBackground
+		guiGraphics.fillGradient(0, 0, this.width, this.height, -300, -1072689136, -804253680);
+		MinecraftForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, guiGraphics));
 
 		int startX = guiLeft;
 		int startY = guiTop;
@@ -145,10 +147,13 @@ public class SkinsScreen extends Screen{
 			}
 
 			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
-			guiGraphics.pose().pushPose();
-			guiGraphics.pose().translate(0, 0, 100);
-			ClientDragonRender.renderEntityInInventory(dragon, startX + 15, startY + 70, scale, xRot, yRot);
-			guiGraphics.pose().popPose();
+
+			// TODO: Fix the dragon not starting in the correct rotation when the editor is opened
+			Quaternionf quat1 = new Quaternionf();
+			quat1.rotateLocalX((float)Math.toRadians(0 - yRot * 10));
+			quat1.rotateLocalY((float)Math.toRadians(180 - xRot * 10));
+			quat1.rotateLocalZ((float)Math.toRadians(180));
+			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, quat1, null, dragon);
 		}
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;

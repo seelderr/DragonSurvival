@@ -11,7 +11,6 @@
     "MixinEntity",
     "MixinInventory",
     "MixinItem",
-    "MixinLevelRenderer",
     "MixinLivingEntity",
     "MixinPlayerEnd",
     "MixinPlayerEntity",

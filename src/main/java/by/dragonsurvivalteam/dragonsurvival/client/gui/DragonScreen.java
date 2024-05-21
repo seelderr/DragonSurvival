@@ -249,14 +249,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
 			RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
 
-			guiGraphics.pose().pushPose();
-			// Avoid getting overlapped
-			guiGraphics.pose().translate(0, 0, 150);
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-			guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
-
-			guiGraphics.pose().popPose();
+			guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
 		}
 	}
 
@@ -290,18 +285,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		guiGraphics.pose().pushPose();
-
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		double renderedSize = Math.min(handler.getSize(), ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 6;
-		guiGraphics.pose().translate(0, 10., 0);
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, leftPos + 65, topPos + 65 + (int)(renderedSize * 1.25), (int)renderedSize + 15, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, leftPos + 65, topPos + 75 + (int)(renderedSize * 1.25), (int)renderedSize + 15, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
 		RenderSystem.disableScissor();
-
-		/*guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0f, size / 10f, 0);
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics,leftPos + 65, topPos + 65, (int) size, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
-		guiGraphics.pose().popPose();*/
 
 		if (isGrowthIconHovered) {
 			String age = (int)handler.getSize() - handler.getLevel().size + "/";

@@ -28,6 +28,7 @@ public class MixinEntityRenderDispatcher{
 	@Final
 	private static RenderType SHADOW_RENDER_TYPE;
 
+	// TODO: Look into if this usage of pose stack is actually safe or not
 	@Inject(at = @At("HEAD"), method = "renderShadow", cancellable = true)
 	private static void renderShadow(final PoseStack poseStack, final MultiBufferSource buffer, final Entity entity, float weight, float partialTick, final LevelReader level, float size, final CallbackInfo callback) {
 		if(!DragonUtils.isDragon(entity)){
