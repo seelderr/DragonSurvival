@@ -592,6 +592,7 @@ public class ClientDragonRender{
 		}
 	}
 
+	// TODO: Port the fixes down from 1.20.1 to this version for renderEntityInInventory
 	// Called for the dragon editor and skins screen (but not the actual inventory?)
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
 		if(entity == null)
