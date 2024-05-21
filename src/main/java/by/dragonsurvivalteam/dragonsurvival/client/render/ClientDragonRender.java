@@ -130,6 +130,9 @@ public class ClientDragonRender{
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateBodyWithCamera", comment = "Should the body rotate with the camera when turning around." )
 	public static Boolean rotateBodyWithCamera = true;
+	
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateCameraWithDragon", comment = "Should the player rotate their view when the dragon they are riding rotates their body?")
+	public static Boolean rotateCameraWithDragon = true;
 
 	private static boolean wasFreeLook = false;
 
