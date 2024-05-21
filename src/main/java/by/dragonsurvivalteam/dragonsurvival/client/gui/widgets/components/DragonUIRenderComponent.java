@@ -3,6 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
+import com.mojang.math.Axis;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -53,12 +55,10 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, -200); // We chose -200 here as the background is translated -300 and we don't want to clip with it
 
-		// TODO: Fix the dragon not starting in the correct rotation when the editor is opened
-		Quaternionf quat1 = new Quaternionf();
-		quat1.rotateLocalX((float)Math.toRadians(0 - yRot * 10));
-		quat1.rotateLocalY((float)Math.toRadians(180 - xRot * 10));
-		quat1.rotateLocalZ((float)Math.toRadians(180));
-		InventoryScreen.renderEntityInInventory(guiGraphics, x + width / 2 + (int)xOffset, y + height - 30 + (int)yOffset, (int)scale, quat1, null, getter.get());
+		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
+		quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
+		quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
+		InventoryScreen.renderEntityInInventory(guiGraphics, x + width / 2 + (int)xOffset, y + height - 30 + (int)yOffset, (int)scale, quaternion, null, getter.get());
 
 		guiGraphics.pose().popPose();
 	}

@@ -17,6 +17,8 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import com.mojang.math.Axis;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -75,7 +77,7 @@ public class DragonAltarGUI extends Screen{
 			animation2++;
 ;
 			int randBody = (int) (Math.random() * (DragonBodies.bodyMappings.size()));
-			//System.out.println("body num: " + randBody + " and: " + DragonBodies.bodyMappings.keySet().toArray()[randBody]);
+			System.out.println("body num: " + randBody + " and: " + DragonBodies.bodyMappings.keySet().toArray()[randBody]);
 
 			if (handler1.getBody() == null) {
 				handler1.setBody(DragonBodies.CENTER);
@@ -122,17 +124,13 @@ public class DragonAltarGUI extends Screen{
 						entity2 = FakeClientPlayerUtils.getFakePlayer(1, handler2);
 					}
 
-					Quaternionf quat1 = new Quaternionf();
-					quat1.rotateLocalX((float)Math.toRadians(0));
-					quat1.rotateLocalY((float)Math.toRadians(150));
-					quat1.rotateLocalZ((float)Math.toRadians(180));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), 20, quat1, null, entity1);
+					Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
+					quaternion.rotateY((float)Math.toRadians(150));
+					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), 20, quaternion, null, entity1);
 
-					Quaternionf quat2 = new Quaternionf();
-					quat2.rotateLocalX((float)Math.toRadians(0));
-					quat2.rotateLocalY((float)Math.toRadians(210));
-					quat2.rotateLocalZ((float)Math.toRadians(180));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 - 170, button.getY() + button.getHeight(), 40, quat2, null, entity2);
+					Quaternionf quaternion2 = Axis.ZP.rotationDegrees(180.0F);
+					quaternion2.rotateY((float)Math.toRadians(210));
+					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 - 170, button.getY() + button.getHeight(), 40, quaternion2, null, entity2);
 				}
 			}
 		}

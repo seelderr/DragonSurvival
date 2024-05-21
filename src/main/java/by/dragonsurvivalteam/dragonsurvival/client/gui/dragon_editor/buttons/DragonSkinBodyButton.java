@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -29,22 +26,12 @@ public class DragonSkinBodyButton extends Button {
 
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		RenderSystem.setShaderTexture(0, texture_location);
-
 		int i = 0;
 		if (this.dragonBody.equals(screen.handler.getBody())) {
 			i = 2;
-		} else if (false) {
-			i = 3;
 		} else if (this.isHoveredOrFocused()) {
 			i = 1;
-		}else {
-			//this.alpha = 0.5f;
 		}
-		//RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, this.alpha);
-		guiGraphics.blit(texture_location, getX(), getY(), i * this.height, i * this.width, 256, 256);
-		//this.getX(), this.getY(), pos * this.width, i * this.height, this.width, this.height, texture_location);
-		RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
-		//this.alpha = 1.0f;
+		guiGraphics.blit(texture_location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height);
 	}
 }

@@ -223,7 +223,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 		}
 
 		if(showUi){
-			SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 - 20, DyeColor.GRAY.getTextColor());
+			SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 75 - 27, DyeColor.GRAY.getTextColor());
 		}
 
 		for(Renderable widget : new CopyOnWriteArrayList<>(renderables)){

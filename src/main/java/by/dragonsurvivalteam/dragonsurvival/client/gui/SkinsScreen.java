@@ -22,6 +22,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.math.Axis;
 
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
@@ -148,12 +149,10 @@ public class SkinsScreen extends Screen{
 
 			FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
 
-			// TODO: Fix the dragon not starting in the correct rotation when the editor is opened
-			Quaternionf quat1 = new Quaternionf();
-			quat1.rotateLocalX((float)Math.toRadians(0 - yRot * 10));
-			quat1.rotateLocalY((float)Math.toRadians(180 - xRot * 10));
-			quat1.rotateLocalZ((float)Math.toRadians(180));
-			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, quat1, null, dragon);
+			Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
+			quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
+			quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
+			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, quaternion, null, dragon);
 		}
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;
@@ -364,7 +363,7 @@ public class SkinsScreen extends Screen{
 			}
 		}).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.random"))).build());
 
-		addRenderableWidget(new Button(startX + 90, startY + 10, 11, 17, Component.empty(), button -> {
+		addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
 			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 			setTextures();
@@ -379,7 +378,7 @@ public class SkinsScreen extends Screen{
 			}
 		});
 
-		addRenderableWidget(new Button(startX - 70, startY + 10, 11, 17, Component.empty(), button -> {
+		addRenderableWidget(new Button(startX - 70, startY - 20, 11, 17, Component.empty(), button -> {
 			int pos = Mth.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
 			level = DragonLevel.values()[pos];
 			setTextures();
