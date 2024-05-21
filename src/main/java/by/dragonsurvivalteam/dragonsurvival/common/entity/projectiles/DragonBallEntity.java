@@ -16,21 +16,21 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
-import software.bernie.geckolib3.core.IAnimatable;
-import software.bernie.geckolib3.core.PlayState;
-import software.bernie.geckolib3.core.builder.AnimationBuilder;
-import software.bernie.geckolib3.core.builder.ILoopType;
-import software.bernie.geckolib3.core.builder.ILoopType.EDefaultLoopTypes;
-import software.bernie.geckolib3.core.controller.AnimationController;
-import software.bernie.geckolib3.core.event.predicate.AnimationEvent;
-import software.bernie.geckolib3.core.manager.AnimationData;
-import software.bernie.geckolib3.core.manager.AnimationFactory;
-import software.bernie.geckolib3.util.GeckoLibUtil;
+import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.*;
+import software.bernie.geckolib.core.animation.Animation.LoopType;
+import software.bernie.geckolib.core.molang.MolangParser;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.util.GeckoLibUtil;
 
 import javax.annotation.Nullable;
+import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 
 
-public abstract class DragonBallEntity extends Fireball implements IAnimatable{
+public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	public static final EntityDataAccessor<Integer> SKILL_LEVEL = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Integer> LIFESPAN = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.FLOAT);
@@ -119,21 +119,23 @@ public abstract class DragonBallEntity extends Fireball implements IAnimatable{
 			level.explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, true, Explosion.BlockInteraction.DESTROY);
 		}
 		else {
-			animationBuilder.clearAnimations();
-			animationBuilder.addAnimation("explosion", ILoopType.EDefaultLoopTypes.LOOP);
+			hasExploded = true;
 		}
 	}
-
-	private <E extends IAnimatable> PlayState predicate(AnimationEvent<E> event)
-	{
-		event.getController().setAnimation(animationBuilder);
+	
+	private PlayState predicate(final AnimationState<DragonEntity> state) {
+		AnimationController<DragonEntity> animationController = state.getController();
+		if(hasExploded) {
+			animationController.setAnimation(EXPLOSION);
+		} else {
+			animationController.setAnimation(IDLE);
+		}
 		return PlayState.CONTINUE;
 	}
 
 	@Override
-	public void registerControllers(AnimationData data){
-		data.addAnimationController(new AnimationController(this, "everything", 0, this::predicate));
-		animationBuilder.addAnimation("idle", EDefaultLoopTypes.LOOP);
+	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar){
+		registrar.add(new AnimationController<>(this, "everything", this::predicate));
 	}
 
 	@Override
