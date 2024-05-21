@@ -592,10 +592,6 @@ public class ClientDragonRender{
 		}
 	}
 
-	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot){
-		renderEntityInInventory(entity, x, y, scale, xRot, yRot, 0, 0);
-	}
-
 	// Called for the dragon editor and skins screen (but not the actual inventory?)
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
 		if(entity == null)
@@ -645,13 +641,13 @@ public class ClientDragonRender{
 		entityrenderermanager.overrideCameraOrientation(quaternion1);
 		MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
 		RenderSystem.runAsFancy(() -> {
-			entityrenderermanager.setRenderHitBoxes(false);
-			entityrenderermanager.setRenderShadow(false);
+			//entityrenderermanager.setRenderHitBoxes(false);
+			//entityrenderermanager.setRenderShadow(false);
 
 			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 244);
 
-			entityrenderermanager.setRenderShadow(true);
-			entityrenderermanager.setRenderHitBoxes(renderHitbox);
+			//entityrenderermanager.setRenderShadow(true);
+			//entityrenderermanager.setRenderHitBoxes(renderHitbox);
 		});
 
 		irendertypebuffer$impl.endBatch();
