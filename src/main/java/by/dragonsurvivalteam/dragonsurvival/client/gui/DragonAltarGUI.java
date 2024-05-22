@@ -77,7 +77,7 @@ public class DragonAltarGUI extends Screen{
 			animation2++;
 ;
 			int randBody = (int) (Math.random() * (DragonBodies.bodyMappings.size()));
-			System.out.println("body num: " + randBody + " and: " + DragonBodies.bodyMappings.keySet().toArray()[randBody]);
+			//System.out.println("body num: " + randBody + " and: " + DragonBodies.bodyMappings.keySet().toArray()[randBody]);
 
 			if (handler1.getBody() == null) {
 				handler1.setBody(DragonBodies.CENTER);
