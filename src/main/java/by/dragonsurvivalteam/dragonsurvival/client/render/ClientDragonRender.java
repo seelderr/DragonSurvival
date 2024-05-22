@@ -349,7 +349,7 @@ public class ClientDragonRender{
 							handler.getMovementData().prevXRot = dummyDragon.prevXRot;
 							handler.getMovementData().prevZRot = rot;
 
-							matrixStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
+							poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
 						}
 					} else {
 						handler.getMovementData().prevZRot = 0;
