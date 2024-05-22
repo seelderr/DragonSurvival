@@ -65,6 +65,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	public int altarCooldown;
 	public boolean hasUsedAltar;
+	public boolean refreshBody;
 
     /** Last timestamp the server synchronized the player */
     public int lastSync = 0;
@@ -319,7 +320,10 @@ public class DragonStateHandler extends EntityStateHandler {
 	
 	public void setBody(final AbstractDragonBody body) {
 		if (body != null) {
-			dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
+			if (!body.equals(dragonBody)) {
+				dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
+				refreshBody = true;
+			}
 		} else {
 			dragonBody = null;
 		}

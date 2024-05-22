@@ -236,6 +236,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 		AnimationController<DragonEntity> animationController = state.getController();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
+		
+		if (handler.refreshBody) {
+			animationController.forceAnimationReset();
+			handler.refreshBody = false;
+		}
 
 		boolean useDynamicScaling = false;
 		double animationSpeed = 1;

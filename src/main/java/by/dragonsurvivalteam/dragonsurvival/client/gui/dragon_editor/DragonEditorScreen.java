@@ -86,7 +86,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 	                                     "sit_head_locked",
 	                                     "idle_head_locked",
 	                                     "fly_head_locked",
-	                                     "swim_fast_locked",
+	                                     "swim_fast_head_locked",
 	                                     "run_head_locked",
 	                                     "spinning_on_back"};
 	@ConfigRange( min = 1, max = 1000 )
