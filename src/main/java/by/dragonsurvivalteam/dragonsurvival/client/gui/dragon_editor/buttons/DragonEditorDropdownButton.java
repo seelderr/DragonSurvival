@@ -92,7 +92,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 				list.centerScrollOn(center);
 
 			boolean hasBorder = false;
-			if(screen.children.size() > 0){
+			if(!screen.children.isEmpty()){
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
 				screen.children.add(0, list);
