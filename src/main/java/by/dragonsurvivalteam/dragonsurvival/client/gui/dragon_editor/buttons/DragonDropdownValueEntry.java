@@ -5,6 +5,7 @@ import java.util.function.Consumer;
 
 import com.google.common.collect.ImmutableList;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -28,7 +29,7 @@ public class DragonDropdownValueEntry extends DropdownValueEntry
 		this.setter = setter;
 		this.source = source;
 		this.localeString = localeString;
-		message = Component.translatable(localeString);
+		message = Component.translatable(DragonEditorScreen.partToTranslation(value));
 	}
 
 	@Override
