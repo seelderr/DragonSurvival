@@ -69,7 +69,7 @@ public class DragonDestructionHandler {
                         }
                         else {
                             // #TODO: Make the MINEABLE_WITH_AXE, FLOWERS and REPLACEABLE_PLANTS tag configurable in data
-                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock()) || blockstate.is(BlockTags.REPLACEABLE_PLANTS) || blockstate.is(BlockTags.MINEABLE_WITH_AXE) || blockstate.is(BlockTags.FLOWERS)) {
+                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock()) || blockstate.is(BlockTags.REPLACEABLE_PLANTS) || (blockstate.is(BlockTags.MINEABLE_WITH_AXE) && !ServerConfig.disableDefaultDestructionTags) || blockstate.is(BlockTags.FLOWERS)) {
                                 if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
                                     event.player.level.destroyBlock(blockpos, false);
                                 }
