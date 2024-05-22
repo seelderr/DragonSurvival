@@ -32,6 +32,7 @@ import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
 import software.bernie.geckolib.core.animation.Animation;
+import software.bernie.geckolib.core.animation.Animation.LoopType;
 import software.bernie.geckolib.core.animation.AnimationController;
 import software.bernie.geckolib.core.animation.AnimationController.State;
 import software.bernie.geckolib.core.animation.AnimationState;
@@ -365,7 +366,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				animationController.transitionLength(2);
 			}
 		}else if(animationController.getCurrentAnimation() != null && (Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land"))) {
-			state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND_END));
+			state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND_END).then("idle", LoopType.LOOP));
 			animationController.transitionLength(2);
 		} else if(animationController.getCurrentAnimation() != null && Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land_end")) {
 			// Don't add any animation
