@@ -224,8 +224,15 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(final DragonEntity ignored) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon_center.json");
+	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
+		if (dragon.playerId != null || dragon.getPlayer() != null) {
+			DragonStateHandler handler = DragonUtils.getHandler(dragon.getPlayer());
+			AbstractDragonBody body = handler.getBody();
+			if (body != null) {
+				return new ResourceLocation(DragonSurvivalMod.MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
+			}
+		}
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
 	}
 
 	@Override
