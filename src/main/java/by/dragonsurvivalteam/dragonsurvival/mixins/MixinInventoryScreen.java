@@ -1,24 +1,29 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
+import org.joml.Matrix4f;
+import org.joml.Quaternionf;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin( InventoryScreen.class )
 public abstract class MixinInventoryScreen extends EffectRenderingInventoryScreen<InventoryMenu> implements RecipeUpdateListener{
@@ -63,33 +68,18 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		}
 	}
 
-	private static float dragonScreenEntityRescaler(float pX){
-		LocalPlayer player = Minecraft.getInstance().player;
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+	@Inject(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPoseMatrix(Lorg/joml/Matrix4f;)V"))
+	private static void dragonScreenEntityRescalerX(GuiGraphics pGuiGraphics, int pX, int pY, int pScale, Quaternionf pPose, Quaternionf pCameraOrientation, LivingEntity pEntity, CallbackInfo ci) {
+		DragonStateHandler handler = DragonUtils.getHandler(pEntity);
 
-		if(handler.isDragon()){
+		if(handler.isDragon()) {
 			double size = handler.getSize();
 			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE){
 				// Scale the matrix back to the DEFAULT_MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
-				pX *= Mth.sqrt(((float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size)));
+				float scale = (float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size);
+				pGuiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling(scale, scale, scale));
 			}
 		}
-
-		return pX;
 	}
 
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;scaling(FFF)Lorg/joml/Matrix4f;"), index = 0)
-	private static float dragonScreenEntityRescalerX(float pX) {
-		return dragonScreenEntityRescaler(pX);
-	}
-
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;scaling(FFF)Lorg/joml/Matrix4f;"), index = 1)
-	private static float dragonScreenEntityRescalerY(float pY) {
-		return dragonScreenEntityRescaler(pY);
-	}
-
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;scaling(FFF)Lorg/joml/Matrix4f;"), index = 2)
-	private static float dragonScreenEntityRescalerZ(float pZ) {
-		return dragonScreenEntityRescaler(pZ);
-	}
 }
