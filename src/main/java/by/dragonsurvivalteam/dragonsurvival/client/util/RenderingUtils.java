@@ -61,10 +61,9 @@ public class RenderingUtils{
 		RenderSystem.disableBlend();
 	}
 
-	// FIXME :: There is a mismatch between the dragon color and the chosen color
 	public static void renderPureColorSquare(PoseStack mStack, int x, int y, int width, int height){
 		Matrix4f mat = mStack.last().pose();
-		int zLevel = 100;
+		int zLevel = 0;
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		RenderSystem.enableBlend();
@@ -87,7 +86,7 @@ public class RenderingUtils{
 
 	public static void renderColorSquare(@NotNull final GuiGraphics guiGraphics, int x, int y, int width, int height){
 		Matrix4f mat = guiGraphics.pose().last().pose();
-		int zLevel = 200;
+		int zLevel = 0;
 		RenderSystem.enableBlend();
 //		RenderSystem.disableTexture();
 		RenderSystem.defaultBlendFunc();

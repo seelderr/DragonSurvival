@@ -91,6 +91,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				if(visible){
 					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
+					guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, this.getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
 				}
 			}
 		};
@@ -122,7 +123,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col1 = Color.getHSBColor(value1, 0f, 1f).getRGB();
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
-					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 200, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
+					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
+					guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, this.getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
 				}
 			}
 		};
@@ -170,7 +172,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col1 = Color.getHSBColor(value1, 1f, 0f).getRGB();
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
-					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 200, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
+					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
+					guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, this.getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
 				}
 			}
 		};
