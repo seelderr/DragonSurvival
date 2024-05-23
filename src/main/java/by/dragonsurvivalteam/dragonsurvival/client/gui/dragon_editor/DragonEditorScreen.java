@@ -358,7 +358,7 @@ public class DragonEditorScreen extends Screen implements TooltipRender{
 			}
 
 			String[] values = valueList.toArray(new String[0]);
-			String curValue = preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin;
+			String curValue = partToTranslation(preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin);
 
 			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers) {
 				@Override

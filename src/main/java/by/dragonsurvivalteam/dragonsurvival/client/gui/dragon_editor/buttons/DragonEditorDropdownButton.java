@@ -40,10 +40,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks){
 		active = visible = dragonEditorScreen.showUi;
-		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
-		String currentValue = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin;
+		super.render(guiGraphics, mouseX, mouseY, pPartialTicks);
+		String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
 
 		if (!Objects.equals(currentValue, current)) {
 			current = DragonEditorScreen.partToTranslation(currentValue);
@@ -80,8 +80,9 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 			for(int i = 0; i < values.length; i++){
 				String val = values[i];
-				String localeString = String.format("ds.skin_part.%s.%s", this.dragonType, val).toLowerCase();
-				DropdownEntry ent = createEntry(i, val, localeString);
+				//String localeString = current;
+				//String localeString = String.format("ds.skin_part.%s.%s", this.dragonType, val).toLowerCase();
+				DropdownEntry ent = createEntry(i, val, val);
 				list.addEntry(ent);
 
 				if(Objects.equals(val, current))
