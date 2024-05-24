@@ -78,6 +78,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+
 @OnlyIn( Dist.CLIENT )
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientEvents{
@@ -169,7 +171,7 @@ public class ClientEvents{
 
 			if(inventoryToggle){
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+					SendOpenDragonInventoryAndMaintainCursorPosition();
 				}){
 					@Override
 					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -187,7 +189,7 @@ public class ClientEvents{
 		if (sc instanceof CreativeModeInventoryScreen screen) {
 			if (inventoryToggle) {
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+					SendOpenDragonInventoryAndMaintainCursorPosition();
 				}) {
 					@Override
 					public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {

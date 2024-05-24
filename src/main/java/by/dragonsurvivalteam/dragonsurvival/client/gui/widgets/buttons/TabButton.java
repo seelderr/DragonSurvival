@@ -19,6 +19,8 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+
 
 public class TabButton extends Button {
 	public enum TabType {
@@ -45,7 +47,7 @@ public class TabButton extends Button {
 			NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
 			return true;
 		} else if (sourceScreen instanceof DragonScreen) {
-			NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+			SendOpenDragonInventoryAndMaintainCursorPosition();
 			return true;
 		}
 
@@ -70,7 +72,7 @@ public class TabButton extends Button {
 
 					if(!setSuccessfully) {
 						if(ClientEvents.dragonInventory){
-							NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+							SendOpenDragonInventoryAndMaintainCursorPosition();
 						} else {
 							Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
 							NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
