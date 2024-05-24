@@ -5,8 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
-import by.dragonsurvivalteam.dragonsurvival.client.render.util.CustomTickAnimationController;
-import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
@@ -23,7 +21,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.ShulkerBoxBlockEntity.AnimationStatus;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,10 +28,8 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.Animation;
 import software.bernie.geckolib.core.animation.Animation.LoopType;
 import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationController.State;
 import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
@@ -60,7 +55,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	public float prevZRot;
 	public float prevXRot;
 
-	//Molang queries
 	public double tailMotionSide;
 	public double tailMotionUp;
 	public double body_yaw_change = 0;
@@ -71,9 +65,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	ActiveDragonAbility lastCast = null;
 	boolean started, ended;
 	AnimationTimer animationTimer = new AnimationTimer();
-	Emote lastEmote;
-	CustomTickAnimationController dragonAnimationController;
-	public double seekTime; // Copied from DragonModel.java in order to calculate the correct tickOffset when speed is adjusted for an animation.
 	private final double defaultPlayerWalkSpeed = 0.1;
 	private final double defaultPlayerSneakSpeed = 0.03;
 	private final double defaultPlayerFastSwimSpeed = 0.13;
@@ -84,37 +75,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		super(type, worldIn);
 	}
 
-	public Vec3 getPseudoDeltaMovement() {
-		Entity entity = level().getEntity(playerId);
-
-		if (entity instanceof Player player) {
-			return getPseudoDeltaMovement(player);
-		}
-
-		return new Vec3(0, 0, 0);
-	}
-
-	// TODO :: Not really needed while SyncFlightSpeed packet is constantly being synced
-	public Vec3 getPseudoDeltaMovement(final Player player) {
-		if (player == null) {
-			return new Vec3(0, 0, 0);
-		}
-
-		if (true/*player == Minecraft.getInstance().player*/) {
-			return player.getDeltaMovement();
-		}
-
-		return new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-	}
-
 	@Override
 	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar) {
 		for (int slot = 0; slot < EmoteCap.MAX_EMOTES; slot++) {
 			int finalSlot = slot;
-			registrar.add(new CustomTickAnimationController(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
+			registrar.add(new AnimationController<>(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
 		}
 
-		registrar.add(dragonAnimationController = new CustomTickAnimationController(this, "3", 2, this::predicate));
+		registrar.add(new AnimationController<>(this, "3", 2, this::predicate));
 		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
 		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
 		registrar.add(new AnimationController<>(this, "1", this::headPredicate));
@@ -147,11 +115,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		if (currentCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation) {
 			builder = renderAbility(state, currentCast);
 		}
-
-		/* TODO 1.20
-		This always added the animation to the builder without a loop type - is this needed?
-		animationTimer.putAnimation("...", ..., animation);
-		*/
 
 		if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
 			// When the player is using an item
@@ -214,7 +177,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			neckLocked = emote.locksHead;
 			tailLocked = emote.locksTail;
 
-			dragonAnimationController.speed = emote.speed;
+			state.getController().setAnimationSpeed(emote.speed);
 
 			if (emote.animation != null && !emote.animation.isEmpty()) {
 				if (!emote.loops) {
@@ -262,7 +225,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		neckLocked = false;
 		tailLocked = false;
 
-		Vec3 deltaMovement = getPseudoDeltaMovement(player);
+		Vec3 deltaMovement = player.getDeltaMovement();
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
 
 		RawAnimation builder = null;
@@ -279,17 +242,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			neckLocked = false;
 			tailLocked = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT_ON_MAGIC_SOURCE));
-			//builder.addAnimation("sit_on_magic_source", Animation.LoopType.LOOP);
 		}else if(player.isSleeping() || handler.treasureResting){
 			neckLocked = false;
 			tailLocked = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SLEEP));
-			//builder.addAnimation("sleep", Animation.LoopType.LOOP);
 		}else if(player.isPassenger()){
 			neckLocked = false;
 			tailLocked = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT));
-			//builder.addAnimation("sit", Animation.LoopType.LOOP);
 		}else if(player.getAbilities().flying || ServerFlightHandler.isFlying(player)){
 			if(ServerFlightHandler.isGliding(player)){
 				neckLocked = false;
@@ -298,24 +258,19 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 					neckLocked = false;
 					tailLocked = false;
 					animationSpeed = 2;
-					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SPIN));
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
 					animationController.transitionLength(2);
 				}else if(deltaMovement.y < -1){
-					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_DIVE_ALT));
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_DIVE_ALT));
 					animationController.transitionLength(4);
 				}else if(deltaMovement.y < -0.25){
-					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_DIVE));
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_DIVE));
 					animationController.transitionLength(4);
 				}else if(deltaMovement.y > 0.5){
 					animationSpeed = 1.5;
-					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY));
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY));
 					animationController.transitionLength(2);
 				}else{
-					//return state.setAndContinue(AnimationUtils.createAnimation(builder, FLY_SOARING));
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SOARING));
 					animationController.transitionLength(4);
 				}
@@ -362,7 +317,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}else{
 				useDynamicScaling = true;
 				baseSpeed = defaultPlayerSwimSpeed;
-				state.setAnimation(AnimationUtils.createAnimation(builder, SWIM_FAST));
+				state.setAnimation(AnimationUtils.createAnimation(builder, SWIM));
 				animationController.transitionLength(2);
 			}
 		}else if(animationController.getCurrentAnimation() != null && (Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land"))) {
@@ -415,22 +370,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			double sizeDistance = handler.getSize() - baseSize;
 			double sizeFactor = sizeDistance >= 0 ? bigSizeFactor : smallSizeFactor;
 			double sizeComponent = baseSize / (baseSize + sizeDistance * sizeFactor);
- 			finalAnimationSpeed = (animationSpeed + speedComponent) * sizeComponent;
+			// Prevent animation speed from being zero (as that breaks things!)
+ 			finalAnimationSpeed = Math.max(0.05, (animationSpeed + speedComponent) * sizeComponent);
 		}
 		AnimationUtils.setAnimationSpeed(finalAnimationSpeed, state.getAnimationTick(), animationController);
 
 		return PlayState.CONTINUE;
-	}
-
-	private PlayState swimOrSpin(final AnimationState<DragonEntity> state, final Player player, final RawAnimation swimAnimation) {
-		if (ServerFlightHandler.isSpin(player)) {
-			neckLocked = true;
-			tailLocked = true;
-			return state.setAndContinue(FLY_SPIN_FAST); // TODO 1.20 :: AnimationUtils.createAnimation
-		} else {
-			dragonAnimationController.speed = 1 + (double) Mth.sqrt((float) (player.getDeltaMovement().x * player.getDeltaMovement().x + player.getDeltaMovement().z * player.getDeltaMovement().z)) / 10;
-			return state.setAndContinue(swimAnimation);
-		}
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
@@ -449,7 +394,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				}
 
 				rawAnimation = RawAnimation.begin().thenLoop(animation.animationKey);
-//				state.setAndContinue(RawAnimation.begin().thenPlay(animation.animationKey));
 
 				if (animationTimer.getDuration(animation.animationKey) <= 0) {
 					lastCast = currentCast;
@@ -463,7 +407,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				lastCast = currentCast;
 
 				rawAnimation = RawAnimation.begin().thenLoop(animation.animationKey);
-//				state.setAndContinue(RawAnimation.begin().thenLoop(animation.animationKey));
 			}
 		} else if (currentCast != null) {
 			// Save the current cast as the previous cast
@@ -475,7 +418,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				tailLocked = animation.locksTail;
 
 				rawAnimation = RawAnimation.begin().thenLoop(animation.animationKey);
-//				state.setAndContinue(RawAnimation.begin().thenLoop(animation.animationKey));
 			}
 		} else if (lastCast != null) {
 			// Play the stopping animation
@@ -490,7 +432,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				}
 
 				rawAnimation = RawAnimation.begin().thenPlay(stopAnimation.animationKey);
-//				state.setAndContinue(RawAnimation.begin().thenPlay(stopAnimation.animationKey));
 
 				if (animationTimer.getDuration(stopAnimation.animationKey) <= 0) {
 					lastCast = null;
@@ -554,12 +495,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private static final RawAnimation SLEEP = RawAnimation.begin().thenLoop("sleep");
 	private static final RawAnimation SIT = RawAnimation.begin().thenLoop("sit");
 	private static final RawAnimation FLY = RawAnimation.begin().thenLoop("fly");
-	private static final RawAnimation FLY_FAST = RawAnimation.begin().thenLoop("fly_fast");
 	private static final RawAnimation FLY_SOARING = RawAnimation.begin().thenLoop("fly_soaring");
 	private static final RawAnimation FLY_DIVE = RawAnimation.begin().thenLoop("fly_dive");
 	private static final RawAnimation FLY_DIVE_ALT = RawAnimation.begin().thenLoop("fly_dive_alt");
 	private static final RawAnimation FLY_SPIN = RawAnimation.begin().thenLoop("fly_spin");
-	private static final RawAnimation FLY_SPIN_FAST = RawAnimation.begin().thenLoop("fly_spin_fast");
 	private static final RawAnimation FLY_LAND = RawAnimation.begin().thenLoop("fly_land");
 	private static final RawAnimation SWIM = RawAnimation.begin().thenLoop("swim");
 	private static final RawAnimation SWIM_FAST = RawAnimation.begin().thenLoop("swim_fast");
@@ -573,7 +512,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private static final RawAnimation DIG = RawAnimation.begin().thenLoop("dig");
 
 	private static final RawAnimation JUMP = RawAnimation.begin().thenPlay("jump");
-	private static final RawAnimation LAND = RawAnimation.begin().thenPlay("land");
 	private static final RawAnimation FLY_LAND_END = RawAnimation.begin().thenPlay("fly_land_end");
 
 	private static final RawAnimation TAIL_TURN = RawAnimation.begin().thenLoop("tail_turn");

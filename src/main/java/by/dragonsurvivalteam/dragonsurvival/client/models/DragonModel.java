@@ -32,11 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private final ResourceLocation model = new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
-	private final ResourceLocation animation = new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
-
 	private ResourceLocation currentTexture = defaultTexture;
-
-	private final ConcurrentHashMap<String, ResourceLocation> cache = new ConcurrentHashMap<>();
 
 	/**TODO Body Types Update
 	Required:
@@ -59,7 +55,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		MolangParser parser = MolangParser.INSTANCE;
 
 		Player player = dragon.getPlayer();
-		Vec3 deltaMovement = dragon.getPseudoDeltaMovement();
+		Vec3 deltaMovement = dragon.getDeltaMovement();
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
 		parser.setValue("query.delta_y", () -> deltaMovement.y);
@@ -181,43 +177,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 		return currentTexture == null ? defaultTexture : currentTexture;
 	}
-
-	/**
-	 * Copied code from Geckolib pre version 3.0.47 which broke dragon rendering
-	 * @link <a href="https://github.com/bernie-g/geckolib/blob/4e864bd2d4a0a8dceea01f600b7031cb2fba3a3b/Forge/src/main/java/software/bernie/geckolib3/model/AnimatedGeoModel.java#L51">Github link</a>
-	 */
-	/*@Override
-	public void setCustomAnimations(DragonEntity dragon, int uniqueID, final AnimationEvent customPredicate) {
-		AnimationData manager = dragon.getFactory().getOrCreateAnimationData(uniqueID);
-
-		if (manager.startTick == -1) {
-			manager.startTick = dragon.tickCount + Minecraft.getInstance().getFrameTime();
-		}
-
-		if (!Minecraft.getInstance().isPaused() || manager.shouldPlayWhilePaused) {
-			getCurrentState();
-			manager.tick = getCurrentTick() - manager.startTick;
-			double gameTick = manager.tick;
-			double deltaTicks = gameTick - lastGameTickTime;
-			seekTime += deltaTicks;
-			dragon.seekTime = seekTime; // Needed for dynamic speed adjustments to work correctly
-			lastGameTickTime = gameTick;
-		}
-
-		AnimationEvent<DragonEntity> predicate = Objects.requireNonNullElseGet(customPredicate, () -> new AnimationEvent<>(dragon, 0, 0, (float) (manager.tick - lastGameTickTime), false, Collections.emptyList()));
-		predicate.animationTick = seekTime;
-
-		getAnimationProcessor().preAnimationSetup(predicate.getAnimatable(), seekTime);
-
-		if (!getAnimationProcessor().getModelRendererList().isEmpty()) {
-			getAnimationProcessor().tickAnimation(dragon, uniqueID, seekTime, predicate, GeckoLibCache.getInstance().parser, shouldCrashOnMissing);
-		}
-	}*/
-
-	/*@Override
-	public void setMolangQueries(final GeoAnimatable animatable, double currentTick) {
-		super.setMolangQueries(animatable, currentTick);
-	}*/
 
 	public void setCurrentTexture(final ResourceLocation currentTexture) {
 		this.currentTexture = currentTexture;
