@@ -339,7 +339,7 @@ public class DragonModifiers{
 	}
 
 	public static double getJumpBonus(DragonStateHandler handler) {
-		double jumpBonus = handler.getBody().getJumpBonus();
+		double jumpBonus = 0;
 		if (handler.getBody() != null) {
 			jumpBonus = handler.getBody().getJumpBonus();
 			if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
