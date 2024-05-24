@@ -58,10 +58,10 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
+import net.minecraft.world.level.material.FogType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
-import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
 import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.ScreenEvent;
@@ -158,37 +158,13 @@ public class ClientEvents{
 
 		if(sc instanceof InventoryScreen screen){
 			if(dragonTabs){
-				initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, 0, screen){
-					@Override
-					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
-						setX(screen.getGuiLeft());
-					}
-				});
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, TabButton.TabType.INVENTORY, screen));
 
-				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, 1, screen){
-					@Override
-					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
-						setX(screen.getGuiLeft() + 28);
-					}
-				});
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, TabButton.TabType.ABILITY, screen));
 
-				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, 2, screen){
-					@Override
-					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
-						setX(screen.getGuiLeft() + 57);
-					}
-				});
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, TabButton.TabType.GITHUB_REMINDER, screen));
 
-				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, 3, screen){
-					@Override
-					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
-						setX(screen.getGuiLeft() + 86);
-					}
-				});
+				initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, TabButton.TabType.SKINS, screen));
 			}
 
 			if(inventoryToggle){
@@ -198,7 +174,6 @@ public class ClientEvents{
 					@Override
 					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 						super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-						setX(screen.getGuiLeft() + 128);
 
 						if(isHoveredOrFocused()){
 							ArrayList<Component> description = new ArrayList<>(List.of(Component.translatable("ds.gui.toggle_inventory.dragon")));

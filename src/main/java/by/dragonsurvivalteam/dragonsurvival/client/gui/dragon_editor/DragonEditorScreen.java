@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.utils.TooltipRender;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.UndoRedoButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
@@ -73,7 +72,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 
-public class DragonEditorScreen extends Screen implements TooltipRender{
+public class DragonEditorScreen extends Screen {
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
 	private static final ResourceLocation RESET_POSITION = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png");
 	private static final ResourceLocation SAVE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png");

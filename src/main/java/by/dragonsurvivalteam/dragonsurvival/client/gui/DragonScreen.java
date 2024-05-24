@@ -112,10 +112,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		addRenderableWidget(new TabButton(leftPos, topPos - 28, 0, this));
-		addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, 1, this));
-		addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, 2, this));
-		addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, 3, this));
+		addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.TabType.INVENTORY, this));
+		addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.TabType.ABILITY, this));
+		addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, TabButton.TabType.GITHUB_REMINDER, this));
+		addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, TabButton.TabType.SKINS, this));
 
 		addRenderableWidget(new DSButton(leftPos + 27, topPos + 10, 11, 11 , button -> {
 			clawsMenu = !clawsMenu;
