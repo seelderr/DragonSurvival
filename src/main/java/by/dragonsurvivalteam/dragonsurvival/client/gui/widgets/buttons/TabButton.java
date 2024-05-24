@@ -39,13 +39,17 @@ public class TabButton extends Button {
 		setTooltip(Tooltip.create(Component.translatable("ds.gui.tab_button." + tabType.ordinal())));
 	}
 
-	private void setInventoryScreen(Screen sourceScreen) {
+	private boolean setInventoryScreen(Screen sourceScreen) {
 		if (sourceScreen instanceof InventoryScreen) {
 			Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
 			NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+			return true;
 		} else if (sourceScreen instanceof DragonScreen) {
 			NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+			return true;
 		}
+
+		return false;
 	}
 
 	@Override
@@ -53,19 +57,24 @@ public class TabButton extends Button {
 		if(!isCurrent())
 			switch(tabType){
 				case INVENTORY -> {
+					boolean setSuccessfully = false;
 					if(parent instanceof AbilityScreen){
 						if(((AbilityScreen)parent).sourceScreen != null){
-							setInventoryScreen(((AbilityScreen)parent).sourceScreen);
+							setSuccessfully = setInventoryScreen(((AbilityScreen)parent).sourceScreen);
 						}
 					} else if(parent instanceof SkinsScreen){
 						if(((SkinsScreen)parent).sourceScreen != null){
-							setInventoryScreen(((SkinsScreen)parent).sourceScreen);
+							setSuccessfully = setInventoryScreen(((SkinsScreen)parent).sourceScreen);
 						}
-					} else if(ClientEvents.dragonInventory){
-						NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
-					} else {
-						Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-						NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+					}
+
+					if(!setSuccessfully) {
+						if(ClientEvents.dragonInventory){
+							NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+						} else {
+							Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
+							NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+						}
 					}
 				}
 				case ABILITY -> Minecraft.getInstance().setScreen(new AbilityScreen(parent));
