@@ -281,7 +281,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		super.renderBackground(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
-		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		DragonStateHandler handler = DragonUtils.getHandler(player);
 
@@ -289,6 +288,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		double renderedSize = Math.min(handler.getSize(), ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 6;
 		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, leftPos + 65, topPos + 75 + (int)(renderedSize * 1.25), (int)renderedSize + 15, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
 		RenderSystem.disableScissor();
+
+		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		if (isGrowthIconHovered) {
 			String age = (int)handler.getSize() - handler.getLevel().size + "/";
