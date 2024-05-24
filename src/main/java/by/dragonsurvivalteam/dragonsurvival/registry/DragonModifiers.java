@@ -342,7 +342,7 @@ public class DragonModifiers{
 		double jumpBonus = handler.getBody().getJumpBonus();
 		if (handler.getBody() != null) {
 			jumpBonus = handler.getBody().getJumpBonus();
-			if (ServerConfig.allowLargeScaling) {
+			if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 				jumpBonus += ServerConfig.largeJumpHeightScalar * (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 			}
 		}
