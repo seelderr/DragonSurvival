@@ -30,6 +30,7 @@
     "MixinInventoryScreen",
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",
+    "MixinLiquidBlockRenderer",
     "MixinWorldRenderer",
     "tool_swap.MixinMultiPlayerGameModeStart",
     "tool_swap.MixinMultiPlayerGameModeEnd"
