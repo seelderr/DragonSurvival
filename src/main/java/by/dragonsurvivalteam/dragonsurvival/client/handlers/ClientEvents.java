@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
+import by.dragonsurvivalteam.dragonsurvival.client.render.CaveLavaFluidRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
@@ -13,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -49,9 +51,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
-import net.minecraft.world.level.block.state.StateHolder;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.FogType;
@@ -59,6 +63,8 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
+import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.client.event.ScreenEvent;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.LevelEvent;
@@ -92,8 +98,8 @@ public class ClientEvents{
 	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "inventoryToggle", comment = "Should the buttons for toggeling between dragon and normaly inventory be added?" )
 	public static Boolean inventoryToggle = true;
 	private static ItemStack BOLAS;
-	private static boolean hasUpdatedSinceChangingLavaVision = false;
-	private static boolean hasLavaVisionPrev = false;
+	private static boolean wasCaveDragon = false;
+	private static LiquidBlockRenderer prevFluidRenderer;
 
 	@SubscribeEvent
 	public static void decreaseJumpDuration(TickEvent.PlayerTickEvent playerTickEvent){
@@ -290,17 +296,6 @@ public class ClientEvents{
 
 	@SubscribeEvent
 	@OnlyIn( Dist.CLIENT )
-	public static void onRenderFog(ViewportEvent.RenderFog event) {
-		Minecraft minecraft = Minecraft.getInstance();
-		LocalPlayer player = minecraft.player;
-
-		if(player.hasEffect(DragonEffects.LAVA_VISION) && event.getCamera().getFluidInCamera() == FogType.LAVA) {
-			event.setFarPlaneDistance(1000);
-		}
-	}
-
-	@SubscribeEvent
-	@OnlyIn( Dist.CLIENT )
 	public static void onRenderWorldLastEvent(RenderLevelStageEvent event){
 		if(event.getStage() != Stage.AFTER_PARTICLES){
 			return;
@@ -313,28 +308,32 @@ public class ClientEvents{
 			return;
 		}
 
-		if(player.hasEffect(DragonEffects.LAVA_VISION)) {
-			if(!hasLavaVisionPrev) {
-				hasUpdatedSinceChangingLavaVision = false;
+		DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+			if(playerStateHandler.isDragon() && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && ServerConfig.bonuses && ServerConfig.caveLavaSwimming){
+				if(!wasCaveDragon){
+					if(player.hasEffect(DragonEffects.LAVA_VISION)){
+						prevFluidRenderer = minecraft.getBlockRenderer().liquidBlockRenderer;
+						minecraft.getBlockRenderer().liquidBlockRenderer = new CaveLavaFluidRenderer();
+						minecraft.levelRenderer.allChanged();
+					}
+				}else{
+					if(!player.hasEffect(DragonEffects.LAVA_VISION)){
+						if(prevFluidRenderer != null){
+							minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
+						}
+						minecraft.levelRenderer.allChanged();
+					}
+				}
+			}else{
+				if(wasCaveDragon){
+					if(prevFluidRenderer != null){
+						minecraft.getBlockRenderer().liquidBlockRenderer = prevFluidRenderer;
+					}
+					minecraft.levelRenderer.allChanged();
+				}
 			}
-
-			hasLavaVisionPrev = true;
-			if(!hasUpdatedSinceChangingLavaVision) {
-				hasUpdatedSinceChangingLavaVision = true;
-				event.getLevelRenderer().allChanged();
-			}
-		}
-		else {
-			if(hasLavaVisionPrev) {
-				hasUpdatedSinceChangingLavaVision = false;
-			}
-
-			hasLavaVisionPrev = false;
-			if(!hasUpdatedSinceChangingLavaVision) {
-				hasUpdatedSinceChangingLavaVision = true;
-				event.getLevelRenderer().allChanged();
-			}
-		}
+			wasCaveDragon = playerStateHandler.isDragon() && Objects.equals(playerStateHandler.getType(), DragonTypes.CAVE) && player.hasEffect(DragonEffects.LAVA_VISION);
+		});
 	}
 
 	public static void renderOverlay(final DragonStateHandler handler, final ForgeGui forgeGUI, final GuiGraphics guiGraphics) {
