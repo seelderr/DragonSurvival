@@ -64,18 +64,18 @@ public class BallLightningEntity extends DragonBallEntity{
 
 	@Override
 	protected void onHit(HitResult hitResult){
-		if(this.level.isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
-			if (!(getOwner() instanceof Player) && !isLingering)
-			{
+		if((getOwner() == null || !getOwner().isRemoved()) && this.level.hasChunkAt(this.blockPosition())) {
+			if(this.level.isClientSide && !isLingering) {
 				level.playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
+				isLingering = true;
+			} else if (!isLingering) {
+				isLingering = true;
+				// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
+				xPower = 0;
+				zPower = 0;
+				yPower = 0;
+				setDeltaMovement(Vec3.ZERO);
 			}
-
-			isLingering = true;
-			// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
-			xPower = 0;
-			zPower = 0;
-			yPower = 0;
-			setDeltaMovement(Vec3.ZERO);
 		}
 	}
 	
