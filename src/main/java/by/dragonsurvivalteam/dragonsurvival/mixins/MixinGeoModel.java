@@ -20,14 +20,15 @@ public abstract class MixinGeoModel<T extends GeoAnimatable> implements CoreGeoM
     @Unique private long dragonSurvival$instanceId;
 
     @Inject(method = "handleAnimations", at = @At("HEAD"))
-    public void overrideTick(final T animatable, long instanceId, final AnimationState<T> animationState, final CallbackInfo callback) {
+    public void captureHandleAnimationsArgs(final T animatable, long instanceId, final AnimationState<T> animationState, final CallbackInfo callback) {
         dragonSurvival$animatable = animatable;
         dragonSurvival$instanceId = instanceId;
         /*animationState.getData(DataTickets.TICK);*/ // TODO :: Is always 0 -> because the dragon entity does not tick?
     }
 
+    // The dragon entity doesn't tick, so we apply the time it would've taken for it to tick in this mixin for GeckoLib to work properly
     @ModifyArg(method = "handleAnimations", at = @At(value = "INVOKE", target = "Lsoftware/bernie/geckolib/core/animation/AnimatableManager;updatedAt(D)V"))
-    private double stuff(double updateTime) {
+    private double applyDragonTickTime(double updateTime) {
         if (dragonSurvival$animatable instanceof DragonEntity) {
             AnimatableManager<GeoAnimatable> manager = dragonSurvival$animatable.getAnimatableInstanceCache().getManagerForId(dragonSurvival$instanceId);
             return RenderUtils.getCurrentTick() - manager.getFirstTickTime();
