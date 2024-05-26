@@ -125,7 +125,7 @@ tasks.withType(ProcessResources).configureEach {
     }
 }
 
-/*tasks.named('jar', Jar).configure {
+tasks.named('jar', Jar).configure {
     manifest {
         attributes([
                 'Specification-Title'     : mod_id,
@@ -139,10 +139,9 @@ tasks.withType(ProcessResources).configureEach {
     }
 
     finalizedBy 'reobfJar'
-}*/
+}
 
-// FIXME: REMOVE THIS AND RE-ADD THE ABOVE TASK WHEN WE UPDATE PAST 1.20.1 (MixinExtras will be included in Neoforge from that point forward and we don't need Jar-in-Jar anymore)
-tasks.named('jar', Jar).configure {
+tasks.named('jarJar', Jar).configure {
     jarJar.enable()
 
     manifest {
