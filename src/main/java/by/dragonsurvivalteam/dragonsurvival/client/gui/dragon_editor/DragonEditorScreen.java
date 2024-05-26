@@ -36,7 +36,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
@@ -83,7 +83,7 @@ public class DragonEditorScreen extends Screen {
 	                                     "sit_head_locked",
 	                                     "idle_head_locked",
 	                                     "fly_head_locked",
-	                                     "swim_fast_locked",
+	                                     "swim_fast_head_locked",
 	                                     "run_head_locked",
 	                                     "spinning_on_back"};
 	@ConfigRange( min = 1, max = 1000 )
@@ -356,10 +356,10 @@ public class DragonEditorScreen extends Screen {
 		}
 
 		int i = 0;
-		for(EnumSkinLayer layers : EnumSkinLayer.values()){
+		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
 			ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonType, layers);
 
-			if(layers != EnumSkinLayer.BASE){
+			if (layers != EnumSkinLayer.BASE) {
 				valueList.add(0, SkinCap.defaultSkinValue);
 			}
 
@@ -391,6 +391,12 @@ public class DragonEditorScreen extends Screen {
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
 				btn.updateMessage();
+
+				LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layers, settings.selectedSkin, dragonType);
+				if (text != null && !settings.modifiedColor) {
+					settings.hue = text.average_hue;
+				}
 			}){
 				@Override
 				public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
@@ -417,6 +423,12 @@ public class DragonEditorScreen extends Screen {
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
 				btn.updateMessage();
+
+				LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layers, settings.selectedSkin, dragonType);
+				if (text != null && !settings.modifiedColor) {
+					settings.hue = text.average_hue;
+				}
 			}){
 				@Override
 				public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
@@ -490,37 +502,6 @@ public class DragonEditorScreen extends Screen {
 		for(int num = 1; num <= 9; num++){
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
 		}
-
-// The old part of the gui that allowed you to change the size of the dragon without changing the hitbox
-//		addRenderableWidget(new ForgeSlider(width / 2 - 100 - 100, height - 25, 100, 20, Component.translatable("ds.gui.dragon_editor.size"), Component.empty().append("%"), ServerConfig.minSizeVari, ServerConfig.maxSizeVari, Math.round((preset.sizeMul - 1.0) * 100), true){
-//			@Override
-//			protected void applyValue(){
-//				super.applyValue();
-//				double val = 1.0 + getValueInt() / 100.0;
-//				if(preset.sizeMul != val){
-//					preset.sizeMul = val;
-//					dragonRender.zoom = (float)(level.size * preset.sizeMul);
-//				}
-//
-//				double val1 = Math.round((preset.sizeMul - 1.0) * 100);
-//
-//				if(val1 > 0){
-//					setMessage(Component.translatable("ds.gui.dragon_editor.size").append("+").append(val1 + "%"));
-//				}else{
-//					setMessage(Component.translatable("ds.gui.dragon_editor.size").append(val1 + "%"));
-//				}
-//			}
-//
-//			@Override
-//			public void render(PoseStack pPoseStack, int pMouseX, int pMouseY, float pPartialTicks){
-//				super.render(pPoseStack, pMouseX, pMouseY, pPartialTicks);
-//			}
-//
-//			@Override
-//			public void renderToolTip(PoseStack pPoseStack, int pMouseX, int pMouseY){
-//				TooltipRendering.drawHoveringText(pPoseStack, Component.translatable("ds.gui.dragon_editor.size_info"), pMouseX, pMouseY);
-//			}
-//		});
 
 		addRenderableWidget(new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
 			@Override
@@ -669,7 +650,7 @@ public class DragonEditorScreen extends Screen {
 					keys.add(SkinCap.defaultSkinValue);
 				}
 
-				if(keys.size() > 0){
+				if(!keys.isEmpty()){
 					String key = keys.get(minecraft.player.getRandom().nextInt(keys.size()));
 					if(Objects.equals(layer.name, "Extra")){
 						extraKeys.remove(key);
@@ -680,12 +661,17 @@ public class DragonEditorScreen extends Screen {
 					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, dragonType);
 
 					if(text != null && text.randomHue){
-						settings.hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						settings.hue = minecraft.player.getRandom().nextFloat();
 						settings.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
 						settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
 						settings.modifiedColor = true;
 					}else{
-						settings.hue = 0.5f;
+						if (text != null) {
+							settings.hue = text.average_hue;
+						}
+						else {
+							settings.hue = 0.0f;
+						}
 						settings.saturation = 0.5f;
 						settings.brightness = 0.5f;
 						settings.modifiedColor = true;
@@ -792,7 +778,7 @@ public class DragonEditorScreen extends Screen {
 	}
 
 	public void update(){
-		if(dragonType != null){
+		if (dragonType != null) {
 			handler.setType(dragonType);
 		}
 		handler.setBody(dragonBody);
@@ -800,7 +786,7 @@ public class DragonEditorScreen extends Screen {
 		handler.setSize(level.size);
 		handler.setHasFlight(true);
 
-		if(currentSelected != lastSelected){
+		if (currentSelected != lastSelected) {
 			preset = new SkinPreset();
 
 			if (DragonEditorRegistry.getSavedCustomizations().skinPresets.containsKey(dragonType.getTypeName().toUpperCase())) {
@@ -866,7 +852,8 @@ public class DragonEditorScreen extends Screen {
 				NetworkHandler.CHANNEL.sendToServer(new CompleteDataSync(minecraft.player.getId(), cap.writeNBT()));
 				NetworkHandler.CHANNEL.sendToServer(new SyncAltarCooldown(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				ClientEvents.sendClientData(new RequestClientData(cap.getType(), cap.getBody(), cap.getLevel()));
+
+				ClientProxy.requestClientData(handler);
 			}
 
 			if (minecraft != null && minecraft.player != null) {
@@ -888,5 +875,3 @@ public class DragonEditorScreen extends Screen {
 		return false;
 	}
 }
-
-// TODO add a warning to the logs that any custom textures are incorrectly registered in customization.json or are not used.
