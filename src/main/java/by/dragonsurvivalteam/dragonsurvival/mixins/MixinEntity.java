@@ -37,11 +37,6 @@ import java.util.Objects;
 
 @Mixin( Entity.class )
 public abstract class MixinEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity>{
-	@Shadow
-	private EntityDimensions dimensions;
-	@Shadow 
-	public abstract void onPassengerTurned(Entity $$0);
-
 	protected MixinEntity(Class<Entity> baseClass){
 		super(baseClass);
 	}
@@ -190,35 +185,6 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			return DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(entity.position());
 		}else
 			return getBoundingBoxForPose(pose);
-	}
-
-	@ModifyVariable(method = "spawnAtLocation(Lnet/minecraft/world/item/ItemStack;F)Lnet/minecraft/world/entity/item/ItemEntity;", at = @At(value = "STORE"), name = "itementity")
-	public ItemEntity protectDrops(ItemEntity itemEntity) { // TODO 1.20 :: Check
-		Object self = this;
-
-		if (self instanceof LivingEntity livingEntity) {
-			if (!(livingEntity.level() instanceof ServerLevel)) {
-				return itemEntity;
-			}
-
-			if (livingEntity.lastHurtByPlayerTime > 0) {
-				Player player = livingEntity.lastHurtByPlayer;
-
-				// Prevent the dropped item from burning when player is a cave dragon
-				if (DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
-					itemEntity = new ItemEntity(livingEntity.level(), itemEntity.position().x, itemEntity.position().y, itemEntity.position().z, itemEntity.getItem()) {
-						@Override
-						public boolean fireImmune(){
-							return true;
-						}
-					};
-
-					return itemEntity;
-				}
-			}
-		}
-
-		return itemEntity;
 	}
 
 	@Shadow

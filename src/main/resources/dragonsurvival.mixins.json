@@ -6,7 +6,6 @@
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
     "AccessorAnimationController",
-    "MixinBlock",
     "MixinEnchantmentHelper",
     "MixinEntity",
     "MixinInventory",

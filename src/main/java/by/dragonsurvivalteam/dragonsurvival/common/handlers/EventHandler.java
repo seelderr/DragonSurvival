@@ -231,37 +231,17 @@ public class EventHandler{
 
 					if(dragonStateHandler.isDragon()){
 						if(player.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
+							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)));
 						}
 						if(player.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
+							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)));
 						}
 					}else{
 						if(player.getRandom().nextDouble() < ServerConfig.humanOreDustChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
+							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)));
 						}
 						if(player.getRandom().nextDouble() < ServerConfig.humanOreBoneChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
+							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)));
 						}
 					}
 				}
