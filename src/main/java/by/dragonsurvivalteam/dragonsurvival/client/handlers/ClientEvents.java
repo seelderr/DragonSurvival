@@ -72,6 +72,8 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+
 @OnlyIn( Dist.CLIENT )
 @Mod.EventBusSubscriber( Dist.CLIENT )
 public class ClientEvents{
@@ -163,7 +165,7 @@ public class ClientEvents{
 
 			if(inventoryToggle){
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
+					SendOpenDragonInventoryAndMaintainCursorPosition();
 				}){
 					@Override
 					public void renderButton(PoseStack p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
@@ -182,8 +184,8 @@ public class ClientEvents{
 		if(sc instanceof CreativeModeInventoryScreen screen){
 			if(inventoryToggle){
 				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-					NetworkHandler.CHANNEL.sendToServer(new OpenDragonInventory());
-				}){
+					SendOpenDragonInventoryAndMaintainCursorPosition();
+				}) {
 					@Override
 					public void render(PoseStack p_230430_1_, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 						active = visible = screen.getSelectedTab() == CreativeModeTab.TAB_INVENTORY.getId();
