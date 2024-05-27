@@ -326,7 +326,9 @@ public class DragonFoodHandler {
 	public static void dragonEat(final FoodData foodData, final Item item, final AbstractDragonType type) {
 		if (isDragonEdible(item, type)) {
 			FoodProperties foodProperties = getDragonFoodProperties(item, type);
-			foodData.eat(foodProperties.getNutrition(), foodProperties.getSaturationModifier());
+			if(foodProperties != null) {
+				foodData.eat(foodProperties.getNutrition(), foodProperties.getSaturationModifier());
+			}
 		}
 	}
 

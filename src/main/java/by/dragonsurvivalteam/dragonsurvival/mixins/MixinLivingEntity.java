@@ -17,6 +17,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
@@ -59,10 +60,14 @@ public abstract class MixinLivingEntity extends Entity{
 		return getItemBySlot(slotType);
 	}
 
+	// Partially copied from MixinItem.java
 	@Unique
 	private boolean dragon_Survival$isDragonEdibleForLivingEntity(boolean original, ItemStack itemStack, LivingEntity livingEntity){
-		if (livingEntity instanceof Player) {
-			return DragonStateProvider.getCap(livingEntity).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible(itemStack.getItem(), dragonStateHandler.getType())).orElse(original);
+		if(livingEntity instanceof Player player) {
+			DragonStateHandler handler = DragonStateProvider.getHandler(player);
+			if(handler != null && handler.isDragon()){
+				return DragonFoodHandler.isDragonEdible(itemStack.getItem(), handler.getType());
+			}
 		}
 
 		return original;
