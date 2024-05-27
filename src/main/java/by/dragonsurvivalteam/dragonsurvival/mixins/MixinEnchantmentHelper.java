@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,15 +22,18 @@ import java.util.List;
 
 @Mixin( EnchantmentHelper.class )
 public abstract class MixinEnchantmentHelper{
-	@Inject( at = @At( "HEAD" ), method = "hasAquaAffinity", cancellable = true )
-	private static void hasAquaAffinity(LivingEntity entity, CallbackInfoReturnable<Boolean> ci){
-		if(!(entity instanceof Player player)){
-			return;
+
+	@ModifyReturnValue(method = "hasAquaAffinity", at = @At("RETURN"))
+	private static boolean modifyHasAquaAffinityForSeaDragon(boolean original, @Local(index = 0, argsOnly = true) LivingEntity pEntity){
+		if(!(pEntity instanceof Player player)){
+			return original;
 		}
 
 		if(DragonUtils.isDragonType(player, DragonTypes.SEA)){
-			ci.setReturnValue(true);
+			return true;
 		}
+
+		return original;
 	}
 
 	@Unique
