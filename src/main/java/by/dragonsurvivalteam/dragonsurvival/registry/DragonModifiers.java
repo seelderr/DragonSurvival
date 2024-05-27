@@ -324,4 +324,21 @@ public class DragonModifiers{
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}
+
+	public static double getJumpBonus(DragonStateHandler handler) {
+		double jumpBonus = 0;
+		if (handler.getBody() != null) {
+			jumpBonus = handler.getBody().getJumpBonus();
+			if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+				jumpBonus += ServerConfig.largeJumpHeightScalar * (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+			}
+		}
+		switch(handler.getLevel()){
+			case NEWBORN -> jumpBonus += ServerConfig.newbornJump; //1+ block
+			case YOUNG -> jumpBonus += ServerConfig.youngJump; //1.5+ block
+			case ADULT -> jumpBonus += ServerConfig.adultJump; //2+ blocks
+		}
+
+		return jumpBonus;
+	}
 }

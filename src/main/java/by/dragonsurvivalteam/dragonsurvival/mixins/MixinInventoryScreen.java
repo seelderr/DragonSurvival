@@ -77,17 +77,17 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		return pX;
 	}
 
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;scaling(FFF)Lorg/joml/Matrix4f;"), index = 0)
+	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 0)
 	private static float dragonScreenEntityRescalerX(float pX) {
 		return dragonScreenEntityRescaler(pX);
 	}
 
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;scaling(FFF)Lorg/joml/Matrix4f;"), index = 1)
+	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 1)
 	private static float dragonScreenEntityRescalerY(float pY) {
 		return dragonScreenEntityRescaler(pY);
 	}
 
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix4f;scaling(FFF)Lorg/joml/Matrix4f;"), index = 2)
+	@ModifyArg(method = "renderEntityInInventoryRaw", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"), index = 2)
 	private static float dragonScreenEntityRescalerZ(float pZ) {
 		return dragonScreenEntityRescaler(pZ);
 	}
