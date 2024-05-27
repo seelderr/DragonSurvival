@@ -255,6 +255,7 @@ public class DragonFoodHandler {
 
 		if (!shouldKeepEffects && !isDragonFood && foodHungerEffect) {
 			builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 60, 0), 1.0F);
+			builder.effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 60, 0), 0.5F);
 		}
 
 		if (saturation == 0 || nutrition == 0) {
