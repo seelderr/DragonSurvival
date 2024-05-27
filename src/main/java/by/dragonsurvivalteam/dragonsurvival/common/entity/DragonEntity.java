@@ -320,12 +320,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				state.setAnimation(AnimationUtils.createAnimation(builder, SWIM));
 				animationController.transitionLength(2);
 			}
-		}else if(animationController.getCurrentAnimation() != null && (Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land"))) {
-			state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND_END).then("idle", LoopType.LOOP));
+		}else if(AnimationUtils.isAnimationPlaying(animationController, "fly_land")) {
+			state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND_END));
 			animationController.transitionLength(2);
-		} else if(animationController.getCurrentAnimation() != null && Objects.equals(animationController.getCurrentAnimation().animation().name(), "fly_land_end")) {
+		} else if(AnimationUtils.isAnimationPlaying(animationController, "fly_land_end")) {
 			// Don't add any animation
-		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
+		}else if(!player.onGround() && ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
 			state.setAnimation(AnimationUtils.createAnimation(builder, JUMP));
 			animationController.transitionLength(2);
 		// Extra condition to prevent the player from triggering the fall animation when falling a trivial distance (this happens when you are really big)
@@ -511,8 +511,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation DIG = RawAnimation.begin().thenLoop("dig");
 
-	private static final RawAnimation JUMP = RawAnimation.begin().thenPlay("jump");
-	private static final RawAnimation FLY_LAND_END = RawAnimation.begin().thenPlay("fly_land_end");
+	private static final RawAnimation JUMP = RawAnimation.begin().then("jump", LoopType.PLAY_ONCE).thenLoop("fall_loop");
+	private static final RawAnimation FLY_LAND_END = RawAnimation.begin().then("fly_land_end", LoopType.PLAY_ONCE).thenLoop("idle");
 
 	private static final RawAnimation TAIL_TURN = RawAnimation.begin().thenLoop("tail_turn");
 	private static final RawAnimation HEAD_TURN = RawAnimation.begin().thenLoop("head_turn");
