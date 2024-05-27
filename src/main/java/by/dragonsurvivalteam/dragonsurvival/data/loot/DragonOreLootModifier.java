@@ -64,27 +64,19 @@ public class DragonOreLootModifier extends LootModifier {
                                 int fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
                                 if(handler.isDragon()) {
                                     if(context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){
-                                        for (int i = 0; i < fortuneRoll; i++) {
-                                            generatedLoot.add(new ItemStack(DSItems.elderDragonDust));
-                                        }
+                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
                                     }
 
                                     if(context.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance){
-                                        for (int i = 0; i < fortuneRoll; i++) {
-                                            generatedLoot.add(new ItemStack(DSItems.elderDragonBone));
-                                        }
+                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
                                     }
                                 } else {
                                     if(context.getRandom().nextDouble() < ServerConfig.humanOreDustChance){
-                                        for (int i = 0; i < fortuneRoll; i++) {
-                                            generatedLoot.add(new ItemStack(DSItems.elderDragonDust));
-                                        }
+                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
                                     }
 
                                     if(context.getRandom().nextDouble() < ServerConfig.humanOreBoneChance){
-                                        for (int i = 0; i < fortuneRoll; i++) {
-                                            generatedLoot.add(new ItemStack(DSItems.elderDragonBone));
-                                        }
+                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
                                     }
                                 }
                             }
