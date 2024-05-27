@@ -114,12 +114,6 @@ public class AbilityScreen extends Screen{
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-		for(Renderable btn : renderables){
-			if(btn instanceof AbstractWidget b && b.isHoveredOrFocused()){
-				//b.renderToolTip(mouseX, mouseY);
-			}
-		}
-
 		renderables.forEach(s-> {
 			if(s instanceof AbilityButton btn){
 				if(btn.skillType == 0 && btn.dragging && btn.ability != null){
@@ -139,10 +133,10 @@ public class AbilityScreen extends Screen{
 		int startY = guiTop;
 
 		//Inventory
-		addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, 0, this));
-		addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, 1, this));
-		addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, 2, this));
-		addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, 3, this));
+		addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, TabButton.TabType.INVENTORY, this));
+		addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, TabButton.TabType.ABILITY, this));
+		addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.TabType.GITHUB_REMINDER, this));
+		addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.TabType.SKINS, this));
 
 		addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int)(219 / 2F), startY + 8 - 30, 4, this));
 
