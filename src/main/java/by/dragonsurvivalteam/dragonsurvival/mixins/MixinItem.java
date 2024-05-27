@@ -19,16 +19,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinItem{
 	@ModifyExpressionValue (method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEdible()Z"))
 	private boolean dragonIsEdible(boolean original, Level level, Player player, InteractionHand hand){
-		return original && DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())).orElse(true);
+		return DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())).orElse(original);
 	}
 
 	@ModifyExpressionValue (method ="use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;canEat(Z)Z"))
 	private boolean dragonCanEat(boolean original, Level level, Player player, InteractionHand hand){
-		return original && DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || player.canEat(DragonFoodHandler.getDragonFoodProperties((Item)(Object)this, dragonStateHandler.getType()).canAlwaysEat())).orElse(true);
+		return DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || player.canEat(DragonFoodHandler.getDragonFoodProperties((Item)(Object)this, dragonStateHandler.getType()).canAlwaysEat())).orElse(original);
 	}
 
 	@ModifyExpressionValue (method = "finishUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;isEdible()Z"))
 	private boolean dragonFinishUsingItem(boolean original, ItemStack item, Level level, LivingEntity player){
-		return original && DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())).orElse(true);
+		return DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())).orElse(original);
 	}
 }
