@@ -8,6 +8,7 @@
     "AccessorAnimationController",
     "MixinEnchantmentHelper",
     "MixinEntity",
+    "MixinBlock",
     "MixinInventory",
     "MixinItem",
     "MixinLivingEntity",
