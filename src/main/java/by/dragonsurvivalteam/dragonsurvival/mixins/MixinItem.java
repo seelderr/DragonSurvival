@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,31 +17,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin( Item.class )
 public class MixinItem{
-	@Inject( at = @At( "HEAD" ), method = "use", cancellable = true )
-	public void dragonUse(Level level, Player player, InteractionHand hand, CallbackInfoReturnable<InteractionResultHolder<ItemStack>> ci){
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				if(DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())){
-					ItemStack itemstack = player.getItemInHand(hand);
-					if(player.canEat(DragonFoodHandler.getDragonFoodProperties((Item)(Object)this, dragonStateHandler.getType()).canAlwaysEat())){
-						player.startUsingItem(hand);
-						ci.setReturnValue(InteractionResultHolder.consume(itemstack));
-					}else{
-						ci.setReturnValue(InteractionResultHolder.fail(itemstack));
-					}
-				}else{
-					ci.setReturnValue(InteractionResultHolder.pass(player.getItemInHand(hand)));
-				}
-			}
-		});
+	@ModifyExpressionValue (method = "use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEdible()Z"))
+	private boolean dragonIsEdible(boolean original, Level level, Player player, InteractionHand hand){
+		return original && DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())).orElse(true);
 	}
 
-	@Inject( at = @At( "HEAD" ), method = "finishUsingItem", cancellable = true )
-	public void dragonFinishUsingItem(ItemStack item, Level level, LivingEntity player, CallbackInfoReturnable<ItemStack> ci){
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				ci.setReturnValue(DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType()) ? player.eat(level, item) : item);
-			}
-		});
+	@ModifyExpressionValue (method ="use", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;canEat(Z)Z"))
+	private boolean dragonCanEat(boolean original, Level level, Player player, InteractionHand hand){
+		return original && DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || player.canEat(DragonFoodHandler.getDragonFoodProperties((Item)(Object)this, dragonStateHandler.getType()).canAlwaysEat())).orElse(true);
+	}
+
+	@ModifyExpressionValue (method = "finishUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;isEdible()Z"))
+	private boolean dragonFinishUsingItem(boolean original, ItemStack item, Level level, LivingEntity player){
+		return original && DragonStateProvider.getCap(player).map(dragonStateHandler -> !dragonStateHandler.isDragon() || DragonFoodHandler.isDragonEdible((Item)(Object)this, dragonStateHandler.getType())).orElse(true);
 	}
 }
