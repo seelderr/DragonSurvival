@@ -151,9 +151,15 @@ public class DragonModifiers{
 					max.removeModifier(oldMod);
 				}
 
-				oldMod = getReachModifier(player);
+				oldMod = getBlockReachModifier(player);
 				if (oldMod != null) {
 					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getEntityReachModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
 					max.removeModifier(oldMod);
 				}
 
@@ -243,8 +249,13 @@ public class DragonModifiers{
 	}
 
 	@Nullable
-	public static AttributeModifier getReachModifier(Player player){
+	public static AttributeModifier getBlockReachModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get())).getModifier(DRAGON_REACH_MODIFIER);
+	}
+
+	@Nullable
+	public static AttributeModifier getEntityReachModifier(Player player) {
+		return Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get())).getModifier(DRAGON_REACH_MODIFIER);
 	}
 
 	@Nullable
@@ -276,18 +287,13 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses){
 			return;
 		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
-		max.removeModifier(mod);
-		max.addPermanentModifier(mod);
-	}
-	
-	public static void updateAttackRangeModifier(Player player, AttributeModifier mod) {
-		if(!ServerConfig.bonuses) {
-			return;
-		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
-		max.removeModifier(mod);
-		max.addPermanentModifier(mod);
+		AttributeInstance blockReach = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
+		blockReach.removeModifier(mod);
+		blockReach.addPermanentModifier(mod);
+
+		AttributeInstance entityReach = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
+		entityReach.removeModifier(mod);
+		entityReach.addPermanentModifier(mod);
 	}
 
 	public static void updateHealthModifier(Player player, AttributeModifier mod){
