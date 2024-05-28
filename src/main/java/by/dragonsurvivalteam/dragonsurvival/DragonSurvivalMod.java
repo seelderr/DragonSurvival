@@ -60,9 +60,7 @@ import software.bernie.geckolib.GeckoLib;
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
-	private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
-	private static final RegistryObject<Codec<DragonOreLootModifier>> DRAGON_ORE = GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
-	private static final RegistryObject<Codec<DragonHeartLootModifier>> DRAGON_HEART = GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
+	public static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MODID, name);
