@@ -98,21 +98,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	private void updateModifiers(double size, final Player player) {
 		if (isDragon()) {
 			// Grant the dragon attribute modifiers
-			AttributeModifier health = DragonModifiers.buildHealthMod(size);
-			DragonModifiers.updateHealthModifier(player, health);
-
-			AttributeModifier damage = DragonModifiers.buildDamageMod(this);
-			DragonModifiers.updateDamageModifier(player, damage);
-
-			AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());
-			DragonModifiers.updateSwimSpeedModifier(player, swimSpeed);
-
-			AttributeModifier reach = DragonModifiers.buildReachMod(size);
-			DragonModifiers.updateBlockReachModifier(player, reach);
-			DragonModifiers.updateEntityReachModifier(player, reach);
-
-			AttributeModifier stepHeight = DragonModifiers.buildStepHeightMod(size);
-			DragonModifiers.updateStepHeightModifier(player, stepHeight);
+			DragonModifiers.updateSizeModifiers(player);
 		} else {
 			// Remove the dragon attribute modifiers
 			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));

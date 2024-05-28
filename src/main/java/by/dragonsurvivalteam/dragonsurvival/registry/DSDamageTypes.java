@@ -24,6 +24,7 @@ public class DSDamageTypes {
     public static final ResourceKey<DamageType> SEA_DRAGON_BREATH = createKey("sea_dragon_breath");
     public static final ResourceKey<DamageType> FOREST_DRAGON_DRAIN = createKey("forest_dragon_drain"); // TODO 1.20 :: tags -> setMagic()
     public static final ResourceKey<DamageType> CAVE_DRAGON_BURN = createKey("cave_dragon_burn");
+    public static final ResourceKey<DamageType> DRAGON_BALL_LIGHTNING = createKey("dragon_ball_lightning");
     public static final ResourceKey<DamageType> CRUSHED = createKey("crushed");
 
     public static void bootstrap(final BootstapContext<DamageType> context) {
