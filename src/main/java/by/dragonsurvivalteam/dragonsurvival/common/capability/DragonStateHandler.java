@@ -90,8 +90,11 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	/** Sets the size, health and base damage */
 	public void setSize(double size, final Player player) {
+		double oldSize = this.size;
 		setSize(size);
-		DragonModifiers.updateModifiers(player);
+		if(oldSize != size) {
+			DragonModifiers.updateSizeModifiers(player);
+		}
 	}
 
 	@Override
@@ -301,6 +304,15 @@ public class DragonStateHandler extends EntityStateHandler {
 		return dragonType.getSubtypeName();
 	}
 
+	public void setType(final AbstractDragonType type, Player player) {
+		AbstractDragonType oldType = dragonType;
+		setType(type);
+		if (oldType != dragonType) {
+			DragonModifiers.updateTypeModifiers(player);
+		}
+	}
+
+	// Only call this version of setType if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
 	public void setType(final AbstractDragonType type) {
 		if (type != null && !Objects.equals(dragonType, type)) {
 			growing = true;
@@ -317,7 +329,16 @@ public class DragonStateHandler extends EntityStateHandler {
 			dragonType = null;
 		}
 	}
-	
+
+	public void setBody(final AbstractDragonBody body, Player player) {
+		AbstractDragonBody oldBody = dragonBody;
+		setBody(body);
+		if (oldBody != dragonBody) {
+			DragonModifiers.updateBodyModifiers(player);
+		}
+	}
+
+	// Only call this version of setBody if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
 	public void setBody(final AbstractDragonBody body) {
 		if (body != null) {
 			if (!body.equals(dragonBody)) {

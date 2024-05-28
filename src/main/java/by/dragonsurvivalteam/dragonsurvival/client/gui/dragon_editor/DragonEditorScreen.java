@@ -830,8 +830,8 @@ public class DragonEditorScreen extends Screen {
 					DragonCommand.reInsertClawTools(minecraft.player, cap);
 				}
 
-				cap.setType(dragonType);
-				cap.setBody(dragonBody);
+				cap.setType(dragonType, minecraft.player);
+				cap.setBody(dragonBody, minecraft.player);
 
 				double size = cap.getSavedDragonSize(cap.getTypeName());
 
