@@ -313,7 +313,7 @@ public class DragonEditorScreen extends Screen {
 		handler.getSkinData().skinPreset = preset;
 		handler.getSkinData().compileSkin();
 
-		dragonRender.zoom = (float) (level.size * preset.sizeMul * 4 - 5);
+		dragonRender.zoom = (float) (level.size * 4 - 5);
 
 		handler.setHasFlight(true);
 		handler.setType(dragonType);
