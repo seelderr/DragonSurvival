@@ -13,12 +13,12 @@ import java.util.HashMap;
 public class SkinPortingSystem {
     public static SavedSkinPresets upgrade(SavedSkinPresets presets) {
         if (presets.version == 0) {
-            presets = upgrade0to3(presets);
+            upgrade0to3(presets);
         }
         return presets;
     }
 
-    public static SavedSkinPresets upgrade0to3(SavedSkinPresets presets) {
+    public static void upgrade0to3(SavedSkinPresets presets) {
         for (String type : presets.skinPresets.keySet()) {
             for (int age : presets.skinPresets.get(type).keySet()) {
                 for(DragonLevel level : DragonLevel.values()){
@@ -47,6 +47,5 @@ public class SkinPortingSystem {
             }
         }
         presets.version = 3;
-        return presets;
     }
 }
