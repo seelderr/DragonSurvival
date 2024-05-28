@@ -21,7 +21,6 @@ import java.util.Map;
 public class DragonConfigHandler{
 	public static List<Block> SEA_DRAGON_HYDRATION_BLOCKS = List.of();
 	public static List<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = List.of();
-
 	public static List<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = List.of();
 	public static List<Block> DRAGON_DESTRUCTIBLE_BLOCKS = List.of();
 

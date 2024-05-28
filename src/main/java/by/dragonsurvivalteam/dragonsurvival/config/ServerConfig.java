@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import net.minecraft.nbt.Tag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;

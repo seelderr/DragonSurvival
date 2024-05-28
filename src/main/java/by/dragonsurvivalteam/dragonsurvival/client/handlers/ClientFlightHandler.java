@@ -153,7 +153,6 @@ public class ClientFlightHandler {
 					}
 				}
 
-
 				// Move the third person camera into a more suitable position if the player is too large (otherwise it ends up clipping inside the player)
 				if(setup.getCamera().isDetached()) {
 					if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {

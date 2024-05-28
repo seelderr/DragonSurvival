@@ -50,7 +50,8 @@ public class DataDamageTypeTagsProvider extends TagsProvider<DamageType> {
 
         tag(NO_KNOCKBACK)
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
-                .add(DSDamageTypes.FOREST_DRAGON_DRAIN);
+                .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
+                .add(DSDamageTypes.CRUSHED);
     }
 
     private static TagKey<DamageType> createKey(@NotNull final String name) {

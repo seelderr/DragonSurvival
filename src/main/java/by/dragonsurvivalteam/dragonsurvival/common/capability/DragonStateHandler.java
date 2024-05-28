@@ -92,8 +92,41 @@ public class DragonStateHandler extends EntityStateHandler {
 	public void setSize(double size, final Player player) {
 		double oldSize = this.size;
 		setSize(size);
-		if(oldSize != size) {
-			DragonModifiers.updateSizeModifiers(player);
+		updateModifiers(size, player);
+	}
+
+	private void updateModifiers(double size, final Player player) {
+		if (isDragon()) {
+			// Grant the dragon attribute modifiers
+			AttributeModifier health = DragonModifiers.buildHealthMod(size);
+			DragonModifiers.updateHealthModifier(player, health);
+
+			AttributeModifier damage = DragonModifiers.buildDamageMod(this);
+			DragonModifiers.updateDamageModifier(player, damage);
+
+			AttributeModifier swimSpeed = DragonModifiers.buildSwimSpeedMod(getType());
+			DragonModifiers.updateSwimSpeedModifier(player, swimSpeed);
+
+			AttributeModifier reach = DragonModifiers.buildReachMod(size);
+			DragonModifiers.updateBlockReachModifier(player, reach);
+			DragonModifiers.updateEntityReachModifier(player, reach);
+
+			AttributeModifier stepHeight = DragonModifiers.buildStepHeightMod(size);
+			DragonModifiers.updateStepHeightModifier(player, stepHeight);
+		} else {
+			// Remove the dragon attribute modifiers
+			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DragonModifiers.getDamageModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.SWIM_SPEED.get()), DragonModifiers.getSwimSpeedModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.BLOCK_REACH.get()), DragonModifiers.getBlockReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.ENTITY_REACH.get()), DragonModifiers.getEntityReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()), DragonModifiers.getStepHeightModifier(player));
+		}
+	}
+
+	private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final AttributeModifier modifier) {
+		if (attribute != null && modifier != null && attribute.hasModifier(modifier)) {
+			attribute.removeModifier(modifier);
 		}
 	}
 

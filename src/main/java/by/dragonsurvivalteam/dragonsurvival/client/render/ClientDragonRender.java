@@ -278,14 +278,14 @@ public class ClientDragonRender{
 
 				if(player.isCrouching() && handler.isWingsSpread() && !player.onGround()){
 					poseStack.translate(0, -0.15, 0);
-				}else if(player.isCrouching()){
+				} else if (player.isCrouching()) {
 					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 						poseStack.translate(0, 0.045, 0);
 					}
 					else {
 						poseStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
 					}
-				}else if(player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()){
+				} else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
 					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 						poseStack.translate(0, -0.55, 0);
 					}

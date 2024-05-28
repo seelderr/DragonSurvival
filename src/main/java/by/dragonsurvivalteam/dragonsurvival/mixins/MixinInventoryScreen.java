@@ -68,18 +68,21 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		}
 	}
 
-	@Inject(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPoseMatrix(Lorg/joml/Matrix4f;)V"))
-	private static void dragonScreenEntityRescalerX(GuiGraphics pGuiGraphics, int pX, int pY, int pScale, Quaternionf pPose, Quaternionf pCameraOrientation, LivingEntity pEntity, CallbackInfo ci) {
-		DragonStateHandler handler = DragonUtils.getHandler(pEntity);
+	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPoseMatrix(Lorg/joml/Matrix4f;)V"), index = 0)
+	private static Matrix4f dragonScreenEntityRescaler(Matrix4f pMatrix) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		DragonStateHandler handler = DragonUtils.getHandler(player);
 
-		if(handler.isDragon()) {
+		if (handler.isDragon()) {
 			double size = handler.getSize();
-			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE){
-				// Scale the matrix back to the DEFAULT_MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
+			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE)
+			{
+				// Scale the matrix back to the MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
 				float scale = (float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size);
-				pGuiGraphics.pose().mulPoseMatrix((new Matrix4f()).scaling(scale, scale, scale));
+				pMatrix.scale(scale, scale, scale);
 			}
 		}
-	}
 
+		return pMatrix;
+	}
 }
