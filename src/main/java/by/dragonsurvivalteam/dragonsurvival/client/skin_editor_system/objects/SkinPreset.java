@@ -15,7 +15,6 @@ import java.util.HashMap;
 
 public class SkinPreset implements NBTInterface{
 	public HashMap<DragonLevel, Lazy<SkinAgeGroup>> skinAges = new HashMap<>();
-	public double sizeMul = 1.0;
 
 	public SkinPreset(){
 		for(DragonLevel level : DragonLevel.values()){
@@ -36,7 +35,6 @@ public class SkinPreset implements NBTInterface{
 	@Override
 	public CompoundTag writeNBT(){
 		CompoundTag nbt = new CompoundTag();
-		nbt.putDouble("sizeMul", sizeMul);
 
 		for(DragonLevel level : DragonLevel.values()){
 			nbt.put(level.name, skinAges.getOrDefault(level, Lazy.of(()->new SkinAgeGroup(level))).get().writeNBT());
@@ -47,8 +45,6 @@ public class SkinPreset implements NBTInterface{
 
 	@Override
 	public void readNBT(CompoundTag base){
-		sizeMul = base.getDouble("sizeMul");
-
 		for(DragonLevel level : DragonLevel.values()){
 			skinAges.put(level,
 					Lazy.of(()->{

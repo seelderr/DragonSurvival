@@ -250,7 +250,7 @@ public class ClientDragonRender{
 				Vector3f lookVector = Functions.getDragonCameraOffset(player);
 				poseStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 
-				double size = handler.getSize() * handler.getSkinData().skinPreset.sizeMul;
+				double size = handler.getSize();
 				String playerModelType = player.getModelName();
 				EntityRenderer<? extends Player> playerRenderer = /* TODO :: Why not use renderPlayerEvent.getRenderer() */ ((AccessorEntityRendererManager) minecraft.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 				int eventLight = renderPlayerEvent.getPackedLight();
