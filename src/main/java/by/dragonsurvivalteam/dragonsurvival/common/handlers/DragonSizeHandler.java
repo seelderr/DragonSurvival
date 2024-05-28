@@ -1,9 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -159,11 +157,7 @@ public class DragonSizeHandler{
 		}
 		
 		double size = capability.orElseThrow(() -> new IllegalStateException("Dragon State was not valid")).getSize();
-		AbstractDragonBody body = capability.orElse(null).getBody();
-		boolean squish = false;
-		if (body != null) {
-			squish = body.isSquish();
-		}
+		boolean squish = DragonUtils.getDragonBody(player) != null ? DragonUtils.getDragonBody(player).isSquish() : false;
 		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox, squish);
 		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
 		return player.level().noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));
