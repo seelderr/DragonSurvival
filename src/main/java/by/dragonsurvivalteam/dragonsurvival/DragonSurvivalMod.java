@@ -15,22 +15,27 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSerializer;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.serialization.Codec;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.data.DataProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.server.packs.metadata.pack.PackMetadataSection;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.data.loading.DatagenModLoader;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+import net.minecraftforge.common.loot.LootModifier;
+import net.minecraftforge.data.event.GatherDataEvent;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -40,13 +45,13 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathPackResources;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLib;
@@ -55,6 +60,9 @@ import software.bernie.geckolib.GeckoLib;
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
+	private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+	private static final RegistryObject<Codec<DragonOreLootModifier>> DRAGON_ORE = GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
+	private static final RegistryObject<Codec<DragonHeartLootModifier>> DRAGON_HEART = GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MODID, name);
@@ -80,6 +88,8 @@ public class DragonSurvivalMod{
 		SoundRegistry.SOUNDS.register(modEventBus);
 		DSEntities.ENTITY_TYPES.register(modEventBus);
 		DSCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
+		GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
+
 
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
@@ -123,6 +133,15 @@ public class DragonSurvivalMod{
 			for (Map.Entry<MutableComponent, String> entry : resourcePacks.entrySet()) {
 				registerBuiltinResourcePack(event, entry.getKey(), entry.getValue());
 			}
+		}
+	}
+
+	@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+	public static class EventHandlers {
+		@SubscribeEvent
+		public static void runData(GatherDataEvent event) {
+			event.getGenerator().addProvider(event.includeServer(), new DragonOreLootModifierSerializer(event.getGenerator().getPackOutput(), MODID));
+			event.getGenerator().addProvider(event.includeServer(), new DragonHeartLootModifierSerializer(event.getGenerator().getPackOutput(), MODID));
 		}
 	}
 

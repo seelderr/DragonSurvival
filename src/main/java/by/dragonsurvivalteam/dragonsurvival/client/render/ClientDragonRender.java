@@ -245,7 +245,6 @@ public class ClientDragonRender{
 			PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
 			try {
-				// TODO: Avoid using a poseStack here if possible
 				poseStack.pushPose();
 
 				Vector3f lookVector = Functions.getDragonCameraOffset(player);
@@ -402,7 +401,7 @@ public class ClientDragonRender{
 					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
 					if(player.hasEffect(DragonEffects.TRAPPED)){
 						float bolasScale = player.getEyeHeight();
-						if(handler != null && handler.isDragon()) {
+						if(handler.isDragon()) {
 							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
 						}
 						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, poseStack, bolasScale);
@@ -599,74 +598,6 @@ public class ClientDragonRender{
 			float f1 = Mth.cos(yRot * ((float)Math.PI / 180F));
 			return new Vec3(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
 		}
-	}
-
-	// Called for the dragon editor and skins screen (but not the actual inventory?)
-	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
-		if(entity == null)
-			return;
-
-		if(entity instanceof DragonEntity){
-			if(ClientDragonRender.dragonArmor == null){
-				ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(Minecraft.getInstance().player.level());
-				assert dragonArmor != null;
-				ClientDragonRender.dragonArmor.playerId = Minecraft.getInstance().player.getId();
-			}
-
-			if(!ClientDragonRender.playerDragonHashMap.containsKey(Minecraft.getInstance().player.getId())){
-				DragonEntity dummyDragon = DSEntities.DRAGON.get().create(Minecraft.getInstance().player.level());
-				dummyDragon.playerId = Minecraft.getInstance().player.getId();
-				ClientDragonRender.playerDragonHashMap.put(Minecraft.getInstance().player.getId(), new AtomicReference<>(dummyDragon));
-			}
-		}
-		// FIXME :: "Could not load animation: sitting_blep. Is it missing?"
-
-		// Copied from InventoryScreen#renderEntityInInventoryRaw
-		PoseStack matrixstack = new PoseStack();
-		matrixstack.pushPose();
-		matrixstack.translate((float)x, (float)y, 0);
-		matrixstack.scale(1.0F, 1.0F, -1.0F);
-		matrixstack.translate(0.0D, 0.0D, 0);
-		matrixstack.scale(scale, scale, scale);
-		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
-		Quaternionf quaternion1 = Axis.XP.rotationDegrees(yRot * 10.0F);
-		quaternion.mul(quaternion1);
-		matrixstack.mulPose(quaternion);
-		matrixstack.translate(xOffset, -1 + yOffset, 0);
-		float f2 = entity.yBodyRot;
-		float f3 = entity.yRot;
-		float f4 = entity.xRot;
-		float f5 = entity.yHeadRotO;
-		float f6 = entity.yHeadRot;
-		// TODO :: The changes to the rotation don't seem to affect anything? (Even if they get reset within the fancy thread)
-		entity.yBodyRot = 180.0F + xRot * 10.0F;
-		entity.yRot = 180.0F + xRot * 10.0F;
-		entity.xRot = -yRot * 10.0F;
-		entity.yHeadRot = entity.yRot;
-		entity.yHeadRotO = entity.yRot;
-		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
-		boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
-		quaternion1 = quaternion1.conjugate();
-		entityrenderermanager.overrideCameraOrientation(quaternion1);
-		MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderSystem.runAsFancy(() -> {
-			//entityrenderermanager.setRenderHitBoxes(false);
-			//entityrenderermanager.setRenderShadow(false);
-
-			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 244);
-
-			//entityrenderermanager.setRenderShadow(true);
-			//entityrenderermanager.setRenderHitBoxes(renderHitbox);
-		});
-
-		irendertypebuffer$impl.endBatch();
-		matrixstack.popPose();
-
-		entity.yBodyRot = f2;
-		entity.yRot = f3;
-		entity.xRot = f4;
-		entity.yHeadRotO = f5;
-		entity.yHeadRot = f6;
 	}
 }
 
