@@ -90,6 +90,7 @@ dependencies {
 
     // MixinExtras (we can remove this once we update to a newer version of NeoForge)
     compileOnly(annotationProcessor("io.github.llamalad7:mixinextras-common:0.3.6"))
+    implementation group: 'io.github.llamalad7', name: 'mixinextras-common', version: '0.3.6'
     implementation(jarJar("io.github.llamalad7:mixinextras-forge:0.3.6")) {
         jarJar.ranged(it, "[0.3.6,)")
     }
