@@ -32,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
 	private final ResourceLocation model = new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
-	private ResourceLocation currentTexture = defaultTexture;
+	private ResourceLocation currentTexture;
 
 	/**TODO Body Types Update
 	Required:
