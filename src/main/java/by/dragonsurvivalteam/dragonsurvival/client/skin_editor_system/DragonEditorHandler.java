@@ -116,8 +116,8 @@ public class DragonEditorHandler{
 
 					if (skinTexture != null) {
 						float hueVal = settings.hue - skinTexture.average_hue;
-						float satVal = settings.saturation - 0.5f;
-						float brightVal = settings.brightness - 0.5f;
+						float satVal = settings.saturation;
+						float brightVal = settings.brightness;
 
 						try {
 							ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
@@ -178,13 +178,13 @@ public class DragonEditorHandler{
 		Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 
 		if(text.colorable){
-			if(settings.glowing && hsb[0] == 0 && hsb[1] == 0){
+			if(settings.glowing && hsb[0] == 0.5f && hsb[1] == 0.5f){
 				return null;
 			}
 
             hsb[0] = (float)(hsb[0] - hueVal);
-			hsb[1] = (float)Mth.lerp(Math.abs(satVal) * 2, hsb[1], satVal > 0 ? 1.0 : 0.0);
-			hsb[2] = (float)Mth.lerp(Math.abs(brightVal) * 2, hsb[2], satVal > 0 ? 1.0 : 0.0);
+			hsb[1] = (float)Mth.lerp(Math.abs(satVal - 0.5f) * 2 , hsb[1], satVal > 0.5f ? 1.0 : 0.0);
+			hsb[2] = (float)Mth.lerp(Math.abs(brightVal - 0.5f) * 2, hsb[2], brightVal > 0.5f ? 1.0 : 0.0);
 		}
 
 		Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
