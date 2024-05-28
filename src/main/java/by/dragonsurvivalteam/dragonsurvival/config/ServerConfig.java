@@ -92,6 +92,10 @@ public class ServerConfig{
 	public static Integer largeMaxHealth = 80;
 
 	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMovementSpeedScalar", comment = "The bonus movement speed multiplier per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
+	public static Double largeMovementSpeedScalar = 0.0;
+
+	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeDamageBonus", comment = "The bonus damage when the dragon is at maximum growth size if large scaling is enabled.")
 	public static Double largeDamageBonus = 6.0;
 
@@ -137,12 +141,20 @@ public class ServerConfig{
 	public static Double maxGrowthSize = DEFAULT_MAX_GROWTH_SIZE;
 
 	@ConfigRange( min = 0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "moveSpeedNewborn", comment = "The movement speed multiplier for newborn dragons. Default is 1.0.")
+	public static Double moveSpeedNewborn = 1.0;
+
+	@ConfigRange( min = 0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "moveSpeedYoung", comment = "The movement speed multiplier for young dragons. Default is 1.0.")
+	public static Double moveSpeedYoung = 1.0;
+
+	@ConfigRange( min = 0, max = 1000000.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "moveSpeedAdult", comment = "The movement speed multiplier for adult dragons. Default is 1.0.")
+	public static Double moveSpeedAdult = 1.0;
+
+	@ConfigRange( min = 0, max = 1000000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "reachBonus", comment = "The bonus that is given to dragons at 60 size. The bonus gradually scales up to the maximum size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default values.")
 	public static Double reachBonus = 0.5;
-	
-	@ConfigRange( min = 0, max = 1000000.0 )
-	@ConfigOption ( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "attackRangeBonus", comment = "The bonus that is given to dragons at every 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to combat." )
-	public static Double attackRangeBonus = 0.5;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth"}, key = "saveGrowthStage", comment = "Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist..." )
 	public static Boolean saveGrowthStage = false;

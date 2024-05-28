@@ -80,8 +80,8 @@ public class SynchronizeDragonCap implements IMessage<SynchronizeDragonCap> {
 					}
 
 					handler.setIsHiding(message.hiding);
-					handler.setType(message.dragonType);
-					handler.setBody(message.dragonBody);
+					handler.setType(message.dragonType, sender);
+					handler.setBody(message.dragonBody, sender);
 					handler.setSize(message.size, sender);
 					handler.setHasFlight(message.hasWings);
 					handler.setPassengerId(message.passengerId);
