@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSerializer;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.tags.BlockTagsProvider;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -29,5 +31,8 @@ public class ForgeDataGen {
 		generator.addProvider(true, new DataBlockModelProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(true, new DataItemModelProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(true, new DataBlockStateProvider(generator, DragonSurvivalMod.MODID, existingFileHelper));
+
+		generator.addProvider(event.includeServer(), new DragonOreLootModifierSerializer(generator, DragonSurvivalMod.MODID));
+		generator.addProvider(event.includeServer(), new DragonHeartLootModifierSerializer(generator, DragonSurvivalMod.MODID));
 	}
 }
