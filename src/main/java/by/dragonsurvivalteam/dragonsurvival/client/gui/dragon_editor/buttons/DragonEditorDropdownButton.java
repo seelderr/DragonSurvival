@@ -65,14 +65,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		active = !dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().defaultSkin;
 	}
 
-	@Override
-	public void updateMessage(){
-		if(current != null){
-			message = Component.translatable(DragonEditorScreen.partToTranslation(current));
-		}
-	}
-
-	@Override
+    @Override
 	public void onPress(){
 		Screen screen = Minecraft.getInstance().screen;
 
