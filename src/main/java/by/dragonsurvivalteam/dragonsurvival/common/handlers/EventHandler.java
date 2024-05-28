@@ -121,48 +121,6 @@ public class EventHandler{
 		}
 	}
 
-	@SubscribeEvent
-	public static void mobDeath(LivingDropsEvent event){
-		LivingEntity entity = event.getEntity();
-		float health = entity.getMaxHealth();
-
-		//if(entity instanceof AnimalEntity) return;
-		if(event.getSource() == null || !(event.getSource().getEntity() instanceof Player)){
-			return;
-		}
-		if(!DragonUtils.isDragon(event.getSource().getEntity())){
-			return;
-		}
-
-		boolean canDropDragonHeart = ServerConfig.dragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.dragonHeartWhiteList;
-		boolean canDropWeakDragonHeart = ServerConfig.weakDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.weakDragonHeartWhiteList;
-		boolean canDropElderDragonHeart = ServerConfig.elderDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.elderDragonHeartWhiteList;
-
-		if(canDropDragonHeart){
-			if(ServerConfig.dragonHeartUseList || health >= 14 && health < 20){
-				if(entity.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + event.getLootingLevel() * (ServerConfig.dragonHeartShardChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level(), entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
-				}
-			}
-		}
-
-		if(canDropWeakDragonHeart){
-			if(ServerConfig.weakDragonHeartUseList || health >= 20 && health < 50){
-				if(entity.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.weakDragonHeartChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level(), entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
-				}
-			}
-		}
-
-		if(canDropElderDragonHeart){
-			if(ServerConfig.elderDragonHeartUseList || health >= 50){
-				if(entity.getRandom().nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.elderDragonHeartChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level(), entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
-				}
-			}
-		}
-	}
-
 	/**
 	 * Adds dragon avoidance goal
 	 */

@@ -15,6 +15,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -60,6 +62,7 @@ public class DragonSurvivalMod{
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
 	private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
 	private static final RegistryObject<Codec<DragonOreLootModifier>> DRAGON_ORE = GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
+	private static final RegistryObject<Codec<DragonHeartLootModifier>> DRAGON_HEART = GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MODID, name);
@@ -138,6 +141,7 @@ public class DragonSurvivalMod{
 		@SubscribeEvent
 		public static void runData(GatherDataEvent event) {
 			event.getGenerator().addProvider(event.includeServer(), new DragonOreLootModifierSerializer(event.getGenerator().getPackOutput(), MODID));
+			event.getGenerator().addProvider(event.includeServer(), new DragonHeartLootModifierSerializer(event.getGenerator().getPackOutput(), MODID));
 		}
 	}
 
