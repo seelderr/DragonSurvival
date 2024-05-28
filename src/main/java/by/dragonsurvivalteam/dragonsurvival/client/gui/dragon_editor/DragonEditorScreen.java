@@ -359,14 +359,7 @@ public class DragonEditorScreen extends Screen {
 			String[] values = valueList.toArray(new String[0]);
 			String curValue = partToTranslation(preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin);
 
-			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers) {
-				@Override
-				public void updateMessage(){
-					if(current != null){
-						message = Component.translatable(partToTranslation(current));
-					}
-				}
-			};
+			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers);
 			addRenderableWidget(btn);
 			addRenderableWidget(new ArrowButton(btn.getX() - 15, btn.getY() + 1, 16, 16, false, s -> {
 				int index = 0;
@@ -383,6 +376,12 @@ public class DragonEditorScreen extends Screen {
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
 				btn.updateMessage();
+
+				LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layers, settings.selectedSkin, dragonType);
+				if (text != null && !settings.modifiedColor) {
+					settings.hue = text.average_hue;
+				}
 			}){
 				@Override
 				public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
@@ -409,6 +408,12 @@ public class DragonEditorScreen extends Screen {
 				btn.current = btn.values[index];
 				btn.setter.accept(btn.current);
 				btn.updateMessage();
+
+				LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layers, settings.selectedSkin, dragonType);
+				if (text != null && !settings.modifiedColor) {
+					settings.hue = text.average_hue;
+				}
 			}){
 				@Override
 				public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
@@ -659,12 +664,17 @@ public class DragonEditorScreen extends Screen {
 					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, handler), layer, key, dragonType);
 
 					if(text != null && text.randomHue){
-						settings.hue = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
+						settings.hue = minecraft.player.getRandom().nextFloat();
 						settings.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
 						settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
 						settings.modifiedColor = true;
 					}else{
-						settings.hue = 0.5f;
+						if (text != null) {
+							settings.hue = text.average_hue;
+						}
+						else {
+							settings.hue = 0.0f;
+						}
 						settings.saturation = 0.5f;
 						settings.brightness = 0.5f;
 						settings.modifiedColor = true;

@@ -6,6 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -80,8 +83,6 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 			for(int i = 0; i < values.length; i++){
 				String val = values[i];
-				//String localeString = current;
-				//String localeString = String.format("ds.skin_part.%s.%s", this.dragonType, val).toLowerCase();
 				DropdownEntry ent = createEntry(i, val, val);
 				list.addEntry(ent);
 
@@ -131,6 +132,12 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			screen.children.add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
+			LayerSettings settings = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get();
+			DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, dragonEditorScreen.handler), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
+			if (text != null && !settings.modifiedColor) {
+				settings.hue = text.average_hue;
+			}
+
 			screen.children.removeIf(s -> s == list);
 			screen.children.removeIf(s -> s == renderButton);
 			screen.renderables.removeIf(s -> s == list);

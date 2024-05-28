@@ -7,15 +7,16 @@ import net.minecraft.nbt.CompoundTag;
 public class LayerSettings implements NBTInterface{
 	public String selectedSkin = SkinCap.defaultSkinValue;
 
-	public float hue = 0.5f, saturation = 0.5f, brightness = 0.5f;
+	public float hue = 0.0f, saturation = 0.5f, brightness = 0.5f;
 	public boolean modifiedColor = false;
 
 	public boolean glowing = false;
 
 	public LayerSettings(){}
 
-	public LayerSettings(String selectedSkin){
+	public LayerSettings(String selectedSkin, float defaultHue){
 		this.selectedSkin = selectedSkin;
+		this.hue = defaultHue;
 	}
 
 	@Override

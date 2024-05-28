@@ -50,8 +50,8 @@ public class DragonDropdownValueEntry extends DropdownValueEntry
 					@Override
 					public void onPress(){
 						source.current = value;
-						source.onPress();
 						setter.accept(value);
+						source.onPress();
 					}
 			};
 		} else {
