@@ -660,7 +660,7 @@ public class DragonEditorScreen extends Screen {
 					if(text != null && text.randomHue){
 						settings.hue = minecraft.player.getRandom().nextFloat();
 						settings.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
-						settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.2f;
+						settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.3f;
 						settings.modifiedColor = true;
 					}else{
 						if (text != null) {
