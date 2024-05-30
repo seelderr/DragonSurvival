@@ -15,7 +15,6 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -54,14 +53,16 @@ public class DragonOreLootModifier extends LootModifier {
                             int fortuneLevel = 0;
                             int silkTouchLevel = 0;
                             if (tool != null) {
-                                fortuneLevel = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.BLOCK_FORTUNE, tool);
-                                silkTouchLevel = EnchantmentHelper.getTagEnchantmentLevel(Enchantments.SILK_TOUCH, tool);
+                                fortuneLevel = tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
+                                silkTouchLevel = tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), context.getRandom(), blockPos, fortuneLevel, silkTouchLevel);
                             if(expDrop > 0) {
                                 DragonStateHandler handler = DragonUtils.getHandler(player);
-                                int fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
+                                int fortuneRoll = 1;
+                                if (fortuneLevel >= 1)
+                                    fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
                                 if(handler.isDragon()) {
                                     if(context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){
                                         generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
