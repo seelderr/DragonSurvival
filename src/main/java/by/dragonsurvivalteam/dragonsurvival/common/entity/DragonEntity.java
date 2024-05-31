@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
+import by.dragonsurvivalteam.dragonsurvival.api.DragonFood;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
@@ -147,14 +148,14 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		   && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
 			builder.addAnimation("use_item", EDefaultLoopTypes.LOOP);
 			handler.getMovementData().bite = false;
-		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_right") && player.isUsingItem() && player.getMainHandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0){
+		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_right") && player.isUsingItem() && DragonFood.isEdible(useItem.getItem(), player) || animationTimer.getDuration("eat_item_right") > 0){
 			if(animationTimer.getDuration("eat_item_right") <= 0){
 				handler.getMovementData().bite = false;
 				animationTimer.putAnimation("eat_item_right", 0.32 * 20, builder);
 			}
 
 			builder.addAnimation("eat_item_right", EDefaultLoopTypes.LOOP);
-		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_left") && player.isUsingItem() && player.getOffhandItem().isEdible() || animationTimer.getDuration("eat_item_right") > 0){
+		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_left") && player.isUsingItem() && DragonFood.isEdible(useItem.getItem(), player)  || animationTimer.getDuration("eat_item_right") > 0){
 			if(animationTimer.getDuration("eat_item_left") <= 0){
 				handler.getMovementData().bite = false;
 				animationTimer.putAnimation("eat_item_left", 0.32 * 20, builder);
