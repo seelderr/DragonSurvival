@@ -6,8 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -82,16 +85,15 @@ public abstract class MixinLivingEntity extends Entity{
 		return dragon_Survival$isDragonEdibleForLivingEntity(original, itemStack, (LivingEntity)(Object)this);
 	}
 
-	@ModifyExpressionValue(method = "addEatEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/food/FoodProperties;getEffects()Ljava/util/List;"))
-	private List<Pair<MobEffectInstance, Float>> modifyGetEffectsInEatEffect(List<Pair<MobEffectInstance, Float>> original, @Local(argsOnly = true) ItemStack itemStack){
+	// TODO: Figure out how to inject into IForgeItemStack instead to just override getFoodProperties
+	@ModifyExpressionValue(method = "addEatEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
+	private FoodProperties getFoodPropertiesInAddEatEffect(FoodProperties original, ItemStack pFood, Level pLevel, LivingEntity pLivingEntity){
 
-		if ((LivingEntity)(Object)this instanceof Player player) {
-			DragonStateHandler handler = DragonStateProvider.getHandler(player);
-			if (handler != null && handler.isDragon()) {
-				FoodProperties dragonFoodProperties = DragonFoodHandler.getDragonFoodProperties(itemStack.getItem(), handler.getType());
-				if (dragonFoodProperties != null) {
-					return dragonFoodProperties.getEffects();
-				}
+		DragonStateHandler handler = DragonStateProvider.getHandler(pLivingEntity);
+		if(handler != null && handler.isDragon()) {
+			FoodProperties dragonFoodProperties = DragonFoodHandler.getDragonFoodProperties(pFood.getItem(), handler.getType());
+			if(dragonFoodProperties != null) {
+				return dragonFoodProperties;
 			}
 		}
 
@@ -115,6 +117,21 @@ public abstract class MixinLivingEntity extends Entity{
 		return dragon_Survival$getHumanOrDragonUseDuration(original);
 	}
 
+	// TODO: Figure out how to inject into IForgeItemStack instead to just override getFoodProperties
+	@ModifyExpressionValue(method = "shouldTriggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
+	private FoodProperties getFoodPropertiesInShouldTriggerItemUseEffects(FoodProperties original){
+
+		DragonStateHandler handler = DragonStateProvider.getHandler(this);
+		if(handler != null && handler.isDragon()) {
+			FoodProperties dragonFoodProperties = DragonFoodHandler.getDragonFoodProperties(useItem.getItem(), handler.getType());
+			if(dragonFoodProperties != null) {
+				return dragonFoodProperties;
+			}
+		}
+
+		return original;
+	}
+
 	@ModifyExpressionValue(method = "onSyncedDataUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"))
 	private int modifyUseDurationInSyncedDataUpdated(int original){
 		return dragon_Survival$getHumanOrDragonUseDuration(original);
@@ -127,5 +144,28 @@ public abstract class MixinLivingEntity extends Entity{
 		}
 
 		return strength;
+	}
+
+	@Unique
+	private UseAnim dragon_Survival$getItemUseAnimation(UseAnim original, ItemStack pStack){
+		if ((LivingEntity)(Object)this instanceof Player player) {
+			DragonStateHandler handler = DragonStateProvider.getHandler(player);
+			if (handler != null && handler.isDragon()) {
+				return DragonFoodHandler.isDragonEdible(pStack.getItem(), handler.getType()) ? UseAnim.EAT : UseAnim.NONE;
+			}
+		}
+
+		return original;
+	}
+
+	// TODO: Possible to combine these into one statement?
+	@ModifyExpressionValue(method = "triggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;", ordinal = 0))
+	private UseAnim dragonReplaceUseAnimTriggerItemUseEffects0(UseAnim original, ItemStack pStack, int pAmount){
+		return dragon_Survival$getItemUseAnimation(original, pStack);
+	}
+
+	@ModifyExpressionValue(method = "triggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;", ordinal = 1))
+	private UseAnim dragonReplaceUseAnimTriggerItemUseEffects1(UseAnim original, ItemStack pStack, int pAmount){
+		return dragon_Survival$getItemUseAnimation(original, pStack);
 	}
 }
