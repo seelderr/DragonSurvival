@@ -1,8 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import by.dragonsurvivalteam.dragonsurvival.api.DragonFood;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -14,6 +16,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.ItemTransforms.TransformType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.fml.ModList;
@@ -93,10 +96,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 
 		if(rightWing != null)
 			rightWing.setHidden(!hasWings);
-		
+
 		if (smallLeftWing != null)
 			smallLeftWing.setHidden(!hasWings);
-		
+
 		if (smallRightWing != null)
 			smallRightWing.setHidden(!hasWings);
 
@@ -119,10 +122,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 			RenderType renderType = getRenderType(currentEntityBeingRendered, currentPartialTicks, stack, bufferSource, buffer, packedLight, currentTexture);
 			buffer = bufferSource.getBuffer(renderType);
 
-			if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL){
+			if (getCurrentModelRenderCycle() == EModelRenderCycle.INITIAL && DragonUtils.isDragon(player)){
 				if(renderHeldItem){
 					if(player != Minecraft.getInstance().player || ClientDragonRender.alternateHeldItem || !Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-						if(bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem") && !player.getInventory().offhand.get(0).isEmpty()){
+						if(bone.getName().equals(ClientDragonRender.renderItemsInMouth || (player.isUsingItem() && DragonFood.isEdible(player.getItemInHand(InteractionHand.OFF_HAND).getItem(), player)) ? "LeftItem_jaw" : "LeftItem") && !player.getInventory().offhand.get(0).isEmpty()){
 							stack.pushPose();
 
 							RenderUtils.prepMatrixForBone(stack, bone);
@@ -133,7 +136,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity>{
 							stack.popPose();
 						}
 
-						if(bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "RightItem_jaw" : "RightItem") && !player.getInventory().getSelected().isEmpty()){
+						if(bone.getName().equals(ClientDragonRender.renderItemsInMouth || (player.isUsingItem() && DragonFood.isEdible(player.getItemInHand(InteractionHand.MAIN_HAND).getItem(), player)) ?  "RightItem_jaw" : "RightItem") && !player.getInventory().getSelected().isEmpty()){
 							stack.pushPose();
 							RenderUtils.prepMatrixForBone(stack, bone);
 							RenderUtils.translateAndRotateMatrixForBone(stack, bone);

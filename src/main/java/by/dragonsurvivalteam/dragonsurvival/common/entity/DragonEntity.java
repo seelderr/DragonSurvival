@@ -16,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -143,19 +144,17 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		if(curCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation)
 			renderAbility(builder, curCast);
 
-
-		if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item")
-		   && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
+		if(!ClientDragonRender.renderItemsInMouth && animationExists("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))){
 			builder.addAnimation("use_item", EDefaultLoopTypes.LOOP);
 			handler.getMovementData().bite = false;
-		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_right") && player.isUsingItem() && DragonFood.isEdible(useItem.getItem(), player) || animationTimer.getDuration("eat_item_right") > 0){
+		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_right") && player.isUsingItem() && DragonFood.isEdible(this.getItemInHand(InteractionHand.MAIN_HAND).getItem(), player) || animationTimer.getDuration("eat_item_right") > 0){
 			if(animationTimer.getDuration("eat_item_right") <= 0){
 				handler.getMovementData().bite = false;
 				animationTimer.putAnimation("eat_item_right", 0.32 * 20, builder);
 			}
 
 			builder.addAnimation("eat_item_right", EDefaultLoopTypes.LOOP);
-		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_left") && player.isUsingItem() && DragonFood.isEdible(useItem.getItem(), player)  || animationTimer.getDuration("eat_item_right") > 0){
+		}else if(!ClientDragonRender.renderItemsInMouth && animationExists("eat_item_left") && player.isUsingItem() && DragonFood.isEdible(this.getItemInHand(InteractionHand.OFF_HAND).getItem(), player) || animationTimer.getDuration("eat_item_right") > 0){
 			if(animationTimer.getDuration("eat_item_left") <= 0){
 				handler.getMovementData().bite = false;
 				animationTimer.putAnimation("eat_item_left", 0.32 * 20, builder);
