@@ -26,7 +26,7 @@ public class ClientConfig{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stableNightVision", comment = "When enabled it stops the blinking effect of night vision when low duration, disable if it causes rendering issues with other mods.")
 	public static Boolean stableNightVision = true;
 
-	@ConfigRange(min=0)
+	@ConfigRange(min=0, max=Integer.MAX_VALUE)
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "skinTimeoutInSeconds", comment = "How long the system will wait before trying to fetch skins online after a failed attempt")
 	public static int skinTimeoutInSeconds = 100;
 }
