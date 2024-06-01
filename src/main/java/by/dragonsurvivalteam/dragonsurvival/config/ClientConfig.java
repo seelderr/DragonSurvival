@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import net.minecraftforge.common.ForgeConfigSpec;
 
@@ -24,4 +25,8 @@ public class ClientConfig{
 
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stableNightVision", comment = "When enabled it stops the blinking effect of night vision when low duration, disable if it causes rendering issues with other mods.")
 	public static Boolean stableNightVision = true;
+
+	@ConfigRange(min=0)
+	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "skinTimeoutInSeconds", comment = "How long the system will wait before trying to fetch skins online after a failed attempt")
+	public static int skinTimeoutInSeconds = 100;
 }
