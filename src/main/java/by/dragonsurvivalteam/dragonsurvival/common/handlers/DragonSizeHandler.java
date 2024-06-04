@@ -31,7 +31,7 @@ public class DragonSizeHandler{
 			return;
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if (!handler.isDragon()) {
 			return;
@@ -61,7 +61,7 @@ public class DragonSizeHandler{
 	}
 	
 	public static double getDragonHeight(Player player) {
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		double height = calculateDragonHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
 		boolean squish = false;
 		if (handler.getBody() != null) {

@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.passive;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -43,7 +43,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 		BlockState blockUnder = player.level().getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
 
-		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
 
 		boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getTypeName()).contains(block);
 

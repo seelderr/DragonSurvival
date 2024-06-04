@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -19,19 +20,15 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
@@ -49,12 +46,8 @@ import net.minecraftforge.eventbus.api.Event.Result;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 
-import java.util.HashMap;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-
-import com.mojang.datafixers.util.Pair;
 
 
 @EventBusSubscriber
@@ -149,7 +142,7 @@ public class MagicHandler{
 	@SubscribeEvent
 	public static void livingTick(LivingEvent.LivingTickEvent event){
 		LivingEntity entity = event.getEntity();
-		EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
+		EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
 
 		if(entity.hasEffect(DragonEffects.BURN)){
 			if(entity.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || entity.isInWaterRainOrBubble()){
@@ -290,7 +283,7 @@ public class MagicHandler{
 					boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
 					if (hit) {
-						DragonUtils.getEntityHandler(event.getEntity()).lastAfflicted = player.getId();
+						EntityStateProvider.getEntityHandler(event.getEntity()).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {
 							event.getEntity().addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));

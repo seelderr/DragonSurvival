@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.api.appleskin;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ToolTipHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -12,7 +12,7 @@ import squeek.appleskin.api.event.TooltipOverlayEvent;
 public class AppleSkinEventHandler {
     @SubscribeEvent
     public void onEvent(final TooltipOverlayEvent.Pre event) {
-        if (ToolTipHandler.hideAppleskinTooltip && DragonUtils.isDragon(Minecraft.getInstance().player)) {
+        if (ToolTipHandler.hideAppleskinTooltip && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
             event.setCanceled(true);
         }
     }

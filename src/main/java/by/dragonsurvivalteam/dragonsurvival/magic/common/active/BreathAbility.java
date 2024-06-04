@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -13,16 +13,12 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -32,7 +28,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -85,7 +80,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	@Override
 	public void onChanneling(final Player player, int castDuration) {
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		currentBreathRange = calculateCurrentBreathRange(handler.getSize());
 
@@ -229,7 +224,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public ArrayList<Component> getInfo() {
 		ArrayList<Component> components = new ArrayList<>();
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		int range = calculateCurrentBreathRange(handler.getSize());
 
 		components.add(Component.translatable("ds.skill.mana_cost", getInitManaCost()));

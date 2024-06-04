@@ -30,7 +30,7 @@ public class StarBoneItem extends Item{
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level worldIn, Player playerIn, InteractionHand handIn){
-		DragonStateHandler handler = DragonStateProvider.getHandler(playerIn);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(playerIn);
 
 		if (handler != null && handler.isDragon()) {
 			double size = handler.getSize();

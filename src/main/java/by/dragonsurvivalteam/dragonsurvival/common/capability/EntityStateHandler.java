@@ -1,11 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.UnknownNullability;
 
-public class EntityStateHandler implements NBTInterface {
+import java.util.function.Supplier;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
+
+public class EntityStateHandler implements INBTSerializable<CompoundTag> {
+    public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = ATTACHMENT_TYPES.register(
+            "entity_handler",
+            () -> AttachmentType.serializable(EntityStateHandler::new).copyOnDeath().build()
+    );
+
     // Last entity this entity recieved a debuff from
     public int lastAfflicted = -1;
 
@@ -15,7 +28,7 @@ public class EntityStateHandler implements NBTInterface {
     public Vec3 lastPos;
 
     @Override
-    public CompoundTag writeNBT() {
+    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("lastAfflicted", lastAfflicted);
         tag.putInt("chainCount", chainCount);
@@ -28,7 +41,7 @@ public class EntityStateHandler implements NBTInterface {
     }
 
     @Override
-    public void readNBT(CompoundTag tag) {
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
         lastAfflicted = tag.getInt("lastAfflicted");
         chainCount = tag.getInt("chainCount");
 

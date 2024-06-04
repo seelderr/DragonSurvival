@@ -4,9 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.TickablePassiveAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.TickEvent;
@@ -41,7 +39,7 @@ public class DragonTraitHandler{
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent event){
 		if(event.getEntity() instanceof Player){
-			DragonStateHandler handler = DragonUtils.getHandler(event.getEntity());
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(event.getEntity());
 			if(handler.isDragon()){
 				handler.getType().onPlayerDeath();
 			}

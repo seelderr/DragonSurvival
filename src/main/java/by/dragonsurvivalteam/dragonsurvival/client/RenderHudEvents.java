@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
@@ -57,7 +56,7 @@ public class RenderHudEvents {
                 event.setCanceled(true);
             }
         } else if (id == VanillaGuiOverlay.AIR_LEVEL.id()) {
-            DragonStateHandler handler = DragonStateProvider.getHandler(ClientProxy.getLocalPlayer());
+            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(ClientProxy.getLocalPlayer());
 
             if (handler == null || !handler.isDragon()) {
                 return;

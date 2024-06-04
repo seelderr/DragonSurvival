@@ -33,7 +33,6 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
@@ -44,14 +43,12 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeableArmorItem;
 import net.minecraft.world.item.ItemStack;
@@ -64,7 +61,6 @@ import net.minecraftforge.event.TickEvent.RenderTickEvent;
 import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.core.object.Color;
 
@@ -155,7 +151,7 @@ public class ClientDragonRender{
 	public static void renderBreathHitBox(final RenderLevelStageEvent event) {
 		if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
-			DragonStateHandler handler = DragonUtils.getHandler(localPlayer);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(localPlayer);
 
 			if (localPlayer == null || !handler.isDragon()) {
 				return;
@@ -211,7 +207,7 @@ public class ClientDragonRender{
 		}
 
 		Minecraft minecraft = Minecraft.getInstance();
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if (!playerDragonHashMap.containsKey(player.getId())) {
 			DragonEntity dummyDragon = DSEntities.DRAGON.get().create(player.level());
@@ -294,7 +290,7 @@ public class ClientDragonRender{
 					}
 				}
 				if(!player.isInvisible()){
-					if(ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonUtils.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))){
+					if(ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonStateProvider.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))){
 						if(renderOtherPlayerRotation || minecraft.player == player){
 							float upRot = 0;
 							if (ServerFlightHandler.isGliding(player)) {
@@ -452,7 +448,7 @@ public class ClientDragonRender{
 			return;
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		if(!handler.isDragon()){
 			return;
 		}

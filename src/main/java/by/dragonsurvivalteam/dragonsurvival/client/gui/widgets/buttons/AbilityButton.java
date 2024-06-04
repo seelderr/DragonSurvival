@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -71,7 +70,7 @@ public class AbilityButton extends Button {
 			screen.renderables.forEach(s-> {
 				if(s instanceof AbilityButton btn){
 					if(btn != this && btn.skillType == 0 && btn.dragging){
-						MagicCap cap = DragonUtils.getHandler(Minecraft.getInstance().player).getMagicData();
+						MagicCap cap = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player).getMagicData();
 						btn.onRelease(pMouseX, pMouseY);
 						DragonAbility ab1 = cap.getAbilityFromSlot(btn.slot);
 						DragonAbility ab2 = cap.getAbilityFromSlot(slot);

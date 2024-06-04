@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.tags.TagKey;
@@ -81,7 +80,7 @@ public class ClawToolHandler{
 
 		if(ent instanceof Player player){
 			if(!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
-				DragonStateHandler handler = DragonUtils.getHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 				for(int i = 0; i < ClawInventory.Slot.size(); i++){
 					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
@@ -124,7 +123,7 @@ public class ClawToolHandler{
 		}
 
 		ItemStack harvestTool = mainStack;
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		for (int i = 1; i < ClawInventory.Slot.size(); i++) {
 			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
@@ -155,7 +154,7 @@ public class ClawToolHandler{
 		}
 
 		ItemStack harvestTool = mainStack;
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		int toolSlot = -1;
 
 		for (int i = 0; i < ClawInventory.Slot.size(); i++) {
@@ -214,7 +213,7 @@ public class ClawToolHandler{
 			return ItemStack.EMPTY;
 		}
 
-		DragonStateHandler cap = DragonUtils.getHandler(player);
+		DragonStateHandler cap = DragonStateProvider.getOrGenerateHandler(player);
 
 		return cap.getClawToolData().getClawsInventory().getItem(0);
 	}
@@ -225,14 +224,14 @@ public class ClawToolHandler{
 		if (event.getHand() == null) return;
 		Player player = event.getEntity();
 
-		if (DragonUtils.isDragon(player)) {
+		if (DragonStateProvider.isDragon(player)) {
 			ItemStack clawTool = getDragonHarvestTool(player);
 
 			if (ItemStack.matches(clawTool, event.getOriginal())) {
 				player.broadcastBreakEvent(event.getHand());
 			} else {
 				if (!player.level().isClientSide()) {
-					DragonStateHandler handler = DragonUtils.getHandler(player);
+					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 					if (handler.switchedTool || handler.switchedWeapon) {
 						player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
@@ -268,7 +267,7 @@ public class ClawToolHandler{
 
 			Player player = event.getEntity();
 			ItemStack mainStack = player.getMainHandItem();
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
 				// Bonus does not apply to held tools

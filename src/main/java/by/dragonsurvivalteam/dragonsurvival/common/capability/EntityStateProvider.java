@@ -1,28 +1,43 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import net.minecraft.core.Direction;
-import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.capabilities.Capability;
-import net.minecraftforge.common.capabilities.ICapabilitySerializable;
-import net.minecraftforge.common.util.LazyOptional;
-import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import org.jetbrains.annotations.Nullable;
 
-public class EntityStateProvider implements ICapabilitySerializable<CompoundTag> {
-    private final EntityStateHandler handlerObject = new EntityStateHandler();
-    private final LazyOptional<EntityStateHandler> instance = LazyOptional.of(() -> handlerObject);
+import java.util.Optional;
 
-    @Override
-    public <T> @NotNull LazyOptional<T> getCapability(@NotNull final Capability<T> cap, Direction side){
-        return cap == Capabilities.ENTITY_CAPABILITY ? instance.cast() : LazyOptional.empty();
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.ENTITY_CAPABILITY;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler.ENTITY_HANDLER;
+
+// TODO: We duplicate data between here and the DragonStateHandler. We'll probably want to test and refactor that once we are compiling.
+public class EntityStateProvider implements ICapabilityProvider<Entity, Void, EntityStateHandler> {
+    public static Optional<? extends EntityStateHandler> getEntityCap(Entity entity){
+        if (entity instanceof Player) {
+            return DragonStateProvider.getCap(entity);
+        }
+
+        EntityStateHandler handler = entity.getCapability(ENTITY_CAPABILITY);
+
+        return Optional.ofNullable(handler);
+    }
+
+    public static EntityStateHandler getEntityHandler(Entity entity){
+        if (entity == null) {
+            return new EntityStateHandler();
+        }
+
+        Optional<EntityStateHandler> cap = (Optional<EntityStateHandler>) getEntityCap(entity);
+
+        return cap.orElse(new EntityStateHandler());
     }
 
     @Override
-    public CompoundTag serializeNBT(){
-        return instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).writeNBT();
-    }
+    public @Nullable EntityStateHandler getCapability(Entity entity, Void context) {
+        if(entity instanceof Player){
+            return null;
+        }
 
-    @Override
-    public void deserializeNBT(CompoundTag nbt){
-        instance.orElseThrow(() -> new IllegalArgumentException("LazyOptional must not be empty!")).readNBT(nbt);
+        return entity.getData(ENTITY_HANDLER);
     }
 }

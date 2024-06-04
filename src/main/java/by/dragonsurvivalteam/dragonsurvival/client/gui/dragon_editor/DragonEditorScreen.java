@@ -41,7 +41,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.common.collect.EvictingQueue;
@@ -325,7 +324,7 @@ public class DragonEditorScreen extends Screen {
 
 		Minecraft minecraft = getMinecraft();
 		if (!hasInit) {
-			DragonStateHandler dshandler = DragonUtils.getHandler(minecraft.player);
+			DragonStateHandler dshandler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
 			
 			initialize(dshandler);
 			update();

@@ -3,44 +3,34 @@ package by.dragonsurvivalteam.dragonsurvival.network.player;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class SyncChatEvent implements IMessage<SyncChatEvent> {
-    public String signerId = "";
-    public String chatId = "";
+public class SyncChatEvent implements IMessage<SyncChatEvent.Data> {
 
-    public SyncChatEvent() { /* Nothing to do */ }
-
-    public SyncChatEvent(final String signerId, final String chatId) {
-        this.signerId = signerId;
-        this.chatId = chatId;
+    public static void handleClient(Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncChatEvent(message));
     }
 
-    @Override
-    public void encode(final SyncChatEvent message, final FriendlyByteBuf buffer) {
-        buffer.writeUtf(message.signerId);
-        buffer.writeUtf(message.chatId);
-    }
+    public record Data(String signerId, String chatId) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "chat_event"));
 
-    @Override
-    public SyncChatEvent decode(final FriendlyByteBuf buffer) {
-        SyncChatEvent syncChatEvent = new SyncChatEvent();
-        syncChatEvent.signerId = buffer.readUtf();
-        syncChatEvent.chatId = buffer.readUtf();
-        return syncChatEvent;
-    }
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.STRING_UTF8,
+                Data::signerId,
+                ByteBufCodecs.STRING_UTF8,
+                Data::chatId,
+                Data::new
+        );
 
-    @Override
-    public void handle(final SyncChatEvent message, final Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
-
-        if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-            context.enqueueWork(() -> ClientProxy.handleSyncChatEvent(message));
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
         }
-
-        context.setPacketHandled(true);
     }
 }

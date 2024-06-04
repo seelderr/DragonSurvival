@@ -38,10 +38,10 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	private void positionRider(Entity entity, Entity.MoveFunction move, CallbackInfo callbackInfo){
 		Object self = this;
 
-		if(DragonUtils.isDragon((Entity) self)){
+		if(DragonStateProvider.isDragon((Entity) self)){
 			if(hasPassenger(entity)) {
 				if ((Object)this instanceof Player player && entity instanceof Player passenger) {
-					DragonMovementData md = DragonUtils.getHandler((Entity) self).getMovementData();
+					DragonMovementData md = DragonStateProvider.getOrGenerateHandler((Entity) self).getMovementData();
 					double heightOffset = -0.2 * this.getPassengersRidingOffset();
 					Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.5 * player.getBbWidth());
 					Vec3 offsetFromCenter = new Vec3(0, this.getPassengersRidingOffset() - heightOffset, 0);
@@ -60,7 +60,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	
 	@Inject(method = "onPassengerTurned(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
 	private void onPassengerTurned(Entity passenger, CallbackInfo callbackInfo) {
-		if (passenger instanceof Player player && player.getVehicle() != null && DragonUtils.getHandler(player.getVehicle()).isDragon() && player.level().isClientSide()) {
+		if (passenger instanceof Player player && player.getVehicle() != null && DragonStateProvider.getOrGenerateHandler(player.getVehicle()).isDragon() && player.level().isClientSide()) {
 			this.clampRotation(passenger);
 		}
 	}
@@ -68,10 +68,10 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Unique
 	private void clampRotation(Entity passenger) {
 		Entity self = (Entity)(Object) this;
-		DragonStateHandler selfHandler = DragonUtils.getHandler(self);
+		DragonStateHandler selfHandler = DragonStateProvider.getOrGenerateHandler(self);
 		DragonMovementData selfmd = selfHandler.getMovementData();
-		if (DragonUtils.isDragon(passenger)) {
-			DragonStateHandler handler = DragonUtils.getHandler(passenger);
+		if (DragonStateProvider.isDragon(passenger)) {
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(passenger);
 			DragonMovementData md = handler.getMovementData();
 			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
 			float facingClamped = Mth.clamp(facing, -150.0F, 150.0F);
@@ -129,8 +129,8 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;getPassengersRidingOffset()D", cancellable = true )
 	public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci){
-		if(DragonUtils.isDragon((Entity)(Object)this)){
-			if (!DragonUtils.isDragon(((Entity)(Object)this).getPassengers().get(0))) { // Human
+		if(DragonStateProvider.isDragon((Entity)(Object)this)){
+			if (!DragonStateProvider.isDragon(((Entity)(Object)this).getPassengers().get(0))) { // Human
 				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
 				switch(((Entity)(Object)this).getPose()){
 					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue(height * 0.6D);
@@ -150,14 +150,14 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;isVisuallyCrawling()Z", cancellable = true )
 	public void isDragonVisuallyCrawling(CallbackInfoReturnable<Boolean> ci){
-		if(DragonUtils.isDragon((Entity)(Object)this)){
+		if(DragonStateProvider.isDragon((Entity)(Object)this)){
 			ci.setReturnValue(false);
 		}
 	}
 
 	@Inject( at = @At( value = "RETURN" ), method = "canRide", cancellable = true )
 	public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci){
-		if(ci.getReturnValue() && DragonUtils.isDragon((Entity)(Object)this) && !DragonUtils.isDragon(entity)){
+		if(ci.getReturnValue() && DragonStateProvider.isDragon((Entity)(Object)this) && !DragonStateProvider.isDragon(entity)){
 			if(ServerConfig.ridingBlacklist){
 				ci.setReturnValue(ServerConfig.allowedVehicles.contains(ResourceHelper.getKey(entity).toString()));
 			}
@@ -166,14 +166,14 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 
 	@Redirect( method = "canEnterPose(Lnet/minecraft/world/entity/Pose;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;" ) )
 	public AABB dragonPoseBB(Entity entity, Pose pose){
-		if(DragonUtils.isDragon(entity) && ServerConfig.sizeChangesHitbox){
+		if(DragonStateProvider.isDragon(entity) && ServerConfig.sizeChangesHitbox){
 			boolean squish = DragonUtils.getDragonBody(entity) != null ? DragonUtils.getDragonBody(entity).isSquish() : false;
 			double heightMult = 1.0;
 			if (DragonUtils.getDragonBody(entity) != null) {
 				squish = DragonUtils.getDragonBody(entity).isSquish();
 				heightMult = DragonUtils.getDragonBody(entity).getHeightMult();
 			}
-			double size = DragonUtils.getHandler(entity).getSize();
+			double size = DragonStateProvider.getOrGenerateHandler(entity).getSize();
 			double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox, squish) * heightMult;
 			double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
 			return DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(entity.position());

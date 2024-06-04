@@ -1,93 +1,97 @@
 package by.dragonsurvivalteam.dragonsurvival.network.config;
-
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
-import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.common.ForgeConfigSpec.LongValue;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class SyncNumberConfig implements IMessage<SyncNumberConfig> {
-	public String type;
-	public String path;
-	public Number value;
-
-	public SyncNumberConfig() { /* Nothing to do */ }
-
-	public SyncNumberConfig(final String path, final Number value) {
-		this.path = path;
-		this.value = value;
-	}
-
-	@Override
-	public void encode(final SyncNumberConfig message, final FriendlyByteBuf buffer) {
-		if (message.value instanceof Double doubleValue) {
-			buffer.writeUtf("DOUBLE");
-			buffer.writeDouble(doubleValue);
-		} else if (message.value instanceof Long longValue) {
-			buffer.writeUtf("LONG");
-			buffer.writeLong(longValue);
-		} else if (message.value instanceof Float floatValue) {
-			buffer.writeUtf("FLOAT");
-			buffer.writeFloat(floatValue);
-		} else if (message.value instanceof Integer intValue) {
-			buffer.writeUtf("INTEGER");
-			buffer.writeInt(intValue);
-		}
-
-		buffer.writeUtf(message.path);
-	}
-
-	@Override
-	public SyncNumberConfig decode(final FriendlyByteBuf buffer) {
-		String type = buffer.readUtf();
-
-		Number value = switch (type) {
-            case "DOUBLE" -> buffer.readDouble();
-            case "LONG" -> buffer.readLong();
-            case "FLOAT" -> buffer.readFloat();
-            case "INTEGER" -> buffer.readInt();
-            default -> 0;
-        };
-
-        String path = buffer.readUtf();
-		return new SyncNumberConfig(path, value);
-	}
-
-	@Override
-	public void handle(final SyncNumberConfig message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer sender = context.getSender();
-
-			if (sender == null || !sender.hasPermissions(2)) {
-				context.setPacketHandled(true);
-				return;
-			}
-
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncNumberConfig(message.path, message.value));
-		}
-
-		Object object = ConfigHandler.serverSpec.getValues().get(message.path);
-
+public class SyncNumberConfig implements IMessage<SyncNumberConfig.Data> {
+	public static void handleClient(final SyncNumberConfig.Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> {
-			if (object instanceof IntValue intValue) {
+			Object object = ConfigHandler.clientSpec.getValues().get(message.path);
+
+			if (object instanceof ModConfigSpec.IntValue intValue) {
 				ConfigHandler.updateConfigValue(intValue, message.value.intValue());
-			} else if (object instanceof DoubleValue doubleValue) {
+			} else if (object instanceof ModConfigSpec.DoubleValue doubleValue) {
 				ConfigHandler.updateConfigValue(doubleValue, message.value.doubleValue());
-			} else if (object instanceof LongValue longValue) {
+			} else if (object instanceof ModConfigSpec.LongValue longValue) {
 				ConfigHandler.updateConfigValue(longValue, message.value.longValue());
 			}
 		});
+	}
 
-		context.setPacketHandled(true);
+	public static void handleServer(final SyncNumberConfig.Data message, final IPayloadContext context) {
+		Player sender = context.player();
+
+		if (!sender.hasPermissions(2)) {
+			return;
+		}
+
+		PacketDistributor.sendToAllPlayers(message);
+
+		context.enqueueWork(() -> {
+			Object object = ConfigHandler.serverSpec.getValues().get(message.path);
+
+			if (object instanceof ModConfigSpec.IntValue intValue) {
+				ConfigHandler.updateConfigValue(intValue, message.value.intValue());
+			} else if (object instanceof ModConfigSpec.DoubleValue doubleValue) {
+				ConfigHandler.updateConfigValue(doubleValue, message.value.doubleValue());
+			} else if (object instanceof ModConfigSpec.LongValue longValue) {
+				ConfigHandler.updateConfigValue(longValue, message.value.longValue());
+			}
+		});
+	}
+
+	public record Data(String path, Number value) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "number_config"));
+
+		public static StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = new StreamCodec<FriendlyByteBuf, Data>() {
+			@Override
+			public void encode(FriendlyByteBuf pBuffer, Data pValue) {
+				if (pValue.value instanceof Double doubleValue) {
+					pBuffer.writeUtf("DOUBLE");
+					pBuffer.writeDouble(doubleValue);
+				} else if (pValue.value instanceof Long longValue) {
+					pBuffer.writeUtf("LONG");
+					pBuffer.writeLong(longValue);
+				} else if (pValue.value instanceof Float floatValue) {
+					pBuffer.writeUtf("FLOAT");
+					pBuffer.writeFloat(floatValue);
+				} else if (pValue.value instanceof Integer intValue) {
+					pBuffer.writeUtf("INTEGER");
+					pBuffer.writeInt(intValue);
+				}
+
+				pBuffer.writeUtf(pValue.path);
+			}
+
+			@Override
+			public Data decode(FriendlyByteBuf pBuffer) {
+				String type = pBuffer.readUtf();
+
+				Number value = switch (type) {
+					case "DOUBLE" -> pBuffer.readDouble();
+					case "LONG" -> pBuffer.readLong();
+					case "FLOAT" -> pBuffer.readFloat();
+					case "INTEGER" -> pBuffer.readInt();
+					default -> 0;
+				};
+
+				String path = pBuffer.readUtf();
+				return new Data(path, value);
+			}
+		};
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
 	}
 }

@@ -1,20 +1,18 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
 
 import java.util.function.Supplier;
 
-public class RequestSpinResync implements IMessage<RequestSpinResync> {
-	public RequestSpinResync() { /* Nothing to do */ }
+// TODO: Sort out what this is supposed to do
+/*public class RequestSpinResync implements IMessage<RequestSpinResync> {
+	public RequestSpinResync() {}
 
 	@Override
-	public void encode(final RequestSpinResync message, FriendlyByteBuf buffer) { /* Nothing to do */ }
+	public void encode(final RequestSpinResync message, FriendlyByteBuf buffer) { }
 
 	@Override
 	public RequestSpinResync decode(final FriendlyByteBuf buffer) {
@@ -32,4 +30,4 @@ public class RequestSpinResync implements IMessage<RequestSpinResync> {
 
 		context.setPacketHandled(true);
 	}
-}
+}*/

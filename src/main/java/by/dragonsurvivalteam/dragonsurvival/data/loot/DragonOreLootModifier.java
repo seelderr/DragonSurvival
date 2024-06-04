@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.data.loot;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -59,7 +59,7 @@ public class DragonOreLootModifier extends LootModifier {
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), context.getRandom(), blockPos, fortuneLevel, silkTouchLevel);
                             if(expDrop > 0) {
-                                DragonStateHandler handler = DragonUtils.getHandler(player);
+                                DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
                                 int fortuneRoll = 1;
                                 if (fortuneLevel >= 1)
                                     fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;

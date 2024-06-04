@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import com.mojang.datafixers.util.Pair;
 
@@ -62,7 +63,7 @@ public class ToolUtils {
             return;
         }
 
-        DragonStateHandler handler = DragonUtils.getHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
         if (!handler.isDragon()) {
             return;
@@ -92,7 +93,7 @@ public class ToolUtils {
             return;
         }
 
-        DragonStateHandler handler = DragonUtils.getHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
         if (!handler.isDragon()) {
             return;

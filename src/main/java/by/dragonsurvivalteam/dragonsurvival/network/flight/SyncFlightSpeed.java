@@ -1,60 +1,51 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.PacketDistributor.TargetPoint;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.function.Supplier;
 
-public class SyncFlightSpeed implements IMessage<SyncFlightSpeed> {
-	public int playerId;
-	public Vec3 flightSpeed;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-	public SyncFlightSpeed() { /* Nothing to do */ }
-
-	public SyncFlightSpeed(int playerId, final Vec3 flightSpeed) {
-		this.playerId = playerId;
-		this.flightSpeed = flightSpeed;
+public class SyncFlightSpeed implements IMessage<SyncFlightSpeed.Data> {
+	public static void handleClient(final SyncFlightSpeed.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncFlightSpeed(message));
 	}
 
-	@Override
-	public void encode(final SyncFlightSpeed message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		buffer.writeDouble(message.flightSpeed.x);
-		buffer.writeDouble(message.flightSpeed.y);
-		buffer.writeDouble(message.flightSpeed.z);
+	public static void handleServer(final SyncFlightSpeed.Data message, final IPayloadContext context) {
+		Player sender = context.player();
+		sender.setDeltaMovement(message.flightSpeedX, message.flightSpeedY, message.flightSpeedZ);
+		PacketDistributor.sendToPlayersNear((ServerLevel) sender.level(), (ServerPlayer) sender, sender.position().x, sender.position().y, sender.position().z, 32, message);
 	}
 
-	@Override
-	public SyncFlightSpeed decode(final FriendlyByteBuf buffer) {
-		return new SyncFlightSpeed(buffer.readInt(), new Vec3(buffer.readDouble(), buffer.readDouble(), buffer.readDouble()));
-	}
+	public record Data (int playerId, double flightSpeedX, double flightSpeedY, double flightSpeedZ) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "flight_speed"));
 
-	@Override
-	public void handle(final SyncFlightSpeed message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.DOUBLE,
+				Data::flightSpeedX,
+				ByteBufCodecs.DOUBLE,
+				Data::flightSpeedY,
+				ByteBufCodecs.DOUBLE,
+				Data::flightSpeedZ,
+				Data::new
+		);
 
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncFlightSpeed(message));
-		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer sender = context.getSender();
-
-			if (sender != null) {
-				context.enqueueWork(() -> {
-					sender.setDeltaMovement(message.flightSpeed);
-					TargetPoint point = new TargetPoint(sender, sender.position().x, sender.position().y, sender.position().z, 32, sender.level().dimension());
-					NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncFlightSpeed(sender.getId(), message.flightSpeed));
-				});
-			}
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

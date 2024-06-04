@@ -3,52 +3,37 @@ package by.dragonsurvivalteam.dragonsurvival.network.magic;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect> {
-	public int entityId;
-	public int effectId;
-	public int duration;
-	public int amplifier;
-
-	public SyncPotionAddedEffect() { /* Nothing to do */ }
-
-	public SyncPotionAddedEffect(int playerId, int effectId, int duration, int amplifier) {
-		entityId = playerId;
-		this.effectId = effectId;
-		this.duration = duration;
-		this.amplifier = amplifier;
+public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect.Data> {
+	public static void handleClient(final SyncPotionAddedEffect.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
 	}
 
-	@Override
-	public void encode(final SyncPotionAddedEffect message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.entityId);
-		buffer.writeInt(message.effectId);
-		buffer.writeInt(message.duration);
-		buffer.writeInt(message.amplifier);
-	}
+	public record Data(int playerId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "potion_added_effect"));
 
-	@Override
-	public SyncPotionAddedEffect decode(final FriendlyByteBuf buffer) {
-		int playerId = buffer.readInt();
-		int effectId = buffer.readInt();
-		int duration = buffer.readInt();
-		int amplifier = buffer.readInt();
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::playerId,
+			ByteBufCodecs.VAR_INT,
+			Data::effectId,
+			ByteBufCodecs.VAR_INT,
+			Data::duration,
+			ByteBufCodecs.VAR_INT,
+			Data::amplifier,
+			Data::new
+		);
 
-		return new SyncPotionAddedEffect(playerId, effectId, duration, amplifier);
-	}
-
-	@Override
-	public void handle(final SyncPotionAddedEffect message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return null;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

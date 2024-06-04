@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
@@ -112,7 +111,7 @@ public class DragonModifiers{
 
 	public static void updateTypeModifiers(final Player player) {
 		if (DragonStateProvider.getCap(player).isPresent()) {
-			DragonStateHandler handler = DragonStateProvider.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			if (handler.isDragon()) {
 				// Grant the dragon attribute modifiers
 				AttributeModifier swimSpeed = buildSwimSpeedMod(handler.getType());
@@ -130,7 +129,7 @@ public class DragonModifiers{
 
 	public static void updateSizeModifiers(final Player player) {
 		if (DragonStateProvider.getCap(player).isPresent()) {
-			DragonStateHandler handler = DragonStateProvider.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			if (handler.isDragon()) {
 				// Grant the dragon attribute modifiers
 				double size = handler.getSize();
@@ -194,7 +193,7 @@ public class DragonModifiers{
 
 	public static void updateBodyModifiers(Player player) {
 		AbstractDragonBody body = DragonUtils.getDragonBody(player);
-		boolean isDragon = DragonUtils.isDragon(player);
+		boolean isDragon = DragonStateProvider.isDragon(player);
 
 		AttributeInstance speedAttr = player.getAttribute(Attributes.MOVEMENT_SPEED);
 		AttributeInstance armorAttr = player.getAttribute(Attributes.ARMOR);

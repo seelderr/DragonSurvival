@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleOptions;
@@ -39,7 +38,7 @@ public class ClientMagicHandler{
 		Player player = event.getPlayer();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonUtils.isDragon(player)){
+			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonStateProvider.isDragon(player)){
 				event.setNewFovModifier(1f);
 				return;
 			}
@@ -70,7 +69,7 @@ public class ClientMagicHandler{
 			return;
 		}
 
-		if (!particlesOnDragons && DragonUtils.isDragon(entity)) {
+		if (!particlesOnDragons && DragonStateProvider.isDragon(entity)) {
 			return;
 		}
 

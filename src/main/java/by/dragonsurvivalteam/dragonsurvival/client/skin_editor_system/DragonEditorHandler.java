@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -21,7 +22,6 @@ import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -34,7 +34,7 @@ public class DragonEditorHandler{
 		}
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			return getSkinTexture(player, layer, type.getTypeName().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
 
@@ -90,7 +90,7 @@ public class DragonEditorHandler{
 
 	public static void generateSkinTextures(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if (!RenderSystem.isOnRenderThreadOrInit()) {
 			RenderSystem.recordRenderCall(() -> genTextures(player, handler));

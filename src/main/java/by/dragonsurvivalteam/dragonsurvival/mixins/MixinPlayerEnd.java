@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -19,11 +19,11 @@ public class MixinPlayerEnd {
         Object self = this;
         Player player = (Player) self;
 
-        if (!DragonUtils.isDragon(player)) {
+        if (!DragonStateProvider.isDragon(player)) {
             return;
         }
 
-        DragonStateHandler handler = DragonUtils.getHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
         if (handler.switchedWeapon) {
             ItemStack originalMainHand = handler.storedMainHandWeapon;

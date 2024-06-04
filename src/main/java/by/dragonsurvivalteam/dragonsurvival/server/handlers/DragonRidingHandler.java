@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -81,7 +80,7 @@ public class DragonRidingHandler{
 				player.connection.send(new ClientboundSetPassengersPacket(player));
 			}
 			if(passenger instanceof ServerPlayer){
-				DragonStateHandler passengerCap = DragonUtils.getHandler(passenger);
+				DragonStateHandler passengerCap = DragonStateProvider.getOrGenerateHandler(passenger);
 				if(passengerCap.isDragon() && passengerCap.getLevel() != DragonLevel.NEWBORN){
 					flag = true;
 					passenger.stopRiding();

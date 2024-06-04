@@ -65,7 +65,7 @@ public class ClientMagicHUDHandler {
 			return false;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(localPlayer);
 
 		if (handler == null || !handler.isDragon()) {
 			return false;

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonEditorPacket;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -24,7 +24,7 @@ public class DragonEditorCommand{
 	}
 
 	private static int runCommand(ServerPlayer serverPlayer){
-		if(DragonUtils.isDragon(serverPlayer)){
+		if(DragonStateProvider.isDragon(serverPlayer)){
 			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonEditorPacket());
 		}
 		return 1;

@@ -5,7 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLigh
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -245,8 +247,8 @@ public class StormBreathAbility extends BreathAbility{
 
 			if(!chargedSpreadBlacklist.contains(ResourceHelper.getKey(source).toString())){
 				if(target != source){
-					EntityStateHandler capSource = DragonUtils.getEntityHandler(source);
-					EntityStateHandler entityCap = DragonUtils.getEntityHandler(target);
+					EntityStateHandler capSource = EntityStateProvider.getEntityHandler(source);
+					EntityStateHandler entityCap = EntityStateProvider.getEntityHandler(target);
 
 					entityCap.chainCount = capSource.chainCount + 1;
 
@@ -307,7 +309,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(!entity.level().isClientSide()){
 			if(!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())){
 				if(entity.getRandom().nextInt(100) < 40){
-					EntityStateHandler cap = DragonUtils.getEntityHandler(entity);
+					EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
 
 					cap.lastAfflicted = player.getId();
 					cap.chainCount = 1;
@@ -462,14 +464,14 @@ public class StormBreathAbility extends BreathAbility{
 		}
 
 		if(player.level().isClientSide()){
-			for(int i = 0; i < calculateNumberOfParticles(DragonUtils.getHandler(player).getSize()) / 6; i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 6; i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
 				player.level().addParticle(new SmallLightningParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
-			for(int i = 0; i < calculateNumberOfParticles(DragonUtils.getHandler(player).getSize()) / 12; i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 12; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);

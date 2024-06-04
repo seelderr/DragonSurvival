@@ -1,56 +1,39 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.SimpleContainer;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
 
-public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu> {
-	public int playerId;
-	public boolean state;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-	public SimpleContainer clawInventory;
-
-	public SyncDragonClawsMenu() { /* Nothing to do */ }
-
-	public SyncDragonClawsMenu(int playerId, boolean state, final SimpleContainer clawInventory) {
-		this.playerId = playerId;
-		this.state = state;
-		this.clawInventory = clawInventory;
+public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu.Data> {
+	public static void handleClient(final SyncDragonClawsMenu.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncDragonClawsMenu(message, context.player().registryAccess()));
 	}
 
-	@Override
-	public void encode(final SyncDragonClawsMenu message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		buffer.writeBoolean(message.state);
-		CompoundTag nbt = new CompoundTag();
-		nbt.put("inv", ClawInventory.saveClawInventory(message.clawInventory));
-		buffer.writeNbt(nbt);
-	}
+	public record Data(int playerId, boolean state, CompoundTag clawInventory) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_claws_menu"));
 
-	@Override
-	public SyncDragonClawsMenu decode(final FriendlyByteBuf buffer) {
-		int playerId = buffer.readInt();
-		boolean state = buffer.readBoolean();
-		CompoundTag tag = buffer.readNbt();
-		SimpleContainer inventory = ClawInventory.readClawInventory(tag.getList("inv", 10)); // TODO :: What type is 10?
-		return new SyncDragonClawsMenu(playerId, state, inventory);
-	}
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::playerId,
+			ByteBufCodecs.BOOL,
+			Data::state,
+			ByteBufCodecs.COMPOUND_TAG,
+			Data::clawInventory,
+			Data::new
+		);
 
-	@Override
-	public void handle(final SyncDragonClawsMenu message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncDragonClawsMenu(message));
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

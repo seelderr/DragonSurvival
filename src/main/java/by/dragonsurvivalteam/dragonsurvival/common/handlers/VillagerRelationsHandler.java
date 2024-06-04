@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
@@ -64,7 +63,7 @@ public class VillagerRelationsHandler{
 				Level world = killer.level();
 				if(!(livingEntity instanceof PrincesHorseEntity)){
 
-					if(DragonUtils.isDragon(killer)){
+					if(DragonStateProvider.isDragon(killer)){
 						AbstractVillager villagerEntity = (AbstractVillager)livingEntity;
 
 						MerchantOffers merchantOffers = villagerEntity.getOffers();
@@ -96,7 +95,7 @@ public class VillagerRelationsHandler{
 				}
 			}
 			String typeName = ResourceHelper.getKey(livingEntity).toString();
-			if(DragonUtils.isDragon(playerEntity) && ServerConfig.royalChaseStatusGivers.contains(typeName)){
+			if(DragonStateProvider.isDragon(playerEntity) && ServerConfig.royalChaseStatusGivers.contains(typeName)){
 				applyEvilMarker(playerEntity);
 			}
 		}
@@ -216,9 +215,9 @@ public class VillagerRelationsHandler{
 	public static void spawnHunters(TickEvent.PlayerTickEvent playerTickEvent){
 		if(!dragonHunters.isEmpty() && playerTickEvent.phase == TickEvent.Phase.END){
 			Player player = playerTickEvent.player;
-			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DragonEffects.ROYAL_CHASE) && DragonUtils.isDragon(player)){
+			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DragonEffects.ROYAL_CHASE) && DragonStateProvider.isDragon(player)){
 				if(serverLevel.dimension() == Level.OVERWORLD){
-					VillageRelationShips villageRelationShips = DragonUtils.getHandler(player).getVillageRelationShips();
+					VillageRelationShips villageRelationShips = DragonStateProvider.getOrGenerateHandler(player).getVillageRelationShips();
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
@@ -244,7 +243,7 @@ public class VillagerRelationsHandler{
 	}
 
 	public static int computeLevelOfEvil(Player playerEntity){
-		if(DragonUtils.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
+		if(DragonStateProvider.isDragon(playerEntity) && playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
 			MobEffectInstance effectInstance = playerEntity.getEffect(DragonEffects.ROYAL_CHASE);
 			assert effectInstance != null;
 			int timeLeft = effectInstance.getDuration();
@@ -361,7 +360,7 @@ public class VillagerRelationsHandler{
 			Player playerEntity = playerTickEvent.player;
 			if(!playerEntity.level().isClientSide()){
 				if(playerEntity.hasEffect(DragonEffects.ROYAL_CHASE)){
-					DragonUtils.getHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DragonEffects.ROYAL_CHASE).getDuration();
+					DragonStateProvider.getOrGenerateHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DragonEffects.ROYAL_CHASE).getDuration();
 				}
 			}
 		}

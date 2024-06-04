@@ -2,12 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -189,7 +189,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	protected void registerGoals(){
 		super.registerGoals();
 		this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6, 1, 1, living -> DragonUtils.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE)));
+		this.goalSelector.addGoal(2, new AvoidEntityGoal<>(this, Player.class, 6, 1, 1, living -> DragonStateProvider.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE)));
 		this.goalSelector.addGoal(1, new PanicGoal(this, 2.0));
 		this.targetSelector.addGoal(4, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
 		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 10.0F));

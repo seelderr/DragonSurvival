@@ -1,13 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent.Phase;
@@ -31,8 +28,8 @@ public class ServerPlayerStatusSync {
 		Player player = event.player;
 
 		if(player.isAddedToWorld() && player.isAlive()){
-			if(DragonUtils.isDragon(player)){
-				DragonStateHandler handler = DragonUtils.getHandler(player);
+			if(DragonStateProvider.isDragon(player)){
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 				if(player.tickCount >= handler.lastSync + syncTicks){
                     // We don't do an initial sync here since it could result in the player syncing before their data is loaded, causing data loss.
 					handler.lastSync = player.tickCount;

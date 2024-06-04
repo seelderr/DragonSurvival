@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -35,7 +35,7 @@ public abstract class MixinWorldRenderer{
 		if(!ClientDragonRender.renderInFirstPerson){
 			return;
 		}
-		if(!DragonUtils.isDragon(camera.getEntity())){
+		if(!DragonStateProvider.isDragon(camera.getEntity())){
 			return;
 		}
 

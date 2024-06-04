@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
-import by.dragonsurvivalteam.dragonsurvival.api.DragonFood;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.EmoteCap;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
@@ -17,8 +17,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,7 +37,6 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Stream;
 
 public class DragonEntity extends LivingEntity implements GeoEntity, CommonTraits {
@@ -108,7 +105,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 	private PlayState bitePredicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
 
@@ -122,7 +119,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			// When the player is using an item
 			handler.getMovementData().bite = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM));
-		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_right") && player.isUsingItem() && DragonFood.isEdible(player.getMainHandItem().getItem(), player) || animationTimer.getDuration("eat_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), player) || animationTimer.getDuration("eat_item_right") > 0) {
 			// When the player is eating the main hand item
 			if (animationTimer.getDuration("eat_item_right") <= 0) {
 				handler.getMovementData().bite = false;
@@ -130,7 +127,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_RIGHT));
-		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_left") && player.isUsingItem() && DragonFood.isEdible(player.getMainHandItem().getItem(), player) || animationTimer.getDuration("eat_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), player) || animationTimer.getDuration("eat_item_right") > 0) {
 			// When the player is eating the offhand item
 			if (animationTimer.getDuration("eat_item_left") <= 0) {
 				handler.getMovementData().bite = false;
@@ -171,7 +168,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	}
 
 	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
-		DragonStateHandler handler = DragonUtils.getHandler(getPlayer());
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(getPlayer());
 
 		if (handler.getEmoteData().currentEmotes[slot] != null) {
 			Emote emote = handler.getEmoteData().currentEmotes[slot];
@@ -201,7 +198,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		Player player = getPlayer();
 
 		AnimationController<DragonEntity> animationController = state.getController();
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		
 		if (handler.refreshBody) {
 			animationController.forceAnimationReset();

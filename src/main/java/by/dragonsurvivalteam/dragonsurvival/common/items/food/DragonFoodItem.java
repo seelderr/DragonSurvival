@@ -1,15 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items.food;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.FoodProperties.Builder;
 import net.minecraft.world.item.Item;
@@ -87,12 +86,12 @@ public class DragonFoodItem extends Item{
 		ItemStack stack = super.finishUsingItem(pStack, pLevel, pLivingEntity);
 
 		if(onEat != null){
-			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isDragonType(pLivingEntity, dragonType))){
+			if(DragonStateProvider.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isDragonType(pLivingEntity, dragonType))){
 				onEat.accept(pLivingEntity);
 			}
 		}
 		if(effects != null && effects.length > 0){
-			if(DragonUtils.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isDragonType(pLivingEntity, dragonType))){
+			if(DragonStateProvider.isDragon(pLivingEntity) && (dragonType == null || DragonUtils.isDragonType(pLivingEntity, dragonType))){
 				for(Supplier<MobEffectInstance> effect : effects){
 					pLivingEntity.addEffect(effect.get());
 				}

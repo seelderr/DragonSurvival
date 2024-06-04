@@ -13,6 +13,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
@@ -29,10 +31,14 @@ import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import org.jetbrains.annotations.UnknownNullability;
 
 import javax.annotation.Nullable;
 import java.util.Map;
@@ -40,7 +46,15 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonStateHandler extends EntityStateHandler {
+	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = ATTACHMENT_TYPES.register(
+			"dragon_handler",
+			() -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
+	);
+
 	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
 
     /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
@@ -103,10 +117,10 @@ public class DragonStateHandler extends EntityStateHandler {
 			// Remove the dragon attribute modifiers
 			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));
 			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DragonModifiers.getDamageModifier(player));
-			checkAndRemoveModifier(player.getAttribute(ForgeMod.SWIM_SPEED.get()), DragonModifiers.getSwimSpeedModifier(player));
-			checkAndRemoveModifier(player.getAttribute(ForgeMod.BLOCK_REACH.get()), DragonModifiers.getBlockReachModifier(player));
-			checkAndRemoveModifier(player.getAttribute(ForgeMod.ENTITY_REACH.get()), DragonModifiers.getEntityReachModifier(player));
-			checkAndRemoveModifier(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()), DragonModifiers.getStepHeightModifier(player));
+			checkAndRemoveModifier(player.getAttribute(NeoForgeMod.SWIM_SPEED), DragonModifiers.getSwimSpeedModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE), DragonModifiers.getBlockReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE), DragonModifiers.getEntityReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.STEP_HEIGHT), DragonModifiers.getStepHeightModifier(player));
 		}
 	}
 
@@ -114,139 +128,6 @@ public class DragonStateHandler extends EntityStateHandler {
 		if (attribute != null && modifier != null && attribute.hasModifier(modifier)) {
 			attribute.removeModifier(modifier);
 		}
-	}
-
-	@Override
-	public CompoundTag writeNBT() {
-		CompoundTag tag = new CompoundTag();
-		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
-		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
-		tag.putString("dragonBody", dragonBody != null ? dragonBody.getBodyName() : "none");
-
-		if (isDragon()) {
-			tag.put("typeData", dragonType.writeNBT());
-			if (dragonBody != null) {
-				tag.put("bodyData", dragonBody.writeNBT());
-			}
-
-			//Rendering
-			DragonMovementData movementData = getMovementData();
-			tag.putDouble("bodyYaw", movementData.bodyYaw);
-			tag.putDouble("headYaw", movementData.headYaw);
-			tag.putDouble("headPitch", movementData.headPitch);
-
-			tag.putBoolean("bite", movementData.bite);
-			tag.putBoolean("dig", movementData.dig);
-			tag.putBoolean("isHiding", isHiding());
-
-			//Spin attack
-			tag.putInt("spinCooldown", movementData.spinCooldown);
-			tag.putInt("spinAttack", movementData.spinAttack);
-
-			tag.putDouble("size", getSize());
-			tag.putBoolean("growing", growing);
-
-			tag.putBoolean("isFlying", isWingsSpread());
-
-			tag.putBoolean("resting", treasureResting);
-			tag.putInt("restingTimer", treasureRestTimer);
-		}
-
-		if (isDragon() || ServerConfig.saveAllAbilities) { // FIXME :: Is this growing or abilities?
-			tag.putBoolean("spinLearned", getMovementData().spinLearned);
-			tag.putBoolean("hasWings", hasFlight());
-		}
-
-		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
-		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
-		tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
-
-		for (int i = 0; i < caps.length; i++) {
-			tag.put("cap_" + i, caps[i].get().writeNBT());
-		}
-
-		tag.putInt("altarCooldown", altarCooldown);
-		tag.putBoolean("usedAltar", hasUsedAltar);
-
-		if (lastPos != null) {
-			tag.put("lastPos", Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
-		}
-
-		tag.putInt("lastAfflicted", lastAfflicted);
-
-		return tag;
-	}
-
-	@Override
-	public void readNBT(final CompoundTag tag) {
-		if (tag.getAllKeys().contains("subtype"))
-			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("subtype"));
-		else
-			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
-
-		if (dragonType != null) {
-			if (tag.contains("typeData")) {
-				dragonType.readNBT(tag.getCompound("typeData"));
-			}
-		}
-
-		dragonBody = DragonBodies.newDragonBodyInstance(tag.getString("dragonBody"));
-		if (dragonBody != null) {
-			if (tag.contains("bodyData")) {
-				dragonBody.readNBT(tag.getCompound("bodyData"));
-			}
-		}
-
-		if (isDragon()) {
-			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
-			getMovementData().headYawLastTick = getMovementData().headYaw;
-			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
-			getMovementData().headPitchLastTick = getMovementData().headPitch;
-			setIsHiding(tag.getBoolean("isHiding"));
-			getMovementData().dig = tag.getBoolean("dig");
-
-			setWingsSpread(tag.getBoolean("isFlying"));
-
-			getMovementData().spinCooldown = tag.getInt("spinCooldown");
-			getMovementData().spinAttack = tag.getInt("spinAttack");
-
-			setSize(tag.getDouble("size"));
-			growing = !tag.contains("growing") || tag.getBoolean("growing");
-
-			treasureResting = tag.getBoolean("resting");
-			treasureRestTimer = tag.getInt("restingTimer");
-
-			if(getSize() == 0){
-				setSize(DragonLevel.NEWBORN.size);
-			}
-		}
-
-		if (isDragon() || ServerConfig.saveAllAbilities) {
-			getMovementData().spinLearned = tag.getBoolean("spinLearned");
-			setHasFlight(tag.getBoolean("hasWings"));
-		}
-
-		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
-		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
-		setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
-
-		for (int i = 0; i < caps.length; i++) {
-			if (tag.contains("cap_" + i)) {
-				caps[i].get().readNBT((CompoundTag) tag.get("cap_" + i));
-			}
-		}
-
-		altarCooldown = tag.getInt("altarCooldown");
-		hasUsedAltar = tag.getBoolean("usedAltar");
-
-		if (tag.contains("lastPos")) {
-			ListTag listnbt = tag.getList("lastPos", 6);
-			lastPos = new Vec3(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
-		}
-
-		lastAfflicted = tag.getInt("lastAfflicted");
-
-		getSkinData().compileSkin();
 	}
 
 	public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
@@ -490,9 +371,9 @@ public class DragonStateHandler extends EntityStateHandler {
 		tierPath = tierPath.replace("wood", "wooden");
 
 		Item item = switch (toolSlot) {
-			case 1 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "pickaxe"));
-			case 2 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "axe"));
-			case 3 -> ForgeRegistries.ITEMS.getValue(new ResourceLocation("minecraft", tierPath + "shovel"));
+			case 1 -> BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft", tierPath + "pickaxe"));
+			case 2 -> BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft", tierPath + "axe"));
+			case 3 -> BuiltInRegistries.ITEM.get(new ResourceLocation("minecraft", tierPath + "shovel"));
 			default -> ItemStack.EMPTY.getItem();
 		};
 
@@ -644,5 +525,138 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	public VillageRelationShips getVillageRelationShips() {
 		return villageRelationShips;
+	}
+
+	@Override
+	public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		CompoundTag tag = new CompoundTag();
+		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
+		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
+		tag.putString("dragonBody", dragonBody != null ? dragonBody.getBodyName() : "none");
+
+		if (isDragon()) {
+			tag.put("typeData", dragonType.writeNBT());
+			if (dragonBody != null) {
+				tag.put("bodyData", dragonBody.writeNBT());
+			}
+
+			//Rendering
+			DragonMovementData movementData = getMovementData();
+			tag.putDouble("bodyYaw", movementData.bodyYaw);
+			tag.putDouble("headYaw", movementData.headYaw);
+			tag.putDouble("headPitch", movementData.headPitch);
+
+			tag.putBoolean("bite", movementData.bite);
+			tag.putBoolean("dig", movementData.dig);
+			tag.putBoolean("isHiding", isHiding());
+
+			//Spin attack
+			tag.putInt("spinCooldown", movementData.spinCooldown);
+			tag.putInt("spinAttack", movementData.spinAttack);
+
+			tag.putDouble("size", getSize());
+			tag.putBoolean("growing", growing);
+
+			tag.putBoolean("isFlying", isWingsSpread());
+
+			tag.putBoolean("resting", treasureResting);
+			tag.putInt("restingTimer", treasureRestTimer);
+		}
+
+		if (isDragon() || ServerConfig.saveAllAbilities) { // FIXME :: Is this growing or abilities?
+			tag.putBoolean("spinLearned", getMovementData().spinLearned);
+			tag.putBoolean("hasWings", hasFlight());
+		}
+
+		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
+		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
+		tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
+
+		for (int i = 0; i < caps.length; i++) {
+			tag.put("cap_" + i, caps[i].get().writeNBT());
+		}
+
+		tag.putInt("altarCooldown", altarCooldown);
+		tag.putBoolean("usedAltar", hasUsedAltar);
+
+		if (lastPos != null) {
+			tag.put("lastPos", Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
+		}
+
+		tag.putInt("lastAfflicted", lastAfflicted);
+
+		return tag;
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+		if (tag.getAllKeys().contains("subtype"))
+			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("subtype"));
+		else
+			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
+
+		if (dragonType != null) {
+			if (tag.contains("typeData")) {
+				dragonType.readNBT(tag.getCompound("typeData"));
+			}
+		}
+
+		dragonBody = DragonBodies.newDragonBodyInstance(tag.getString("dragonBody"));
+		if (dragonBody != null) {
+			if (tag.contains("bodyData")) {
+				dragonBody.readNBT(tag.getCompound("bodyData"));
+			}
+		}
+
+		if (isDragon()) {
+			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
+			getMovementData().headYawLastTick = getMovementData().headYaw;
+			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
+			getMovementData().headPitchLastTick = getMovementData().headPitch;
+			setIsHiding(tag.getBoolean("isHiding"));
+			getMovementData().dig = tag.getBoolean("dig");
+
+			setWingsSpread(tag.getBoolean("isFlying"));
+
+			getMovementData().spinCooldown = tag.getInt("spinCooldown");
+			getMovementData().spinAttack = tag.getInt("spinAttack");
+
+			setSize(tag.getDouble("size"));
+			growing = !tag.contains("growing") || tag.getBoolean("growing");
+
+			treasureResting = tag.getBoolean("resting");
+			treasureRestTimer = tag.getInt("restingTimer");
+
+			if(getSize() == 0){
+				setSize(DragonLevel.NEWBORN.size);
+			}
+		}
+
+		if (isDragon() || ServerConfig.saveAllAbilities) {
+			getMovementData().spinLearned = tag.getBoolean("spinLearned");
+			setHasFlight(tag.getBoolean("hasWings"));
+		}
+
+		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
+		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
+		setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
+
+		for (int i = 0; i < caps.length; i++) {
+			if (tag.contains("cap_" + i)) {
+				caps[i].get().readNBT((CompoundTag) tag.get("cap_" + i));
+			}
+		}
+
+		altarCooldown = tag.getInt("altarCooldown");
+		hasUsedAltar = tag.getBoolean("usedAltar");
+
+		if (tag.contains("lastPos")) {
+			ListTag listnbt = tag.getList("lastPos", 6);
+			lastPos = new Vec3(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
+		}
+
+		lastAfflicted = tag.getInt("lastAfflicted");
+
+		getSkinData().compileSkin();
 	}
 }

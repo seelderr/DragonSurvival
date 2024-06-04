@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -23,7 +24,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.*;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -54,7 +54,6 @@ import net.minecraftforge.network.NetworkHooks;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.Random;
 
 public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock, EntityBlock{
 	public static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.25, 1);
@@ -231,9 +230,9 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 				NetworkHooks.openScreen((ServerPlayer)player, (MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
 			}
 		}else{
-			if(DragonUtils.isDragon(player) && player.getMainHandItem().isEmpty()){
+			if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()){
 				if(player.getFeetBlockState().getBlock() == state.getBlock()){
-					DragonStateHandler handler = DragonUtils.getHandler(player);
+					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 					if(!handler.getMagicData().onMagicSource){
 						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);

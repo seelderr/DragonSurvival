@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -175,7 +174,7 @@ public class DragonGrowthHandler{
 			return;
 		}
 
-		if(!DragonUtils.isDragon(player)){
+		if(!DragonStateProvider.isDragon(player)){
 			return;
 		}
 

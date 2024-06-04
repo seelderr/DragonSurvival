@@ -11,13 +11,11 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
@@ -36,8 +34,6 @@ import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
 
-import java.util.Random;
-
 
 @Mod.EventBusSubscriber
 public class SourceOfMagicHandler{
@@ -48,8 +44,8 @@ public class SourceOfMagicHandler{
 		}
 		Player player = event.player;
 
-		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+		if(DragonStateProvider.isDragon(player)){
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.getMagicData().onMagicSource){
 				if(!(player.getFeetBlockState().getBlock() instanceof SourceOfMagicBlock) || handler.getMovementData().bite || player.isCrouching() && handler.getMagicData().magicSourceTimer > 40){
@@ -115,8 +111,8 @@ public class SourceOfMagicHandler{
 		}
 		Player player = event.player;
 
-		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+		if(DragonStateProvider.isDragon(player)){
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.getMagicData().onMagicSource){
 				BlockPos pos1 = player.blockPosition();
@@ -167,8 +163,8 @@ public class SourceOfMagicHandler{
 		}
 		Player player = Minecraft.getInstance().player;
 
-		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+		if(DragonStateProvider.isDragon(player)){
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.getMagicData().onMagicSource){
 				Vec3 velocity = player.getDeltaMovement();

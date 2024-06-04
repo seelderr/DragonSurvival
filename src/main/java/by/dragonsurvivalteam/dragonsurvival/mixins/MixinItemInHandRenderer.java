@@ -1,10 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.api.DragonFood;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -14,8 +12,6 @@ import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import org.spongepowered.asm.mixin.Final;
@@ -34,8 +30,8 @@ public class MixinItemInHandRenderer{
 
 	@ModifyExpressionValue( method = "renderArmWithItem", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;"))
 	private UseAnim dragonRenderArmWithItem(UseAnim original, AbstractClientPlayer pPlayer, float pPartialTicks, float pPitch, InteractionHand pHand, float pSwingProgress, ItemStack pStack, float pEquippedProgress, PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight){
-		if(DragonUtils.isDragon(pPlayer)) {
-			return DragonFood.isEdible(pStack.getItem(), pPlayer) ? UseAnim.EAT : original;
+		if(DragonStateProvider.isDragon(pPlayer)) {
+			return DragonFoodHandler.isEdible(pStack, pPlayer) ? UseAnim.EAT : original;
 		}
 
 		return original;
@@ -43,9 +39,9 @@ public class MixinItemInHandRenderer{
 
 	@ModifyExpressionValue( method = "applyEatTransform", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"))
 	private int dragonUseDuration(int original, @Local(argsOnly = true) ItemStack stack){
-		DragonStateHandler handler = DragonStateProvider.getHandler(minecraft.player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
 		if (handler != null && handler.isDragon()) {
-			return DragonFoodHandler.getUseDuration(stack, handler.getType());
+			return DragonFoodHandler.getUseDuration(stack, minecraft.player);
 		}
 
 		return original;
@@ -53,13 +49,13 @@ public class MixinItemInHandRenderer{
 
 	@Inject( at = @At( value = "HEAD" ), method = "renderPlayerArm", cancellable = true )
 	private void hideArmsForDragon(PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight, float pEquippedProgress, float pSwingProgress, HumanoidArm pSide, CallbackInfo ci){
-		if(DragonUtils.isDragon(minecraft.player)){
+		if(DragonStateProvider.isDragon(minecraft.player)){
 			ci.cancel();
 		}
 	}
 
 	@ModifyExpressionValue (method = "renderTwoHandedMap", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isInvisible()Z"))
 	private boolean hideArmsForDragonTwoHandedMap(boolean original){
-		return !DragonUtils.isDragon(minecraft.player) && original;
+		return !DragonStateProvider.isDragon(minecraft.player) && original;
 	}
 }

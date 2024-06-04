@@ -1,52 +1,32 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.function.Supplier;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
+
 /** Synchronizes the logic of consuming or giving experience to the server side to prevent de-syncs */
-public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost> {
-	private int level;
-	private int levelChange;
-	private String skill;
-
-	public SyncSkillLevelChangeCost(int level, String skill, int levelChange) {
-		this.level = level;
-		this.skill = skill;
-		this.levelChange = levelChange;
-	}
-
-	public SyncSkillLevelChangeCost() { /* Nothing to do */ }
-
-	@Override
-	public void encode(final SyncSkillLevelChangeCost message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.level);
-		buffer.writeUtf(message.skill);
-		buffer.writeInt(message.levelChange);
-	}
-
-	@Override
-	public SyncSkillLevelChangeCost decode(final FriendlyByteBuf buffer) {
-		int level = buffer.readInt();
-		String skill = buffer.readUtf();
-		int levelChange = buffer.readInt();
-		return new SyncSkillLevelChangeCost(level, skill, levelChange);
-	}
-
-	@Override
-	public void handle(final SyncSkillLevelChangeCost message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-		ServerPlayer sender = context.getSender();
-
-		if (sender != null) {
-			context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler -> {
+public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost.Data> {
+	public static void handleServer(final SyncSkillLevelChangeCost.Data message, final IPayloadContext context) {
+		Player sender = context.player();
+		context.enqueueWork(() -> {
+			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
+			if(handler.isDragon()) {
 				DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
 				if (staticAbility instanceof PassiveDragonAbility ability) {
@@ -57,9 +37,26 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 						sender.giveExperienceLevels(levelCost);
 					}
 				}
-			}));
-		}
+			}
+		});
+	}
 
-		context.setPacketHandled(true);
+	public record Data(int level, String skill, int levelChange) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "skill_level_change_cost"));
+
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::level,
+			ByteBufCodecs.STRING_UTF8,
+			Data::skill,
+			ByteBufCodecs.VAR_INT,
+			Data::levelChange,
+			Data::new
+		);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
 	}
 }

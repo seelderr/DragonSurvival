@@ -3,8 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -36,7 +36,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(animatable.getPlayer());
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(animatable.getPlayer());
 
 		if (!handler.getClawToolData().shouldRenderClaws) {
 			return;
@@ -71,7 +71,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 	public String constructClaws(final Player player) {
 		String texturePath = "textures/armor/";
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().slotForBonus);
 
 		if (!clawItem.isEmpty()) {
@@ -85,7 +85,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 	public String constructTeethTexture(final Player player) {
 		String texturePath = "textures/armor/";
-		ItemStack swordItem = DragonUtils.getHandler(player).getClawToolData().getClawsInventory().getItem(0);
+		ItemStack swordItem = DragonStateProvider.getOrGenerateHandler(player).getClawToolData().getClawsInventory().getItem(0);
 
 		if (!swordItem.isEmpty()) {
 			texturePath = ClientEvents.getMaterial(texturePath, swordItem);

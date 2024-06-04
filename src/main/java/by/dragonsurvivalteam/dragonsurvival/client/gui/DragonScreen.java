@@ -23,7 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.SortInventoryPacket;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -110,7 +109,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		leftPos = (width - imageWidth) / 2;
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.TabType.INVENTORY, this));
 		addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.TabType.ABILITY, this));
@@ -168,7 +167,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				active = clawsMenu;
-				DragonStateHandler handler = DragonUtils.getHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 				if (handler.getClawToolData().shouldRenderClaws && clawsMenu) {
 					guiGraphics.blit(DRAGON_CLAW_CHECKMARK, getX(), getY(), 0, 0, 9, 9, 9, 9);
@@ -213,7 +212,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				initResources();
 			}
 
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			double curSize = handler.getSize();
 			float progress = 0;
@@ -282,7 +281,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		super.renderBackground(guiGraphics);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		double renderedSize = Math.min(handler.getSize(), ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 6;

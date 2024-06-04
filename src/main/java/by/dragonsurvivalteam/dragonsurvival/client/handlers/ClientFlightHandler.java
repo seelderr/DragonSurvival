@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -25,7 +24,6 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
@@ -112,7 +110,7 @@ public class ClientFlightHandler {
 		Camera info = setup.getCamera();
 
 		if(currentPlayer != null && currentPlayer.isAddedToWorld()){
-			DragonStateHandler dragonStateHandler = DragonUtils.getHandler(currentPlayer);
+			DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(currentPlayer);
 			AccessorGameRenderer gameRenderer = (AccessorGameRenderer)minecraft.gameRenderer;
 
 			if(ServerFlightHandler.isGliding(currentPlayer)){
@@ -175,7 +173,7 @@ public class ClientFlightHandler {
 			return;
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if (!handler.isDragon()) {
 			return;
@@ -510,7 +508,7 @@ public class ClientFlightHandler {
 			return;
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		if(!handler.isDragon()){
 			return;
 		}
@@ -538,7 +536,7 @@ public class ClientFlightHandler {
 			return;
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		if(handler == null || !handler.isDragon()){
 			return;
 		}

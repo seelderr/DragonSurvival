@@ -1,12 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncDragonAbilitySlot;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -94,10 +93,10 @@ public class KeyInputHandler{
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = Minecraft.getInstance().player;
 
-		if(player == null || !DragonUtils.isDragon(minecraft.player))
+		if(player == null || !DragonStateProvider.isDragon(minecraft.player))
 			return;
 
-		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if(DRAGON_INVENTORY.consumeClick()){
 			if(minecraft.screen == null){

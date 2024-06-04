@@ -3,52 +3,38 @@ package by.dragonsurvivalteam.dragonsurvival.network.magic;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class SyncMagicStats implements IMessage<SyncMagicStats> {
-	public int playerid;
-	public int selectedSlot;
-	public int currentMana;
-	public boolean renderHotbar;
+public class SyncMagicStats implements IMessage<SyncMagicStats.Data> {
 
-	public SyncMagicStats() { /* Nothing to do */ }
-
-	public SyncMagicStats(int playerid, int selectedSlot, int currentMana, boolean renderHotbar) {
-		this.playerid = playerid;
-		this.currentMana = currentMana;
-		this.selectedSlot = selectedSlot;
-		this.renderHotbar = renderHotbar;
+	public static void handleClient(final SyncMagicStats.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncMagicstats(message));
 	}
 
-	@Override
-	public void encode(final SyncMagicStats message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerid);
-		buffer.writeInt(message.selectedSlot);
-		buffer.writeInt(message.currentMana);
-		buffer.writeBoolean(message.renderHotbar);
-	}
+	public record Data(int playerid, int selectedSlot, int currentMana, boolean renderHotbar) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "magic_stats"));
 
-	@Override
-	public SyncMagicStats decode(final FriendlyByteBuf buffer) {
-		int playerid = buffer.readInt();
-		int selectedSlot = buffer.readInt();
-		int currentMana = buffer.readInt();
-		boolean renderHotbar = buffer.readBoolean();
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::playerid,
+			ByteBufCodecs.VAR_INT,
+			Data::selectedSlot,
+			ByteBufCodecs.VAR_INT,
+			Data::currentMana,
+			ByteBufCodecs.BOOL,
+			Data::renderHotbar,
+			Data::new
+		);
 
-		return new SyncMagicStats(playerid, selectedSlot, currentMana, renderHotbar);
-	}
-
-	@Override
-	public void handle(final SyncMagicStats message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncMagicstats(message));
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

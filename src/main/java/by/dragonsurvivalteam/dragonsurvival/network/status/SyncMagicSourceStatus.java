@@ -1,64 +1,51 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
-public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus> {
-	public int playerId;
-	public boolean state;
-	public int timer;
-
-	public SyncMagicSourceStatus() { /* Nothing to do */ }
-
-	public SyncMagicSourceStatus(int playerId, boolean state, int timer) {
-		this.playerId = playerId;
-		this.state = state;
-		this.timer = timer;
+public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus.Data> {
+	public static void handleClient(Data message, IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncMagicSourceStatus(message));
 	}
 
-	@Override
-	public void encode(final SyncMagicSourceStatus message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		buffer.writeBoolean(message.state);
-		buffer.writeInt(message.timer);
+	public static void handleServer(Data message, IPayloadContext context) {
+		DragonStateHandler handler = context.player().getData(DRAGON_HANDLER);
+		handler.getMagicData().onMagicSource = message.state;
+		handler.getMagicData().magicSourceTimer = message.timer;
+		PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message);
 	}
 
-	@Override
-	public SyncMagicSourceStatus decode(final FriendlyByteBuf buffer) {
-		int playerId = buffer.readInt();
-		boolean state = buffer.readBoolean();
-		int timer = buffer.readInt();
-		return new SyncMagicSourceStatus(playerId, state, timer);
-	}
+	public record Data(int playerId, boolean state, int timer) implements CustomPacketPayload
+	{
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "magic_source_status"));
 
-	@Override
-	public void handle(final SyncMagicSourceStatus message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.BOOL,
+				Data::state,
+				ByteBufCodecs.VAR_INT,
+				Data::timer,
+				Data::new
+		);
 
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncMagicSourceStatus(message));
-		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer sender = context.getSender();
-
-			if (sender != null) {
-				DragonStateProvider.getCap(sender).ifPresent(handler -> {
-					handler.getMagicData().onMagicSource = message.state;
-					handler.getMagicData().magicSourceTimer = message.timer;
-				});
-
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncMagicSourceStatus(sender.getId(), message.state, message.timer));
-			}
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

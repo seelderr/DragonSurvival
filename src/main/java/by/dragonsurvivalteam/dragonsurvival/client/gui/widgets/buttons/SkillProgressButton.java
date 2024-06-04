@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -55,7 +55,7 @@ public class SkillProgressButton extends Button{
 		guiGraphics.blit(texture, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
 		if (ability != null) {
-			DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 
 			if (handler.isDragon()) {
 				DragonAbility playerAbility = DragonAbilities.getSelfAbility(Minecraft.getInstance().player, ability.getClass());

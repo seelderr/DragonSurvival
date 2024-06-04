@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -77,9 +77,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 	@Override
 	public InteractionResult use(BlockState p_225533_1_, Level world, BlockPos p_225533_3_, Player player, InteractionHand hand, BlockHitResult p_225533_6_){
-		if(DragonUtils.isDragon(player) && player.getItemInHand(hand).isEmpty()){
+		if(DragonStateProvider.isDragon(player) && player.getItemInHand(hand).isEmpty()){
 			if(player.getFeetBlockState().getBlock() == p_225533_1_.getBlock()){
-				DragonStateHandler handler = DragonUtils.getHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 				if(!handler.treasureResting){
 					if(world.isClientSide()){

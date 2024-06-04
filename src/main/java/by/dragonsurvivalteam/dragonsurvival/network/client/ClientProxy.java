@@ -24,7 +24,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.effect.MobEffect;
@@ -95,7 +94,7 @@ public class ClientProxy {
     }
 
     public static void requestClientData(final DragonStateHandler handler) {
-        if (handler == DragonUtils.getHandler(Minecraft.getInstance().player)) {
+        if (handler == DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player)) {
             ClientEvents.sendClientData(new RequestClientData(handler.getType(), handler.getBody(), handler.getLevel()));
         }
     }
@@ -402,22 +401,22 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId);
 
             if (entity instanceof Player player) {
-                DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
+                DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
                 dragonStateHandler.altarCooldown = message.cooldown;
             }
         }
     }
 
-    public static void handleSyncMagicSourceStatus(final SyncMagicSourceStatus message) {
+    public static void handleSyncMagicSourceStatus(final SyncMagicSourceStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    handler.getMagicData().onMagicSource = message.state;
-                    handler.getMagicData().magicSourceTimer = message.timer;
+                    handler.getMagicData().onMagicSource = message.state();
+                    handler.getMagicData().magicSourceTimer = message.timer();
                 });
             }
         }

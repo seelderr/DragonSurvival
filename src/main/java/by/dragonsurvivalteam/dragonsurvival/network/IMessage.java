@@ -1,14 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.network;
 
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.function.Supplier;
 
-public interface IMessage<T> {
-	void encode(T message, FriendlyByteBuf buffer);
+public interface IMessage<T extends CustomPacketPayload> {
+    static <T> void handleClient(final T message, final IPayloadContext context) {}
 
-	T decode(FriendlyByteBuf buffer);
-
-	void handle(T message, Supplier<NetworkEvent.Context> supplier);
+	static <T> void handleServer(final T message, final IPayloadContext context) {}
 }

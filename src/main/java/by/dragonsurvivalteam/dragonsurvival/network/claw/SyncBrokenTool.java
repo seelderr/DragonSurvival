@@ -1,51 +1,58 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
-public record SyncBrokenTool(int playerId, int slot) {
-    public void encode(final FriendlyByteBuf buffer) {
-        buffer.writeInt(playerId);
-        buffer.writeInt(slot);
-    }
+public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
 
-    public static SyncBrokenTool decode(final FriendlyByteBuf buffer) {
-        return new SyncBrokenTool(buffer.readInt(), buffer.readInt());
-    }
+    public static void handleClient(final SyncBrokenTool.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player localPlayer = ClientProxy.getLocalPlayer();
 
-    public static void handle(final SyncBrokenTool message, final Supplier<NetworkEvent.Context> supplier) {
-        NetworkEvent.Context context = supplier.get();
+            if (localPlayer != null) {
+                Entity entity = localPlayer.level().getEntity(message.playerId);
 
-        if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-            context.enqueueWork(() -> {
-                Player localPlayer = ClientProxy.getLocalPlayer();
+                if (entity instanceof Player) {
+                    DragonStateHandler handler = entity.getData(DRAGON_HANDLER);
 
-                if (localPlayer != null) {
-                    Entity entity = localPlayer.level().getEntity(message.playerId);
-
-                    if (entity instanceof Player) {
-                        DragonStateHandler handler = DragonUtils.getHandler(entity);
-
-                        if (handler.switchedTool || handler.switchedWeapon) {
-                            localPlayer.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-                        } else {
-                            handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
-                        }
+                    if (handler.switchedTool || handler.switchedWeapon) {
+                        localPlayer.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                    } else {
+                        handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
                     }
                 }
-            });
-        }
+            }
+        });
+    }
 
-        context.setPacketHandled(true);
+    public record Data(int playerId, int slot) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "broken_tool"));
+
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.INT,
+            Data::playerId,
+            ByteBufCodecs.INT,
+            Data::slot,
+            Data::new
+        );
+
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
     }
 }

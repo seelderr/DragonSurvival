@@ -1,64 +1,59 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.function.Supplier;
 
-public class SyncMagicCap implements IMessage<SyncMagicCap> {
-	public int playerId;
-	public MagicCap cap;
-	public CompoundTag nbt;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
-	public SyncMagicCap() { /* Nothing to do */ }
-
-	public SyncMagicCap(int playerId, final MagicCap cap) {
-		this.cap = cap;
-		this.playerId = playerId;
+public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
+	public static void handleClient(final SyncMagicCap.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncMagicCap(message, context.player().registryAccess()));
 	}
 
-	public SyncMagicCap(int playerId, final CompoundTag nbt) {
-		this.nbt = nbt;
-		this.playerId = playerId;
+	public static void handleServer(final SyncMagicCap.Data message, final IPayloadContext context) {
+		context.enqueueWork(()-> {
+			Player sender = context.player();
+			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
+			handler.getMagicData().deserializeNBT(context.player().registryAccess(), message.nbt);
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
+		});
 	}
 
-	@Override
-	public void encode(final SyncMagicCap message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		buffer.writeNbt(message.cap != null ? message.cap.writeNBT() : nbt);
-	}
+	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "magic_cap"));
 
-	@Override
-	public SyncMagicCap decode(final FriendlyByteBuf buffer) {
-		return new SyncMagicCap(buffer.readInt(), buffer.readNbt());
-	}
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::playerId,
+			ByteBufCodecs.COMPOUND_TAG,
+			Data::nbt,
+			Data::new
+		);
 
-	@Override
-	public void handle(final SyncMagicCap message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncMagicCap(message));
-		} else if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			context.enqueueWork(()-> {
-				ServerPlayer sender = context.getSender();
-
-				DragonStateProvider.getCap(sender).ifPresent(handler -> {
-					handler.getMagicData().readNBT(message.nbt);
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> sender), new SyncMagicCap(sender.getId(), handler.getMagicData()));
-				});
-			});
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

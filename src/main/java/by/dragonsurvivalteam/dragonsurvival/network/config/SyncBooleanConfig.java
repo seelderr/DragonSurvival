@@ -3,67 +3,57 @@ package by.dragonsurvivalteam.dragonsurvival.network.config;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
-import net.minecraftforge.network.PacketDistributor;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class SyncBooleanConfig implements IMessage<SyncBooleanConfig> {
-	public String path;
-	public boolean value;
+public class SyncBooleanConfig implements IMessage<SyncBooleanConfig.Data> {
 
-	public SyncBooleanConfig() { /* Nothing to do */ }
+	public static void handleClient(final SyncBooleanConfig.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ConfigHandler.updateConfigValue(message.path, message.value));
 
-	public SyncBooleanConfig(final String path, boolean value) {
-		this.path = path;
-		this.value = value;
+		if (message.path.equals("tooltips.hideUnsafeFood")) {
+			DragonFoodHandler.clearTooltipMaps();
+		}
 	}
 
-	@Override
+	public static void handleServer(final SyncBooleanConfig.Data message, final IPayloadContext context) {
+		Player sender = context.player();
 
-	public void encode(final SyncBooleanConfig message, final FriendlyByteBuf buffer) {
-		buffer.writeBoolean(message.value);
-		buffer.writeUtf(message.path);
-	}
-
-	@Override
-
-	public SyncBooleanConfig decode(final FriendlyByteBuf buffer) {
-		boolean value = buffer.readBoolean();
-		String path = buffer.readUtf();
-		return new SyncBooleanConfig(path, value);
-	}
-
-	@Override
-	public void handle(final SyncBooleanConfig message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_SERVER) {
-			ServerPlayer sender = context.getSender();
-
-			if (sender == null || !sender.hasPermissions(2)) {
-				context.setPacketHandled(true);
-				return;
-			}
-
-			NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SyncBooleanConfig(message.path, message.value));
+		if (!sender.hasPermissions(2)) {
+			return;
 		}
 
-		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof BooleanValue booleanValue) {
-			context.enqueueWork(() -> {
-				ConfigHandler.updateConfigValue(booleanValue, message.value);
+		PacketDistributor.sendToAllPlayers(message);
 
-				if (message.path.equals("tooltips.hideUnsafeFood")) {
-					DragonFoodHandler.clearTooltipMaps();
-				}
-			});
+		context.enqueueWork(() -> ConfigHandler.updateConfigValue(message.path, message.value));
+
+		if (message.path.equals("tooltips.hideUnsafeFood")) {
+			DragonFoodHandler.clearTooltipMaps();
 		}
+	}
 
-		context.setPacketHandled(true);
+	public record Data(boolean value, String path) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "boolean_config"));
+
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.BOOL,
+				Data::value,
+				ByteBufCodecs.STRING_UTF8,
+				Data::path,
+				Data::new
+		);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
 	}
 }

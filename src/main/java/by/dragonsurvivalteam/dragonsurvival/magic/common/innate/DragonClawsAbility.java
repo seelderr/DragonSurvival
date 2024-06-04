@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -16,8 +16,6 @@ import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
-
-import static by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes.*;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
 	@Override
@@ -33,7 +31,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public ArrayList<Component> getInfo() {
-		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 
 		ArrayList<Component> components = super.getInfo();
 		components.add(Component.translatable("ds.skill.tool_type." + getName()));
@@ -63,7 +61,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
 	@OnlyIn(Dist.CLIENT)
 	public @Nullable Pair<Tiers, Integer> getHarvestInfo() {
-		DragonStateHandler handler = DragonUtils.getHandler(Minecraft.getInstance().player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 
 		if (handler.getType() == null) {
 			return null;

@@ -3,45 +3,33 @@ package by.dragonsurvivalteam.dragonsurvival.network.magic;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect> {
-	public int playerId;
-	public int effectId;
-
-	public SyncPotionRemovedEffect() { /* Nothing to do */ }
-
-	public SyncPotionRemovedEffect(int playerId, int effectId) {
-		this.playerId = playerId;
-		this.effectId = effectId;
+public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect.Data> {
+	public static void handleClient(final SyncPotionRemovedEffect.Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
 	}
 
-	@Override
+	public record Data(int playerId, int effectId) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "potion_removed_effect"));
 
-	public void encode(final SyncPotionRemovedEffect message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		buffer.writeInt(message.effectId);
-	}
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::playerId,
+			ByteBufCodecs.VAR_INT,
+			Data::effectId,
+			Data::new
+		);
 
-	@Override
-	public SyncPotionRemovedEffect decode(final FriendlyByteBuf buffer) {
-		int playerId = buffer.readInt();
-		int effectId = buffer.readInt();
-
-		return new SyncPotionRemovedEffect(playerId, effectId);
-	}
-
-	@Override
-	public void handle(final SyncPotionRemovedEffect message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		if (context.getDirection() == NetworkDirection.PLAY_TO_CLIENT) {
-			context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
-
-		context.setPacketHandled(true);
 	}
 }

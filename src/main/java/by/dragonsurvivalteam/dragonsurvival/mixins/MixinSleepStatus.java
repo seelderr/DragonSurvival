@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.players.SleepStatus;
 import org.spongepowered.asm.mixin.Mixin;
@@ -13,7 +13,7 @@ public class MixinSleepStatus{
 	// This is done here so that the dragon rests without the player sleep UI appearing or the camera view changing.
 	@Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isSleeping()Z"))
 	public boolean isSleeping(ServerPlayer target){
-		DragonStateHandler handler = DragonUtils.getHandler(target);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(target);
 		return target.isSleeping() || handler.treasureResting;
 	}
 }

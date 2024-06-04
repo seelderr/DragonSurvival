@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAb
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -128,7 +127,7 @@ public class DragonAbilities{
 	}
 
 	public static void addAbility(LivingEntity player, Class<? extends DragonAbility> c){
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		try{
 			DragonAbility ability = c.newInstance();
@@ -154,7 +153,7 @@ public class DragonAbilities{
 			addAbility(player, c);
 		}
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		handler.getMagicData().abilities.values().stream().filter(s-> s.getClass() == c).forEach(s -> {
 			s.level = Mth.clamp(level, s.getMinLevel(), s.getMaxLevel());
 		});
@@ -167,7 +166,7 @@ public class DragonAbilities{
 	}
 
 	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c, @Nullable AbstractDragonType type) {
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		return handler.getMagicData().abilities.values().stream().anyMatch(s-> {
 			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
 				return false;
@@ -182,14 +181,14 @@ public class DragonAbilities{
 		return hasAbility(player, c, null);
 	}
 	public static boolean hasSelfAbility(LivingEntity player, Class<? extends DragonAbility> c) {
-		AbstractDragonType dragonType = DragonUtils.getHandler(player).getType();
+		AbstractDragonType dragonType = DragonStateProvider.getOrGenerateHandler(player).getType();
 		if (dragonType == null)
 			return hasAbility(player, c, null);
 		else
 			return hasAbility(player, c, dragonType);
 	}
 	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(s-> {
 			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
 				return false;
@@ -210,7 +209,7 @@ public class DragonAbilities{
 		return getAbility(player, c, null);
 	}
 	public static <T extends DragonAbility> T getSelfAbility(LivingEntity player, Class<T> c) {
-		AbstractDragonType dragonType = DragonUtils.getHandler(player).getType();
+		AbstractDragonType dragonType = DragonStateProvider.getOrGenerateHandler(player).getType();
 		if (dragonType == null)
 			return getAbility(player, c, null);
 		else
@@ -218,7 +217,7 @@ public class DragonAbilities{
 	}
 
 	public static AABB calculateBreathArea(@NotNull final Player player, double range) {
-		return calculateBreathArea(player, DragonUtils.getHandler(player), range);
+		return calculateBreathArea(player, DragonStateProvider.getOrGenerateHandler(player), range);
 	}
 
 	public static AABB calculateBreathArea(@NotNull final Player player, final DragonStateHandler handler, double range) {

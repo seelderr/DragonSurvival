@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
@@ -70,7 +71,7 @@ public class Functions{
 		Vector3f lookVector = new Vector3f(0, 0, 0);
 
 		if(entity instanceof Player player){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			if(handler.isDragon()){
 				float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
 

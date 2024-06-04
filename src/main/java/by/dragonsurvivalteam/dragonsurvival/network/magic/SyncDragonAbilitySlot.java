@@ -1,55 +1,49 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraftforge.network.NetworkEvent;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import java.util.function.Supplier;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
-public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot> {
-	public int playerId;
-	private int selectedSlot;
-	private boolean displayHotbar;
-
-	public SyncDragonAbilitySlot() { /* Nothing to do */ }
-
-	public SyncDragonAbilitySlot(int playerId, int selectedSlot, boolean displayHotbar) {
-		this.playerId = playerId;
-		this.selectedSlot = selectedSlot;
-		this.displayHotbar = displayHotbar;
-	}
-
-	@Override
-	public void encode(final SyncDragonAbilitySlot message, final FriendlyByteBuf buffer) {
-		buffer.writeInt(message.playerId);
-		buffer.writeInt(message.selectedSlot);
-		buffer.writeBoolean(message.displayHotbar);
-	}
-
-	@Override
-	public SyncDragonAbilitySlot decode(final FriendlyByteBuf buffer) {
-		int playerId = buffer.readInt();
-		int selectedSlot = buffer.readInt();
-		boolean hideHotbar = buffer.readBoolean();
-
-		return new SyncDragonAbilitySlot(playerId, selectedSlot, hideHotbar);
-	}
-
-	@Override
-	public void handle(final SyncDragonAbilitySlot message, final Supplier<NetworkEvent.Context> supplier) {
-		NetworkEvent.Context context = supplier.get();
-
-		context.enqueueWork(()-> DragonStateProvider.getCap(context.getSender()).ifPresent(cap -> {
-			if (cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()) != null) {
-				cap.getMagicData().getAbilityFromSlot(cap.getMagicData().getSelectedAbilitySlot()).onKeyReleased(context.getSender());
+public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Data> {
+	public static void handleServer(final SyncDragonAbilitySlot.Data message, final IPayloadContext context) {
+		Player sender = context.player();
+		context.enqueueWork(() -> {
+			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
+			if (handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()) != null) {
+				handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(sender);
 			}
 
-			cap.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
-			cap.getMagicData().setRenderAbilities(message.displayHotbar);
-		}));
+			handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
+			handler.getMagicData().setRenderAbilities(message.displayHotbar);
+		});
+	}
 
-		context.setPacketHandled(true);
+	public record Data(int playerId, int selectedSlot, boolean displayHotbar) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_ability_slot"));
+
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+			ByteBufCodecs.VAR_INT,
+			Data::playerId,
+			ByteBufCodecs.VAR_INT,
+			Data::selectedSlot,
+			ByteBufCodecs.BOOL,
+			Data::displayHotbar,
+			Data::new
+		);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
 	}
 }

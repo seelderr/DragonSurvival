@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -28,8 +28,6 @@ import net.minecraftforge.network.NetworkHooks;
 import net.minecraftforge.network.PacketDistributor;
 
 import java.util.UUID;
-
-import static by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen.handler;
 
 public class Bolas extends ThrowableItemProjectile{
 	public static final UUID SLOW_MOVEMENT = UUID.fromString("eab67409-4834-43d8-bdf6-736dc96375f2");
@@ -84,7 +82,7 @@ public class Bolas extends ThrowableItemProjectile{
 				}
 
 				if(entity instanceof Player player) {
-					DragonStateHandler handler = DragonUtils.getHandler(player);
+					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 					if(handler.isDragon()){
 						handler.setWingsSpread(false);
 						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> living), new SyncFlyingStatus(living.getId(), false));

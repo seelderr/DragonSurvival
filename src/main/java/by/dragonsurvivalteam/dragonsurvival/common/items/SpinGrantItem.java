@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
@@ -26,7 +26,7 @@ public class SpinGrantItem extends Item{
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if(handler.isDragon()){
 			if(!world.isClientSide()){

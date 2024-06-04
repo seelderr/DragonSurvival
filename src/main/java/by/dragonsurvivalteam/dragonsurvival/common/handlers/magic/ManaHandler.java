@@ -55,7 +55,7 @@ public class ManaHandler{
 	}
 
 	public static boolean isPlayerInGoodConditions(Player player){
-		if(!DragonUtils.isDragon(player)){
+		if(!DragonStateProvider.isDragon(player)){
 			return false;
 		}
 

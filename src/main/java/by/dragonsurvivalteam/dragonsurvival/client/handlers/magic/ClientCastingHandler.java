@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
@@ -31,10 +31,10 @@ public class ClientCastingHandler{
 			return;
 
 		Player player = instance.player;
-		if(player.isSpectator() || !DragonUtils.isDragon(player))
+		if(player.isSpectator() || !DragonStateProvider.isDragon(player))
 			return;
 
-		DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
 
 		boolean isKeyDown = KeyInputHandler.USE_ABILITY.isDown() || ClientConfig.alternateCastMode && (
 								KeyInputHandler.ABILITY1.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 0

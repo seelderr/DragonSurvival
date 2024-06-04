@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -21,7 +22,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkin
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.math.Axis;
 
 import net.minecraft.ChatFormatting;
@@ -95,7 +95,7 @@ public class SkinsScreen extends Screen{
 		this.sourceScreen = sourceScreen;
 
 		LocalPlayer localPlayer = sourceScreen.getMinecraft().player;
-		SkinCap skinData = DragonUtils.getHandler(localPlayer).getSkinData();
+		SkinCap skinData = DragonStateProvider.getOrGenerateHandler(localPlayer).getSkinData();
 		renderNewborn = skinData.renderNewborn;
 		renderYoung = skinData.renderYoung;
 		renderAdult = skinData.renderAdult;
@@ -142,7 +142,7 @@ public class SkinsScreen extends Screen{
 			handler.getSkinData().skinPreset.initDefaults(handler);
 
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-				handler.getSkinData().skinPreset.readNBT(DragonUtils.getHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
+				handler.getSkinData().skinPreset.readNBT(DragonStateProvider.getOrGenerateHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
 			}else{
 				handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
 			}
@@ -217,7 +217,7 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable rendering of the newborn dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
 			ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
@@ -228,7 +228,7 @@ public class SkinsScreen extends Screen{
 			public void renderWidget(GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				super.renderWidget(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
 
-				DragonStateHandler handler = DragonUtils.getHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 				//RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
 				p_230431_1_.blit(!handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
@@ -236,7 +236,7 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			boolean newValue = !handler.getSkinData().renderNewborn;
 
 			handler.getSkinData().renderYoung = newValue;
@@ -254,7 +254,7 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable rendering of the adult dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, Component.translatable("ds.level.adult"), button -> {
-			DragonStateHandler handler = DragonUtils.getHandler(getMinecraft().player);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(getMinecraft().player);
 			boolean newValue = !handler.getSkinData().renderAdult;
 
 			handler.getSkinData().renderAdult = newValue;

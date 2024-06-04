@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.network.chat.Component;
 
 import java.util.Locale;
@@ -16,7 +15,7 @@ public abstract class DragonWingAbility extends InnateDragonAbility{
 		if(key.isEmpty())
 			key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString();
 
-		DragonStateHandler handler = DragonUtils.getHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		return Component.translatable("ds.skill.description." + getName(), key).append("\n").append(Component.translatable("ds.skill.description." + getName() + (handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));
 	}
 

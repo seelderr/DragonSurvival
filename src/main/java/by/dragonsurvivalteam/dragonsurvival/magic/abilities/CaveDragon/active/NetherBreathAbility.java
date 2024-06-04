@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFir
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -16,7 +18,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.B
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -224,14 +225,14 @@ public class NetherBreathAbility extends BreathAbility{
 		}
 
 		if(player.level().isClientSide()){
-			for(int i = 0; i < calculateNumberOfParticles(DragonUtils.getHandler(player).getSize()); i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()); i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
 				player.level().addParticle(new SmallFireParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
-			for(int i = 0; i < calculateNumberOfParticles(DragonUtils.getHandler(player).getSize()) / 2; i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 2; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
@@ -297,7 +298,7 @@ public class NetherBreathAbility extends BreathAbility{
 			BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
-				DragonUtils.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
+				EntityStateProvider.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}

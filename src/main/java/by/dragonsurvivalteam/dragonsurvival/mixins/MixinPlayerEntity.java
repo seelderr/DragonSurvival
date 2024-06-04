@@ -54,7 +54,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Inject( method = "isInvulnerableTo", at = @At( "HEAD" ), cancellable = true )
 	public void isInvulnerableTo(DamageSource pSource, CallbackInfoReturnable<Boolean> cir){
-		if(pSource == damageSources().inWall() && DragonUtils.isDragon(this)){
+		if(pSource == damageSources().inWall() && DragonStateProvider.isDragon(this)){
 			if(ServerConfig.disableSuffocation){
 				cir.setReturnValue(true);
 			}
@@ -63,7 +63,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Inject( method = "isImmobile", at = @At( "HEAD" ), cancellable = true )
 	private void castMovement(CallbackInfoReturnable<Boolean> ci){
-		DragonStateHandler cap = DragonUtils.getHandler(this);
+		DragonStateHandler cap = DragonStateProvider.getOrGenerateHandler(this);
 
 		if(!isDeadOrDying() && !isSleeping()){
 			if(cap.getMagicData().getCurrentlyCasting() != null){
@@ -84,7 +84,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Inject( method = "isSleepingLongEnough", at = @At( "HEAD" ), cancellable = true )
 	public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> ci){
-		if(DragonUtils.isDragon(this)){
+		if(DragonStateProvider.isDragon(this)){
 			DragonStateProvider.getCap(this).ifPresent(cap -> {
 				if(cap.treasureResting && cap.treasureSleepTimer >= 100){
 					ci.setReturnValue(true);
@@ -129,7 +129,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 	@Inject( method = "travel", at = @At( "HEAD" ))
 	public void travel(Vec3 pTravelVector, CallbackInfo ci){
-		if(DragonUtils.isDragon(this)){
+		if(DragonStateProvider.isDragon(this)){
 			double d01 = getX();
 			double d11 = getY();
 			double d21 = getZ();

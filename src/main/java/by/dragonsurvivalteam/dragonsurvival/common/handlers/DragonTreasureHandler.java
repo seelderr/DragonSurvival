@@ -6,11 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -42,8 +40,8 @@ public class DragonTreasureHandler{
 		}
 		Player player = event.player;
 
-		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+		if(DragonStateProvider.isDragon(player)){
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.treasureResting){
 				if(player.isCrouching() || !(player.getFeetBlockState().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
@@ -99,8 +97,8 @@ public class DragonTreasureHandler{
 		}
 		Player player = Minecraft.getInstance().player;
 
-		if(DragonUtils.isDragon(player)){
-			DragonStateHandler handler = DragonUtils.getHandler(player);
+		if(DragonStateProvider.isDragon(player)){
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.treasureResting){
 				Vec3 velocity = player.getDeltaMovement();
@@ -118,7 +116,7 @@ public class DragonTreasureHandler{
 	public static void sleepScreenRender(RenderGuiOverlayEvent.Post event){
 		Player playerEntity = Minecraft.getInstance().player;
 
-		if(playerEntity == null || !DragonUtils.isDragon(playerEntity) || playerEntity.isSpectator()){
+		if(playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator()){
 			return;
 		}
 
