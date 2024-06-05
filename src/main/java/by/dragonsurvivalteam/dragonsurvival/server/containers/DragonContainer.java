@@ -18,10 +18,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
@@ -73,7 +74,7 @@ public class DragonContainer extends AbstractContainerMenu {
 	};
 
 	public DragonContainer(int id, final Inventory inventory) {
-		super(DSContainers.dragonContainer, id);
+		super(DSContainers.DRAGON_CONTAINER.get(), id);
 		this.player = inventory.player;
 		this.playerInventory = inventory;
 
@@ -265,13 +266,13 @@ public class DragonContainer extends AbstractContainerMenu {
 	public void slotsChanged(@NotNull final Container inventory) {
 		if (player instanceof ServerPlayer serverPlayer) {
 			ItemStack itemStack = ItemStack.EMPTY;
-			Optional<CraftingRecipe> recipeOptional = serverPlayer.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, serverPlayer.level());
+			Optional<RecipeHolder<CraftingRecipe>> recipeOptional = serverPlayer.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, serverPlayer.level());
 
 			if (recipeOptional.isPresent()) {
-				CraftingRecipe recipe = recipeOptional.get();
+				RecipeHolder<CraftingRecipe> recipe = recipeOptional.get();
 
 				if (craftResult.setRecipeUsed(player.level(), serverPlayer, recipe)) {
-					itemStack = recipe.assemble(craftMatrix, serverPlayer.level().registryAccess());
+					itemStack = recipe.value().assemble(craftMatrix, serverPlayer.level().registryAccess());
 				}
 			}
 

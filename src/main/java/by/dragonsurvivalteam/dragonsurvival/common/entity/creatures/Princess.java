@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -249,7 +249,7 @@ public class Princess extends Villager{
 		});
 		goalSelector.addGoal(6, new LookAtPlayerGoal(this, LivingEntity.class, 8.0F));
 		goalSelector.addGoal(6, new AvoidEntityGoal<>(this, Player.class, 16, 1, 1, living -> {
-			return DragonStateProvider.isDragon(living) && living.hasEffect(DragonEffects.ROYAL_CHASE);
+			return DragonStateProvider.isDragon(living) && living.hasEffect(DSEffects.ROYAL_CHASE);
 		}));
 		goalSelector.addGoal(7, new PanicGoal(this, 1));
 	}

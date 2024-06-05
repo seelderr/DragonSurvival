@@ -19,7 +19,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Sp
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
@@ -104,11 +104,11 @@ public class MagicHandler{
 				ability.player = player;
 			}
 
-			if(player.hasEffect(DragonEffects.WATER_VISION) && (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || SeaEyesAbility.seaEyesOutOfWater)){
+			if(player.hasEffect(DSEffects.WATER_VISION) && (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || SeaEyesAbility.seaEyesOutOfWater)){
 				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 10, 0, false, false));
 			}
 
-			if (player.hasEffect(DragonEffects.HUNTER)) {
+			if (player.hasEffect(DSEffects.HUNTER)) {
 				BlockState blockStateFeet = player.getFeetBlockState();
 
 				if (isHunterRelevant(blockStateFeet)) {
@@ -132,7 +132,7 @@ public class MagicHandler{
 					return;
 				}
 
-				if(player.hasEffect(DragonEffects.HUNTER)){
+				if(player.hasEffect(DSEffects.HUNTER)){
 					event.modifyVisibility(0);
 				}
 			});
@@ -144,14 +144,14 @@ public class MagicHandler{
 		LivingEntity entity = event.getEntity();
 		EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
 
-		if(entity.hasEffect(DragonEffects.BURN)){
+		if(entity.hasEffect(DSEffects.BURN)){
 			if(entity.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || entity.isInWaterRainOrBubble()){
-				entity.removeEffect(DragonEffects.BURN);
+				entity.removeEffect(DSEffects.BURN);
 			}
 		}
 
 		if(entity.tickCount % 20 == 0){
-            MobEffectInstance drainEffect = entity.getEffect(DragonEffects.DRAIN);
+            MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
 
             if (drainEffect != null) {
                 if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
@@ -165,7 +165,7 @@ public class MagicHandler{
                 }
             }
 
-            MobEffectInstance chargedEffect = entity.getEffect(DragonEffects.CHARGED);
+            MobEffectInstance chargedEffect = entity.getEffect(DSEffects.CHARGED);
 
             if (chargedEffect != null) {
                 Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
@@ -174,7 +174,7 @@ public class MagicHandler{
                 }
             }
 
-            MobEffectInstance burnEffect = entity.getEffect(DragonEffects.BURN);
+            MobEffectInstance burnEffect = entity.getEffect(DSEffects.BURN);
 
             if (burnEffect != null) {
                 if (!entity.fireImmune()) {
@@ -227,8 +227,8 @@ public class MagicHandler{
 					return;
 				}
 
-				if(player.hasEffect(DragonEffects.HUNTER)){
-					player.removeEffect(DragonEffects.HUNTER);
+				if(player.hasEffect(DSEffects.HUNTER)){
+					player.removeEffect(DSEffects.HUNTER);
 				}
 			});
 		}
@@ -242,9 +242,9 @@ public class MagicHandler{
 				return;
 			}
 
-			if(player.hasEffect(DragonEffects.HUNTER)){
-				MobEffectInstance hunter = player.getEffect(DragonEffects.HUNTER);
-				player.removeEffect(DragonEffects.HUNTER);
+			if(player.hasEffect(DSEffects.HUNTER)){
+				MobEffectInstance hunter = player.getEffect(DSEffects.HUNTER);
+				player.removeEffect(DSEffects.HUNTER);
 				event.setDamageModifier(event.getDamageModifier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 				event.setResult(Result.ALLOW);
 			}
@@ -286,7 +286,7 @@ public class MagicHandler{
 						EntityStateProvider.getEntityHandler(event.getEntity()).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {
-							event.getEntity().addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(30)));
+							event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));
 						}
 					}
 				}
@@ -310,7 +310,7 @@ public class MagicHandler{
 					expMult = body.getExpMult();
 				}
 
-				if(player.hasEffect(DragonEffects.REVEALING_THE_SOUL)){
+				if(player.hasEffect(DSEffects.REVEALING_THE_SOUL)){
 					int extra = (int)Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
 					event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
 				}

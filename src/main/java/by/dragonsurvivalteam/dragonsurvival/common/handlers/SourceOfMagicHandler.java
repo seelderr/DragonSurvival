@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -16,7 +16,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -72,14 +71,13 @@ public class SourceOfMagicHandler{
 							if(ServerConfig.sourceOfMagicInfiniteMagic){
 								if(handler.getMagicData().magicSourceTimer >= Functions.secondsToTicks(10)){
 									handler.getMagicData().magicSourceTimer = 0;
-									MobEffect effect = DragonEffects.SOURCE_OF_MAGIC;
-									MobEffectInstance effectInstance = player.getEffect(effect);
+									MobEffectInstance effectInstance = player.getEffect(DSEffects.SOURCE_OF_MAGIC);
 									int duration = SourceOfMagicTileEntity.consumables.get(tile.getItem(0).getItem());
 
 									if(effectInstance == null){
-										player.addEffect(new MobEffectInstance(effect, duration));
+										player.addEffect(new MobEffectInstance(DSEffects.SOURCE_OF_MAGIC, duration));
 									}else{
-										player.addEffect(new MobEffectInstance(effect, effectInstance.getDuration() + duration));
+										player.addEffect(new MobEffectInstance(DSEffects.SOURCE_OF_MAGIC, effectInstance.getDuration() + duration));
 									}
 
 									tile.removeItem(0, 1);
@@ -137,11 +135,11 @@ public class SourceOfMagicHandler{
 									double x = -1 + random.nextDouble() * 2;
 									double z = -1 + random.nextDouble() * 2;
 
-									if(pState.getBlock() == DSBlocks.seaSourceOfMagic || pState.getBlock() == DSBlocks.forestSourceOfMagic){
+									if(pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC){
 										if(!minecraft.isPaused()){
 											player.level().addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
-									}else if(pState.getBlock() == DSBlocks.caveSourceOfMagic){
+									}else if(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC){
 										if(!minecraft.isPaused()){
 											player.level().addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}

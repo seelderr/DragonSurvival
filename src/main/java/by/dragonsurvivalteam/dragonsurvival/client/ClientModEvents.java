@@ -41,24 +41,24 @@ public class ClientModEvents{
 	@SubscribeEvent
 	public static void setup(FMLClientSetupEvent event)
 	{
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_stone, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_sandstone, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_red_sandstone, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_purpur_block, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_oak_log, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_nether_bricks, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_mossy_cobblestone, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_blackstone, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.dragon_altar_birch_log, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.birchDoor, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.acaciaDoor, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.peaceDragonBeacon, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.fireDragonBeacon, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.magicDragonBeacon, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_STONE, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_SANDSTONE, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_RED_SANDSTONE, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_OAK_LOG, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_NETHER_BRICKS, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_BLACKSTONE, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_BIRCH_LOG, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.BIRCH_DRAGON_DOOR, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.ACACIA_DRAGON_DOOR, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.PEACE_DRAGON_BEACON, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.FIRE_DRAGON_BEACON, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.MAGIC_DRAGON_BEACON, RenderType.cutout());
 
 		// Enable transparecny for certain small doors
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.birchSmallDoor, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.acaciaSmallDoor, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.BIRCH_SMALL_DOOR, RenderType.cutout());
+		ItemBlockRenderTypes.setRenderLayer(DSBlocks.ACACIA_SMALL_DOOR, RenderType.cutout());
 
 		EntityRenderers.register(DSEntities.DRAGON_SPIKE.get(), DragonSpikeRenderer::new);
 
@@ -73,9 +73,6 @@ public class ClientModEvents{
 		BlockEntityRenderers.register(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
 
 		//ShaderHelper.initShaders();
-
-		MenuScreens.register(DSContainers.nestContainer, SourceOfMagicScreen::new);
-		MenuScreens.register(DSContainers.dragonContainer, DragonScreen::new);
 
 		//Gecko renderers
 		EntityRenderers.register(DSEntities.BALL_LIGHTNING.get(), manager -> new BallLightningRenderer(manager, new LightningBallModel()));

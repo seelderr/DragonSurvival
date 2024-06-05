@@ -117,11 +117,11 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	@Override
-	public boolean isPathfindable(BlockState state, BlockGetter worldIn, BlockPos pos, PathComputationType type){
-		switch(type){
+	public boolean isPathfindable(BlockState pState, PathComputationType pPathComputationType){
+		switch(pPathComputationType){
 			case LAND:
 			case AIR:
-				return state.getValue(OPEN);
+				return pState.getValue(OPEN);
 			default:
 				return false;
 		}
@@ -142,7 +142,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		boolean validPower = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.POWER;
-		boolean validType = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.seaPressurePlate || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.forestPressurePlate || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.cavePressurePlate;
+		boolean validType = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.SEA_PRESSURE_PLATE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.FOREST_PRESSURE_PLATE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.CAVE_PRESSURE_PLATE;
 		if(validPower || validType){
 			boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
 			if(blockIn != this && flag != state.getValue(POWERED)){

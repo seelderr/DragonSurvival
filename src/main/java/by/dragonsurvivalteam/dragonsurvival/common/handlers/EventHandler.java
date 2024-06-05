@@ -7,8 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.status.PlayerJumpSync;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
@@ -115,7 +115,7 @@ public class EventHandler{
 	public static void onJoin(EntityJoinLevelEvent joinWorldEvent){
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)){
-			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonStateProvider.isDragon((Player)living) && !((Player)living).hasEffect(DragonEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, s -> true));
+			((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonStateProvider.isDragon((Player)living) && !((Player)living).hasEffect(DSEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, s -> true));
 		}
 	}
 
@@ -137,7 +137,7 @@ public class EventHandler{
 		}
 
 		ItemStack itemStack = rightClickBlock.getItemStack();
-		if(itemStack.getItem() == DSItems.elderDragonBone){
+		if(itemStack.getItem() == DSItems.ELDER_DRAGON_BONE){
 			if(!rightClickBlock.getEntity().isSpectator()){
 
 				final Level world = rightClickBlock.getLevel();
@@ -150,32 +150,32 @@ public class EventHandler{
 				rightClickBlock.getEntity().isCreative();
 				BlockPlaceContext deirection = new BlockPlaceContext(rightClickBlock.getLevel(), rightClickBlock.getEntity(), rightClickBlock.getHand(), rightClickBlock.getItemStack(), new BlockHitResult(new Vec3(0, 0, 0), rightClickBlock.getEntity().getDirection(), blockPos, false));
 				if(block == Blocks.STONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_stone.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_STONE.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.MOSSY_COBBLESTONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_mossy_cobblestone.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.SANDSTONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_sandstone.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_SANDSTONE.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.RED_SANDSTONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_red_sandstone.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_RED_SANDSTONE.getStateForPlacement(deirection));
 					replace = true;
 				}else if(ResourceHelper.getKey(block).getPath().contains(ResourceHelper.getKey(Blocks.OAK_LOG).getPath())){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_oak_log.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_OAK_LOG.getStateForPlacement(deirection));
 					replace = true;
 				}else if(ResourceHelper.getKey(block).getPath().contains(ResourceHelper.getKey(Blocks.BIRCH_LOG).getPath())){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_birch_log.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BIRCH_LOG.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.PURPUR_BLOCK){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_purpur_block.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.NETHER_BRICKS){
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_nether_bricks.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_NETHER_BRICKS.getStateForPlacement(deirection));
 					replace = true;
 				}else if(block == Blocks.BLACKSTONE){
 					rightClickBlock.getEntity().getDirection();
-					world.setBlockAndUpdate(blockPos, DSBlocks.dragon_altar_blackstone.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BLACKSTONE.getStateForPlacement(deirection));
 					replace = true;
 				}
 
@@ -195,10 +195,10 @@ public class EventHandler{
 	public static void returnBeacon(PlayerEvent.ItemCraftedEvent craftedEvent){
 		Container inventory = craftedEvent.getInventory();
 		ItemStack result = craftedEvent.getCrafting();
-		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.passiveFireBeacon
-			|| item.getItem() == DSItems.passiveMagicBeacon
-			|| item.getItem() == DSItems.passivePeaceBeacon, 1, true);
-		if(rem == 0 && result.getItem() == DSBlocks.dragonBeacon.asItem()){
+		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.PASSIVE_FIRE_BEACON
+			|| item.getItem() == DSItems.PASSIVE_MAGIC_BEACON
+			|| item.getItem() == DSItems.PASSIVE_PEACE_BEACON, 1, true);
+		if(rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.asItem()){
 			craftedEvent.getEntity().addItem(new ItemStack(Items.BEACON));
 		}
 	}
@@ -207,8 +207,8 @@ public class EventHandler{
 	public static void returnNetherStarHeart(PlayerEvent.ItemCraftedEvent craftedEvent){
 		Container inventory = craftedEvent.getInventory();
 		ItemStack result = craftedEvent.getCrafting();
-		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.starHeart, 1, true);
-		if(rem == 0 && result.getItem() == DSItems.starHeart.asItem()){
+		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_HEART, 1, true);
+		if(rem == 0 && result.getItem() == DSItems.STAR_HEART.asItem()){
 			craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
 		}
 	}
@@ -217,8 +217,8 @@ public class EventHandler{
 	public static void returnNetherStarBone(PlayerEvent.ItemCraftedEvent craftedEvent){
 		Container inventory = craftedEvent.getInventory();
 		ItemStack result = craftedEvent.getCrafting();
-		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.starBone, 1, true);
-		if(rem == 0 && result.getItem() == DSItems.starBone.asItem()){
+		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_BONE, 1, true);
+		if(rem == 0 && result.getItem() == DSItems.STAR_BONE.asItem()){
 			craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
 		}
 	}
@@ -228,7 +228,7 @@ public class EventHandler{
 		final LivingEntity living = jumpEvent.getEntity();
 
 
-		if(living.getEffect(DragonEffects.TRAPPED) != null){
+		if(living.getEffect(DSEffects.TRAPPED) != null){
 			Vec3 deltaMovement = living.getDeltaMovement();
 			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
 			living.setJumping(false);
@@ -240,7 +240,7 @@ public class EventHandler{
 			if(dragonStateHandler.isDragon()){
 				Double jumpBonus = 0.0;
 				if (dragonStateHandler.getBody() != null) {
-					jumpBonus = DragonModifiers.getJumpBonus(dragonStateHandler);
+					jumpBonus = DSModifiers.getJumpBonus(dragonStateHandler);
 				}
 
 				living.push(0, jumpBonus, 0);

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
@@ -12,7 +12,7 @@ public class FireBreathSound extends AbstractTickableSoundInstance{
 	private final NetherBreathAbility ability;
 
 	public FireBreathSound(NetherBreathAbility ability){
-		super(SoundRegistry.fireBreathLoop, SoundSource.PLAYERS,ability.getPlayer().getRandom());
+		super(DSSounds.FIRE_BREATH_LOOP, SoundSource.PLAYERS,ability.getPlayer().getRandom());
 		looping = true;
 
 		this.x = ability.getPlayer().getX();

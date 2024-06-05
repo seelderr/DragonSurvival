@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,7 +42,7 @@ public class ManaHandler{
 
 			int timeToRecover = goodConditions ? ServerConfig.favorableManaTicks : ServerConfig.normalManaTicks;
 
-			if(player.hasEffect(DragonEffects.SOURCE_OF_MAGIC)){
+			if(player.hasEffect(DSEffects.SOURCE_OF_MAGIC)){
 				timeToRecover = 1;
 			}
 
@@ -66,7 +66,7 @@ public class ManaHandler{
 			return true;
 		}
 
-		if(player.hasEffect(DragonEffects.SOURCE_OF_MAGIC)){
+		if(player.hasEffect(DSEffects.SOURCE_OF_MAGIC)){
 			return true;
 		}
 
@@ -108,7 +108,7 @@ public class ManaHandler{
 	}
 
 	public static void consumeMana(Player entity, int mana){
-		if(entity == null || entity.isCreative() || entity.hasEffect(DragonEffects.SOURCE_OF_MAGIC))
+		if(entity == null || entity.isCreative() || entity.hasEffect(DSEffects.SOURCE_OF_MAGIC))
 			return;
 
 		if(ServerConfig.consumeEXPAsMana){

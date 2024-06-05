@@ -28,7 +28,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventor
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -215,7 +215,7 @@ public class ClientEvents{
 	@SubscribeEvent
 	public static void renderTrap(RenderLivingEvent.Pre<LivingEntity, EntityModel<LivingEntity>> postEvent){
 		LivingEntity entity = postEvent.getEntity();
-		if(entity.getEffect(DragonEffects.TRAPPED) != null) {
+		if(entity.getEffect(DSEffects.TRAPPED) != null) {
 			int light = postEvent.getPackedLight();
 			int overlayCoords = LivingEntityRenderer.getOverlayCoords(entity, 0);
 			MultiBufferSource buffers = postEvent.getMultiBufferSource();
@@ -236,7 +236,7 @@ public class ClientEvents{
 		matrixStack.translate(0, 0.9f + eyeHeight / 8.f, 0);
 		matrixStack.scale(1.6f + eyeHeight / 8.f, 1.6f + eyeHeight / 8.f, 1.6f + eyeHeight / 8.f);
 		if(BOLAS == null){
-			BOLAS = new ItemStack(DSItems.huntingNet);
+			BOLAS = new ItemStack(DSItems.HUNTING_NET);
 		}
 		Minecraft.getInstance().getItemRenderer().renderStatic(BOLAS, ItemDisplayContext.NONE, light, overlayCoords, matrixStack, buffers, Minecraft.getInstance().level, 0);
 		matrixStack.popPose();
@@ -280,7 +280,7 @@ public class ClientEvents{
 			return null;
 		}
 
-		if ((fluidState.is(Fluids.LAVA) || fluidState.is(Fluids.FLOWING_LAVA)) && player.hasEffect(DragonEffects.LAVA_VISION))
+		if ((fluidState.is(Fluids.LAVA) || fluidState.is(Fluids.FLOWING_LAVA)) && player.hasEffect(DSEffects.LAVA_VISION))
 			return RenderType.translucent();
 		return null;
 	}
@@ -291,7 +291,7 @@ public class ClientEvents{
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
 
-		if(player.hasEffect(DragonEffects.LAVA_VISION) && event.getCamera().getFluidInCamera() == FogType.LAVA) {
+		if(player.hasEffect(DSEffects.LAVA_VISION) && event.getCamera().getFluidInCamera() == FogType.LAVA) {
 			event.setFarPlaneDistance(1000);
 		}
 	}
@@ -310,7 +310,7 @@ public class ClientEvents{
 			return;
 		}
 
-		if(player.hasEffect(DragonEffects.LAVA_VISION)) {
+		if(player.hasEffect(DSEffects.LAVA_VISION)) {
 			if(!hasLavaVisionPrev) {
 				hasUpdatedSinceChangingLavaVision = false;
 			}
@@ -422,7 +422,7 @@ public class ClientEvents{
 				RenderSystem.disableBlend();
 			}
 		} else if (handler.getType() instanceof ForestDragonType forestDragonType) {
-			if (forestDragonType.timeInDarkness > 0 && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !localPlayer.hasEffect(DragonEffects.STRESS)) {
+			if (forestDragonType.timeInDarkness > 0 && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !localPlayer.hasEffect(DSEffects.STRESS)) {
 				RenderSystem.enableBlend();
 
 				rightHeight = forgeGUI.rightHeight;

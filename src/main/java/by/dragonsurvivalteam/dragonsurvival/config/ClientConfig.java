@@ -2,13 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import net.minecraftforge.common.ForgeConfigSpec;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ClientConfig{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "alternateCastMode", comment = "Should the cast mode where you click the keybind to cast be used?")
 	public static Boolean alternateCastMode = false;
 
-	ClientConfig(ForgeConfigSpec.Builder builder){
+	ClientConfig(ModConfigSpec.Builder builder){
 		ConfigHandler.addConfigs(builder, ConfigSide.CLIENT);
 	}
 

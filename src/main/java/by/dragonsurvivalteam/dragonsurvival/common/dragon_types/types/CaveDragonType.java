@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.C
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
@@ -72,7 +72,7 @@ public class CaveDragonType extends AbstractDragonType{
 		int oldLavaTicks = lavaAirSupply;
 
 		if(ServerConfig.penalties
-		   && !player.hasEffect(DragonEffects.FIRE)
+		   && !player.hasEffect(DSEffects.FIRE)
 		   && !player.isCreative()
 		   && !player.isSpectator()) {
 			if(!world.isClientSide() ) {
@@ -144,7 +144,7 @@ public class CaveDragonType extends AbstractDragonType{
 	public boolean isInManaCondition(Player player, DragonStateHandler cap){
 		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 
-		if(player.isInLava() || player.isOnFire() || player.hasEffect(DragonEffects.BURN) || player.hasEffect(DragonEffects.FIRE)){
+		if(player.isInLava() || player.isOnFire() || player.hasEffect(DSEffects.BURN) || player.hasEffect(DSEffects.FIRE)){
 			return true;
 		}
 

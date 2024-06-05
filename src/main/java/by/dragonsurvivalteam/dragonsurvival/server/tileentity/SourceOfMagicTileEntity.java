@@ -37,11 +37,11 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
 	private int ticks;
 	static{
-		consumables.put(DSItems.elderDragonDust, Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
-		consumables.put(DSItems.elderDragonBone, Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
-		consumables.put(DSItems.dragonHeartShard, Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
-		consumables.put(DSItems.weakDragonHeart, Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
-		consumables.put(DSItems.elderDragonHeart, Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
+		consumables.put(DSItems.ELDER_DRAGON_DUST, Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
+		consumables.put(DSItems.ELDER_DRAGON_BONE, Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
+		consumables.put(DSItems.DRAGON_HEART_SHARD, Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
+		consumables.put(DSItems.WEAK_DRAGON_HEART, Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
+		consumables.put(DSItems.ELDER_DRAGON_HEART, Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
 	}
 	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
 		super(DSTileEntities.sourceOfMagicTileEntity, pWorldPosition, pBlockState);
@@ -58,7 +58,7 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 
 		if(!pBlockEntity.isEmpty()){
 			if(pBlockEntity.ticks % 120 == 0){
-				pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.caveSourceOfMagic ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
+				pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
 			}
 		}
 

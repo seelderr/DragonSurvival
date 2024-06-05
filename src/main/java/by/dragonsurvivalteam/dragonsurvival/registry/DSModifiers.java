@@ -14,15 +14,15 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForgeMod;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 import java.util.UUID;
 
 @EventBusSubscriber
-public class DragonModifiers{
+public class DSModifiers {
 	private static final UUID DRAGON_REACH_MODIFIER = UUID.fromString("7455d5c7-4e1f-4cca-ab46-d79353764020");
 	private static final UUID DRAGON_HEALTH_MODIFIER = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
 	private static final UUID DRAGON_DAMAGE_MODIFIER = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
@@ -50,7 +50,7 @@ public class DragonModifiers{
 			double healthModifierPercentage = Math.min(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));
 			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.minHealth, ServerConfig.maxHealth) - 20;
 		}
-		return new AttributeModifier(DRAGON_HEALTH_MODIFIER, "Dragon Health Adjustment", healthModifier, AttributeModifier.Operation.ADDITION);
+		return new AttributeModifier(DRAGON_HEALTH_MODIFIER, "Dragon Health Adjustment", healthModifier, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildReachMod(double size){
@@ -61,7 +61,7 @@ public class DragonModifiers{
 		else {
 			reachModifier = Math.max(ServerConfig.reachBonus, (size - DragonLevel.NEWBORN.size) / (ServerConfig.DEFAULT_MAX_GROWTH_SIZE - DragonLevel.NEWBORN.size) * ServerConfig.reachBonus);
 		}
-		return new AttributeModifier(DRAGON_REACH_MODIFIER, "Dragon Reach Adjustment", reachModifier, Operation.MULTIPLY_BASE);
+		return new AttributeModifier(DRAGON_REACH_MODIFIER, "Dragon Reach Adjustment", reachModifier, Operation.ADD_MULTIPLIED_BASE);
 	}
 
 	public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon){
@@ -70,11 +70,11 @@ public class DragonModifiers{
 			double damageModPercentage = Math.min(1.0, (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / (ServerConfig.maxGrowthSize - ServerConfig.DEFAULT_MAX_GROWTH_SIZE));
 			ageBonus = Mth.lerp(damageModPercentage, ageBonus, ServerConfig.largeDamageBonus);
 		}
-		return new AttributeModifier(DRAGON_DAMAGE_MODIFIER, "Dragon Damage Adjustment", ageBonus, Operation.ADDITION);
+		return new AttributeModifier(DRAGON_DAMAGE_MODIFIER, "Dragon Damage Adjustment", ageBonus, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildSwimSpeedMod(AbstractDragonType dragonType){
-		return new AttributeModifier(DRAGON_SWIM_SPEED_MODIFIER, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADDITION);
+		return new AttributeModifier(DRAGON_SWIM_SPEED_MODIFIER, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildStepHeightMod(DragonStateHandler handler, double size) {
@@ -82,7 +82,7 @@ public class DragonModifiers{
 		if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling)  {
 			stepHeightBonus += ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 		}
-		return new AttributeModifier(DRAGON_STEP_HEIGHT_MODIFIER, "Dragon Step Height Adjustment", stepHeightBonus, Operation.ADDITION);
+		return new AttributeModifier(DRAGON_STEP_HEIGHT_MODIFIER, "Dragon Step Height Adjustment", stepHeightBonus, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildMovementSpeedMod(DragonStateHandler handler, double size) {
@@ -100,7 +100,7 @@ public class DragonModifiers{
 				moveSpeedMultiplier = ServerConfig.moveSpeedAdult;
 			}
 		}
-		return new AttributeModifier(DRAGON_MOVEMENT_SPEED_MODIFIER, "Dragon Movement Speed Adjustment", moveSpeedMultiplier - 1, AttributeModifier.Operation.MULTIPLY_TOTAL);
+		return new AttributeModifier(DRAGON_MOVEMENT_SPEED_MODIFIER, "Dragon Movement Speed Adjustment", moveSpeedMultiplier - 1, Operation.ADD_MULTIPLIED_TOTAL);
 	}
 
 	public static void updateModifiers(Player player) {
@@ -120,7 +120,7 @@ public class DragonModifiers{
 				// Remove the dragon attribute modifiers
 				AttributeModifier oldMod = getSwimSpeedModifier(player);
 				if (oldMod != null) {
-					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED));
 					max.removeModifier(oldMod);
 				}
 			}
@@ -166,19 +166,19 @@ public class DragonModifiers{
 
 				oldMod = getBlockReachModifier(player);
 				if (oldMod != null) {
-					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE));
 					max.removeModifier(oldMod);
 				}
 
 				oldMod = getEntityReachModifier(player);
 				if (oldMod != null) {
-					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE));
 					max.removeModifier(oldMod);
 				}
 
 				oldMod = getStepHeightModifier(player);
 				if (oldMod != null) {
-					AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()));
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.STEP_HEIGHT));
 					max.removeModifier(oldMod);
 				}
 
@@ -199,55 +199,55 @@ public class DragonModifiers{
 		AttributeInstance armorAttr = player.getAttribute(Attributes.ARMOR);
 		AttributeInstance strengthAttr = player.getAttribute(Attributes.ATTACK_DAMAGE);
 		AttributeInstance attackKnockbackAttr = player.getAttribute(Attributes.ATTACK_KNOCKBACK);
-		AttributeInstance swimSpeedAttr = player.getAttribute(ForgeMod.SWIM_SPEED.get());
-		AttributeInstance stepAttr = player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get());
-		AttributeInstance gravityAttr = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get());
+		AttributeInstance swimSpeedAttr = player.getAttribute(NeoForgeMod.SWIM_SPEED);
+		AttributeInstance stepAttr = player.getAttribute(Attributes.STEP_HEIGHT);
+		AttributeInstance gravityAttr = player.getAttribute(Attributes.GRAVITY);
 		AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
 
 		if (body != null && isDragon) {
-			if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).getAmount() != body.getRunMult()) {
+			if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).amount() != body.getRunMult()) {
 				if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) { speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
-				speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", body.getRunMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", body.getRunMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
-			if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).getAmount() != body.getArmorBonus()) {
+			if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).amount() != body.getArmorBonus()) {
 				if (armorAttr.getModifier(DRAGON_BODY_ARMOR) != null) { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
-				armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, "BODY_ARMOR_BONUS", body.getArmorBonus(), AttributeModifier.Operation.ADDITION));
+				armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, "BODY_ARMOR_BONUS", body.getArmorBonus(), Operation.ADD_VALUE));
 			}
 
-			if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH).getAmount() != body.getDamageBonus()) {
+			if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH).amount() != body.getDamageBonus()) {
 				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
-				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, "BODY_STRENGTH_BONUS", body.getDamageBonus(), AttributeModifier.Operation.ADDITION));
+				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, "BODY_STRENGTH_BONUS", body.getDamageBonus(), Operation.ADD_VALUE));
 			}
 
-			if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT).getAmount() != (body.getDamageMult()  - 1)) {
+			if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT).amount() != (body.getDamageMult()  - 1)) {
 				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
-				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT, "BODY_STRENGTH_MULT", body.getDamageMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT, "BODY_STRENGTH_MULT", body.getDamageMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
-			if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) == null || attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS).getAmount() != body.getKnockbackBonus()) {
+			if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) == null || attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS).amount() != body.getKnockbackBonus()) {
 				if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) != null) { attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS); }
-				attackKnockbackAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_KNOCKBACK_BONUS, "BODY_KNOCKBACK_BONUS", body.getKnockbackBonus(), AttributeModifier.Operation.ADDITION));
+				attackKnockbackAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_KNOCKBACK_BONUS, "BODY_KNOCKBACK_BONUS", body.getKnockbackBonus(), Operation.ADD_VALUE));
 			}
 
-			if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) == null || swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS).getAmount() != body.getSwimSpeedBonus()) {
+			if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) == null || swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS).amount() != body.getSwimSpeedBonus()) {
 				if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) != null) { swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS); }
-				swimSpeedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SWIM_SPEED_BONUS, "BODY_SWIM_SPEED_BONUS", body.getSwimSpeedBonus(), AttributeModifier.Operation.ADDITION));
+				swimSpeedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SWIM_SPEED_BONUS, "BODY_SWIM_SPEED_BONUS", body.getSwimSpeedBonus(), Operation.ADD_VALUE));
 			}
 
-			if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) == null || stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS).getAmount() != body.getStepBonus()) {
+			if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) == null || stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS).amount() != body.getStepBonus()) {
 				if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) != null) { stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS); }
-				stepAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS, "BODY_STEP_HEIGHT_BONUS", body.getStepBonus(), AttributeModifier.Operation.ADDITION));
+				stepAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS, "BODY_STEP_HEIGHT_BONUS", body.getStepBonus(), Operation.ADD_VALUE));
 			}
 
-			if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) == null || gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT).getAmount() != (body.getGravityMult() - 1)) {
+			if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) == null || gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT).amount() != (body.getGravityMult() - 1)) {
 				if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) != null) { gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT); }
-				gravityAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_GRAVITY_MULT, "BODY_GRAVITY_MULT", body.getGravityMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				gravityAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_GRAVITY_MULT, "BODY_GRAVITY_MULT", body.getGravityMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
-			if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) == null || healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT).getAmount() != (body.getHealthMult() - 1)) {
+			if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) == null || healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT).amount() != (body.getHealthMult() - 1)) {
 				if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) != null) { healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT); }
-				healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, "BODY_HEALTH_MULT", body.getHealthMult() - 1, AttributeModifier.Operation.MULTIPLY_TOTAL));
+				healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, "BODY_HEALTH_MULT", body.getHealthMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 		} else {
 			speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED);
@@ -264,12 +264,12 @@ public class DragonModifiers{
 
 	@Nullable
 	public static AttributeModifier getBlockReachModifier(Player player){
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get())).getModifier(DRAGON_REACH_MODIFIER);
+		return Objects.requireNonNull(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE)).getModifier(DRAGON_REACH_MODIFIER);
 	}
 
 	@Nullable
 	public static AttributeModifier getEntityReachModifier(Player player) {
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get())).getModifier(DRAGON_REACH_MODIFIER);
+		return Objects.requireNonNull(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)).getModifier(DRAGON_REACH_MODIFIER);
 	}
 
 	@Nullable
@@ -284,12 +284,12 @@ public class DragonModifiers{
 
 	@Nullable
 	public static AttributeModifier getSwimSpeedModifier(Player player){
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get())).getModifier(DRAGON_SWIM_SPEED_MODIFIER);
+		return Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED)).getModifier(DRAGON_SWIM_SPEED_MODIFIER);
 	}
 
 	@Nullable
 	public static AttributeModifier getStepHeightModifier(Player player) {
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get())).getModifier(DRAGON_STEP_HEIGHT_MODIFIER);
+		return Objects.requireNonNull(player.getAttribute(Attributes.STEP_HEIGHT)).getModifier(DRAGON_STEP_HEIGHT_MODIFIER);
 	}
 
 	@Nullable
@@ -301,11 +301,11 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses){
 			return;
 		}
-		AttributeInstance blockReach = Objects.requireNonNull(player.getAttribute(ForgeMod.BLOCK_REACH.get()));
+		AttributeInstance blockReach = Objects.requireNonNull(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE));
 		blockReach.removeModifier(mod);
 		blockReach.addPermanentModifier(mod);
 
-		AttributeInstance entityReach = Objects.requireNonNull(player.getAttribute(ForgeMod.ENTITY_REACH.get()));
+	AttributeInstance entityReach = Objects.requireNonNull(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE));
 		entityReach.removeModifier(mod);
 		entityReach.addPermanentModifier(mod);
 	}
@@ -335,7 +335,7 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses || !ServerConfig.seaSwimmingBonuses){
 			return;
 		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.SWIM_SPEED.get()));
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}
@@ -344,7 +344,7 @@ public class DragonModifiers{
 		if(!ServerConfig.bonuses) {
 			return;
 		}
-		AttributeInstance max = Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get()));
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.STEP_HEIGHT));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}

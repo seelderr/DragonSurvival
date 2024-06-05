@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -17,7 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -175,7 +175,7 @@ public class NetherBreathAbility extends BreathAbility{
 					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 					entity.setWaitTime(0);
 					entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
-					entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
+					entity.setPotion(new Potion(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
 					entity.setParticle(new SmallFireParticleData(37, false));
@@ -251,7 +251,7 @@ public class NetherBreathAbility extends BreathAbility{
 	public  void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
-				SoundRegistry.fireBreathStart,
+				DSSounds.FIRE_BREATH_START,
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -264,10 +264,10 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@OnlyIn( Dist.CLIENT )
 	public  void stopSound(){
-		if(SoundRegistry.fireBreathEnd != null){
+		if(DSSounds.FIRE_BREATH_END != null){
 			Vec3 pos = player.getEyePosition(1.0F);
 			SimpleSoundInstance endSound = new SimpleSoundInstance(
-				SoundRegistry.fireBreathEnd,
+				DSSounds.FIRE_BREATH_END,
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -299,7 +299,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 			if(entityHit.getRandom().nextInt(100) < burnAbility.level * 15){
 				EntityStateProvider.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
-				entityHit.addEffect(new MobEffectInstance(DragonEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
+				entityHit.addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
 	}

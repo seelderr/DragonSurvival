@@ -1,185 +1,658 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
-import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
-import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
-import software.bernie.geckolib.core.object.Color;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import software.bernie.geckolib.util.Color;
 
-import java.util.HashMap;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
+@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSBlocks{
-	public static HashMap<String, Block> DS_BLOCKS = new HashMap<>();
-	public static HashMap<String, BlockItem> DS_BLOCK_ITEMS = new HashMap<>();
+	public static final DeferredRegister<Block> DS_BLOCKS = DeferredRegister.create(
+			BuiltInRegistries.BLOCK,
+			MODID
+	);
 
-	public static DragonDoor spruceDoor, acaciaDoor, birchDoor, jungleDoor, oakDoor, darkOakDoor, crimsonDoor, warpedDoor;
-	public static DragonDoor legacyDoor, ironDoor, murdererDoor, sleeperDoor, stoneDoor;
-	public static DragonDoor caveDoor, forestDoor, seaDoor;
+	// Dragon Doors
 
-	public static SmallDragonDoor spruceSmallDoor, acaciaSmallDoor, birchSmallDoor, jungleSmallDoor, oakSmallDoor, darkOakSmallDoor, crimsonSmallDoor, warpedSmallDoor;
+	public static final DeferredHolder<Block, DragonDoor> SPRUCE_DRAGON_DOOR = DS_BLOCKS.register(
+			"spruce_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	public static SourceOfMagicBlock forestSourceOfMagic, caveSourceOfMagic, seaSourceOfMagic;
+	public static final DeferredHolder<Block, DragonDoor> ACACIA_DRAGON_DOOR = DS_BLOCKS.register(
+			"acacia_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.ACACIA_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	public static Block dragon_altar_stone;
-	public static Block dragon_altar_sandstone;
-	public static Block dragon_altar_red_sandstone;
-	public static Block dragon_altar_purpur_block;
-	public static Block dragon_altar_oak_log;
-	public static Block dragon_altar_nether_bricks;
-	public static Block dragon_altar_mossy_cobblestone;
-	public static Block dragon_altar_blackstone;
-	public static Block dragon_altar_birch_log;
+	public static final DeferredHolder<Block, DragonDoor> BIRCH_DRAGON_DOOR = DS_BLOCKS.register(
+			"birch_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.BIRCH_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	public static HelmetBlock helmet1, helmet2, helmet3;
-	public static DragonBeacon dragonBeacon, peaceDragonBeacon, magicDragonBeacon, fireDragonBeacon;
-	public static RotatedPillarBlock dragonMemoryBlock;
+	public static final DeferredHolder<Block, DragonDoor> JUNGLE_DRAGON_DOOR = DS_BLOCKS.register(
+			"jungle_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.JUNGLE_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	public static TreasureBlock treasureDebris, treasureDiamond, treasureEmerald, treasureCopper, treasureGold, treasureIron;
+	public static final DeferredHolder<Block, DragonDoor> OAK_DRAGON_DOOR = DS_BLOCKS.register(
+			"oak_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.OAK_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	public static DragonPressurePlates dragonPressurePlate, humanPressurePlate, seaPressurePlate, forestPressurePlate, cavePressurePlate;
-	public static SmallDragonDoor stoneSmallDoor;
-	public static SmallDragonDoor forestSmallDoor;
-	public static SmallDragonDoor sleeperSmallDoor;
-	public static SmallDragonDoor caveSmallDoor;
-	public static SmallDragonDoor seaSmallDoor;
-	public static SmallDragonDoor ironSmallDoor;
-	public static SmallDragonDoor murdererSmallDoor;
+	public static final DeferredHolder<Block, DragonDoor> DARK_OAK_DRAGON_DOOR = DS_BLOCKS.register(
+			"dark_oak_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.DARK_OAK_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	@SubscribeEvent
-	public static void registerEvent(final RegisterEvent event){
-		ResourceKey<? extends Registry<?>> registerKey = event.getRegistryKey();
+	public static final DeferredHolder<Block, DragonDoor> CRIMSON_DRAGON_DOOR = DS_BLOCKS.register(
+			"crimson_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		if (registerKey.equals(ForgeRegistries.Keys.BLOCKS)) {
-			registerBlocks(event);
-		} else if (registerKey.equals(ForgeRegistries.Keys.ITEMS)) {
-			registerBlockItems(event);
-		}
-	}
+	public static final DeferredHolder<Block, DragonDoor> WARPED_DRAGON_DOOR = DS_BLOCKS.register(
+			"warped_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.WARPED_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	protected static void registerBlocks(final RegisterEvent event){
-		// TODO 1.20 :: For the material changes see https://gist.github.com/GizmoTheMoonPig/77a90a48e0aeecd15b4c524e1c7f0a4a
-		dragon_altar_stone = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_stone", event);
-		dragon_altar_sandstone = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_sandstone", event);
-		dragon_altar_red_sandstone = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(0.8f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_red_sandstone", event);
-		dragon_altar_purpur_block = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_purpur_block", event);
-		dragon_altar_oak_log = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.WOOD*/).mapColor(MapColor.WOOD).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(2f).sound(SoundType.WOOD)), "dragon_altar_oak_log", event);
-		dragon_altar_birch_log = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.WOOD*/).mapColor(MapColor.WOOD).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(2f).sound(SoundType.WOOD)), "dragon_altar_birch_log", event);
-		dragon_altar_nether_bricks = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(0.4f).sound(SoundType.NETHER_BRICKS).requiresCorrectToolForDrops()), "dragon_altar_nether_bricks", event);
-		dragon_altar_mossy_cobblestone = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(2f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_mossy_cobblestone", event);
-		dragon_altar_blackstone = registerBlock(new DragonAltarBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops()), "dragon_altar_blackstone", event);
+	public static final DeferredHolder<Block, DragonDoor> LEGACY_DRAGON_DOOR = DS_BLOCKS.register(
+			"legacy_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		oakDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.OAK_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "oak_dragon_door", event);
-		spruceDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "spruce_dragon_door", event);
-		acaciaDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.ACACIA_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "acacia_dragon_door", event);
-		birchDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.BIRCH_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "birch_dragon_door", event);
-		jungleDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.JUNGLE_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "jungle_dragon_door", event);
-		darkOakDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.DARK_OAK_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "dark_oak_dragon_door", event);
-		warpedDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.WARPED_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "warped_dragon_door", event);
-		crimsonDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "crimson_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> IRON_DRAGON_DOOR = DS_BLOCKS.register(
+			"iron_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(MapColor.METAL)
+					.requiresCorrectToolForDrops()
+					.strength(5.0F)
+					.sound(SoundType.METAL)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER)
+	);
 
-		caveDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.STONE*/).mapColor(Blocks.BLACKSTONE.defaultMapColor()).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.GILDED_BLACKSTONE).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.CAVE), "cave_dragon_door", event);
-		forestDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.DARK_PRISMARINE.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.FOREST), "forest_dragon_door", event);
-		seaDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.STONE).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.SEA), "sea_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> MURDERER_DRAGON_DOOR = DS_BLOCKS.register(
+			"murderer_dragon_door",
+			() -> new DragonDoor(OAK_DRAGON_DOOR.get().properties(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		ironDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER), "iron_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> SLEEPER_DRAGON_DOOR = DS_BLOCKS.register(
+			"sleeper_dragon_door",
+			() -> new DragonDoor(OAK_DRAGON_DOOR.get().properties(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		// small doors
-		oakSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.OAK_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "oak_small_dragon_door", event);
-		spruceSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "spruce_small_dragon_door", event);
-		acaciaSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.ACACIA_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "acacia_small_dragon_door", event);
-		birchSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.BIRCH_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "birch_small_dragon_door", event);
-		jungleSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.JUNGLE_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "jungle_small_dragon_door", event);
-		darkOakSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.DARK_OAK_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "dark_oak_small_dragon_door", event);
-		warpedSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.WARPED_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "warped_small_dragon_door", event);
-		crimsonSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "crimson_small_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> STONE_DRAGON_DOOR = DS_BLOCKS.register(
+			"stone_dragon_door",
+			() -> new DragonDoor(OAK_DRAGON_DOOR.get().properties(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		stoneSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.STONE.defaultMapColor()).instrument(NoteBlockInstrument.BASEDRUM).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "stone_small_dragon_door", event);
-		sleeperSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor()).instrument(NoteBlockInstrument.BASEDRUM).strength(3.0F).sound(SoundType.STONE).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "sleeper_small_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> CAVE_DRAGON_DOOR = DS_BLOCKS.register(
+			"cave_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.BLACKSTONE.defaultMapColor())
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.requiresCorrectToolForDrops()
+					.strength(7.0F)
+					.sound(SoundType.GILDED_BLACKSTONE)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.CAVE)
+	);
 
-		caveSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.STONE*/).mapColor(Blocks.BLACKSTONE.defaultMapColor()).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.GILDED_BLACKSTONE).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.CAVE), "cave_small_dragon_door", event);
-		forestSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.DARK_PRISMARINE.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.FOREST), "forest_small_dragon_door", event);
-		seaSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.COLOR_BROWN).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(7.0F).sound(SoundType.STONE).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.SEA), "sea_small_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> FOREST_DRAGON_DOOR = DS_BLOCKS.register(
+			"forest_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(Blocks.DARK_PRISMARINE.defaultMapColor())
+					.ignitedByLava()
+					.requiresCorrectToolForDrops()
+					.strength(7.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.FOREST)
+	);
 
-		ironSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER), "iron_small_dragon_door", event);
-		murdererSmallDoor = registerBlock(new SmallDragonDoor(Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL).requiresCorrectToolForDrops().strength(5.0F).sound(SoundType.METAL).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER), "murderer_small_dragon_door", event);
-		// TODO 1.20 :: Copies `ignitedByLava()`
-		murdererDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoor.DragonDoorOpenRequirement.NONE), "murderer_dragon_door", event);
-		sleeperDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoor.DragonDoorOpenRequirement.NONE), "sleeper_dragon_door", event);
-		stoneDoor = registerBlock(new DragonDoor(Block.Properties.copy(oakDoor), DragonDoor.DragonDoorOpenRequirement.NONE), "stone_dragon_door", event);
-		legacyDoor = registerBlock(new DragonDoor(Block.Properties.of(/*Material.WOOD*/).mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor()).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(3.0F).sound(SoundType.WOOD).noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE), "legacy_dragon_door", event);
+	public static final DeferredHolder<Block, DragonDoor> SEA_DRAGON_DOOR = DS_BLOCKS.register(
+			"sea_dragon_door",
+			() -> new DragonDoor(Block.Properties.of()
+					.mapColor(MapColor.COLOR_BROWN)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.requiresCorrectToolForDrops()
+					.strength(7.0F)
+					.sound(SoundType.STONE)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.SEA)
+	);
 
-		caveSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).randomTicks().strength(3, 100).noOcclusion().lightLevel(c1 -> 10)), "cave_source_of_magic", event);
-		forestSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(3, 100).noOcclusion().lightLevel(c1 -> 10)), "forest_source_of_magic", event);
-		seaSourceOfMagic = registerBlock(new SourceOfMagicBlock(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(3, 100).noOcclusion().lightLevel(c1 -> 10)), "sea_source_of_magic", event);
+	// Small Dragon Doors
+	public static final DeferredHolder<Block, SmallDragonDoor> OAK_SMALL_DOOR = DS_BLOCKS.register(
+			"oak_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.OAK_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		treasureDebris = registerBlock(new TreasureBlock(Color.ofRGB(148, 120, 114), Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.COLOR_BROWN).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_debris", event);
-		treasureDiamond = registerBlock(new TreasureBlock(Color.ofRGB(212, 255, 255), Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.DIAMOND).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_diamond", event);
-		treasureEmerald = registerBlock(new TreasureBlock(Color.ofRGB(57, 240, 94), Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.COLOR_GREEN).noOcclusion().sound(SoundRegistry.treasureGem).strength(0.5F)), "treasure_emerald", event);
-		treasureCopper = registerBlock(new TreasureBlock(Color.ofRGB(255, 255, 208), Block.Properties.of(/*Material.GLASS*/).mapColor(MapColor.COLOR_ORANGE).instrument(NoteBlockInstrument.HAT).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_copper", event);
-		treasureGold = registerBlock(new TreasureBlock(Color.ofRGB(255, 255, 243), Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.GOLD).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_gold", event);
-		treasureIron = registerBlock(new TreasureBlock(Color.ofRGB(211, 211, 211), Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL).noOcclusion().sound(SoundRegistry.treasureMetal).strength(0.5F)), "treasure_iron", event);
+	public static final DeferredHolder<Block, SmallDragonDoor> SPRUCE_SMALL_DOOR = DS_BLOCKS.register(
+			"spruce_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		helmet1 = registerBlock(new HelmetBlock(Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL)), "broken_knight_helmet_1", event);
-		helmet2 = registerBlock(new HelmetBlock(Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL)), "broken_knight_helmet_2", event);
-		helmet3 = registerBlock(new HelmetBlock(Block.Properties.of(/*Material.METAL*/).mapColor(MapColor.METAL)), "broken_knight_helmet_3", event);
+	public static final DeferredHolder<Block, SmallDragonDoor> ACACIA_SMALL_DOOR = DS_BLOCKS.register(
+			"acacia_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.ACACIA_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		dragonBeacon = registerBlock(new DragonBeacon(Block.Properties.of(/*Material.HEAVY_METAL*/).mapColor(MapColor.METAL).pushReaction(PushReaction.BLOCK).strength(15, 50).requiresCorrectToolForDrops().noOcclusion().noCollission()), "empty_dragon_beacon", event);
-		dragonMemoryBlock = registerBlock(new RotatedPillarBlock(Block.Properties.of(/*Material.HEAVY_METAL*/).mapColor(MapColor.METAL).pushReaction(PushReaction.BLOCK).strength(3, 30).requiresCorrectToolForDrops()), "dragon_memory_block", event);
-		peaceDragonBeacon = registerBlock(new DragonBeacon(Block.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_peace", event);
-		magicDragonBeacon = registerBlock(new DragonBeacon(Block.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_magic", event);
-		fireDragonBeacon = registerBlock(new DragonBeacon(Block.Properties.copy(dragonBeacon).lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0)), "dragon_beacon_fire", event);
+	public static final DeferredHolder<Block, SmallDragonDoor> BIRCH_SMALL_DOOR = DS_BLOCKS.register(
+			"birch_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.BIRCH_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		dragonPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.DRAGON), "dragon_pressure_plate", event);
-		humanPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.HUMAN), "human_pressure_plate", event);
-		seaPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.SEA), "sea_dragon_pressure_plate", event);
-		forestPressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(/*Material.WOOD*/).mapColor(MapColor.WOOD).ignitedByLava().instrument(NoteBlockInstrument.BASS).strength(2.0F).sound(SoundType.WOOD).requiresCorrectToolForDrops(), PressurePlateType.FOREST), "forest_dragon_pressure_plate", event);
-		cavePressurePlate = registerBlock(new DragonPressurePlates(Block.Properties.of(/*Material.STONE*/).mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).strength(1.5f).sound(SoundType.STONE).requiresCorrectToolForDrops(), PressurePlateType.CAVE), "cave_dragon_pressure_plate", event);
-	}
+	public static final DeferredHolder<Block, SmallDragonDoor> JUNGLE_SMALL_DOOR = DS_BLOCKS.register(
+			"jungle_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.JUNGLE_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	private static <B extends Block> B registerBlock(B block, String identifier, RegisterEvent event){
-		event.register(ForgeRegistries.Keys.BLOCKS, new ResourceLocation(DragonSurvivalMod.MODID,identifier), ()->block);
-		DS_BLOCKS.put(identifier, block);
-		return block;
-	}
+	public static final DeferredHolder<Block, SmallDragonDoor> DARK_OAK_SMALL_DOOR = DS_BLOCKS.register(
+			"dark_oak_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.DARK_OAK_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	public static void registerBlockItems(final RegisterEvent event){
-		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(ResourceHelper.getKey(helmet1).toString()), ()->new HelmetItem(helmet1, new Item.Properties()/*.tab(DragonSurvivalMod.items)*/));
-		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(ResourceHelper.getKey(helmet2).toString()), ()->new HelmetItem(helmet2, new Item.Properties()/*.tab(DragonSurvivalMod.items)*/));
-		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(ResourceHelper.getKey(helmet3).toString()), ()->new HelmetItem(helmet3, new Item.Properties()/*.tab(DragonSurvivalMod.items)*/));
+	public static final DeferredHolder<Block, SmallDragonDoor> CRIMSON_SMALL_DOOR = DS_BLOCKS.register(
+			"crimson_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-		DSBlocks.DS_BLOCKS.forEach((key, value) -> {
-			if(key.startsWith("broken_knight_helmet")) return;
-			registerItem(value, new Item.Properties()/*.tab(DragonSurvivalMod.items)*/, event);
-		});
-	}
+	public static final DeferredHolder<Block, SmallDragonDoor> WARPED_SMALL_DOOR = DS_BLOCKS.register(
+			"warped_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of()
+					.mapColor(Blocks.WARPED_PLANKS.defaultMapColor())
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(3.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	@SuppressWarnings( "ConstantConditions" )
-	private static void registerItem(Block block, Item.Properties itemProperties, RegisterEvent event){
-		BlockItem itm = new BlockItem(block, itemProperties/*.tab(DragonSurvivalMod.items)*/);
-		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(ResourceHelper.getKey(block).toString()), ()->itm);
-		DS_BLOCK_ITEMS.put(ResourceHelper.getKey(block).toString(), itm);
-	}
+	public static final DeferredHolder<Block, SmallDragonDoor> STONE_SMALL_DOOR = DS_BLOCKS.register(
+			"stone_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/)
+					.mapColor(Blocks.STONE.defaultMapColor())
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(3.0F)
+					.sound(SoundType.STONE)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
 
-	private static void registerSingleItem(Block block, Item.Properties properties, RegisterEvent event){
-		registerItem(block, properties.stacksTo(1), event);
-	}
+	public static final DeferredHolder<Block, SmallDragonDoor> SLEEPER_SMALL_DOOR = DS_BLOCKS.register(
+			"sleeper_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/)
+					.mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor())
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(3.0F)
+					.sound(SoundType.STONE)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
+	);
+
+	public static final DeferredHolder<Block, SmallDragonDoor> CAVE_SMALL_DOOR = DS_BLOCKS.register(
+			"cave_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.STONE*/)
+					.mapColor(Blocks.BLACKSTONE.defaultMapColor())
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.requiresCorrectToolForDrops()
+					.strength(7.0F)
+					.sound(SoundType.GILDED_BLACKSTONE)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.CAVE)
+	);
+
+	public static final DeferredHolder<Block, SmallDragonDoor> FOREST_SMALL_DOOR = DS_BLOCKS.register(
+			"forest_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/)
+					.mapColor(Blocks.DARK_PRISMARINE.defaultMapColor())
+					.ignitedByLava()
+					.requiresCorrectToolForDrops()
+					.strength(7.0F)
+					.sound(SoundType.WOOD)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.FOREST)
+	);
+
+	public static final DeferredHolder<Block, SmallDragonDoor> SEA_SMALL_DOOR = DS_BLOCKS.register(
+			"sea_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.STONE*/)
+					.mapColor(MapColor.COLOR_BROWN)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.requiresCorrectToolForDrops()
+					.strength(7.0F)
+					.sound(SoundType.STONE)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.SEA)
+	);
+
+	public static final DeferredHolder<Block, SmallDragonDoor> IRON_SMALL_DOOR = DS_BLOCKS.register(
+			"iron_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.METAL*/)
+					.mapColor(MapColor.METAL)
+					.requiresCorrectToolForDrops()
+					.strength(5.0F)
+					.sound(SoundType.METAL)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER)
+	);
+
+	public static final DeferredHolder<Block, SmallDragonDoor> MURDERER_SMALL_DOOR = DS_BLOCKS.register(
+			"murderer_small_dragon_door",
+			() -> new SmallDragonDoor(Block.Properties.of(/*Material.METAL*/)
+					.mapColor(MapColor.METAL)
+					.requiresCorrectToolForDrops()
+					.strength(5.0F)
+					.sound(SoundType.METAL)
+					.noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER)
+	);
+
+	// Source of Magic Blocks
+
+	public static final DeferredHolder<Block, SourceOfMagicBlock> FOREST_SOURCE_OF_MAGIC = DS_BLOCKS.register(
+			"forest_source_of_magic",
+			() -> new SourceOfMagicBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.randomTicks()
+					.strength(3, 100)
+					.noOcclusion().lightLevel(c1 -> 10))
+	);
+
+	public static final DeferredHolder<Block, SourceOfMagicBlock> CAVE_SOURCE_OF_MAGIC = DS_BLOCKS.register(
+			"cave_source_of_magic",
+			() -> new SourceOfMagicBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(3, 100)
+					.noOcclusion().lightLevel(c1 -> 10))
+	);
+
+	public static final DeferredHolder<Block, SourceOfMagicBlock> SEA_SOURCE_OF_MAGIC = DS_BLOCKS.register(
+			"sea_source_of_magic",
+			() -> new SourceOfMagicBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(3, 100)
+					.noOcclusion()
+					.lightLevel(c1 -> 10))
+	);
+
+	// Dragon Altar Blocks
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_STONE = DS_BLOCKS.register(
+			"dragon_altar_stone",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops())
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_SANDSTONE = DS_BLOCKS.register(
+			"dragon_altar_sandstone",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(0.8f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops())
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_RED_SANDSTONE = DS_BLOCKS.register(
+			"dragon_altar_red_sandstone",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(0.8f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops())
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_PURPUR_BLOCK = DS_BLOCKS.register(
+			"dragon_altar_purpur_block",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops())
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_OAK_LOG = DS_BLOCKS.register(
+			"dragon_altar_oak_log",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.WOOD)
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(2f)
+					.sound(SoundType.WOOD))
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_BIRCH_LOG = DS_BLOCKS.register(
+			"dragon_altar_birch_log",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.WOOD)
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(2f)
+					.sound(SoundType.WOOD))
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_NETHER_BRICKS = DS_BLOCKS.register(
+			"dragon_altar_nether_bricks",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(0.4f)
+					.sound(SoundType.NETHER_BRICKS)
+					.requiresCorrectToolForDrops())
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_MOSSY_COBBLESTONE = DS_BLOCKS.register(
+			"dragon_altar_mossy_cobblestone",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(2f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops())
+	);
+
+	public static final DeferredHolder<Block, Block> DRAGON_ALTAR_BLACKSTONE = DS_BLOCKS.register(
+			"dragon_altar_blackstone",
+			() -> new DragonAltarBlock(Block.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops())
+	);
+
+	// Dragon Memory Blocks
+
+	public static final DeferredHolder<Block, RotatedPillarBlock> DRAGON_MEMORY_BLOCK = DS_BLOCKS.register(
+			"dragon_memory_block",
+			() -> new RotatedPillarBlock(Block.Properties.of()
+					.mapColor(MapColor.METAL)
+					.pushReaction(PushReaction.BLOCK)
+					.strength(3, 30)
+					.requiresCorrectToolForDrops())
+	);
+
+	// Dragon Beacons
+
+	public static final DeferredHolder<Block, DragonBeacon> DRAGON_BEACON = DS_BLOCKS.register(
+			"empty_dragon_beacon",
+			() -> new DragonBeacon(Block.Properties.of()
+					.mapColor(MapColor.METAL).
+					pushReaction(PushReaction.BLOCK)
+					.strength(15, 50)
+					.requiresCorrectToolForDrops()
+					.noOcclusion()
+					.noCollission())
+	);
+
+	public static final DeferredHolder<Block, DragonBeacon> PEACE_DRAGON_BEACON = DS_BLOCKS.register(
+			"peace_dragon_beacon",
+			() -> new DragonBeacon(DRAGON_BEACON.get().properties()
+					.lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
+	);
+
+	public static final DeferredHolder<Block, DragonBeacon> MAGIC_DRAGON_BEACON = DS_BLOCKS.register(
+			"magic_dragon_beacon",
+			() -> new DragonBeacon(DRAGON_BEACON.get().properties()
+					.lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
+	);
+
+	public static final DeferredHolder<Block, DragonBeacon> FIRE_DRAGON_BEACON = DS_BLOCKS.register(
+			"fire_dragon_beacon",
+			() -> new DragonBeacon(DRAGON_BEACON.get().properties()
+					.lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
+	);
+
+	// Treasure Blocks
+
+	public static final DeferredHolder<Block, TreasureBlock> TREASURE_DEBRIS = DS_BLOCKS.register(
+			"treasure_debris",
+			() -> new TreasureBlock(Color.ofRGB(148, 120, 114),
+					BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_BROWN)
+					.noOcclusion()
+					.sound(DSSounds.TREASURE_METAL)
+					.strength(0.5F))
+	);
+
+	public static final DeferredHolder<Block, TreasureBlock> TREASURE_DIAMOND = DS_BLOCKS.register(
+			"treasure_diamond",
+			() -> new TreasureBlock(Color.ofRGB(212, 255, 255),
+					BlockBehaviour.Properties.of()
+					.mapColor(MapColor.DIAMOND)
+					.noOcclusion()
+					.sound(DSSounds.TREASURE_GEM)
+					.strength(0.5F))
+	);
+
+	public static final DeferredHolder<Block, TreasureBlock> TREASURE_EMERALD = DS_BLOCKS.register(
+			"treasure_emerald",
+			() -> new TreasureBlock(Color.ofRGB(57, 240, 94),
+					BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_GREEN)
+					.noOcclusion()
+					.sound(DSSounds.TREASURE_GEM)
+					.strength(0.5F))
+	);
+
+	public static final DeferredHolder<Block, TreasureBlock> TREASURE_COPPER = DS_BLOCKS.register(
+			"treasure_copper",
+			() -> new TreasureBlock(Color.ofRGB(255, 255, 208),
+					BlockBehaviour.Properties.of()
+					.mapColor(MapColor.COLOR_ORANGE)
+					.instrument(NoteBlockInstrument.HAT)
+					.noOcclusion()
+					.sound(DSSounds.TREASURE_METAL)
+					.strength(0.5F))
+	);
+
+	public static final DeferredHolder<Block, TreasureBlock> TREASURE_GOLD = DS_BLOCKS.register(
+			"treasure_gold",
+			() -> new TreasureBlock(Color.ofRGB(255, 255, 243),
+					BlockBehaviour.Properties.of()
+					.mapColor(MapColor.GOLD)
+					.noOcclusion()
+					.sound(DSSounds.TREASURE_METAL)
+					.strength(0.5F))
+	);
+
+	public static final DeferredHolder<Block, TreasureBlock> TREASURE_IRON = DS_BLOCKS.register(
+			"treasure_iron",
+			() -> new TreasureBlock(Color.ofRGB(211, 211, 211),
+					BlockBehaviour.Properties.of()
+					.mapColor(MapColor.METAL)
+					.noOcclusion()
+					.sound(DSSounds.TREASURE_METAL)
+					.strength(0.5F))
+	);
+
+	// Dragon Pressure Plates
+
+	public static final DeferredHolder<Block, DragonPressurePlates> DRAGON_PRESSURE_PLATE = DS_BLOCKS.register(
+			"dragon_pressure_plate",
+			() -> new DragonPressurePlates(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops(), PressurePlateType.DRAGON)
+	);
+
+	public static final DeferredHolder<Block, DragonPressurePlates> HUMAN_PRESSURE_PLATE = DS_BLOCKS.register(
+			"human_pressure_plate",
+			() -> new DragonPressurePlates(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops(), PressurePlateType.HUMAN)
+	);
+
+	public static final DeferredHolder<Block, DragonPressurePlates> SEA_PRESSURE_PLATE = DS_BLOCKS.register(
+			"sea_dragon_pressure_plate",
+			() -> new DragonPressurePlates(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops(), PressurePlateType.SEA)
+	);
+
+	public static final DeferredHolder<Block, DragonPressurePlates> FOREST_PRESSURE_PLATE = DS_BLOCKS.register(
+			"forest_dragon_pressure_plate",
+			() -> new DragonPressurePlates(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.WOOD)
+					.ignitedByLava()
+					.instrument(NoteBlockInstrument.BASS)
+					.strength(2.0F)
+					.sound(SoundType.WOOD)
+					.requiresCorrectToolForDrops(), PressurePlateType.FOREST)
+	);
+
+	public static final DeferredHolder<Block, DragonPressurePlates> CAVE_PRESSURE_PLATE = DS_BLOCKS.register(
+			"cave_dragon_pressure_plate",
+			() -> new DragonPressurePlates(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.strength(1.5f)
+					.sound(SoundType.STONE)
+					.requiresCorrectToolForDrops(), PressurePlateType.CAVE)
+	);
+
+	// TODO: (maybe we need to register items too? not sure)
+	// Helmet Blocks
+
+	public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_1 = DS_BLOCKS.register(
+			"broken_knight_helmet_1",
+			() -> new HelmetBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.METAL)
+					.strength(5.0F)
+					.sound(SoundType.METAL))
+	);
+
+	public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_2 = DS_BLOCKS.register(
+			"broken_knight_helmet_2",
+			() -> new HelmetBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.METAL)
+					.strength(5.0F)
+					.sound(SoundType.METAL)
+					.noOcclusion())
+	);
+
+	public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_3 = DS_BLOCKS.register(
+			"broken_knight_helmet_3",
+			() -> new HelmetBlock(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.METAL)
+					.strength(5.0F)
+					.sound(SoundType.METAL)
+					.noOcclusion())
+	);
 }

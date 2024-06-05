@@ -5,9 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -48,7 +48,7 @@ public class Bolas extends ThrowableItemProjectile{
 
 	@Override
 	protected Item getDefaultItem(){
-		return DSItems.huntingNet;
+		return DSItems.HUNTING_NET;
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class Bolas extends ThrowableItemProjectile{
 				// -The player can't activate their wings (ClientFlightHandler.java)
 
 				if(addEffect){
-					living.addEffect(new MobEffectInstance(DragonEffects.TRAPPED, Functions.secondsToTicks(ServerConfig.hunterTrappedDebuffDuration)));
+					living.addEffect(new MobEffectInstance(DSEffects.TRAPPED, Functions.secondsToTicks(ServerConfig.hunterTrappedDebuffDuration)));
 				}
 			}
 		}

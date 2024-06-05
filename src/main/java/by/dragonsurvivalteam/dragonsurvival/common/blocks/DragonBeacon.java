@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -15,7 +15,6 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.MenuProvider;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
@@ -62,31 +61,31 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		ItemStack itemStack = playerEntity.getItemInHand(hand);
 		Item item = itemStack.getItem();
 		//upgrading
-		if(this == DSBlocks.dragonBeacon){
+		if(this == DSBlocks.DRAGON_BEACON){
 			DragonBeaconTileEntity old = (DragonBeaconTileEntity)world.getBlockEntity(pos);
 			if(item == Items.GOLD_BLOCK){
-				world.setBlockAndUpdate(pos, DSBlocks.peaceDragonBeacon.defaultBlockState());
+				world.setBlockAndUpdate(pos, DSBlocks.PEACE_DRAGON_BEACON.defaultBlockState());
 				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)world.getBlockEntity(pos);
 				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.PEACE;
 				dragonBeaconEntity.tick = old.tick;
 				itemStack.shrink(1);
-				world.playSound(playerEntity, pos, SoundRegistry.upgradeBeacon, SoundSource.BLOCKS, 1, 1);
+				world.playSound(playerEntity, pos, DSSounds.UPGRADE_BEACON, SoundSource.BLOCKS, 1, 1);
 				return InteractionResult.SUCCESS;
 			}else if(item == Items.DIAMOND_BLOCK){
-				world.setBlockAndUpdate(pos, DSBlocks.magicDragonBeacon.defaultBlockState());
+				world.setBlockAndUpdate(pos, DSBlocks.MAGIC_DRAGON_BEACON.defaultBlockState());
 				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)world.getBlockEntity(pos);
 				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.MAGIC;
 				dragonBeaconEntity.tick = old.tick;
 				itemStack.shrink(1);
-				world.playSound(playerEntity, pos, SoundRegistry.upgradeBeacon, SoundSource.BLOCKS, 1, 1);
+				world.playSound(playerEntity, pos, DSSounds.UPGRADE_BEACON, SoundSource.BLOCKS, 1, 1);
 				return InteractionResult.SUCCESS;
 			}else if(item == Items.NETHERITE_INGOT){
-				world.setBlockAndUpdate(pos, DSBlocks.fireDragonBeacon.defaultBlockState());
+				world.setBlockAndUpdate(pos, DSBlocks.FIRE_DRAGON_BEACON.defaultBlockState());
 				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)world.getBlockEntity(pos);
 				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.FIRE;
 				dragonBeaconEntity.tick = old.tick;
 				itemStack.shrink(1);
-				world.playSound(playerEntity, pos, SoundRegistry.upgradeBeacon, SoundSource.BLOCKS, 1, 1);
+				world.playSound(playerEntity, pos, DSSounds.UPGRADE_BEACON, SoundSource.BLOCKS, 1, 1);
 				return InteractionResult.SUCCESS;
 			}
 		}
@@ -96,7 +95,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 			if(dragonState.isPresent()){
 				DragonStateHandler dragonStateHandler = dragonState.orElse(null);
 				if(dragonStateHandler.isDragon() && (playerEntity.totalExperience >= 60 || playerEntity.isCreative())){
-					if(this == DSBlocks.peaceDragonBeacon){
+					if(this == DSBlocks.PEACE_DRAGON_BEACON){
 						if(!world.isClientSide()){
 							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
 								if(effect != null){
@@ -104,7 +103,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 								}
 							});
 						}
-					}else if(this == DSBlocks.magicDragonBeacon){
+					}else if(this == DSBlocks.MAGIC_DRAGON_BEACON){
 						if(!world.isClientSide()){
 							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 								if(effect != null){
@@ -112,7 +111,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 								}
 							});
 						}
-					}else if(this == DSBlocks.fireDragonBeacon){
+					}else if(this == DSBlocks.FIRE_DRAGON_BEACON){
 						if(!world.isClientSide()){
 							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
 								if(effect != null){
@@ -123,7 +122,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 					}
 
 					playerEntity.giveExperiencePoints(-60);
-					world.playSound(playerEntity, pos, SoundRegistry.applyEffect, SoundSource.PLAYERS, 1, 1);
+					world.playSound(playerEntity, pos, DSSounds.APPLY_EFFECT, SoundSource.PLAYERS, 1, 1);
 					return InteractionResult.SUCCESS;
 				}
 			}

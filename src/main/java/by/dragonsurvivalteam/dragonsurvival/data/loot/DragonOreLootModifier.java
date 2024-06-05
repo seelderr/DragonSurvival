@@ -65,19 +65,19 @@ public class DragonOreLootModifier extends LootModifier {
                                     fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
                                 if(handler.isDragon()) {
                                     if(context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){
-                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
 
                                     if(context.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance){
-                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
                                 } else {
                                     if(context.getRandom().nextDouble() < ServerConfig.humanOreDustChance){
-                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
 
                                     if(context.getRandom().nextDouble() < ServerConfig.humanOreBoneChance){
-                                        generatedLoot.add(new ItemStack(DSItems.elderDragonDust, fortuneRoll));
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
                                 }
                             }

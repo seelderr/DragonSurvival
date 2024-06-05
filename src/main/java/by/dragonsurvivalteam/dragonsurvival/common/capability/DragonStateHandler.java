@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -35,9 +35,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.common.util.INBTSerializable;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.UnknownNullability;
 
 import javax.annotation.Nullable;
@@ -47,7 +44,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonStateHandler extends EntityStateHandler {
 	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = ATTACHMENT_TYPES.register(
@@ -112,15 +108,15 @@ public class DragonStateHandler extends EntityStateHandler {
 	private void updateModifiers(double size, final Player player) {
 		if (isDragon()) {
 			// Grant the dragon attribute modifiers
-			DragonModifiers.updateSizeModifiers(player);
+			DSModifiers.updateSizeModifiers(player);
 		} else {
 			// Remove the dragon attribute modifiers
-			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DragonModifiers.getHealthModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DragonModifiers.getDamageModifier(player));
-			checkAndRemoveModifier(player.getAttribute(NeoForgeMod.SWIM_SPEED), DragonModifiers.getSwimSpeedModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE), DragonModifiers.getBlockReachModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE), DragonModifiers.getEntityReachModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.STEP_HEIGHT), DragonModifiers.getStepHeightModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DSModifiers.getHealthModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DSModifiers.getDamageModifier(player));
+			checkAndRemoveModifier(player.getAttribute(NeoForgeMod.SWIM_SPEED), DSModifiers.getSwimSpeedModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE), DSModifiers.getBlockReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE), DSModifiers.getEntityReachModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.STEP_HEIGHT), DSModifiers.getStepHeightModifier(player));
 		}
 	}
 
@@ -208,7 +204,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		AbstractDragonType oldType = dragonType;
 		setType(type);
 		if (oldType != dragonType) {
-			DragonModifiers.updateTypeModifiers(player);
+			DSModifiers.updateTypeModifiers(player);
 		}
 	}
 
@@ -234,7 +230,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		AbstractDragonBody oldBody = dragonBody;
 		setBody(body);
 		if (oldBody != dragonBody) {
-			DragonModifiers.updateBodyModifiers(player);
+			DSModifiers.updateBodyModifiers(player);
 		}
 	}
 

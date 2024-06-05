@@ -79,7 +79,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	@Override
 	@OnlyIn( Dist.CLIENT )
 	public void animateTick(BlockState p_180655_1_, Level p_180655_2_, BlockPos p_180655_3_, RandomSource p_180655_4_){
-		if(p_180655_1_.getBlock() == DSBlocks.caveSourceOfMagic){
+		if(p_180655_1_.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC){
 			if(p_180655_2_.getFluidState(p_180655_3_).is(FluidTags.WATER)){
 				double d0 = p_180655_3_.getX();
 				double d1 = p_180655_3_.getY();
@@ -323,7 +323,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 				}
 
 				if(ServerConfig.damageWrongSourceOfMagic){
-					entity.hurt(pState.getBlock() == DSBlocks.caveSourceOfMagic ? entity.damageSources().hotFloor() : pState.getBlock() == DSBlocks.seaSourceOfMagic ? entity.damageSources().drown() : entity.damageSources().cactus(), 1F);
+					entity.hurt(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC ? entity.damageSources().hotFloor() : pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC ? entity.damageSources().drown() : entity.damageSources().cactus(), 1F);
 				}
 			}
 		}
@@ -335,13 +335,13 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		boolean harm = false;
 		AbstractDragonType type = DragonUtils.getDragonType(entity);
 		
-		if(!Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.caveSourceOfMagic){
+		if(!Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC){
 			harm = true;
 		}
-		if(!Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.seaSourceOfMagic){
+		if(!Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC){
 			harm = true;
 		}
-		if(!Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.forestSourceOfMagic){
+		if(!Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC){
 			harm = true;
 		}
 		

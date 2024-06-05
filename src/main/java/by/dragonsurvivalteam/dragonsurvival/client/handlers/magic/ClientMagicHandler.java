@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleOptions;
@@ -73,21 +73,21 @@ public class ClientMagicHandler{
 			return;
 		}
 
-		if (entity.hasEffect(DragonEffects.BURN)) {
+		if (entity.hasEffect(DSEffects.BURN)) {
 			ParticleOptions data = new SmallFireParticleData(37F, false);
 			for (int i = 0; i < 4; i++) {
 				renderEffectParticle(entity, data);
 			}
 		}
 
-		if (entity.hasEffect(DragonEffects.DRAIN)) {
+		if (entity.hasEffect(DSEffects.DRAIN)) {
 			ParticleOptions data = new SmallPoisonParticleData(37F, false);
 			for (int i = 0; i < 4; i++) {
 				renderEffectParticle(entity, data);
 			}
 		}
 
-		if (entity.hasEffect(DragonEffects.CHARGED)) {
+		if (entity.hasEffect(DSEffects.CHARGED)) {
 			ParticleOptions data = new LargeLightningParticleData(37F, false);
 			for (int i = 0; i < 4; i++) {
 				renderEffectParticle(entity, data);
@@ -119,13 +119,13 @@ public class ClientMagicHandler{
 			}
 
 			if(Objects.equals(cap.getType(), DragonTypes.CAVE) && event.getCamera().getFluidInCamera() == FogType.LAVA){
-				if(player.hasEffect(DragonEffects.LAVA_VISION)){
+				if(player.hasEffect(DSEffects.LAVA_VISION)){
 					event.setNearPlaneDistance(-32.0F);
 					event.setFarPlaneDistance(128.0F);
 					event.setCanceled(true);
 				}
 			}else if(Objects.equals(cap.getType(), DragonTypes.SEA) && event.getCamera().getFluidInCamera() == FogType.WATER){
-				if(player.hasEffect(DragonEffects.WATER_VISION)){
+				if(player.hasEffect(DSEffects.WATER_VISION)){
 					event.setNearPlaneDistance(-32.0F);
 					event.setFarPlaneDistance(128.0F);
 					event.setCanceled(true);

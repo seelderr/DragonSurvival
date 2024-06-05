@@ -11,9 +11,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -23,139 +24,110 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.Level;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegisterEvent;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.registries.DeferredRegister;
 
-import javax.annotation.Nullable;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 
-@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD )
-public class DSItems{
-	public static HashMap<String, Item> DS_ITEMS = new HashMap<>();
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-	public static Item dragonHeartShard, weakDragonHeart, elderDragonHeart;
-	public static Item starBone, elderDragonBone, elderDragonDust;
+@EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )
+public class DSItems {
 
-	public static Item princeSummon;
-	public static Item princessSummon;
+	private static class CustomHoverTextItem extends Item {
+		private final String description;
 
-	public static Item charredMeat, charredVegetable, charredMushroom, charredSeafood, chargedCoal, chargedSoup, hotDragonRod, explosiveCopper, doubleQuartz, quartzExplosiveCopper, meatChorusMix, meatWildBerries, smellyMeatPorridge, diamondChorus, luminousOintment, sweetSourRabbit, seasonedFish, goldenCoralPufferfish, frozenRawFish, goldenTurtleEgg;
-	public static Item seaDragonTreat, caveDragonTreat, forestDragonTreat;
-	public static Item huntingNet;
-	public static Item passiveFireBeacon, passiveMagicBeacon, passivePeaceBeacon;
-	public static Item starHeart;
-
-	public static Item wingGrantItem, spinGrantItem;
-	public static Item lightningTextureItem;
-	public static Item inactivePeaceDragonBeacon, inactiveMagicDragonBeacon, inactiveFireDragonBeacon;
-
-	@SubscribeEvent
-	public static void register(final RegisterEvent event){
-		if (!Objects.equals(event.getForgeRegistry(), ForgeRegistries.ITEMS)) {
-			return;
+		public CustomHoverTextItem(Properties properties, String description) {
+			super(properties);
+			this.description = description;
 		}
 
-		Properties defaultProperties = new Item.Properties()/*.tab(DragonSurvivalMod.items)*/;
+		@Override
+		public void appendHoverText(ItemStack pStack, Item.TooltipContext pContext, List<Component> pTooltipComponents, TooltipFlag pTooltipFlag) {
+			super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+			pTooltipComponents.add(Component.translatable(description));
+		}
+	}
 
-		starBone = registerItem(event, new StarBoneItem(defaultProperties), "star_bone");
-		starHeart = registerItem(event, new StarHeartItem(defaultProperties), "star_heart");
+	public static final DeferredRegister<Item> DS_ITEMS = DeferredRegister.create(
+			BuiltInRegistries.ITEM,
+			MODID
+	);
 
-		elderDragonDust = registerItem(event, "elder_dragon_dust", "ds.description.elderDragonDust");
-		elderDragonBone = registerItem(event, "elder_dragon_bone", "ds.description.elderDragonBone");
+	private static final Properties defaultProperties = new Item.Properties();
 
-     	princeSummon = registerItem(event, new RoyalSummonItem(DSEntities.castToMob(DSEntities.PRINCE_ON_HORSE), defaultProperties), "prince_summon");
-		princessSummon = registerItem(event, new RoyalSummonItem(DSEntities.castToMob(DSEntities.PRINCESS_ON_HORSE), defaultProperties), "princess_summon");
+	public static final Holder<Item> STAR_BONE = DS_ITEMS.register("star_bone", () -> new StarBoneItem(defaultProperties));
+	public static final Holder<Item> STAR_HEART = DS_ITEMS.register("star_heart", () -> new StarHeartItem(defaultProperties));
 
-		dragonHeartShard = registerItem(event, "heart_element", "ds.description.heartElement");
-		weakDragonHeart = registerItem(event, "weak_dragon_heart", "ds.description.weakDragonHeart");
-		elderDragonHeart = registerItem(event, "elder_dragon_heart", "ds.description.elderDragonHeart");
+	public static final Holder<Item> ELDER_DRAGON_DUST = DS_ITEMS.register("elder_dragon_dust", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.elderDragonDust"));
+	public static final Holder<Item> ELDER_DRAGON_BONE = DS_ITEMS.register("elder_dragon_bone", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.elderDragonBone"));
 
-		chargedCoal = registerItem(event, new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , LivingEntity::removeAllEffects), "charged_coal");
-		chargedSoup = registerItem(event, new ChargedSoupItem(defaultProperties), "charged_soup");
-		charredMeat = registerItem(event, new DragonFoodItem(defaultProperties), "charred_meat");
-		charredVegetable = registerItem(event, new DragonFoodItem(defaultProperties), "charred_vegetable");
-		charredMushroom = registerItem(event, new DragonFoodItem(defaultProperties), "charred_mushroom");
-		charredSeafood = registerItem(event, new DragonFoodItem(defaultProperties), "charred_seafood");
-		hotDragonRod = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(DragonEffects.FIRE, Functions.minutesToTicks(1))), "hot_dragon_rod");
-		explosiveCopper = registerItem(event, new DragonFoodItem(defaultProperties, null, e -> {
-			e.hurt(e.damageSources()/* TODO 1.20 :: Unsure */.explosion(e, e), 1f);
-			e.level().addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
-			e.level().playSound(null, BlockPosHelper.get(e.getEyePosition()), SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR, SoundSource.PLAYERS, 1f, 1f);
-		}), "explosive_copper");
-		quartzExplosiveCopper = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
-			e.removeEffect(MobEffects.POISON);
-			e.removeEffect(MobEffects.WITHER);
-		}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "quartz_explosive_copper");
-		doubleQuartz = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "double_quartz");
+	public static final Holder<Item> PRINCE_SUMMON = DS_ITEMS.register("prince_summon", () -> new RoyalSummonItem(DSEntities.castToMob(DSEntities.PRINCE_ON_HORSE), defaultProperties));
+	public static final Holder<Item> PRINCESS_SUMMON = DS_ITEMS.register("princess_summon", () -> new RoyalSummonItem(DSEntities.castToMob(DSEntities.PRINCESS_ON_HORSE), defaultProperties));
 
-		sweetSourRabbit = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.FOREST , LivingEntity::removeAllEffects), "sweet_sour_rabbit");
-		luminousOintment = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), () -> new MobEffectInstance(DragonEffects.MAGIC, Functions.minutesToTicks(5))), "luminous_ointment");
-		diamondChorus = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, e -> {
-			e.removeEffect(MobEffects.POISON);
-			e.removeEffect(MobEffects.WITHER);
-		}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "diamond_chorus");
-		smellyMeatPorridge = registerItem(event, new DragonFoodItem(defaultProperties), "smelly_meat_porridge");
-		meatWildBerries = registerItem(event, new DragonFoodItem(defaultProperties), "meat_wild_berries");
-		meatChorusMix = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "meat_chorus_mix");
+	public static final Holder<Item> DRAGON_HEART_SHARD = DS_ITEMS.register("heart_element", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.heartElement"));
+	public static final Holder<Item> WEAK_DRAGON_HEART = DS_ITEMS.register("weak_dragon_heart", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.weakDragonHeart"));
+	public static final Holder<Item> ELDER_DRAGON_HEART = DS_ITEMS.register("elder_dragon_heart", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.elderDragonHeart"));
 
-		seasonedFish = registerItem(event, new DragonFoodItem(defaultProperties), "seasoned_fish");
-		goldenCoralPufferfish = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.SEA, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))), "golden_coral_pufferfish");
-		frozenRawFish = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
-			e.removeAllEffects();
+	public static final Holder<Item> CHARGED_COAL = DS_ITEMS.register("charged_coal", () -> new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , LivingEntity::removeAllEffects));
+	public static final Holder<Item> CHARGED_SOUP = DS_ITEMS.register("charged_soup", () -> new ChargedSoupItem(defaultProperties));
+	public static final Holder<Item> CHARRED_MEAT = DS_ITEMS.register("charred_meat", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> CHARRED_VEGETABLE = DS_ITEMS.register("charred_vegetable", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> CHARRED_MUSHROOM = DS_ITEMS.register("charred_mushroom", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> CHARRED_SEAFOOD = DS_ITEMS.register("charred_seafood", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> HOT_DRAGON_ROD = DS_ITEMS.register("hot_dragon_rod", () -> new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(DSEffects.FIRE, Functions.minutesToTicks(1))));
+	public static final Holder<Item> EXPLOSIVE_COPPER = DS_ITEMS.register("explosive_copper", () -> new DragonFoodItem(defaultProperties, null, e -> {
+		e.hurt(e.damageSources().explosion(e, e), 1f);
+		e.level().addParticle(ParticleTypes.EXPLOSION, e.getX(), e.getEyeY(), e.getZ(), 1.0D, 0.0D, 0.0D);
+		e.level().playSound(null, BlockPosHelper.get(e.getEyePosition()), SoundEvents.FIREWORK_ROCKET_TWINKLE_FAR, SoundSource.PLAYERS, 1f, 1f);
+	}));
+	public static final Holder<Item> QUARTZ_EXPLOSIVE_COPPER = DS_ITEMS.register("quartz_explosive_copper", () -> new DragonFoodItem(defaultProperties, DragonTypes.CAVE, e -> {
+		e.removeEffect(MobEffects.POISON);
+		e.removeEffect(MobEffects.WITHER);
+	}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)));
+	public static final Holder<Item> DOUBLE_QUARTZ = DS_ITEMS.register("double_quartz", () -> new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
 
-			if(!e.level().isClientSide()){
-				if(DragonStateProvider.getOrGenerateHandler(e).getType() instanceof SeaDragonType type){
-					type.timeWithoutWater = 0;
-				}
+	public static final Holder<Item> SWEET_SOUR_RABBIT = DS_ITEMS.register("sweet_sour_rabbit", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST , LivingEntity::removeAllEffects));
+	public static final Holder<Item> LUMINOUS_OINTMENT = DS_ITEMS.register("luminous_ointment", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), () -> new MobEffectInstance(DSEffects.MAGIC, Functions.minutesToTicks(5))));
+	public static final Holder<Item> DIAMOND_CHORUS = DS_ITEMS.register("diamond_chorus", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, e -> {
+		e.removeEffect(MobEffects.POISON);
+		e.removeEffect(MobEffects.WITHER);
+	}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)));
+	public static final Holder<Item> SMELLY_MEAT_PORRIDGE = DS_ITEMS.register("smelly_meat_porridge", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> MEAT_WILD_BERRIES = DS_ITEMS.register("meat_wild_berries", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> MEAT_CHORUS_MIX = DS_ITEMS.register("meat_chorus_mix", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
+
+	public static final Holder<Item> SEASONED_FISH = DS_ITEMS.register("seasoned_fish", () -> new DragonFoodItem(defaultProperties));
+	public static final Holder<Item> GOLDEN_CORAL_PUFFERFISH = DS_ITEMS.register("golden_coral_pufferfish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
+	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
+		e.removeAllEffects();
+
+		if(!e.level().isClientSide()){
+			if(DragonStateProvider.getOrGenerateHandler(e).getType() instanceof SeaDragonType type){
+				type.timeWithoutWater = 0;
 			}
-		}), "frozen_raw_fish");
-		goldenTurtleEgg = registerItem(event, new DragonFoodItem(defaultProperties, DragonTypes.SEA, e -> {
-			e.removeEffect(MobEffects.POISON);
-			e.removeEffect(MobEffects.WITHER);
-		}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)), "golden_turtle_egg");
+		}
+	}));
+	public static final Holder<Item> GOLDEN_TURTLE_EGG = DS_ITEMS.register("golden_turtle_egg", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA, e -> {
+		e.removeEffect(MobEffects.POISON);
+		e.removeEffect(MobEffects.WITHER);
+	}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)));
 
-		seaDragonTreat = registerItem(event, new DragonTreatItem(DragonTypes.SEA, defaultProperties), "sea_dragon_treat");
-		caveDragonTreat = registerItem(event, new DragonTreatItem(DragonTypes.CAVE, defaultProperties), "cave_dragon_treat");
-		forestDragonTreat = registerItem(event, new DragonTreatItem(DragonTypes.FOREST, defaultProperties), "forest_dragon_treat");
+	public static final Holder<Item> SEA_DRAGON_TREAT = DS_ITEMS.register("sea_dragon_treat", () -> new DragonTreatItem(DragonTypes.SEA, defaultProperties));
+	public static final Holder<Item> CAVE_DRAGON_TREAT = DS_ITEMS.register("cave_dragon_treat", () -> new DragonTreatItem(DragonTypes.CAVE, defaultProperties));
+	public static final Holder<Item> FOREST_DRAGON_TREAT = DS_ITEMS.register("forest_dragon_treat", () -> new DragonTreatItem(DragonTypes.FOREST, defaultProperties));
 
-		huntingNet = registerItem(event, new Item(new Item.Properties()), "dragon_hunting_mesh");
-		lightningTextureItem = registerItem(event, new Item(new Item.Properties()), "lightning");
+	public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));
+	public static final Holder<Item> LIGHTNING_TEXTURE_ITEM = DS_ITEMS.register("lightning", () -> new Item(new Item.Properties()));
 
-		passiveMagicBeacon = registerItem(event, new Item(new Item.Properties()), "beacon_magic_1");
-		passivePeaceBeacon = registerItem(event, new Item(new Item.Properties()), "beacon_peace_1");
-		passiveFireBeacon = registerItem(event, new Item(new Item.Properties()), "beacon_fire_1");
+	public static final Holder<Item> PASSIVE_MAGIC_BEACON = DS_ITEMS.register("beacon_magic_1", () -> new Item(new Item.Properties()));
+	public static final Holder<Item> PASSIVE_PEACE_BEACON = DS_ITEMS.register("beacon_peace_1", () -> new Item(new Item.Properties()));
+	public static final Holder<Item> PASSIVE_FIRE_BEACON = DS_ITEMS.register("beacon_fire_1", () -> new Item(new Item.Properties()));
 
-		inactiveMagicDragonBeacon = registerItem(event, new Item(new Item.Properties()), "beacon_magic_0");
-		inactivePeaceDragonBeacon = registerItem(event, new Item(new Item.Properties()), "beacon_peace_0");
-		inactiveFireDragonBeacon = registerItem(event, new Item(new Item.Properties()), "beacon_fire_0");
+	public static final Holder<Item> INACTIVE_MAGIC_DRAGON_BEACON = DS_ITEMS.register("beacon_magic_0", () -> new Item(new Item.Properties()));
+	public static final Holder<Item> INACTIVE_PEACE_DRAGON_BEACON = DS_ITEMS.register("beacon_peace_0", () -> new Item(new Item.Properties()));
+	public static final Holder<Item> INACTIVE_FIRE_DRAGON_BEACON = DS_ITEMS.register("beacon_fire_0", () -> new Item(new Item.Properties()));
 
-
-		wingGrantItem = registerItem(event, new WingGrantItem(defaultProperties), "wing_grant");
-		spinGrantItem = registerItem(event, new SpinGrantItem(defaultProperties), "spin_grant");
-	}
-
-	public static Item registerItem(RegisterEvent event, String name, String description){
-		Item item = new Item(new Item.Properties()/*.tab(DragonSurvivalMod.items)*/){
-			@Override
-			public void appendHoverText(@NotNull ItemStack stack, @Nullable Level world, @NotNull List<Component> list, @NotNull TooltipFlag tooltipFlag){
-				super.appendHoverText(stack, world, list, tooltipFlag);
-				list.add(Component.translatable(description));
-			}
-		};
-		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(DragonSurvivalMod.MODID, name), ()->item);
-		DS_ITEMS.put(name, item);
-		return item;
-	}
-
-	public static Item registerItem(RegisterEvent event, Item item, String name){
-		event.register(ForgeRegistries.Keys.ITEMS, new ResourceLocation(DragonSurvivalMod.MODID, name),()->item);
-		DS_ITEMS.put(name, item);
-		return item;
-	}
+	public static final Holder<Item> WING_GRANT_ITEM = DS_ITEMS.register("wing_grant", () -> new WingGrantItem(defaultProperties));
+	public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", () -> new SpinGrantItem(defaultProperties));
 }

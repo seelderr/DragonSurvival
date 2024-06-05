@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
@@ -43,10 +43,10 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, DragonBeaconTileEntity pBlockEntity){
 		BlockState below = pLevel.getBlockState(pPos.below());
 
-		if(below.getBlock() == DSBlocks.dragonMemoryBlock && pBlockEntity.type != Type.NONE){
+		if(below.getBlock() == DSBlocks.DRAGON_MEMORY_BLOCK && pBlockEntity.type != Type.NONE){
 			if(!pState.getValue(DragonBeacon.LIT)){
 				pLevel.setBlockAndUpdate(pPos, pState.cycle(DragonBeacon.LIT));
-				pLevel.playSound(null, pPos, SoundRegistry.activateBeacon, SoundSource.BLOCKS, 1, 1);
+				pLevel.playSound(null, pPos, DSSounds.ACTIVATE_BEACON, SoundSource.BLOCKS, 1, 1);
 			}
 			if(!pLevel.isClientSide()){
 				List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
@@ -77,18 +77,18 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 		}else{
 			if(pState.getValue(DragonBeacon.LIT)){
 				pLevel.setBlockAndUpdate(pPos, pState.cycle(DragonBeacon.LIT));
-				pLevel.playSound(null, pPos, SoundRegistry.deactivateBeacon, SoundSource.BLOCKS, 1, 1);
+				pLevel.playSound(null, pPos, DSSounds.DEACTIVATE_BEACON, SoundSource.BLOCKS, 1, 1);
 			}
 		}
 	}
 
 	private static void setType(final DragonBeaconTileEntity beaconTileEntity, final Block beacon) {
 		if(beaconTileEntity.type == Type.NONE){
-			if(beacon == DSBlocks.magicDragonBeacon){
+			if(beacon == DSBlocks.MAGIC_DRAGON_BEACON){
 				beaconTileEntity.type = Type.MAGIC;
-			}else if(beacon == DSBlocks.peaceDragonBeacon){
+			}else if(beacon == DSBlocks.PEACE_DRAGON_BEACON){
 				beaconTileEntity.type = Type.PEACE;
-			}else if(beacon == DSBlocks.fireDragonBeacon){
+			}else if(beacon == DSBlocks.FIRE_DRAGON_BEACON){
 				beaconTileEntity.type = Type.FIRE;
 			}
 		}

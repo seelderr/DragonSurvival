@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -28,11 +27,11 @@ public class DataItemTagProvider extends ItemTagsProvider {
 		tag(createForgeKey("raw_fishes")).add(Items.COD, Items.SALMON, Items.TROPICAL_FISH, Items.PUFFERFISH);
 		tag(createForgeKey("raw_meats")).add(Items.BEEF, Items.CHICKEN, Items.MUTTON, Items.PORKCHOP, Items.RABBIT);
 
-		tag(createKey("dragon_survival_food")).add(DSItems.seaDragonTreat, DSItems.forestDragonTreat, DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus, DSItems.luminousOintment, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
-		tag(createKey("sea_dragon_survival_food")).add(DSItems.seaDragonTreat, DSItems.frozenRawFish, DSItems.seasonedFish, DSItems.goldenCoralPufferfish, DSItems.goldenTurtleEgg);
-		tag(createKey("cave_dragon_survival_food")).add(DSItems.caveDragonTreat, DSItems.hotDragonRod, DSItems.explosiveCopper, DSItems.doubleQuartz, DSItems.quartzExplosiveCopper, DSItems.charredMeat, DSItems.charredVegetable, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.chargedCoal, DSItems.chargedSoup);
-		tag(createKey("forest_survival_food")).add(DSItems.forestDragonTreat, DSItems.meatWildBerries, DSItems.smellyMeatPorridge, DSItems.sweetSourRabbit, DSItems.meatChorusMix, DSItems.diamondChorus);
-		tag(createKey("charred_food")).add(DSItems.chargedCoal, DSItems.chargedSoup, DSItems.charredMeat, DSItems.charredMushroom, DSItems.charredSeafood, DSItems.charredVegetable);
+		tag(createKey("dragon_survival_food")).add(DSItems.SEA_DRAGON_TREAT, DSItems.FOREST_DRAGON_TREAT, DSItems.CAVE_DRAGON_TREAT, DSItems.HOT_DRAGON_ROD, DSItems.EXPLOSIVE_COPPER, DSItems.DOUBLE_QUARTZ, DSItems.QUARTZ_EXPLOSIVE_COPPER, DSItems.CHARRED_MEAT, DSItems.CHARRED_VEGETABLE, DSItems.CHARRED_MUSHROOM, DSItems.CHARRED_SEAFOOD, DSItems.CHARGED_COAL, DSItems.CHARGED_SOUP, DSItems.MEAT_WILD_BERRIES, DSItems.SMELLY_MEAT_PORRIDGE, DSItems.SWEET_SOUR_RABBIT, DSItems.MEAT_CHORUS_MIX, DSItems.DIAMOND_CHORUS, DSItems.LUMINOUS_OINTMENT, DSItems.FROZEN_RAW_FISH, DSItems.SEASONED_FISH, DSItems.GOLDEN_CORAL_PUFFERFISH, DSItems.GOLDEN_TURTLE_EGG);
+		tag(createKey("sea_dragon_survival_food")).add(DSItems.SEA_DRAGON_TREAT, DSItems.FROZEN_RAW_FISH, DSItems.SEASONED_FISH, DSItems.GOLDEN_CORAL_PUFFERFISH, DSItems.GOLDEN_TURTLE_EGG);
+		tag(createKey("cave_dragon_survival_food")).add(DSItems.CAVE_DRAGON_TREAT, DSItems.HOT_DRAGON_ROD, DSItems.EXPLOSIVE_COPPER, DSItems.DOUBLE_QUARTZ, DSItems.QUARTZ_EXPLOSIVE_COPPER, DSItems.CHARRED_MEAT, DSItems.CHARRED_VEGETABLE, DSItems.CHARRED_MUSHROOM, DSItems.CHARRED_SEAFOOD, DSItems.CHARGED_COAL, DSItems.CHARGED_SOUP);
+		tag(createKey("forest_survival_food")).add(DSItems.FOREST_DRAGON_TREAT, DSItems.MEAT_WILD_BERRIES, DSItems.SMELLY_MEAT_PORRIDGE, DSItems.SWEET_SOUR_RABBIT, DSItems.MEAT_CHORUS_MIX, DSItems.DIAMOND_CHORUS);
+		tag(createKey("charred_food")).add(DSItems.CHARGED_COAL, DSItems.CHARGED_SOUP, DSItems.CHARRED_MEAT, DSItems.CHARRED_MUSHROOM, DSItems.CHARRED_SEAFOOD, DSItems.CHARRED_VEGETABLE);
 		tag(createKey("copper")).addTag(createForgeKey("ingots/copper")).addOptional(new ResourceLocation("cavesandcliffs:raw_copper"));
 
 		this.copy(DataBlockTagProvider.DRAGON_ALTARS, createKey("dragon_altars"));

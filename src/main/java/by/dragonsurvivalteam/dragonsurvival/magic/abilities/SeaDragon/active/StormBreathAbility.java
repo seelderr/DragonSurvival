@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -17,7 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -230,7 +230,7 @@ public class StormBreathAbility extends BreathAbility{
 		secondaryTargets.removeIf(e -> !isValidTarget(source, e));
 
 		if(secondaryTargets.size() > maxChainTargets){
-			secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DragonEffects.CHARGED), c2.hasEffect(DragonEffects.CHARGED)));
+			secondaryTargets.sort((c1, c2) -> Boolean.compare(c1.hasEffect(DSEffects.CHARGED), c2.hasEffect(DSEffects.CHARGED)));
 			secondaryTargets = secondaryTargets.subList(0, maxChainTargets);
 		}
 
@@ -256,7 +256,7 @@ public class StormBreathAbility extends BreathAbility{
 						if(target.getRandom().nextInt(100) < 40){
 							if(entityCap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
 								entityCap.lastAfflicted = player != null ? player.getId() : -1;
-								target.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+								target.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
 						}
 					}
@@ -264,7 +264,7 @@ public class StormBreathAbility extends BreathAbility{
 					if(player != null){
 						if(player.getRandom().nextInt(100) < 50){
 							if(!player.level().isClientSide()){
-								player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+								player.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(30)));
 							}
 						}
 					}
@@ -302,7 +302,7 @@ public class StormBreathAbility extends BreathAbility{
 
 		if(player.getRandom().nextInt(100) < 50){
 			if(!player.level().isClientSide()){
-				player.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(30)));
+				player.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(30)));
 			}
 		}
 
@@ -314,7 +314,7 @@ public class StormBreathAbility extends BreathAbility{
 					cap.lastAfflicted = player.getId();
 					cap.chainCount = 1;
 
-					entity.addEffect(new MobEffectInstance(DragonEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
+					entity.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 				}
 			}
 		}
@@ -373,7 +373,7 @@ public class StormBreathAbility extends BreathAbility{
 	public void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
-				SoundRegistry.stormBreathStart,
+				DSSounds.STORM_BREATH_START,
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -395,7 +395,7 @@ public class StormBreathAbility extends BreathAbility{
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setPotion(new Potion(new MobEffectInstance(DSEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(1);
 				entity.setParticle(new SmallLightningParticleData(37, false));
@@ -409,7 +409,7 @@ public class StormBreathAbility extends BreathAbility{
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(pos.getX(), pos.getY(), pos.getZ());
-				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setPotion(new Potion(new MobEffectInstance(DSEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(0.45f);
 				entity.setParticle(new SmallLightningParticleData(37, true));
@@ -439,10 +439,10 @@ public class StormBreathAbility extends BreathAbility{
 
 	@OnlyIn( Dist.CLIENT )
 	public void stopSound(){
-		if(SoundRegistry.stormBreathEnd != null){
+		if(DSSounds.STORM_BREATH_END != null){
 			Vec3 pos = player.getEyePosition(1.0F);
 			SimpleSoundInstance endSound = new SimpleSoundInstance(
-					SoundRegistry.stormBreathEnd,
+					DSSounds.STORM_BREATH_END.get(),
 					SoundSource.PLAYERS,
 					1.0F,1.0F,
 					SoundInstance.createUnseededRandom(),

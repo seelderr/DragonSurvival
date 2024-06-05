@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.LargePoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -16,7 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -153,7 +153,7 @@ public class ForestBreathAbility extends BreathAbility{
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
-				entity.setPotion(new Potion(new MobEffectInstance(DragonEffects.DRAIN, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setPotion(new Potion(new MobEffectInstance(DSEffects.DRAIN, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(1);
 				entity.setParticle(new LargePoisonParticleData(37, false));
@@ -219,7 +219,7 @@ public class ForestBreathAbility extends BreathAbility{
 	public void onChanneling(Player player, int castDuration){
 		super.onChanneling(player, castDuration);
 
-		if(player.hasEffect(DragonEffects.STRESS)){
+		if(player.hasEffect(DSEffects.STRESS)){
 			if(player.level().isClientSide()){
 				if(player.tickCount % 10 == 0){
 					player.playSound(SoundEvents.LAVA_EXTINGUISH, 0.25F, 1F);
@@ -282,10 +282,10 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@OnlyIn( Dist.CLIENT )
 	public  void stopSound(){
-		if(SoundRegistry.forestBreathEnd != null){
+		if(DSSounds.FOREST_BREATH_END != null){
 			Vec3 pos = player.getEyePosition(1.0F);
 			SimpleSoundInstance endSound = new SimpleSoundInstance(
-					SoundRegistry.forestBreathEnd,
+					DSSounds.FOREST_BREATH_END,
 					SoundSource.PLAYERS,
 					1.0F,1.0F,
 					SoundInstance.createUnseededRandom(),
@@ -310,7 +310,7 @@ public class ForestBreathAbility extends BreathAbility{
 		if(!entityHit.level().isClientSide()){
 			if(entityHit.getRandom().nextInt(100) < 30){
 				EntityStateProvider.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
-				entityHit.addEffect(new MobEffectInstance(DragonEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
+				entityHit.addEffect(new MobEffectInstance(DSEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
 	}
@@ -332,7 +332,7 @@ public class ForestBreathAbility extends BreathAbility{
 	public  void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
-				SoundRegistry.forestBreathStart,
+				DSSounds.FOREST_BREATH_START,
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),

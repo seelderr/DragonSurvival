@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionRemovedEffect;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.entity.living.MobEffectEvent;
@@ -17,7 +17,7 @@ import net.minecraftforge.network.PacketDistributor.TargetPoint;
 public class PotionSync{
 	@SubscribeEvent
 	public static void potionAdded(MobEffectEvent.Added event){
-		if(event.getEffectInstance().getEffect() != DragonEffects.DRAIN && event.getEffectInstance().getEffect() != DragonEffects.CHARGED && event.getEffectInstance().getEffect() != DragonEffects.BURN){
+		if(event.getEffectInstance().getEffect() != DSEffects.DRAIN && event.getEffectInstance().getEffect() != DSEffects.CHARGED && event.getEffectInstance().getEffect() != DSEffects.BURN){
 			return;
 		}
 
@@ -31,7 +31,7 @@ public class PotionSync{
 
 	@SubscribeEvent
 	public static void potionRemoved(MobEffectEvent.Expired event){
-		if(event.getEffectInstance() != null && event.getEffectInstance().getEffect() != DragonEffects.DRAIN && event.getEffectInstance().getEffect() != DragonEffects.CHARGED && event.getEffectInstance().getEffect() != DragonEffects.BURN){
+		if(event.getEffectInstance() != null && event.getEffectInstance().getEffect() != DSEffects.DRAIN && event.getEffectInstance().getEffect() != DSEffects.CHARGED && event.getEffectInstance().getEffect() != DSEffects.BURN){
 			return;
 		}
 

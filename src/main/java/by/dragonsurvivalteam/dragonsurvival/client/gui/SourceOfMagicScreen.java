@@ -59,11 +59,11 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 
 		ResourceLocation resourceLocation = null;
 
-		if(DSBlocks.caveSourceOfMagic.equals(block)){
+		if(DSBlocks.CAVE_SOURCE_OF_MAGIC.equals(block)){
 			resourceLocation = hasItem ? CAVE_NEST1 : CAVE_NEST0;
-		}else if(DSBlocks.forestSourceOfMagic.equals(block)){
+		}else if(DSBlocks.FOREST_SOURCE_OF_MAGIC.equals(block)){
 			resourceLocation = hasItem ? FOREST_NEST1 : FOREST_NEST0;
-		}else if(DSBlocks.seaSourceOfMagic.equals(block)){
+		}else if(DSBlocks.SEA_SOURCE_OF_MAGIC.equals(block)){
 			resourceLocation = hasItem ? SEA_NEST1 : SEA_NEST0;
 		}
 

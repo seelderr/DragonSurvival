@@ -56,19 +56,19 @@ public class DragonHeartLootModifier extends LootModifier {
 
         if(canDropDragonHeart){
             if(context.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + context.getLootingModifier() * (ServerConfig.dragonHeartShardChance * 100 / 4)){
-                generatedLoot.add(new ItemStack(DSItems.dragonHeartShard));
+                generatedLoot.add(new ItemStack(DSItems.DRAGON_HEART_SHARD));
             }
         }
 
         if(canDropWeakDragonHeart){
             if(context.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + context.getLootingModifier() * (ServerConfig.weakDragonHeartChance * 100 / 4)){
-                generatedLoot.add(new ItemStack(DSItems.weakDragonHeart));
+                generatedLoot.add(new ItemStack(DSItems.WEAK_DRAGON_HEART));
             }
         }
 
         if(canDropElderDragonHeart){
             if(context.getRandom().nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + context.getLootingModifier() * (ServerConfig.elderDragonHeartChance * 100 / 4)){
-                generatedLoot.add(new ItemStack(DSItems.elderDragonHeart));
+                generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_HEART));
             }
         }
 

@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -108,7 +108,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public MobEffectInstance getEffect(){
-		return new MobEffectInstance(DragonEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration));
+		return new MobEffectInstance(DSEffects.REVEALING_THE_SOUL, Functions.secondsToTicks(revealingTheSoulDuration));
 	}
 
 	@Override

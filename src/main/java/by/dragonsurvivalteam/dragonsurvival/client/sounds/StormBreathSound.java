@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,7 +13,7 @@ public class StormBreathSound extends AbstractTickableSoundInstance{
 	private final StormBreathAbility ability;
 
 	public StormBreathSound(StormBreathAbility ability){
-		super(SoundRegistry.stormBreathLoop, SoundSource.PLAYERS, ability.getPlayer().getRandom());
+		super(DSSounds.STORM_BREATH_LOOP, SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
 

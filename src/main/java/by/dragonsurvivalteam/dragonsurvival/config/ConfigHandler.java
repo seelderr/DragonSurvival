@@ -6,6 +6,7 @@ import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -18,22 +19,18 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.ForgeConfigSpec.*;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.ModLoadingContext;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
-import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.config.ModConfigEvent;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.moddiscovery.ModAnnotation.EnumHolder;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.IForgeRegistry;
-import net.minecraftforge.registries.tags.ITagManager;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
+import net.neoforged.fml.ModLoadingContext;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.config.ModConfig;
+import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.modscan.ModAnnotation;
+import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
@@ -44,30 +41,30 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Supplier;
 
-@EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = Bus.MOD )
+@EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )
 public class ConfigHandler{
 
 	public static ClientConfig CLIENT;
-	public static ForgeConfigSpec clientSpec;
+	public static ModConfigSpec clientSpec;
 	public static ServerConfig SERVER;
-	public static ForgeConfigSpec serverSpec;
+	public static ModConfigSpec serverSpec;
 
 	public static HashMap<String, Object> defaultConfigValues = new HashMap<>(); // Contains the default values
 	public static HashMap<String, ConfigOption> configObjects = new HashMap<>(); // Contains config options
 	public static HashMap<String, Field> configFields = new HashMap<>(); // Contains all annotated config fields
 	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>(); // Contains all config keys per side
-	public static HashMap<String, ForgeConfigSpec.ConfigValue<?>> configValues = new HashMap<>(); // contains all config values
+	public static HashMap<String, ModConfigSpec.ConfigValue<?>> configValues = new HashMap<>(); // contains all config values
 
-	private static final HashMap<Class<?>, Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
+	private static final HashMap<Class<?>, Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
 
 	public static void initTypes() {
-		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> ForgeRegistries.ITEMS, () -> ForgeRegistries.Keys.ITEMS));
-		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> ForgeRegistries.BLOCKS, () -> ForgeRegistries.Keys.BLOCKS));
-		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> ForgeRegistries.ENTITY_TYPES, () -> ForgeRegistries.Keys.ENTITY_TYPES));
-		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> ForgeRegistries.BLOCK_ENTITY_TYPES, () -> ForgeRegistries.Keys.BLOCK_ENTITY_TYPES));
-		REGISTRY_HASH_MAP.put(Biome.class,  new Tuple<>(() -> ForgeRegistries.BIOMES, () -> ForgeRegistries.Keys.BIOMES));
-		REGISTRY_HASH_MAP.put(MobEffect.class,  new Tuple<>(() -> ForgeRegistries.MOB_EFFECTS, () -> ForgeRegistries.Keys.MOB_EFFECTS));
-		REGISTRY_HASH_MAP.put(Potion.class,  new Tuple<>(() -> ForgeRegistries.POTIONS, () -> ForgeRegistries.Keys.POTIONS));
+		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> BuiltInRegistries.ITEM, BuiltInRegistries.ITEM::key));
+		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> BuiltInRegistries.BLOCK, BuiltInRegistries.BLOCK::key));
+		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> BuiltInRegistries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE::key));
+		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> BuiltInRegistries.BLOCK_ENTITY_TYPE, BuiltInRegistries.BLOCK_ENTITY_TYPE::key));
+		REGISTRY_HASH_MAP.put(Biome.class,  new Tuple<>(() -> BuiltInRegistries.BIOME_SOURCE, BuiltInRegistries.BIOME_SOURCE::key));
+		REGISTRY_HASH_MAP.put(MobEffect.class,  new Tuple<>(() -> BuiltInRegistries.MOB_EFFECT, BuiltInRegistries.MOB_EFFECT::key));
+		REGISTRY_HASH_MAP.put(Potion.class,  new Tuple<>(() -> BuiltInRegistries.POTION, BuiltInRegistries.POTION::key));
 	}
 
 	private static List<Field> getFields() {
@@ -78,8 +75,8 @@ public class ConfigHandler{
 			List<ModFileScanData.AnnotationData> ebsTargets = s.getAnnotations().stream().filter(s1 -> s1.targetType() == ElementType.FIELD).filter(annotationData -> annotationType.equals(annotationData.annotationType())).toList();
 
 			ebsTargets.forEach(ad ->  {
-				EnumHolder sidesValue = (EnumHolder)ad.annotationData().get("side");
-				Dist side = Objects.equals(sidesValue.getValue(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
+				ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder)ad.annotationData().get("side");
+				Dist side = Objects.equals(sidesValue.value(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
 
 				if(side == FMLEnvironment.dist || side == Dist.DEDICATED_SERVER){
 					try{
@@ -119,22 +116,23 @@ public class ConfigHandler{
 			configs.computeIfAbsent(configOption.side(), key -> new ArrayList<>()).add(configOption.key());
 		});
 
+		ModContainer modContainer = ModLoadingContext.get().getActiveContainer();
 		if (FMLEnvironment.dist.isClient()) {
-			Pair<ClientConfig, ForgeConfigSpec> clientConfig = new ForgeConfigSpec.Builder().configure(ClientConfig::new);
+			Pair<ClientConfig, ModConfigSpec> clientConfig = new ModConfigSpec.Builder().configure(ClientConfig::new);
 			CLIENT = clientConfig.getLeft();
 			clientSpec = clientConfig.getRight();
 
-			ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, clientSpec);
+			modContainer.registerConfig(ModConfig.Type.CLIENT, clientSpec);
 		}
 
-		Pair<ServerConfig, ForgeConfigSpec> serverConfig = new ForgeConfigSpec.Builder().configure(ServerConfig::new);
+		Pair<ServerConfig, ModConfigSpec> serverConfig = new ModConfigSpec.Builder().configure(ServerConfig::new);
 		SERVER = serverConfig.getLeft();
 		serverSpec = serverConfig.getRight();
 
-		ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, serverSpec);
+		modContainer.registerConfig(ModConfig.Type.SERVER, serverSpec);
 	}
 
-	public static void addConfigs(final ForgeConfigSpec.Builder builder, final ConfigSide side) {
+	public static void addConfigs(final ModConfigSpec.Builder builder, final ConfigSide side) {
 		for (String key : configs.getOrDefault(side, Collections.emptyList())) {
 			ConfigOption configOption = configObjects.get(key);
 			Field field = configFields.get(key);
@@ -162,28 +160,28 @@ public class ConfigHandler{
 
 				// Fill the configuration options (define the key, default value and predicate to check if the option is valid)
 				if (tt instanceof Integer intVal) {
-					IntValue value = builder.defineInRange(configOption.key(), intVal, rang ? (int) range.min() : Integer.MIN_VALUE, rang ? (int) range.max() : Integer.MAX_VALUE);
+					ModConfigSpec.IntValue value = builder.defineInRange(configOption.key(), intVal, rang ? (int) range.min() : Integer.MIN_VALUE, rang ? (int) range.max() : Integer.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Float floatVal) {
-					DoubleValue value = builder.defineInRange(configOption.key(), floatVal, rang ? range.min() : Float.MIN_VALUE, rang ? range.max() : Float.MAX_VALUE);
+					ModConfigSpec.DoubleValue value = builder.defineInRange(configOption.key(), floatVal, rang ? range.min() : Float.MIN_VALUE, rang ? range.max() : Float.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Long longVal) {
-					LongValue value = builder.defineInRange(configOption.key(), longVal, rang ? (long) range.min() : Long.MIN_VALUE, rang ? (long) range.max() : Long.MAX_VALUE);
+					ModConfigSpec.LongValue value = builder.defineInRange(configOption.key(), longVal, rang ? (long) range.min() : Long.MIN_VALUE, rang ? (long) range.max() : Long.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Double doubleVal) {
-					DoubleValue value = builder.defineInRange(configOption.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
+					ModConfigSpec.DoubleValue value = builder.defineInRange(configOption.key(), doubleVal, rang ? range.min() : Double.MIN_VALUE, rang ? range.max() : Double.MAX_VALUE);
 					configValues.put(key, value);
 				} else if (tt instanceof Boolean boolValue) {
-					BooleanValue value = builder.define(configOption.key(), (boolean) boolValue);
+					ModConfigSpec.BooleanValue value = builder.define(configOption.key(), (boolean) boolValue);
 					configValues.put(key, value);
 				} else if (field.getType().isEnum()) {
-					EnumValue<?> value = builder.defineEnum(configOption.key(), (Enum) defaultValues, ((Enum<?>) defaultValues).getClass().getEnumConstants());
+					ModConfigSpec.EnumValue<?> value = builder.defineEnum(configOption.key(), (Enum) defaultValues, ((Enum<?>) defaultValues).getClass().getEnumConstants());
 					configValues.put(key, value);
 				} else if(tt instanceof List<?> list) { // TODO :: Numeric lists?
-					ConfigValue<List<?>> value = builder.defineList(configOption.key(), list, configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue));
+					ModConfigSpec.ConfigValue<List<?>> value = builder.defineList(configOption.key(), list, configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue));
 					configValues.put(key, value);
 				} else {
-					ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
+					ModConfigSpec.ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
 					configValues.put(key, value);
 					DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [" + configOption.key() + "]");
 				}
@@ -295,8 +293,8 @@ public class ConfigHandler{
 	/** Get the relevant string value from an object for specific types */
 	private static Object getRelevantString(final Object object) {
 		// TODO :: Might not be used / relevant at the moment?
-		if (object instanceof IForgeRegistry<?> forgeRegistry) {
-			return forgeRegistry.getRegistryName().toString();
+		if (object instanceof Registry<?> registry) {
+			return registry.toString();
 		}
 
 		if (object instanceof Enum<?> enumValue) {
@@ -313,7 +311,7 @@ public class ConfigHandler{
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
 	public static <T> List<T> parseResourceLocation(final Class<T> type, final ResourceLocation location) {
-		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
+		Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 
 		if (registry != null) {
 			if (registry.getA().get().containsKey(location)) {
@@ -325,9 +323,10 @@ public class ConfigHandler{
 			} else {
 				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>) registry.getB().get(), location);
 
-				if (tagKey.isFor(registry.getA().get().getRegistryKey())) {
-					ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
-					return manager.getTag(tagKey).stream().toList();
+				if (tagKey.isFor(registry.getA().get().key())) {
+					// TODO: This might not work.
+					//ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
+					return (List<T>) registry.getA().get().stream().toList();
 				}
 			}
 		}
@@ -354,7 +353,7 @@ public class ConfigHandler{
 			}
 
 			ResourceLocation location = ResourceLocation.tryParse(stringValue);
-			List<?> list = parseResourceLocation((Class<? extends IForgeRegistry>) field.getType(), location);
+			List<?> list = parseResourceLocation((Class<? extends Registry>) field.getType(), location);
 
 			if (list != null) {
 				if (field.getGenericType() instanceof List<?>) {
@@ -424,7 +423,7 @@ public class ConfigHandler{
 	}
 
 	/** Update and save the config */
-	public static void updateConfigValue(final ForgeConfigSpec.ConfigValue config, final Object configValue) {
+	public static void updateConfigValue(final ModConfigSpec.ConfigValue config, final Object configValue) {
 		config.set(convertToString(configValue));
 		config.save();
 
@@ -490,7 +489,7 @@ public class ConfigHandler{
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
 	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) { // TODO :: Filter duplicates
-		Tuple<Supplier<IForgeRegistry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
+		Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
 		ArrayList<T> list = new ArrayList<>();
 
 		for (Object object : values) {
@@ -505,9 +504,10 @@ public class ConfigHandler{
 
 				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>) registry.getB().get(), location);
 
-				if (tagKey.isFor(registry.getA().get().getRegistryKey())) {
-					ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
-					list.addAll(manager.getTag(tagKey).stream().toList());
+				if (tagKey.isFor(registry.getA().get().key())) {
+					// TODO: This might not work.
+					//ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
+					return (List<T>) registry.getA().get().stream().toList();
 				}
 			}
 		}

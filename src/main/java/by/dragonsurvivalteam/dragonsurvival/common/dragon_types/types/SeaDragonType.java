@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Wa
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
@@ -77,14 +77,14 @@ public class SeaDragonType extends AbstractDragonType {
 		double oldWaterTime = timeWithoutWater;
 		
 		if(!world.isClientSide()) {
-			if ((player.hasEffect(DragonEffects.PEACE) || player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) && player.getAirSupply() < player.getMaxAirSupply()) {
+			if ((player.hasEffect(DSEffects.PEACE) || player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) && player.getAirSupply() < player.getMaxAirSupply()) {
 				player.setAirSupply(player.getMaxAirSupply());
 			}
 		}
 		
 		if(ServerConfig.penalties && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
 			if (!world.isClientSide()) {
-				if (player.hasEffect(DragonEffects.PEACE)) {
+				if (player.hasEffect(DSEffects.PEACE)) {
 					timeWithoutWater = 0;
 				} else {
 					if (!player.isInWaterRainOrBubble() && !isInSeaBlock) {
@@ -122,7 +122,7 @@ public class SeaDragonType extends AbstractDragonType {
 			}
 			
 			if(world.isClientSide() && !player.isCreative() && !player.isSpectator()){
-				if(!player.hasEffect(DragonEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
+				if(!player.hasEffect(DSEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
 					world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
 				}
 			}
@@ -135,7 +135,7 @@ public class SeaDragonType extends AbstractDragonType {
 		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 		BlockState blockAtFeet = player.getFeetBlockState();
 
-		if (player.isInWaterRainOrBubble() || player.hasEffect(DragonEffects.CHARGED) || player.hasEffect(DragonEffects.PEACE)) {
+		if (player.isInWaterRainOrBubble() || player.hasEffect(DSEffects.CHARGED) || player.hasEffect(DSEffects.PEACE)) {
 			return true;
 		}
 

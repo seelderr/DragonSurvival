@@ -128,7 +128,7 @@ public class DragonGrowthHandler{
 
 		int increment = 0;
 
-		if(item == DSItems.starBone){
+		if(item == DSItems.STAR_BONE){
 			return -2;
 		}
 

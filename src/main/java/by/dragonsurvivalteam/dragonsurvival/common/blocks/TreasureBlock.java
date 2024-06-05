@@ -41,10 +41,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.core.object.Color;
+import software.bernie.geckolib.util.Color;
 
 import javax.annotation.Nullable;
 import java.util.List;
@@ -66,9 +64,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 
 	@Override
-	public boolean isPathfindable(BlockState p_196266_1_, BlockGetter p_196266_2_, BlockPos p_196266_3_, PathComputationType p_196266_4_){
-		return switch(p_196266_4_){
-			case LAND -> p_196266_1_.getValue(LAYERS) < 5;
+	public boolean isPathfindable(BlockState pState, PathComputationType pPathComputationType){
+		return switch(pPathComputationType){
+			case LAND -> pState.getValue(LAYERS) < 5;
 			case WATER -> false;
 			case AIR -> false;
 			default -> false;

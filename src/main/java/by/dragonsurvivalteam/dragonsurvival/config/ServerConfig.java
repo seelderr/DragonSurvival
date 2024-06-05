@@ -2,12 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import net.minecraft.nbt.Tag;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraftforge.common.ForgeConfigSpec.Builder;
+import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,7 +15,7 @@ import java.util.List;
 
 public class ServerConfig{
 	public static final Double DEFAULT_MAX_GROWTH_SIZE = 60.0;
-	ServerConfig(Builder builder){
+	ServerConfig(ModConfigSpec.Builder builder){
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 

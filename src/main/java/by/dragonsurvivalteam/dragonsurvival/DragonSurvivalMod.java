@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival;
 
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.client.sounds.SoundRegistry;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
@@ -15,44 +15,26 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSerializer;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import com.mojang.brigadier.CommandDispatcher;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.commands.CommandSourceStack;
-import net.minecraft.data.DataProvider;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
-import net.minecraftforge.data.event.GatherDataEvent;
-import net.minecraftforge.event.AddPackFindersEvent;
-import net.minecraftforge.event.RegisterCommandsEvent;
-import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
-import net.minecraftforge.registries.RegistryObject;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -60,6 +42,11 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLib;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
 
 @Mod( DragonSurvivalMod.MODID )
 public class DragonSurvivalMod{
@@ -72,7 +59,7 @@ public class DragonSurvivalMod{
         return new ResourceLocation(MODID, name);
     }
 
-	public DragonSurvivalMod(){
+	public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer){
 		GeckoLib.initialize();
 		DragonTypes.registerTypes();
 		DragonBodies.registerBodies();
@@ -80,18 +67,20 @@ public class DragonSurvivalMod{
 		ConfigHandler.initConfig();
 		DragonAbilities.initAbilities();
 
-		IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
 		modEventBus.addListener(this::addPackFinders);
 
 		DSParticles.register();
-		SoundRegistry.register();
-		// TODO :: Move to clientSetup?
+		DSSounds.register();
+
+		DS_MOB_EFFECTS.register(modEventBus);
+		DS_BLOCKS.register(modEventBus);
+		DS_CONTAINERS.register(modEventBus);
+		DS_CREATIVE_MODE_TABS.register(modEventBus);
 		DSParticles.REGISTRY.register(modEventBus);
-		SoundRegistry.SOUNDS.register(modEventBus);
+		DSSounds.SOUNDS.register(modEventBus);
 		DSEntities.ENTITY_TYPES.register(modEventBus);
-		DSCreativeTabs.CREATIVE_MODE_TABS.register(modEventBus);
 		GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
 
 

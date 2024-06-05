@@ -12,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -117,64 +116,64 @@ public class ToolTipHandler{
 			Item item = event.getItemStack().getItem();
 			List<Component> toolTip = event.getToolTip();
 
-			if(item == DSBlocks.fireDragonBeacon.asItem()){
+			if(item == DSBlocks.FIRE_DRAGON_BEACON.asItem()){
 				toolTip.add(Component.translatable("ds.description.passiveFireBeacon"));
 			}
-			if(item == DSBlocks.magicDragonBeacon.asItem()){
+			if(item == DSBlocks.MAGIC_DRAGON_BEACON.asItem()){
 				toolTip.add(Component.translatable("ds.description.passiveMagicBeacon"));
 			}
-			if(item == DSBlocks.peaceDragonBeacon.asItem()){
+			if(item == DSBlocks.PEACE_DRAGON_BEACON.asItem()){
 				toolTip.add(Component.translatable("ds.description.passivePeaceBeacon"));
 			}
-			if(item == DSBlocks.caveDoor.asItem()){
+			if(item == DSBlocks.CAVE_DRAGON_DOOR.asItem()){
 				toolTip.add(Component.translatable("ds.description.caveDoor"));
 			}
-			if(item == DSBlocks.forestDoor.asItem()){
+			if(item == DSBlocks.FOREST_DRAGON_DOOR.asItem()){
 				toolTip.add(Component.translatable("ds.description.forestDoor"));
 			}
-			if(item == DSBlocks.seaDoor.asItem()){
+			if(item == DSBlocks.SEA_DRAGON_DOOR.asItem()){
 				toolTip.add(Component.translatable("ds.description.seaDoor"));
 			}
-			if(item == DSBlocks.legacyDoor.asItem()){
+			if(item == DSBlocks.LEGACY_DRAGON_DOOR.asItem()){
 				toolTip.add(Component.translatable("ds.description.legacyDoor"));
 			}
-			if(item == DSBlocks.helmet1.asItem()){
+			if(item == DSBlocks.HELMET_BLOCK_1.asItem()){
 				toolTip.add(Component.translatable("ds.description.grayHelmet"));
 			}
-			if(item == DSBlocks.helmet2.asItem()){
+			if(item == DSBlocks.HELMET_BLOCK_2.asItem()){
 				toolTip.add(Component.translatable("ds.description.goldHelmet"));
 			}
-			if(item == DSBlocks.helmet3.asItem()){
+			if(item == DSBlocks.HELMET_BLOCK_3.asItem()){
 				toolTip.add(Component.translatable("ds.description.blackHelmet"));
 			}
-			if(item == DSBlocks.dragonBeacon.asItem()){
+			if(item == DSBlocks.DRAGON_BEACON.asItem()){
 				toolTip.add(Component.translatable("ds.description.dragonBeacon"));
 			}
-			if(item == DSBlocks.dragonMemoryBlock.asItem()){
+			if(item == DSBlocks.DRAGON_MEMORY_BLOCK.asItem()){
 				toolTip.add(Component.translatable("ds.description.dragonMemoryBlock"));
 			}
-			if(item == DSBlocks.seaSourceOfMagic.asItem()){
+			if(item == DSBlocks.SEA_SOURCE_OF_MAGIC.asItem()){
 				toolTip.add(Component.translatable("ds.description.sea_source_of_magic"));
 			}
-			if(item == DSBlocks.forestSourceOfMagic.asItem()){
+			if(item == DSBlocks.FOREST_SOURCE_OF_MAGIC.asItem()){
 				toolTip.add(Component.translatable("ds.description.forest_source_of_magic"));
 			}
-			if(item == DSBlocks.caveSourceOfMagic.asItem()){
+			if(item == DSBlocks.CAVE_SOURCE_OF_MAGIC.asItem()){
 				toolTip.add(Component.translatable("ds.description.cave_source_of_magic"));
 			}
-			if(item == DSBlocks.dragonPressurePlate.asItem()){
+			if(item == DSBlocks.DRAGON_PRESSURE_PLATE.asItem()){
 				toolTip.add(Component.translatable("ds.description.dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.humanPressurePlate.asItem()){
+			if(item == DSBlocks.HUMAN_PRESSURE_PLATE.asItem()){
 				toolTip.add(Component.translatable("ds.description.human_pressure_plate"));
 			}
-			if(item == DSBlocks.seaPressurePlate.asItem()){
+			if(item == DSBlocks.SEA_PRESSURE_PLATE.asItem()){
 				toolTip.add(Component.translatable("ds.description.sea_dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.forestPressurePlate.asItem()){
+			if(item == DSBlocks.FOREST_PRESSURE_PLATE.asItem()){
 				toolTip.add(Component.translatable("ds.description.forest_dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.cavePressurePlate.asItem()){
+			if(item == DSBlocks.CAVE_PRESSURE_PLATE.asItem()){
 				toolTip.add(Component.translatable("ds.description.cave_dragon_pressure_plate"));
 			}
 		}

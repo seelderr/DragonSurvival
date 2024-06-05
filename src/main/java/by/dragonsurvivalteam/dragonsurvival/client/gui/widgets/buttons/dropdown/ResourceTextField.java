@@ -21,6 +21,7 @@ import net.minecraft.commands.arguments.blocks.BlockStateParser;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -178,23 +179,23 @@ public class ResourceTextField extends EditBox /*implements TooltipAccessor*/ {
 		SuggestionsBuilder builder = new SuggestionsBuilder(resource, 0);
 
 		if (isItem) {
-			SharedSuggestionProvider.suggestResource(ForgeRegistries.ITEMS.getKeys(), builder);
+			SharedSuggestionProvider.suggestResource(BuiltInRegistries.ITEM.keySet(), builder);
 		}
 
 		if (isBlock) {
-			SharedSuggestionProvider.suggestResource(ForgeRegistries.BLOCKS.getKeys(), builder);
+			SharedSuggestionProvider.suggestResource(BuiltInRegistries.BLOCK.keySet(), builder);
 		}
 
 		if (isEntity) {
-			SharedSuggestionProvider.suggestResource(ForgeRegistries.ENTITY_TYPES.getKeys(), builder);
+			SharedSuggestionProvider.suggestResource(BuiltInRegistries.ENTITY_TYPE.keySet(), builder);
 		}
 
 		if (isEffect) {
-			SharedSuggestionProvider.suggestResource(ForgeRegistries.MOB_EFFECTS.getKeys(), builder);
+			SharedSuggestionProvider.suggestResource(BuiltInRegistries.MOB_EFFECT.keySet(), builder);
 		}
 
 		if (isBiome) {
-			SharedSuggestionProvider.suggestResource(ForgeRegistries.BIOMES.getKeys(), builder);
+			SharedSuggestionProvider.suggestResource(BuiltInRegistries.BIOME_SOURCE.keySet(), builder);
 		}
 
 		Suggestions sgs = builder.build();
@@ -299,8 +300,7 @@ public class ResourceTextField extends EditBox /*implements TooltipAccessor*/ {
 
 			if (isEffect) {
                 try {
-                    MobEffect effect = ForgeRegistries.MOB_EFFECTS.getValue(location);
-                    MobEffectInstance instance = new MobEffectInstance(effect, 20);
+                    MobEffectInstance instance = new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(location).get(), 20);
                     ItemStack stack = new ItemStack(Items.POTION);
                     PotionUtils.setPotion(stack, Potions.WATER);
                     PotionUtils.setCustomEffects(stack, Collections.singletonList(instance));

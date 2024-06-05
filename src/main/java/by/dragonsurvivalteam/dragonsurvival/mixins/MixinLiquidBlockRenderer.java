@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -17,7 +17,7 @@ public class MixinLiquidBlockRenderer {
         LocalPlayer player = minecraft.player;
 
         // The first bool in tesselate is pFluidState.is(FluidTags.LAVA), so we can just reuse it here instead of trying to read the args of this function
-        if(player.hasEffect(DragonEffects.LAVA_VISION) && isLava) {
+        if(player.hasEffect(DSEffects.LAVA_VISION) && isLava) {
             return value * 0.25F;
         }
 

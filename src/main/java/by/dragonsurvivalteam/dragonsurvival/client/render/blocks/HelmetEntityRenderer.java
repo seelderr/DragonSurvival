@@ -26,9 +26,9 @@ import java.util.Map;
 
 public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntity>{
 	private static final Map<Block, ResourceLocation> TEXTURE_BY_TYPE = Util.make(Maps.newHashMap(), resourceLocationHashMap -> {
-		resourceLocationHashMap.put(DSBlocks.helmet1, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_0.png"));
-		resourceLocationHashMap.put(DSBlocks.helmet2, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_1.png"));
-		resourceLocationHashMap.put(DSBlocks.helmet3, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_2.png"));
+		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_1, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_0.png"));
+		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_2, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_1.png"));
+		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_3, new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_2.png"));
 	});
 	static SkullModel humanoidHeadModel = new SkullModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_HEAD));
 

@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
@@ -65,7 +65,7 @@ public class ForestDragonType extends AbstractDragonType{
 		
 		double oldDarknessTime = timeInDarkness;
 		
-		if(ServerConfig.penalties && !player.hasEffect(DragonEffects.MAGIC)
+		if(ServerConfig.penalties && !player.hasEffect(DSEffects.MAGIC)
 		   && ServerConfig.forestStressTicks > 0
 		   && !player.isCreative() &&
 		   !player.isSpectator()) {
@@ -84,7 +84,7 @@ public class ForestDragonType extends AbstractDragonType{
 				timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
 				
 				if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
-					player.addEffect(new MobEffectInstance(DragonEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
+					player.addEffect(new MobEffectInstance(DSEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
 				}
 				
 				
@@ -94,7 +94,7 @@ public class ForestDragonType extends AbstractDragonType{
 			}
 			
 			if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
-				if (!player.hasEffect(DragonEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
+				if (!player.hasEffect(DSEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
 					world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
 				}
 			}
@@ -120,7 +120,7 @@ public class ForestDragonType extends AbstractDragonType{
 			}
 		}
 		
-		return player.hasEffect(DragonEffects.DRAIN) || player.hasEffect(DragonEffects.MAGIC);
+		return player.hasEffect(DSEffects.DRAIN) || player.hasEffect(DSEffects.MAGIC);
 	}
 
 	@Override

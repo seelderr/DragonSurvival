@@ -28,7 +28,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.player.PacketSyncCapabilityMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -395,7 +395,7 @@ public class ClientDragonRender{
 					});
 
 					int combinedOverlayIn = LivingEntityRenderer.getOverlayCoords(player, 0);
-					if(player.hasEffect(DragonEffects.TRAPPED)){
+					if(player.hasEffect(DSEffects.TRAPPED)){
 						float bolasScale = player.getEyeHeight();
 						if(handler.isDragon()) {
 							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);

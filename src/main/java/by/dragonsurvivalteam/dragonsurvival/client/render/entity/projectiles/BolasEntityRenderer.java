@@ -7,16 +7,12 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.EntityRendererProvider.Context;
-import net.minecraft.client.renderer.entity.layers.VillagerProfessionLayer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3f;
 
 public class BolasEntityRenderer extends EntityRenderer<Bolas>{
 
@@ -35,7 +31,7 @@ public class BolasEntityRenderer extends EntityRenderer<Bolas>{
 			stack.scale(1.2F, 1.2F, 1.2F);
 			stack.mulPose(entityRenderDispatcher.cameraOrientation());
 			stack.mulPose(Axis.YP.rotationDegrees(180.0F));
-			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.huntingNet), ItemDisplayContext.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, bufferSource, bolas.level(), 0);
+			Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(DSItems.HUNTING_NET), ItemDisplayContext.GROUND, p_225623_6_, OverlayTexture.NO_OVERLAY, stack, bufferSource, bolas.level(), 0);
 			stack.popPose();
 		}
 

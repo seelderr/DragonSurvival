@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.sounds;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.ForestBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
@@ -13,7 +13,7 @@ public class PoisonBreathSound extends AbstractTickableSoundInstance{
 	private final ForestBreathAbility ability;
 
 	public PoisonBreathSound(ForestBreathAbility ability){
-		super(SoundRegistry.forestBreathLoop, SoundSource.PLAYERS, ability.getPlayer().getRandom());
+		super(DSSounds.FOREST_BREATH_LOOP, SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
 		this.x = ability.getPlayer().getX();

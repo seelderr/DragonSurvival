@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.registry.DragonEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -181,30 +181,30 @@ public class ServerFlightHandler{
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
 						if(DragonUtils.isDragonType(player, DragonTypes.SEA)) {
-							player.addEffect(new MobEffectInstance(DragonEffects.sea_wings, 500));
+							player.addEffect(new MobEffectInstance(DSEffects.sea_wings, 500));
 
 						}if(DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
-							player.addEffect(new MobEffectInstance(DragonEffects.cave_wings, 500));
+							player.addEffect(new MobEffectInstance(DSEffects.cave_wings, 500));
 
 						}if(DragonUtils.isDragonType(player, DragonTypes.FOREST)) {
-							player.addEffect(new MobEffectInstance(DragonEffects.forest_wings, 500));
+							player.addEffect(new MobEffectInstance(DSEffects.forest_wings, 500));
 						}
 					}
 				}
 			}
 
 			if(!handler.isDragon() || !handler.isWingsSpread()){
-				if(player.hasEffect(DragonEffects.sea_wings)){
+				if(player.hasEffect(DSEffects.sea_wings)){
 					player.resetFallDistance();
-					player.removeEffect(DragonEffects.sea_wings);
+					player.removeEffect(DSEffects.sea_wings);
 				}
-				if(player.hasEffect(DragonEffects.cave_wings)){
+				if(player.hasEffect(DSEffects.cave_wings)){
 					player.resetFallDistance();
-					player.removeEffect(DragonEffects.cave_wings);
+					player.removeEffect(DSEffects.cave_wings);
 				}
-				if(player.hasEffect(DragonEffects.forest_wings)){
+				if(player.hasEffect(DSEffects.forest_wings)){
 					player.resetFallDistance();
-					player.removeEffect(DragonEffects.forest_wings);
+					player.removeEffect(DSEffects.forest_wings);
 				}
 			}
 		});
