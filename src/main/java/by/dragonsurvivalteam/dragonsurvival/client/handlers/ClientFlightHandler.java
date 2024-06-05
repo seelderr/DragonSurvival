@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorGameRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.RequestSpinResync;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
@@ -19,6 +18,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import ca.weblite.objc.Client;
+import com.jcraft.jogg.Packet;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -31,29 +32,27 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.event.ViewportEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.TimeUnit;
 
 /** Used in pair with {@link ServerFlightHandler} */
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 @SuppressWarnings("unused")
 public class ClientFlightHandler {
 	@ConfigRange(min = 0, max = 60)
@@ -120,7 +119,8 @@ public class ClientFlightHandler {
 						Vec3 lookVec = currentPlayer.getLookAngle();
 						double increase = Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
 						double gradualIncrease = Mth.lerp(0.25, lastIncrease, increase);
-						info.move(0, gradualIncrease, 0);
+						// FIXME this method is private now
+						//info.move(0, gradualIncrease, 0);
 						lastIncrease = gradualIncrease;
 					}
 				}
@@ -140,7 +140,8 @@ public class ClientFlightHandler {
 				if(lastIncrease > 0){
 					if(flightCameraMovement){
 						lastIncrease = Mth.lerp(0.25, lastIncrease, 0);
-						info.move(0, lastIncrease, 0);
+						// FIXME this method is private now
+						//info.move(0, lastIncrease, 0);
 					}
 				}
 
@@ -157,7 +158,8 @@ public class ClientFlightHandler {
 						// I'm not entirely sure why 20 works here, but it seems to be the magic number that
 						// keeps the dragon's size from the camera's perspective constant.
 						double offset = (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20;
-						info.move(-offset, 0, 0);
+						// FIXME this method is private now
+						//info.move(-offset, 0, 0);
 					}
 				}
 			}
@@ -165,7 +167,7 @@ public class ClientFlightHandler {
 	}
 
 	@SubscribeEvent
-	public static void renderFlightCooldown(RenderGuiOverlayEvent.Post event){
+	public static void renderFlightCooldown(RenderGuiLayerEvent.Post event){
 		Minecraft minecraft = Minecraft.getInstance();
 		Player player = minecraft.player;
 
@@ -184,7 +186,7 @@ public class ClientFlightHandler {
 		}
 
 		if (handler.getMovementData().spinLearned && handler.getMovementData().spinCooldown > 0) {
-			if (event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()) {
+			if (event.getLayer() == VanillaGuiLayers.AIR_LEVEL) {
 				Window window = Minecraft.getInstance().getWindow();
 
 				int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
@@ -204,11 +206,9 @@ public class ClientFlightHandler {
 	}
 
 	@SubscribeEvent
-	public static void flightParticles(TickEvent.PlayerTickEvent playerTickEvent){
-		if(playerTickEvent.phase == Phase.START || playerTickEvent.side == LogicalSide.SERVER){
-			return;
-		}
-		Player player = playerTickEvent.player;
+	@OnlyIn(Dist.CLIENT)
+	public static void flightParticles(PlayerTickEvent.Post playerTickEvent){
+		Player player = playerTickEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
@@ -220,10 +220,11 @@ public class ClientFlightHandler {
 					}
 
 
-					if(player.tickCount - lastSync >= 20){ // TODO :: Is this necessary?
+					// TODO: Removed because I don't think it does anything. Prove me wrong!
+					/*if(player.tickCount - lastSync >= 20){
 						//Request the server to resync the status of a spin if it is has been too long since the last update
 						NetworkHandler.CHANNEL.sendToServer(new RequestSpinResync());
-					}
+					}*/
 
 					if(ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)){
 						spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);
@@ -262,13 +263,9 @@ public class ClientFlightHandler {
 
 	/** Controls acceleration */
 	@SubscribeEvent
-	public static void flightControl(final ClientTickEvent event) {
+	public static void flightControl(final ClientTickEvent.Pre event) {
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
-		
-		if (event.phase.equals(ClientTickEvent.Phase.START)) {
-			return;
-		}
 
 		if (player != null && !player.isPassenger()) {
 			if (player.hasEffect(MobEffects.LEVITATION)) {
@@ -280,9 +277,7 @@ public class ClientFlightHandler {
 				levitationLeft = Functions.secondsToTicks(levitationAfterEffect);
 			} else if (levitationLeft > 0) {
 				// TODO :: Set to 0 once ground is reached?
-				if (event.phase == Phase.END) {
-					levitationLeft--;
-				}
+				levitationLeft--;
 			} else {
 				DragonStateProvider.getCap(player).ifPresent(handler -> {
 					if (handler.isDragon()) {
@@ -346,7 +341,7 @@ public class ClientFlightHandler {
 								float verticalDelta = Mth.cos(pitch);
 
 								verticalDelta = (float) ((double) verticalDelta * (double) verticalDelta * Math.min(1.0D, lookMagnitude / 0.4D));
-								double gravity = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).getValue();
+								double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
 
 								if (ServerFlightHandler.isGliding(player)) {
 									if (!wasGliding) {
@@ -413,7 +408,7 @@ public class ClientFlightHandler {
 									wasGliding = false;
 									double maxForward = 0.5 * flightMult * 2;
 
-									Vec3 moveVector = ClientDragonRender.getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.yRot);
+									Vec3 moveVector = ClientDragonRender.getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.getYRot());
 									moveVector.multiply(1.3 * flightMult * 2, 0, 1.3 * flightMult * 2);
 
 									boolean moving = movement.up || movement.down || movement.left || movement.right;
@@ -491,11 +486,12 @@ public class ClientFlightHandler {
 				});
 			}
 
-			if (event.phase == Phase.END && player.tickCount % 5 == 0) { // TODO :: Some checks to avoid too many packets
+			// TODO: Revisit the sync rate of this event? Maybe can afford it now?
+			if (player.tickCount % 5 == 0) {
 				// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
 				// TODO :: Check ClientboundSetEntityMotionPacket
 				// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
-				NetworkHandler.CHANNEL.sendToServer(new SyncFlightSpeed(player.getId(), player.getDeltaMovement()));
+				PacketDistributor.sendToServer(new SyncFlightSpeed.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
 			}
 		}
 	}
@@ -523,7 +519,7 @@ public class ClientFlightHandler {
 			if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)){
 				handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
 				handler.getMovementData().spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
-				NetworkHandler.CHANNEL.sendToServer(new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+				PacketDistributor.sendToServer(new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 			}
 		}
 	}
@@ -554,7 +550,7 @@ public class ClientFlightHandler {
 					if(handler.hasFlight() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
 						if(!player.onGround() && !player.isInLava() && !player.isInWater()){
 							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger){
-								NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), true));
+								PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
 							}else{
 								if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()){
 									lastHungerMessage = System.currentTimeMillis();
@@ -571,7 +567,7 @@ public class ClientFlightHandler {
 			if(handler.hasFlight()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
 				if(!player.hasEffect(DSEffects.TRAPPED) && (player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState || ServerFlightHandler.allowFlyingWithoutHunger)){
-					NetworkHandler.CHANNEL.sendToServer(new SyncFlyingStatus(player.getId(), !currentState));
+					PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !currentState));
 					if(notifyWingStatus){
 						if(!currentState){
 							player.sendSystemMessage(Component.translatable("ds.wings.enabled"));

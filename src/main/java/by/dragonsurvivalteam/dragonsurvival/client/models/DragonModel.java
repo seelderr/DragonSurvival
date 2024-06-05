@@ -16,13 +16,11 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.ForgeMod;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
-import software.bernie.geckolib.core.molang.MolangParser;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Locale;
@@ -42,29 +40,29 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	*/
 
 	@Override
-	public void applyMolangQueries(final DragonEntity dragon, double currentTick) {
-		super.applyMolangQueries(dragon, currentTick);
+	public void applyMolangQueries(final AnimationState<DragonEntity> animationState, double currentTick) {
+		super.applyMolangQueries(animationState, currentTick);
+
+		DragonEntity dragon = animationState.getAnimatable();
 
 		// In case the Integer (id of the player) is null
 		if (dragon.playerId == null || dragon.getPlayer() == null) {
 			return;
 		}
 
-		MolangParser parser = MolangParser.INSTANCE;
-
 		Player player = dragon.getPlayer();
 		Vec3 deltaMovement = dragon.getDeltaMovement();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
-		parser.setValue("query.delta_y", () -> deltaMovement.y);
-		parser.setValue("query.head_yaw", () -> handler.getMovementData().headYaw);
-		parser.setValue("query.head_pitch", () -> handler.getMovementData().headPitch);
+		MathParser.setVariable("query.delta_y", () -> deltaMovement.y);
+		MathParser.setVariable("query.head_yaw", () -> handler.getMovementData().headYaw);
+		MathParser.setVariable("query.head_pitch", () -> handler.getMovementData().headPitch);
 
 		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
 		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
 		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
 
-		double gravity = player.getAttribute(ForgeMod.ENTITY_GRAVITY.get()).getValue();
+		double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
 
 		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (deltaMovement.y + gravity) * 50), -10, 10);
 		dragon.tailMotionSide = Mth.lerp(0.1, Mth.clamp(dragon.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
@@ -117,15 +115,15 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			query_tail_motion_side = 0;
 		}
 
-		parser.setValue("query.body_yaw_change", () -> query_body_yaw_change);
-		parser.setValue("query.head_yaw_change", () -> query_head_yaw_change);
-		parser.setValue("query.head_pitch_change", () -> query_head_pitch_change);
+		MathParser.setVariable("query.body_yaw_change", () -> query_body_yaw_change);
+		MathParser.setVariable("query.head_yaw_change", () -> query_head_yaw_change);
+		MathParser.setVariable("query.head_pitch_change", () -> query_head_pitch_change);
 
 		double finalQuery_tail_motion_up = query_tail_motion_up;
-		parser.setValue("query.tail_motion_up", () -> finalQuery_tail_motion_up);
+		MathParser.setVariable("query.tail_motion_up", () -> finalQuery_tail_motion_up);
 
 		double finalQuery_tail_motion_side = query_tail_motion_side;
-		parser.setValue("query.tail_motion_side", () -> finalQuery_tail_motion_side);
+		MathParser.setVariable("query.tail_motion_side", () -> finalQuery_tail_motion_side);
 
 		dragon.body_yaw_change = query_body_yaw_change;
 		dragon.head_yaw_change = query_head_yaw_change;

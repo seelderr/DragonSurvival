@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.serialization.Codec;

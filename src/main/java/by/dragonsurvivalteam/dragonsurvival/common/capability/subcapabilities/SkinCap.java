@@ -37,7 +37,7 @@ public class SkinCap extends SubCap{
 		tag.putBoolean("renderYoung", renderYoung);
 		tag.putBoolean("renderAdult", renderAdult);
 
-		tag.put("skinPreset", skinPreset.writeNBT());
+		tag.put("skinPreset", skinPreset.serializeNBT(provider));
 
 		return tag;
 	}
@@ -50,6 +50,6 @@ public class SkinCap extends SubCap{
 
 		CompoundTag skinNbt = tag.getCompound("skinPreset");
 		skinPreset = new SkinPreset();
-		skinPreset.readNBT(skinNbt);
+		skinPreset.deserializeNBT(provider, skinNbt);
 	}
 }

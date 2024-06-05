@@ -60,5 +60,6 @@
       "model": "dragonsurvival:block/birch_small_dragon_door",
       "y": 180
     }
-  }
+  },
+  "render_type": "cutout"
 }

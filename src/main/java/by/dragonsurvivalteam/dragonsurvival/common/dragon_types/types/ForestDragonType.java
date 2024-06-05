@@ -6,9 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import com.jcraft.jogg.Packet;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -25,7 +26,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ForestDragonType extends AbstractDragonType{
 	@Override
 	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
 		Level world = player.level();
-		BlockState feetBlock = player.getFeetBlockState();
+		BlockState feetBlock = player.getBlockStateOn();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
 		Biome biome = world.getBiome(player.blockPosition()).value();
@@ -89,7 +90,7 @@ public class ForestDragonType extends AbstractDragonType{
 				
 				
 				if (timeInDarkness != oldDarknessTime) {
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), dragonStateHandler.getType()));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
 				}
 			}
 			

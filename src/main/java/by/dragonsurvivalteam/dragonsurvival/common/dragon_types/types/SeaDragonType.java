@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -18,6 +18,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
@@ -27,8 +28,8 @@ import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -59,7 +60,7 @@ public class SeaDragonType extends AbstractDragonType {
 	@Override
 	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
 		Level world = player.level();
-		BlockState feetBlock = player.getFeetBlockState();
+		BlockState feetBlock = player.getBlockStateOn();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
 		Biome biome = world.getBiome(player.blockPosition()).value();
@@ -77,7 +78,7 @@ public class SeaDragonType extends AbstractDragonType {
 		double oldWaterTime = timeWithoutWater;
 		
 		if(!world.isClientSide()) {
-			if ((player.hasEffect(DSEffects.PEACE) || player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())) && player.getAirSupply() < player.getMaxAirSupply()) {
+			if ((player.hasEffect(DSEffects.PEACE) || player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) && player.getAirSupply() < player.getMaxAirSupply()) {
 				player.setAirSupply(player.getMaxAirSupply());
 			}
 		}
@@ -105,19 +106,19 @@ public class SeaDragonType extends AbstractDragonType {
 						
 						if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
 							if (player.tickCount % 40 == 0) {
-								player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.DEHYDRATION), hydrationDamage);
+								player.hurt(new DamageSource(DSDamageTypes.DEHYDRATION), hydrationDamage);
 							}
 							
 						} else if (timeWithoutWater >= maxTicksOutofWater * 2) {
 							if (player.tickCount % 20 == 0) {
-								player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.DEHYDRATION), hydrationDamage);
+								player.hurt(new DamageSource(DSDamageTypes.DEHYDRATION), hydrationDamage);
 							}
 						}
 					}
 				}
 				
 				if(oldWaterTime != timeWithoutWater){
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), dragonStateHandler.getType()));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
 				}
 			}
 			
@@ -133,7 +134,7 @@ public class SeaDragonType extends AbstractDragonType {
 	@Override
 	public boolean isInManaCondition(final Player player, final DragonStateHandler cap) {
 		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-		BlockState blockAtFeet = player.getFeetBlockState();
+		BlockState blockAtFeet = player.getBlockStateOn();
 
 		if (player.isInWaterRainOrBubble() || player.hasEffect(DSEffects.CHARGED) || player.hasEffect(DSEffects.PEACE)) {
 			return true;

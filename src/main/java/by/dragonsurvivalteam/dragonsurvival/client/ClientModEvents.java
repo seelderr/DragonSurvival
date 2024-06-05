@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.SourceOfMagicScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
@@ -9,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHors
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
@@ -19,47 +17,23 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRe
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
-import net.minecraft.client.gui.screens.MenuScreens;
-import net.minecraft.client.renderer.ItemBlockRenderTypes;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
-import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
+@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
 public class ClientModEvents{
 	@SubscribeEvent
 	public static void setup(FMLClientSetupEvent event)
 	{
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_STONE, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_SANDSTONE, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_RED_SANDSTONE, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_OAK_LOG, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_NETHER_BRICKS, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_BLACKSTONE, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.DRAGON_ALTAR_BIRCH_LOG, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.BIRCH_DRAGON_DOOR, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.ACACIA_DRAGON_DOOR, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.PEACE_DRAGON_BEACON, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.FIRE_DRAGON_BEACON, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.MAGIC_DRAGON_BEACON, RenderType.cutout());
-
-		// Enable transparecny for certain small doors
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.BIRCH_SMALL_DOOR, RenderType.cutout());
-		ItemBlockRenderTypes.setRenderLayer(DSBlocks.ACACIA_SMALL_DOOR, RenderType.cutout());
-
 		EntityRenderers.register(DSEntities.DRAGON_SPIKE.get(), DragonSpikeRenderer::new);
 
 //		EntityRenderers.register(DSEntities.BOLAS_ENTITY.get(), BolasEntityRenderer::new);

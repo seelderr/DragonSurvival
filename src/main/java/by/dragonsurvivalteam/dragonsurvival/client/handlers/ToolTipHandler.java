@@ -24,18 +24,18 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderTooltipEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderTooltipEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler{
 	private static final ResourceLocation tooltip_1 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_0.png");
 	private static final ResourceLocation tooltip_2 = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_tips_1.png");
@@ -93,8 +93,8 @@ public class ToolTipHandler{
 		String saturation = "0";
 
 		if (properties != null) {
-			float nutritionValue = properties.getNutrition();
-			float saturationValue = properties.getNutrition() * properties.getSaturationModifier() * 2f;
+			float nutritionValue = properties.nutrition();
+			float saturationValue = properties.nutrition() * properties.saturation() * 2f;
 
 			// 1 Icon = 2 points (e.g. 10 nutrition icons for a maximum food level of 20)
 			nutrition = String.format("%.1f", nutritionValue / 2);
@@ -116,64 +116,64 @@ public class ToolTipHandler{
 			Item item = event.getItemStack().getItem();
 			List<Component> toolTip = event.getToolTip();
 
-			if(item == DSBlocks.FIRE_DRAGON_BEACON.asItem()){
+			if(item == DSBlocks.FIRE_DRAGON_BEACON.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.passiveFireBeacon"));
 			}
-			if(item == DSBlocks.MAGIC_DRAGON_BEACON.asItem()){
+			if(item == DSBlocks.MAGIC_DRAGON_BEACON.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.passiveMagicBeacon"));
 			}
-			if(item == DSBlocks.PEACE_DRAGON_BEACON.asItem()){
+			if(item == DSBlocks.PEACE_DRAGON_BEACON.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.passivePeaceBeacon"));
 			}
-			if(item == DSBlocks.CAVE_DRAGON_DOOR.asItem()){
+			if(item == DSBlocks.CAVE_DRAGON_DOOR.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.caveDoor"));
 			}
-			if(item == DSBlocks.FOREST_DRAGON_DOOR.asItem()){
+			if(item == DSBlocks.FOREST_DRAGON_DOOR.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.forestDoor"));
 			}
-			if(item == DSBlocks.SEA_DRAGON_DOOR.asItem()){
+			if(item == DSBlocks.SEA_DRAGON_DOOR.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.seaDoor"));
 			}
-			if(item == DSBlocks.LEGACY_DRAGON_DOOR.asItem()){
+			if(item == DSBlocks.LEGACY_DRAGON_DOOR.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.legacyDoor"));
 			}
-			if(item == DSBlocks.HELMET_BLOCK_1.asItem()){
+			if(item == DSBlocks.HELMET_BLOCK_1.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.grayHelmet"));
 			}
-			if(item == DSBlocks.HELMET_BLOCK_2.asItem()){
+			if(item == DSBlocks.HELMET_BLOCK_2.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.goldHelmet"));
 			}
-			if(item == DSBlocks.HELMET_BLOCK_3.asItem()){
+			if(item == DSBlocks.HELMET_BLOCK_3.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.blackHelmet"));
 			}
-			if(item == DSBlocks.DRAGON_BEACON.asItem()){
+			if(item == DSBlocks.DRAGON_BEACON.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.dragonBeacon"));
 			}
-			if(item == DSBlocks.DRAGON_MEMORY_BLOCK.asItem()){
+			if(item == DSBlocks.DRAGON_MEMORY_BLOCK.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.dragonMemoryBlock"));
 			}
-			if(item == DSBlocks.SEA_SOURCE_OF_MAGIC.asItem()){
+			if(item == DSBlocks.SEA_SOURCE_OF_MAGIC.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.sea_source_of_magic"));
 			}
-			if(item == DSBlocks.FOREST_SOURCE_OF_MAGIC.asItem()){
+			if(item == DSBlocks.FOREST_SOURCE_OF_MAGIC.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.forest_source_of_magic"));
 			}
-			if(item == DSBlocks.CAVE_SOURCE_OF_MAGIC.asItem()){
+			if(item == DSBlocks.CAVE_SOURCE_OF_MAGIC.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.cave_source_of_magic"));
 			}
-			if(item == DSBlocks.DRAGON_PRESSURE_PLATE.asItem()){
+			if(item == DSBlocks.DRAGON_PRESSURE_PLATE.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.HUMAN_PRESSURE_PLATE.asItem()){
+			if(item == DSBlocks.HUMAN_PRESSURE_PLATE.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.human_pressure_plate"));
 			}
-			if(item == DSBlocks.SEA_PRESSURE_PLATE.asItem()){
+			if(item == DSBlocks.SEA_PRESSURE_PLATE.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.sea_dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.FOREST_PRESSURE_PLATE.asItem()){
+			if(item == DSBlocks.FOREST_PRESSURE_PLATE.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.forest_dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.CAVE_PRESSURE_PLATE.asItem()){
+			if(item == DSBlocks.CAVE_PRESSURE_PLATE.get().asItem()){
 				toolTip.add(Component.translatable("ds.description.cave_dragon_pressure_plate"));
 			}
 		}
@@ -181,12 +181,13 @@ public class ToolTipHandler{
 
 	@SubscribeEvent
 	public static void postScreenRender(ScreenEvent.Render.Post event) {
-		if (Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children != null) {
-			for (GuiEventListener button : Minecraft.getInstance().screen.children) {
+		if (Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children() != null) {
+			for (GuiEventListener button : Minecraft.getInstance().screen.children()) {
 				if (button instanceof HelpButton helpButton) {
-					if (helpButton.isHoveredOrFocused()) {
+					// FIXME: This functionality no longer exists
+					//if (helpButton.isHoveredOrFocused()) {
 						helpButton.renderTooltip(event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
-					}
+					//}
 				}
 			}
 		}
@@ -258,10 +259,11 @@ public class ToolTipHandler{
 			return false;
 		}
 
-		for(GuiEventListener btn : Minecraft.getInstance().screen.children){
-			if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
+		for(GuiEventListener btn : Minecraft.getInstance().screen.children()){
+			// FIXME: This functionality no longer exists
+			//if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
 				return true;
-			}
+			//}
 		}
 
 		return false;

@@ -22,11 +22,9 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRendererManager;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
-import by.dragonsurvivalteam.dragonsurvival.network.player.PacketSyncCapabilityMovement;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -50,24 +48,23 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.*;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.RenderTickEvent;
-import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import software.bernie.geckolib.core.object.Color;
+import software.bernie.geckolib.util.Color;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Mod.EventBusSubscriber( Dist.CLIENT )
+@EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRender{
 	public static DragonModel dragonModel = new DragonModel();
 	public static DragonArmorModel dragonArmorModel = new DragonArmorModel(dragonModel);
@@ -247,16 +244,16 @@ public class ClientDragonRender{
 				poseStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 
 				double size = handler.getSize();
-				String playerModelType = player.getModelName();
-				EntityRenderer<? extends Player> playerRenderer = /* TODO :: Why not use renderPlayerEvent.getRenderer() */ ((AccessorEntityRendererManager) minecraft.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
+				EntityRenderer<? extends Player> playerRenderer = renderPlayerEvent.getRenderer();
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 
 				if (dragonNameTags) {
 					RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, poseStack, renderTypeBuffer, eventLight, partialRenderTick);
-					MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
+					NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
-					if (renderNameplateEvent.getResult() != Event.Result.DENY && (renderNameplateEvent.getResult() == Event.Result.ALLOW || ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player))) {
+					// TODO: Test this, we might not need shouldShowName
+					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player)) {
 						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight);
 					}
 				}
@@ -423,9 +420,10 @@ public class ClientDragonRender{
 
 		if(stack == null || stack.isEmpty()) return;
 
-		if (stack.getItem() instanceof DyeableArmorItem dyeableArmorItem) {
-			int colorCode = dyeableArmorItem.getColor(stack);
-			armorColor = Color.ofOpaque(colorCode);
+		if (stack.getItem() instanceof DyeItem dyeItem) {
+			DyeColor dyeColor = dyeItem.getDyeColor();
+			float[] colors = dyeColor.getTextureDiffuseColors();
+			armorColor = Color.ofRGB(colors[0], colors[1], colors[2]);
 		}
 
 		if(!stack.isEmpty()){
@@ -458,9 +456,9 @@ public class ClientDragonRender{
 		}
 	}
 
+	// TODO: This event type might be wrong.
 	@SubscribeEvent
-	public static void onClientTick(RenderTickEvent renderTickEvent){
-		if(renderTickEvent.phase == Phase.START){
+	public static void onClientTick(ClientTickEvent.Pre renderTickEvent){
 			Minecraft minecraft = Minecraft.getInstance();
 			LocalPlayer player = minecraft.player;
 			if(player != null){
@@ -472,7 +470,7 @@ public class ClientDragonRender{
 						md.bodyYawLastTick = Mth.lerp(0.05, md.bodyYawLastTick, md.bodyYaw);
 
 						double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-						float headRot = Functions.angleDifference((float)bodyYaw, Mth.wrapDegrees(player.yRot != 0.0 ? player.yRot : player.yHeadRot));
+						float headRot = Functions.angleDifference((float)bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : player.yHeadRot));
 
 						if(rotateBodyWithCamera && !KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook){
 							if(headRot > 150){
@@ -484,8 +482,8 @@ public class ClientDragonRender{
 						headRot = (float)Mth.lerp(0.05, md.headYaw, headRot);
 
 
-						double headPitch = Mth.lerp(0.1, md.headPitch, player.xRot);
-						Vec3 moveVector = getInputVector(new Vec3(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.yRot);
+						double headPitch = Mth.lerp(0.1, md.headPitch, player.getXRot());
+						Vec3 moveVector = getInputVector(new Vec3(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.getYRot());
 
 						if(ServerFlightHandler.isFlying(player)){
 							moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
@@ -504,17 +502,17 @@ public class ClientDragonRender{
 
 						if(!firstPersonRotation && !KeyInputHandler.FREE_LOOK.isDown()){
 							if((!wasFreeLook || moveVector.length() > 0) && Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-								bodyYaw = player.yRot;
+								bodyYaw = player.getYRot();
 								wasFreeLook = false;
 								if(moveVector.length() > 0){
-									float f5 = Mth.abs(Mth.wrapDegrees(player.yRot) - f);
+									float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
 									if(95.0F < f5 && f5 < 265.0F){
 										f -= 180.0F;
 									}
 
 									float _f = Mth.wrapDegrees(f - (float)bodyYaw);
 									bodyYaw += _f * 0.3F;
-									float _f1 = Mth.wrapDegrees(player.yRot - (float)bodyYaw);
+									float _f1 = Mth.wrapDegrees(player.getYRot() - (float)bodyYaw);
 
 									if(_f1 < -75.0F){
 										_f1 = -75.0F;
@@ -523,7 +521,7 @@ public class ClientDragonRender{
 									if(_f1 >= 75.0F){
 										_f1 = 75.0F;
 
-										bodyYaw = player.yRot - _f1;
+										bodyYaw = player.getYRot() - _f1;
 										if(_f1 * _f1 > 2500.0F){
 											bodyYaw += _f1 * 0.2F;
 										}
@@ -535,7 +533,7 @@ public class ClientDragonRender{
 									bodyYaw = Mth.wrapDegrees(bodyYaw);
 
 									playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
-									NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
+									PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
 									return;
 								}
 							}
@@ -547,14 +545,14 @@ public class ClientDragonRender{
 							bodyYaw += 0.5F * f2;
 
 							if(minecraft.options.getCameraType() == CameraType.FIRST_PERSON){
-								float f5 = Mth.abs(Mth.wrapDegrees(player.yRot) - f);
+								float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
 								if(95.0F < f5 && f5 < 265.0F){
 									f -= 180.0F;
 								}
 
 								float _f = Mth.wrapDegrees(f - (float)bodyYaw);
 								bodyYaw += _f * 0.3F;
-								float _f1 = Mth.wrapDegrees(player.yRot - (float)bodyYaw);
+								float _f1 = Mth.wrapDegrees(player.getYRot() - (float)bodyYaw);
 
 								if(_f1 < -75.0F){
 									_f1 = -75.0F;
@@ -563,7 +561,7 @@ public class ClientDragonRender{
 								if(_f1 >= 75.0F){
 									_f1 = 75.0F;
 
-									bodyYaw = player.yRot - _f1;
+									bodyYaw = player.getYRot() - _f1;
 									if(_f1 * _f1 > 2500.0F){
 										bodyYaw += _f1 * 0.2F;
 									}
@@ -576,12 +574,11 @@ public class ClientDragonRender{
 							bodyYaw = Mth.wrapDegrees(bodyYaw);
 
 							playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
-							NetworkHandler.CHANNEL.sendToServer(new PacketSyncCapabilityMovement(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
+							PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
 						}
 					}
 				});
 			}
-		}
 	}
 
 	public static Vec3 getInputVector(Vec3 movement, float fricSpeed, float yRot){

@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.util;
 
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -17,11 +16,7 @@ public class AnimationTimer {
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void renderTick(final ClientTickEvent event) {
-		if (event.phase == Phase.START) {
-			return;
-		}
-
+	public static void renderTick(final ClientTickEvent.Post event) {
 		for (AnimationTimer timer : timers) {
 			timer.animationTimes.keySet().forEach(key -> {
 				timer.animationTimes.computeIfPresent(key, (animation, tick) -> tick - 1);

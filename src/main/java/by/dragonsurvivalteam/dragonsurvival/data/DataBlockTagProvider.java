@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagsProvider;
 import net.minecraft.resources.ResourceKey;
@@ -14,136 +15,137 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public class DataBlockTagProvider extends TagsProvider<Block> {
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
+
+public class DataBlockTagProvider extends BlockTagsProvider {
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS = createKey("wooden_dragon_doors");
 	public static final TagKey<Block> DRAGON_ALTARS = createKey("dragon_altars");
 	public static final TagKey<Block> DRAGON_TREASURES = createKey("dragon_treasures");
 	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = createKey("hunter_ability_blocks");
 
-	protected DataBlockTagProvider(PackOutput pOutput, ResourceKey<? extends Registry<Block>> pRegistryKey, CompletableFuture<HolderLookup.Provider> pLookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-		super(pOutput, pRegistryKey, pLookupProvider, modId, existingFileHelper);
+	public DataBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+		super(output, lookupProvider, modId, existingFileHelper);
 	}
-
 
 	@Override
 	protected void addTags(@NotNull final HolderLookup.Provider provider) {
-		tag(DRAGON_ALTARS).add(DSBlocks.DS_BLOCKS.values().stream()
-				.filter(block -> block instanceof DragonAltarBlock)
-				.toList()
-				.toArray(new Block[0]));
+		tag(DRAGON_ALTARS).addAll(DS_BLOCKS.getEntries().stream()
+						.filter(entry -> entry.getDelegate().value() instanceof DragonAltarBlock)
+				        .map(entry -> BuiltInRegistries.BLOCK.getResourceKey(entry.getDelegate().value()).get()).toList());
 
-		tag(DRAGON_TREASURES).add(DSBlocks.DS_BLOCKS.values().stream()
-				.filter(block -> block instanceof TreasureBlock)
-				.toList()
-				.toArray(new Block[0]));
+		tag(DRAGON_TREASURES).addAll(DS_BLOCKS.getEntries().stream()
+				.filter(entry -> entry.getDelegate().value() instanceof TreasureBlock)
+				.map(entry -> BuiltInRegistries.BLOCK.getResourceKey(entry.getDelegate().value()).get()).toList());
+
 
 		TagKey<Block> woodenDragonDoorsSmall = createKey("wooden_dragon_doors_small");
 
 		tag(woodenDragonDoorsSmall)
-				.add(DSBlocks.OAK_SMALL_DOOR)
-				.add(DSBlocks.SPRUCE_SMALL_DOOR)
-				.add(DSBlocks.ACACIA_SMALL_DOOR)
-				.add(DSBlocks.BIRCH_SMALL_DOOR)
-				.add(DSBlocks.JUNGLE_SMALL_DOOR)
-				.add(DSBlocks.DARK_OAK_SMALL_DOOR)
-				.add(DSBlocks.WARPED_SMALL_DOOR)
-				.add(DSBlocks.CRIMSON_SMALL_DOOR);
+				.add(DSBlocks.OAK_SMALL_DOOR.get())
+				.add(DSBlocks.SPRUCE_SMALL_DOOR.get())
+				.add(DSBlocks.ACACIA_SMALL_DOOR.get())
+				.add(DSBlocks.BIRCH_SMALL_DOOR.get())
+				.add(DSBlocks.JUNGLE_SMALL_DOOR.get())
+				.add(DSBlocks.DARK_OAK_SMALL_DOOR.get())
+				.add(DSBlocks.WARPED_SMALL_DOOR.get())
+				.add(DSBlocks.CRIMSON_SMALL_DOOR.get());
 
 		tag(WOODEN_DRAGON_DOORS)
-				.add(DSBlocks.DRAGON_ALTAR_OAK_LOG)
-				.add(DSBlocks.DRAGON_ALTAR_BIRCH_LOG)
-				.add(DSBlocks.OAK_DRAGON_DOOR)
-				.add(DSBlocks.SPRUCE_DRAGON_DOOR)
-				.add(DSBlocks.ACACIA_DRAGON_DOOR)
-				.add(DSBlocks.BIRCH_DRAGON_DOOR)
-				.add(DSBlocks.JUNGLE_DRAGON_DOOR)
-				.add(DSBlocks.DARK_OAK_DRAGON_DOOR)
-				.add(DSBlocks.WARPED_DRAGON_DOOR)
-				.add(DSBlocks.CRIMSON_DRAGON_DOOR)
-				.add(DSBlocks.FOREST_DRAGON_DOOR)
-				.add(DSBlocks.LEGACY_DRAGON_DOOR)
+				.add(DSBlocks.DRAGON_ALTAR_OAK_LOG.get())
+				.add(DSBlocks.DRAGON_ALTAR_BIRCH_LOG.get())
+				.add(DSBlocks.OAK_DRAGON_DOOR.get())
+				.add(DSBlocks.SPRUCE_DRAGON_DOOR.get())
+				.add(DSBlocks.ACACIA_DRAGON_DOOR.get())
+				.add(DSBlocks.BIRCH_DRAGON_DOOR.get())
+				.add(DSBlocks.JUNGLE_DRAGON_DOOR.get())
+				.add(DSBlocks.DARK_OAK_DRAGON_DOOR.get())
+				.add(DSBlocks.WARPED_DRAGON_DOOR.get())
+				.add(DSBlocks.CRIMSON_DRAGON_DOOR.get())
+				.add(DSBlocks.FOREST_DRAGON_DOOR.get())
+				.add(DSBlocks.LEGACY_DRAGON_DOOR.get())
 				.addOptionalTag(woodenDragonDoorsSmall.location()); // FIXME :: Has problems finding the tag?
 
 		tag(BlockTags.MINEABLE_WITH_AXE)
 				.addTag(WOODEN_DRAGON_DOORS)
-				.add(DSBlocks.FOREST_PRESSURE_PLATE);
+				.add(DSBlocks.FOREST_PRESSURE_PLATE.get());
 
 		tag(BlockTags.MINEABLE_WITH_PICKAXE)
-				.add(DSBlocks.DRAGON_ALTAR_STONE)
-				.add(DSBlocks.DRAGON_ALTAR_SANDSTONE)
-				.add(DSBlocks.DRAGON_ALTAR_RED_SANDSTONE)
-				.add(DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK)
-				.add(DSBlocks.DRAGON_ALTAR_NETHER_BRICKS)
-				.add(DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE)
-				.add(DSBlocks.DRAGON_ALTAR_BLACKSTONE)
-				.add(DSBlocks.CAVE_DRAGON_DOOR)
-				.add(DSBlocks.SEA_DRAGON_DOOR)
-				.add(DSBlocks.IRON_DRAGON_DOOR)
-				.add(DSBlocks.STONE_SMALL_DOOR)
-				.add(DSBlocks.SLEEPER_SMALL_DOOR)
-				.add(DSBlocks.CAVE_SMALL_DOOR)
-				.add(DSBlocks.SEA_SMALL_DOOR)
-				.add(DSBlocks.IRON_SMALL_DOOR)
-				.add(DSBlocks.MURDERER_SMALL_DOOR)
-				.add(DSBlocks.MURDERER_DRAGON_DOOR)
-				.add(DSBlocks.SLEEPER_DRAGON_DOOR)
-				.add(DSBlocks.STONE_DRAGON_DOOR)
-				.add(DSBlocks.CAVE_SOURCE_OF_MAGIC)
-				.add(DSBlocks.FOREST_SOURCE_OF_MAGIC)
-				.add(DSBlocks.SEA_SOURCE_OF_MAGIC)
-				.add(DSBlocks.TREASURE_DEBRIS)
-				.add(DSBlocks.TREASURE_DIAMOND)
-				.add(DSBlocks.TREASURE_EMERALD)
-				.add(DSBlocks.TREASURE_COPPER)
-				.add(DSBlocks.TREASURE_GOLD)
-				.add(DSBlocks.TREASURE_IRON)
-				.add(DSBlocks.HELMET_BLOCK_1)
-				.add(DSBlocks.HELMET_BLOCK_2)
-				.add(DSBlocks.HELMET_BLOCK_3)
-				.add(DSBlocks.DRAGON_BEACON)
-				.add(DSBlocks.DRAGON_MEMORY_BLOCK)
-				.add(DSBlocks.PEACE_DRAGON_BEACON)
-				.add(DSBlocks.MAGIC_DRAGON_BEACON)
-				.add(DSBlocks.FIRE_DRAGON_BEACON)
-				.add(DSBlocks.DRAGON_PRESSURE_PLATE)
-				.add(DSBlocks.HUMAN_PRESSURE_PLATE)
-				.add(DSBlocks.SEA_PRESSURE_PLATE)
-				.add(DSBlocks.CAVE_PRESSURE_PLATE);
+				.add(DSBlocks.DRAGON_ALTAR_STONE.get())
+				.add(DSBlocks.DRAGON_ALTAR_SANDSTONE.get())
+				.add(DSBlocks.DRAGON_ALTAR_RED_SANDSTONE.get())
+				.add(DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK.get())
+				.add(DSBlocks.DRAGON_ALTAR_NETHER_BRICKS.get())
+				.add(DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE.get())
+				.add(DSBlocks.DRAGON_ALTAR_BLACKSTONE.get())
+				.add(DSBlocks.CAVE_DRAGON_DOOR.get())
+				.add(DSBlocks.SEA_DRAGON_DOOR.get())
+				.add(DSBlocks.IRON_DRAGON_DOOR.get())
+				.add(DSBlocks.STONE_SMALL_DOOR.get())
+				.add(DSBlocks.SLEEPER_SMALL_DOOR.get())
+				.add(DSBlocks.CAVE_SMALL_DOOR.get())
+				.add(DSBlocks.SEA_SMALL_DOOR.get())
+				.add(DSBlocks.IRON_SMALL_DOOR.get())
+				.add(DSBlocks.MURDERER_SMALL_DOOR.get())
+				.add(DSBlocks.MURDERER_DRAGON_DOOR.get())
+				.add(DSBlocks.SLEEPER_DRAGON_DOOR.get())
+				.add(DSBlocks.STONE_DRAGON_DOOR.get())
+				.add(DSBlocks.CAVE_SOURCE_OF_MAGIC.get())
+				.add(DSBlocks.FOREST_SOURCE_OF_MAGIC.get())
+				.add(DSBlocks.SEA_SOURCE_OF_MAGIC.get())
+				.add(DSBlocks.TREASURE_DEBRIS.get())
+				.add(DSBlocks.TREASURE_DIAMOND.get())
+				.add(DSBlocks.TREASURE_EMERALD.get())
+				.add(DSBlocks.TREASURE_COPPER.get())
+				.add(DSBlocks.TREASURE_GOLD.get())
+				.add(DSBlocks.TREASURE_IRON.get())
+				.add(DSBlocks.HELMET_BLOCK_1.get())
+				.add(DSBlocks.HELMET_BLOCK_2.get())
+				.add(DSBlocks.HELMET_BLOCK_3.get())
+				.add(DSBlocks.DRAGON_BEACON.get())
+				.add(DSBlocks.DRAGON_MEMORY_BLOCK.get())
+				.add(DSBlocks.PEACE_DRAGON_BEACON.get())
+				.add(DSBlocks.MAGIC_DRAGON_BEACON.get())
+				.add(DSBlocks.FIRE_DRAGON_BEACON.get())
+				.add(DSBlocks.DRAGON_PRESSURE_PLATE.get())
+				.add(DSBlocks.HUMAN_PRESSURE_PLATE.get())
+				.add(DSBlocks.SEA_PRESSURE_PLATE.get())
+				.add(DSBlocks.CAVE_PRESSURE_PLATE.get());
 
 		tag(BlockTags.NEEDS_STONE_TOOL)
-				.add(DSBlocks.TREASURE_GOLD)
-				.add(DSBlocks.TREASURE_EMERALD)
-				.add(DSBlocks.TREASURE_DIAMOND)
-				.add(DSBlocks.TREASURE_DEBRIS)
-				.add(DSBlocks.IRON_DRAGON_DOOR)
-				.add(DSBlocks.IRON_SMALL_DOOR)
-				.add(DSBlocks.MURDERER_DRAGON_DOOR)
-				.add(DSBlocks.MURDERER_SMALL_DOOR)
-				.add(DSBlocks.TREASURE_COPPER)
-				.add(DSBlocks.TREASURE_IRON)
-				.add(DSBlocks.HELMET_BLOCK_1)
-				.add(DSBlocks.HELMET_BLOCK_2)
-				.add(DSBlocks.HELMET_BLOCK_3);
+				.add(DSBlocks.TREASURE_GOLD.get())
+				.add(DSBlocks.TREASURE_EMERALD.get())
+				.add(DSBlocks.TREASURE_DIAMOND.get())
+				.add(DSBlocks.TREASURE_DEBRIS.get())
+				.add(DSBlocks.IRON_DRAGON_DOOR.get())
+				.add(DSBlocks.IRON_SMALL_DOOR.get())
+				.add(DSBlocks.MURDERER_DRAGON_DOOR.get())
+				.add(DSBlocks.MURDERER_SMALL_DOOR.get())
+				.add(DSBlocks.TREASURE_COPPER.get())
+				.add(DSBlocks.TREASURE_IRON.get())
+				.add(DSBlocks.HELMET_BLOCK_1.get())
+				.add(DSBlocks.HELMET_BLOCK_2.get())
+				.add(DSBlocks.HELMET_BLOCK_3.get());
 
 		tag(BlockTags.NEEDS_IRON_TOOL)
-				.add(DSBlocks.DRAGON_BEACON)
-				.add(DSBlocks.DRAGON_MEMORY_BLOCK)
-				.add(DSBlocks.PEACE_DRAGON_BEACON)
-				.add(DSBlocks.MAGIC_DRAGON_BEACON)
-				.add(DSBlocks.FIRE_DRAGON_BEACON);
+				.add(DSBlocks.DRAGON_BEACON.get())
+				.add(DSBlocks.DRAGON_MEMORY_BLOCK.get())
+				.add(DSBlocks.PEACE_DRAGON_BEACON.get())
+				.add(DSBlocks.MAGIC_DRAGON_BEACON.get())
+				.add(DSBlocks.FIRE_DRAGON_BEACON.get());
 
 		tag(HUNTER_ABILITY_BLOCKS)
 				.addTag(BlockTags.FLOWERS)
 				.addTag(BlockTags.SAPLINGS)
 				.add(Blocks.WARPED_NYLIUM)
 				.add(Blocks.CRIMSON_NYLIUM)
-				.add(Blocks.GRASS)
+				.add(Blocks.GRASS_BLOCK)
 				.add(Blocks.FERN)
 				.add(Blocks.LARGE_FERN)
 				.add(Blocks.DEAD_BUSH)

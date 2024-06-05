@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -19,6 +19,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
@@ -26,8 +27,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class CaveDragonType extends AbstractDragonType{
 	@Override
 	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
 		Level world = player.level();
-		BlockState feetBlock = player.getFeetBlockState();
+		BlockState feetBlock = player.getBlockStateOn();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
 		Block block = blockUnder.getBlock();
 
@@ -78,14 +79,14 @@ public class CaveDragonType extends AbstractDragonType{
 			if(!world.isClientSide() ) {
 				if (player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0 || player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0 || isInSeaBlock && ServerConfig.caveRainDamage != 0.0) {
 					if (player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0) {
-						player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.WATER_BURN), ServerConfig.caveWaterDamage.floatValue());
+						player.hurt(new DamageSource(DSDamageTypes.WATER_BURN), ServerConfig.caveWaterDamage.floatValue());
 					} else if ((player.isInWaterOrRain() && !player.isInWaterOrBubble() || isInSeaBlock) && ServerConfig.caveRainDamage != 0.0) {
 						timeInRain++;
 					}
 					
 					if (timeInRain >= maxRainTime) {
 						if (player.tickCount % 40 == 0) {
-							player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.RAIN_BURN), ServerConfig.caveRainDamage.floatValue());
+							player.hurt(new DamageSource(DSDamageTypes.RAIN_BURN), ServerConfig.caveRainDamage.floatValue());
 						}
 					}
 					
@@ -114,7 +115,7 @@ public class CaveDragonType extends AbstractDragonType{
 		}
 
 		if(!player.level().isClientSide()){
-			if(player.isEyeInFluidType(ForgeMod.LAVA_TYPE.get())
+			if(player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())
 			   && ServerConfig.bonuses
 			   && ServerConfig.caveLavaSwimming
 			   && ServerConfig.caveLavaSwimmingTicks != 0){
@@ -127,16 +128,16 @@ public class CaveDragonType extends AbstractDragonType{
 						}
 					}
 				}
-				if(!player.level().isClientSide() && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(ForgeMod.WATER_TYPE.get(), player)){
+				if(!player.level().isClientSide() && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(NeoForgeMod.WATER_TYPE.value(), player)){
 					player.stopRiding();
 				}
-			}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluidType(ForgeMod.WATER_TYPE.get())){
+			}else if(lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())){
 				lavaAirSupply = Math.min(lavaAirSupply + (int)Math.ceil(ServerConfig.caveLavaSwimmingTicks * 0.0133333F), ServerConfig.caveLavaSwimmingTicks);
 			}
 		}
 		
 		if(!world.isClientSide() && (oldLavaTicks != lavaAirSupply || timeInRain != oldRainTime)){
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), dragonStateHandler.getType()));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
 		}
 	}
 

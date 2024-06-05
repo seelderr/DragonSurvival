@@ -4,31 +4,28 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFir
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.material.FogType;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.ComputeFovModifierEvent;
-import net.minecraftforge.client.event.ViewportEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 
 import java.util.Arrays;
 import java.util.Objects;
 
-@Mod.EventBusSubscriber(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "particles_on_dragons", comment = "Particles (from the dragon type effects) will be rendered on dragons if this is enabled")
 	public static Boolean particlesOnDragons = false;
@@ -62,35 +59,32 @@ public class ClientMagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingTick(final LivingEvent.LivingTickEvent event) {
-		LivingEntity entity = event.getEntity();
-
-		if (!entity.level().isClientSide()) {
-			return;
-		}
-
-		if (!particlesOnDragons && DragonStateProvider.isDragon(entity)) {
-			return;
-		}
-
-		if (entity.hasEffect(DSEffects.BURN)) {
-			ParticleOptions data = new SmallFireParticleData(37F, false);
-			for (int i = 0; i < 4; i++) {
-				renderEffectParticle(entity, data);
+	@OnlyIn(Dist.CLIENT)
+	public static void livingTick(final EntityTickEvent event) {
+		if(event.getEntity() instanceof LivingEntity livingEntity) {
+			if (!particlesOnDragons && DragonStateProvider.isDragon(livingEntity)) {
+				return;
 			}
-		}
 
-		if (entity.hasEffect(DSEffects.DRAIN)) {
-			ParticleOptions data = new SmallPoisonParticleData(37F, false);
-			for (int i = 0; i < 4; i++) {
-				renderEffectParticle(entity, data);
+			if (livingEntity.hasEffect(DSEffects.BURN)) {
+				ParticleOptions data = new SmallFireParticleData(37F, false);
+				for (int i = 0; i < 4; i++) {
+					renderEffectParticle(livingEntity, data);
+				}
 			}
-		}
 
-		if (entity.hasEffect(DSEffects.CHARGED)) {
-			ParticleOptions data = new LargeLightningParticleData(37F, false);
-			for (int i = 0; i < 4; i++) {
-				renderEffectParticle(entity, data);
+			if (livingEntity.hasEffect(DSEffects.DRAIN)) {
+				ParticleOptions data = new SmallPoisonParticleData(37F, false);
+				for (int i = 0; i < 4; i++) {
+					renderEffectParticle(livingEntity, data);
+				}
+			}
+
+			if (livingEntity.hasEffect(DSEffects.CHARGED)) {
+				ParticleOptions data = new LargeLightningParticleData(37F, false);
+				for (int i = 0; i < 4; i++) {
+					renderEffectParticle(livingEntity, data);
+				}
 			}
 		}
 	}

@@ -1,17 +1,27 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon;
 
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class LargeFireParticle extends TextureSheetParticle{
+
+public class LargeFireParticle extends TextureSheetParticle implements ParticleOptions {
 	private final float spread;
 	private final SpriteSet sprites;
 	boolean swirls;
@@ -98,7 +108,7 @@ public class LargeFireParticle extends TextureSheetParticle{
 		super.render(buffer, renderInfo, partialTicks);
 	}
 
-	@OnlyIn( Dist.CLIENT )
+	@OnlyIn(Dist.CLIENT )
 	public static final class FireFactory implements ParticleProvider<LargeFireParticleData>{
 		private final SpriteSet spriteSet;
 
@@ -113,6 +123,24 @@ public class LargeFireParticle extends TextureSheetParticle{
 			LargeFireParticle particle = new LargeFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;
+		}
+	}
+
+	public record Data(double duration, boolean swirls) implements CustomPacketPayload {
+
+		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "large_fire_particle"));
+
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.DOUBLE,
+				Data::duration,
+				ByteBufCodecs.BOOL,
+				Data::swirls,
+				Data::new
+		);
+
+		@Override
+		public Type<? extends CustomPacketPayload> type() {
+			return TYPE;
 		}
 	}
 }

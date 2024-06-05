@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -23,15 +22,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.network.NetworkHooks;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.UUID;
 
 public class Bolas extends ThrowableItemProjectile{
 	public static final UUID SLOW_MOVEMENT = UUID.fromString("eab67409-4834-43d8-bdf6-736dc96375f2");
-	public static final UUID DISABLE_JUMP = UUID.fromString("d7c976cd-edba-46aa-9002-294d429d7741");
 
 	public Bolas(Level world){
 		super(DSEntities.BOLAS_ENTITY.get(), world);
@@ -48,7 +44,7 @@ public class Bolas extends ThrowableItemProjectile{
 
 	@Override
 	protected Item getDefaultItem(){
-		return DSItems.HUNTING_NET;
+		return DSItems.HUNTING_NET.value();
 	}
 
 	@Override
@@ -66,6 +62,7 @@ public class Bolas extends ThrowableItemProjectile{
 
 	@Override
 	public Packet<ClientGamePacketListener> getAddEntityPacket(){
+		// FIXME: What to do here?
 		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
@@ -74,7 +71,7 @@ public class Bolas extends ThrowableItemProjectile{
 		if(!entity.level().isClientSide()){
 			if(entity instanceof LivingEntity living){
 				AttributeInstance movementSpeed = living.getAttribute(Attributes.MOVEMENT_SPEED);
-				AttributeModifier bolasTrap = new AttributeModifier(SLOW_MOVEMENT, "Slow Movement", -movementSpeed.getValue() / 2.f, AttributeModifier.Operation.ADDITION);
+				AttributeModifier bolasTrap = new AttributeModifier(SLOW_MOVEMENT, "Slow Movement", -movementSpeed.getValue() / 2.f, AttributeModifier.Operation.ADD_VALUE);
 				boolean addEffect = false;
 				if(!movementSpeed.hasModifier(bolasTrap)){
 					movementSpeed.addTransientModifier(bolasTrap);
@@ -85,7 +82,7 @@ public class Bolas extends ThrowableItemProjectile{
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 					if(handler.isDragon()){
 						handler.setWingsSpread(false);
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> living), new SyncFlyingStatus(living.getId(), false));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
 					}
 				}
 

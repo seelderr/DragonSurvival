@@ -16,14 +16,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
-import net.minecraftforge.fml.ModList;
+import net.neoforged.fml.ModList;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-import software.bernie.geckolib.core.object.Color;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.util.RenderUtils;
+import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.util.RenderUtil;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
@@ -75,10 +74,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (handler.getBody() != null)
 			hasWings = hasWings || !handler.getBody().canHideWings();
 
-		CoreGeoBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
-		CoreGeoBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
-		CoreGeoBone smallLeftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingLeft");
-		CoreGeoBone smallRightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
+		GeoBone leftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingLeft");
+		GeoBone rightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("WingRight");
+		GeoBone smallLeftWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingLeft");
+		GeoBone smallRightWing = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
 
 		if (leftWing != null)
 			leftWing.setHidden(!hasWings);
@@ -113,8 +112,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 					if (bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem") && !player.getInventory().offhand.get(0).isEmpty()) {
 						poseStack.pushPose();
 
-						RenderUtils.prepMatrixForBone(poseStack, bone);
-						RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
+						RenderUtil.prepMatrixForBone(poseStack, bone);
+						RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 
 						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
 						customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
@@ -123,8 +122,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
 					if (bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "RightItem_jaw" : "RightItem") && !player.getInventory().getSelected().isEmpty()) {
 						poseStack.pushPose();
-						RenderUtils.prepMatrixForBone(poseStack, bone);
-						RenderUtils.translateAndRotateMatrixForBone(poseStack, bone);
+						RenderUtil.prepMatrixForBone(poseStack, bone);
+						RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 
 						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
 						customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
@@ -134,7 +133,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 			}
 
 			poseStack.pushPose();
-			RenderUtils.prepMatrixForBone(poseStack, bone);
+			RenderUtil.prepMatrixForBone(poseStack, bone);
 			super.renderCubesOfBone(poseStack, bone, customBuffer, packedLight, packedOverlay, red, green, blue, alpha);
 			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, customBuffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
 			poseStack.popPose();

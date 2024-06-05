@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.model.GeoModel;
-import software.bernie.geckolib.renderer.DynamicGeoEntityRenderer;
+import software.bernie.geckolib.renderer.specialty.DynamicGeoEntityRenderer;
 
 public class PrinceHorseRenderer extends DynamicGeoEntityRenderer<PrinceHorseEntity> {
 	public PrinceHorseRenderer(final EntityRendererProvider.Context context, final GeoModel<PrinceHorseEntity> model) {

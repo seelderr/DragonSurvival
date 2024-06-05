@@ -8,26 +8,27 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.model.generators.ItemModelProvider;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
-public class DataItemModelProvider extends ItemModelProvider{
+public class DataItemModelProvider extends ItemModelProvider {
 	public DataItemModelProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
 		super(output, modId, existingFileHelper);
 	}
 
 	@Override
 	protected void registerModels(){
-		DSItems.DS_ITEMS.forEach((key, item) -> basicItem(item));
+		DSItems.DS_ITEMS.getEntries().forEach((key) -> basicItem(key.get().asItem()));
 
-		DSBlocks.DS_BLOCKS.forEach((key, block) -> {
-			if (block instanceof DragonPressurePlates || block instanceof DragonAltarBlock) {
-				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/" + key);
-				withExistingParent(key, resource);
-			} else if (block instanceof TreasureBlock) {
-				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/" + key + "2");
-				withExistingParent(key, resource);
+		// TODO: Test this
+		DSBlocks.DS_BLOCKS.getEntries().forEach((key) -> {
+			if (key.get() instanceof DragonPressurePlates || key.get() instanceof DragonAltarBlock) {
+				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/");
+				withExistingParent(key.toString(), resource);
+			} else if (key.get() instanceof TreasureBlock) {
+				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/");
+				withExistingParent(key.toString(), resource);
 			}
 		});
 	}

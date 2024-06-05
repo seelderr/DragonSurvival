@@ -179,6 +179,7 @@
     "facing=north,part=middle,hinge=right,open=true": {
       "model": "dragonsurvival:block/birch_dragon_door_middle",
       "y": 180
-    }
+    },
+    "render_type": "cutout"
   }
 }

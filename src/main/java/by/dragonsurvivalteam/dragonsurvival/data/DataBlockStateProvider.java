@@ -7,13 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraftforge.client.model.generators.BlockModelBuilder;
-import net.minecraftforge.client.model.generators.BlockStateProvider;
-import net.minecraftforge.client.model.generators.ConfiguredModel;
-import net.minecraftforge.client.model.generators.ModelFile;
-import net.minecraftforge.common.data.ExistingFileHelper;
+import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
+import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
+import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
+import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class DataBlockStateProvider extends BlockStateProvider {
@@ -21,18 +20,19 @@ public class DataBlockStateProvider extends BlockStateProvider {
 		super(output, modId, existingFileHelper);
 	}
 
+	// FIXME: This almost certainly does not work as intended. Will probably need a refactor.
 	@Override
 	protected void registerStatesAndModels() {
-		DSBlocks.DS_BLOCKS.forEach((key, block) -> {
-			if (block instanceof DragonDoor) {
+		DSBlocks.DS_BLOCKS.getEntries().forEach((key) -> {
+			if (key.get() instanceof DragonDoor) {
 				// TODO
-			} else if (block instanceof DragonPressurePlates plate) {
+			} else if (key.get() instanceof DragonPressurePlates plate) {
 				ResourceLocation texture = modLoc("block/" + key);
-				ModelFile pressurePlate = models().pressurePlate(key, texture);
+				ModelFile pressurePlate = models().pressurePlate(key.toString(), texture);
 				ModelFile pressurePlateDown = models().pressurePlateDown(key + "_down", texture);
 				horizontalFacingPressurePlate(plate, pressurePlateDown, pressurePlate);
-			} else if (block instanceof DragonAltarBlock) {
-				BlockModelBuilder builder = models().withExistingParent(key, "orientable")
+			} else if (key.get() instanceof DragonAltarBlock) {
+				BlockModelBuilder builder = models().withExistingParent(key.toString(), "orientable")
 						.texture("up", modLoc("block/" + key + "_top"))
 						.texture("down", modLoc("block/" + key + "_top"))
 						.texture("east", modLoc("block/" + key + "_east"))
@@ -41,22 +41,22 @@ public class DataBlockStateProvider extends BlockStateProvider {
 						.texture("south", modLoc("block/" + key + "_south"))
 						.texture("particle", modLoc("block/" + key + "_top"));
 
-				getVariantBuilder(block)
+				getVariantBuilder(key.get())
 						.forAllStates(state ->
 								ConfiguredModel.builder()
 										.modelFile(builder)
 										.rotationY((int) state.getValue(DragonAltarBlock.FACING).toYRot())
 										.build()
 						);
-			} else if (block instanceof TreasureBlock treasureBlock) {
+			} else if (key.get() instanceof TreasureBlock treasureBlock) {
 				getVariantBuilder(treasureBlock)
 						.forAllStatesExcept(state -> {
 							int layers = state.getValue(TreasureBlock.LAYERS);
 							BlockModelBuilder builder = layers != 8 ? models()
-									.withExistingParent(key + layers * 2, "block/snow_height" + layers * 2)
+									.withExistingParent(key.toString() + layers * 2, "block/snow_height" + layers * 2)
 									.texture("particle", modLoc("block/" + key))
 									.texture("texture", modLoc("block/" + key))
-									: /* 8 layers */ models().cubeAll(key, modLoc("block/" + key));
+									: /* 8 layers */ models().cubeAll(key.toString(), modLoc("block/" + key));
 							return ConfiguredModel.builder().modelFile(builder).build();
 						}, TreasureBlock.WATERLOGGED);
 			}

@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Em
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
@@ -25,13 +24,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.InputEvent;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -41,7 +40,7 @@ import java.util.*;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-@Mod.EventBusSubscriber( Dist.CLIENT )
+@EventBusSubscriber( Dist.CLIENT )
 public class EmoteMenuHandler {
 	private static final int PER_PAGE = 10;
 	private static final ResourceLocation EMPTY_SLOT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/empty_slot.png");
@@ -169,7 +168,7 @@ public class EmoteMenuHandler {
 			initGuiEvent.addListener(new Button(startX, startY, width, height, Component.empty().append(">"), btn -> {
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 				handler.getEmoteData().emoteMenuOpen = !handler.getEmoteData().emoteMenuOpen;
-				NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
+				PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), handler.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 				currentlyKeybinding = null;
 			}, Supplier::get) {
 				@Override
@@ -276,7 +275,7 @@ public class EmoteMenuHandler {
 
 							if(emote != null){
 								handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
-								NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
+								PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), handler.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 								return true;
 							}
 						}
@@ -293,7 +292,7 @@ public class EmoteMenuHandler {
 					if(emote != null){
 						currentlyKeybinding = null;
 						handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
-						NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
+						PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), handler.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 					}
 				}, Supplier::get) {
 					@Override
@@ -354,7 +353,7 @@ public class EmoteMenuHandler {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
 			handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
 			handler.getEmoteData().emoteTicks = new Integer[EmoteCap.MAX_EMOTES];
-			NetworkHandler.CHANNEL.sendToServer(new SyncEmote(entity.getId(), handler.getEmoteData()));
+			PacketDistributor.sendToServer(new SyncEmote.Data(entity.getId(), handler.getEmoteData().serializeNBT(entity.registryAccess())));
 		}
 	}
 
@@ -373,7 +372,7 @@ public class EmoteMenuHandler {
 		cap.getEmoteData().currentEmotes = ls1.toArray(new Emote[0]);
 		cap.getEmoteData().emoteTicks = ls2.toArray(new Integer[0]);
 
-		NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), cap.getEmoteData()));
+		PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), cap.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess());
 	}
 
 	public static List<Emote> getEmotes(){
@@ -462,7 +461,7 @@ public class EmoteMenuHandler {
 		return num;
 	}
 
-	@OnlyIn( Dist.CLIENT )
+	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void onKey(InputEvent.Key keyInputEvent){
 		Screen sc = Minecraft.getInstance().screen;
@@ -485,7 +484,7 @@ public class EmoteMenuHandler {
 					}else{
 						handler.getEmoteData().emoteKeybinds.put(currentlyKeybinding, keyInputEvent.getKey());
 					}
-					NetworkHandler.CHANNEL.sendToServer(new SyncEmote(Minecraft.getInstance().player.getId(), handler.getEmoteData()));
+					PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), handler.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 					currentlyKeybinding = null;
 				}
 			}else{

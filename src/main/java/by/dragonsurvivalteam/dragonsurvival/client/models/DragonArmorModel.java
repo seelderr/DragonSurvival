@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.cache.object.GeoBone;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.Collection;
@@ -13,17 +12,13 @@ public class DragonArmorModel extends GeoModel<DragonEntity> {
 	private ResourceLocation armorTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/armor/empty_armor.png");
 
 	public DragonArmorModel(final DragonModel model) {
-		Collection<CoreGeoBone> armorBones = model.getAnimationProcessor().getRegisteredBones();
-		Collection<CoreGeoBone> dragonBones = getAnimationProcessor().getRegisteredBones();
+		Collection<GeoBone> armorBones = model.getAnimationProcessor().getRegisteredBones();
+		Collection<GeoBone> dragonBones = getAnimationProcessor().getRegisteredBones();
 
-		for(CoreGeoBone armorBone : armorBones) {
-			GeoBone armorGeoBone = (GeoBone) armorBone;
-
-			for (CoreGeoBone dragonBone : dragonBones) {
-				GeoBone dragonGeobone = (GeoBone) dragonBone;
-
-				if (armorGeoBone.getName().equals(dragonGeobone.getName())) {
-					dragonGeobone.getChildBones().add(armorGeoBone);
+		for(GeoBone armorBone : armorBones) {
+			for (GeoBone dragonBone : dragonBones) {
+				if (armorBone.getName().equals(dragonBone.getName())) {
+					dragonBone.getChildBones().add(armorBone);
 					break;
 				}
 			}

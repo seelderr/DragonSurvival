@@ -494,19 +494,19 @@ public class DSBlocks{
 	);
 
 	public static final DeferredHolder<Block, DragonBeacon> PEACE_DRAGON_BEACON = DS_BLOCKS.register(
-			"peace_dragon_beacon",
+			"dragon_beacon_peace",
 			() -> new DragonBeacon(DRAGON_BEACON.get().properties()
 					.lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
 	);
 
 	public static final DeferredHolder<Block, DragonBeacon> MAGIC_DRAGON_BEACON = DS_BLOCKS.register(
-			"magic_dragon_beacon",
+			"dragon_beacon_magic",
 			() -> new DragonBeacon(DRAGON_BEACON.get().properties()
 					.lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
 	);
 
 	public static final DeferredHolder<Block, DragonBeacon> FIRE_DRAGON_BEACON = DS_BLOCKS.register(
-			"fire_dragon_beacon",
+			"dragon_beacon_fire",
 			() -> new DragonBeacon(DRAGON_BEACON.get().properties()
 					.lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
 	);

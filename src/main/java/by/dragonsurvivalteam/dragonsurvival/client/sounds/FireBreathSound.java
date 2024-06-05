@@ -4,15 +4,15 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.Ne
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn( Dist.CLIENT )
 public class FireBreathSound extends AbstractTickableSoundInstance{
 	private final NetherBreathAbility ability;
 
 	public FireBreathSound(NetherBreathAbility ability){
-		super(DSSounds.FIRE_BREATH_LOOP, SoundSource.PLAYERS,ability.getPlayer().getRandom());
+		super(DSSounds.FIRE_BREATH_LOOP.get(), SoundSource.PLAYERS,ability.getPlayer().getRandom());
 		looping = true;
 
 		this.x = ability.getPlayer().getX();

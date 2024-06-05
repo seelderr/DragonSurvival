@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import net.minecraft.core.BlockPos;
@@ -22,8 +23,8 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.common.loot.IGlobalLootModifier;
-import net.minecraftforge.common.loot.LootModifier;
+import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+import net.neoforged.neoforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Supplier;
@@ -31,7 +32,7 @@ import java.util.function.Supplier;
 public class DragonOreLootModifier extends LootModifier {
 
     // No codec at the moment. This is just a formality.
-    public static final Supplier<Codec<DragonOreLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.create(inst -> codecStart(inst).apply(inst, DragonOreLootModifier::new)));
+    public static final Supplier<MapCodec<DragonOreLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, DragonOreLootModifier::new)));
 
     TagKey<Block> ores = BlockTags.create(new ResourceLocation("forge", "ores"));
 
@@ -53,8 +54,8 @@ public class DragonOreLootModifier extends LootModifier {
                             int fortuneLevel = 0;
                             int silkTouchLevel = 0;
                             if (tool != null) {
-                                fortuneLevel = tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
-                                silkTouchLevel = tool.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE);
+                                fortuneLevel = tool.getEnchantmentLevel(Enchantments.FORTUNE);
+                                silkTouchLevel = tool.getEnchantmentLevel(Enchantments.FORTUNE);
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), context.getRandom(), blockPos, fortuneLevel, silkTouchLevel);
@@ -90,7 +91,7 @@ public class DragonOreLootModifier extends LootModifier {
     }
 
     @Override
-    public Codec<? extends IGlobalLootModifier> codec() {
+    public MapCodec<? extends IGlobalLootModifier> codec() {
         return CODEC.get();
     }
 }

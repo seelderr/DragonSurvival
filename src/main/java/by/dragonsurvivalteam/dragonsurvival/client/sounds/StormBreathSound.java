@@ -5,15 +5,15 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import net.minecraft.client.resources.sounds.AbstractTickableSoundInstance;
 import net.minecraft.sounds.SoundSource;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn( Dist.CLIENT )
 public class StormBreathSound extends AbstractTickableSoundInstance{
 	private final StormBreathAbility ability;
 
 	public StormBreathSound(StormBreathAbility ability){
-		super(DSSounds.STORM_BREATH_LOOP, SoundSource.PLAYERS, ability.getPlayer().getRandom());
+		super(DSSounds.STORM_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
 

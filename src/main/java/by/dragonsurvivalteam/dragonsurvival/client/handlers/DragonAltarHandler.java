@@ -2,12 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class DragonAltarHandler {
     public static boolean shouldAltarOpen = false;
 
@@ -20,7 +20,7 @@ public class DragonAltarHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(final TickEvent.PlayerTickEvent.ClientTickEvent event) {
+    public static void onPlayerTick(final ClientTickEvent event) {
         if (shouldAltarOpen) {
             Minecraft minecraft = Minecraft.getInstance();
 

@@ -60,5 +60,6 @@
       "model": "dragonsurvival:block/acacia_small_dragon_door",
       "y": 180
     }
-  }
+  },
+  "render_type": "cutout"
 }

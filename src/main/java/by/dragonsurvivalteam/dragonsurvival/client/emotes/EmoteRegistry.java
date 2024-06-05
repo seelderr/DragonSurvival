@@ -1,9 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
-import com.eliotlash.mclib.math.Constant;
 import com.google.gson.Gson;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -11,16 +9,12 @@ import net.minecraft.server.packs.resources.ReloadableResourceManager;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-import software.bernie.geckolib.cache.GeckoLibCache;
-import software.bernie.geckolib.core.animation.Animation;
-import software.bernie.geckolib.core.keyframe.BoneAnimation;
-import software.bernie.geckolib.loading.object.BakedAnimations;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,7 +25,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-@Mod.EventBusSubscriber( bus = Mod.EventBusSubscriber.Bus.MOD )
+@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class EmoteRegistry{
 	public static final ResourceLocation CLIENT_EMOTES = new ResourceLocation(DragonSurvivalMod.MODID, "emotes.json");
 	public static final ArrayList<Emote> EMOTES = new ArrayList<>();
@@ -164,7 +158,7 @@ public class EmoteRegistry{
 //		}
 	}
 
-	@Mod.EventBusSubscriber( Dist.CLIENT )
+	@EventBusSubscriber( Dist.CLIENT )
 	public static class clientStart{
 		@OnlyIn( Dist.CLIENT )
 		@SubscribeEvent
