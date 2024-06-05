@@ -6,12 +6,12 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonAltarHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.ISidedMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
@@ -26,18 +26,22 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.network.NetworkEvent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
+
 
 /** To avoid loading client classes on the server side */
 public class ClientProxy {
@@ -49,45 +53,45 @@ public class ClientProxy {
         return null;
     }
 
-    public static void handleSyncDragonClawRender(final SyncDragonClawRender message) {
+    public static void handleSyncDragonClawRender(final SyncDragonClawRender.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
-                DragonStateProvider.getCap(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state);
+                DragonStateProvider.getCap(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state());
             }
         }
     }
 
-    public static void handleSyncDragonClawsMenu(final SyncDragonClawsMenu message) {
+    public static void handleSyncDragonClawsMenu(final SyncDragonClawsMenu.Data message, HolderLookup.Provider provider) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
                 DragonStateProvider.getCap(entity).ifPresent(handler -> {
-                    handler.getClawToolData().setMenuOpen(message.state);
-                    handler.getClawToolData().setClawsInventory(message.clawInventory);
+                    handler.getClawToolData().setMenuOpen(message.state());
+                    handler.getClawToolData().deserializeNBT(provider, message.clawInventory());
                 });
             }
         }
     }
 
-    public static void handleSyncDragonSkinSettings(final SyncDragonSkinSettings message) {
+    public static void handleSyncDragonSkinSettings(final SyncDragonSkinSettings.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
             Level world = localPlayer.level();
-            Entity entity = world.getEntity(message.playerId);
+            Entity entity = world.getEntity(message.playerId());
 
             if (entity instanceof Player) {
                 DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.getSkinData().renderNewborn = message.newborn;
-                    dragonStateHandler.getSkinData().renderYoung = message.young;
-                    dragonStateHandler.getSkinData().renderAdult = message.adult;
+                    dragonStateHandler.getSkinData().renderNewborn = message.newborn();
+                    dragonStateHandler.getSkinData().renderYoung = message.young();
+                    dragonStateHandler.getSkinData().renderAdult = message.adult();
                 });
             }
         }
@@ -95,11 +99,11 @@ public class ClientProxy {
 
     public static void requestClientData(final DragonStateHandler handler) {
         if (handler == DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player)) {
-            ClientEvents.sendClientData(new RequestClientData(handler.getType(), handler.getBody(), handler.getLevel()));
+            ClientEvents.sendClientData(new RequestClientData.Data(handler.getType(), handler.getBody(), handler.getLevel()));
         }
     }
 
-    public static void handleRequestClientData(final RequestClientData message) {
+    public static void handleRequestClientData(final RequestClientData.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -107,44 +111,32 @@ public class ClientProxy {
         }
     }
 
-    public static <T extends ISidedMessage<T>> void handleRunClient(final T message, final NetworkEvent.Context context) {
-        context.enqueueWork(() -> {
-            Player localPlayer = Minecraft.getInstance().player;
-
-            if (localPlayer != null) {
-                Entity entity = localPlayer.level().getEntity(message.playerId);
-
-                if (entity instanceof Player player) {
-                    message.runClient(message, context, player);
-                }
-            }
-        });
-    }
-
-    public static void handleSyncPlayerSkinPreset(final SyncPlayerSkinPreset message) {
+    public static void handleSyncPlayerSkinPreset(final SyncPlayerSkinPreset.Data message, HolderLookup.Provider provider) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    handler.getSkinData().skinPreset = message.preset;
+                    SkinPreset preset = new SkinPreset();
+                    preset.deserializeNBT(provider, message.preset());
+                    handler.getSkinData().skinPreset = preset;
                     handler.getSkinData().compileSkin();
                 });
             }
         }
     }
 
-    public static void handleSyncFlightSpeed(final SyncFlightSpeed message) {
+    public static void handleSyncFlightSpeed(final SyncFlightSpeed.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             // Local player already has the correct values of themselves
             if (entity instanceof Player player && player != localPlayer) {
-                player.setDeltaMovement(message.flightSpeed);
+                player.setDeltaMovement(message.flightSpeedX(), message.flightSpeedY(), message.flightSpeedZ());
             }
         }
     }
@@ -157,29 +149,29 @@ public class ClientProxy {
         Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
     }
 
-    public static void handleSyncFlyingStatus(final SyncFlyingStatus message) {
+    public static void handleSyncFlyingStatus(final SyncFlyingStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setWingsSpread(message.state));
+                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setWingsSpread(message.state()));
             }
         }
     }
 
-    public static void handleSyncSpinStatus(final SyncSpinStatus message) {
+    public static void handleSyncSpinStatus(final SyncSpinStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.getMovementData().spinAttack = message.spinAttack;
-                    dragonStateHandler.getMovementData().spinCooldown = message.spinCooldown;
-                    dragonStateHandler.getMovementData().spinLearned = message.spinLearned;
+                    dragonStateHandler.getMovementData().spinAttack = message.spinAttack();
+                    dragonStateHandler.getMovementData().spinCooldown = message.spinCooldown();
+                    dragonStateHandler.getMovementData().spinLearned = message.spinLearned();
                 });
 
                 ClientFlightHandler.lastSync = player.tickCount;
@@ -187,25 +179,25 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncAbilityCasting(final SyncAbilityCasting message) {
+    public static void handleSyncAbilityCasting(final SyncAbilityCasting.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot);
-                    ability.loadNBT(message.nbt);
-                    handler.getMagicData().isCasting = message.isCasting;
+                    ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot());
+                    ability.loadNBT(message.nbt());
+                    handler.getMagicData().isCasting = message.isCasting();
 
-                    if (message.isCasting) {
+                    if (message.isCasting()) {
                         ability.onKeyPressed(player, () -> {
                             if (player.getId() == localPlayer.getId()) {
                                 ClientCastingHandler.hasCast = true;
                                 ClientCastingHandler.status = ClientCastingHandler.StatusStop;
                             }
-                        }, message.castStartTime, message.clientTime);
+                        }, message.castStartTime(), message.clientTime());
                     } else {
                         ability.onKeyReleased(player);
                     }
@@ -214,77 +206,77 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncMagicCap(final SyncMagicCap message) {
+    public static void handleSyncMagicCap(final SyncMagicCap.Data message, HolderLookup.Provider provider) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMagicData().readNBT(message.nbt));
+                DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMagicData().deserializeNBT(provider, message.nbt()));
             }
         }
     }
 
-    public static void handleSyncMagicstats(final SyncMagicStats message) {
+    public static void handleSyncMagicstats(final SyncMagicStats.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerid);
+            Entity entity = localPlayer.level().getEntity(message.playerid());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    handler.getMagicData().setCurrentMana(message.currentMana);
-                    handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
-                    handler.getMagicData().setRenderAbilities(message.renderHotbar);
+                    handler.getMagicData().setCurrentMana(message.currentMana());
+                    handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot());
+                    handler.getMagicData().setRenderAbilities(message.renderHotbar());
                 });
             }
         }
     }
 
-    public static void handleSyncPotionAddedEffect(final SyncPotionAddedEffect message) {
+    public static void handleSyncPotionAddedEffect(final SyncPotionAddedEffect.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.entityId);
-            MobEffect mobEffect = MobEffect.byId(message.effectId);
+            Entity entity = localPlayer.level().getEntity(message.entityId());
+            Optional<Holder.Reference<MobEffect>> mobEffect = BuiltInRegistries.MOB_EFFECT.getHolder(message.effectId());
 
-            if (mobEffect != null) {
+            if (mobEffect.isPresent()) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.addEffect(new MobEffectInstance(mobEffect, message.duration, message.amplifier));
+                    livingEntity.addEffect(new MobEffectInstance(mobEffect.get(), message.duration(), message.amplifier()));
                 }
             }
         }
     }
 
-    public static void handleSyncPotionRemovedEffect(final SyncPotionRemovedEffect message) {
+    public static void handleSyncPotionRemovedEffect(final SyncPotionRemovedEffect.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
-            MobEffect mobEffect = MobEffect.byId(message.effectId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
+            Optional<Holder.Reference<MobEffect>> mobEffect = BuiltInRegistries.MOB_EFFECT.getHolder(message.effectId());
 
             if (mobEffect != null) {
                 if (entity instanceof LivingEntity livingEntity) {
-                    livingEntity.removeEffect(mobEffect);
+                    livingEntity.removeEffect(mobEffect.get());
                 }
             }
         }
     }
 
-    public static void handlePacketSyncCapabilityMovement(final PacketSyncCapabilityMovement message) {
+    public static void handlePacketSyncCapabilityMovement(final SyncDragonMovement.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw, message.headYaw, message.headPitch, message.bite));
+                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw(), message.headYaw(), message.headPitch(), message.bite()));
             }
         }
     }
 
-    public static void handleSyncChatEvent(final SyncChatEvent message) {
+    public static void handleSyncChatEvent(final SyncChatEvent.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -292,31 +284,31 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncDragonTypeData(final SyncDragonTypeData message) {
+    public static void handleSyncDragonTypeData(final SyncDragonType.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
                     if (handler.getType() != null) {
-                        handler.getType().readNBT(message.nbt);
+                        handler.getType().readNBT(message.nbt());
                     }
                 });
             }
         }
     }
 
-    public static void handleSyncGrowthState(final SyncGrowthState message) {
+    public static void handleSyncGrowthState(final SyncGrowthState.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            DragonStateProvider.getCap(localPlayer).ifPresent(handler -> handler.growing = message.growing);
+            DragonStateProvider.getCap(localPlayer).ifPresent(handler -> handler.growing = message.growing());
         }
     }
 
-    public static void handleSynchronizeDragonCap(final SynchronizeDragonCap message) {
+    public static void handleSynchronizeDragonCap(final SyncDragonHandler.Data message) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
         // TODO :: use string uuid?
@@ -325,16 +317,16 @@ public class ClientProxy {
                 ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
             }
 
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    handler.setType(message.dragonType, player);
-                    handler.setBody(message.dragonBody, player);
-                    handler.setIsHiding(message.hiding);
-                    handler.setHasFlight(message.hasWings);
-                    handler.setSize(message.size, player);
-                    handler.setPassengerId(message.passengerId);
+                    handler.setType(message.dragonType(), player);
+                    handler.setBody(message.dragonBody(), player);
+                    handler.setIsHiding(message.hiding());
+                    handler.setHasFlight(message.hasWings());
+                    handler.setSize(message.size(), player);
+                    handler.setPassengerId(message.passengerId());
                 });
 
                 // Refresh instances
@@ -347,36 +339,36 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncSize(final SyncSize message) {
-        Entity entity = Minecraft.getInstance().level.getEntity(message.playerId);
+    public static void handleSyncSize(final SyncSize.Data message) {
+        Entity entity = Minecraft.getInstance().level.getEntity(message.playerId());
 
         if (entity instanceof Player player) {
-            DragonStateProvider.getCap(player).ifPresent(handler -> handler.setSize(message.size, player));
+            DragonStateProvider.getCap(player).ifPresent(handler -> handler.setSize(message.size(), player));
             player.refreshDimensions();
         }
     }
 
-    public static void handleDiggingStatus(final DiggingStatus message) {
+    public static void handleDiggingStatus(final SyncDiggingStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMovementData().dig = message.status);
+                DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMovementData().dig = message.status());
             }
         }
     }
 
-    public static void handlePlayerJumpSync(final PlayerJumpSync message) {
-        Entity entity = Minecraft.getInstance().level.getEntity(message.playerId);
+    public static void handlePlayerJumpSync(final SyncPlayerJump.Data message) {
+        Entity entity = Minecraft.getInstance().level.getEntity(message.playerId());
 
         if (entity instanceof Player player) {
-            ClientEvents.dragonsJumpingTicks.put(player.getId(), message.ticks);
+            ClientEvents.dragonsJumpingTicks.put(player.getId(), message.ticks());
         }
     }
 
-    public static void handleRefreshDragons(final RefreshDragons message) {
+    public static void handleRefreshDragons(final RefreshDragon.Data message) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;
 
         ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(localPlayer.level());
@@ -385,7 +377,7 @@ public class ClientProxy {
             ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
         }
 
-        Entity entity = localPlayer.level().getEntity(message.playerId);
+        Entity entity = localPlayer.level().getEntity(message.playerId());
 
         if (entity instanceof Player player) {
             DragonEntity dragon = DSEntities.DRAGON.get().create(localPlayer.level());
@@ -394,15 +386,15 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncAltarCooldown(final SyncAltarCooldown message) {
+    public static void handleSyncAltarCooldown(final SyncAltarCooldown.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
-                dragonStateHandler.altarCooldown = message.cooldown;
+                dragonStateHandler.altarCooldown = message.cooldown();
             }
         }
     }
@@ -422,20 +414,20 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncTreasureRestStatus(final SyncTreasureRestStatus message) {
+    public static void handleSyncTreasureRestStatus(final SyncTreasureRestStatus.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId);
+            Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    if (message.state != handler.treasureResting) {
+                    if (message.state() != handler.treasureResting) {
                         handler.treasureRestTimer = 0;
                         handler.treasureSleepTimer = 0;
                     }
 
-                    handler.treasureResting = message.state;
+                    handler.treasureResting = message.state();
                 });
             }
         }

@@ -28,9 +28,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 		context.enqueueWork(() -> {
 			Player player = context.player();
 			DragonStateHandler handler = player.getData(DRAGON_HANDLER);
-			SimpleContainer container = handler.getClawToolData().getClawsInventory();
 			handler.deserializeNBT(context.player().registryAccess(), message.nbt);
-			handler.getClawToolData().setClawsInventory(container); // TODO :: Why is the old state restored?
 			player.refreshDimensions();
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message);
 		});

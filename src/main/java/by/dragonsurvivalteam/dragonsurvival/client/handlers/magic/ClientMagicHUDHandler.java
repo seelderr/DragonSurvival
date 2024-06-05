@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -58,10 +59,11 @@ public class ClientMagicHUDHandler {
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
-	public static boolean renderExperienceBar(final ForgeGui gui, GuiGraphics guiGraphics, int screenWidth) {
+	public static boolean renderExperienceBar(final Gui gui, GuiGraphics guiGraphics, int screenWidth) {
 		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		if (localPlayer == null || !gui.shouldDrawSurvivalElements() || !Minecraft.getInstance().gameMode.hasExperience()) {
+		// FIXME: Figure out how to draw gui in correct situation
+		if (localPlayer == null || /*!gui.shouldDrawSurvivalElements() ||*/ !Minecraft.getInstance().gameMode.hasExperience()) {
 			return false;
 		}
 

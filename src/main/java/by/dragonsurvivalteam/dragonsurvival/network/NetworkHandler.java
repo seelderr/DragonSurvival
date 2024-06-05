@@ -44,6 +44,8 @@ public class NetworkHandler {
 		registrar.playToClient(RequestClientData.Data.TYPE, RequestClientData.Data.STREAM_CODEC, RequestClientData::handleClient);
 		registrar.playBidirectional(SyncComplete.Data.TYPE, SyncComplete.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncComplete::handleClient, SyncComplete::handleServer));
 		registrar.playToClient(SyncBrokenTool.Data.TYPE, SyncBrokenTool.Data.STREAM_CODEC, SyncBrokenTool::handleClient);
+		registrar.playToServer(RequestOpenDragonInventory.Data.TYPE, RequestOpenDragonInventory.Data.STREAM_CODEC, RequestOpenDragonInventory::handleServer);
+		registrar.playToServer(RequestOpenInventory.Data.TYPE, RequestOpenInventory.Data.STREAM_CODEC, RequestOpenInventory::handleServer);
 
 		// Status
 		registrar.playToClient(SyncGrowthState.Data.TYPE, SyncGrowthState.Data.STREAM_CODEC, SyncGrowthState::handleClient);
@@ -64,7 +66,6 @@ public class NetworkHandler {
 		registrar.playToClient(SyncDragonClawsMenu.Data.TYPE, SyncDragonClawsMenu.Data.STREAM_CODEC, SyncDragonClawsMenu::handleClient);
 
 		// Ability packets
-		registrar.playToServer(SyncOpenDragonInventory.Data.TYPE, SyncOpenDragonInventory.Data.STREAM_CODEC, SyncOpenDragonInventory::handleServer);
 		registrar.playToClient(SyncMagicStats.Data.TYPE, SyncMagicStats.Data.STREAM_CODEC, SyncMagicStats::handleClient);
 		registrar.playBidirectional(SyncMagicCap.Data.TYPE, SyncMagicCap.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncMagicCap::handleClient, SyncMagicCap::handleServer));
 		registrar.playToServer(SyncDragonAbilitySlot.Data.TYPE, SyncDragonAbilitySlot.Data.STREAM_CODEC, SyncDragonAbilitySlot::handleServer);

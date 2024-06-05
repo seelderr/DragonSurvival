@@ -12,14 +12,13 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.ForgeGui;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
-@Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class RenderHudEvents {
     @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaFoodLevel", comment = "Re-enable the vanilla hud for the food level")
     public static Boolean vanillaFoodLevel = false;
@@ -27,35 +26,31 @@ public class RenderHudEvents {
     @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaExperienceBar", comment = "Re-enable the vanilla hud for the experience bar")
     public static Boolean vanillaExperienceBar = false;
 
-    public static ForgeGui getForgeGUI() {
-        return (ForgeGui) Minecraft.getInstance().gui;
-    }
-
     @SubscribeEvent(receiveCanceled = true)
-    public static void onRenderOverlay(final RenderGuiOverlayEvent.Pre event) {
+    public static void onRenderOverlay(final RenderGuiLayerEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
 
         if (event.isCanceled() || minecraft.options.hideGui){
             return;
         }
 
-        int screenWidth = event.getWindow().getGuiScaledWidth();
-        int screenHeight = event.getWindow().getGuiScaledHeight();
-        ResourceLocation id = event.getOverlay().id();
+        int screenWidth = event.getGuiGraphics().guiWidth();
+        int screenHeight = event.getGuiGraphics().guiHeight();
+        ResourceLocation id = event.getName();
 
-        if (DragonFoodHandler.customDragonFoods && !vanillaFoodLevel && id == VanillaGuiOverlay.FOOD_LEVEL.id()) {
-            boolean wasRendered = DragonFoodHandler.renderFoodBar(getForgeGUI(), event.getGuiGraphics(), screenWidth, screenHeight);
-
-            if (wasRendered) {
-                event.setCanceled(true);
-            }
-        } else if (ServerConfig.consumeEXPAsMana && !vanillaExperienceBar && id == VanillaGuiOverlay.EXPERIENCE_BAR.id()) {
-            boolean wasRendered = ClientMagicHUDHandler.renderExperienceBar(getForgeGUI(), event.getGuiGraphics(), screenWidth);
+        if (DragonFoodHandler.customDragonFoods && !vanillaFoodLevel && id == VanillaGuiLayers.FOOD_LEVEL) {
+            boolean wasRendered = DragonFoodHandler.renderFoodBar(Minecraft.getInstance().gui, event.getGuiGraphics(), screenWidth, screenHeight);
 
             if (wasRendered) {
                 event.setCanceled(true);
             }
-        } else if (id == VanillaGuiOverlay.AIR_LEVEL.id()) {
+        } else if (ServerConfig.consumeEXPAsMana && !vanillaExperienceBar && id == VanillaGuiLayers.EXPERIENCE_BAR) {
+            boolean wasRendered = ClientMagicHUDHandler.renderExperienceBar(Minecraft.getInstance().gui, event.getGuiGraphics(), screenWidth);
+
+            if (wasRendered) {
+                event.setCanceled(true);
+            }
+        } else if (id == VanillaGuiLayers.AIR_LEVEL) {
             DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(ClientProxy.getLocalPlayer());
 
             if (handler == null || !handler.isDragon()) {
@@ -63,7 +58,7 @@ public class RenderHudEvents {
             }
 
             // Render dragon specific hud elements (e.g. time in rain for cave dragons or time without water for sea dragons)
-            ClientEvents.renderOverlay(handler, getForgeGUI(), event.getGuiGraphics());
+            ClientEvents.renderOverlay(handler, Minecraft.getInstance().gui, event.getGuiGraphics());
             // Renders the abilities
             ClientMagicHUDHandler.renderAbilityHud(handler, event.getGuiGraphics(), screenWidth, screenHeight);
             // Renders the growth icon above the experience bar when an item is selected which grants growth

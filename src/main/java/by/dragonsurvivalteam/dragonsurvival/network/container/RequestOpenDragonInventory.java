@@ -19,7 +19,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
-public class SyncOpenDragonInventory implements IMessage<SyncOpenDragonInventory.Data> {
+public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInventory.Data> {
 
 	// FIXME: This randomly fails rarely (about 1 in 20 times) and I have no idea why.
 	// This is needed since an OpenInventory message normally resets the cursor back to the center of the screen.
@@ -27,10 +27,10 @@ public class SyncOpenDragonInventory implements IMessage<SyncOpenDragonInventory
 	public static void SendOpenDragonInventoryAndMaintainCursorPosition() {
 		ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
 		ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
-		PacketDistributor.sendToServer(new SyncOpenDragonInventory.Data());
+		PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
 	}
 
-	public static void handleServer(final SyncOpenDragonInventory.Data message, final IPayloadContext context) {
+	public static void handleServer(final RequestOpenDragonInventory.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
 		if (handler.isDragon()) {
@@ -43,14 +43,14 @@ public class SyncOpenDragonInventory implements IMessage<SyncOpenDragonInventory
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<SyncOpenDragonInventory.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_inventory"));
+		public static final Type<RequestOpenDragonInventory.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_inventory"));
 
-		public static final StreamCodec<ByteBuf, SyncOpenDragonInventory.Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, RequestOpenDragonInventory.Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override
-			public void encode(ByteBuf pBuffer, SyncOpenDragonInventory.Data pValue) {}
+			public void encode(ByteBuf pBuffer, RequestOpenDragonInventory.Data pValue) {}
 
 			@Override
-			public SyncOpenDragonInventory.Data decode(ByteBuf pBuffer) { return new SyncOpenDragonInventory.Data(); }
+			public RequestOpenDragonInventory.Data decode(ByteBuf pBuffer) { return new RequestOpenDragonInventory.Data(); }
 		};
 
 		@Override

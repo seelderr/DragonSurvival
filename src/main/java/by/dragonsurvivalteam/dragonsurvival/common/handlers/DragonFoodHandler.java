@@ -2,22 +2,34 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ToolTipHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
@@ -294,16 +306,16 @@ public class DragonFoodHandler {
 		return itemStack.getFoodProperties(null) != null;
 	}
 
-	// TODO: Why are we rendering a custom food bar?
-	/*@OnlyIn(Dist.CLIENT)
-	public static boolean renderFoodBar(final ForgeGui forgeGUI, final GuiGraphics guiGraphics, int width, int height) {
+	@OnlyIn(Dist.CLIENT)
+	public static boolean renderFoodBar(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
 		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		if (localPlayer == null || !forgeGUI.shouldDrawSurvivalElements()) {
+		// FIXME: Figure out how to handle this
+		if (localPlayer == null /*!gui.shouldDrawSurvivalElements()*/) {
 			return false;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getHandler(localPlayer);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(localPlayer);
 
 		if (handler == null || !handler.isDragon()) {
 			return false;
@@ -312,8 +324,8 @@ public class DragonFoodHandler {
 		Minecraft.getInstance().getProfiler().push("food");
 		RenderSystem.enableBlend();
 
-		rightHeight = forgeGUI.rightHeight;
-		forgeGUI.rightHeight += 10;
+		rightHeight = gui.rightHeight;
+		gui.rightHeight += 10;
 
 		final int left = width / 2 + 91;
 		final int top = height - rightHeight;
@@ -344,7 +356,7 @@ public class DragonFoodHandler {
 		Minecraft.getInstance().getProfiler().pop();
 
 		return true;
-	}*/
+	}
 
 	public static int getUseDuration(final ItemStack itemStack, final LivingEntity entity) {
 		FoodProperties foodProperties = itemStack.getFoodProperties(entity);

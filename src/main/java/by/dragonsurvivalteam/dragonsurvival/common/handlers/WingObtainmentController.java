@@ -30,6 +30,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.loading.FMLLoader;
 import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -109,7 +111,7 @@ public class WingObtainmentController{
 		}
 	}
 	@OnlyIn(Dist.CLIENT)
-	public static void clientMessageRecieved(SyncChatEvent event){
+	public static void clientMessageRecieved(SyncChatEvent.Data event){
 		Player player = Minecraft.getInstance().player;
 		if (player == null)
 			return;

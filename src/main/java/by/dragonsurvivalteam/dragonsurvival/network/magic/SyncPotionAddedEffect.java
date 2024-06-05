@@ -16,12 +16,12 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect.Dat
 		context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
 	}
 
-	public record Data(int playerId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
+	public record Data(int entityId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "potion_added_effect"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,
-			Data::playerId,
+			Data::entityId,
 			ByteBufCodecs.VAR_INT,
 			Data::effectId,
 			ByteBufCodecs.VAR_INT,

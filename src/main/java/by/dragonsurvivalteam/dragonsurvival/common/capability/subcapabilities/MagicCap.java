@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 import java.util.ArrayList;
@@ -212,7 +213,7 @@ public class MagicCap extends SubCap{
 	}
 
 	@Override
-	public CompoundTag writeNBT(){
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
 
 		tag.putBoolean("renderSkills", renderAbilities);
@@ -227,7 +228,7 @@ public class MagicCap extends SubCap{
 	}
 
 	@Override
-	public void readNBT(CompoundTag tag){
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag){
 		onMagicSource = tag.getBoolean("onMagicSource");
 		magicSourceTimer = tag.getInt("magicSourceTimer");
 

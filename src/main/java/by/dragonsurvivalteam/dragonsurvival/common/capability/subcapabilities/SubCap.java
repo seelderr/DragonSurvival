@@ -2,8 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
+import net.minecraft.nbt.CompoundTag;
+import net.neoforged.neoforge.common.util.INBTSerializable;
 
-public abstract class SubCap implements NBTInterface{
+public abstract class SubCap implements INBTSerializable<CompoundTag> {
 	public DragonStateHandler handler;
 
 	public SubCap(DragonStateHandler handler){

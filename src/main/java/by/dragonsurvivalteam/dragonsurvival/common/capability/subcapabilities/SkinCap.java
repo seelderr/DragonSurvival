@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
 public class SkinCap extends SubCap{
@@ -29,7 +30,7 @@ public class SkinCap extends SubCap{
 	}
 
 	@Override
-	public CompoundTag writeNBT(){
+	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag tag = new CompoundTag();
 
 		tag.putBoolean("renderNewborn", renderNewborn);
@@ -42,7 +43,7 @@ public class SkinCap extends SubCap{
 	}
 
 	@Override
-	public void readNBT(CompoundTag tag){
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag){
 		renderNewborn = tag.getBoolean("renderNewborn");
 		renderYoung = tag.getBoolean("renderYoung");
 		renderAdult = tag.getBoolean("renderAdult");

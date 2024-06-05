@@ -109,28 +109,4 @@ public class ClientMagicHandler{
 			localPlayer.level().addParticle(particle, x, y, z, 0, 0, 0);
 		}
 	}
-
-	@SubscribeEvent
-	public static void removeLavaAndWaterFog(ViewportEvent.RenderFog event){
-		LocalPlayer player = Minecraft.getInstance().player;
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
-			if(!cap.isDragon()){
-				return;
-			}
-
-			if(Objects.equals(cap.getType(), DragonTypes.CAVE) && event.getCamera().getFluidInCamera() == FogType.LAVA){
-				if(player.hasEffect(DSEffects.LAVA_VISION)){
-					event.setNearPlaneDistance(-32.0F);
-					event.setFarPlaneDistance(128.0F);
-					event.setCanceled(true);
-				}
-			}else if(Objects.equals(cap.getType(), DragonTypes.SEA) && event.getCamera().getFluidInCamera() == FogType.WATER){
-				if(player.hasEffect(DSEffects.WATER_VISION)){
-					event.setNearPlaneDistance(-32.0F);
-					event.setFarPlaneDistance(128.0F);
-					event.setCanceled(true);
-				}
-			}
-		});
-	}
 }

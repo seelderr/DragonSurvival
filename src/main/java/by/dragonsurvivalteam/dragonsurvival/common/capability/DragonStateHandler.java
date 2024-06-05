@@ -569,7 +569,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
 
 		for (int i = 0; i < caps.length; i++) {
-			tag.put("cap_" + i, caps[i].get().writeNBT());
+			tag.put("cap_" + i, caps[i].get().serializeNBT(provider));
 		}
 
 		tag.putInt("altarCooldown", altarCooldown);
@@ -639,7 +639,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		for (int i = 0; i < caps.length; i++) {
 			if (tag.contains("cap_" + i)) {
-				caps[i].get().readNBT((CompoundTag) tag.get("cap_" + i));
+				caps[i].get().deserializeNBT(provider, (CompoundTag) tag.get("cap_" + i));
 			}
 		}
 

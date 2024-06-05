@@ -1,19 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraftforge.common.util.Lazy;
+import net.neoforged.neoforge.common.util.INBTSerializable;
+import net.neoforged.neoforge.common.util.Lazy;
+import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.HashMap;
 
-public class SkinPreset implements NBTInterface{
+public class SkinPreset implements INBTSerializable<CompoundTag> {
 	public HashMap<DragonLevel, Lazy<SkinAgeGroup>> skinAges = new HashMap<>();
 
 	public SkinPreset(){
@@ -33,7 +34,7 @@ public class SkinPreset implements NBTInterface{
 	}
 
 	@Override
-	public CompoundTag writeNBT(){
+	public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag nbt = new CompoundTag();
 
 		for(DragonLevel level : DragonLevel.values()){
@@ -44,7 +45,7 @@ public class SkinPreset implements NBTInterface{
 	}
 
 	@Override
-	public void readNBT(CompoundTag base){
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag base) {
 		for(DragonLevel level : DragonLevel.values()){
 			skinAges.put(level,
 					Lazy.of(()->{

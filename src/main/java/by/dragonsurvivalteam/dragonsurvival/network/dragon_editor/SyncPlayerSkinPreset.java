@@ -19,7 +19,7 @@ import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonState
 
 public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset.Data> {
 	public static void handleClient(final SyncPlayerSkinPreset.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncPlayerSkinPreset(message));
+		context.enqueueWork(() -> ClientProxy.handleSyncPlayerSkinPreset(message, context.player().registryAccess()));
 	}
 
 	public static void handleServer(final SyncPlayerSkinPreset.Data message, final IPayloadContext context) {
@@ -28,7 +28,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset.Data>
 		context.enqueueWork(() -> {
 			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
 			SkinPreset preset = new SkinPreset();
-			preset.readNBT(message.preset);
+			preset.deserializeNBT(context.player().registryAccess(), message.preset());
 			handler.getSkinData().skinPreset = preset;
 			handler.getSkinData().compileSkin();
 		});
