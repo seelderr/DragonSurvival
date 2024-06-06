@@ -1,22 +1,6 @@
 /*
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
-import net.minecraft.client.gui.GuiGraphics;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
-import java.util.function.Consumer;
 
 public class EditorPartButton extends ExtendedButton{
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");

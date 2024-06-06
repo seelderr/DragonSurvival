@@ -4,15 +4,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ColorPickerButton;
 import com.google.common.collect.ImmutableList;
+import java.awt.*;
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.List;
 
 public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton colorPicker;

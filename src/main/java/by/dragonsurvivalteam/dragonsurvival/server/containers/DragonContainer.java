@@ -6,6 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nonnull;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,11 +28,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class DragonContainer extends AbstractContainerMenu {
 	public final CraftingContainer craftMatrix = new TransientCraftingContainer(this, 3, 3);

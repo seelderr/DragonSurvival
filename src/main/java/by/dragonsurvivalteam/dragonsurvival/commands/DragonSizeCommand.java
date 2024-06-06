@@ -1,11 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
@@ -16,10 +18,6 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraftforge.network.PacketDistributor;
-
-
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
 
 public class DragonSizeCommand {
     public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher){

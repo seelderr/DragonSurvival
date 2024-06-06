@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.status;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -7,11 +9,7 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.network.NetworkDirection;
-import net.minecraftforge.network.NetworkEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 /** Jump animation length is 20.8 ticks */
 public class SyncPlayerJump implements IMessage<SyncPlayerJump.Data> {

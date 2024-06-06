@@ -3,6 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ResetSettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableList;
+import java.awt.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -15,11 +19,6 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
 
 @OnlyIn( Dist.CLIENT )
 public class OptionEntry extends OptionListEntry{

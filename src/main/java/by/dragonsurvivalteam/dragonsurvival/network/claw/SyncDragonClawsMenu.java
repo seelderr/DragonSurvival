@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
@@ -9,9 +11,6 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu.Data> {
 	public static void handleClient(final SyncDragonClawsMenu.Data message, final IPayloadContext context) {

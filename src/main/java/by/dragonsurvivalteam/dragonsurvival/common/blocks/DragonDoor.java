@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import java.util.Locale;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -38,9 +40,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Locale;
 
 
 public class DragonDoor extends Block implements SimpleWaterloggedBlock{
@@ -214,8 +213,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	@Override
-	@Nullable
-	public BlockState getStateForPlacement(BlockPlaceContext context){
+	@Nullable public BlockState getStateForPlacement(BlockPlaceContext context){
 		BlockPos blockpos = context.getClickedPos();
 		if(blockpos.getY() < 255 && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)){
 			Level world = context.getLevel();
@@ -264,8 +262,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	@Override
 	public void playerDestroy(Level worldIn, Player player, BlockPos pos, BlockState state,
-		@Nullable
-			BlockEntity te, ItemStack stack){
+		@Nullable BlockEntity te, ItemStack stack){
 		super.playerDestroy(worldIn, player, pos, Blocks.AIR.defaultBlockState(), te, stack);
 	}
 

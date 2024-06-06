@@ -13,6 +13,11 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -20,12 +25,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.function.Supplier;
 
 public class DragonEditorHandler{
 	public static ResourceLocation getSkinTexture(Player player, EnumSkinLayer layer, String key, AbstractDragonType type){
@@ -171,8 +170,7 @@ public class DragonEditorHandler{
 		handler.getSkinData().isCompiled = true;
 	}
 
-	@Nullable
-	private static Color getColor(LayerSettings settings, Texture text, float hueVal, float satVal, float brightVal, NativeImage img, int x, int y){
+	@Nullable private static Color getColor(LayerSettings settings, Texture text, float hueVal, float satVal, float brightVal, NativeImage img, int x, int y){
 		float[] hsb = new float[3];
 
 		Color color = new Color(img.getPixelRGBA(x, y), true);

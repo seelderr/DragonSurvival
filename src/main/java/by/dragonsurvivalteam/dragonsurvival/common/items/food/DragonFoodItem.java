@@ -4,6 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import java.util.List;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -16,11 +20,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.function.Consumer;
-import java.util.function.Supplier;
 
 
 public class DragonFoodItem extends Item{
@@ -57,8 +56,7 @@ public class DragonFoodItem extends Item{
 		this.onEat = onEat;
 	}
 	
-	@NotNull
-	private static FoodProperties genFoodProperties(AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
+	@NotNull private static FoodProperties genFoodProperties(AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
 		Builder builder = new Builder();
 		builder.nutrition(1);
 		builder.saturationMod(0.4F);

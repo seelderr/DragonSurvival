@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.data.loot;
 
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.data.GlobalLootModifierProvider;
-
-import java.util.concurrent.CompletableFuture;
 
 public class DragonHeartLootModifierSerializer extends GlobalLootModifierProvider {
 

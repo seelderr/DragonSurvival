@@ -10,13 +10,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import java.util.Objects;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,8 +25,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Objects;
 
 @Mixin( Entity.class )
 public abstract class MixinEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity>{
@@ -65,8 +63,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 		}
 	}
 	
-	@Unique
-	private void clampRotation(Entity passenger) {
+	@Unique private void clampRotation(Entity passenger) {
 		Entity self = (Entity)(Object) this;
 		DragonStateHandler selfHandler = DragonStateProvider.getOrGenerateHandler(self);
 		DragonMovementData selfmd = selfHandler.getMovementData();

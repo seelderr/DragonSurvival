@@ -1,13 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import org.jetbrains.annotations.NotNull;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 
 public class ArrowButton extends Button {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_gui.png");

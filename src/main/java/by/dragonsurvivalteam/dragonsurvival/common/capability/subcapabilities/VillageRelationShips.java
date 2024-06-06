@@ -3,10 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import javax.annotation.Nullable;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-
-import javax.annotation.Nullable;
 
 public class VillageRelationShips extends SubCap{
 	public int crimeLevel;
@@ -19,8 +18,7 @@ public class VillageRelationShips extends SubCap{
 	}
 
 	@Override
-	@Nullable
-	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+	@Nullable public CompoundTag serializeNBT(HolderLookup.Provider provider) {
 		CompoundTag compoundNBT = new CompoundTag();
 		compoundNBT.putInt("crimeLevel", crimeLevel);
 		compoundNBT.putInt("evilStatusDuration", evilStatusDuration);

@@ -2,8 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-
 import com.mojang.authlib.GameProfile;
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
@@ -19,10 +21,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import software.bernie.geckolib.animation.AnimationController;
-
-import javax.annotation.Nullable;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT )
 public class FakeClientPlayer extends AbstractClientPlayer{
@@ -92,8 +90,7 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	public boolean save(CompoundTag pCompound){return false;}
 
 	@Override
-	@Nullable
-	public MinecraftServer getServer(){return Minecraft.getInstance().getSingleplayerServer();}
+	@Nullable public MinecraftServer getServer(){return Minecraft.getInstance().getSingleplayerServer();}
 
 	@Override
 	public Vec3 position(){return new Vec3(0, 0, 0);}

@@ -9,12 +9,11 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.ArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
-
-import java.util.ArrayList;
 
 public abstract class ActiveDragonAbility extends DragonAbility{
 	private int currentCooldown;

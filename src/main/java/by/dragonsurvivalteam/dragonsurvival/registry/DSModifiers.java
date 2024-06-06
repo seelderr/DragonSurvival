@@ -8,6 +8,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import java.util.Objects;
+import java.util.UUID;
+import javax.annotation.Nullable;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -16,10 +19,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
-
-import javax.annotation.Nullable;
-import java.util.Objects;
-import java.util.UUID;
 
 @EventBusSubscriber
 public class DSModifiers {
@@ -262,38 +261,31 @@ public class DSModifiers {
 		}
 	}
 
-	@Nullable
-	public static AttributeModifier getBlockReachModifier(Player player){
+	@Nullable public static AttributeModifier getBlockReachModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE)).getModifier(DRAGON_REACH_MODIFIER);
 	}
 
-	@Nullable
-	public static AttributeModifier getEntityReachModifier(Player player) {
+	@Nullable public static AttributeModifier getEntityReachModifier(Player player) {
 		return Objects.requireNonNull(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE)).getModifier(DRAGON_REACH_MODIFIER);
 	}
 
-	@Nullable
-	public static AttributeModifier getHealthModifier(Player player){
+	@Nullable public static AttributeModifier getHealthModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(Attributes.MAX_HEALTH)).getModifier(DRAGON_HEALTH_MODIFIER);
 	}
 
-	@Nullable
-	public static AttributeModifier getDamageModifier(Player player){
+	@Nullable public static AttributeModifier getDamageModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(Attributes.ATTACK_DAMAGE)).getModifier(DRAGON_DAMAGE_MODIFIER);
 	}
 
-	@Nullable
-	public static AttributeModifier getSwimSpeedModifier(Player player){
+	@Nullable public static AttributeModifier getSwimSpeedModifier(Player player){
 		return Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED)).getModifier(DRAGON_SWIM_SPEED_MODIFIER);
 	}
 
-	@Nullable
-	public static AttributeModifier getStepHeightModifier(Player player) {
+	@Nullable public static AttributeModifier getStepHeightModifier(Player player) {
 		return Objects.requireNonNull(player.getAttribute(Attributes.STEP_HEIGHT)).getModifier(DRAGON_STEP_HEIGHT_MODIFIER);
 	}
 
-	@Nullable
-	public static AttributeModifier getMovementSpeedModifier(Player player) {
+	@Nullable public static AttributeModifier getMovementSpeedModifier(Player player) {
 		return Objects.requireNonNull(player.getAttribute(Attributes.MOVEMENT_SPEED)).getModifier(DRAGON_MOVEMENT_SPEED_MODIFIER);
 	}
 

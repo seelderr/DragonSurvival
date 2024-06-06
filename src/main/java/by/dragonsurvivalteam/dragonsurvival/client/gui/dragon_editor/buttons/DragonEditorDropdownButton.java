@@ -10,10 +10,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.PoseStack;
-
+import java.util.List;
+import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -22,9 +21,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Objects;
 
 public class DragonEditorDropdownButton extends DropDownButton{
 	private final DragonEditorScreen dragonEditorScreen;

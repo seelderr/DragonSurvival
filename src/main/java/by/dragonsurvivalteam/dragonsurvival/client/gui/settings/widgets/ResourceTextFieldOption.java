@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.ResourceTextField;
+import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
-
-import java.util.function.Function;
 
 public class ResourceTextFieldOption extends Option {
 	public final Function<Options, String> getter;

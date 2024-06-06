@@ -23,7 +23,10 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.math.Axis;
-
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -47,11 +50,6 @@ import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.function.Supplier;
 
 public class SkinsScreen extends Screen{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_interface.png");

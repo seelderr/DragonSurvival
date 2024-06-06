@@ -5,6 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -43,10 +46,6 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.Color;
-
-import javax.annotation.Nullable;
-import java.util.List;
-import java.util.Optional;
 
 public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBlock{
 	public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
@@ -175,8 +174,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	@Nullable
-	public BlockState getStateForPlacement(BlockPlaceContext p_196258_1_){
+	@Nullable public BlockState getStateForPlacement(BlockPlaceContext p_196258_1_){
 		BlockState blockstate = p_196258_1_.getLevel().getBlockState(p_196258_1_.getClickedPos());
 		if(blockstate.is(this)){
 			int i = blockstate.getValue(LAYERS);

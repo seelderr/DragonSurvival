@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import com.google.gson.*;
-import net.minecraftforge.common.util.Lazy;
-
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import net.minecraftforge.common.util.Lazy;
 public class LazyJsonAdapter implements JsonSerializer<Lazy<Object>>, JsonDeserializer<Lazy<Object>>{
     @Override
     public Lazy<Object> deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {

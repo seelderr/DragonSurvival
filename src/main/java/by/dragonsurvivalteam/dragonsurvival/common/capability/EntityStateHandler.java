@@ -1,6 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
+
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.function.Supplier;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -8,10 +11,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;
-
-import java.util.function.Supplier;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
 
 public class EntityStateHandler implements INBTSerializable<CompoundTag> {
     public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = ATTACHMENT_TYPES.register(

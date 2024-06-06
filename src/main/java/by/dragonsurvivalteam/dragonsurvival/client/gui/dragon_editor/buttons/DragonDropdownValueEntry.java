@@ -1,12 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
-import java.util.List;
-import java.util.function.Consumer;
-
-import com.google.common.collect.ImmutableList;
-
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
+import com.google.common.collect.ImmutableList;
+import java.util.List;
+import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;

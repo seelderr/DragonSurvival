@@ -5,7 +5,6 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
-import net.minecraft.world.item.ItemStack;
 
 public class ClawInventory extends SubCap {
 	public enum Slot {

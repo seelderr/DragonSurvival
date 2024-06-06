@@ -5,12 +5,15 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -47,10 +50,6 @@ import software.bernie.geckolib.core.animation.AnimationProcessor;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
 
 public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTraits {
 	private static final List<DyeColor> COLORS = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
@@ -121,8 +120,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	}
 
 	@Override
-	@Nullable
-	protected SoundEvent getAmbientSound() {
+	@Nullable protected SoundEvent getAmbientSound() {
 		return null;
 	}
 
@@ -151,8 +149,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	}
 
 	@Override
-	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
+	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
 		setColor(COLORS.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);

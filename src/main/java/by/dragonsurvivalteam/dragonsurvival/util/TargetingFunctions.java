@@ -1,13 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
+import java.util.function.Function;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
-
-import java.util.function.Function;
 
 public class TargetingFunctions
 {

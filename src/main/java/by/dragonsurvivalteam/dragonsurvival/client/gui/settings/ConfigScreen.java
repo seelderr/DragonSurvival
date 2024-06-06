@@ -19,6 +19,13 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Primitives;
+import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
@@ -37,14 +44,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.Field;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /** Handles the config categories */
 public abstract class ConfigScreen extends OptionsSubScreen{

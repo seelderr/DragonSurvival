@@ -1,12 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import java.util.Arrays;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -39,10 +42,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-
-import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.List;
 
 /*
  * Horseless princess
@@ -144,8 +143,7 @@ public class Princess extends Villager{
 	}
 
 	@Override
-	@Nullable
-	protected SoundEvent getAmbientSound(){
+	@Nullable protected SoundEvent getAmbientSound(){
 		return null;
 	}
 
@@ -204,8 +202,7 @@ public class Princess extends Villager{
 	}
 
 	@Override
-	@Nullable
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
+	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
 		setColor(colors.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCESS_PROFESSION));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);

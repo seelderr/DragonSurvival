@@ -87,8 +87,7 @@ public abstract class MixinLivingEntity extends Entity{
 		return original;
 	}*/
 
-	@Unique
-	private int dragon_Survival$getHumanOrDragonUseDuration(int original){
+	@Unique private int dragon_Survival$getHumanOrDragonUseDuration(int original){
 		if ((LivingEntity)(Object)this instanceof Player player) {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			if (handler != null && handler.isDragon()) {
@@ -128,8 +127,7 @@ public abstract class MixinLivingEntity extends Entity{
 		}
 	}
 
-	@Unique
-	private UseAnim dragon_Survival$getUseAnimation(UseAnim original, ItemStack pStack){
+	@Unique private UseAnim dragon_Survival$getUseAnimation(UseAnim original, ItemStack pStack){
 		if(DragonStateProvider.isDragon((LivingEntity)(Object)this)) {
 			return DragonFoodHandler.isEdible(pStack, (LivingEntity)(Object)this) ? UseAnim.EAT : original;
 		}

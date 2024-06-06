@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.ImmutableList;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -17,8 +18,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_altar_warning.png");

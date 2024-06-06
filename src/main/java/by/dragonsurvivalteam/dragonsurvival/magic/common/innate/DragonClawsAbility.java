@@ -5,17 +5,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.datafixers.util.Pair;
+import java.util.ArrayList;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.common.TierSortingRegistry;
 import net.minecraftforge.fml.loading.FMLEnvironment;
-
-import javax.annotation.Nullable;
-import java.util.ArrayList;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
 	@Override

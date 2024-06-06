@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -12,6 +14,11 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,14 +43,6 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.UnknownNullability;
-
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
 
 public class DragonStateHandler extends EntityStateHandler {
 	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = ATTACHMENT_TYPES.register(

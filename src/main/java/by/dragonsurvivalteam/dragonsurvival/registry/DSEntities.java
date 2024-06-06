@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEn
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.VillagerRelationsHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.*;
@@ -29,8 +30,6 @@ import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.event.entity.SpawnPlacementRegisterEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import java.util.ArrayList;
 
 @SuppressWarnings( "rawtypes,unchecked" )
 @EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )

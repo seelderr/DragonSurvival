@@ -1,18 +1,19 @@
 plugins {
-    id 'eclipse'
-    id 'idea'
-    id 'maven-publish'
-    id 'org.cadixdev.licenser' version '0.6.1'
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
-    id 'net.neoforged.gradleutils' version '3.0.0-alpha.10'
-    id 'net.neoforged.gradle.userdev' version '7.0.136'
+	id 'eclipse'
+	id 'idea'
+	id 'maven-publish'
+	id 'org.cadixdev.licenser' version '0.6.1'
+	id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
+	id 'net.neoforged.gradleutils' version '3.0.0-alpha.10'
+	id 'net.neoforged.gradle.userdev' version '7.0.136'
+	id 'com.diffplug.spotless' version "7.0.0.BETA1"
 }
 
 version = minecraft_version + "-" + new Date().format("dd.MM.yyyy")
 group = mod_group
 
 base {
-    archivesName = mod_id
+	archivesName = mod_id
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
@@ -20,152 +21,176 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 // Default run configurations.
 // These can be tweaked, removed, or duplicated as needed.
 runs {
-    // applies to all the run configs below
-    configureEach {
-        // Recommended logging data for a userdev environment
-        // The markers can be added/remove as needed separated by commas.
-        // "SCAN": For mods scan.
-        // "REGISTRIES": For firing of registry events.
-        // "REGISTRYDUMP": For getting the contents of all registries.
-        systemProperty 'forge.logging.markers', 'REGISTRIES'
+	// applies to all the run configs below
+	configureEach {
+		// Recommended logging data for a userdev environment
+		// The markers can be added/remove as needed separated by commas.
+		// "SCAN": For mods scan.
+		// "REGISTRIES": For firing of registry events.
+		// "REGISTRYDUMP": For getting the contents of all registries.
+		systemProperty 'forge.logging.markers', 'REGISTRIES'
 
-        // Recommended logging level for the console
-        // You can set various levels here.
-        // Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
-        systemProperty 'forge.logging.console.level', 'debug'
+		// Recommended logging level for the console
+		// You can set various levels here.
+		// Please read: https://stackoverflow.com/questions/2031163/when-to-use-the-different-log-levels
+		systemProperty 'forge.logging.console.level', 'debug'
 
-        modSource project.sourceSets.main
-    }
+		modSource project.sourceSets.main
+	}
 
-    client {
-        // Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
+	client {
+		// Comma-separated list of namespaces to load gametests from. Empty = all namespaces.
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+	}
 
-    server {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
-    }
+	server {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+		programArgument '--nogui'
+	}
 
-    // This run config launches GameTestServer and runs all registered gametests, then exits.
-    // By default, the server will crash when no gametests are provided.
-    // The gametest system is also enabled by default for other run configs under the /test command.
-    gameTestServer {
-        systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
-    }
+	// This run config launches GameTestServer and runs all registered gametests, then exits.
+	// By default, the server will crash when no gametests are provided.
+	// The gametest system is also enabled by default for other run configs under the /test command.
+	gameTestServer {
+		systemProperty 'forge.enabledGameTestNamespaces', project.mod_id
+	}
 
-    data {
-        // example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
-        // workingDirectory project.file('run-data')
+	data {
+		// example of overriding the workingDirectory set in configureEach above, uncomment if you want to use it
+		// workingDirectory project.file('run-data')
 
-        // Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
+		// Specify the modid for data generation, where to output the resulting resource, and where to look for existing resources.
+		programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+	}
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    maven {
-        name = 'GeckoLib'
-        url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
-        content {
-            includeGroup("software.bernie.geckolib")
-        }
-    }
-    maven { /* JEI */ url "https://maven.blamejared.com" }
-    maven { /* Curios */ url "https://maven.theillusivec4.top/" }
-    maven { /* AppleSkin */ url "https://maven.ryanliptak.com/" }
-    maven {
-        url "https://cursemaven.com"
-        content {
-            includeGroup "curse.maven"
-        }
-    }
+	maven {
+		name = 'GeckoLib'
+		url 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+		content {
+			includeGroup("software.bernie.geckolib")
+		}
+	}
+	maven { /* JEI */ url "https://maven.blamejared.com" }
+	maven { /* Curios */ url "https://maven.theillusivec4.top/" }
+	maven { /* AppleSkin */ url "https://maven.ryanliptak.com/" }
+	maven {
+		url "https://cursemaven.com"
+		content {
+			includeGroup "curse.maven"
+		}
+	}
 }
 
 dependencies {
-    implementation "net.neoforged:neoforge:${neo_version}"
+	implementation "net.neoforged:neoforge:${neo_version}"
 
-    // Dependencies
-    implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+	// Dependencies
+	implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 
-    // Compatibility
-    compileOnly "mezz.jei:jei-1.20.4-common-api:${jei_version}"
-    compileOnly "mezz.jei:jei-1.20.4-neoforge-api:${jei_version}"
+	// Compatibility
+	compileOnly "mezz.jei:jei-1.20.4-common-api:${jei_version}"
+	compileOnly "mezz.jei:jei-1.20.4-neoforge-api:${jei_version}"
 
-    runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
-    compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
+	runtimeOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}"
+	compileOnly "top.theillusivec4.curios:curios-neoforge:${curios_version}:api"
 
-    compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
+	compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
 
-    // Mixin
-    annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
+	// Mixin
+	annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 }
 
 tasks.withType(ProcessResources).configureEach {
-    var replaceProperties = [
-            minecraft_version           : minecraft_version,
-            minecraft_version_range     : minecraft_version_range,
-            neo_version                 : neo_version,
-            neo_version_range           : neo_version_range,
-            loader_version_range        : loader_version_range,
-            geckolib_version_range      : geckolib_version_range,
-            mod_id                      : mod_id,
-            mod_name                    : mod_name,
-            mod_license                 : mod_license,
-            mod_version                 : mod_version,
-            mod_authors                 : mod_authors,
-            pack_format_number          : pack_format_number,
-    ]
+	var replaceProperties = [
+			minecraft_version           : minecraft_version,
+			minecraft_version_range     : minecraft_version_range,
+			neo_version                 : neo_version,
+			neo_version_range           : neo_version_range,
+			loader_version_range        : loader_version_range,
+			geckolib_version_range      : geckolib_version_range,
+			mod_id                      : mod_id,
+			mod_name                    : mod_name,
+			mod_license                 : mod_license,
+			mod_version                 : mod_version,
+			mod_authors                 : mod_authors,
+			pack_format_number          : pack_format_number,
+	]
 
-    duplicatesStrategy = DuplicatesStrategy.WARN
+	duplicatesStrategy = DuplicatesStrategy.WARN
 
-    inputs.properties replaceProperties
+	inputs.properties replaceProperties
 
-    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
-        expand replaceProperties + [project: project]
-    }
+	filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+		expand replaceProperties + [project: project]
+	}
 }
 
 tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
+	options.encoding = 'UTF-8'
 }
 
 subsystems {
-    parchment {
-        // The Minecraft version for which the Parchment mappings were created.
-        // This does not necessarily need to match the Minecraft version your mod targets
-        // Defaults to the value of Gradle property neogradle.subsystems.parchment.minecraftVersion
-        minecraftVersion = minecraft_version
+	parchment {
+		// The Minecraft version for which the Parchment mappings were created.
+		// This does not necessarily need to match the Minecraft version your mod targets
+		// Defaults to the value of Gradle property neogradle.subsystems.parchment.minecraftVersion
+		minecraftVersion = minecraft_version
 
-        // The version of Parchment mappings to apply.
-        // See https://parchmentmc.org/docs/getting-started for a list.
-        // Defaults to the value of Gradle property neogradle.subsystems.parchment.mappingsVersion
-        mappingsVersion = mapping_version
+		// The version of Parchment mappings to apply.
+		// See https://parchmentmc.org/docs/getting-started for a list.
+		// Defaults to the value of Gradle property neogradle.subsystems.parchment.mappingsVersion
+		mappingsVersion = mapping_version
 
-        // Overrides the full Maven coordinate of the Parchment artifact to use
-        // This is computed from the minecraftVersion and mappingsVersion properties by default.
-        // If you set this property explicitly, minecraftVersion and mappingsVersion will be ignored.
-        // The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.parchmentArtifact
-        // parchmentArtifact = "org.parchmentmc.data:parchment-$minecraftVersion:$mappingsVersion:checked@zip"
+		// Overrides the full Maven coordinate of the Parchment artifact to use
+		// This is computed from the minecraftVersion and mappingsVersion properties by default.
+		// If you set this property explicitly, minecraftVersion and mappingsVersion will be ignored.
+		// The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.parchmentArtifact
+		// parchmentArtifact = "org.parchmentmc.data:parchment-$minecraftVersion:$mappingsVersion:checked@zip"
 
-        // Set this to false if you don't want the https://maven.parchmentmc.org/ repository to be added automatically when
-        // applying Parchment mappings is enabled
-        // The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.addRepository
-        // addRepository = true
+		// Set this to false if you don't want the https://maven.parchmentmc.org/ repository to be added automatically when
+		// applying Parchment mappings is enabled
+		// The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.addRepository
+		// addRepository = true
 
-        // Can be used to explicitly disable this subsystem. By default, it will be enabled automatically as soon
-        // as parchmentArtifact or minecraftVersion and mappingsVersion are set.
-        // The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.enabled
-        // enabled = true
-    }
+		// Can be used to explicitly disable this subsystem. By default, it will be enabled automatically as soon
+		// as parchmentArtifact or minecraftVersion and mappingsVersion are set.
+		// The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.enabled
+		// enabled = true
+	}
 }
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
-    module {
-        downloadSources = true
-        downloadJavadoc = true
-    }
+	module {
+		downloadSources = true
+		downloadJavadoc = true
+	}
+}
+
+// We use spotless for code formatting.
+spotless {
+	format 'misc', {
+		// define the files to apply `misc` to
+		target '*.gradle', '.gitattributes', '.gitignore'
+
+		// define the steps to apply to those files
+		trimTrailingWhitespace()
+		indentWithTabs() // or spaces. Takes an integer argument if you don't like 4
+		endWithNewline()
+	}
+
+	java {
+		target 'src/*/java/**/*.java'
+
+		// Use the default importOrder configuration
+		importOrder()
+		removeUnusedImports()
+
+		// fixes formatting of type annotations
+		formatAnnotations()
+	}
 }

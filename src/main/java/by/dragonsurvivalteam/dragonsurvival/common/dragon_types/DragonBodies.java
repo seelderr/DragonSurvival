@@ -1,14 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.function.Supplier;
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.bodies.CenterBodyType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.bodies.EastBodyType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.bodies.NorthBodyType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.bodies.SouthBodyType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.bodies.WestBodyType;
+import java.util.HashMap;
+import java.util.List;
+import java.util.function.Supplier;
 
 public class DragonBodies {
 	public static final HashMap<String, Supplier<AbstractDragonBody>> bodyMappings = new HashMap<>();

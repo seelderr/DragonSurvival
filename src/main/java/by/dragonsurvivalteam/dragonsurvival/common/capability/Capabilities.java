@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import net.minecraft.resources.ResourceLocation;
@@ -12,8 +14,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber( modid = MODID, bus = EventBusSubscriber.Bus.GAME)
 public class Capabilities{

@@ -1,10 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.network.config;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
@@ -12,11 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncListConfig implements IMessage<SyncListConfig.Data> {
 	public static void handleServer(final SyncListConfig.Data message, final IPayloadContext context) {

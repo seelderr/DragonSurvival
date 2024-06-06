@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
+import javax.annotation.Nullable;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.syncher.EntityDataAccessor;
@@ -12,27 +13,17 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
-import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraftforge.network.NetworkHooks;
-import software.bernie.geckolib.core.animatable.GeoAnimatable;
+import org.antlr.v4.runtime.misc.NotNull;
+import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
-import software.bernie.geckolib.core.animation.Animation.LoopType;
-import software.bernie.geckolib.core.molang.MolangParser;
 import software.bernie.geckolib.core.object.PlayState;
-import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import javax.annotation.Nullable;
-
-import org.antlr.v4.runtime.misc.NotNull;
-
-import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 
 
 public abstract class DragonBallEntity extends Fireball implements GeoEntity {

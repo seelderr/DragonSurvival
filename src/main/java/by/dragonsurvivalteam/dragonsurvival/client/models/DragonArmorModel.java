@@ -2,11 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import java.util.Collection;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
-
-import java.util.Collection;
 
 public class DragonArmorModel extends GeoModel<DragonEntity> {
 	private ResourceLocation armorTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/armor/empty_armor.png");

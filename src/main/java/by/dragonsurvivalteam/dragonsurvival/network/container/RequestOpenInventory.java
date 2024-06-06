@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
@@ -9,8 +11,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class RequestOpenInventory implements IMessage<RequestOpenInventory.Data> {
 

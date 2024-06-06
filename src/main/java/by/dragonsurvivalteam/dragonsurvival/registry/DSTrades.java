@@ -4,6 +4,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import java.util.Map;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
@@ -15,10 +18,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Map;
-import java.util.Optional;
 
 public class DSTrades {
 
@@ -161,8 +160,7 @@ public class DSTrades {
 			this.xp = xp;
 		}
 
-		@Nullable
-		@Override
+		@Nullable @Override
 		public MerchantOffer getOffer(@NotNull Entity entity, @NotNull RandomSource random){
 			return new MerchantOffer(baseCostA, costB, result, maxUses, xp, priceMultiplier);
 		}

@@ -15,6 +15,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
@@ -22,9 +24,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec.ConfigValue;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 public class ResetSettingsButton extends Button {
 	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");

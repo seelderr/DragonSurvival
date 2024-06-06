@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import net.minecraft.core.NonNullList;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -17,9 +19,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Mixin( Inventory.class )
 public abstract class MixinInventory{
@@ -46,8 +45,7 @@ public abstract class MixinInventory{
 		dragonSurvival$handleItem(SLOT_OFFHAND);
 	}
 
-	@Unique
-	private void dragonSurvival$handleItem(int slot) {
+	@Unique private void dragonSurvival$handleItem(int slot) {
 		ItemStack stack = getItem(slot);
 
 		if((ServerConfig.blacklistedSlots.contains(slot)) && dragonSurvival$isBlacklisted(stack.getItem())){
@@ -59,8 +57,7 @@ public abstract class MixinInventory{
 		}
 	}
 
-	@Unique
-	private boolean dragonSurvival$isBlacklisted(final Item item) {
+	@Unique private boolean dragonSurvival$isBlacklisted(final Item item) {
 		ResourceLocation location = ResourceHelper.getKey(item);
 
 		boolean contains = ServerConfig.blacklistedItems.contains(location.toString());

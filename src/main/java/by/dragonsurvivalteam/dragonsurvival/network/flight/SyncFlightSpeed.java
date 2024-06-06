@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,10 +14,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.function.Supplier;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncFlightSpeed implements IMessage<SyncFlightSpeed.Data> {
 	public static void handleClient(final SyncFlightSpeed.Data message, final IPayloadContext context) {

@@ -13,6 +13,12 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
@@ -34,13 +40,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
-
-import javax.annotation.Nullable;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DragonFoodHandler {
@@ -188,8 +187,7 @@ public class DragonFoodHandler {
 		}
 	}
 
-	@Nullable
-	private static FoodProperties calculateDragonFoodProperties(final Item item, final AbstractDragonType type, int nutrition, float saturation, boolean isDragonFood) {
+	@Nullable private static FoodProperties calculateDragonFoodProperties(final Item item, final AbstractDragonType type, int nutrition, float saturation, boolean isDragonFood) {
 		if (item == null) {
 			return new FoodProperties.Builder().nutrition(nutrition).saturationModifier(saturation / (float) nutrition / 2.0F).build();
 		}
@@ -280,8 +278,7 @@ public class DragonFoodHandler {
 		return foods;
 	}
 
-	@Nullable
-	public static FoodProperties getDragonFoodProperties(final Item item, final AbstractDragonType type) {
+	@Nullable public static FoodProperties getDragonFoodProperties(final Item item, final AbstractDragonType type) {
 		if (DRAGON_FOODS.get(type.getTypeName()).containsKey(item)) {
 			return DRAGON_FOODS.get(type.getTypeName()).get(item);
 		}

@@ -13,6 +13,8 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlace
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
+import java.util.Objects;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -51,9 +53,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.network.NetworkHooks;
-
-import javax.annotation.Nullable;
-import java.util.Objects;
 
 public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock, EntityBlock{
 	public static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.25, 1);
@@ -98,8 +97,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		}
 	}
 
-	@Nullable
-	@Override
+	@Nullable @Override
 	public BlockState getStateForPlacement(BlockPlaceContext context){
 		BlockState superState = null;
 		BlockPos blockPos = context.getClickedPos();
@@ -126,8 +124,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 
 	@Override
 	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state,
-		@Nullable
-			LivingEntity placer, ItemStack stack){
+		@Nullable LivingEntity placer, ItemStack stack){
 		super.setPlacedBy(worldIn, pos, state, placer, stack);
 
 		if(placer != null){
@@ -267,8 +264,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	}
 
 	@Override
-	@Nullable
-	public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos){
+	@Nullable public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos){
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
 		return blockentity instanceof MenuProvider ? (MenuProvider)blockentity : null;
 	}
@@ -401,8 +397,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		}
 	}
 
-	@org.jetbrains.annotations.Nullable
-	@Override
+	@org.jetbrains.annotations.Nullable @Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
 		if(!pState.getValue(PRIMARY_BLOCK)){
 			return DSTileEntities.sourceOfMagicPlaceholder.create(pPos, pState);
@@ -411,8 +406,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	}
 
 	@Override
-	@Nullable
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
+	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
 		return pLevel.isClientSide() ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.sourceOfMagicTileEntity, SourceOfMagicTileEntity::serverTick);
 	}
 }

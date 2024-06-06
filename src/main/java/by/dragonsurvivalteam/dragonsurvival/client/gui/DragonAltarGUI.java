@@ -1,5 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
+import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
+import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
@@ -16,7 +19,6 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Axis;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -32,9 +34,6 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.common.MinecraftForge;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
-
-import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
-import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
 
 public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");

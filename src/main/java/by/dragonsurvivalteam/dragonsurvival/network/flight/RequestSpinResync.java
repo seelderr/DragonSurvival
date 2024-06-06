@@ -1,11 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
-import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-
-import java.util.function.Supplier;
 
 // TODO: Sort out what this is supposed to do
 /*public class RequestSpinResync implements IMessage<RequestSpinResync> {

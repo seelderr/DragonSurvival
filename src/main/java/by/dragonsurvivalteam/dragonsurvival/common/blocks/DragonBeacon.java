@@ -1,14 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -36,8 +37,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.util.LazyOptional;
-
-import javax.annotation.Nullable;
 
 public class DragonBeacon extends Block implements SimpleWaterloggedBlock, EntityBlock{
 	public static BooleanProperty LIT = BlockStateProperties.LIT;
@@ -151,8 +150,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 	}
 
 	@Override
-	@Nullable
-	public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos){
+	@Nullable public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos){
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
 		return blockentity instanceof MenuProvider ? (MenuProvider)blockentity : null;
 	}
@@ -168,15 +166,13 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		p_206840_1_.add(LIT, WATERLOGGED);
 	}
 
-	@org.jetbrains.annotations.Nullable
-	@Override
+	@org.jetbrains.annotations.Nullable @Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
 		return DSTileEntities.dragonBeacon.create(pPos, pState);
 	}
 
 	@Override
-	@Nullable
-	public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
+	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
 		return pLevel.isClientSide() ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.dragonBeacon, DragonBeaconTileEntity::serverTick);
 	}
 }

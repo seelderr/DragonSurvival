@@ -12,6 +12,11 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -33,12 +38,6 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 @EventBusSubscriber( Dist.CLIENT )
 public class EmoteMenuHandler {
@@ -372,7 +371,7 @@ public class EmoteMenuHandler {
 		cap.getEmoteData().currentEmotes = ls1.toArray(new Emote[0]);
 		cap.getEmoteData().emoteTicks = ls2.toArray(new Integer[0]);
 
-		PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), cap.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess());
+		PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), cap.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 	}
 
 	public static List<Emote> getEmotes(){

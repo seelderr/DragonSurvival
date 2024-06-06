@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
 
+import java.util.EnumSet;
 import net.minecraft.util.TimeUtil;
 import net.minecraft.util.valueproviders.UniformInt;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,8 +12,6 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.EnumSet;
 
 public class CrossbowAttackGoal<T extends Mob&RangedAttackMob&CrossbowAttackMob> extends Goal{
 	public static final UniformInt PATHFINDING_DELAY_RANGE = TimeUtil.rangeOfSeconds(20, 40);

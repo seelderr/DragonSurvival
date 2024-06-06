@@ -10,6 +10,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import com.google.common.collect.ImmutableList;
+import java.awt.*;
+import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Renderable;
@@ -18,10 +21,6 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.List;
-import java.util.function.Supplier;
 
 public class ColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton colorPicker;

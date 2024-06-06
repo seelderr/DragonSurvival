@@ -1,9 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
+import java.util.List;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.List;
 
 public class ResourceEntry{
 	public Entity ent;

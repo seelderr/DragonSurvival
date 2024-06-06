@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityChec
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -21,8 +22,6 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-
-import javax.annotation.Nullable;
 
 public class HunterHoundEntity extends Wolf implements DragonHunter{
 	public static final EntityDataAccessor<Integer> variety = SynchedEntityData.defineId(HunterHoundEntity.class, EntityDataSerializers.INT);
@@ -99,10 +98,8 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 
 	@Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
-		@Nullable
-			SpawnGroupData livingEntityData,
-		@Nullable
-			CompoundTag compoundNBT){
+		@Nullable SpawnGroupData livingEntityData,
+		@Nullable CompoundTag compoundNBT){
 		entityData.set(variety, random.nextInt(8));
 		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
 	}

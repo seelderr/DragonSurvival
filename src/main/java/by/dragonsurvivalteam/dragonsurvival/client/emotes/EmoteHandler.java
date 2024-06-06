@@ -1,9 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
+import static net.minecraft.client.CameraType.THIRD_PERSON_BACK;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
+import java.util.Arrays;
+import java.util.Objects;
+import java.util.UUID;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -16,18 +20,11 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.Arrays;
-import java.util.Objects;
-import java.util.UUID;
-
-import static net.minecraft.client.CameraType.THIRD_PERSON_BACK;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class EmoteHandler {

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists.OptionsList;
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,8 +11,6 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.function.Supplier;
 
 /** Main Config Screen to select between Client or Server config */
 public class ConfigSideSelectionScreen extends OptionsSubScreen {

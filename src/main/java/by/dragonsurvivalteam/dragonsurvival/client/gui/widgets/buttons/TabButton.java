@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
+import static by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
@@ -7,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.MouseTooltipPosit
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,8 +19,6 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
 
 
 public class TabButton extends Button {

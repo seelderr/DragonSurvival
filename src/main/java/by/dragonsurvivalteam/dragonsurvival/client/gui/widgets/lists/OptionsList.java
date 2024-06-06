@@ -2,6 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableMap;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -10,13 +16,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 	public static ConcurrentHashMap<Option, String> configMap = new ConcurrentHashMap<>();
@@ -182,8 +181,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 		return getRowTop(index) + getEntry(index).getHeight();
 	}
 
-	@Nullable
-	public CategoryEntry findCategory(String text, String lastKey){
+	@Nullable public CategoryEntry findCategory(String text, String lastKey){
 		for(OptionListEntry optionsrowlist$row : children())
 			if(optionsrowlist$row instanceof CategoryEntry cat){
 				
@@ -215,8 +213,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionListEntry>{
 		return closest;
 	}
 
-	@Nullable
-	public AbstractWidget findOption(Option pOption){
+	@Nullable public AbstractWidget findOption(Option pOption){
 		for(OptionListEntry optionslist$entry : children())
 			if(optionslist$entry instanceof OptionEntry){
 				AbstractWidget abstractwidget = ((OptionEntry)optionslist$entry).options.get(pOption);

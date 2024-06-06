@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

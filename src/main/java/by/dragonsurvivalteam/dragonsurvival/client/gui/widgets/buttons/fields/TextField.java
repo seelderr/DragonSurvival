@@ -1,16 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class TextField extends EditBox /*implements TooltipAccessor*/ {
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");

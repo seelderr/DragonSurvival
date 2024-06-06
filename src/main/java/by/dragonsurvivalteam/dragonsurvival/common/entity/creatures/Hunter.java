@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
@@ -9,8 +10,6 @@ import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.monster.AbstractIllager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
-
-import javax.annotation.Nullable;
 
 public abstract class Hunter extends PathfinderMob implements DragonHunter{
 	public Hunter(EntityType<? extends PathfinderMob> entityType, Level world){
@@ -28,13 +27,10 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter{
 		super.tick();
 	}
 
-	@Nullable
-	@Override
+	@Nullable @Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason,
-		@Nullable
-			SpawnGroupData entityData,
-		@Nullable
-			CompoundTag nbt){
+		@Nullable SpawnGroupData entityData,
+		@Nullable CompoundTag nbt){
 		populateDefaultEquipmentSlots(random, difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);
 	}

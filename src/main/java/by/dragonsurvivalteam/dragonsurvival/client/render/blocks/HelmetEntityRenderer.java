@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.HelmetTileEntity;
 import com.google.common.collect.Maps;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import java.util.Map;
+import javax.annotation.Nullable;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.SkullModel;
@@ -20,9 +22,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.state.BlockState;
-
-import javax.annotation.Nullable;
-import java.util.Map;
 
 public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntity>{
 	private static final Map<Block, ResourceLocation> TEXTURE_BY_TYPE = Util.make(Maps.newHashMap(), resourceLocationHashMap -> {
@@ -42,8 +41,7 @@ public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntit
 	}
 
 	public static void renderHelmet(
-		@Nullable
-			Direction direction, float p_228879_1_, Block helmetBlock, float p_228879_4_, PoseStack PoseStack, MultiBufferSource renderTypeBuffer, int p_228879_7_){
+		@Nullable Direction direction, float p_228879_1_, Block helmetBlock, float p_228879_4_, PoseStack PoseStack, MultiBufferSource renderTypeBuffer, int p_228879_7_){
 		PoseStack.pushPose();
 		if(direction == null){
 			PoseStack.translate(0.5D, 0.0D, 0.5D);

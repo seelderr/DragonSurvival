@@ -2,6 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.google.common.collect.ImmutableMap;
+import java.awt.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -13,11 +17,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 @OnlyIn( Dist.CLIENT )
 public class CategoryEntry extends OptionListEntry{

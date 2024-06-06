@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network;
 
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
-
-import java.util.function.Supplier;
 
 public interface IMessage<T extends CustomPacketPayload> {
     static <T> void handleClient(final T message, final IPayloadContext context) {}

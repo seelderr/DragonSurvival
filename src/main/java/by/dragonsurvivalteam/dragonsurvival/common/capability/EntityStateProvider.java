@@ -1,14 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.ENTITY_CAPABILITY;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler.ENTITY_HANDLER;
+
+import java.util.Optional;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Optional;
-
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.ENTITY_CAPABILITY;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler.ENTITY_HANDLER;
 
 // TODO: We duplicate data between here and the DragonStateHandler. We'll probably want to test and refactor that once we are compiling.
 public class EntityStateProvider implements ICapabilityProvider<Entity, Void, EntityStateHandler> {

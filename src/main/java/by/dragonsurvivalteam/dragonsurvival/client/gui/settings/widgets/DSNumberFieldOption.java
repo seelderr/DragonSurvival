@@ -1,13 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields.TextField;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
-
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 public class DSNumberFieldOption extends Option {
 	private final Function<Options, Number> getter;

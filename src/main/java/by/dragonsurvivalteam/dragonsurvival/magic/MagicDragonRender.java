@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,8 +17,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.core.object.Color;
-
-import java.util.List;
 
 public class MagicDragonRender{
 	public static final ResourceLocation BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widget_bars.png");

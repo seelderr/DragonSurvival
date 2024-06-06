@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -29,9 +31,6 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 
 public class DragonAltarBlock extends Block{
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -55,8 +54,7 @@ public class DragonAltarBlock extends Block{
 
 	@Override
 	public void appendHoverText(ItemStack p_190948_1_,
-		@Nullable
-			BlockGetter p_190948_2_, List<Component> p_190948_3_, TooltipFlag p_190948_4_){
+		@Nullable BlockGetter p_190948_2_, List<Component> p_190948_3_, TooltipFlag p_190948_4_){
 		super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
 		p_190948_3_.add(Component.translatable("ds.description.dragonAltar"));
 	}

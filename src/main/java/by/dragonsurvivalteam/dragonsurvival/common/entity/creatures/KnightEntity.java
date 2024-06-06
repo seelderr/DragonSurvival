@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityChec
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -34,8 +35,6 @@ import software.bernie.geckolib.core.animation.AnimationProcessor;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import javax.annotation.Nullable;
 
 public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter, CommonTraits {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -191,8 +190,7 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 		return false;
 	}
 
-	@Nullable
-	@Override
+	@Nullable @Override
 	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag nbt){
 		populateDefaultEquipmentSlots(random, difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);

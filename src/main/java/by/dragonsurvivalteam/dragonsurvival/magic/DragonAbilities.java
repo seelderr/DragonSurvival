@@ -14,6 +14,10 @@ import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import com.mojang.datafixers.util.Pair;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
@@ -29,11 +33,6 @@ import net.minecraftforge.forgespi.language.ModFileScanData;
 import net.minecraftforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
-
-import javax.annotation.Nullable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.*;
 
 public class DragonAbilities{
 	public static HashMap<String, ArrayList<DragonAbility>> ABILITIES = new HashMap<>();

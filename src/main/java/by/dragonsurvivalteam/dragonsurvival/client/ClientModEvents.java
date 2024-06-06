@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHors
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
@@ -18,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.Bal
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;

@@ -1,5 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
+import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_DESTRUCTIBLE_BLOCKS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.entityDamageSource;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
@@ -20,9 +23,6 @@ import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_DESTRUCTIBLE_BLOCKS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.entityDamageSource;
 
 @Mod.EventBusSubscriber
 public class DragonDestructionHandler {

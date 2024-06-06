@@ -3,20 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.lists;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets.Option;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
-
 import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Collections;
-import java.util.List;
 
 @OnlyIn( Dist.CLIENT )
 public class TextBoxEntry extends OptionListEntry{

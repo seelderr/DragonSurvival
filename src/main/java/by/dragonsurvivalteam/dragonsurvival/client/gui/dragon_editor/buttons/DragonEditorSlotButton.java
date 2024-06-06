@@ -3,14 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
+import java.awt.*;
+import java.util.HashMap;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.DyeColor;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.HashMap;
 
 public class DragonEditorSlotButton extends Button{
 	private final DragonEditorScreen screen;

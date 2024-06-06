@@ -6,8 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSer
 import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.resources.ResourceLocation;
@@ -17,14 +19,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
-import net.neoforged.neoforge.common.loot.LootModifier;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
-import java.util.List;
-import java.util.Set;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 @EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ForgeDataGen {

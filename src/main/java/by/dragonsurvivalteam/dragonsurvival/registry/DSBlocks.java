@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -15,8 +17,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.geckolib.util.Color;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSBlocks{

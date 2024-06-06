@@ -1,9 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.data;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
+
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonDoor;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
@@ -19,13 +24,6 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.registries.DeferredHolder;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
 public class BlockLootTableSubProvider extends BlockLootSubProvider {
     protected BlockLootTableSubProvider() {

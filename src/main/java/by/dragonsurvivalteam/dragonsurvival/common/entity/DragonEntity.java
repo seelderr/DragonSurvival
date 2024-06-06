@@ -17,6 +17,9 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Stream;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -34,10 +37,6 @@ import software.bernie.geckolib.core.animation.AnimationState;
 import software.bernie.geckolib.core.animation.RawAnimation;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Stream;
 
 public class DragonEntity extends LivingEntity implements GeoEntity, CommonTraits {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);

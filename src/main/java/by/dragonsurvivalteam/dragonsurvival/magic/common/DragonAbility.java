@@ -3,6 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Objects;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -10,10 +13,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.text.NumberFormat;
-import java.util.ArrayList;
-import java.util.Objects;
 
 public abstract class DragonAbility {
 	protected static NumberFormat nf = NumberFormat.getInstance();

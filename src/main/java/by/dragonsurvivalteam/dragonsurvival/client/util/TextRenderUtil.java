@@ -1,14 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 
-import com.mojang.blaze3d.vertex.PoseStack;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class TextRenderUtil{
 

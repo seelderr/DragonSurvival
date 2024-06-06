@@ -46,6 +46,12 @@ import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -63,13 +69,6 @@ import net.minecraftforge.client.gui.widget.ExtendedButton;
 import net.minecraftforge.common.util.Lazy;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
-
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Supplier;
 
 public class DragonEditorScreen extends Screen {
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");

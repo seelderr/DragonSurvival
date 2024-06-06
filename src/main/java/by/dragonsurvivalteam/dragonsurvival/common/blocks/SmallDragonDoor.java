@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -38,8 +39,6 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
-
 public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
@@ -59,8 +58,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	@Override
-	@Nullable
-	public BlockState getStateForPlacement(BlockPlaceContext context){
+	@Nullable public BlockState getStateForPlacement(BlockPlaceContext context){
 		BlockPos blockpos = context.getClickedPos();
 		if(blockpos.getY() < 255){
 			Level world = context.getLevel();
@@ -104,8 +102,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	// not sure why inheriting this behaviour doesn't work, but confirmed it doesn't
 	@Override
 	public void playerDestroy(Level p_180657_1_, Player p_180657_2_, BlockPos p_180657_3_, BlockState p_180657_4_,
-		@Nullable
-			BlockEntity p_180657_5_, ItemStack p_180657_6_){
+		@Nullable BlockEntity p_180657_5_, ItemStack p_180657_6_){
 		p_180657_2_.awardStat(Stats.BLOCK_MINED.get(this));
 		p_180657_2_.causeFoodExhaustion(0.005F);
 		dropResources(p_180657_4_, p_180657_1_, p_180657_3_, p_180657_5_, p_180657_2_, p_180657_6_);

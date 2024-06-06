@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.BlockPos.MutableBlockPos;
 import net.minecraft.server.level.ServerLevel;
@@ -17,12 +18,9 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.BlockHitResult;
 
-import javax.annotation.Nullable;
-
 public class SpawningUtils
 {
-	@Nullable
-	public static BlockPos findRandomSpawnPosition(Player player, int p_221298_1_, int timesToCheck, float distance){
+	@Nullable public static BlockPos findRandomSpawnPosition(Player player, int p_221298_1_, int timesToCheck, float distance){
 		int i = p_221298_1_ == 0 ? 2 : 2 - p_221298_1_;
 		MutableBlockPos blockpos$mutable = new MutableBlockPos();
 

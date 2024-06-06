@@ -1,14 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.settings.widgets;
 
 
+import java.util.List;
 import net.minecraft.client.Options;
 import net.minecraft.client.gui.components.AbstractOptionSliderButton;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.List;
 
 @OnlyIn(Dist.CLIENT)
 public class SliderButton extends AbstractOptionSliderButton /*implements TooltipAccessor*/ {

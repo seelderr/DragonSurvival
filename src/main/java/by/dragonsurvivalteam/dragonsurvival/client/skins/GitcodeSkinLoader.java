@@ -3,15 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.skins;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
-import org.apache.logging.log4j.Level;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.*;
+import org.apache.logging.log4j.Level;
 
 public class GitcodeSkinLoader extends NetSkinLoader {
     private static final String SKINS_LIST_LINK = "https://web-api.gitcode.com/api/v1/projects/mirrors%2FDragonSurvivalTeam%2FDragonSurvival/repository/tree?ref=master&path=src/test/resources&per_page=100&page=";

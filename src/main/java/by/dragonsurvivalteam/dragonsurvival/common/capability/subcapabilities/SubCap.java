@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 

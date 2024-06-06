@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.UUID;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -23,8 +24,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.UUID;
 
 public class Bolas extends ThrowableItemProjectile{
 	public static final UUID SLOW_MOVEMENT = UUID.fromString("eab67409-4834-43d8-bdf6-736dc96375f2");

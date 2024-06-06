@@ -1,8 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.DS_DAMAGE_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.ENTITY_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.SOUNDS;
+
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
@@ -15,21 +22,19 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSerializer;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.serialization.MapCodec;
+import java.util.HashMap;
+import java.util.Map;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
-
-import java.util.HashMap;
-import java.util.Map;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -40,15 +45,6 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLibClient;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.DS_DAMAGE_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.ENTITY_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.SOUNDS;
 
 @Mod( DragonSurvivalMod.MODID )
 public class DragonSurvivalMod{
