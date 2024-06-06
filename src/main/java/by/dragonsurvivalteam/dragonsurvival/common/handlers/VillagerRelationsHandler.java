@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Vi
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincessHorseEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -61,7 +61,7 @@ public class VillagerRelationsHandler{
 		if(killer instanceof Player playerEntity){
 			if(livingEntity instanceof AbstractVillager){
 				Level world = killer.level();
-				if(!(livingEntity instanceof PrincesHorseEntity)){
+				if(!(livingEntity instanceof PrincessHorseEntity)){
 
 					if(DragonStateProvider.isDragon(killer)){
 						AbstractVillager villagerEntity = (AbstractVillager)livingEntity;
@@ -325,8 +325,8 @@ public class VillagerRelationsHandler{
 								if (serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_AQUATIC)) {
 									return;
 								}
-								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE.get() : DSEntities.PRINCE_ON_HORSE.get();
-								PrincesHorseEntity princessEntity = entityType.create(world);
+								EntityType<? extends PrincessHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE.get() : DSEntities.PRINCE_ON_HORSE.get();
+								PrincessHorseEntity princessEntity = entityType.create(world);
 								princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 								princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
 								serverWorld.addFreshEntity(princessEntity);
@@ -335,7 +335,7 @@ public class VillagerRelationsHandler{
 								for(int i = 0; i < knights; i++){
 									KnightEntity knightHunter = DSEntities.KNIGHT.get().create(serverWorld);
 									knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-									knightHunter.goalSelector.addGoal(5, new FollowMobGoal(PrincesHorseEntity.class, knightHunter, 8));
+									knightHunter.goalSelector.addGoal(5, new FollowMobGoal(PrincessHorseEntity.class, knightHunter, 8));
 									knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
 									serverWorld.addFreshEntity(knightHunter);
 								}

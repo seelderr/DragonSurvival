@@ -115,9 +115,9 @@ public class DSEntities {
 					.updateInterval(1)
 					.build("knight"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<PrincesHorseEntity>> PRINCESS_ON_HORSE = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<PrincessHorseEntity>> PRINCESS_ON_HORSE = ENTITY_TYPES.register(
 			"princess",
-			() -> EntityType.Builder.of(PrincesHorseEntity::new, MobCategory.MONSTER)
+			() -> EntityType.Builder.of(PrincessHorseEntity::new, MobCategory.MONSTER)
 					.sized(0.8f, 2.5f)
 					.clientTrackingRange(64)
 					.updateInterval(1)

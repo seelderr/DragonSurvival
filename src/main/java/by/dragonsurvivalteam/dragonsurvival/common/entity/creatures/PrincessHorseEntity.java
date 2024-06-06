@@ -43,22 +43,17 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationProcessor;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTraits {
+public class PrincessHorseEntity extends Villager implements GeoEntity, CommonTraits {
 	private static final List<DyeColor> COLORS = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
-	public static EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(PrincesHorseEntity.class, EntityDataSerializers.INT);
+	public static EntityDataAccessor<Integer> COLOR = SynchedEntityData.defineId(PrincessHorseEntity.class, EntityDataSerializers.INT);
 
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	protected final AnimationTimer animationTimer = new AnimationTimer();
 
-	public PrincesHorseEntity(EntityType<? extends Villager> entityType, Level world){
+	public PrincessHorseEntity(EntityType<? extends Villager> entityType, Level world){
 		super(entityType, world);
 	}
 
@@ -174,7 +169,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	}
 
 	@Override
-	public void gossip(@NotNull final ServerLevel level, @NotNull Villager villager, long p_242368_3_)  }
+	public void gossip(@NotNull final ServerLevel level, @NotNull Villager villager, long p_242368_3_) {}
 
 	@Override
 	public void startSleeping(@NotNull final BlockPos position) {}
@@ -204,7 +199,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "everything", 10, state -> {
 			double speed = getMovementSpeed(this);
-			AnimationController<PrincesHorseEntity> controller = state.getController();
+			AnimationController<PrincessHorseEntity> controller = state.getController();
 
 			if (speed > 0.4) {
 				return state.setAndContinue(WALK);
@@ -244,7 +239,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 		}));
 	}
 
-    @Override
+	@Override
     public AnimatableInstanceCache getAnimatableInstanceCache() {
         return cache;
     }
