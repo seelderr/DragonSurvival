@@ -79,7 +79,7 @@ public class DSEntities {
 					.build("fireball"));
 
 	// Entities
-	public static DeferredHolder<EntityType<?>, EntityType<HunterHoundEntity>> HUNTER_HOUND = ENTITY_TYPES.register(
+	/*public static DeferredHolder<EntityType<?>, EntityType<HunterHoundEntity>> HUNTER_HOUND = ENTITY_TYPES.register(
 			"hunter_hound",
 			() -> EntityType.Builder.of(HunterHoundEntity::new, MobCategory.MONSTER)
 					.sized(0.6F, 0.85F)
@@ -128,7 +128,7 @@ public class DSEntities {
 					.sized(0.8f, 2.5f)
 					.clientTrackingRange(64)
 					.updateInterval(1)
-					.build("prince"));
+					.build("prince"));*/
 
 	// Professions
 	public static VillagerProfession PRINCESS_PROFESSION = new VillagerProfession("princess", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
@@ -138,13 +138,13 @@ public class DSEntities {
 	public static void attributeCreationEvent(final EntityAttributeCreationEvent event) {
 		event.put(DRAGON.get(), DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR.get(), DragonEntity.createLivingAttributes().build());
-		event.put(HUNTER_HOUND.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
+		/*event.put(HUNTER_HOUND.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
 		event.put(SHOOTER_HUNTER.get(), Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.hunterSpeed).add(Attributes.MAX_HEALTH, ServerConfig.hunterHealth).add(Attributes.ARMOR, ServerConfig.hunterArmor).add(Attributes.ATTACK_DAMAGE, ServerConfig.hunterDamage).build());
 		event.put(SQUIRE_HUNTER.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.squireSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.squireDamage).add(Attributes.ARMOR, ServerConfig.squireArmor).add(Attributes.MAX_HEALTH, ServerConfig.squireHealth).build());
 		event.put(KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
 		event.put(PRINCESS.get(), Villager.createAttributes().add(Attributes.MAX_HEALTH, ServerConfig.princessHealth).add(Attributes.ARMOR, ServerConfig.princessArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princessSpeed).build());
 		event.put(PRINCESS_ON_HORSE.get(), Villager.createAttributes().add(Attributes.MAX_HEALTH, ServerConfig.princessHealth).add(Attributes.ARMOR, ServerConfig.princessArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princessSpeed).build());
-		event.put(PRINCE_ON_HORSE.get(), Villager.createAttributes().add(Attributes.ATTACK_DAMAGE, ServerConfig.princeDamage).add(Attributes.MAX_HEALTH, ServerConfig.princeHealth).add(Attributes.ARMOR, ServerConfig.princeArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princeSpeed).build());
+		event.put(PRINCE_ON_HORSE.get(), Villager.createAttributes().add(Attributes.ATTACK_DAMAGE, ServerConfig.princeDamage).add(Attributes.MAX_HEALTH, ServerConfig.princeHealth).add(Attributes.ARMOR, ServerConfig.princeArmor).add(Attributes.MOVEMENT_SPEED, ServerConfig.princeSpeed).build());*/
 	}
 
 	@SubscribeEvent
@@ -152,17 +152,17 @@ public class DSEntities {
 		SpawnPlacements.SpawnPredicate predicate = (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getBlockState(pPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && serverWorld.canSeeSky(pPos);
 		SpawnPlacements.SpawnPredicate princeSpawn = (pEntityType, serverWorld, mobSpawnType, pPos, random) -> predicate.test(pEntityType, serverWorld, mobSpawnType, pPos, random) && serverWorld.getLevel().isVillage(pPos);
 
-		event.register(SHOOTER_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
+		/*event.register(SHOOTER_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 		event.register(SQUIRE_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 		event.register(KNIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 		event.register(PRINCE_ON_HORSE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, princeSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
-		event.register(PRINCESS_ON_HORSE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, princeSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);
+		event.register(PRINCESS_ON_HORSE.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, princeSpawn, SpawnPlacementRegisterEvent.Operation.REPLACE);*/
 	}
 
 	static {
 		VillagerRelationsHandler.dragonHunters = new ArrayList<>(4);
 
-		if (ServerConfig.spawnHound) {
+		/*if (ServerConfig.spawnHound) {
 			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_HOUND));
 		}
 
@@ -176,7 +176,7 @@ public class DSEntities {
 
 		if (ServerConfig.spawnKnight) {
 			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(KNIGHT));
-		}
+		}*/
 	}
 
 	public static <T extends DeferredHolder<EntityType<?>, EntityType<? extends PathfinderMob>>> T castToPathFinder(final DeferredHolder entityType) {
