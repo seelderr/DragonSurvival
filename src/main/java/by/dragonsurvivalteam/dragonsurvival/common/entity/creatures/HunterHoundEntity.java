@@ -1,4 +1,4 @@
-/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
@@ -113,4 +113,4 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	public int getExperienceReward(){
 		return 1 + random.nextInt(2);
 	}
-}*/
+}

@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
-//import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
-//import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
-//import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHorseModel;
+import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
+import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
+import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHorseModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.HelmetEntityRenderer;
-//import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
+import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BallLightningRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
@@ -38,10 +38,10 @@ public class ClientModEvents{
 
 //		EntityRenderers.register(DSEntities.BOLAS_ENTITY.get(), BolasEntityRenderer::new);
 
-		//EntityRenderers.register(DSEntities.PRINCESS.get(), PrincessRenderer::new);
-		//EntityRenderers.register(DSEntities.HUNTER_HOUND.get(), HunterHoundRenderer::new);
-		//EntityRenderers.register(DSEntities.SHOOTER_HUNTER.get(), ShooterHunterRenderer::new);
-		//EntityRenderers.register(DSEntities.SQUIRE_HUNTER.get(), SquireHunterRenderer::new);
+		EntityRenderers.register(DSEntities.PRINCESS.get(), PrincessRenderer::new);
+		EntityRenderers.register(DSEntities.HUNTER_HOUND.get(), HunterHoundRenderer::new);
+		EntityRenderers.register(DSEntities.SHOOTER_HUNTER.get(), ShooterHunterRenderer::new);
+		EntityRenderers.register(DSEntities.SQUIRE_HUNTER.get(), SquireHunterRenderer::new);
 
 		BlockEntityRenderers.register(DSTileEntities.HELMET_TILE.get(), HelmetEntityRenderer::new);
 		BlockEntityRenderers.register(DSTileEntities.DRAGON_BEACON.get(), DragonBeaconRenderer::new);
@@ -54,9 +54,9 @@ public class ClientModEvents{
 
 		EntityRenderers.register(DSEntities.DRAGON.get(), manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
 		EntityRenderers.register(DSEntities.DRAGON_ARMOR.get(), manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
-		//EntityRenderers.register(DSEntities.KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));
-		//EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE.get(), manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
-		//EntityRenderers.register(DSEntities.PRINCE_ON_HORSE.get(), manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
+		EntityRenderers.register(DSEntities.KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));
+		EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE.get(), manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
+		EntityRenderers.register(DSEntities.PRINCE_ON_HORSE.get(), manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
 	}
 
 	@SubscribeEvent

@@ -1,4 +1,4 @@
-/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -247,4 +247,4 @@ public class Princess extends Villager{
 		}));
 		goalSelector.addGoal(7, new PanicGoal(this, 1));
 	}
-}*/
+}

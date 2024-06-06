@@ -1,4 +1,4 @@
-/*package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
+package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
 
 import java.util.EnumSet;
@@ -134,4 +134,4 @@ public class CrossbowAttackGoal<T extends Mob&RangedAttackMob&CrossbowAttackMob>
 	private boolean canRun(){
 		return crossbowState == CrossbowAttackGoal.CrossbowState.UNCHARGED;
 	}
-}*/
+}

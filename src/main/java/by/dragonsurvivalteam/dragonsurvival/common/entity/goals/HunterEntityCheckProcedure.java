@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-/*import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
-import net.minecraftforge.registries.ForgeRegistries;
 
 public class HunterEntityCheckProcedure {
     public static boolean execute(Entity entity) {
@@ -15,4 +14,4 @@ public class HunterEntityCheckProcedure {
         }
         return true;
     }
-}*/
+}

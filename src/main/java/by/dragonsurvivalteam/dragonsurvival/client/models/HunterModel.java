@@ -1,4 +1,4 @@
-/*package by.dragonsurvivalteam.dragonsurvival.client.models;
+package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -155,4 +155,4 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	private ModelPart getArm(HumanoidArm pArm){
 		return pArm == HumanoidArm.LEFT ? leftArm : rightArm;
 	}
-}*/
+}

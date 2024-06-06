@@ -1,4 +1,4 @@
-/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
@@ -36,4 +36,4 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter{
 	public AbstractIllager.IllagerArmPose getArmPose(){
 		return isAggressive() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;
 	}
-}*/
+}
