@@ -6,15 +6,18 @@ import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import javax.annotation.Nullable;
+
+import by.dragonsurvivalteam.dragonsurvival.util.MobEffectUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -36,7 +39,9 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.common.util.LazyOptional;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class DragonBeacon extends Block implements SimpleWaterloggedBlock, EntityBlock{
 	public static BooleanProperty LIT = BlockStateProperties.LIT;
@@ -55,79 +60,81 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		return super.updateShape(blockState, direction, blockState1, world, blockPos, blockPos1);
 	}
 
+	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
+		Optional<DragonStateHandler> dragonState = DragonStateProvider.getCap(pPlayer);
+		if (dragonState.isPresent()) {
+			DragonStateHandler dragonStateHandler = dragonState.orElse(null);
+			if (dragonStateHandler.isDragon() && (pPlayer.totalExperience >= 60 || pPlayer.isCreative())) {
+				if (this == DSBlocks.PEACE_DRAGON_BEACON.get()) {
+					if (!pLevel.isClientSide()) {
+						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+							if (effect != null) {
+								pPlayer.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
+							}
+						});
+					}
+				} else if (this == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
+					if (!pLevel.isClientSide()) {
+						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+							if (effect != null) {
+								pPlayer.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
+							}
+						});
+					}
+				} else if (this == DSBlocks.FIRE_DRAGON_BEACON.get()) {
+					if (!pLevel.isClientSide()) {
+						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+							if (effect != null) {
+								pPlayer.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
+							}
+						});
+					}
+				}
+
+				pPlayer.giveExperiencePoints(-60);
+				pLevel.playSound(pPlayer, pPos, DSSounds.APPLY_EFFECT.get(), SoundSource.PLAYERS, 1, 1);
+				return InteractionResult.SUCCESS;
+			}
+			return InteractionResult.FAIL;
+		}
+		return InteractionResult.FAIL;
+	}
+
 	@Override
-	public InteractionResult use(BlockState blockState, Level world, BlockPos pos, Player playerEntity, InteractionHand hand, BlockHitResult p_225533_6_){
-		ItemStack itemStack = playerEntity.getItemInHand(hand);
+	public ItemInteractionResult useItemOn(@NotNull ItemStack pStack, @NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull InteractionHand pHand, @NotNull BlockHitResult pHitResult){
+		ItemStack itemStack = pPlayer.getItemInHand(pHand);
 		Item item = itemStack.getItem();
 		//upgrading
-		if(this == DSBlocks.DRAGON_BEACON){
-			DragonBeaconTileEntity old = (DragonBeaconTileEntity)world.getBlockEntity(pos);
+		if(this == DSBlocks.DRAGON_BEACON.get()){
+			DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
 			if(item == Items.GOLD_BLOCK){
-				world.setBlockAndUpdate(pos, DSBlocks.PEACE_DRAGON_BEACON.defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)world.getBlockEntity(pos);
+				pLevel.setBlockAndUpdate(pPos, DSBlocks.PEACE_DRAGON_BEACON.get().defaultBlockState());
+				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
 				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.PEACE;
 				dragonBeaconEntity.tick = old.tick;
 				itemStack.shrink(1);
-				world.playSound(playerEntity, pos, DSSounds.UPGRADE_BEACON, SoundSource.BLOCKS, 1, 1);
-				return InteractionResult.SUCCESS;
+				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+				return ItemInteractionResult.SUCCESS;
 			}else if(item == Items.DIAMOND_BLOCK){
-				world.setBlockAndUpdate(pos, DSBlocks.MAGIC_DRAGON_BEACON.defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)world.getBlockEntity(pos);
+				pLevel.setBlockAndUpdate(pPos, DSBlocks.MAGIC_DRAGON_BEACON.get().defaultBlockState());
+				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
 				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.MAGIC;
 				dragonBeaconEntity.tick = old.tick;
 				itemStack.shrink(1);
-				world.playSound(playerEntity, pos, DSSounds.UPGRADE_BEACON, SoundSource.BLOCKS, 1, 1);
-				return InteractionResult.SUCCESS;
+				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+				return ItemInteractionResult.SUCCESS;
 			}else if(item == Items.NETHERITE_INGOT){
-				world.setBlockAndUpdate(pos, DSBlocks.FIRE_DRAGON_BEACON.defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)world.getBlockEntity(pos);
+				pLevel.setBlockAndUpdate(pPos, DSBlocks.FIRE_DRAGON_BEACON.get().defaultBlockState());
+				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
 				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.FIRE;
 				dragonBeaconEntity.tick = old.tick;
 				itemStack.shrink(1);
-				world.playSound(playerEntity, pos, DSSounds.UPGRADE_BEACON, SoundSource.BLOCKS, 1, 1);
-				return InteractionResult.SUCCESS;
+				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+				return ItemInteractionResult.SUCCESS;
 			}
 		}
-		//apply temporary benefits
-		if(itemStack.isEmpty()){
-			LazyOptional<DragonStateHandler> dragonState = DragonStateProvider.getCap(playerEntity);
-			if(dragonState.isPresent()){
-				DragonStateHandler dragonStateHandler = dragonState.orElse(null);
-				if(dragonStateHandler.isDragon() && (playerEntity.totalExperience >= 60 || playerEntity.isCreative())){
-					if(this == DSBlocks.PEACE_DRAGON_BEACON){
-						if(!world.isClientSide()){
-							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
-								if(effect != null){
-									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
-								}
-							});
-						}
-					}else if(this == DSBlocks.MAGIC_DRAGON_BEACON){
-						if(!world.isClientSide()){
-							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
-								if(effect != null){
-									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
-								}
-							});
-						}
-					}else if(this == DSBlocks.FIRE_DRAGON_BEACON){
-						if(!world.isClientSide()){
-							ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
-								if(effect != null){
-									playerEntity.addEffect(new MobEffectInstance(effect, Functions.minutesToTicks(ServerConfig.secondsOfBeaconEffect)));
-								}
-							});
-						}
-					}
-
-					playerEntity.giveExperiencePoints(-60);
-					world.playSound(playerEntity, pos, DSSounds.APPLY_EFFECT, SoundSource.PLAYERS, 1, 1);
-					return InteractionResult.SUCCESS;
-				}
-			}
-		}
-		playerEntity.hurt(playerEntity.damageSources().generic(), 1);
-		return InteractionResult.SUCCESS;
+		pPlayer.hurt(pPlayer.damageSources().generic(), 1);
+		return ItemInteractionResult.SUCCESS;
 	}
 
 	@Override
@@ -168,11 +175,12 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 
 	@org.jetbrains.annotations.Nullable @Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		return DSTileEntities.dragonBeacon.create(pPos, pState);
+		return DSTileEntities.DRAGON_BEACON.get().create(pPos, pState);
 	}
 
+	// FIXME: Figure out what is the replacement for createTickerHelper
 	@Override
 	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
-		return pLevel.isClientSide() ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.dragonBeacon, DragonBeaconTileEntity::serverTick);
+		return pLevel.isClientSide() ? null : null; //: BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.DRAGON_BEACON.get(), DragonBeaconTileEntity::serverTick);
 	}
 }

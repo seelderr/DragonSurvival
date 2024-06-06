@@ -2,14 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.commands;
 
 import static net.minecraft.commands.Commands.literal;
 
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class DragonAltarCommand{
@@ -23,7 +22,7 @@ public class DragonAltarCommand{
 	}
 
 	private static int runCommand(ServerPlayer serverPlayer){
-		NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonAltar());
+		PacketDistributor.sendToPlayer(serverPlayer, new AllowOpenDragonAltar.Data());
 		return 1;
 	}
 }

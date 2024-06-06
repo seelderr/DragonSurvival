@@ -6,19 +6,21 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.util.Lazy;
+import net.neoforged.neoforge.event.entity.EntityEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DragonSizeHandler{
 	// TODO :: Add timestamp and clear cache
 	private static final ConcurrentHashMap<String, Boolean> WAS_DRAGON = new ConcurrentHashMap<>(20);
@@ -108,7 +110,7 @@ public class DragonSizeHandler{
 
 	public static EntityDimensions calculateDimensions(double width, double height)
 	{
-		return new EntityDimensions((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D), false);
+		return EntityDimensions.scalable((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D));
 	}
 
 	public static Pose overridePose(final Player player) {
@@ -149,7 +151,7 @@ public class DragonSizeHandler{
 	}
 
 	public static boolean canPoseFit(LivingEntity player, Pose pose){
-		LazyOptional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
+		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
 
 		if (!capability.isPresent()){
 			return false;
@@ -182,16 +184,16 @@ public class DragonSizeHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerTick(final TickEvent.PlayerTickEvent event) {
-		Player player = event.player;
+	public static void playerTick(final PlayerTickEvent.Pre event) {
+		Player player = event.getEntity();
 
-		if (player == null || event.phase == TickEvent.Phase.END || !ServerConfig.sizeChangesHitbox) {
+		if (!ServerConfig.sizeChangesHitbox) {
 			return;
 		}
 
 		// In cases where client and server runs on the same machine
 		// Only using the player id results in one side not refreshing the dimensions
-		String playerIdSide = player.getId() + event.side.name();
+		String playerIdSide = player.getId() + (player.level().isClientSide() ? "client" : "server");
 
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if (handler.isDragon()) {

@@ -4,15 +4,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class ServerPlayerStatusSync {
@@ -23,9 +22,9 @@ public class ServerPlayerStatusSync {
 	@SubscribeEvent
 	public static void onServerTick(PlayerTickEvent event){
         int syncTicks = Functions.secondsToTicks(ServerConfig.serverSyncTime);
-		if(event.side == LogicalSide.CLIENT || event.phase != Phase.START || ServerConfig.serverSyncTime == -1) return;
+		if(event.getEntity().level().isClientSide() || ServerConfig.serverSyncTime == -1) return;
 
-		Player player = event.player;
+		Player player = event.getEntity();
 
 		if(player.isAddedToWorld() && player.isAlive()){
 			if(DragonStateProvider.isDragon(player)){
@@ -33,7 +32,7 @@ public class ServerPlayerStatusSync {
 				if(player.tickCount >= handler.lastSync + syncTicks){
                     // We don't do an initial sync here since it could result in the player syncing before their data is loaded, causing data loss.
 					handler.lastSync = player.tickCount;
-                    NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new CompleteDataSync(player.getId(), handler.writeNBT()));
+					PacketDistributor.sendToPlayersTrackingEntity(player, new SyncComplete.Data(player.getId(), handler.serializeNBT(player.registryAccess())));
 				}
 			}
 		}

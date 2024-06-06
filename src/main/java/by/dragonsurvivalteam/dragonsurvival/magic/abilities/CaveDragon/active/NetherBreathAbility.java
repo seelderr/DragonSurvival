@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -35,17 +36,17 @@ import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.ForgeEventFactory;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.loading.FMLEnvironment;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
 @RegisterDragonAbility
 public class NetherBreathAbility extends BreathAbility{
@@ -147,18 +148,14 @@ public class NetherBreathAbility extends BreathAbility{
 				BlockPos firePosition = blockPosition.relative(direction);
 
 				if (FireBlock.canBePlacedAt(player.level(), firePosition, direction)) {
-					boolean allowPlacement = ForgeEventFactory.getMobGriefingEvent(player.level(), player);
+					if (player.getRandom().nextInt(100) < 50) {
+						BlockState fireBlockState = FireBlock.getState(player.level(), firePosition);
+						player.level().setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
 
-					if (allowPlacement) {
-						if (player.getRandom().nextInt(100) < 50) {
-							BlockState fireBlockState = FireBlock.getState(player.level(), firePosition);
-							player.level().setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
+						blockState.onCaughtFire(player.level(), blockPosition, direction, player);
 
-							blockState.onCaughtFire(player.level(), blockPosition, direction, player);
-
-							if (blockState.getBlock() == Blocks.TNT) {
-								player.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-							}
+						if (blockState.getBlock() == Blocks.TNT) {
+							player.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
 						}
 					}
 				}
@@ -173,7 +170,7 @@ public class NetherBreathAbility extends BreathAbility{
 					AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 					entity.setWaitTime(0);
 					entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
-					entity.setPotion(new Potion(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(10) * 4))); //Effect duration is divided by 4 normaly
+					entity.setPotionContents(new PotionContents(CAVE_BREATH));
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
 					entity.setParticle(new SmallFireParticleData(37, false));
@@ -218,8 +215,8 @@ public class NetherBreathAbility extends BreathAbility{
 			return;
 		}
 
-		if(player.level().isClientSide() && castDuration <= 0){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
+		if(player.level().isClientSide() && castDuration <= 0 && FMLEnvironment.dist.isClient()){
+			sound();
 		}
 
 		if(player.level().isClientSide()){
@@ -249,7 +246,7 @@ public class NetherBreathAbility extends BreathAbility{
 	public  void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
-				DSSounds.FIRE_BREATH_START,
+				DSSounds.FIRE_BREATH_START.get(),
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -265,7 +262,7 @@ public class NetherBreathAbility extends BreathAbility{
 		if(DSSounds.FIRE_BREATH_END != null){
 			Vec3 pos = player.getEyePosition(1.0F);
 			SimpleSoundInstance endSound = new SimpleSoundInstance(
-				DSSounds.FIRE_BREATH_END,
+				DSSounds.FIRE_BREATH_END.get(),
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -304,7 +301,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void onDamage(LivingEntity entity){
-		entity.setSecondsOnFire(30);
+		entity.setRemainingFireTicks(Functions.secondsToTicks(30));
 	}
 
 	public static float getDamage(int level){
@@ -333,8 +330,8 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public void castComplete(Player player){
-		if(player.level().isClientSide()){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
+		if(player.level().isClientSide() && FMLEnvironment.dist.isClient()) {
+			stopSound();
 		}
 	}
 

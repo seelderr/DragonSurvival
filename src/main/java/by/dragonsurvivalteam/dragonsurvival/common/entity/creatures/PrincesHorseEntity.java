@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
@@ -86,7 +86,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	}
 
 	@Override
-	public void playCelebrateSound() { /* Nothing to do here */ }
+	public void playCelebrateSound() {}
 
 	@Override
 	protected @NotNull Brain<?> makeBrain(@NotNull final Dynamic<?> p_213364_1_) {
@@ -156,7 +156,7 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	}
 
 	@Override
-	public void thunderHit(@NotNull final ServerLevel level, @NotNull final LightningBolt bolt) { /* Nothing to do here */ }
+	public void thunderHit(@NotNull final ServerLevel level, @NotNull final LightningBolt bolt) { }
 
 	@Override
 	protected void updateTrades() {
@@ -174,13 +174,13 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	}
 
 	@Override
-	public void gossip(@NotNull final ServerLevel level, @NotNull Villager villager, long p_242368_3_) { /* Nothing to do */ }
+	public void gossip(@NotNull final ServerLevel level, @NotNull Villager villager, long p_242368_3_)  }
 
 	@Override
-	public void startSleeping(@NotNull final BlockPos position) { /* Nothing to do */ }
+	public void startSleeping(@NotNull final BlockPos position) {}
 
 	@Override
-	protected void pickUpItem(@NotNull final ItemEntity ignored) { /* Nothing to do */ }
+	protected void pickUpItem(@NotNull final ItemEntity ignored) { }
 
 	@Override
 	protected void registerGoals(){
@@ -258,4 +258,4 @@ public class PrincesHorseEntity extends Villager implements GeoEntity, CommonTra
 	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk_princess");
 	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle_princess");
 	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_princess_2");
-}
+}*/

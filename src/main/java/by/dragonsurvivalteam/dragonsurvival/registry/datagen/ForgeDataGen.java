@@ -1,10 +1,10 @@
-package by.dragonsurvivalteam.dragonsurvival.data;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifier;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifierSerializer;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifier;
-import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifierSerializer;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifierSerializer;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import com.mojang.serialization.MapCodec;
 import java.util.List;
@@ -37,9 +37,9 @@ public class ForgeDataGen {
 		generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(generator.getPackOutput(), event.getLookupProvider(), DragonSurvivalMod.MODID, existingFileHelper));
 
 		// Server
-		// TODO: This might not work.
-		Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.getEntries().stream().map(key -> new ResourceLocation(DragonSurvivalMod.MODID, "blocks/" + key.getId())).collect(Collectors.toSet());
-		generator.addProvider(event.includeServer(), new DataLootTableProvider(generator.getPackOutput(), blocks, List.of(new LootTableProvider.SubProviderEntry(BlockLootTableSubProvider::new, LootContextParamSets.BLOCK))));
+		// FIXME: We need a Set<ResourceKey<LootTable>> pRequiredTables and I don't know how to get it
+		//Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.getEntries().stream().map(key -> new ResourceLocation(DragonSurvivalMod.MODID, "blocks/" + key.getId())).collect(Collectors.toSet());
+		//generator.addProvider(event.includeServer(), new DataLootTableProvider(generator.getPackOutput(), blocks, List.of(new LootTableProvider.SubProviderEntry(BlockLootTableSubProvider::new, LootContextParamSets.BLOCK))));
 
 		BlockTagsProvider blockTagsProvider = new DataBlockTagProvider(generator.getPackOutput(), event.getLookupProvider(), DragonSurvivalMod.MODID, existingFileHelper);
 		generator.addProvider(event.includeServer(), blockTagsProvider);

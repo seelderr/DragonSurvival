@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.data;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonDoor;

@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.data;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
@@ -24,6 +24,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePrope
 import net.minecraft.world.level.storage.loot.predicates.LootItemEntityPropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import net.neoforged.neoforge.registries.DeferredHolder;
+import org.jetbrains.annotations.NotNull;
 
 public class BlockLootTableSubProvider extends BlockLootSubProvider {
     protected BlockLootTableSubProvider() {
@@ -32,7 +33,7 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        DS_BLOCKS.getRegistry().get().forEach((key, value) -> {
+        DS_BLOCKS.getRegistry().get().forEach((key) -> {
             Function<Block, LootTable.Builder> builder = block -> {
                 if (block instanceof DragonDoor) {
                     return createSinglePropConditionTable(block, DragonDoor.PART, DragonDoor.Part.BOTTOM);
@@ -59,15 +60,15 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block))));
                 }
 
-                return createSingleItemTable(value);
+                return createSingleItemTable(key.asItem());
             };
 
-            add(value, builder);
+            add(key, builder);
         });
     }
 
     @Override
-    protected Iterable<Block> getKnownBlocks() {
+    protected @NotNull Iterable<Block> getKnownBlocks() {
         return DS_BLOCKS.getEntries().stream().map(DeferredHolder::get).collect(Collectors.toList());
     }
 }

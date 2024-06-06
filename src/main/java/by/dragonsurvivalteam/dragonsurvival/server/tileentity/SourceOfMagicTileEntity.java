@@ -4,11 +4,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import io.netty.buffer.Unpooled;
 import java.util.HashMap;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -26,8 +28,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, GeoBlockEntity {
@@ -36,14 +38,14 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
 	private int ticks;
 	static{
-		consumables.put(DSItems.ELDER_DRAGON_DUST, Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
-		consumables.put(DSItems.ELDER_DRAGON_BONE, Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
-		consumables.put(DSItems.DRAGON_HEART_SHARD, Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
-		consumables.put(DSItems.WEAK_DRAGON_HEART, Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
-		consumables.put(DSItems.ELDER_DRAGON_HEART, Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
+		consumables.put(DSItems.ELDER_DRAGON_DUST.value(), Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
+		consumables.put(DSItems.ELDER_DRAGON_BONE.value(), Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
+		consumables.put(DSItems.DRAGON_HEART_SHARD.value(), Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
+		consumables.put(DSItems.WEAK_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
+		consumables.put(DSItems.ELDER_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
 	}
 	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
-		super(DSTileEntities.sourceOfMagicTileEntity, pWorldPosition, pBlockState);
+		super(DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), pWorldPosition, pBlockState);
 	}
 
 	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity){
@@ -57,7 +59,7 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 
 		if(!pBlockEntity.isEmpty()){
 			if(pBlockEntity.ticks % 120 == 0){
-				pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
+				pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.value() ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
 			}
 		}
 
@@ -97,15 +99,14 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public void load(CompoundTag compound){
-		super.load(compound);
+	public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries){
 		stacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(compound, stacks);
+		ContainerHelper.loadAllItems(pTag, stacks, pRegistries);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag compound){
-		ContainerHelper.saveAllItems(compound, stacks);
+	public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries){
+		ContainerHelper.saveAllItems(pTag, stacks, pRegistries);
 	}
 
 	@Override
@@ -125,16 +126,27 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 		return new SourceOfMagicContainer(p_createMenu_1_, p_createMenu_2_, buffer);
 	}
 
-	@Override
-	public void registerControllers(final AnimatableManager.ControllerRegistrar controllerRegistrar) { /* TODO :: Nothing to do? */ }
+	// FIXME: Read up on geckolib
+	//@Override
+	//public void registerControllers(final AnimatableManager.ControllerRegistrar controllerRegistrar) { /* TODO :: Nothing to do? */ }
 
-	@Override
-	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return cache;
-	}
+	///@Override
+	//public AnimatableInstanceCache getAnimatableInstanceCache() {
+	//	return cache;
+	//}
 
 	@Override
 	public void clearContent(){
 		stacks.clear();
+	}
+
+	@Override
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+
+	}
+
+	@Override
+	public AnimatableInstanceCache getAnimatableInstanceCache() {
+		return null;
 	}
 }

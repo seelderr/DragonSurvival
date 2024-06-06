@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -178,4 +178,4 @@ public class PrinceHorseEntity extends PrincesHorseEntity {
 	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
 	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
 	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_2");
-}
+}*/

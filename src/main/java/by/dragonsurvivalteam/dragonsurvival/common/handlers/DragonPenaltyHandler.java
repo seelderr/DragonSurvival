@@ -4,31 +4,32 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonTypeData;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.PotionItem;
-import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.entity.ProjectileImpactEvent;
-import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DragonPenaltyHandler{
 	@SubscribeEvent
 	public static void hitByPotion(ProjectileImpactEvent potionEvent){
@@ -40,7 +41,7 @@ public class DragonPenaltyHandler{
 			if(potion.getItem().getItem() != Items.SPLASH_POTION){
 				return;
 			}
-			if(!PotionUtils.getPotion(potion.getItem()).getEffects().isEmpty()){
+			if(PotionUtils.getPotion(potion.getItem()).getEffects().isEmpty()){
 				return; //Remove this line if you want potions with effects to also damage rather then just water ones.
 			}
 
@@ -57,7 +58,7 @@ public class DragonPenaltyHandler{
 						if(dragonStateHandler.getType() == null || !Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
 							return;
 						}
-						player.hurt(DSDamageTypes.damageSource(player.level(), DSDamageTypes.WATER_BURN), ServerConfig.caveSplashDamage.floatValue());
+						player.hurt(new DamageSource(DSDamageTypes.WATER_BURN), ServerConfig.caveSplashDamage.floatValue());
 					}
 				});
 			}
@@ -100,12 +101,12 @@ public class DragonPenaltyHandler{
 				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
 					if(PotionUtils.getPotion(itemStack) == Potions.WATER && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) && !player.level().isClientSide()){
 						seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), seaDragonType));
+						PacketDistributor.sendToPlayersTrackingEntity(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
 					}
 				}
 				if(DragonConfigHandler.SEA_DRAGON_HYDRATION_USE_ALTERNATIVES.contains(itemStack.getItem()) && !player.level().isClientSide()){
 					seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonTypeData(player.getId(), seaDragonType));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
 				}
 			}
 		});

@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.data;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 

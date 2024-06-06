@@ -14,16 +14,16 @@ import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Snowball;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.PlayLevelSoundEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.PlayLevelSoundEvent;
+import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DragonBonusHandler {
 	@SubscribeEvent
 	public static void dragonDamageImmunities(final LivingAttackEvent event) {
@@ -60,7 +60,7 @@ public class DragonBonusHandler {
 		}
 
 		if (event.getSound() != null) {
-			boolean isRelevant = event.getSound().get().getLocation().getPath().contains(".step");
+			boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
 
 			if (isRelevant && ServerConfig.bonuses && ServerConfig.caveLavaSwimming) {
 				if (DragonUtils.isDragonType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
@@ -87,7 +87,7 @@ public class DragonBonusHandler {
 					distance -= ability.getHeight();
 				}
 
-				float gravity = (float) livingFallEvent.getEntity().getAttributeValue(ForgeMod.ENTITY_GRAVITY.get());
+				float gravity = (float) livingFallEvent.getEntity().getAttributeValue(Attributes.GRAVITY);
 				// TODO: Added a fudge factor of 1.5 here. Not sure why it is needed but otherwise you begin to hurt yourself at very high jump heights even though the calculation here is identical to the push force calculation.
 				float jumpHeight = (float) DSModifiers.getJumpBonus(dragonStateHandler) * 1.5f;
 

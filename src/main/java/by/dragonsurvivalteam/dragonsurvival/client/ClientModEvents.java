@@ -18,7 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.Dra
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.api.distmarker.Dist;
@@ -43,8 +43,8 @@ public class ClientModEvents{
 		EntityRenderers.register(DSEntities.SHOOTER_HUNTER.get(), ShooterHunterRenderer::new);
 		EntityRenderers.register(DSEntities.SQUIRE_HUNTER.get(), SquireHunterRenderer::new);
 
-		BlockEntityRenderers.register(DSTileEntities.helmetTile, HelmetEntityRenderer::new);
-		BlockEntityRenderers.register(DSTileEntities.dragonBeacon, DragonBeaconRenderer::new);
+		BlockEntityRenderers.register(DSTileEntities.HELMET_TILE.get(), HelmetEntityRenderer::new);
+		BlockEntityRenderers.register(DSTileEntities.DRAGON_BEACON.get(), DragonBeaconRenderer::new);
 
 		//ShaderHelper.initShaders();
 

@@ -15,8 +15,10 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorCreeper;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSPotions;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -36,6 +38,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.EntityType;
@@ -44,16 +47,20 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.DistExecutor;
+import net.neoforged.fml.loading.FMLEnvironment;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
 @RegisterDragonAbility
 public class StormBreathAbility extends BreathAbility{
@@ -176,7 +183,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(entity instanceof Creeper creeper){
 
 			if(!creeper.isPowered()){
-				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);
+				creeper.getEntityData().set(AccessorCreeper.getDataIsPowered(), true);
 			}
 		}
 	}
@@ -296,7 +303,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	public void hurtTarget(LivingEntity entity){
-		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(DSDamageTypes.entityDamageSource(player.level(), this, player), getDamage()), entity);
+		TargetingFunctions.attackTargets(getPlayer(), e -> e.hurt(new DamageSource(DSDamageTypes.SEA_DRAGON_BREATH, player), getDamage()), entity);
 		onDamage(entity);
 
 		if(player.getRandom().nextInt(100) < 50){
@@ -372,7 +379,7 @@ public class StormBreathAbility extends BreathAbility{
 	public void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
-				DSSounds.STORM_BREATH_START,
+				DSSounds.STORM_BREATH_START.get(),
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -394,7 +401,7 @@ public class StormBreathAbility extends BreathAbility{
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(pos.above().getX(), pos.above().getY(), pos.above().getZ());
-				entity.setPotion(new Potion(new MobEffectInstance(DSEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setPotionContents(new PotionContents(STORM_BREATH));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(1);
 				entity.setParticle(new SmallLightningParticleData(37, false));
@@ -408,7 +415,7 @@ public class StormBreathAbility extends BreathAbility{
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(pos.getX(), pos.getY(), pos.getZ());
-				entity.setPotion(new Potion(new MobEffectInstance(DSEffects.CHARGED, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setPotionContents(new PotionContents(STORM_BREATH));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(0.45f);
 				entity.setParticle(new SmallLightningParticleData(37, true));
@@ -458,8 +465,8 @@ public class StormBreathAbility extends BreathAbility{
 	public void onChanneling(Player player, int castDuration){
 		super.onChanneling(player, castDuration);
 
-		if(player.level().isClientSide() && castDuration <= 0){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
+		if(player.level().isClientSide() && castDuration <= 0 && FMLEnvironment.dist == Dist.CLIENT){
+			sound();
 		}
 
 		if(player.level().isClientSide()){
@@ -523,8 +530,9 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	@Override
+	@OnlyIn( Dist.CLIENT )
 	public void castComplete(Player player){
-		DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
+		stopSound();
 	}
 
 	@Override

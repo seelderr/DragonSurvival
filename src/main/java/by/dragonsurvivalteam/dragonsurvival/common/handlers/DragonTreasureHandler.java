@@ -15,38 +15,37 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.RenderGuiOverlayEvent;
-import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
-import software.bernie.geckolib.core.object.Color;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+import software.bernie.geckolib.util.Color;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DragonTreasureHandler{
 	private static int sleepTimer = 0;
 
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent event){
-		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT){
+	public static void playerTick(PlayerTickEvent.Post event){
+		if(event.getEntity().level().isClientSide()) {
 			return;
 		}
-		Player player = event.player;
+
+		Player player = event.getEntity();
 
 		if(DragonStateProvider.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.treasureResting){
-				if(player.isCrouching() || !(player.getFeetBlockState().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
+				if(player.isCrouching() || !(player.getBlockStateOn().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
 					handler.treasureResting = false;
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), false));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
 					return;
 				}
 
@@ -92,9 +91,6 @@ public class DragonTreasureHandler{
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
 	public static void playerTick(ClientTickEvent event){
-		if(event.phase == Phase.START){
-			return;
-		}
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonStateProvider.isDragon(player)){
@@ -105,7 +101,7 @@ public class DragonTreasureHandler{
 				float groundSpeed = Mth.sqrt((float)(velocity.x * velocity.x + velocity.z * velocity.z));
 				if(Math.abs(groundSpeed) > 0.05){
 					handler.treasureResting = false;
-					NetworkHandler.CHANNEL.sendToServer(new SyncTreasureRestStatus(player.getId(), false));
+					PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), false));
 				}
 			}
 		}
@@ -113,7 +109,7 @@ public class DragonTreasureHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void sleepScreenRender(RenderGuiOverlayEvent.Post event){
+	public static void sleepScreenRender(RenderGuiLayerEvent.Post event){
 		Player playerEntity = Minecraft.getInstance().player;
 
 		if(playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator()){
@@ -121,7 +117,7 @@ public class DragonTreasureHandler{
 		}
 
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if(event.getOverlay() == VanillaGuiOverlay.AIR_LEVEL.type()){
+			if(event.getLayer() == VanillaGuiLayers.AIR_LEVEL){
 
 				Window window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level().getSunAngle(1.0F);
@@ -152,7 +148,7 @@ public class DragonTreasureHandler{
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(cap.treasureResting){
 						cap.treasureResting = false;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncTreasureRestStatus(player.getId(), false));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
 					}
 				});
 			}

@@ -1,15 +1,16 @@
-package by.dragonsurvivalteam.dragonsurvival.server.handlers;
+// FIXME: Reimplement loot tables once we get compiling
+/*package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import java.util.List;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.entries.LootPoolEntryContainer;
-import net.minecraft.world.level.storage.loot.entries.LootTableReference;
+import net.minecraft.world.level.storage.loot.entries.NestedLootTable;
 import net.minecraft.world.level.storage.loot.providers.number.UniformGenerator;
-import net.minecraftforge.event.LootTableLoadEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.LootTableLoadEvent;
 
 @EventBusSubscriber
 public class LootTableInject{
@@ -71,6 +72,6 @@ public class LootTableInject{
 
 	private static LootPoolEntryContainer.Builder<?> getInjectEntry(String name, int weight){
 		ResourceLocation table = new ResourceLocation(DragonSurvivalMod.MODID, "inject/" + name);
-		return LootTableReference.lootTableReference(table).setWeight(weight);
+		return NestedLootTable.lootTableReference(table).setWeight(weight);
 	}
-}
+}*/

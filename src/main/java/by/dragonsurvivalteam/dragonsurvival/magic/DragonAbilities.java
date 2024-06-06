@@ -28,9 +28,9 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.fml.ModList;
-import net.minecraftforge.forgespi.language.ModFileScanData;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.fml.ModList;
+import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
 
@@ -138,9 +138,9 @@ public class DragonAbilities{
 			handler.getMagicData().abilities.put(ability.getName(), ability);
 
 			if(player.level().isClientSide()){
-				NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagicData()));
-			}else{
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagicData()));
+				PacketDistributor.sendToServer(new SyncMagicCap.Data(player.getId(), handler.getMagicData().serializeNBT(player.registryAccess())));
+			} else {
+				PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicCap.Data(player.getId(), handler.getMagicData().serializeNBT(player.registryAccess())));
 			}
 		}catch(InstantiationException | IllegalAccessException e){
 			throw new RuntimeException(e);
@@ -158,9 +158,9 @@ public class DragonAbilities{
 		});
 
 		if(player.level().isClientSide()){
-			NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(player.getId(), handler.getMagicData()));
+			PacketDistributor.sendToServer(new SyncMagicCap.Data(player.getId(), handler.getMagicData().serializeNBT(player.registryAccess())));
 		}else{
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY.with(() -> player), new SyncMagicCap(player.getId(), handler.getMagicData()));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicCap.Data(player.getId(), handler.getMagicData().serializeNBT(player.registryAccess())));
 		}
 	}
 
@@ -266,7 +266,7 @@ public class DragonAbilities{
 		Vec3 vector3d2 = eyePosition.add(viewVector);
 
 		BlockPos pos = null;
-		BlockHitResult result = player.level().clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility.clipContext(), null));
+		BlockHitResult result = player.level().clip(new ClipContext(eyePosition, vector3d2, ClipContext.Block.OUTLINE, breathAbility.clipContext(), player));
 
 		if (result.getType() == HitResult.Type.MISS) {
 			pos = BlockPosHelper.get(vector3d2);

@@ -1,6 +1,7 @@
-package by.dragonsurvivalteam.dragonsurvival.client.emotes;
+package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
@@ -25,8 +26,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
-public class EmoteRegistry{
-	public static final ResourceLocation CLIENT_EMOTES = new ResourceLocation(DragonSurvivalMod.MODID, "emotes.json");
+public class DSEmotes {
+	public static final ResourceLocation DS_CLIENT_EMOTES = new ResourceLocation(DragonSurvivalMod.MODID, "emotes.json");
 	public static final ArrayList<Emote> EMOTES = new ArrayList<>();
 
 	private static boolean hasStarted = false;
@@ -34,12 +35,12 @@ public class EmoteRegistry{
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
 	public static void clientStart(FMLClientSetupEvent event){
-		EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
+		DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
 
 		if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
 			((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
-				EmoteRegistry.EMOTES.clear();
-				EmoteRegistry.reload(Minecraft.getInstance().getResourceManager(), EmoteRegistry.CLIENT_EMOTES);
+				DSEmotes.EMOTES.clear();
+				DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
 				initEmoteRotation();
 			});
 		}

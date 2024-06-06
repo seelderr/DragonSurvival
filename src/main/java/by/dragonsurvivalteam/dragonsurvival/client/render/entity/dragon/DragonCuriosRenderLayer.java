@@ -15,7 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import top.theillusivec4.curios.api.CuriosApi;
@@ -38,7 +38,7 @@ public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
             return;
         }
 
-        CoreGeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+        GeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
         if (neck != null) {
             neck.setHidden(false);

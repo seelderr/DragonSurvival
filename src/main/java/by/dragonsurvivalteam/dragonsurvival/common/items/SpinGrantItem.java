@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -16,21 +15,22 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 public class SpinGrantItem extends Item{
-	public SpinGrantItem(Properties p_i48487_1_){
-		super(p_i48487_1_);
+	public SpinGrantItem(Properties properties){
+		super(properties);
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
+	public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand p_77659_3_){
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if(handler.isDragon()){
 			if(!world.isClientSide()){
 				handler.getMovementData().spinLearned = !handler.getMovementData().spinLearned;
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+				PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 
 				if(!player.isCreative()){
 					player.getItemInHand(p_77659_3_).shrink(1);
@@ -45,9 +45,8 @@ public class SpinGrantItem extends Item{
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-		@Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(Component.translatable("ds.description.spin_grant"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+		pTooltipComponents.add(Component.translatable("ds.description.spin_grant"));
 	}
 }

@@ -3,29 +3,24 @@ package by.dragonsurvivalteam.dragonsurvival;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_TAB;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.DS_DAMAGE_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.ENTITY_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.SOUNDS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonAltarCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonEditorCommand;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonSizeCommand;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.serialization.MapCodec;
 import java.util.HashMap;
@@ -36,10 +31,17 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
+import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
@@ -67,10 +69,6 @@ public class DragonSurvivalMod{
 
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
-		modEventBus.addListener(this::addPackFinders);
-
-		DSParticles.register();
-		DSSounds.register();
 
 		DS_MOB_EFFECTS.register(modEventBus);
 		DS_BLOCKS.register(modEventBus);
@@ -78,27 +76,19 @@ public class DragonSurvivalMod{
 		DS_CREATIVE_MODE_TABS.register(modEventBus);
 		DS_PARTICLES.register(modEventBus);
 		DS_DAMAGE_TYPES.register(modEventBus);
-		SOUNDS.register(modEventBus);
+		DS_SOUNDS.register(modEventBus);
+		DS_TILE_ENTITIES.register(modEventBus);
 		ENTITY_TYPES.register(modEventBus);
 		GLM.register(modEventBus);
-
-
-		MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());
-		MinecraftForge.EVENT_BUS.register(new Event_busHandler());
-
-		MinecraftForge.EVENT_BUS.addListener(this::serverRegisterCommandsEvent);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event){
 		WingObtainmentController.loadDragonPhrases();
-		NetworkHandler.setup();
-		LOGGER.info("Successfully registered packets!");
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		if (ModList.get().isLoaded("appleskin")) {
-			MinecraftForge.EVENT_BUS.register(new AppleSkinEventHandler());
+			NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
 		}
 	}
 
@@ -171,11 +161,5 @@ public class DragonSurvivalMod{
 					e.printStackTrace();
 			}
 		});*/
-	}
-
-	@SubscribeEvent
-	public static void register(final RegisterCapabilitiesEvent event){
-		event.register(DragonStateHandler.class);
-		event.register(EntityStateHandler.class);
 	}
 }

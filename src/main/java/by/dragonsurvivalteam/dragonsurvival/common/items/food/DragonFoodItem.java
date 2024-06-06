@@ -27,31 +27,31 @@ public class DragonFoodItem extends Item{
 	private AbstractDragonType dragonType;
 	private Consumer<LivingEntity> onEat;
 
-	public DragonFoodItem(Properties p_i48487_1_){
-		super(p_i48487_1_.food(genFoodProperties(null, null)));
+	public DragonFoodItem(Properties properties){
+		super(properties.food(genFoodProperties(null, null)));
 	}
 
-	public DragonFoodItem(Properties p_i48487_1_, Supplier<MobEffectInstance>... effectInstances){
-		super(p_i48487_1_.food(genFoodProperties(null, effectInstances)));
+	public DragonFoodItem(Properties properties, Supplier<MobEffectInstance>... effectInstances){
+		super(properties.food(genFoodProperties(null, effectInstances)));
 		effects = effectInstances;
 	}
 
 
-	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
-		super(p_i48487_1_.food(genFoodProperties(dragonType, effectInstances)));
+	public DragonFoodItem(Properties properties, AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
+		super(properties.food(genFoodProperties(dragonType, effectInstances)));
 		this.dragonType = dragonType;
 		effects = effectInstances;
 	}
 
-	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, Supplier<MobEffectInstance>... effectInstances){
-		super(p_i48487_1_.food(genFoodProperties(dragonType, effectInstances)));
+	public DragonFoodItem(Properties properties, AbstractDragonType dragonType, Consumer<LivingEntity> onEat, Supplier<MobEffectInstance>... effectInstances){
+		super(properties.food(genFoodProperties(dragonType, effectInstances)));
 		this.dragonType = dragonType;
 		effects = effectInstances;
 		this.onEat = onEat;
 	}
 
-	public DragonFoodItem(Properties p_i48487_1_, AbstractDragonType dragonType, Consumer<LivingEntity> onEat){
-		super(p_i48487_1_.food(genFoodProperties(dragonType, null)));
+	public DragonFoodItem(Properties properties, AbstractDragonType dragonType, Consumer<LivingEntity> onEat){
+		super(properties.food(genFoodProperties(dragonType, null)));
 		this.dragonType = dragonType;
 		this.onEat = onEat;
 	}
@@ -59,11 +59,11 @@ public class DragonFoodItem extends Item{
 	@NotNull private static FoodProperties genFoodProperties(AbstractDragonType dragonType, Supplier<MobEffectInstance>... effectInstances){
 		Builder builder = new Builder();
 		builder.nutrition(1);
-		builder.saturationMod(0.4F);
+		builder.saturationModifier(0.4F);
         builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F);
 
 		if(effectInstances != null){
-			builder.alwaysEat();
+			builder.alwaysEdible();
 		}
 		
 		return builder.build();
@@ -71,11 +71,11 @@ public class DragonFoodItem extends Item{
 	
 	
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag tooltipFlag){
-		super.appendHoverText(stack, world, list, tooltipFlag);
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
 		String langKey = "ds.description." + ResourceHelper.getKey(this).getPath();
 		if(I18n.exists(langKey)){
-			list.add(Component.translatable(langKey));
+			pTooltipComponents.add(Component.translatable(langKey));
 		}
 	}
 

@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -18,14 +17,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber( modid = DragonSurvivalMod.MODID )
+@EventBusSubscriber( modid = DragonSurvivalMod.MODID )
 public class DragonGrowthHandler{
 	public static long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
 	public static long youngToAdult = TimeUnit.SECONDS.convert(15, TimeUnit.HOURS);
@@ -115,7 +113,7 @@ public class DragonGrowthHandler{
 				return;
 			}
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
 			player.refreshDimensions();
 		});
 	}
@@ -161,15 +159,15 @@ public class DragonGrowthHandler{
 	}
 
 	@SubscribeEvent
-	public static void onPlayerUpdate(TickEvent.PlayerTickEvent event){
+	public static void onPlayerUpdate(PlayerTickEvent.Pre event){
 		if(!ServerConfig.alternateGrowing){
 			return;
 		}
 
-		Player player = event.player;
+		Player player = event.getEntity();
 		Level world = player.getCommandSenderWorld();
 
-		if(world.isClientSide() || event.phase == Phase.END){
+		if(world.isClientSide()){
 			return;
 		}
 
@@ -209,7 +207,7 @@ public class DragonGrowthHandler{
 				if(handler.getSize() != size){
 					handler.setSize(size, player);
 
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSize(player.getId(), size));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
 					player.refreshDimensions();
 				}
 			}

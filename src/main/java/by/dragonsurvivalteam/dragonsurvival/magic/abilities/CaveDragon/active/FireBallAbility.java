@@ -20,8 +20,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
 public class FireBallAbility extends ChargeCastAbility{
@@ -174,7 +174,7 @@ public class FireBallAbility extends ChargeCastAbility{
 		FireBallEntity entity = new FireBallEntity(player.level(), player, d2, d3, d4);
 		entity.setPos(x + vector3d.x * speed, y, z + vector3d.z * speed);
 		entity.setLevel(getLevel());
-		entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, (float)speed, 1.0F);
+		entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, (float)speed, 1.0F);
 		player.level().addFreshEntity(entity);
 	}
 }

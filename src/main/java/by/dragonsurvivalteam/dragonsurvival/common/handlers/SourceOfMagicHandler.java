@@ -22,35 +22,34 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.TickEvent.ClientTickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.living.LivingHurtEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class SourceOfMagicHandler{
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent event){
-		if(event.phase == Phase.START || event.side == LogicalSide.CLIENT){
+	public static void playerTick(PlayerTickEvent.Pre event){
+		if(event.getEntity().level().isClientSide()){
 			return;
 		}
-		Player player = event.player;
+
+		Player player = event.getEntity();
 
 		if(DragonStateProvider.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if(handler.getMagicData().onMagicSource){
-				if(!(player.getFeetBlockState().getBlock() instanceof SourceOfMagicBlock) || handler.getMovementData().bite || player.isCrouching() && handler.getMagicData().magicSourceTimer > 40){
+				if(!(player.getBlockStateOn().getBlock() instanceof SourceOfMagicBlock) || handler.getMovementData().bite || player.isCrouching() && handler.getMagicData().magicSourceTimer > 40){
 					handler.getMagicData().onMagicSource = false;
 					handler.getMagicData().magicSourceTimer = 0;
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicSourceStatus.Data(player.getId(), false, 0));
 					return;
 				}
 
@@ -95,7 +94,7 @@ public class SourceOfMagicHandler{
 					}else{
 						handler.getMagicData().magicSourceTimer = 0;
 						handler.getMagicData().onMagicSource = false;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicSourceStatus.Data(player.getId(), false, 0));
 					}
 				}
 			}
@@ -103,11 +102,12 @@ public class SourceOfMagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerParticles(PlayerTickEvent event){
-		if(event.phase == Phase.START || event.side == LogicalSide.SERVER){
+	public static void playerParticles(PlayerTickEvent.Post event){
+		if(event.getEntity().level().isClientSide()){
 			return;
 		}
-		Player player = event.player;
+
+		Player player = event.getEntity();
 
 		if(DragonStateProvider.isDragon(player)){
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
@@ -135,11 +135,11 @@ public class SourceOfMagicHandler{
 									double x = -1 + random.nextDouble() * 2;
 									double z = -1 + random.nextDouble() * 2;
 
-									if(pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC){
+									if(pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()){
 										if(!minecraft.isPaused()){
 											player.level().addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
-									}else if(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC){
+									}else if(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()){
 										if(!minecraft.isPaused()){
 											player.level().addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
@@ -155,10 +155,7 @@ public class SourceOfMagicHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void playerTick(ClientTickEvent event){
-		if(event.phase == Phase.START){
-			return;
-		}
+	public static void playerTick(ClientTickEvent.Post event){
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonStateProvider.isDragon(player)){
@@ -168,7 +165,7 @@ public class SourceOfMagicHandler{
 				Vec3 velocity = player.getDeltaMovement();
 				float groundSpeed = Mth.sqrt((float)(velocity.x * velocity.x + velocity.z * velocity.z));
 				if(Math.abs(groundSpeed) > 0.05){
-					NetworkHandler.CHANNEL.sendToServer(new SyncMagicSourceStatus(player.getId(), false, 0));
+					PacketDistributor.sendToServer(new SyncMagicSourceStatus.Data(player.getId(), false, 0));
 				}
 			}
 		}
@@ -184,7 +181,7 @@ public class SourceOfMagicHandler{
 					if(cap.getMagicData().onMagicSource){
 						cap.getMagicData().onMagicSource = false;
 						cap.getMagicData().magicSourceTimer = 0;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncMagicSourceStatus(player.getId(), false, 0));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicSourceStatus.Data(player.getId(), false, 0));
 					}
 				});
 			}

@@ -22,6 +22,7 @@ import java.util.Locale;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -147,7 +148,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public abstract boolean canHitEntity(LivingEntity entity);
 
 	public void onEntityHit(final LivingEntity entityHit) {
-		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(DSDamageTypes.entityDamageSource(player.level(), this, player), getDamage()), entityHit)) {
+		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new DamageSource(DSDamageTypes.DRAGON_BREATH, player), getDamage()), entityHit)) {
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}

@@ -2,8 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreathEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 

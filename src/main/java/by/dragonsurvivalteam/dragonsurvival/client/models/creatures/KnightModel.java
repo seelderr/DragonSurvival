@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
@@ -20,4 +20,4 @@ public class KnightModel extends GeoModel<KnightEntity> {
 	public ResourceLocation getAnimationResource(KnightEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/knight.animations.json");
 	}
-}
+}*/

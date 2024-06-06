@@ -9,6 +9,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -21,7 +22,7 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig.Data> {
 			return;
 		}
 
-		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof ForgeConfigSpec.EnumValue<?> enumValue) {
+		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof ModConfigSpec.EnumValue<?> enumValue) {
 			context.enqueueWork(() -> ConfigHandler.updateConfigValue(enumValue, message.value));
 		}
 
@@ -29,7 +30,7 @@ public class SyncEnumConfig implements IMessage<SyncEnumConfig.Data> {
 	}
 
 	public static void handleClient(final SyncEnumConfig.Data message, final IPayloadContext context) {
-		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof ForgeConfigSpec.EnumValue<?> enumValue) {
+		if (ConfigHandler.serverSpec.getValues().get(message.path) instanceof ModConfigSpec.EnumValue<?> enumValue) {
 			context.enqueueWork(() -> ConfigHandler.updateConfigValue(enumValue, message.value));
 		}
 	}

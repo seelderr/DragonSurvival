@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,7 +19,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class SyncComplete implements IMessage<SyncComplete.Data> {
 	public static void handleClient(final Data message, final IPayloadContext context) {
 		Player player = context.player();
-		DragonStateHandler handler = player.getData(DRAGON_HANDLER);
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		handler.deserializeNBT(context.player().registryAccess(), message.nbt);
 		player.refreshDimensions();
 	}
@@ -26,7 +27,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 	public static void handleServer(final Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> {
 			Player player = context.player();
-			DragonStateHandler handler = player.getData(DRAGON_HANDLER);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			handler.deserializeNBT(context.player().registryAccess(), message.nbt);
 			player.refreshDimensions();
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message);

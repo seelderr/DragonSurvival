@@ -27,6 +27,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.EventHooks;
+import org.jetbrains.annotations.NotNull;
 
 public class RoyalSummonItem extends Item
 {
@@ -63,7 +65,7 @@ public class RoyalSummonItem extends Item
 					ent.setPos(hitresult.getLocation().x, hitresult.getLocation().y, hitresult.getLocation().z);
 					ent.addEffect(new MobEffectInstance(DSEffects.ROYAL_DEPARTURE, Functions.minutesToTicks(ServerConfig.royalDisappearInMinutes)));
 					if (!pLevel.isClientSide()) {
-						ent.finalizeSpawn((ServerLevelAccessor)pLevel, pLevel.getCurrentDifficultyAt(ent.blockPosition()), MobSpawnType.SPAWN_EGG, (SpawnGroupData)null, (CompoundTag)null);
+						EventHooks.finalizeMobSpawn(ent, (ServerLevelAccessor)pLevel, pLevel.getCurrentDifficultyAt(ent.blockPosition()), MobSpawnType.SPAWN_EGG, (SpawnGroupData)null);
 						pLevel.addFreshEntity(ent);
 						pLevel.gameEvent(pPlayer, GameEvent.ENTITY_PLACE, BlockPosHelper.get(hitresult.getLocation()));
 						if (!pPlayer.getAbilities().instabuild) {
@@ -83,9 +85,9 @@ public class RoyalSummonItem extends Item
 	}
 	
 	@Override
-	public void appendHoverText(ItemStack stack, @Nullable Level world, List<Component> list, TooltipFlag tooltipFlag){
-		super.appendHoverText(stack, world, list, tooltipFlag);
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
 		String langKey = "ds.description." + ResourceHelper.getKey(this).getPath();
-		list.add(Component.translatable(langKey));
+		pTooltipComponents.add(Component.translatable(langKey));
 	}
 }

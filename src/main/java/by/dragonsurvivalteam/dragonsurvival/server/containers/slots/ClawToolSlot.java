@@ -16,6 +16,7 @@ import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class ClawToolSlot extends Slot {
@@ -68,7 +69,7 @@ public class ClawToolSlot extends Slot {
 	private void syncSlots() {
 		if (!dragonContainer.player.level().isClientSide()) {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragonContainer.player);
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> dragonContainer.player), new SyncDragonClawsMenu(dragonContainer.player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().getClawsInventory()));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(dragonContainer.player, new SyncDragonClawsMenu.Data(dragonContainer.player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().serializeNBT(dragonContainer.player.registryAccess())));
 		}
 	}
 }

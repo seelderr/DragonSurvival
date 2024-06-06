@@ -11,13 +11,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -41,7 +42,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		CoreGeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+		GeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
 		if (neck != null) {
 			neck.setHidden(false);
@@ -73,9 +74,10 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 		Color armorColor = new Color(1f, 1f, 1f);
 
-		if (stack.getItem() instanceof DyeableArmorItem) {
-			int colorCode = ((DyeableArmorItem) stack.getItem()).getColor(stack);
-			armorColor = new Color(colorCode);
+		if (stack.getItem() instanceof DyeItem dyeItem) {
+			DyeColor dyeColor = dyeItem.getDyeColor();
+			float[] colors = dyeColor.getTextureDiffuseColors();
+			armorColor = new Color(colors[0], colors[1], colors[2]);
 		}
 
 		ClientDragonRender.dragonModel.setCurrentTexture(texture);
@@ -95,26 +97,33 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 				return texture2;
 			}
 		}
-		if(item instanceof ArmorItem armorItem){
-			ArmorMaterial armorMaterial = armorItem.getMaterial();
-			if(armorMaterial instanceof ArmorMaterials){
-				if(armorMaterial == ArmorMaterials.NETHERITE)
-					texture += "netherite_";
-				else if(armorMaterial == ArmorMaterials.DIAMOND)
-					texture += "diamond_";
-				else if(armorMaterial == ArmorMaterials.IRON)
-					texture += "iron_";
-				else if(armorMaterial == ArmorMaterials.LEATHER)
-					texture += "leather_";
-				else if(armorMaterial == ArmorMaterials.GOLD)
-					texture += "gold_";
-				else if(armorMaterial == ArmorMaterials.CHAIN)
-					texture += "chainmail_";
-				else if(armorMaterial == ArmorMaterials.TURTLE)
-					texture += "turtle_";
-				else
-					return texture + "empty_armor.png";
+		if(item instanceof ArmorItem armorItem) {
+			Holder<ArmorMaterial> armorMaterial = armorItem.getMaterial();
+			boolean isVanillaArmor = false;
+			if (armorMaterial == ArmorMaterials.NETHERITE) {
+				isVanillaArmor = true;
+				texture += "netherite_";
+			} else if (armorMaterial == ArmorMaterials.DIAMOND) {
+				isVanillaArmor = true;
+				texture += "diamond_";
+			} else if (armorMaterial == ArmorMaterials.IRON) {
+				isVanillaArmor = true;
+				texture += "iron_";
+			} else if (armorMaterial == ArmorMaterials.LEATHER) {
+				isVanillaArmor = true;
+				texture += "leather_";
+			} else if (armorMaterial == ArmorMaterials.GOLD) {
+				isVanillaArmor = true;
+				texture += "gold_";
+			} else if (armorMaterial == ArmorMaterials.CHAIN) {
+				isVanillaArmor = true;
+				texture += "chainmail_";
+			} else if (armorMaterial == ArmorMaterials.TURTLE) {
+				isVanillaArmor = true;
+				texture += "turtle_";
+			}
 
+			if(isVanillaArmor) {
 				texture += "dragon_";
 				switch(equipmentSlot){
 					case HEAD -> texture += "helmet";
@@ -125,6 +134,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 				texture += ".png";
 				return stripInvalidPathChars(texture);
 			}
+
 			int defense = armorItem.getDefense();
 			switch(equipmentSlot){
 				case FEET -> texture += Mth.clamp(defense, 1, 4) + "_dragon_boots";

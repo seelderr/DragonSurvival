@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincesHorseEntity;
@@ -36,4 +36,4 @@ public class PrincessHorseModel extends GeoModel<PrincesHorseEntity> {
 	public ResourceLocation getAnimationResource(PrincesHorseEntity animatable){
 		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/horseback_rider.animations.json");
 	}
-}
+}*/

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DSTileEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -60,6 +60,6 @@ public class HelmetBlock extends Block implements EntityBlock{
 
 	@Nullable @Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		return DSTileEntities.helmetTile.create(pPos, pState);
+		return DSTileEntities.HELMET_TILE.value().create(pPos, pState);
 	}
 }

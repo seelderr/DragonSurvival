@@ -7,20 +7,16 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.TickablePassive
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DragonTraitHandler{
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent){
-		if(playerTickEvent.phase != Phase.END){
-			return;
-		}
-		Player player = playerTickEvent.player;
+	public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent){
+		Player player = playerTickEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				for(DragonAbility passiveAbility : dragonStateHandler.getMagicData().abilities.values()){

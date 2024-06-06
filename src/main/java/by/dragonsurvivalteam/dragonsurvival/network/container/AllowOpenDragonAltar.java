@@ -10,7 +10,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class RequestOpenDragonAltar implements IMessage<RequestOpenDragonAltar.Data> {
+public class AllowOpenDragonAltar implements IMessage<AllowOpenDragonAltar.Data> {
 
 	public static void handleClient(final Data message, final IPayloadContext context) {
 		context.enqueueWork(ClientProxy::handleOpenDragonAltar);
@@ -18,14 +18,14 @@ public class RequestOpenDragonAltar implements IMessage<RequestOpenDragonAltar.D
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<RequestOpenDragonAltar.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_altar"));
+		public static final Type<AllowOpenDragonAltar.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_altar"));
 
-		public static final StreamCodec<ByteBuf, RequestOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, AllowOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override
-			public void encode(ByteBuf pBuffer, RequestOpenDragonAltar.Data pValue) {}
+			public void encode(ByteBuf pBuffer, AllowOpenDragonAltar.Data pValue) {}
 
 			@Override
-			public RequestOpenDragonAltar.Data decode(ByteBuf pBuffer) { return new RequestOpenDragonAltar.Data(); }
+			public AllowOpenDragonAltar.Data decode(ByteBuf pBuffer) { return new AllowOpenDragonAltar.Data(); }
 		};
 
 		@Override

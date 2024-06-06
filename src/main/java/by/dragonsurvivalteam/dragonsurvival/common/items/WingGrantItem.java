@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import java.util.List;
 import javax.annotation.Nullable;
@@ -17,6 +18,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 public class WingGrantItem extends Item{
 	public WingGrantItem(Properties p_i48487_1_){
@@ -30,7 +33,7 @@ public class WingGrantItem extends Item{
 		if(handler.isDragon()){
 			if(!world.isClientSide){
 				handler.setHasFlight(!handler.hasFlight());
-				NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new SynchronizeDragonCap(player.getId(), handler.isHiding(), handler.getType(), handler.getBody(), handler.getSize(), handler.hasFlight(), handler.getPassengerId()));
+				PacketDistributor.sendToAllPlayers(new SyncDragonHandler.Data(player.getId(), handler.isHiding(), handler.getType(), handler.getBody(), handler.getSize(), handler.hasFlight(), handler.getPassengerId()));
 
 				if(!player.isCreative()){
 					player.getItemInHand(p_77659_3_).shrink(1);
@@ -45,9 +48,8 @@ public class WingGrantItem extends Item{
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-		@Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(Component.translatable("ds.description.wing_grant"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+		pTooltipComponents.add(Component.translatable("ds.description.wing_grant"));
 	}
 }

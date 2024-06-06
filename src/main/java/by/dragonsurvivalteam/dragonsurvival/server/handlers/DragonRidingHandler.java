@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
-import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragon;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,19 +12,20 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteractSpecific;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
+
 @EventBusSubscriber
 public class DragonRidingHandler{
 	/**
 	 * Mounting a dragon
 	 */
 	@SubscribeEvent
-	public static void onEntityInteract(EntityInteractSpecific event){
+	public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event){
 		Entity ent = event.getTarget();
 
 		if(event.getHand() != InteractionHand.MAIN_HAND){
@@ -43,7 +43,7 @@ public class DragonRidingHandler{
 							self.startRiding(target);
 							target.connection.send(new ClientboundSetPassengersPacket(target));
 							targetCap.setPassengerId(self.getId());
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> target), new SynchronizeDragonCap(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getBody(), targetCap.getSize(), targetCap.hasFlight(), self.getId()));
+							PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonHandler.Data(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getBody(), targetCap.getSize(), targetCap.hasFlight(), self.getId()));
 							event.setCancellationResult(InteractionResult.SUCCESS);
 							event.setCanceled(true);
 						}
@@ -54,8 +54,8 @@ public class DragonRidingHandler{
 	}
 
 	@SubscribeEvent
-	public static void onServerPlayerTick(TickEvent.PlayerTickEvent event){ // TODO: Find a better way of doing this.
-		if(!(event.player instanceof ServerPlayer player)){
+	public static void onServerPlayerTick(PlayerTickEvent event){ // TODO: Find a better way of doing this.
+		if(!(event.getEntity() instanceof ServerPlayer player)){
 			return;
 		}
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
@@ -93,7 +93,7 @@ public class DragonRidingHandler{
 			}
 			if(flag || passenger == null || !player.hasPassenger(passenger) || passenger.isSpectator() || player.isSpectator()){
 				dragonStateHandler.setPassengerId(0);
-				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getBody(), dragonStateHandler.getSize(), dragonStateHandler.hasFlight(), 0));
+				PacketDistributor.sendToPlayer(player, new SyncDragonHandler.Data(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getBody(), dragonStateHandler.getSize(), dragonStateHandler.hasFlight(), 0));
 			}
 		});
 	}
@@ -109,7 +109,7 @@ public class DragonRidingHandler{
 				player.stopRiding();
 				vehicle.connection.send(new ClientboundSetPassengersPacket(vehicle));
 				vehicleCap.setPassengerId(0);
-				NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> vehicle), new SynchronizeDragonCap(player.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getBody(), vehicleCap.getSize(), vehicleCap.hasFlight(), 0));
+				PacketDistributor.sendToPlayer(vehicle, new SyncDragonHandler.Data(player.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getBody(), vehicleCap.getSize(), vehicleCap.hasFlight(), 0));
 			});
 		});
 	}
@@ -118,8 +118,8 @@ public class DragonRidingHandler{
 	public static void changedDimension(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
 		Player player = changedDimensionEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SynchronizeDragonCap(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getBody(), dragonStateHandler.getSize(), dragonStateHandler.hasFlight(), 0));
-			NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new RefreshDragons(player.getId()));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonHandler.Data(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getBody(), dragonStateHandler.getSize(), dragonStateHandler.hasFlight(), 0));
+			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new RefreshDragon.Data(player.getId()));
 		});
 	}
 }

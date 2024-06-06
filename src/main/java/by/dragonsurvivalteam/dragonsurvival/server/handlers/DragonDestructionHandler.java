@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_DESTRUCTIBLE_BLOCKS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.entityDamageSource;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -13,24 +12,28 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.targeting.TargetingConditions;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class DragonDestructionHandler {
 
     private static int crushTickCounter = 0;
     private static boolean isBreakingMultipleBlocks = false;
 
-    private static void checkAndDestroyCollidingBlocks(DragonStateHandler dragonStateHandler, TickEvent.PlayerTickEvent event, AABB boundingBox) {
+    private static void checkAndDestroyCollidingBlocks(DragonStateHandler dragonStateHandler, PlayerTickEvent event, AABB boundingBox) {
         if(!ServerConfig.allowLargeBlockDestruction) {
             return;
         }
@@ -47,21 +50,22 @@ public class DragonDestructionHandler {
         int i1 = Mth.ceil(boundingBox.maxY);
         int j1 = Mth.ceil(boundingBox.maxZ);
 
-        RandomSource random = new XoroshiroRandomSource(event.player.level().getGameTime());
+        Player player = event.getEntity();
+        RandomSource random = new XoroshiroRandomSource(player.level().getGameTime());
 
         for (int k1 = i; k1 <= l; ++k1) {
             for (int l1 = j; l1 <= i1; ++l1) {
                 for (int i2 = k; i2 <= j1; ++i2) {
                     BlockPos blockpos = new BlockPos(k1, l1, i2);
-                    BlockState blockstate = event.player.level().getBlockState(blockpos);
+                    BlockState blockstate = player.level().getBlockState(blockpos);
                     if (!blockstate.isAir()) {
                         if(ServerConfig.useBlacklistForDestructibleBlocks) {
                             if(!DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock())) {
                                 if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
-                                    event.player.level().destroyBlock(blockpos, false);
+                                    player.level().destroyBlock(blockpos, false);
                                 }
                                 else {
-                                    event.player.level().removeBlock(blockpos, false);
+                                    player.level().removeBlock(blockpos, false);
                                 }
                             }
                         }
@@ -69,10 +73,10 @@ public class DragonDestructionHandler {
                             // #TODO: Make the MINEABLE_WITH_AXE and FLOWERS tag configurable in data
                             if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock()) || blockstate.canBeReplaced() || blockstate.is(BlockTags.MINEABLE_WITH_AXE) || blockstate.is(BlockTags.FLOWERS)) {
                                 if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
-                                    event.player.level().destroyBlock(blockpos, false);
+                                    player.level().destroyBlock(blockpos, false);
                                 }
                                 else {
-                                    event.player.level().removeBlock(blockpos, false);
+                                    player.level().removeBlock(blockpos, false);
                                 }
                             }
                         }
@@ -104,7 +108,7 @@ public class DragonDestructionHandler {
                 continue;
             }
 
-            entity.hurt(entityDamageSource(player.level(), DSDamageTypes.CRUSHED, player), (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
+            entity.hurt(new DamageSource(DSDamageTypes.CRUSHED, player), (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
             crushTickCounter = ServerConfig.crushingTickDelay;
         }
     }
@@ -162,12 +166,12 @@ public class DragonDestructionHandler {
 
 
     @SubscribeEvent
-    public static void checkAndDestroyCollidingBlocksAndCrushedEntities(TickEvent.PlayerTickEvent event) {
+    public static void checkAndDestroyCollidingBlocksAndCrushedEntities(PlayerTickEvent event) {
         if(!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
 
-        if(!(event.player instanceof ServerPlayer player)){
+        if(!(event.getEntity() instanceof ServerPlayer player)){
             return;
         }
 
@@ -187,7 +191,7 @@ public class DragonDestructionHandler {
                 if (ServerConfig.sizeChangesHitbox) {
                     boolean squish = dragonStateHandler.getBody() == null ? dragonStateHandler.getBody().isSquish() : false;
                     double size = dragonStateHandler.getSize();
-                    double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), event.player.getPose(), ServerConfig.sizeChangesHitbox, squish);
+                    double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), event.getEntity().getPose(), ServerConfig.sizeChangesHitbox, squish);
                     double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
                     boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
                 } else {

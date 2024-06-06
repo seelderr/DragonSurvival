@@ -17,21 +17,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.AbstractCauldronBlock;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class ManaHandler{
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent event){
-		if(event.phase == Phase.START){
-			return;
-		}
-
-		Player player = event.player;
+	public static void playerTick(PlayerTickEvent.Post event){
+		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(cap.getMagicData().getCurrentlyCasting() != null){
@@ -60,7 +55,7 @@ public class ManaHandler{
 		}
 
 		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-		BlockState feetBlock = player.getFeetBlockState();
+		BlockState feetBlock = player.getBlockStateOn();
 
 		if(feetBlock.getBlock() instanceof TreasureBlock || blockBelow.getBlock() instanceof TreasureBlock){
 			return true;
@@ -103,7 +98,7 @@ public class ManaHandler{
 
 		DragonStateProvider.getCap(entity).ifPresent(cap -> {
 			cap.getMagicData().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagicData().getCurrentMana() + mana));
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagicData().getSelectedAbilitySlot(), cap.getMagicData().getCurrentMana(), cap.getMagicData().shouldRenderAbilities()));
+			PacketDistributor.sendToPlayer((ServerPlayer)entity, new SyncMagicStats.Data(entity.getId(), cap.getMagicData().getSelectedAbilitySlot(), cap.getMagicData().getCurrentMana(), cap.getMagicData().shouldRenderAbilities()));
 		});
 	}
 
@@ -137,7 +132,7 @@ public class ManaHandler{
 				cap.getMagicData().setCurrentMana(Math.max(0, cap.getMagicData().getCurrentMana() - mana));
 			}
 
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer)entity), new SyncMagicStats(entity.getId(), cap.getMagicData().getSelectedAbilitySlot(), cap.getMagicData().getCurrentMana(), cap.getMagicData().shouldRenderAbilities()));
+			PacketDistributor.sendToPlayer((ServerPlayer)entity, new SyncMagicStats.Data(entity.getId(), cap.getMagicData().getSelectedAbilitySlot(), cap.getMagicData().getCurrentMana(), cap.getMagicData().shouldRenderAbilities()));
 		});
 	}
 

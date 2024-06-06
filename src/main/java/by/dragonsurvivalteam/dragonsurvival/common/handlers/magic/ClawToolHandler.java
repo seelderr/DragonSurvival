@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorItem;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
@@ -31,19 +32,18 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
-import net.minecraftforge.event.entity.player.PlayerDestroyItemEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerXpEvent.PickupXp;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class ClawToolHandler{
 	@SubscribeEvent
-	public static void experiencePickup(PickupXp event){
+	public static void experiencePickup(PlayerXpEvent.PickupXp event){
 		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
@@ -69,7 +69,8 @@ public class ClawToolHandler{
 			}
 
 			event.getOrb().value = Math.max(0, event.getOrb().value);
-			player.detectEquipmentUpdates();
+			// FIXME: Is this still needed?
+			//player.detectEquipmentUpdates();
 		});
 	}
 
@@ -185,7 +186,7 @@ public class ClawToolHandler{
 		}
 
 		Level world = player.level();
-		BlockHitResult result = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
+		BlockHitResult result = AccessorItem.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
 
 		if (result.getType() != HitResult.Type.MISS) {
 			BlockState state = world.getBlockState(result.getBlockPos());
@@ -227,14 +228,14 @@ public class ClawToolHandler{
 			ItemStack clawTool = getDragonHarvestTool(player);
 
 			if (ItemStack.matches(clawTool, event.getOriginal())) {
-				player.broadcastBreakEvent(event.getHand());
+				player.broadcastBreakEvent(event.getOriginal().getEquipmentSlot());
 			} else {
 				if (!player.level().isClientSide()) {
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 					if (handler.switchedTool || handler.switchedWeapon) {
 						player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
-                        NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncBrokenTool(player.getId(), handler.switchedTool ? handler.switchedToolSlot : ClawInventory.Slot.SWORD.ordinal()));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncBrokenTool.Data(player.getId(), handler.switchedTool ? handler.switchedToolSlot : ClawInventory.Slot.SWORD.ordinal()));
 						return;
 					}
 
@@ -250,13 +251,13 @@ public class ClawToolHandler{
 						}
 					}
 
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncDragonClawsMenu(player.getId(), handler.getClawToolData().isMenuOpen(), clawsInventory));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonClawsMenu.Data(player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().serializeNBT(player.registryAccess())));
 				}
 			}
 		}
 	}
 
-	@Mod.EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
+	@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 	public static class Event_busHandler {
 		@SubscribeEvent
 		public void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {

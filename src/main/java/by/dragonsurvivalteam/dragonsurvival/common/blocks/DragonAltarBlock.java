@@ -14,6 +14,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -28,8 +29,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 
 public class DragonAltarBlock extends Block{
@@ -53,26 +55,25 @@ public class DragonAltarBlock extends Block{
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_190948_1_,
-		@Nullable BlockGetter p_190948_2_, List<Component> p_190948_3_, TooltipFlag p_190948_4_){
-		super.appendHoverText(p_190948_1_, p_190948_2_, p_190948_3_, p_190948_4_);
-		p_190948_3_.add(Component.translatable("ds.description.dragonAltar"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTootipComponents, pTooltipFlag);
+		pTootipComponents.add(Component.translatable("ds.description.dragonAltar"));
 	}
 
 	@Override
-	public InteractionResult use(BlockState blockState, Level worldIn, BlockPos blockPos, Player player, InteractionHand handIn, BlockHitResult p_225533_6_){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult){
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(pPlayer);
 
 		if(handler.altarCooldown > 0){
-			if(worldIn.isClientSide()){
+			if(pLevel.isClientSide()){
 				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
 				int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
 				int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
-				player.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
+				pPlayer.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
 			}
 			return InteractionResult.CONSUME;
 		}else{
-			if(worldIn.isClientSide()){
+			if(pLevel.isClientSide()){
 				openGUi();
 			}
 		}

@@ -45,7 +45,7 @@ public class SeaSweepParticle extends TextureSheetParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static class Factory implements ParticleProvider<SimpleParticleType>{
+	public static class Factory implements DragonParticleProvider<SimpleParticleType> {
 		private final SpriteSet sprites;
 
 		public Factory(SpriteSet p_i50563_1_){

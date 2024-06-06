@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
@@ -28,14 +28,12 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter{
 	}
 
 	@Nullable @Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason,
-		@Nullable SpawnGroupData entityData,
-		@Nullable CompoundTag nbt){
-		populateDefaultEquipmentSlots(random, difficultyInstance);
-		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData){
+		populateDefaultEquipmentSlots(random, pDifficulty);
+		return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
 	}
 
 	public AbstractIllager.IllagerArmPose getArmPose(){
 		return isAggressive() ? AbstractIllager.IllagerArmPose.ATTACKING : AbstractIllager.IllagerArmPose.NEUTRAL;
 	}
-}
+}*/

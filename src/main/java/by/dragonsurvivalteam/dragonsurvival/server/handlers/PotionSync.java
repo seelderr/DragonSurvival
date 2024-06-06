@@ -1,16 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionRemovedEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import net.minecraft.world.effect.MobEffect;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.network.PacketDistributor.TargetPoint;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 @EventBusSubscriber
@@ -24,8 +23,7 @@ public class PotionSync{
 		LivingEntity entity = event.getEntity();
 
 		if(!entity.level().isClientSide()){
-			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level().dimension());
-			NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionAddedEffect(entity.getId(), MobEffect.getId(event.getEffectInstance().getEffect()), event.getEffectInstance().getDuration(), event.getEffectInstance().getAmplifier()));
+			PacketDistributor.sendToPlayersNear((ServerLevel)entity.level(), null, entity.position().x, entity.position().y, entity.position().z, 64, new SyncPotionAddedEffect.Data(entity.getId(), BuiltInRegistries.MOB_EFFECT.getId(event.getEffectInstance().getEffect().value()), event.getEffectInstance().getDuration(), event.getEffectInstance().getAmplifier()));
 		}
 	}
 
@@ -38,8 +36,7 @@ public class PotionSync{
 		LivingEntity entity = event.getEntity();
 
 		if(!entity.level().isClientSide()){
-			TargetPoint point = new TargetPoint(entity.position().x, entity.position().y, entity.position().z, 64, entity.level().dimension());
-			NetworkHandler.CHANNEL.send(PacketDistributor.NEAR.with(() -> point), new SyncPotionRemovedEffect(entity.getId(), MobEffect.getId(event.getEffectInstance().getEffect())));
+			PacketDistributor.sendToPlayersNear((ServerLevel)entity.level(), null, entity.position().x, entity.position().y, entity.position().z, 64, new SyncPotionRemovedEffect.Data(entity.getId(), BuiltInRegistries.MOB_EFFECT.getId(event.getEffectInstance().getEffect().value())));
 		}
 	}
 }

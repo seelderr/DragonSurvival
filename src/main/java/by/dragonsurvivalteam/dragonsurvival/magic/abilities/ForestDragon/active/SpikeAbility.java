@@ -22,8 +22,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
 public class SpikeAbility extends InstantCastAbility{
@@ -161,7 +161,7 @@ public class SpikeAbility extends InstantCastAbility{
 			entity.setArrow_level(getLevel());
 			entity.setBaseDamage(getDamage());
 			entity.pickup = AbstractArrow.Pickup.DISALLOWED;
-			entity.shootFromRotation(player, player.xRot, player.yRot, 0.0F, 4F, i * spikeSpread);
+			entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4F, i * spikeSpread);
 			player.level().addFreshEntity(entity);
 			if (!spikeMultishot)
 				break;

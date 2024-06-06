@@ -13,16 +13,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 
 public class ChargedSoupItem extends Item{
-	public ChargedSoupItem(Properties p_i48487_1_){
-		super(p_i48487_1_.food(new FoodProperties.Builder().nutrition(1).saturationMod(0.4F).meat().alwaysEat().effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F).effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(ServerConfig.chargedSoupBuffDuration), 0), 1.0F).build()));
+	public ChargedSoupItem(Properties properties){
+		super(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.4F).alwaysEdible().effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F).effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(ServerConfig.chargedSoupBuffDuration), 0), 1.0F).build()));
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-		@Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(Component.translatable("ds.description.chargedSoup"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+		pTooltipComponents.add(Component.translatable("ds.description.chargedSoup"));
 	}
 }

@@ -2,11 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncChatEvent;
-import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragons;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.CompleteDataSync;
+import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragon;
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
@@ -22,6 +21,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -32,19 +32,17 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.event.ServerChatEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.loading.FMLLoader;
-import net.minecraftforge.network.PacketDistributor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.loading.FMLLoader;
+import net.neoforged.neoforge.event.ServerChatEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class WingObtainmentController{
 
 	private static final Map<String, Integer> dragonPhrases = new HashMap<String, Integer>();
@@ -100,32 +98,29 @@ public class WingObtainmentController{
 		if(changedDimensionEvent.getTo() == Level.END){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
-					executorService.schedule(
-							() -> NetworkHandler.CHANNEL.send(
-									PacketDistributor.PLAYER.with(()->player),
-									new SyncChatEvent(enderDragonUUID.toString(), "ds.endmessage")
-							), 3, TimeUnit.SECONDS);
+					executorService.schedule(() -> PacketDistributor.sendToPlayer(player, new SyncChatEvent.Data(enderDragonUUID.toString(), "ds.endmessage")), 3, TimeUnit.SECONDS);
 				}
 			});
 		}
 	}
+
 	@OnlyIn(Dist.CLIENT)
 	public static void clientMessageRecieved(SyncChatEvent.Data event){
 		Player player = Minecraft.getInstance().player;
 		if (player == null)
 			return;
 
-		if(event.signerId.equals(enderDragonUUID.toString())){
+		if(event.signerId().equals(enderDragonUUID.toString())){
 			Vec3 centerPoint = new Vec3(0D, 128D, 0D);
 			List<EnderDragon> enderDragons = player.level().getEntitiesOfClass(EnderDragon.class, AABB.ofSize(centerPoint,192 ,192 ,192));
 			if (enderDragons.size() == 0)
 				return;
 			String dragonName = "<"+enderDragons.get(0).getDisplayName().getString()+"> ";
-			if(event.chatId.equals("ds.endmessage")){
+			if(event.chatId().equals("ds.endmessage")){
 				String language = Minecraft.getInstance().getLanguageManager().getSelected();
 				int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language, dragonPhrases.getOrDefault("en_us", 1))) + 1;
 				player.sendSystemMessage(Component.literal(dragonName).append(Component.translatable("ds.endmessage." + messageId, player.getDisplayName().getString())));
-			}else if(event.chatId.equals("ds.dragon.grants.wings")){
+			}else if(event.chatId().equals("ds.dragon.grants.wings")){
 				player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings"));
 			}
 		}
@@ -146,8 +141,8 @@ public class WingObtainmentController{
 
 							dragonStateHandler.setHasFlight(true);
 							dragonStateHandler.getMovementData().spinLearned = true;
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-							NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new CompleteDataSync(player));
+							PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
+							PacketDistributor.sendToAllPlayers(new SyncComplete.Data(player.getId(), DragonStateProvider.getOrGenerateHandler(player).serializeNBT(player.registryAccess())));
 						}
 					}
 				}
@@ -167,7 +162,7 @@ public class WingObtainmentController{
 				DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
 						living.changeDimension(living.getServer().overworld());
-						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new RefreshDragons(living.getId()));
+						PacketDistributor.sendToAllPlayers(new RefreshDragon.Data(living.getId()));
 						damageEvent.setCanceled(true);
 					}
 				});

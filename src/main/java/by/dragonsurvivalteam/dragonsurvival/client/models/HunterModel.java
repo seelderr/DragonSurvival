@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.models;
+/*package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Hunter;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -59,9 +59,6 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 		return root;
 	}
 
-	/**
-	 * Sets this entity's model rotation angles
-	 */
 	@Override
 	public void setupAnim(T pEntity, float pLimbSwing, float pLimbSwingAmount, float pAgeInTicks, float pNetHeadYaw, float pHeadPitch){
 		head.yRot = pNetHeadYaw * ((float)Math.PI / 180F);
@@ -158,4 +155,4 @@ public class HunterModel<T extends Hunter> extends HierarchicalModel<T> implemen
 	private ModelPart getArm(HumanoidArm pArm){
 		return pArm == HumanoidArm.LEFT ? leftArm : rightArm;
 	}
-}
+}*/

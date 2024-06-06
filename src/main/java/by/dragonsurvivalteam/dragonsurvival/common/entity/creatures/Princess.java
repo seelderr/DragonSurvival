@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -43,9 +43,6 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 
-/*
- * Horseless princess
-*/
 public class Princess extends Villager{
 	private static final List<DyeColor> colors = Arrays.asList(DyeColor.RED, DyeColor.YELLOW, DyeColor.PURPLE, DyeColor.BLUE, DyeColor.BLACK, DyeColor.WHITE);
 	public static EntityDataAccessor<Integer> color = SynchedEntityData.defineId(Princess.class, EntityDataSerializers.INT);
@@ -250,4 +247,4 @@ public class Princess extends Villager{
 		}));
 		goalSelector.addGoal(7, new PanicGoal(this, 1));
 	}
-}
+}*/

@@ -40,7 +40,7 @@ public class NetworkHandler {
 		registrar.playToClient(SyncPlayerJump.Data.TYPE, SyncPlayerJump.Data.STREAM_CODEC, SyncPlayerJump::handleClient);
 		registrar.playToClient(RefreshDragon.Data.TYPE, RefreshDragon.Data.STREAM_CODEC, RefreshDragon::handleClient);
 		registrar.playBidirectional(SyncAltarCooldown.Data.TYPE, SyncAltarCooldown.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAltarCooldown::handleClient, SyncAltarCooldown::handleServer));
-		registrar.playToClient(RequestOpenDragonAltar.Data.TYPE, RequestOpenDragonAltar.Data.STREAM_CODEC, RequestOpenDragonAltar::handleClient);
+		registrar.playToClient(AllowOpenDragonAltar.Data.TYPE, AllowOpenDragonAltar.Data.STREAM_CODEC, AllowOpenDragonAltar::handleClient);
 		registrar.playToClient(RequestClientData.Data.TYPE, RequestClientData.Data.STREAM_CODEC, RequestClientData::handleClient);
 		registrar.playBidirectional(SyncComplete.Data.TYPE, SyncComplete.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncComplete::handleClient, SyncComplete::handleServer));
 		registrar.playToClient(SyncBrokenTool.Data.TYPE, SyncBrokenTool.Data.STREAM_CODEC, SyncBrokenTool::handleClient);

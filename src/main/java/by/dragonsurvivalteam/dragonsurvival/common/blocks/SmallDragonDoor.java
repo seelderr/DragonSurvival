@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import javax.annotation.Nullable;
@@ -139,7 +139,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	@Override
 	public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving){
 		boolean validPower = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.POWER;
-		boolean validType = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.SEA_PRESSURE_PLATE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.FOREST_PRESSURE_PLATE || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.CAVE_PRESSURE_PLATE;
+		boolean validType = state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.SEA_PRESSURE_PLATE.get() || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.FOREST_PRESSURE_PLATE.get() || state.getValue(OPEN_REQ) == DragonDoor.DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.CAVE_PRESSURE_PLATE.get();
 		if(validPower || validType){
 			boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(Direction.UP));
 			if(blockIn != this && flag != state.getValue(POWERED)){
@@ -165,7 +165,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 	}
 
 	@Override
-	public @NotNull InteractionResult use(@NotNull BlockState blockState, @NotNull final Level level, @NotNull final BlockPos blockPos, @NotNull final Player player, @NotNull final InteractionHand hand, @NotNull final BlockHitResult hitResult) {
+	public @NotNull InteractionResult useWithoutItem(@NotNull BlockState blockState, @NotNull final Level level, @NotNull final BlockPos blockPos, @NotNull final Player player, @NotNull final BlockHitResult hitResult) {
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		boolean canOpen = switch (blockState.getValue(OPEN_REQ)) {

@@ -25,18 +25,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.living.LivingFallEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 /**
  * Used in pair with {@link ClientFlightHandler}
  */
-@Mod.EventBusSubscriber()
+@EventBusSubscriber()
 @SuppressWarnings( "unused" )
 public class ServerFlightHandler{
 
@@ -126,7 +124,7 @@ public class ServerFlightHandler{
 						if(foldWingsOnLand){
 							if(dragonStateHandler.isWingsSpread()){
 								dragonStateHandler.setWingsSpread(false);
-								NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> livingEntity), new SyncFlyingStatus(livingEntity.getId(), false));
+								PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncFlyingStatus.Data(livingEntity.getId(), false));
 							}
 						}
 					}
@@ -136,11 +134,12 @@ public class ServerFlightHandler{
 	}
 
 	@SubscribeEvent
-	public static void foldWings(PlayerTickEvent tickEvent){
-		Player player = tickEvent.player;
-		if(tickEvent.phase == Phase.START || player.level().isClientSide() || !DragonStateProvider.isDragon(player)){
+	public static void foldWings(PlayerTickEvent.Post tickEvent){
+		Player player = tickEvent.getEntity();
+		if(player.level().isClientSide() || !DragonStateProvider.isDragon(player)){
 			return;
 		}
+
 		if(!foldWingsOnLand || player.getFoodData().getFoodLevel() <= flightHungerThreshold && !player.isCreative() && !allowFlyingWithoutHunger){
 			return;
 		}
@@ -155,7 +154,7 @@ public class ServerFlightHandler{
 			if(dragonStateHandler.isWingsSpread() && player.isCreative()){
 				dragonStateHandler.hasFlown = false;
 				dragonStateHandler.setWingsSpread(false);
-				NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
+				PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
 			}
 		}else{
 			if(!dragonStateHandler.hasFlown && isFlying(player)){
@@ -170,11 +169,8 @@ public class ServerFlightHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerFlightIcon(TickEvent.PlayerTickEvent playerTickEvent){
-		if(playerTickEvent.phase == Phase.START){
-			return;
-		}
-		Player player = playerTickEvent.player;
+	public static void playerFlightIcon(PlayerTickEvent.Post playerTickEvent){
+		Player player = playerTickEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(player.tickCount % 10 == 0){
@@ -210,18 +206,16 @@ public class ServerFlightHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerFlightAttacks(TickEvent.PlayerTickEvent playerTickEvent){
-		if(playerTickEvent.phase == Phase.START){
-			return;
-		}
-		Player player = playerTickEvent.player;
+	public static void playerFlightAttacks(PlayerTickEvent.Post playerTickEvent){
+
+		Player player = playerTickEvent.getEntity();
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
 					if(!isFlying(player) && !canSwimSpin(player)){
 						if(!player.level().isClientSide()){
 							handler.getMovementData().spinAttack = 0;
-							NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+							PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 						}
 					}
 				}
@@ -248,12 +242,12 @@ public class ServerFlightHandler{
 					handler.getMovementData().spinAttack--;
 
 					if(!player.level().isClientSide()){
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 				}else if(handler.getMovementData().spinCooldown > 0){
 					if(!player.level().isClientSide()){
 						handler.getMovementData().spinCooldown--;
-						NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncSpinStatus(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 					}
 				}
 			}
@@ -281,11 +275,8 @@ public class ServerFlightHandler{
 	public static int flightHungerTicks = 50;
 
 	@SubscribeEvent
-	public static void playerFoodExhaustion(TickEvent.PlayerTickEvent playerTickEvent){
-		if(playerTickEvent.phase == Phase.START){
-			return;
-		}
-		Player player = playerTickEvent.player;
+	public static void playerFoodExhaustion(PlayerTickEvent.Post playerTickEvent){
+		Player player = playerTickEvent.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
@@ -304,7 +295,7 @@ public class ServerFlightHandler{
 								if(player.getFoodData().getFoodLevel() <= foldWingsThreshold && !allowFlyingWithoutHunger && !player.isCreative()){
 									player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 									dragonStateHandler.setWingsSpread(false);
-									NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), new SyncFlyingStatus(player.getId(), false));
+									PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
 									return;
 								}
 							}

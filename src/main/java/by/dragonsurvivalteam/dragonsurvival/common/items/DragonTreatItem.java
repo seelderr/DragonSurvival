@@ -25,7 +25,7 @@ public class DragonTreatItem extends Item {
 	public AbstractDragonType type;
 
 	public DragonTreatItem(final AbstractDragonType type, final Properties foodProperties) {
-		super(foodProperties.food(new FoodProperties.Builder().nutrition(1).alwaysEat().saturationMod(0.4F).meat().effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F).build()));
+		super(foodProperties.food(new FoodProperties.Builder().nutrition(1).alwaysEdible().saturationModifier(0.4F).effect(() -> new MobEffectInstance(MobEffects.HUNGER, 20 * 15, 0), 1.0F).build()));
 		this.type = type;
 	}
 
@@ -42,8 +42,8 @@ public class DragonTreatItem extends Item {
 	}
 
 	@Override
-	public void appendHoverText(@NotNull final ItemStack itemStack, @Nullable final Level level, @NotNull final List<Component> components, @NotNull final TooltipFlag tooltipFlag) {
-		super.appendHoverText(itemStack, level, components, tooltipFlag);
-		components.add(Component.translatable("ds.description." + type.getTypeName().toLowerCase() + "DragonTreat"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+		pTooltipComponents.add(Component.translatable("ds.description." + type.getTypeName().toLowerCase() + "DragonTreat"));
 	}
 }

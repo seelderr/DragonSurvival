@@ -16,7 +16,7 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.core.object.Color;
+import software.bernie.geckolib.util.Color;
 
 public class MagicDragonRender{
 	public static final ResourceLocation BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widget_bars.png");

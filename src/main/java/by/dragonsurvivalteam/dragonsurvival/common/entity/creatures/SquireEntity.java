@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
@@ -77,4 +77,4 @@ public class SquireEntity extends Hunter{
 	public boolean removeWhenFarAway(double distance){
 		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
-}
+}*/

@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import java.awt.*;
@@ -380,7 +381,7 @@ public class EmoteMenuHandler {
 		ArrayList<Emote> emotes = new ArrayList<>();
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 
-		emotes.addAll(EmoteRegistry.EMOTES);
+		emotes.addAll(DSEmotes.EMOTES);
 
 		emotes.removeIf(em -> {
 			if(em.requirements != null){
@@ -439,7 +440,7 @@ public class EmoteMenuHandler {
 		int num = 0;
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 
-		for(Emote emote : EmoteRegistry.EMOTES){
+		for(Emote emote : DSEmotes.EMOTES){
 			num = createMap(num, list, emote);
 		}
 
@@ -490,7 +491,7 @@ public class EmoteMenuHandler {
 				if(handler.getEmoteData().emoteKeybinds.contains(pKeyCode)){
 					Map.Entry<String, Integer> entry = handler.getEmoteData().emoteKeybinds.entrySet().stream().filter(s -> s.getValue() == pKeyCode).findFirst().orElse(null);
 					if(entry != null){
-						Emote emote = EmoteRegistry.EMOTES.stream().filter(s -> Objects.equals(s.id, entry.getKey())).findFirst().orElse(null);
+						Emote emote = DSEmotes.EMOTES.stream().filter(s -> Objects.equals(s.id, entry.getKey())).findFirst().orElse(null);
 
 						if(emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && Objects.equals(s.animation, emote.animation))){
 							return;

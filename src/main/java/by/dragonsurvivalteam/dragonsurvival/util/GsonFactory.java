@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import com.google.gson.*;
-import net.minecraftforge.common.util.Lazy;
+import net.neoforged.neoforge.common.util.Lazy;
 
 final  public class GsonFactory {
     private static final Gson object;

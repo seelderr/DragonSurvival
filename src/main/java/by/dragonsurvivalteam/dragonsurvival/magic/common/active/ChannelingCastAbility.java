@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 	public int chargeTime = 0;
@@ -51,7 +53,8 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 	@Override
 	public void onKeyReleased(Player player){
 		if(chargeTime >= getSkillChargeTime()){
-			castComplete(player);
+			if(FMLEnvironment.dist == Dist.CLIENT)
+				castComplete(player);
 			startCooldown();
 		}
 

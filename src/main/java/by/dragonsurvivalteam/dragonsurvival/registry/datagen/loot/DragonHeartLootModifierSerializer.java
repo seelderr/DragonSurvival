@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.data.loot;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot;
 
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;

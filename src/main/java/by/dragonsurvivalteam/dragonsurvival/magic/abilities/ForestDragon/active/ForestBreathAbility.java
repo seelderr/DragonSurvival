@@ -26,6 +26,7 @@ import net.minecraft.client.resources.sounds.SoundInstance;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -40,14 +41,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
+import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.fml.DistExecutor;
-import net.minecraftforge.fml.DistExecutor.SafeRunnable;
-import net.minecraftforge.registries.ForgeRegistries;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.fml.loading.FMLEnvironment;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
 @RegisterDragonAbility
 public class ForestBreathAbility extends BreathAbility{
@@ -152,7 +154,7 @@ public class ForestBreathAbility extends BreathAbility{
 				AreaEffectCloud entity = new AreaEffectCloud(EntityType.AREA_EFFECT_CLOUD, player.level());
 				entity.setWaitTime(0);
 				entity.setPos(blockPosition.above().getX(), blockPosition.above().getY(), blockPosition.above().getZ());
-				entity.setPotion(new Potion(new MobEffectInstance(DSEffects.DRAIN, /* Effect duration is normally divided by 4 */ Functions.secondsToTicks(10) * 4)));
+				entity.setPotionContents(new PotionContents(FOREST_BREATH));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(1);
 				entity.setParticle(new LargePoisonParticleData(37, false));
@@ -173,7 +175,7 @@ public class ForestBreathAbility extends BreathAbility{
 		if (/* 50% */ player.getRandom().nextInt(100) < 50) {
 			if (blockState.getBlock() instanceof BonemealableBlock bonemealableBlock) {
 				if (!DragonConfigHandler.FOREST_DRAGON_BREATH_GROW_BLACKLIST.contains(bonemealableBlock)) {
-					if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockPosition, blockState, false)) {
+					if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockPosition, blockState)) {
 						if (bonemealableBlock.isBonemealSuccess(serverLevel, player.getRandom(), blockPosition, blockState)) {
 							for (int i = 0; i < 3; i++) {
 								if (bonemealableBlock instanceof DoublePlantBlock) {
@@ -202,8 +204,8 @@ public class ForestBreathAbility extends BreathAbility{
 					if (player.getRandom().nextInt(100) < Integer.parseInt(data[2])) {
 						ResourceLocation resourceLocation = new ResourceLocation(data[0], data[1]);
 
-						if (ForgeRegistries.BLOCKS.containsKey(resourceLocation)) {
-							serverLevel.setBlock(blockPosition, ForgeRegistries.BLOCKS.getValue(resourceLocation).defaultBlockState(), Block.UPDATE_ALL);
+						if (BuiltInRegistries.BLOCK.containsKey(resourceLocation)) {
+							serverLevel.setBlock(blockPosition, BuiltInRegistries.BLOCK.get(resourceLocation).defaultBlockState(), Block.UPDATE_ALL);
 							break;
 						}
 					}
@@ -234,8 +236,8 @@ public class ForestBreathAbility extends BreathAbility{
 			return;
 		}
 
-		if(player.level().isClientSide() && castDuration <= 0){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::sound);
+		if(player.level().isClientSide() && castDuration <= 0 && FMLEnvironment.dist.isClient()){
+			sound();
 		}
 
 		if(player.level().isClientSide()){
@@ -284,7 +286,7 @@ public class ForestBreathAbility extends BreathAbility{
 		if(DSSounds.FOREST_BREATH_END != null){
 			Vec3 pos = player.getEyePosition(1.0F);
 			SimpleSoundInstance endSound = new SimpleSoundInstance(
-					DSSounds.FOREST_BREATH_END,
+					DSSounds.FOREST_BREATH_END.get(),
 					SoundSource.PLAYERS,
 					1.0F,1.0F,
 					SoundInstance.createUnseededRandom(),
@@ -331,7 +333,7 @@ public class ForestBreathAbility extends BreathAbility{
 	public  void sound(){
 		Vec3 pos = player.getEyePosition(1.0F);
 		SimpleSoundInstance startingSound = new SimpleSoundInstance(
-				DSSounds.FOREST_BREATH_START,
+				DSSounds.FOREST_BREATH_START.get(),
 				SoundSource.PLAYERS,
 				1.0F,1.0F,
 				SoundInstance.createUnseededRandom(),
@@ -359,8 +361,8 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public void castComplete(Player player){
-		if(player.level().isClientSide()){
-			DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> (SafeRunnable)this::stopSound);
+		if(player.level().isClientSide() && FMLEnvironment.dist.isClient()){
+			stopSound();
 		}
 	}
 

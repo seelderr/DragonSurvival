@@ -6,8 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.data.DataBlockTagProvider;
-import by.dragonsurvivalteam.dragonsurvival.data.DataDamageTypeTagsProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
@@ -27,6 +27,7 @@ import java.util.Objects;
 import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -34,32 +35,25 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.common.ForgeMod;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.EntityStruckByLightningEvent;
-import net.minecraftforge.event.entity.living.LivingAttackEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingVisibilityEvent;
-import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
-import net.minecraftforge.event.entity.player.CriticalHitEvent;
-import net.minecraftforge.eventbus.api.Event.Result;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
+import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber
 public class MagicHandler{
 	private static final UUID DRAGON_PASSIVE_MOVEMENT_SPEED = UUID.fromString("cdc3be6e-e17d-4efa-90f4-9dd838e9b000");
 
 	@SubscribeEvent
-	public static void magicUpdate(PlayerTickEvent event){
-		if(event.phase == Phase.START){
-			return;
-		}
-
-		Player player = event.player;
+	public static void magicUpdate(PlayerTickEvent.Post event){
+		Player player = event.getEntity();
 
 		AttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
 
@@ -87,12 +81,8 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent event){
-		if(event.phase == Phase.START){
-			return;
-		}
-
-		Player player = event.player;
+	public static void playerTick(PlayerTickEvent.Post event){
+		Player player = event.getEntity();
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
 			if(!cap.isDragon()){
@@ -103,12 +93,12 @@ public class MagicHandler{
 				ability.player = player;
 			}
 
-			if(player.hasEffect(DSEffects.WATER_VISION) && (player.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || SeaEyesAbility.seaEyesOutOfWater)){
+			if(player.hasEffect(DSEffects.WATER_VISION) && (player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || SeaEyesAbility.seaEyesOutOfWater)){
 				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 10, 0, false, false));
 			}
 
 			if (player.hasEffect(DSEffects.HUNTER)) {
-				BlockState blockStateFeet = player.getFeetBlockState();
+				BlockState blockStateFeet = player.getBlockStateOn();
 
 				if (isHunterRelevant(blockStateFeet)) {
 					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
@@ -124,7 +114,7 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingVisibility(LivingVisibilityEvent event){
+	public static void livingVisibility(LivingEvent.LivingVisibilityEvent event){
 		if(event.getEntity() instanceof Player player){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
@@ -139,67 +129,67 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingTick(LivingEvent.LivingTickEvent event){
-		LivingEntity entity = event.getEntity();
-		EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
+	public static void livingTick(EntityTickEvent event){
+		if(event.getEntity() instanceof LivingEntity entity) {
+			EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
 
-		if(entity.hasEffect(DSEffects.BURN)){
-			if(entity.isEyeInFluidType(ForgeMod.WATER_TYPE.get()) || entity.isInWaterRainOrBubble()){
-				entity.removeEffect(DSEffects.BURN);
+			if(entity.hasEffect(DSEffects.BURN)){
+				if(entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()){
+					entity.removeEffect(DSEffects.BURN);
+				}
+			}
+
+			if(entity.tickCount % 20 == 0){
+				MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
+
+				if (drainEffect != null) {
+					if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
+						Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+
+						if (player != null) {
+							TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.FOREST_DRAGON_DRAIN, player), drainEffect.getAmplifier() + 1), entity);
+						} else {
+							entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
+						}
+					}
+				}
+
+				MobEffectInstance chargedEffect = entity.getEffect(DSEffects.CHARGED);
+
+				if (chargedEffect != null) {
+					Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+					if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
+						StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
+					}
+				}
+
+				MobEffectInstance burnEffect = entity.getEffect(DSEffects.BURN);
+
+				if (burnEffect != null) {
+					if (!entity.fireImmune()) {
+						if (cap.lastPos != null) {
+							double distance = entity.distanceToSqr(cap.lastPos);
+							float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
+
+							if (damage > 0) {
+								if (!entity.isOnFire()) {
+									// Short enough fire duration to not cause fire damage but still drop cooked items
+									entity.setRemainingFireTicks(1);
+								}
+								Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
+								if (player != null) {
+									TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
+								} else {
+									entity.hurt(entity.damageSources().onFire(), damage);
+								}
+							}
+						}
+					}
+				}
+
+				cap.lastPos = entity.position();
 			}
 		}
-
-		if(entity.tickCount % 20 == 0){
-            MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
-
-            if (drainEffect != null) {
-                if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
-                    Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
-
-                    if (player != null) {
-                        TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN, player), drainEffect.getAmplifier() + 1), entity);
-                    } else {
-                        entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
-                    }
-                }
-            }
-
-            MobEffectInstance chargedEffect = entity.getEffect(DSEffects.CHARGED);
-
-            if (chargedEffect != null) {
-                Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
-                if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
-                    StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
-                }
-            }
-
-            MobEffectInstance burnEffect = entity.getEffect(DSEffects.BURN);
-
-            if (burnEffect != null) {
-                if (!entity.fireImmune()) {
-                    if (cap.lastPos != null) {
-                        double distance = entity.distanceToSqr(cap.lastPos);
-                        float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
-
-                        if (damage > 0) {
-                            if (!entity.isOnFire()) {
-                                // Short enough fire duration to not cause fire damage but still drop cooked items
-                                entity.setRemainingFireTicks(1);
-                            }
-                            Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
-                            if (player != null) {
-                                TargetingFunctions.attackTargets(player, ent -> ent.hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
-                            } else {
-                                entity.hurt(entity.damageSources().onFire(), damage);
-                            }
-                        }
-                    }
-                }
-            }
-
-			cap.lastPos = entity.position();
-		}
-
 	}
 
 	@SubscribeEvent
@@ -244,8 +234,7 @@ public class MagicHandler{
 			if(player.hasEffect(DSEffects.HUNTER)){
 				MobEffectInstance hunter = player.getEffect(DSEffects.HUNTER);
 				player.removeEffect(DSEffects.HUNTER);
-				event.setDamageModifier(event.getDamageModifier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
-				event.setResult(Result.ALLOW);
+				event.setDamageMultiplier(event.getDamageMultiplier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 			}
 		});
 	}
@@ -269,9 +258,9 @@ public class MagicHandler{
 					if (hit) {
 						// FIXME 1.20
 						// event.getSource().bypassArmor();
-						event.getEntity().hurt(DSDamageTypes.entityDamageSource(player.level(), DSDamageTypes.SPECTRAL_IMPACT, player), (float) (event.getAmount() * 0.15));
-						double d0 = -Mth.sin(player.yRot * ((float) Math.PI / 180F));
-						double d1 = Mth.cos(player.yRot * ((float) Math.PI / 180F));
+						event.getEntity().hurt(new DamageSource(DSDamageTypes.SPECTRAL_IMPACT, player), (float) (event.getAmount() * 0.15));
+						double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
+						double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 
 						if (player.level() instanceof ServerLevel serverLevel) {
 							serverLevel.sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);

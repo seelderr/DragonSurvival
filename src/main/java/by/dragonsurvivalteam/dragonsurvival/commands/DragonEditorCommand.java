@@ -4,13 +4,13 @@ import static net.minecraft.commands.Commands.literal;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonEditorPacket;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonEditor;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 public class DragonEditorCommand{
@@ -25,7 +25,7 @@ public class DragonEditorCommand{
 
 	private static int runCommand(ServerPlayer serverPlayer){
 		if(DragonStateProvider.isDragon(serverPlayer)){
-			NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> serverPlayer), new OpenDragonEditorPacket());
+			PacketDistributor.sendToPlayer(serverPlayer, new RequestOpenDragonEditor.Data());
 		}
 		return 1;
 	}

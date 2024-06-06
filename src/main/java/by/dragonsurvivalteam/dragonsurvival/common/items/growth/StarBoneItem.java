@@ -3,12 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.growth;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SynchronizeDragonCap;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,7 +18,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
 public class StarBoneItem extends Item{
 	public StarBoneItem(Properties p_i48487_1_){
@@ -43,13 +42,13 @@ public class StarBoneItem extends Item{
 				}
 
 				if (!worldIn.isClientSide) {
-					NetworkHandler.CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> playerIn), new SyncSize(playerIn.getId(), size));
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(playerIn, new SyncSize.Data(playerIn.getId(), size));
 					if (handler.getPassengerId() != 0) {
 						Entity mount = worldIn.getEntity(handler.getPassengerId());
 						if (mount != null) {
 							mount.stopRiding();
 							((ServerPlayer) playerIn).connection.send(new ClientboundSetPassengersPacket(playerIn));
-							NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) playerIn), new SynchronizeDragonCap(playerIn.getId(), handler.isHiding(), handler.getType(), handler.getBody(), handler.getSize(), handler.hasFlight(), 0));
+							PacketDistributor.sendToPlayer((ServerPlayer) playerIn, new SyncDragonHandler.Data(playerIn.getId(), handler.isHiding(), handler.getType(), handler.getBody(), handler.getSize(), handler.hasFlight(), 0));
 						}
 					}
 				}
@@ -63,9 +62,8 @@ public class StarBoneItem extends Item{
 	}
 
 	@Override
-	public void appendHoverText(ItemStack p_77624_1_,
-		@Nullable Level p_77624_2_, List<Component> p_77624_3_, TooltipFlag p_77624_4_){
-		super.appendHoverText(p_77624_1_, p_77624_2_, p_77624_3_, p_77624_4_);
-		p_77624_3_.add(Component.translatable("ds.description.starBone"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+		pTooltipComponents.add(Component.translatable("ds.description.starBone"));
 	}
 }

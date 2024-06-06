@@ -8,16 +8,16 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 public class TreasureParticle extends TextureSheetParticle{
 	private final SpriteSet sprites;
 
-	public TreasureParticle(ClientLevel p_i232378_1_, double p_i232378_2_, double p_i232378_4_, double p_i232378_6_, double p_i232378_8_, double p_i232378_10_, double p_i232378_12_, TreasureParticleData p_i232378_14_, SpriteSet p_i232341_10_){
-		super(p_i232378_1_, p_i232378_2_, p_i232378_4_, p_i232378_6_, p_i232378_8_, p_i232378_10_, p_i232378_12_);
-		sprites = p_i232341_10_;
-		rCol = p_i232378_14_.getR();
-		gCol = p_i232378_14_.getG();
-		bCol = p_i232378_14_.getB();
-		quadSize *= 0.75F * p_i232378_14_.getScale();
+	public TreasureParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, TreasureParticleData data, SpriteSet spriteSet){
+		super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
+		sprites = spriteSet;
+		rCol = data.getR();
+		gCol = data.getG();
+		bCol = data.getB();
+		quadSize *= 0.75F * data.getScale();
 		int i = (int)(8.0D / (Math.random() * 0.8D + 0.2D));
-		lifetime = (int)Math.max((float)i * p_i232378_14_.getScale(), 1.0F);
-		pickSprite(p_i232341_10_);
+		lifetime = (int)Math.max((float)i * data.getScale(), 1.0F);
+		pickSprite(spriteSet);
 	}
 
 	@Override
@@ -45,7 +45,7 @@ public class TreasureParticle extends TextureSheetParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static class Factory implements ParticleProvider<TreasureParticleData>{
+	public static class Factory implements DragonParticleProvider<TreasureParticleData> {
 		private final SpriteSet sprites;
 
 		public Factory(SpriteSet p_i50563_1_){

@@ -14,6 +14,7 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.neoforge.common.ModConfigSpec;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -30,7 +31,7 @@ public class SyncListConfig implements IMessage<SyncListConfig.Data> {
 		UnmodifiableConfig spec = ConfigHandler.serverSpec.getValues();
 		Object config = spec.get(message.path);
 
-		if (config instanceof ConfigValue<?> configValue) {
+		if (config instanceof ModConfigSpec.ConfigValue<?> configValue) {
 			context.enqueueWork(() -> {
 				ConfigHandler.updateConfigValue(configValue, message.value);
 
@@ -56,7 +57,7 @@ public class SyncListConfig implements IMessage<SyncListConfig.Data> {
 		UnmodifiableConfig spec = ConfigHandler.serverSpec.getValues();
 		Object config = spec.get(message.path);
 
-		if (config instanceof ConfigValue<?> configValue) {
+		if (config instanceof ModConfigSpec.ConfigValue<?> configValue) {
 			context.enqueueWork(() -> {
 				ConfigHandler.updateConfigValue(configValue, message.value);
 

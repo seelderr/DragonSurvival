@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.Packet;
@@ -10,6 +11,7 @@ import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 
 public class BaseBlockTileEntity extends BlockEntity{
 	public BaseBlockTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState){
@@ -22,20 +24,16 @@ public class BaseBlockTileEntity extends BlockEntity{
 	}
 
 	@Override
-	public CompoundTag getUpdateTag(){
-		CompoundTag supertag = super.getUpdateTag();
-		saveAdditional(supertag);
-		return supertag;
+	public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries){
+		CompoundTag parentTag = super.getUpdateTag(pRegistries);
+		saveAdditional(parentTag, pRegistries);
+		return parentTag;
 	}
-
 	@Override
-	public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt){
-		super.onDataPacket(net, pkt);
-		CompoundTag tag = pkt.getTag();
-		if(tag != null){
-			load(tag);
-		}
-	}
+	public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider pRegistries) {
+		super.handleUpdateTag(tag, pRegistries);
+        loadAdditional(tag, pRegistries);
+    }
 
 	public int getX(){
 		return getBlockPos().getX();

@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.data.loot;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;

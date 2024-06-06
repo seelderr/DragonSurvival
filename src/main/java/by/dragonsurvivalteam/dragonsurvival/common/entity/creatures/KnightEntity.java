@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
+/*package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
@@ -210,4 +210,4 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
 	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
 	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_2");
-}
+}*/

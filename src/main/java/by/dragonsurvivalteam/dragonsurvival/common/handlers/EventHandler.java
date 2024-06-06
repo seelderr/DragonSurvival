@@ -3,15 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
-import by.dragonsurvivalteam.dragonsurvival.network.status.PlayerJumpSync;
+import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import com.jcraft.jogg.Packet;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -38,37 +40,34 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.TickEvent.Phase;
-import net.minecraftforge.event.TickEvent.PlayerTickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
-import net.minecraftforge.event.entity.player.PlayerEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.level.BlockEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.LogicalSide;
-import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.network.PacketDistributor;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @SuppressWarnings( "unused" )
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class EventHandler{
 
 
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent event){
-		if(event.phase == Phase.START || !ServerConfig.startWithDragonChoice) return;
-		if(event.side == LogicalSide.CLIENT) return;
+	public static void playerTick(PlayerTickEvent.Post event){
+		if(!ServerConfig.startWithDragonChoice) return;
+		if(event.getEntity().level().isClientSide()) return;
 
-		if(event.player instanceof ServerPlayer player){
+		if(event.getEntity() instanceof ServerPlayer player){
 			if(player.isDeadOrDying()) return;
 
 			if(player.tickCount > 5 * 20){
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(!cap.hasUsedAltar && !DragonStateProvider.isDragon(player)){
-						NetworkHandler.CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), new OpenDragonAltar());
+						PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
 						cap.hasUsedAltar = true;
 					}
 
@@ -85,11 +84,11 @@ public class EventHandler{
 	/**
 	 * Check every 2 seconds
 	 */
-	//TODO add Elytra from other mods
+	//TODO: Could probably do this in a cleaner way with a mixin somewhere
 	@SubscribeEvent
-	public static void removeElytraFromDragon(TickEvent.PlayerTickEvent playerTickEvent){
-		if(!ServerConfig.dragonsAllowedToUseElytra && playerTickEvent.phase == TickEvent.Phase.START){
-			Player player = playerTickEvent.player;
+	public static void removeElytraFromDragon(PlayerTickEvent.Post playerTickEvent){
+		if(!ServerConfig.dragonsAllowedToUseElytra){
+			Player player = playerTickEvent.getEntity();
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				if(dragonStateHandler.isDragon() && player instanceof ServerPlayer && cycle >= 40){
 					//chestplate slot is #38
@@ -121,7 +120,7 @@ public class EventHandler{
 	public static void expDrops(BlockEvent.BreakEvent breakEvent){
 		if(DragonStateProvider.isDragon(breakEvent.getPlayer())){
 			if(breakEvent.getExpToDrop() > 0){
-				int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.BLOCK_FORTUNE, breakEvent.getPlayer());
+				int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, breakEvent.getPlayer());
 				int silklevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, breakEvent.getPlayer());
 				breakEvent.setExpToDrop(breakEvent.getState().getExpDrop(breakEvent.getLevel(), RandomSource.create(), breakEvent.getPos(), bonusLevel, silklevel));
 			}
@@ -146,34 +145,34 @@ public class EventHandler{
 				boolean replace = false;
 				rightClickBlock.getEntity().isSpectator();
 				rightClickBlock.getEntity().isCreative();
-				BlockPlaceContext deirection = new BlockPlaceContext(rightClickBlock.getLevel(), rightClickBlock.getEntity(), rightClickBlock.getHand(), rightClickBlock.getItemStack(), new BlockHitResult(new Vec3(0, 0, 0), rightClickBlock.getEntity().getDirection(), blockPos, false));
+				BlockPlaceContext direction = new BlockPlaceContext(rightClickBlock.getLevel(), rightClickBlock.getEntity(), rightClickBlock.getHand(), rightClickBlock.getItemStack(), new BlockHitResult(new Vec3(0, 0, 0), rightClickBlock.getEntity().getDirection(), blockPos, false));
 				if(block == Blocks.STONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_STONE.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_STONE.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(block == Blocks.MOSSY_COBBLESTONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(block == Blocks.SANDSTONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_SANDSTONE.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_SANDSTONE.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(block == Blocks.RED_SANDSTONE){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_RED_SANDSTONE.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_RED_SANDSTONE.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(ResourceHelper.getKey(block).getPath().contains(ResourceHelper.getKey(Blocks.OAK_LOG).getPath())){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_OAK_LOG.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_OAK_LOG.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(ResourceHelper.getKey(block).getPath().contains(ResourceHelper.getKey(Blocks.BIRCH_LOG).getPath())){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BIRCH_LOG.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BIRCH_LOG.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(block == Blocks.PURPUR_BLOCK){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(block == Blocks.NETHER_BRICKS){
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_NETHER_BRICKS.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_NETHER_BRICKS.get().getStateForPlacement(direction));
 					replace = true;
 				}else if(block == Blocks.BLACKSTONE){
 					rightClickBlock.getEntity().getDirection();
-					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BLACKSTONE.getStateForPlacement(deirection));
+					world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BLACKSTONE.get().getStateForPlacement(direction));
 					replace = true;
 				}
 
@@ -196,7 +195,7 @@ public class EventHandler{
 		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.PASSIVE_FIRE_BEACON
 			|| item.getItem() == DSItems.PASSIVE_MAGIC_BEACON
 			|| item.getItem() == DSItems.PASSIVE_PEACE_BEACON, 1, true);
-		if(rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.asItem()){
+		if(rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.get().asItem()){
 			craftedEvent.getEntity().addItem(new ItemStack(Items.BEACON));
 		}
 	}
@@ -206,7 +205,7 @@ public class EventHandler{
 		Container inventory = craftedEvent.getInventory();
 		ItemStack result = craftedEvent.getCrafting();
 		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_HEART, 1, true);
-		if(rem == 0 && result.getItem() == DSItems.STAR_HEART.asItem()){
+		if(rem == 0 && result.getItem() == DSItems.STAR_HEART){
 			craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
 		}
 	}
@@ -216,13 +215,14 @@ public class EventHandler{
 		Container inventory = craftedEvent.getInventory();
 		ItemStack result = craftedEvent.getCrafting();
 		int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_BONE, 1, true);
-		if(rem == 0 && result.getItem() == DSItems.STAR_BONE.asItem()){
+		if(rem == 0 && result.getItem() == DSItems.STAR_BONE){
 			craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
 		}
 	}
 
+	// FIXME: We can replace this with Attributes.JUMP_STRENGTH!!
 	@SubscribeEvent
-	public static void onJump(LivingJumpEvent jumpEvent){
+	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent){
 		final LivingEntity living = jumpEvent.getEntity();
 
 
@@ -230,7 +230,6 @@ public class EventHandler{
 			Vec3 deltaMovement = living.getDeltaMovement();
 			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
 			living.setJumping(false);
-			jumpEvent.setCanceled(true);
 			return;
 		}
 
@@ -245,9 +244,9 @@ public class EventHandler{
 
 				if(living instanceof ServerPlayer){
 					if(living.getServer().isSingleplayer()){
-						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(living.getId(), 20)); // 42
+						PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 20));
 					}else{
-						NetworkHandler.CHANNEL.send(PacketDistributor.ALL.noArg(), new PlayerJumpSync(living.getId(), 10)); // 21
+						PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
 					}
 				}
 			}

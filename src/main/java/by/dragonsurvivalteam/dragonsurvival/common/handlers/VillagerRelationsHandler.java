@@ -37,17 +37,18 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.living.MobEffectEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
+import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.tick.LevelTickEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-@Mod.EventBusSubscriber
+@EventBusSubscriber
 public class VillagerRelationsHandler{
 	public static List<Supplier<EntityType<? extends PathfinderMob>>> dragonHunters;
 
@@ -211,16 +212,16 @@ public class VillagerRelationsHandler{
 	}
 
 	@SubscribeEvent
-	public static void spawnHunters(TickEvent.PlayerTickEvent playerTickEvent){
-		if(!dragonHunters.isEmpty() && playerTickEvent.phase == TickEvent.Phase.END){
-			Player player = playerTickEvent.player;
+	public static void spawnHunters(PlayerTickEvent.Post playerTickEvent){
+		if(!dragonHunters.isEmpty()){
+			Player player = playerTickEvent.getEntity();
 			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DSEffects.ROYAL_CHASE) && DragonStateProvider.isDragon(player)){
 				if(serverLevel.dimension() == Level.OVERWORLD){
 					VillageRelationShips villageRelationShips = DragonStateProvider.getOrGenerateHandler(player).getVillageRelationShips();
 						if(villageRelationShips.hunterSpawnDelay == 0){
 							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
 							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_WATER)) {
+								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_AQUATIC)) {
 									return;
 								}
 								int levelOfEvil = computeLevelOfEvil(player);
@@ -311,9 +312,9 @@ public class VillagerRelationsHandler{
 	}
 
 	@SubscribeEvent
-	public static void spawnPrinceOrPrincess(TickEvent.LevelTickEvent serverTickEvent){
+	public static void spawnPrinceOrPrincess(LevelTickEvent serverTickEvent){
 		if(ServerConfig.spawnPrinceAndPrincess){
-			Level world = serverTickEvent.level;
+			Level world = serverTickEvent.getLevel();
 			if(world instanceof ServerLevel serverWorld){
 				if(!serverWorld.players().isEmpty() && serverWorld.dimension() == Level.OVERWORLD){
 					if(timeLeft == 0){
@@ -321,7 +322,7 @@ public class VillagerRelationsHandler{
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
 							BlockPos blockPos = SpawningUtils.findRandomSpawnPosition(player, 1, 2, 20.0F);
 							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
-								if (serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_WATER)) {
+								if (serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_AQUATIC)) {
 									return;
 								}
 								EntityType<? extends PrincesHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE.get() : DSEntities.PRINCE_ON_HORSE.get();
@@ -354,14 +355,12 @@ public class VillagerRelationsHandler{
 	 * Save duration of 'evil dragon'
 	 */
 	@SubscribeEvent
-	public static void onPlayerTick(TickEvent.PlayerTickEvent playerTickEvent){
-		if(playerTickEvent.phase == TickEvent.Phase.END){
-			Player playerEntity = playerTickEvent.player;
+	public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent){
+			Player playerEntity = playerTickEvent.getEntity();
 			if(!playerEntity.level().isClientSide()){
 				if(playerEntity.hasEffect(DSEffects.ROYAL_CHASE)){
 					DragonStateProvider.getOrGenerateHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DSEffects.ROYAL_CHASE).getDuration();
 				}
 			}
-		}
 	}
 }

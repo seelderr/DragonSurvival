@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
-import by.dragonsurvivalteam.dragonsurvival.client.emotes.EmoteRegistry;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,7 +36,7 @@ public class EmoteCap extends SubCap{
 
 		tag.putBoolean("emoteOpen", emoteMenuOpen);
 
-		for(Emote emote : EmoteRegistry.EMOTES){
+		for(Emote emote : DSEmotes.EMOTES){
 			tag.putInt("emote_keybind_" + emote.id, emoteKeybinds.getOrDefault(emote.id, -1));
 		}
 
@@ -51,7 +51,7 @@ public class EmoteCap extends SubCap{
 			Emote emote = null;
 
 			if(emoteId != null){
-				emote = EmoteRegistry.EMOTES.stream().filter(s -> Objects.equals(s.animation, emoteId)).findFirst().orElseGet(() -> {
+				emote = DSEmotes.EMOTES.stream().filter(s -> Objects.equals(s.animation, emoteId)).findFirst().orElseGet(() -> {
 					Emote em = new Emote();
 					em.animation = emoteId;
 					return em;
@@ -64,7 +64,7 @@ public class EmoteCap extends SubCap{
 
 		emoteMenuOpen = tag.getBoolean("emoteOpen");
 
-		for(Emote emote : EmoteRegistry.EMOTES){
+		for(Emote emote : DSEmotes.EMOTES){
 			int num = tag.getInt("emote_keybind_" + emote.id);
 			emoteKeybinds.put(emote.id, num);
 		}

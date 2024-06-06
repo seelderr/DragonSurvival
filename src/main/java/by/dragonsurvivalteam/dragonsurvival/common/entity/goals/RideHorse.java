@@ -22,7 +22,7 @@ public class RideHorse<E extends Mob> extends Goal{
 	@Override
 	public void tick(){
 		Horse horse = (Horse)mob.getVehicle();
-		horse.yRot = mob.yRot;
+		horse.setYRot(mob.getYRot());
 		horse.yBodyRot = mob.yBodyRot;
 		Path path = mob.getNavigation().getPath();
 		horse.getNavigation().moveTo(path, 2.5);
