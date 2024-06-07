@@ -30,7 +30,6 @@
     "MixinClientWorld",
     "MixinEntityRenderDispatcher",
     "MixinGameRenderer",
-    "MixinGeoModel",
     "MixinInventoryScreen",
     "MixinItemBlockRenderTypes",
     "MixinItemInHandRenderer",

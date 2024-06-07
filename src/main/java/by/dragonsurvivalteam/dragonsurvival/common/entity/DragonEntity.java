@@ -27,12 +27,14 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
+import software.bernie.geckolib.util.RenderUtil;
 
 public class DragonEntity extends LivingEntity implements GeoEntity, CommonTraits {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -370,6 +372,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		AnimationUtils.setAnimationSpeed(finalAnimationSpeed, state.getAnimationTick(), animationController);
 
 		return PlayState.CONTINUE;
+	}
+
+	@Override
+	public double getTick(Object obj) {
+		// Add some offset so that when the game starts we don't go into negative ticks
+		return RenderUtil.getCurrentTick() + 100;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
