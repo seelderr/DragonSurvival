@@ -127,6 +127,7 @@ public class EmoteHandler {
         EmoteMenuHandler.clearEmotes(event.getEntity());
     }
 
+    // TODO Is this fine to move into the above playerTickEvent? This was a LevelTick before but it was causing problems on startup
     /*@SubscribeEvent
     public static void playerTick(final PlayerTickEvent.Post event) {
         DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
