@@ -72,7 +72,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	
 	@Inject(method = "onPassengerTurned(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
 	private void onPassengerTurned(Entity passenger, CallbackInfo callbackInfo) {
-		if (passenger instanceof Player player && player.getVehicle() != null && DragonUtils.getHandler(player.getVehicle()).isDragon()) {
+		if (passenger instanceof Player player && player.getVehicle() != null && DragonUtils.getHandler(player.getVehicle()).isDragon() && player.level.isClientSide()) {
 			this.clampRotation(passenger);
 		}
 	}
