@@ -36,5 +36,6 @@ src/generated/resources
 src/generated/resources/.cache/cache
 src/generated/resources/.cache
 /mcmodsrepo/
+runs/
 
 src/generated
