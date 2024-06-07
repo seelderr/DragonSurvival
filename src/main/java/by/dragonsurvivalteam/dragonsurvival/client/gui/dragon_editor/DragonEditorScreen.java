@@ -529,19 +529,18 @@ public class DragonEditorScreen extends Screen {
 
 			@Override
 			public void onPress(){
-				DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
-					minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
+				minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-					if((cap.getType() != null && !cap.getType().equals(dragonType)) || (cap.getBody() != null && !cap.getBody().equals(dragonBody))){
-						if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
-							confirmation = true;
-							return;
-						}
+				if((handler.getType() != null && !handler.getType().equals(dragonType)) || (handler.getBody() != null && !handler.getBody().equals(dragonBody))){
+					if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
+						confirmation = true;
+						return;
 					}
-					if(!confirmation){
-						confirm();
-					}
-				});
+				}
+				if(!confirmation){
+					confirm();
+				}
 
 				if(confirmation){
 					if(!toggled){

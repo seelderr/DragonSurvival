@@ -485,9 +485,8 @@ public class ClientFlightHandler {
 					if (player.tickCount % 5 == 0) {
 						// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
 						// TODO :: Check ClientboundSetEntityMotionPacket
-						player.connection.send(new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
 						// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
-						//PacketDistributor.sendToServer(new SyncFlightSpeed.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+						PacketDistributor.sendToServer(new SyncFlightSpeed.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
 					}
 				});
 			}

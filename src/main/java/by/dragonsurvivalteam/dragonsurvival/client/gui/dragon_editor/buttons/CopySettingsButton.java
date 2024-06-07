@@ -29,7 +29,6 @@ public class CopySettingsButton extends ExtendedButton {
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		active = visible = screen.showUi;
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
 		if(visible){
 			guiGraphics.blit(ICON, getX(), getY(), 0, 0, 16, 16, 16, 16);

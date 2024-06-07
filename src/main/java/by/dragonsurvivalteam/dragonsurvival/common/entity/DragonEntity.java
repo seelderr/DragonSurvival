@@ -76,7 +76,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			registrar.add(new AnimationController<>(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
 		}
 
-		registrar.add(new AnimationController<>(this, "3", 2, this::headPredicate));
+		registrar.add(new AnimationController<>(this, "3", 2, this::predicate));
 		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
 		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
 		registrar.add(new AnimationController<>(this, "1", this::headPredicate));

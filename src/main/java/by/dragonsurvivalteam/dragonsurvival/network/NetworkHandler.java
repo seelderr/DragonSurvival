@@ -17,11 +17,12 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 
-
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NetworkHandler {
 	private static final String PROTOCOL_VERSION = "3";
 

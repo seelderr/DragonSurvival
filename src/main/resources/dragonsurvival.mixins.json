@@ -16,7 +16,6 @@
     "MixinPlayerEnd",
     "MixinPlayerEntity",
     "MixinPlayerStart",
-    "MixinServerCommonPacketListenerImpl",
     "MixinServerPlayerGameMode",
     "MixinSleepStatus",
     "tool_swap.MixinServerPlayerGameModeEnd",

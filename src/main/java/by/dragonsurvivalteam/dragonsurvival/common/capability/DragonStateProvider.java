@@ -31,9 +31,7 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 			return new DragonStateHandler();
 		}
 
-		Optional<DragonStateHandler> cap = getCap(entity);
-
-		return cap.orElse(new DragonStateHandler());
+		return entity.getData(DRAGON_HANDLER);
 	}
 
 	public static boolean isDragon(Entity entity){

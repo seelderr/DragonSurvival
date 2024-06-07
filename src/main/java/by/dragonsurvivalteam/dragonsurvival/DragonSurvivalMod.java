@@ -5,8 +5,10 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONT
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.DS_DAMAGE_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.ENTITY_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 
@@ -33,6 +35,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -48,6 +51,7 @@ import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLibClient;
 
 @Mod( DragonSurvivalMod.MODID )
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
@@ -71,6 +75,7 @@ public class DragonSurvivalMod{
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
 
+		DS_ITEMS.register(modEventBus);
 		DS_ATTACHMENT_TYPES.register(modEventBus);
 		DS_MOB_EFFECTS.register(modEventBus);
 		DS_BLOCKS.register(modEventBus);
@@ -79,8 +84,9 @@ public class DragonSurvivalMod{
 		DS_PARTICLES.register(modEventBus);
 		DS_DAMAGE_TYPES.register(modEventBus);
 		DS_SOUNDS.register(modEventBus);
+		DS_POTIONS.register(modEventBus);
 		DS_TILE_ENTITIES.register(modEventBus);
-		ENTITY_TYPES.register(modEventBus);
+		DS_ENTITY_TYPES.register(modEventBus);
 		GLM.register(modEventBus);
 	}
 
@@ -93,19 +99,9 @@ public class DragonSurvivalMod{
 			NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
 		}
 	}
-
-	@SubscribeEvent
-	public void serverRegisterCommandsEvent(RegisterCommandsEvent event){
-		CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
-		DragonCommand.register(commandDispatcher);
-		DragonEditorCommand.register(commandDispatcher);
-		DragonAltarCommand.register(commandDispatcher);
-		DragonSizeCommand.register(commandDispatcher);
-		LOGGER.info("Registered commands");
-	}
 	
 	@SubscribeEvent
-	public void addPackFinders(AddPackFindersEvent event) {
+	public static void addPackFinders(AddPackFindersEvent event) {
 		if (event.getPackType() == PackType.CLIENT_RESOURCES) {
 			HashMap<MutableComponent, String> resourcePacks = new HashMap<MutableComponent, String>();
 			//resourcePacks.put(Component.literal("- Dragon East"), "ds_east");

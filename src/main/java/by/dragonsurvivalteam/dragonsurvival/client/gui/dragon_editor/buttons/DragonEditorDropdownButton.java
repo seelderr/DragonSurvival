@@ -41,7 +41,6 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks){
 		active = visible = dragonEditorScreen.showUi;
-		super.render(guiGraphics, mouseX, mouseY, pPartialTicks);
 		String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
 
 		if (!Objects.equals(currentValue, current)) {

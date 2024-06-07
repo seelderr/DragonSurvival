@@ -34,21 +34,21 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 @SuppressWarnings( "rawtypes,unchecked" )
 @EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )
 public class DSEntities {
-	public static final DeferredRegister<EntityType<?>> ENTITY_TYPES = DeferredRegister.create(
+	public static final DeferredRegister<EntityType<?>> DS_ENTITY_TYPES = DeferredRegister.create(
 			BuiltInRegistries.ENTITY_TYPE,
 			DragonSurvivalMod.MODID
 	);
 
 	// Player related
-	public static DeferredHolder<EntityType<?>, EntityType<DragonEntity>> DRAGON = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<DragonEntity>> DRAGON = DS_ENTITY_TYPES.register(
 			"dummy_dragon",
 			() -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 1.0f, 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
-	public static DeferredHolder<EntityType<?>, EntityType<DragonEntity>> DRAGON_ARMOR = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<DragonEntity>> DRAGON_ARMOR = DS_ENTITY_TYPES.register(
 			"dragon_armor",
 			() -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 1.0f, 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 
 	// Fake entities
-	public static DeferredHolder<EntityType<?>, EntityType<Bolas>> BOLAS_ENTITY = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<Bolas>> BOLAS_ENTITY = DS_ENTITY_TYPES.register(
 			"bolas",
 			() -> EntityType.Builder.<Bolas>of((entity, level) ->
 					new Bolas(level), MobCategory.MISC)
@@ -56,21 +56,21 @@ public class DSEntities {
 					.clientTrackingRange(4)
 					.updateInterval(10)
 					.build("bolas"));
-	public static DeferredHolder<EntityType<?>, EntityType<DragonSpikeEntity>> DRAGON_SPIKE = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<DragonSpikeEntity>> DRAGON_SPIKE = DS_ENTITY_TYPES.register(
 			"dragon_spike",
 			() -> EntityType.Builder.<DragonSpikeEntity>of(DragonSpikeEntity::new, MobCategory.MISC)
 					.sized(0.5F, 0.5F)
 					.clientTrackingRange(4)
 					.updateInterval(1)
 					.build("dragon_spike"));
-	public static DeferredHolder<EntityType<?>, EntityType<BallLightningEntity>> BALL_LIGHTNING = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<BallLightningEntity>> BALL_LIGHTNING = DS_ENTITY_TYPES.register(
 			"ball_lightning",
 			() -> EntityType.Builder.<BallLightningEntity>of(BallLightningEntity::new, MobCategory.MISC)
 					.sized(1F, 1F)
 					.clientTrackingRange(4)
 					.updateInterval(1)
 					.build("ball_lightning"));
-	public static DeferredHolder<EntityType<?>, EntityType<FireBallEntity>> FIREBALL = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<FireBallEntity>> FIREBALL = DS_ENTITY_TYPES.register(
 			"fireball",
 			() -> EntityType.Builder.<FireBallEntity>of(FireBallEntity::new, MobCategory.MISC)
 					.sized(1F, 1F)
@@ -79,28 +79,28 @@ public class DSEntities {
 					.build("fireball"));
 
 	// Entities
-	public static DeferredHolder<EntityType<?>, EntityType<HunterHoundEntity>> HUNTER_HOUND = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<HunterHoundEntity>> HUNTER_HOUND = DS_ENTITY_TYPES.register(
 			"hunter_hound",
 			() -> EntityType.Builder.of(HunterHoundEntity::new, MobCategory.MONSTER)
 					.sized(0.6F, 0.85F)
 					.clientTrackingRange(64)
 					.updateInterval(1)
 					.build("hunter_hound"));
-	public static DeferredHolder<EntityType<?>, EntityType<Shooter>> SHOOTER_HUNTER = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<Shooter>> SHOOTER_HUNTER = DS_ENTITY_TYPES.register(
 			"shooter",
 			() -> EntityType.Builder.of(Shooter::new, MobCategory.MONSTER)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(64)
 					.updateInterval(1)
 					.build("shooter"));
-	public static DeferredHolder<EntityType<?>, EntityType<SquireEntity>> SQUIRE_HUNTER = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<SquireEntity>> SQUIRE_HUNTER = DS_ENTITY_TYPES.register(
 			"squire",
 			() -> EntityType.Builder.of(SquireEntity::new, MobCategory.MONSTER)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(64)
 					.updateInterval(1)
 					.build("squire"));
-	public static DeferredHolder<EntityType<?>, EntityType<Princess>> PRINCESS = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<Princess>> PRINCESS = DS_ENTITY_TYPES.register(
 			"princess_entity",
 			() -> EntityType.Builder.<Princess>of(Princess::new, MobCategory.MONSTER)
 					.sized(0.6F, 1.9F)
@@ -108,14 +108,14 @@ public class DSEntities {
 					.updateInterval(1)
 					.build("princess_entity"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<KnightEntity>> KNIGHT = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<KnightEntity>> KNIGHT = DS_ENTITY_TYPES.register(
 			"knight", () -> EntityType.Builder.of(KnightEntity::new, MobCategory.MONSTER)
 					.sized(0.8f, 2.5f)
 					.clientTrackingRange(64)
 					.updateInterval(1)
 					.build("knight"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<PrincessHorseEntity>> PRINCESS_ON_HORSE = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<PrincessHorseEntity>> PRINCESS_ON_HORSE = DS_ENTITY_TYPES.register(
 			"princess",
 			() -> EntityType.Builder.of(PrincessHorseEntity::new, MobCategory.MONSTER)
 					.sized(0.8f, 2.5f)
@@ -123,7 +123,7 @@ public class DSEntities {
 					.updateInterval(1)
 					.build("princess"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<PrinceHorseEntity>> PRINCE_ON_HORSE = ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<PrinceHorseEntity>> PRINCE_ON_HORSE = DS_ENTITY_TYPES.register(
 			"prince", () -> EntityType.Builder.of(PrinceHorseEntity::new, MobCategory.MONSTER)
 					.sized(0.8f, 2.5f)
 					.clientTrackingRange(64)
