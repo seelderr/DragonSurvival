@@ -43,13 +43,8 @@ public class DragonBodyButton extends Button {
 	}*/
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		active = visible = dragonEditorScreen.showUi;
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-	}
-
-	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		active = visible = dragonEditorScreen.showUi;
 		RenderSystem.setShaderTexture(0, texture_location);
 		RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
 

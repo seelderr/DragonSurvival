@@ -43,8 +43,8 @@ public class AbilityScreen extends Screen{
 		this.sourceScreen = sourceScreen;
 	}
 
-	public List<GuiEventListener> widgetList(){
-		return children;
+	public List<? extends GuiEventListener> widgetList(){
+		return children();
 	}
 
 	@Override
@@ -53,7 +53,7 @@ public class AbilityScreen extends Screen{
 			return;
 		}
 
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
 		int startX = guiLeft + 10;
 		int startY = guiTop - 30;
@@ -79,7 +79,7 @@ public class AbilityScreen extends Screen{
 
 			int expChange = -1;
 
-			for(GuiEventListener btn : children){
+			for(GuiEventListener btn : children()){
 				if(!(btn instanceof AbstractWidget) || !((AbstractWidget)btn).isHoveredOrFocused()){
 					continue;
 				}

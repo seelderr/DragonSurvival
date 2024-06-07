@@ -1,8 +1,7 @@
 {
   "required": true,
   "package": "by.dragonsurvivalteam.dragonsurvival.mixins",
-  "compatibilityLevel": "JAVA_17",
-  "plugin": "by.dragonsurvivalteam.dragonsurvival.mixins.ApplyMixinPlugin",
+  "compatibilityLevel": "JAVA_21",
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
     "AccessorAnimationController",

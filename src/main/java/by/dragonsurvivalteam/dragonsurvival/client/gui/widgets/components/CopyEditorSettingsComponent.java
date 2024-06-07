@@ -16,16 +16,16 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
-import net.minecraftforge.common.util.Lazy;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton confirm;
 	private final ExtendedButton cancel;
-	private final Checkbox newborn;
-	private final Checkbox young;
-	private final Checkbox adult;
+	private final ExtendedCheckbox newborn;
+	private final ExtendedCheckbox young;
+	private final ExtendedCheckbox adult;
 	private final CopySettingsButton btn;
 	private final DragonEditorScreen screen;
 	private final int x;
@@ -116,8 +116,9 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		};
 
 		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {}){
-			@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			// FIXME
+			//@Override
+			/*public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.NEWBORN){
 					selected = true;
@@ -125,10 +126,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}else{
 					active = true;
 				}
-			}
+			}*/
 		};
 		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {}){
-			@Override
+			// FIXME
+			/*@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.YOUNG){
@@ -137,11 +139,12 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}else{
 					active = true;
 				}
-			}
+			}*/
 		};
 		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {}){
-			@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			// FIXME
+			//@Override
+			/*public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.ADULT){
 					selected = true;
@@ -149,7 +152,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}else{
 					active = true;
 				}
-			}
+			}*/
 		};
 	}
 

@@ -19,12 +19,12 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class ColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton colorPicker;
-	private final Checkbox glowing;
+	//private final Checkbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -45,10 +45,11 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 		LayerSettings set = settings.get();
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
-		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
+		// FIXME
+		/*glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
 			settings.get().glowing = s.selected();
 			screen.handler.getSkinData().compileSkin();
-		});
+		});*/
 
 		Color defaultC = Color.decode(text.defaultColor);
 
@@ -76,7 +77,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 
 	@Override
 	public List<? extends GuiEventListener> children(){
-		return ImmutableList.of(colorPicker, glowing);
+		return ImmutableList.of(colorPicker); // FIXME /*glowing)*/;
 	}
 
 	@Override
@@ -86,7 +87,8 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 		guiGraphics.pose().translate(0, 0, 150);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
 		colorPicker.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-		glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		// FIXME
+		//glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		guiGraphics.pose().popPose();
 	}
 }

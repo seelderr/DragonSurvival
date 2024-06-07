@@ -13,11 +13,12 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class DropDownButton extends ExtendedButton {
@@ -45,15 +46,13 @@ public class DropDownButton extends ExtendedButton {
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		super.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
-
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		// TODO :: Is this safe?
-		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && !list.isMouseOver(p_230430_2_, p_230430_3_))){
+		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && !list.isMouseOver(mouseX, mouseY))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf(s -> s == list);
-			screen.children.removeIf(s -> s == renderButton);
+			screen.children().removeIf(s -> s == list);
+			screen.children().removeIf(s -> s == renderButton);
 			screen.renderables.removeIf(s -> s == list);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
@@ -64,13 +63,10 @@ public class DropDownButton extends ExtendedButton {
 			int offset = screen.height - (getY() + height + 80);
 			list.reposition(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
-	}
 
-	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		Minecraft mc = Minecraft.getInstance();
 		int k = !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
-		guiGraphics.blitWithBorder(WIDGETS_LOCATION, getX(), getY(), 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2/*, getBlitOffset()*/);
+		guiGraphics.blitWithBorder(SPRITES.get(this.active, this.isHoveredOrFocused()), getX(), getY(), 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2/*, getBlitOffset()*/);
 
 		Component buttonText = getMessage();
 		int strWidth = mc.font.width(buttonText);
@@ -91,7 +87,7 @@ public class DropDownButton extends ExtendedButton {
 
 	@Override
 	public void onClick(double pMouseX, double pMouseY){
-		List<GuiEventListener> list = Minecraft.getInstance().screen.children.stream().filter(s -> s.isMouseOver(pMouseX, pMouseY)).toList();
+		List<? extends GuiEventListener> list = Minecraft.getInstance().screen.children().stream().filter(s -> s.isMouseOver(pMouseX, pMouseY)).toList();
 
 		if(list.size() == 1)
 			onPress();
@@ -118,28 +114,31 @@ public class DropDownButton extends ExtendedButton {
 				list.centerScrollOn(center);
 
 			boolean hasBorder = false;
-			if(!screen.children.isEmpty()){
+			if(!screen.children().isEmpty()){
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
-				screen.children.add(0, list);
-				screen.children.add(list);
+				// FIXME
+				//screen.children().add(0, list);
+				//screen.children().add(list);
 
-				for(GuiEventListener child : screen.children)
+				for(GuiEventListener child : screen.children())
 					if(child instanceof ContainerObjectSelectionList){
-						if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
+						// FIXME
+						/*if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
 							hasBorder = true;
 							break;
-						}
+						}*/
 					}
 			}else{
-				screen.children.add(list);
+				// FIXME
+				//screen.children().add(list);
 				screen.renderables.add(list);
 			}
 
 			boolean finalHasBorder = hasBorder;
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 					list.visible = DropDownButton.this.visible;
 
@@ -153,11 +152,12 @@ public class DropDownButton extends ExtendedButton {
 						RenderSystem.disableScissor();
 				}
 			};
-			screen.children.add(renderButton);
+			// FIXME
+			//screen.children().add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf(s -> s == list);
-			screen.children.removeIf(s -> s == renderButton);
+			screen.children().removeIf(s -> s == list);
+			screen.children().removeIf(s -> s == renderButton);
 			screen.renderables.removeIf(s -> s == list);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}

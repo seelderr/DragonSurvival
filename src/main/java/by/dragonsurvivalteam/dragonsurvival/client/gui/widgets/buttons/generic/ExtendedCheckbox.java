@@ -6,28 +6,57 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.client.gui.components.Checkbox;
+import net.minecraft.client.gui.narration.NarratedElementType;
+import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class ExtendedCheckbox extends Checkbox{
+public class ExtendedCheckbox extends AbstractButton {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	final ResourceLocation TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/checkbox.png");
 	private final int renderWidth;
 	public Consumer<ExtendedCheckbox> pressable;
+	public boolean selected;
+	private final Checkbox.OnValueChange onValueChange;
 
 	public ExtendedCheckbox(int pX, int pY, int pWidth, int renderWidth, int pHeight, Component pMessage, boolean pSelected, Consumer<ExtendedCheckbox> pressable){
-		super(pX, pY, pWidth, pHeight, pMessage, pSelected);
+		super(pX, pY, pWidth, pHeight, pMessage);
+		this.onValueChange = (pCheckbox, selected) -> {};
+		this.selected = pSelected;
 		this.pressable = pressable;
 		this.renderWidth = renderWidth;
 	}
 
+	public static int getBoxSize(Font pFont) {
+		return 9 + 8;
+	}
+
 	@Override
-	public void onPress(){
-		super.onPress();
+	public void onPress() {
+		this.selected = !this.selected;
+		// FIXME
+		//this.onValueChange.onValueChange(this, this.selected);
 		pressable.accept(this);
+	}
+
+	public boolean selected() {
+		return this.selected;
+	}
+
+	@Override
+	public void updateWidgetNarration(NarrationElementOutput pNarrationElementOutput) {
+		pNarrationElementOutput.add(NarratedElementType.TITLE, this.createNarrationMessage());
+		if (this.active) {
+			if (this.isFocused()) {
+				pNarrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.checkbox.usage.focused"));
+			} else {
+				pNarrationElementOutput.add(NarratedElementType.USAGE, Component.translatable("narration.checkbox.usage.hovered"));
+			}
+		}
 	}
 
 	@Override

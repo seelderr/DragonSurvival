@@ -15,7 +15,8 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import org.joml.Vector3f;
+import software.bernie.geckolib.cache.object.GeoBone;
 
 public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Renderable {
 	private final Screen screen;
@@ -41,7 +42,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		}
 
 		guiGraphics.pose().pushPose();
-		final CoreGeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final GeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(false);
@@ -56,7 +57,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 		quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
 		quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
-		InventoryScreen.renderEntityInInventory(guiGraphics, x + width / 2 + (int)xOffset, y + height - 30 + (int)yOffset, (int)scale, quaternion, null, getter.get());
+		InventoryScreen.renderEntityInInventory(guiGraphics, x + width / 2 + (int)xOffset, y + height - 30 + (int)yOffset, (int)scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
 
 		guiGraphics.pose().popPose();
 	}
@@ -94,12 +95,12 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double amount){
-		if(isMouseOver(mouseX, mouseY)){
-			zoom += (float)amount * 2;
+	public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY){
+		if(isMouseOver(pMouseX, pMouseY)){
+			zoom += (float)pScrollY * 2;
 			zoom = Mth.clamp(zoom, 10, 100);
 			return true;
 		}
-		return super.mouseScrolled(mouseX, mouseY, amount);
+		return super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
 	}
 }

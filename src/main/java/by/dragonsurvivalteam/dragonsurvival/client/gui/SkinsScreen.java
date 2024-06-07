@@ -45,11 +45,13 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.event.ScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
+import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
-import software.bernie.geckolib.core.animatable.model.CoreGeoBone;
+import org.joml.Vector3f;
+import software.bernie.geckolib.cache.object.GeoBone;
 
 public class SkinsScreen extends Screen{
 	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_interface.png");
@@ -107,12 +109,12 @@ public class SkinsScreen extends Screen{
 
 		// Copied from Screen::renderBackground
 		guiGraphics.fillGradient(0, 0, this.width, this.height, -300, -1072689136, -804253680);
-		MinecraftForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, guiGraphics));
+		NeoForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, guiGraphics));
 
 		int startX = guiLeft;
 		int startY = guiTop;
 
-		final CoreGeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final GeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(false);
@@ -140,7 +142,7 @@ public class SkinsScreen extends Screen{
 			handler.getSkinData().skinPreset.initDefaults(handler);
 
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-				handler.getSkinData().skinPreset.readNBT(DragonStateProvider.getOrGenerateHandler(minecraft.player).getSkinData().skinPreset.writeNBT());
+				handler.getSkinData().skinPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonStateProvider.getOrGenerateHandler(minecraft.player).getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 			}else{
 				handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
 			}
@@ -150,7 +152,7 @@ public class SkinsScreen extends Screen{
 			Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 			quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
 			quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
-			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, quaternion, null, dragon);
+			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, new Vector3f(0, 0, 0), quaternion, null, dragon);
 		}
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;
@@ -219,7 +221,7 @@ public class SkinsScreen extends Screen{
 
 			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
 			ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
+			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
 			@Override
@@ -240,7 +242,7 @@ public class SkinsScreen extends Screen{
 			handler.getSkinData().renderYoung = newValue;
 			renderYoung = newValue;
 			ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
+			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
 			@Override
@@ -258,8 +260,7 @@ public class SkinsScreen extends Screen{
 			handler.getSkinData().renderAdult = newValue;
 			renderAdult = newValue;
 			ConfigHandler.updateConfigValue("renderAdultSkin", handler.getSkinData().renderAdult);
-
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonSkinSettings(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
+			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
 			@Override
@@ -447,8 +448,8 @@ public class SkinsScreen extends Screen{
 	}
 
 	@Override
-	public boolean mouseScrolled(double mouseX, double mouseY, double amount){
-		zoom += (float)amount;
+	public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY){
+		zoom += (float)scrollY;
 		zoom = Mth.clamp(zoom, 10, 80);
 
 		return true;

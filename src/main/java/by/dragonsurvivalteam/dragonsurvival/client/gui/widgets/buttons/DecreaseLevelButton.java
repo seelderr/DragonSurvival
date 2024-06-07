@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class DecreaseLevelButton extends ArrowButton{
@@ -31,7 +32,7 @@ public class DecreaseLevelButton extends ArrowButton{
 				int newLevel = ability.getLevel() - 1;
 
 				if (newLevel >= ability.getMinLevel()){
-					NetworkHandler.CHANNEL.sendToServer(new SyncSkillLevelChangeCost(newLevel, ability.getName(), -1));
+					PacketDistributor.sendToServer(new SyncSkillLevelChangeCost.Data(newLevel, ability.getName(), -1));
                     DragonAbilities.setAbilityLevel(Minecraft.getInstance().player, ability.getClass(), newLevel);
                 }
             }
@@ -39,8 +40,8 @@ public class DecreaseLevelButton extends ArrowButton{
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
 		if (isHovered()) {
 			DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {

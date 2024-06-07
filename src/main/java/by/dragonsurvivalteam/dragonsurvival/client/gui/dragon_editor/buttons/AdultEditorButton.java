@@ -23,13 +23,8 @@ public class AdultEditorButton extends Button{
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		active = visible = dragonEditorScreen.showUi;
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-	}
-
-	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+		active = visible = dragonEditorScreen.showUi;
 		int j = isHovered || dragonEditorScreen.level == DragonLevel.ADULT ? 16777215 : 10526880;
 		TextRenderUtil.drawCenteredScaledText(guiGraphics, getX() + width / 2, getY() + 4, 1.5f, getMessage().getString(), j | Mth.ceil(alpha * 255.0F) << 24);
 	}

@@ -36,6 +36,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -92,7 +93,7 @@ public class EmoteMenuHandler {
 			initGuiEvent.addListener(new Button(startX, startY - (PER_PAGE + 2) * height - 5, width, height, Component.empty().append(">"), button -> {
 			}, Supplier::get){
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 					isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 					active = visible = handler.getEmoteData().emoteMenuOpen;
@@ -122,7 +123,7 @@ public class EmoteMenuHandler {
 				currentlyKeybinding = null;
 			}, Supplier::get) {
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 					isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 					active = visible = handler.getEmoteData().emoteMenuOpen;
@@ -148,7 +149,7 @@ public class EmoteMenuHandler {
 				currentlyKeybinding = null;
 			}, Supplier::get) {
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 					isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 					active = visible = handler.getEmoteData().emoteMenuOpen;
@@ -172,7 +173,7 @@ public class EmoteMenuHandler {
 				currentlyKeybinding = null;
 			}, Supplier::get) {
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 					isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 					int color = isHovered ? new Color(0.35F, 0.35F, 0.35F, 0.75F).getRGB() : new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
@@ -209,7 +210,7 @@ public class EmoteMenuHandler {
 					addEmote(emote);
 				}, Supplier::get) {
 					@Override
-					public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 						DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 						active = visible = handler.getEmoteData().emoteMenuOpen;
 						isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
@@ -238,7 +239,7 @@ public class EmoteMenuHandler {
 					}
 				}, Supplier::get) {
 					@Override
-					public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+					public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 						DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 						active = visible = handler.getEmoteData().emoteMenuOpen && keybinding;
 						isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
@@ -296,7 +297,7 @@ public class EmoteMenuHandler {
 					}
 				}, Supplier::get) {
 					@Override
-					public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+					public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
 						DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
@@ -320,7 +321,7 @@ public class EmoteMenuHandler {
 				currentlyKeybinding = null;
 			}, Supplier::get) {
 				@Override
-				public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
 					active = visible = handler.getEmoteData().emoteMenuOpen;
 					isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();

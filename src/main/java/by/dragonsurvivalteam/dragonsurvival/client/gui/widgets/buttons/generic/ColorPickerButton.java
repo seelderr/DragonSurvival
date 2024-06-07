@@ -7,10 +7,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-public class ColorPickerButton extends ExtendedButton{
+public class ColorPickerButton extends ExtendedButton {
 	public Color defaultColor;
 	public Consumer<Color> colorConsumer;
 	double selectorX;

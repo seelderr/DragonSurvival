@@ -35,17 +35,12 @@ public class DragonEditorSlotButton extends Button{
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+		active = visible = screen.showUi;
 		if(screen.currentSelected == num - 1){
 			guiGraphics.fill(getX(), getY(), getX() + width, getY() + height, new Color(1, 1, 1, isHovered ? 0.95F : 0.75F).getRGB());
 			guiGraphics.fill(getX() + 1, getY() + 1, getX() + width - 1, getY() + height - 1, new Color(0.05F, 0.05F, 0.05F, isHovered ? 0.95F : 0.75F).getRGB());
 		}
 
 		TextRenderUtil.drawScaledText(guiGraphics, getX() + 2.5f, getY() + 1f, 1.5F, Integer.toString(num), DyeColor.WHITE.getTextColor());
-	}
-
-	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		active = visible = screen.showUi;
-		super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 	}
 }

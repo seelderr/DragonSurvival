@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ResetSettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSSlider;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -21,14 +21,16 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.minecraft.resources.ResourceLocation;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
+	public static final ResourceLocation resetSettingsTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
 	private final ExtendedButton hueReset;
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;
-	private final Checkbox glowing;
+	//private final Checkbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -51,10 +53,11 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		LayerSettings set = settings.get();
 		DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
-		glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
+		// FIXME
+		/*glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
 			settings.get().glowing = s.selected();
 			screen.handler.getSkinData().compileSkin();
-		});
+		});*/
 
 		float[] hsb = new float[]{set.hue, set.saturation, set.brightness};
 
@@ -91,7 +94,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				if(visible){
 					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
-					guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, this.getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
+
+					guiGraphics.blitWithBorder(getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, getHeight()/* FIXME */ /*this.getHandleTextureY()*/, 8, this.height, 200, 20, 2, 3, 2, 2);
 				}
 			}
 		};
@@ -100,7 +104,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(ResetSettingsButton.texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
+				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
@@ -133,7 +137,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
-					guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, this.getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
+					guiGraphics.blitWithBorder(getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0,  getHeight() /* FIXME */ /*this.getHandleTextureY()*/, 8, this.height, 200, 20, 2, 3, 2, 2);
 				}
 			}
 		};
@@ -142,7 +146,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(ResetSettingsButton.texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
+				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
@@ -150,7 +154,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(ResetSettingsButton.texture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
+				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
@@ -182,7 +186,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
-					guiGraphics.blitWithBorder(SLIDER_LOCATION, this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, this.getHandleTextureY(), 8, this.height, 200, 20, 2, 3, 2, 2);
+					guiGraphics.blitWithBorder(getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, getHeight()/* FIXME */ /*this.getHandleTextureY()*/, 8, this.height, 200, 20, 2, 3, 2, 2);
 				}
 			}
 		};
@@ -195,7 +199,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 	@Override
 	public @NotNull List<? extends GuiEventListener> children() {
-		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset, glowing);
+		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset); /*glowing);*/
 	}
 
 	@Override
@@ -205,7 +209,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		guiGraphics.pose().translate(0, 0, 150);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
 
-		glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		//glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
 		hueReset.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		saturationReset.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);

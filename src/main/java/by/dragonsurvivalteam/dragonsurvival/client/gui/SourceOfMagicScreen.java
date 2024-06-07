@@ -42,7 +42,7 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 	}
 
@@ -51,7 +51,7 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 
 	@Override
 	protected void renderBg(@NotNull final GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) { // WIP <- TODO?
-		renderBackground(guiGraphics);
+		renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 		guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
 		boolean hasItem = !nest.getItem(0).isEmpty();

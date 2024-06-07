@@ -1,23 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import static by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.MouseTooltipPositioner;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
-import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -43,7 +41,7 @@ public class TabButton extends Button {
 	private boolean setInventoryScreen(Screen sourceScreen) {
 		if (sourceScreen instanceof InventoryScreen) {
 			Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-			NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+			PacketDistributor.sendToServer(new RequestOpenInventory.Data());
 			return true;
 		} else if (sourceScreen instanceof DragonScreen) {
 			SendOpenDragonInventoryAndMaintainCursorPosition();
@@ -74,7 +72,7 @@ public class TabButton extends Button {
 							SendOpenDragonInventoryAndMaintainCursorPosition();
 						} else {
 							Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
-							NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
+							PacketDistributor.sendToServer(new RequestOpenInventory.Data());
 						}
 					}
 				}
@@ -107,10 +105,5 @@ public class TabButton extends Button {
 		} else {
 			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), tabType.ordinal() * 24, 41, 24, 24);
 		}
-	}
-
-	@Override
-	protected @NotNull ClientTooltipPositioner createTooltipPositioner() {
-		return new MouseTooltipPositioner(this);
 	}
 }

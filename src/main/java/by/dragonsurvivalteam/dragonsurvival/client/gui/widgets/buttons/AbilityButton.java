@@ -20,6 +20,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class AbilityButton extends Button {
@@ -75,7 +76,7 @@ public class AbilityButton extends Button {
 						DragonAbility ab2 = cap.getAbilityFromSlot(slot);
 						cap.activeDragonAbilities.put(slot, ab1.getName());
 						cap.activeDragonAbilities.put(btn.slot, ab2.getName());
-						NetworkHandler.CHANNEL.sendToServer(new SyncMagicCap(Minecraft.getInstance().player.getId(), cap));
+						PacketDistributor.sendToServer(new SyncMagicCap.Data(Minecraft.getInstance().player.getId(), cap.serializeNBT(Minecraft.getInstance().player.registryAccess())));
 					}
 				}
 			});

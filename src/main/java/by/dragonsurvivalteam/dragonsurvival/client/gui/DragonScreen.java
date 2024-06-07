@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.settings.ConfigSideSelectionScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSImageButton;
@@ -17,10 +16,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.claw.DragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
-import by.dragonsurvivalteam.dragonsurvival.network.container.OpenInventory;
-import by.dragonsurvivalteam.dragonsurvival.network.container.SortInventoryPacket;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -30,6 +28,7 @@ import java.util.*;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
@@ -39,6 +38,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer>{
@@ -120,7 +120,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			clearWidgets();
 			init();
 
-			NetworkHandler.CHANNEL.sendToServer(new DragonClawsMenuToggle(clawsMenu));
+			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenu));
 			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
 		}, Component.translatable("ds.gui.claws")) {
 			@Override
@@ -135,24 +135,26 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(new HelpButton(leftPos - 58, topPos - 40, 32, 32, null, 0){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				isGrowthIconHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
 				visible = clawsMenu;
 				active = clawsMenu;
 			}
 
-			@Override
+			/*@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				isGrowthIconHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-			}
+			}*/
 		});
 
 		// Info button at the bottom of the claw menu
 		addRenderableWidget(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0){
-			@Override
+			// FIXME
+			/*@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = clawsMenu;
 				active = clawsMenu;
 				super.render(guiGraphics, mouseX, mouseY, partialTick);
-			}
+			}*/
 		});
 
 		// Button to enable / disable the rendering of claws
@@ -161,9 +163,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			handler.getClawToolData().shouldRenderClaws = claws;
 			ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
-			NetworkHandler.CHANNEL.sendToServer(new SyncDragonClawRender(player.getId(), claws));
+			PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws));
 		}, Component.translatable("ds.gui.claws.rendering")){
-			@Override
+			// FIXME
+			/*@Override
 			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				active = clawsMenu;
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
@@ -173,24 +176,16 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				}
 
 				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-			}
+			}*/
 		});
 
 		//DSButton
 		if(ClientEvents.inventoryToggle){
-			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, 0, 0, 19, INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
+			addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, new WidgetSprites(INVENTORY_TOGGLE_BUTTON, INVENTORY_TOGGLE_BUTTON), p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(player));
-				NetworkHandler.CHANNEL.sendToServer(new OpenInventory());
-			}, Component.translatable("ds.gui.toggle_inventory.vanilla")));
+				PacketDistributor.sendToServer(new RequestOpenInventory.Data());
+			}));
 		}
-
-		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 - 1, 20, 18, 0, 0, 18, SORTING_BUTTON, p_onPress_1_ -> {
-			NetworkHandler.CHANNEL.sendToServer(new SortInventoryPacket());
-		}, Component.translatable("ds.gui.sort")));
-
-		addRenderableWidget(new DSImageButton(leftPos + imageWidth - 28, height / 2 + 35, 20, 18, 0, 0, 18, SETTINGS_BUTTON, p_onPress_1_ -> {
-			Minecraft.getInstance().setScreen(new ConfigSideSelectionScreen(this, Minecraft.getInstance().options, Component.translatable("ds.gui.tab_button.4")));
-		}, Component.translatable("ds.gui.tab_button.4")));
 	}
 
 	@Override
@@ -277,14 +272,14 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		super.renderBackground(guiGraphics);
+		super.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		RenderSystem.enableScissor((int)((leftPos + 26) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(height * Minecraft.getInstance().getWindow().getGuiScale() - (topPos + 79) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(76 * Minecraft.getInstance().getWindow().getGuiScale()), (int)(70 * Minecraft.getInstance().getWindow().getGuiScale()));
 		double renderedSize = Math.min(handler.getSize(), ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 6;
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, leftPos + 65, topPos + 75 + (int)(renderedSize * 1.25), (int)renderedSize + 15, (float)(leftPos + 51 - mouseX), (float)(topPos + 75 - 50 - mouseY), minecraft.player);
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, leftPos + 65, topPos + 75 + (int)(renderedSize * 1.25), (int)renderedSize + 15, (leftPos + 51), (topPos + 75 - 50), 0, mouseX, mouseY, minecraft.player);
 		RenderSystem.disableScissor();
 
 		renderTooltip(guiGraphics, mouseX, mouseY);

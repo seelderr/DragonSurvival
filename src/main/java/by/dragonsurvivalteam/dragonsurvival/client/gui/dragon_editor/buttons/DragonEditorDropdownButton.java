@@ -19,7 +19,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonEditorDropdownButton extends DropDownButton{
@@ -39,7 +39,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks){
 		active = visible = dragonEditorScreen.showUi;
 		super.render(guiGraphics, mouseX, mouseY, pPartialTicks);
 		String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
@@ -83,21 +83,24 @@ public class DragonEditorDropdownButton extends DropDownButton{
 				list.centerScrollOn(center);
 
 			boolean hasBorder = false;
-			if(!screen.children.isEmpty()){
+			if(!screen.children().isEmpty()){
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
-				screen.children.add(0, list);
-				screen.children.add(list);
+				// FIXME
+				//screen.children().add(0, list);
+				//screen.children().add(list);
 
-				for(GuiEventListener child : screen.children)
+				for(GuiEventListener child : screen.children())
 					if(child instanceof ContainerObjectSelectionList){
-						if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
-							hasBorder = true;
-							break;
-						}
+						// FIXME
+						//if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
+						//	hasBorder = true;
+						//	break;
+						//}
 					}
 			}else{
-				screen.children.add(list);
+				// FIXME
+				//screen.children().add(list);
 				screen.renderables.add(list);
 			}
 
@@ -118,7 +121,8 @@ public class DragonEditorDropdownButton extends DropDownButton{
 						RenderSystem.disableScissor();
 				}
 			};
-			screen.children.add(renderButton);
+			// FIXME
+			//screen.children().add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
 			LayerSettings settings = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get();
@@ -127,8 +131,8 @@ public class DragonEditorDropdownButton extends DropDownButton{
 				settings.hue = text.average_hue;
 			}
 
-			screen.children.removeIf(s -> s == list);
-			screen.children.removeIf(s -> s == renderButton);
+			screen.children().removeIf(s -> s == list);
+			screen.children().removeIf(s -> s == renderButton);
 			screen.renderables.removeIf(s -> s == list);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}

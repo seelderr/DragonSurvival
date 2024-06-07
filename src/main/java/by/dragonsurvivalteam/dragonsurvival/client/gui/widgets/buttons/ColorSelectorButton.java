@@ -15,10 +15,10 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-public class ColorSelectorButton extends ExtendedButton{
+public class ColorSelectorButton extends ExtendedButton {
 	private final DragonEditorScreen screen;
 	private final EnumSkinLayer layer;
 	public Consumer<Double> setter;
@@ -39,7 +39,7 @@ public class ColorSelectorButton extends ExtendedButton{
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 		if(!screen.showUi){
 			active = false;
 			return;
@@ -54,8 +54,8 @@ public class ColorSelectorButton extends ExtendedButton{
 		if(toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && (hueComponent == null || !hueComponent.isMouseOver(p_230430_2_, p_230430_3_)) && (colorComponent == null || !colorComponent.isMouseOver(p_230430_2_, p_230430_3_)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf(s -> s == colorComponent);
-			screen.children.removeIf(s -> s == hueComponent);
+			screen.children().removeIf(s -> s == colorComponent);
+			screen.children().removeIf(s -> s == hueComponent);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
@@ -70,17 +70,13 @@ public class ColorSelectorButton extends ExtendedButton{
 	}
 
 	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-		super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-	}
-
-	@Override
 	public void onPress(){
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, screen.handler.getType());
 
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
-				@Override
+				// FIXME We need to append this functionality to renderWidget
+				/*@Override
 				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
@@ -95,7 +91,7 @@ public class ColorSelectorButton extends ExtendedButton{
 						if (colorComponent.visible)
 							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
-				}
+				}*/
 			};
 
 			Screen screen = Minecraft.getInstance().screen;
@@ -103,18 +99,20 @@ public class ColorSelectorButton extends ExtendedButton{
 			if(text.defaultColor == null){
 				int offset = screen.height - (getY() + 80);
 				hueComponent = new HueSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 76, layer);
-				screen.children.add(0, hueComponent);
-				screen.children.add(hueComponent);
+				// FIXME
+				//screen.children().add(0, hueComponent);
+				//screen.children().add(hueComponent);
 			}else{
 				int offset = screen.height - (getY() + 80);
 				colorComponent = new ColorSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 71, layer);
-				screen.children.add(0, colorComponent);
-				screen.children.add(colorComponent);
+				// FIXME
+				//screen.children().add(0, colorComponent);
+				//screen.children().add(colorComponent);
 			}
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf(s -> s == colorComponent);
-			screen.children.removeIf(s -> s == hueComponent);
+			screen.children().removeIf(s -> s == colorComponent);
+			screen.children().removeIf(s -> s == hueComponent);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 

@@ -6,13 +6,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.Backgr
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-public class BackgroundColorButton extends ExtendedButton{
+public class BackgroundColorButton extends ExtendedButton {
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png");
 
@@ -35,7 +36,7 @@ public class BackgroundColorButton extends ExtendedButton{
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
 					if(colorComponent != null){
@@ -50,11 +51,15 @@ public class BackgroundColorButton extends ExtendedButton{
 			Screen screen = Minecraft.getInstance().screen;
 
 			colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
-			screen.children.add(0, colorComponent);
-			screen.children.add(colorComponent);
+			// FIXME: WHy doesn't this work?
+			/*colorComponent.children().forEach(
+				s -> {
+					screen.children().add(s);
+				}
+			);*/
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf(s -> s == colorComponent);
+			screen.children().removeIf(s -> s == colorComponent);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
@@ -68,7 +73,7 @@ public class BackgroundColorButton extends ExtendedButton{
 		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf(s -> s == colorComponent);
+			screen.children().removeIf(s -> s == colorComponent);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 

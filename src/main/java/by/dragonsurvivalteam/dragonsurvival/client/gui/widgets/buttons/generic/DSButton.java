@@ -5,7 +5,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class DSButton extends ExtendedButton {
@@ -29,10 +29,5 @@ public class DSButton extends ExtendedButton {
 		}
 
 		setTooltip(Tooltip.create(base));
-	}
-
-	@Override
-	protected @NotNull ClientTooltipPositioner createTooltipPositioner() {
-		return new MouseTooltipPositioner(this);
 	}
 }

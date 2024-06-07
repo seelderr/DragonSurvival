@@ -9,10 +9,10 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-public class CopySettingsButton extends ExtendedButton{
+public class CopySettingsButton extends ExtendedButton {
 	private static final ResourceLocation ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/copy_icon.png");
 
 	private final DragonEditorScreen screen;
@@ -27,7 +27,7 @@ public class CopySettingsButton extends ExtendedButton{
 
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 		active = visible = screen.showUi;
 		super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
@@ -38,7 +38,7 @@ public class CopySettingsButton extends ExtendedButton{
 		if(toggled && (!visible || !isMouseOver(pMouseX, pMouseY) && (component == null || !component.isMouseOver(pMouseX, pMouseY)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			screen.children.removeIf(s -> s == component);
+			screen.children().removeIf(s -> s == component);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
@@ -48,14 +48,11 @@ public class CopySettingsButton extends ExtendedButton{
 	}
 
 	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) { /* Nothing to do */ }
-
-	@Override
 	public void onPress(){
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
 				@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
 					if(component != null){
@@ -69,11 +66,12 @@ public class CopySettingsButton extends ExtendedButton{
 
 			int offset = screen.height - (getY() + 80);
 			component = new CopyEditorSettingsComponent(screen, this, getX() + width - 80, getY() + Math.min(offset, 0), 80, 70);
-			screen.children.add(0, component);
-			screen.children.add(component);
+			// FIXME: Why doesn't this work?
+			//screen.children().add(0, component);
+			//screen.children().add(component);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children.removeIf(s -> s == component);
+			screen.children().removeIf(s -> s == component);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
