@@ -128,7 +128,7 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingTick(EntityTickEvent event){
+	public static void livingTick(EntityTickEvent.Post event){
 		if(event.getEntity() instanceof LivingEntity entity) {
 			EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
 

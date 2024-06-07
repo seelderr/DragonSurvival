@@ -54,7 +54,7 @@ public class DragonRidingHandler{
 	}
 
 	@SubscribeEvent
-	public static void onServerPlayerTick(PlayerTickEvent event){ // TODO: Find a better way of doing this.
+	public static void onServerPlayerTick(PlayerTickEvent.Post event){ // TODO: Find a better way of doing this.
 		if(!(event.getEntity() instanceof ServerPlayer player)){
 			return;
 		}

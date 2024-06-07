@@ -15,7 +15,7 @@ import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-@EventBusSubscriber( modid = MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber( modid = MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Capabilities{
 
 	public static final EntityCapability<EntityStateHandler, Void> ENTITY_CAPABILITY = EntityCapability.createVoid(

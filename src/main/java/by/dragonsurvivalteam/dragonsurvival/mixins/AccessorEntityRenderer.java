@@ -16,5 +16,5 @@ public interface AccessorEntityRenderer{
 	@Accessor( "shadowRadius" )
 	void setShadowRadius(float radius);
 	@Invoker( "renderNameTag" )
-	void callRenderNameTag(Entity p_225629_1_, Component p_225629_2_, PoseStack p_225629_3_, MultiBufferSource p_225629_4_, int p_225629_5_);
+	void callRenderNameTag(Entity pEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, float pPartialTick);
 }

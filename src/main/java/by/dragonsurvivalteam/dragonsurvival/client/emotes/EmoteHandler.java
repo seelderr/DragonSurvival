@@ -106,17 +106,7 @@ public class EmoteHandler {
                     attributeInstance.removeModifier(EMOTE_NO_MOVE);
                 }
             }
-        });
-    }
 
-    @SubscribeEvent
-    public static void playerAttacked(final LivingHurtEvent event) {
-        EmoteMenuHandler.clearEmotes(event.getEntity());
-    }
-
-    @SubscribeEvent
-    public static void playerTick(final ClientTickEvent.Post event) {
-        DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
             if (Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull)) {
                 for (int index = 0; index < cap.getEmoteData().currentEmotes.length; index++) {
                     Emote emote = cap.getEmoteData().currentEmotes[index];
@@ -131,4 +121,27 @@ public class EmoteHandler {
             }
         });
     }
+
+    @SubscribeEvent
+    public static void playerAttacked(final LivingHurtEvent event) {
+        EmoteMenuHandler.clearEmotes(event.getEntity());
+    }
+
+    /*@SubscribeEvent
+    public static void playerTick(final PlayerTickEvent.Post event) {
+        DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+            if (Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull)) {
+                for (int index = 0; index < cap.getEmoteData().currentEmotes.length; index++) {
+                    Emote emote = cap.getEmoteData().currentEmotes[index];
+                    if (emote != null && !emote.loops) {
+                        if (cap.getEmoteData().emoteTicks[index] >= emote.duration) {
+                            cap.getEmoteData().currentEmotes[index] = null;
+                            cap.getEmoteData().emoteTicks[index] = 0;
+                            PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), cap.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
+                        }
+                    }
+                }
+            }
+        });
+    }*/
 }

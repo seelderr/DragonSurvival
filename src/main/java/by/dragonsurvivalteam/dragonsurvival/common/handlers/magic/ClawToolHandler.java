@@ -255,10 +255,10 @@ public class ClawToolHandler{
 		}
 	}
 
-	@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+	@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.GAME)
 	public static class Event_busHandler {
 		@SubscribeEvent
-		public void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {
+		public static void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {
 			if (!ServerConfig.bonuses || !ServerConfig.clawsAreTools) {
 				return;
 			}

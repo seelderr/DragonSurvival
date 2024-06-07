@@ -30,7 +30,6 @@ import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )
 public class DSItems {
 
 	private static class CustomHoverTextItem extends Item {

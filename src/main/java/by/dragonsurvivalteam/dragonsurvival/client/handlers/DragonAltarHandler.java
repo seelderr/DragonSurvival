@@ -20,7 +20,7 @@ public class DragonAltarHandler {
     }
 
     @SubscribeEvent
-    public static void onPlayerTick(final ClientTickEvent event) {
+    public static void onPlayerTick(final ClientTickEvent.Post event) {
         if (shouldAltarOpen) {
             Minecraft minecraft = Minecraft.getInstance();
 

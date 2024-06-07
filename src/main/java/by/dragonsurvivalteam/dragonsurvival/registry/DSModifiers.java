@@ -20,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
-@EventBusSubscriber
 public class DSModifiers {
 	private static final UUID DRAGON_REACH_MODIFIER = UUID.fromString("7455d5c7-4e1f-4cca-ab46-d79353764020");
 	private static final UUID DRAGON_HEALTH_MODIFIER = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");

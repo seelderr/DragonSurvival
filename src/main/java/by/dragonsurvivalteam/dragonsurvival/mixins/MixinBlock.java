@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+
 import java.util.Stack;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Block.class)
@@ -31,8 +32,9 @@ public class MixinBlock {
 		}
 	}
 
-	@ModifyReturnValue(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Ljava/util/function/Supplier;get()Ljava/lang/Object;"))
-	private static ItemEntity makeDropsSafe(final ItemEntity itemEntity) {
+	@ModifyArg(method = "popResource(Lnet/minecraft/world/level/Level;Ljava/util/function/Supplier;Lnet/minecraft/world/item/ItemStack;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addFreshEntity(Lnet/minecraft/world/entity/Entity;)Z" ))
+	private static Entity makeDropsSafe(Entity entity) {
+		ItemEntity itemEntity = (ItemEntity) entity;
 		if (!dragon_Survival$fireImmuneItems.isEmpty() && dragon_Survival$fireImmuneItems.pop()) {
 			return new ItemEntity(itemEntity.level(), itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
 				@Override

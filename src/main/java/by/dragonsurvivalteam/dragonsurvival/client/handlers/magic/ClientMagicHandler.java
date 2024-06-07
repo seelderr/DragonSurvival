@@ -56,7 +56,7 @@ public class ClientMagicHandler{
 
 	@SubscribeEvent
 	@OnlyIn(Dist.CLIENT)
-	public static void livingTick(final EntityTickEvent event) {
+	public static void livingTick(final EntityTickEvent.Post event) {
 		if(event.getEntity() instanceof LivingEntity livingEntity) {
 			if (!particlesOnDragons && DragonStateProvider.isDragon(livingEntity)) {
 				return;

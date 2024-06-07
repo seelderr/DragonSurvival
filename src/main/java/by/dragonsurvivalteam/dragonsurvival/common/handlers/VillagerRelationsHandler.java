@@ -306,7 +306,7 @@ public class VillagerRelationsHandler{
 	}
 
 	@SubscribeEvent
-	public static void spawnPrinceOrPrincess(LevelTickEvent serverTickEvent){
+	public static void spawnPrinceOrPrincess(LevelTickEvent.Post serverTickEvent){
 		if(ServerConfig.spawnPrinceAndPrincess){
 			Level world = serverTickEvent.getLevel();
 			if(world instanceof ServerLevel serverWorld){

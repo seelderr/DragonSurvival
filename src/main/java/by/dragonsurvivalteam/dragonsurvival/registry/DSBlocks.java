@@ -18,7 +18,6 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.geckolib.util.Color;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSBlocks{
 	public static final DeferredRegister<Block> DS_BLOCKS = DeferredRegister.create(
 			BuiltInRegistries.BLOCK,

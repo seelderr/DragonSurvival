@@ -492,7 +492,7 @@ public class ClientFlightHandler {
 	}
 
 	@SubscribeEvent
-	public static void spin(InputEvent.MouseButton keyInputEvent){
+	public static void spin(InputEvent.MouseButton.Pre keyInputEvent){
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
 		if(player == null){

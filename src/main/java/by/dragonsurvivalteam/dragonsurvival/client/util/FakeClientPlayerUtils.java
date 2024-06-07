@@ -67,7 +67,7 @@ public class FakeClientPlayerUtils {
 	}
 
 	@SubscribeEvent
-	public static void clientTick(ClientTickEvent event){
+	public static void clientTick(ClientTickEvent.Pre event){
 		FAKE_PLAYERS.forEach((i, v) -> {
 			if(System.currentTimeMillis() - v.lastAccessed >= TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)){
 				v.remove(RemovalReason.DISCARDED);

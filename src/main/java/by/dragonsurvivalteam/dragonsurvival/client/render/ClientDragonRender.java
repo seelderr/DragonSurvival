@@ -253,7 +253,7 @@ public class ClientDragonRender{
 
 					// TODO: Test this, we might not need shouldShowName
 					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player)) {
-						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight);
+						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
 					}
 				}
 

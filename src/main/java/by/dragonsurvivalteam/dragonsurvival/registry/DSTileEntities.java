@@ -12,7 +12,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSTileEntities {
 	public static DeferredRegister<BlockEntityType<?>> DS_TILE_ENTITIES = DeferredRegister.create(
 			BuiltInRegistries.BLOCK_ENTITY_TYPE,

@@ -18,7 +18,7 @@ public class ServerPlayerStatusSync {
 
 	// TODO: Include some error reporting that says what went out of sync if the server and client data are not the same.
 	@SubscribeEvent
-	public static void onServerTick(PlayerTickEvent event){
+	public static void onServerTick(PlayerTickEvent.Post event){
         int syncTicks = Functions.secondsToTicks(ServerConfig.serverSyncTime);
 		if(event.getEntity().level().isClientSide() || ServerConfig.serverSyncTime == -1) return;
 

@@ -89,7 +89,7 @@ public class DragonTreasureHandler{
 
 	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
-	public static void playerTick(ClientTickEvent event){
+	public static void playerTick(ClientTickEvent.Post event){
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonStateProvider.isDragon(player)){

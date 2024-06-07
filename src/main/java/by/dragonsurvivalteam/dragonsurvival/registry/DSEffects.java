@@ -21,7 +21,6 @@ import net.neoforged.neoforge.common.EffectCure;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSEffects {
 
 	public static final DeferredRegister<MobEffect> DS_MOB_EFFECTS = DeferredRegister.create(
