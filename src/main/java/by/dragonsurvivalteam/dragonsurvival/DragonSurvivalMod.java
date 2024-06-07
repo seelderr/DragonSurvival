@@ -51,8 +51,10 @@ import software.bernie.geckolib.GeckoLibClient;
 public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
+	public static final DeferredRegister<AttachmentType<?>> DS_ATTACHMENT_TYPES = DeferredRegister.create(
+			NeoForgeRegistries.Keys.ATTACHMENT_TYPES,
+			MODID);
 	public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
-	public static final DeferredRegister<AttachmentType<?>> ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MODID, name);
@@ -69,6 +71,7 @@ public class DragonSurvivalMod{
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(this::clientSetup);
 
+		DS_ATTACHMENT_TYPES.register(modEventBus);
 		DS_MOB_EFFECTS.register(modEventBus);
 		DS_BLOCKS.register(modEventBus);
 		DS_CONTAINERS.register(modEventBus);

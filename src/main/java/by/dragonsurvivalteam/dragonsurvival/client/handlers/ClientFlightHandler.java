@@ -27,7 +27,9 @@ import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -103,7 +105,7 @@ public class ClientFlightHandler {
 		LocalPlayer currentPlayer = minecraft.player;
 		Camera info = setup.getCamera();
 
-		if(currentPlayer != null && currentPlayer.isAddedToWorld()){
+		if(currentPlayer != null && currentPlayer.isAddedToWorld() && DragonStateProvider.isDragon(currentPlayer)){
 			DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(currentPlayer);
 			AccessorGameRenderer gameRenderer = (AccessorGameRenderer)minecraft.gameRenderer;
 
@@ -478,15 +480,16 @@ public class ClientFlightHandler {
 							ay = 0;
 						}
 					}
-				});
-			}
 
-			// TODO: Revisit the sync rate of this event? Maybe can afford it now?
-			if (player.tickCount % 5 == 0) {
-				// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
-				// TODO :: Check ClientboundSetEntityMotionPacket
-				// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
-				PacketDistributor.sendToServer(new SyncFlightSpeed.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+					// TODO: Revisit the sync rate of this event? Maybe can afford it now?
+					if (player.tickCount % 5 == 0) {
+						// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
+						// TODO :: Check ClientboundSetEntityMotionPacket
+						player.connection.send(new ClientboundSetEntityMotionPacket(player.getId(), player.getDeltaMovement()));
+						// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
+						//PacketDistributor.sendToServer(new SyncFlightSpeed.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+					}
+				});
 			}
 		}
 	}

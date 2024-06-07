@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DS_ATTACHMENT_TYPES;
 
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.function.Supplier;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class EntityStateHandler implements INBTSerializable<CompoundTag> {
-    public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = ATTACHMENT_TYPES.register(
+    public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register(
             "entity_handler",
             () -> AttachmentType.serializable(EntityStateHandler::new).copyOnDeath().build()
     );

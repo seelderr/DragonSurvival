@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ATTACHMENT_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DS_ATTACHMENT_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
@@ -42,10 +43,13 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.registries.DeferredRegister;
+import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class DragonStateHandler extends EntityStateHandler {
-	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = ATTACHMENT_TYPES.register(
+
+	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register(
 			"dragon_handler",
 			() -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
 	);
