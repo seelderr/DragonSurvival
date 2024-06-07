@@ -34,6 +34,7 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 public class DragonAltarGUI extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
@@ -121,11 +122,11 @@ public class DragonAltarGUI extends Screen{
 
 					Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 					quaternion.rotateY((float)Math.toRadians(150));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), 20, quaternion, null, entity1);
+					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), 20, new Vector3f(), quaternion, null, entity1);
 
 					Quaternionf quaternion2 = Axis.ZP.rotationDegrees(180.0F);
 					quaternion2.rotateY((float)Math.toRadians(210));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 - 170, button.getY() + button.getHeight(), 40, quaternion2, null, entity2);
+					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 - 170, button.getY() + button.getHeight(), 40, new Vector3f(), quaternion2, null, entity2);
 				}
 			}
 		}
