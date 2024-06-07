@@ -16,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.ArrayList;
 import java.util.Locale;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -87,8 +88,9 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	}
 
 	@Override
+	// FIXME: How to generate DSParticles.PEACE_BEACON_PARTICLE specifically?
 	public ParticleOptions getParticleEffect(){
-		return DSParticles.PEACE_BEACON_PARTICLE;
+		return new SimpleParticleType(false);
 	}
 
 	@Override

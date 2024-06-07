@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -155,7 +156,7 @@ public class ForestBreathAbility extends BreathAbility{
 				entity.setPotionContents(new PotionContents(FOREST_BREATH));
 				entity.setDuration(Functions.secondsToTicks(2));
 				entity.setRadius(1);
-				entity.setParticle(new LargePoisonParticleData(37, false));
+				entity.setParticle(new DragonParticle.Data(37, false));
 				entity.setOwner(player);
 				serverLevel.addFreshEntity(entity);
 			}
@@ -243,14 +244,14 @@ public class ForestBreathAbility extends BreathAbility{
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level().addParticle(new LargePoisonParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new DragonParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
 			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 2; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
-				player.level().addParticle(new SmallPoisonParticleData(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new DragonParticle.Data(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 		}
 

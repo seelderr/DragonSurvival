@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.ArrayList;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -101,8 +102,10 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 	}
 
 	@Override
+	// FIXME: How to generate DSParticles.MAGIC_BEACON_PARTICLE specifically?
 	public ParticleOptions getParticleEffect(){
-		return DSParticles.MAGIC_BEACON_PARTICLE;
+		return new SimpleParticleType(false);
+		/*return DSParticles.MAGIC_BEACON_PARTICLE;*/
 	}
 
 	@Override

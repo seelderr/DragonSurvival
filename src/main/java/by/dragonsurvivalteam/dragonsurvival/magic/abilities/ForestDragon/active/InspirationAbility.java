@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -92,8 +93,10 @@ public class InspirationAbility extends AoeBuffAbility{
 	}
 
 	@Override
+	// FIXME: How to generate DSParticles.FIRE_BEACON_PARTICLE specifically?
 	public ParticleOptions getParticleEffect(){
-		return DSParticles.FIRE_BEACON_PARTICLE;
+		return new SimpleParticleType(false);
+		/*return DSParticles.FIRE_BEACON_PARTICLE;*/
 	}
 
 	@Override
