@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;

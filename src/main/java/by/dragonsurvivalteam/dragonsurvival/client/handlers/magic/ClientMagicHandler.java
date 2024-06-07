@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -64,21 +64,21 @@ public class ClientMagicHandler{
 			}
 
 			if (livingEntity.hasEffect(DSEffects.BURN)) {
-				ParticleOptions data = new SmallFireParticle.Data(37F, false);
+				ParticleOptions data = new DragonParticle.Data(37F, false);
 				for (int i = 0; i < 4; i++) {
 					renderEffectParticle(livingEntity, data);
 				}
 			}
 
 			if (livingEntity.hasEffect(DSEffects.DRAIN)) {
-				ParticleOptions data = new SmallPoisonParticleData(37F, false);
+				ParticleOptions data = new DragonParticle.Data(37F, false);
 				for (int i = 0; i < 4; i++) {
 					renderEffectParticle(livingEntity, data);
 				}
 			}
 
 			if (livingEntity.hasEffect(DSEffects.CHARGED)) {
-				ParticleOptions data = new LargeLightningParticleData(37F, false);
+				ParticleOptions data = new DragonParticle.Data(37F, false);
 				for (int i = 0; i < 4; i++) {
 					renderEffectParticle(livingEntity, data);
 				}
