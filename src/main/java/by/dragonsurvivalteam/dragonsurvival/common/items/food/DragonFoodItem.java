@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -28,7 +27,7 @@ public class DragonFoodItem extends Item{
 	private Consumer<LivingEntity> onEat;
 
 	public DragonFoodItem(Properties properties){
-		super(properties.food(genFoodProperties(null, null)));
+		super(properties.food(genFoodProperties(null, (Supplier<MobEffectInstance>) null)));
 	}
 
 	public DragonFoodItem(Properties properties, Supplier<MobEffectInstance>... effectInstances){
@@ -51,7 +50,7 @@ public class DragonFoodItem extends Item{
 	}
 
 	public DragonFoodItem(Properties properties, AbstractDragonType dragonType, Consumer<LivingEntity> onEat){
-		super(properties.food(genFoodProperties(dragonType, null)));
+		super(properties.food(genFoodProperties(dragonType, (Supplier<MobEffectInstance>) null)));
 		this.dragonType = dragonType;
 		this.onEat = onEat;
 	}

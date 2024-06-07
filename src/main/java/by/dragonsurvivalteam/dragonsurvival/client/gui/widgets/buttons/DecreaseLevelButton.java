@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.A
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

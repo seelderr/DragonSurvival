@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -45,8 +46,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
 @RegisterDragonAbility
 public class NetherBreathAbility extends BreathAbility{

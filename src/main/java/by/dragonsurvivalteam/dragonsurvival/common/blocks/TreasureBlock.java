@@ -4,11 +4,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
+import com.mojang.serialization.MapCodec;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
-
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;

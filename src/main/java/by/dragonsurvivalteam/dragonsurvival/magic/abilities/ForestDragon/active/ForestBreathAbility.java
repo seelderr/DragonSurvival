@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
@@ -46,8 +48,6 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
 @RegisterDragonAbility
 public class ForestBreathAbility extends BreathAbility{

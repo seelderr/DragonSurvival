@@ -9,9 +9,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import javax.annotation.Nullable;
-
 import by.dragonsurvivalteam.dragonsurvival.util.MobEffectUtils;
+import java.util.Optional;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -40,8 +40,6 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 public class DragonBeacon extends Block implements SimpleWaterloggedBlock, EntityBlock{
 	public static BooleanProperty LIT = BlockStateProperties.LIT;

@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.commands;
 import static net.minecraft.commands.Commands.literal;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonEditor;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;

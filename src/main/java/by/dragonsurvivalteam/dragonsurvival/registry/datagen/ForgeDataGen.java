@@ -5,15 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLoo
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifierSerializer;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifierSerializer;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import com.mojang.serialization.MapCodec;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import net.minecraft.data.DataGenerator;
-import net.minecraft.data.loot.LootTableProvider;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;

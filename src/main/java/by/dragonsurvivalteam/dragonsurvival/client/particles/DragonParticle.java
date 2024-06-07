@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticle;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;

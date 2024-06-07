@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 
 public class DSImageButton extends ImageButton {
 	public DSImageButton(int pX, int pY, int pWidth, int pHeight, WidgetSprites pSprites, OnPress pOnPress) {

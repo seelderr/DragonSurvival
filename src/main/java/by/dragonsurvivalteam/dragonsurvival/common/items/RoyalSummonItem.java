@@ -8,8 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;

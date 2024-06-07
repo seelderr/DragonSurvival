@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_TAB;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.DS_DAMAGE_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.ENTITY_TYPES;

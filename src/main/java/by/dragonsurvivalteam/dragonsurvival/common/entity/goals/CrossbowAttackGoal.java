@@ -64,7 +64,6 @@ public class CrossbowAttackGoal<T extends Mob&RangedAttackMob&CrossbowAttackMob>
 		if(mob.isUsingItem()){
 			mob.stopUsingItem();
 			mob.setChargingCrossbow(false);
-			CrossbowItem.setCharged(mob.getUseItem(), false);
 		}
 	}
 
@@ -125,7 +124,7 @@ public class CrossbowAttackGoal<T extends Mob&RangedAttackMob&CrossbowAttackMob>
 			}else if(crossbowState == CrossbowAttackGoal.CrossbowState.READY_TO_ATTACK && flag){
 				mob.performRangedAttack(livingentity, 1.0F);
 				ItemStack itemstack1 = mob.getItemInHand(ProjectileUtil.getWeaponHoldingHand(mob, item -> item instanceof CrossbowItem));
-				CrossbowItem.setCharged(itemstack1, false);
+				mob.setChargingCrossbow(false);
 				crossbowState = CrossbowAttackGoal.CrossbowState.UNCHARGED;
 			}
 		}

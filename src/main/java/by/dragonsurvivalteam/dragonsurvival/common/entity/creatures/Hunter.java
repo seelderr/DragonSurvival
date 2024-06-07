@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import javax.annotation.Nullable;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobSpawnType;

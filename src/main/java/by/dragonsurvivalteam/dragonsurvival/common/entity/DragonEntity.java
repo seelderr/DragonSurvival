@@ -20,7 +20,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
