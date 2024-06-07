@@ -23,7 +23,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
-import net.minecraftforge.network.NetworkHooks;
 
 
 public class DragonSpikeEntity extends AbstractArrow{
@@ -38,14 +37,13 @@ public class DragonSpikeEntity extends AbstractArrow{
 	}
 
 	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level world, LivingEntity entity){
-		super(type, entity, world);
+		super(type, world, ItemStack.EMPTY);
 	}
 
-
 	@Override
-	protected void defineSynchedData(){
-		super.defineSynchedData();
-		entityData.define(ARROW_LEVEL, 1);
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+		super.defineSynchedData(pBuilder);
+		entityData.set(ARROW_LEVEL, 1);
 	}
 
 
@@ -131,7 +129,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 	}
 
 	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket(){
-		return NetworkHooks.getEntitySpawningPacket(this);
+	protected ItemStack getDefaultPickupItem() {
+		return ItemStack.EMPTY;
 	}
 }

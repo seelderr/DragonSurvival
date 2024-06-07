@@ -25,6 +25,7 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
@@ -34,6 +35,7 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -45,7 +47,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(Player.class)
 public abstract class MixinPlayerEntity extends LivingEntity{
 	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
-	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADDITION); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
+	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADD_VALUE); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
 
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_){
 		super(p_20966_, p_20967_);
@@ -92,7 +94,8 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		}
 	}
 
-	@Inject(at = @At("HEAD"), method = "eat", cancellable = true)
+	// TODO: Not needed anymore?
+	/*@Inject(at = @At("HEAD"), method = "eat", cancellable = true)
 	public void dragonEat(final Level level, final ItemStack itemStack, final CallbackInfoReturnable<ItemStack> callback) {
 		DragonStateProvider.getCap(this).ifPresent(handler -> {
 			if (handler.isDragon()) {
@@ -105,7 +108,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				callback.setReturnValue(super.eat(level, itemStack));
 			}
 		});
-	}
+	}*/
 
 	@Shadow
 	public FoodData getFoodData(){
@@ -117,14 +120,15 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 		throw new IllegalStateException("Mixin failed to shadow awardStat()");
 	}
 
-	@Inject( at = @At( "HEAD" ), method = "Lnet/minecraft/world/entity/player/Player;getMyRidingOffset()D", cancellable = true )
+	// TODO: Not needed anymore?
+	/*@Inject( at = @At( "HEAD" ), method = "Lnet/minecraft/world/entity/player/Player;getMyRidingOffset()D", cancellable = true )
 	public void dragonRidingOffset(CallbackInfoReturnable<Double> ci){
 		DragonStateProvider.getCap(this).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				ci.setReturnValue(0.25D);
 			}
 		});
-	}
+	}*/
 
 	@Inject( method = "travel", at = @At( "HEAD" ))
 	public void travel(Vec3 pTravelVector, CallbackInfo ci){
@@ -142,7 +146,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 
 				if(isEffectiveAi() || isControlledByLocalInstance()){
 					double d0 = 0.08D;
-					AttributeInstance gravity = getAttribute(net.minecraftforge.common.ForgeMod.ENTITY_GRAVITY.get());
+					AttributeInstance gravity = getAttribute(Attributes.GRAVITY);
 					boolean flag = getDeltaMovement().y <= 0.0D;
 					if(flag && hasEffect(MobEffects.SLOW_FALLING)){
 						if(gravity != null && !gravity.hasModifier(SLOW_FALLING)){
@@ -176,7 +180,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 							f5 = 0.96F;
 						}
 
-						f6 *= (float)getAttribute(net.minecraftforge.common.ForgeMod.SWIM_SPEED.get()).getValue();
+						f6 *= (float)getAttribute(NeoForgeMod.SWIM_SPEED).getValue();
 						moveRelative(f6, pTravelVector);
 						move(MoverType.SELF, getDeltaMovement());
 						Vec3 vector3d6 = getDeltaMovement();
@@ -194,15 +198,16 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 				}
 
 				calculateEntityAnimation(this instanceof FlyingAnimal);
-				checkMovementStatistics(getX() - d01, getY() - d11, getZ() - d21);
+				//checkMovementStatistics(getX() - d01, getY() - d11, getZ() - d21);
 			}
 		}
 	}
 
 
 
-	@Shadow
+	// Not needed?
+	/*@Shadow
 	public void checkMovementStatistics(double d, double e, double f){
 		throw new IllegalStateException("Mixin failed to shadow checkMovementStatistics()");
-	}
+	}*/
 }

@@ -263,7 +263,7 @@ public class MagicHandler{
 						double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 
 						if (player.level() instanceof ServerLevel serverLevel) {
-							serverLevel.sendParticles(DSParticles.seaSweep, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+							serverLevel.sendParticles(DSParticles.SEA_SWEEP, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
 						}
 					}
 				} else if (Objects.equals(handler.getType(), DragonTypes.CAVE)) {

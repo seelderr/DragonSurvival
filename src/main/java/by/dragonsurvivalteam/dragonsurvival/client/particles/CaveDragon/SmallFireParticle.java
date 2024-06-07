@@ -1,12 +1,22 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -91,12 +101,12 @@ public class SmallFireParticle extends TextureSheetParticle{
 	}
 
 	@Override
-	public ParticleRenderType getRenderType(){
+	public @NotNull ParticleRenderType getRenderType(){
 		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
 	@Override
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
+	public void render(@NotNull VertexConsumer buffer, @NotNull Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
@@ -107,15 +117,15 @@ public class SmallFireParticle extends TextureSheetParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static final class FireFactory implements ParticleProvider<SmallFireParticleData>{
+	public static final class Factory implements ParticleProvider<DragonParticle.Data>{
 		private final SpriteSet spriteSet;
 
-		public FireFactory(SpriteSet sprite){
+		public Factory(SpriteSet sprite){
 			spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(SmallFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(DragonParticle.Data typeIn, @NotNull ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 			SmallFireParticle particle = new SmallFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

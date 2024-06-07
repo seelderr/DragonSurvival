@@ -37,6 +37,8 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import java.util.stream.Collectors;
+
 public class Shooter extends Hunter implements CrossbowAttackMob{
 	private static final EntityDataAccessor<Boolean> IS_CHARGING_CROSSBOW = SynchedEntityData.defineId(Shooter.class, EntityDataSerializers.BOOLEAN);
 
@@ -152,24 +154,8 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	}
 
 	@Override
-	public void shootCrossbowProjectile(LivingEntity p_230284_1_, ItemStack p_230284_2_, Projectile p_230284_3_, float p_230284_4_){
-		shootCrossbowProjectile(this, p_230284_1_, p_230284_3_, p_230284_4_, 1.6F);
-	}
-
-	@Override
 	public void onCrossbowAttackPerformed(){
 		noActionTime = 0;
-		ItemStack crossbow = getItemInHand(InteractionHand.MAIN_HAND);
-		addArrow(crossbow);
-	}
-
-	private void addArrow(ItemStack stack){
-		CompoundTag compoundNBT = stack.getOrCreateTag();
-		ListTag listNBT = compoundNBT.getList("ChargedProjectiles", 10);
-		CompoundTag nbt = new CompoundTag();
-		new ItemStack(Items.ARROW).save(nbt);
-		listNBT.add(nbt);
-		compoundNBT.put("ChargedProjectiles", listNBT);
 	}
 
 	@Override
@@ -178,9 +164,9 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	}
 
 	@Override
-	protected void defineSynchedData(){
-		super.defineSynchedData();
-		entityData.define(IS_CHARGING_CROSSBOW, false);
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+		super.defineSynchedData(pBuilder);
+		entityData.set(IS_CHARGING_CROSSBOW, false);
 	}
 
 	@Override
@@ -198,7 +184,6 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	@Override
 	protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance p_180481_1_){
 		ItemStack stack = new ItemStack(Items.CROSSBOW);
-		addArrow(stack);
 		setItemSlot(EquipmentSlot.MAINHAND, stack);
 	}
 	@Override

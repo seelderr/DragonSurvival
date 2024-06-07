@@ -9,8 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.UUID;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -47,22 +45,11 @@ public class Bolas extends ThrowableItemProjectile{
 	}
 
 	@Override
-	protected void defineSynchedData(){
-
-	}
-
-	@Override
 	protected void onHit(HitResult p_70227_1_){
 		super.onHit(p_70227_1_);
 		if(!level().isClientSide()){
 			remove(RemovalReason.DISCARDED);
 		}
-	}
-
-	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket(){
-		// FIXME: What to do here?
-		return NetworkHooks.getEntitySpawningPacket(this);
 	}
 
 	protected void onHitEntity(EntityHitResult entityHitResult){

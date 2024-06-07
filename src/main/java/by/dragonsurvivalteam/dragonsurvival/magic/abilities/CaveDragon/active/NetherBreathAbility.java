@@ -1,8 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFireParticleData;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
@@ -173,7 +172,7 @@ public class NetherBreathAbility extends BreathAbility{
 					entity.setPotionContents(new PotionContents(CAVE_BREATH));
 					entity.setDuration(Functions.secondsToTicks(2));
 					entity.setRadius(1);
-					entity.setParticle(new SmallFireParticleData(37, false));
+					entity.setParticle(new SmallFireParticle.Data(37, false));
 					entity.setOwner(player);
 					player.level().addFreshEntity(entity);
 				}
@@ -224,7 +223,7 @@ public class NetherBreathAbility extends BreathAbility{
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
-				player.level().addParticle(new SmallFireParticleData(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+				player.level().addParticle(new SmallFireParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
 			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 2; i++){

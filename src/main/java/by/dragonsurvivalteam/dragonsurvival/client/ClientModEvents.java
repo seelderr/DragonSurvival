@@ -26,7 +26,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
-import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
@@ -62,32 +61,5 @@ public class ClientModEvents{
 	@SubscribeEvent
 	public static void onKeyRegister(final RegisterKeyMappingsEvent event) {
 		KeyInputHandler.registerKeys(event);
-	}
-
-	@SubscribeEvent
-	public static void registerParticleFactories(final RegisterParticleProvidersEvent event) {
-		event.registerSpriteSet(DSParticles.fireBeaconParticle, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
-			BeaconParticle beaconParticle = new BeaconParticle(clientWorld, x, y, z, speedX, speedY, speedZ);
-			beaconParticle.pickSprite(spriteSet);
-			return beaconParticle;
-		});
-
-		event.registerSpriteSet(DSParticles.magicBeaconParticle, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
-			BeaconParticle beaconParticle = new BeaconParticle(clientWorld, x, y, z, speedX, speedY, speedZ);
-			beaconParticle.pickSprite(spriteSet);
-			return beaconParticle;
-		});
-
-		event.registerSpriteSet(DSParticles.peaceBeaconParticle, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
-			BeaconParticle beaconParticle = new BeaconParticle(clientWorld, x, y, z, speedX, speedY, speedZ);
-			beaconParticle.pickSprite(spriteSet);
-			return beaconParticle;
-		});
-
-		event.registerSpriteSet(DSParticles.seaSweep, spriteSet -> (particleType, clientWorld, x, y, z, speedX, speedY, speedZ) -> {
-			SeaSweepParticle beaconParticle = new SeaSweepParticle(clientWorld, x, y, z, speedX, spriteSet);
-			beaconParticle.pickSprite(spriteSet);
-			return beaconParticle;
-		});
 	}
 }

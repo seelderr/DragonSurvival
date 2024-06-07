@@ -3,16 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
-import net.minecraftforge.network.NetworkHooks;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class StormBreathEntity extends Entity implements GeoEntity {
@@ -23,7 +24,7 @@ public class StormBreathEntity extends Entity implements GeoEntity {
 	}
 
 	@Override
-	protected void defineSynchedData() { /* Nothing to do here */ }
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {}
 
 	@Override
 
@@ -31,11 +32,6 @@ public class StormBreathEntity extends Entity implements GeoEntity {
 
 	@Override
 	protected void addAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
-
-	@Override
-	public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
-	}
 
 	@Override
 	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {

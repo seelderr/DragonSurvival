@@ -43,7 +43,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class PrincessHorseEntity extends Villager implements GeoEntity, CommonTraits {
@@ -89,9 +90,9 @@ public class PrincessHorseEntity extends Villager implements GeoEntity, CommonTr
 	}
 
 	@Override
-	protected void defineSynchedData() {
-		super.defineSynchedData();
-		entityData.define(COLOR, 0);
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+		super.defineSynchedData(pBuilder);
+		entityData.set(COLOR, 0);
 	}
 
 	@Override
@@ -144,10 +145,10 @@ public class PrincessHorseEntity extends Villager implements GeoEntity, CommonTr
 	}
 
 	@Override
-	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
+	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData){
 		setColor(COLORS.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCE_PROFESSION));
-		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
+		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData);
 	}
 
 	@Override

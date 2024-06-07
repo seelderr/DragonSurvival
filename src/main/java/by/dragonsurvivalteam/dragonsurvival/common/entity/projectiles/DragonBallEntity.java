@@ -17,12 +17,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.minecraftforge.network.NetworkHooks;
 import org.antlr.v4.runtime.misc.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.*;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 
@@ -56,16 +54,11 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	}
 
 	@Override
-	protected void defineSynchedData(){
-		super.defineSynchedData();
-		entityData.define(SKILL_LEVEL, 1);
-		entityData.define(MOVE_DISTANCE, 0f);
-		entityData.define(LIFESPAN, 0);
-	}
-
-	@Override
-	public @NotNull Packet<ClientGamePacketListener> getAddEntityPacket() {
-		return NetworkHooks.getEntitySpawningPacket(this);
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+		super.defineSynchedData(pBuilder);
+		entityData.set(SKILL_LEVEL, 1);
+		entityData.set(MOVE_DISTANCE, 0f);
+		entityData.set(LIFESPAN, 0);
 	}
 
 	@Override

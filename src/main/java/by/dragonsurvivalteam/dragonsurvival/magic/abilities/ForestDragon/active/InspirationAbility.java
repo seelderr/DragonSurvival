@@ -93,7 +93,7 @@ public class InspirationAbility extends AoeBuffAbility{
 
 	@Override
 	public ParticleOptions getParticleEffect(){
-		return DSParticles.fireBeaconParticle;
+		return DSParticles.FIRE_BEACON_PARTICLE;
 	}
 
 	@Override

@@ -291,11 +291,7 @@ public class DragonFoodHandler {
 		return null;
 	}
 
-	public static boolean isEdible(ItemStack itemStack, LivingEntity entity){
-		return itemStack.getFoodProperties(entity) != null;
-	}
-
-	public static boolean isDragonEdible(final ItemStack itemStack, final AbstractDragonType type) {
+	public static boolean isEdible(final ItemStack itemStack, final AbstractDragonType type) {
 		if (customDragonFoods && type != null) {
 			return DRAGON_FOODS != null && DRAGON_FOODS.containsKey(type.getTypeName()) && DRAGON_FOODS.get(type.getTypeName()).containsKey(itemStack.getItem());
 		}

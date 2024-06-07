@@ -36,12 +36,7 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 
 		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
 		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
-		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 2.0, false) {
-			@Override
-			protected double getAttackReachSqr(LivingEntity entity) {
-				return (double) (4.0 + entity.getBbWidth() * entity.getBbWidth());
-			}
-		});
+		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 2.0, false));
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DSEffects.ROYAL_CHASE)));
 		this.targetSelector.addGoal(5, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
 			@Override
@@ -56,20 +51,15 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(entity);
 			}
 		});
-		this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 2.0, false) {
-			@Override
-			protected double getAttackReachSqr(LivingEntity entity) {
-				return (double) (4.0 + entity.getBbWidth() * entity.getBbWidth());
-			}
-		});
+		this.goalSelector.addGoal(6, new MeleeAttackGoal(this, 2.0, false));
 		this.targetSelector.addGoal(7, new HurtByTargetGoal(this));
 		this.goalSelector.addGoal(8, new FollowMobGoal<>(KnightEntity.class, this, 30));
 	}
 
 	@Override
-	protected void defineSynchedData(){
-		super.defineSynchedData();
-		entityData.define(variety, 0);
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+		super.defineSynchedData(pBuilder);
+		entityData.set(variety, 0);
 	}
 
 	@Override
@@ -97,11 +87,9 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	}
 
 	@Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason,
-		@Nullable SpawnGroupData livingEntityData,
-		@Nullable CompoundTag compoundNBT){
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor pLevel, DifficultyInstance pDifficulty, MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData){
 		entityData.set(variety, random.nextInt(8));
-		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
+		return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
 	}
 
 	@Override

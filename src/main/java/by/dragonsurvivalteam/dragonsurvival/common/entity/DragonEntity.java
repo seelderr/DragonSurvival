@@ -20,6 +20,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,8 +30,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.AnimatableManager;
-import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
@@ -76,7 +77,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			registrar.add(new AnimationController<>(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
 		}
 
-		registrar.add(new AnimationController<>(this, "3", 2, this::predicate));
+		registrar.add(new AnimationController<>(this, "3", 2, this::headPredicate));
 		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
 		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
 		registrar.add(new AnimationController<>(this, "1", this::headPredicate));
@@ -114,7 +115,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			// When the player is using an item
 			handler.getMovementData().bite = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM));
-		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), player) || animationTimer.getDuration("eat_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
 			// When the player is eating the main hand item
 			if (animationTimer.getDuration("eat_item_right") <= 0) {
 				handler.getMovementData().bite = false;
@@ -122,7 +123,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_RIGHT));
-		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), player) || animationTimer.getDuration("eat_item_right") > 0) {
+		} else if (!ClientDragonRender.renderItemsInMouth && doesAnimationExist("eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
 			// When the player is eating the offhand item
 			if (animationTimer.getDuration("eat_item_left") <= 0) {
 				handler.getMovementData().bite = false;
@@ -505,8 +506,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
 	private static final RawAnimation DIG = RawAnimation.begin().thenLoop("dig");
 
-	private static final RawAnimation JUMP = RawAnimation.begin().then("jump", LoopType.PLAY_ONCE).thenLoop("fall_loop");
-	private static final RawAnimation FLY_LAND_END = RawAnimation.begin().then("fly_land_end", LoopType.PLAY_ONCE).thenLoop("idle");
+	private static final RawAnimation JUMP = RawAnimation.begin().then("jump", Animation.LoopType.PLAY_ONCE).thenLoop("fall_loop");
+	private static final RawAnimation FLY_LAND_END = RawAnimation.begin().then("fly_land_end", Animation.LoopType.PLAY_ONCE).thenLoop("idle");
 
 	private static final RawAnimation TAIL_TURN = RawAnimation.begin().thenLoop("tail_turn");
 	private static final RawAnimation HEAD_TURN = RawAnimation.begin().thenLoop("head_turn");

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -103,17 +104,17 @@ public class SmallPoisonParticle extends TextureSheetParticle{
 
 
 	@OnlyIn(Dist.CLIENT)
-	public static final class ForestFactory implements ParticleProvider<SmallPoisonParticleData>{
+	public static final class Factory implements ParticleProvider<DragonParticle.Data>{
 		private final SpriteSet spriteSet;
 
-		public ForestFactory(SpriteSet sprite){
+		public Factory(SpriteSet sprite){
 
 			spriteSet = sprite;
 		}
 
 		@Override
 
-		public Particle createParticle(SmallPoisonParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(DragonParticle.Data typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 			SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

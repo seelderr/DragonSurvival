@@ -15,6 +15,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
@@ -57,21 +58,12 @@ public abstract class MixinLivingEntity extends Entity{
 		return getItemBySlot(slotType);
 	}
 
-	@ModifyExpressionValue(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;isEdible()Z"))
-	private boolean replaceIsEdibleInEat(boolean original, @Local(argsOnly = true) ItemStack itemStack){
+	@ModifyExpressionValue(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
+	private FoodProperties replaceFoodPropertiesInEat(FoodProperties original, @Local(argsOnly = true) ItemStack itemStack){
 		if(DragonStateProvider.isDragon((LivingEntity)(Object)this))
 		{
-			return DragonFoodHandler.isEdible(itemStack, (LivingEntity)(Object)this);
-		}
-
-		return original;
-	}
-
-	@ModifyExpressionValue(method = "addEatEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/Item;isEdible()Z"))
-	private boolean replaceIsEdibleInAddEatEffect(boolean original, @Local(argsOnly = true) ItemStack itemStack){
-		if(DragonStateProvider.isDragon((LivingEntity)(Object)this))
-		{
-			return DragonFoodHandler.isEdible(itemStack, (LivingEntity)(Object)this);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler((LivingEntity)(Object)this);
+			return DragonFoodHandler.getDragonFoodProperties(itemStack.getItem(), handler.getType());
 		}
 
 		return original;
@@ -128,8 +120,10 @@ public abstract class MixinLivingEntity extends Entity{
 	}
 
 	@Unique private UseAnim dragon_Survival$getUseAnimation(UseAnim original, ItemStack pStack){
+
 		if(DragonStateProvider.isDragon((LivingEntity)(Object)this)) {
-			return DragonFoodHandler.isEdible(pStack, (LivingEntity)(Object)this) ? UseAnim.EAT : original;
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler((LivingEntity)(Object)this);
+			return DragonFoodHandler.isEdible(pStack, handler.getType()) ? UseAnim.EAT : original;
 		}
 
 		return original;

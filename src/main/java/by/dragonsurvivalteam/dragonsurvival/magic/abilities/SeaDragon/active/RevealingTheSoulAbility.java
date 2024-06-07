@@ -102,7 +102,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public ParticleOptions getParticleEffect(){
-		return DSParticles.magicBeaconParticle;
+		return DSParticles.MAGIC_BEACON_PARTICLE;
 	}
 
 	@Override

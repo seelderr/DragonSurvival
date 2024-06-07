@@ -31,7 +31,8 @@ public class MixinItemInHandRenderer{
 	@ModifyExpressionValue( method = "renderArmWithItem", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;"))
 	private UseAnim dragonRenderArmWithItem(UseAnim original, AbstractClientPlayer pPlayer, float pPartialTicks, float pPitch, InteractionHand pHand, float pSwingProgress, ItemStack pStack, float pEquippedProgress, PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight){
 		if(DragonStateProvider.isDragon(pPlayer)) {
-			return DragonFoodHandler.isEdible(pStack, pPlayer) ? UseAnim.EAT : original;
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(pPlayer);
+			return DragonFoodHandler.isEdible(pStack, handler.getType()) ? UseAnim.EAT : original;
 		}
 
 		return original;

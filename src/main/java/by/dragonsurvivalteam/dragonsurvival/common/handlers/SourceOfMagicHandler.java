@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -137,11 +136,11 @@ public class SourceOfMagicHandler{
 
 									if(pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()){
 										if(!minecraft.isPaused()){
-											player.level().addParticle(DSParticles.magicBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											player.level().addParticle(DSParticles.MAGIC_BEACON_PARTICLE, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}else if(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()){
 										if(!minecraft.isPaused()){
-											player.level().addParticle(DSParticles.fireBeaconParticle, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											player.level().addParticle(DSParticles.FIRE_BEACON_PARTICLE, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}
 								}

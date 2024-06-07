@@ -328,7 +328,7 @@ public class VillagerRelationsHandler{
 								EntityType<? extends PrincessHorseEntity> entityType = world.random.nextBoolean() ? DSEntities.PRINCESS_ON_HORSE.get() : DSEntities.PRINCE_ON_HORSE.get();
 								PrincessHorseEntity princessEntity = entityType.create(world);
 								princessEntity.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-								princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
+								princessEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null);
 								serverWorld.addFreshEntity(princessEntity);
 
 								int knights = world.random.nextInt(3) + 3;
@@ -336,7 +336,7 @@ public class VillagerRelationsHandler{
 									KnightEntity knightHunter = DSEntities.KNIGHT.get().create(serverWorld);
 									knightHunter.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
 									knightHunter.goalSelector.addGoal(5, new FollowMobGoal(PrincessHorseEntity.class, knightHunter, 8));
-									knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null, null);
+									knightHunter.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(player.blockPosition()), MobSpawnType.NATURAL, null);
 									serverWorld.addFreshEntity(knightHunter);
 								}
 

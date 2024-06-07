@@ -1,18 +1,17 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.ParticleRenderType;
-import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.particle.*;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 
 public class BeaconParticle extends TextureSheetParticle{
 	private double fallSpeed;
 
-	public BeaconParticle(ClientLevel p_i232447_1_, double p_i232447_2_, double p_i232447_4_, double p_i232447_6_){
-		super(p_i232447_1_, p_i232447_2_, p_i232447_4_, p_i232447_6_);
-	}
-
-	public BeaconParticle(ClientLevel p_i232448_1_, double x, double y, double z, double xd, double yd, double zd){
-		super(p_i232448_1_, x, y, z, xd, yd, zd);
+	public BeaconParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
+		super(level, x, y, z, xd, yd, zd);
 		gravity = 0.9f;
 		fallSpeed = 0.02;
 	}
@@ -41,7 +40,23 @@ public class BeaconParticle extends TextureSheetParticle{
 	}
 
 	@Override
-	public ParticleRenderType getRenderType(){
+	public @NotNull ParticleRenderType getRenderType(){
 		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	public static class Factory implements ParticleProvider<SimpleParticleType> {
+		private SpriteSet spriteSet;
+
+		public Factory(SpriteSet spriteSet){
+			this.spriteSet = spriteSet;
+		}
+
+		@Override
+		public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
+			BeaconParticle beaconParticle = new BeaconParticle(level, x, y, z, xd, yd, zd);
+			beaconParticle.pickSprite(spriteSet);
+			return beaconParticle;
+		}
 	}
 }

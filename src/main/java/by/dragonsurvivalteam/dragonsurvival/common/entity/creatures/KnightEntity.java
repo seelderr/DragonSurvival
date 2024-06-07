@@ -28,12 +28,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.core.animation.AnimatableManager;
-import software.bernie.geckolib.core.animation.AnimationController;
-import software.bernie.geckolib.core.animation.AnimationProcessor;
-import software.bernie.geckolib.core.animation.RawAnimation;
-import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter, CommonTraits {
@@ -153,12 +149,7 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(KnightEntity.this);
 			}
 		});
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 2.0, false) {
-			@Override
-			protected double getAttackReachSqr(@NotNull final LivingEntity entity) {
-				return 4.0 + entity.getBbWidth() * entity.getBbWidth();
-			}
-		});
+		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 2.0, false));
 		this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
 		this.goalSelector.addGoal(7, new FollowMobGoal<>(PrinceHorseEntity.class, this, 15));
 		this.goalSelector.addGoal(8, new FollowMobGoal<>(PrincessHorseEntity.class, this, 15));
@@ -190,10 +181,10 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 		return false;
 	}
 
-	@Nullable @Override
-	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData, @Nullable CompoundTag nbt){
+	@Nullable
+	public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData){
 		populateDefaultEquipmentSlots(random, difficultyInstance);
-		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData, nbt);
+		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData);
 	}
 
 	@Override

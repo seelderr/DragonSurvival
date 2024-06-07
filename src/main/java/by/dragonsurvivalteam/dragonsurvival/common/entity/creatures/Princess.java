@@ -88,9 +88,9 @@ public class Princess extends Villager{
 	}
 
 	@Override
-	protected void defineSynchedData(){
-		super.defineSynchedData();
-		entityData.define(color, 0);
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+		super.defineSynchedData(pBuilder);
+		entityData.set(color, 0);
 	}
 
 	@Override
@@ -199,10 +199,10 @@ public class Princess extends Villager{
 	}
 
 	@Override
-	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData, @Nullable CompoundTag compoundNBT){
+	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType reason, @Nullable SpawnGroupData livingEntityData){
 		setColor(colors.get(random.nextInt(6)).getId());
 		setVillagerData(getVillagerData().setProfession(DSEntities.PRINCESS_PROFESSION));
-		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData, compoundNBT);
+		return super.finalizeSpawn(serverWorld, difficultyInstance, reason, livingEntityData);
 	}
 
 	@Override

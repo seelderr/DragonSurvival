@@ -88,7 +88,7 @@ public class ToughSkinAbility extends AoeBuffAbility{
 
 	@Override
 	public ParticleOptions getParticleEffect(){
-		return DSParticles.peaceBeaconParticle;
+		return DSParticles.PEACE_BEACON_PARTICLE;
 	}
 
 	@Override

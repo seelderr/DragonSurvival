@@ -1,25 +1,28 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 
-public class LargeFireParticle extends TextureSheetParticle implements ParticleOptions {
+public class LargeFireParticle extends TextureSheetParticle {
 	private final float spread;
 	private final SpriteSet sprites;
 	boolean swirls;
@@ -84,7 +87,7 @@ public class LargeFireParticle extends TextureSheetParticle implements ParticleO
 
 	@Override
 
-	public ParticleRenderType getRenderType(){
+	public @NotNull ParticleRenderType getRenderType(){
 		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
@@ -96,7 +99,7 @@ public class LargeFireParticle extends TextureSheetParticle implements ParticleO
 	}
 
 	@Override
-	public void render(VertexConsumer buffer, Camera renderInfo, float partialTicks){
+	public void render(@NotNull VertexConsumer buffer, @NotNull Camera renderInfo, float partialTicks){
 		float var = (age + partialTicks) / (float)lifetime;
 		alpha = (float)(1 - Math.exp(10 * (var - 1)) - Math.pow(2000, -var));
 		if(alpha < 0.1){
@@ -107,38 +110,19 @@ public class LargeFireParticle extends TextureSheetParticle implements ParticleO
 	}
 
 	@OnlyIn(Dist.CLIENT )
-	public static final class FireFactory implements ParticleProvider<LargeFireParticleData>{
+	public static final class Factory implements ParticleProvider<DragonParticle.Data>{
 		private final SpriteSet spriteSet;
 
-		public FireFactory(SpriteSet sprite){
+		public Factory(SpriteSet sprite){
 
 			spriteSet = sprite;
 		}
 
 		@Override
-		public Particle createParticle(LargeFireParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
-
-			LargeFireParticle particle = new LargeFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
+		public @NotNull Particle createParticle(@NotNull DragonParticle.Data pType, @NotNull ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+			LargeFireParticle particle = new LargeFireParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, pType.getDuration(), pType.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;
-		}
-	}
-
-	public record Data(double duration, boolean swirls) implements CustomPacketPayload {
-
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "large_fire_particle"));
-
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.DOUBLE,
-				Data::duration,
-				ByteBufCodecs.BOOL,
-				Data::swirls,
-				Data::new
-		);
-
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
 		}
 	}
 }

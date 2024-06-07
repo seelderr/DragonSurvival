@@ -12,11 +12,12 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
-import org.joml.Matrix4f;
+import org.checkerframework.checker.units.qual.A;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin( InventoryScreen.class )
 public abstract class MixinInventoryScreen extends EffectRenderingInventoryScreen<InventoryMenu> implements RecipeUpdateListener{
@@ -45,7 +46,7 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 
 			handler.getMovementData().bodyYawLastTick = player.yBodyRot;
 			handler.getMovementData().headYawLastTick = player.yHeadRot;
-			handler.getMovementData().headPitchLastTick = player.xRot;
+			handler.getMovementData().headPitchLastTick = player.getXRot();
 
 			RenderSystem.runAsFancy(runnable);
 
@@ -61,8 +62,8 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		}
 	}
 
-	@ModifyArg(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;mulPoseMatrix(Lorg/joml/Matrix4f;)V"), index = 0)
-	private static Matrix4f dragonScreenEntityRescaler(Matrix4f pMatrix) {
+	@ModifyArgs(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"))
+	private static void dragonScreenEntityRescaler(Args args) {
 		LocalPlayer player = Minecraft.getInstance().player;
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
@@ -72,10 +73,8 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 			{
 				// Scale the matrix back to the MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
 				float scale = (float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size);
-				pMatrix.scale(scale, scale, scale);
+				args.setAll(scale, scale, scale);
 			}
 		}
-
-		return pMatrix;
 	}
 }

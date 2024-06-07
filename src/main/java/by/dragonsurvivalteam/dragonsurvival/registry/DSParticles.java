@@ -1,30 +1,30 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.LargeFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.LargePoisonParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.LargePoisonParticleData;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticle.ForestFactory;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticle;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon.SmallPoisonParticle.Factory;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.LargeLightningParticleData;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticle.SeaFactory;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticleData;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon.SmallLightningParticle;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticleData;
-import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.function.Supplier;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DSParticles{
@@ -33,94 +33,73 @@ public class DSParticles{
 			DragonSurvivalMod.MODID
 	);
 
-	public static final Holder<ParticleType<TreasureParticleData>> TREASURE = DS_PARTICLES.register("treasures", () -> new ParticleType<TreasureParticleData>(false, TreasureParticleData.DESERIALIZER){
-		@Override
-		public StreamCodec<TreasureParticleData> codec(){
-			return TreasureParticleData.CODEC;
-		}
+	public static final DeferredHolder<ParticleType<?>, ParticleType<DragonParticle.Data>> FIRE = DS_PARTICLES.register(
+			"fire",
+			() -> new DragonParticle.Type(false)
+	);
 
-		@Override
-		public StreamCodec<? super RegistryFriendlyByteBuf, TreasureParticleData> streamCodec() {
-			return TreasureParticleData.CODEC;
-		}
-	});
-	public static SimpleParticleType fireBeaconParticle, magicBeaconParticle, peaceBeaconParticle;
-	public static SimpleParticleType seaSweep;
+	public static final DeferredHolder<ParticleType<?>, ParticleType<DragonParticle.Data>> LARGE_FIRE = DS_PARTICLES.register(
+			"large_fire",
+			() -> new DragonParticle.Type(false)
+	);
 
-	public static void register()
-	{
-		fireBeaconParticle = new SimpleParticleType(false);
-		DS_PARTICLES.register("netherite_particle", ()->fireBeaconParticle);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<DragonParticle.Data>> POISON = DS_PARTICLES.register(
+			"poison",
+			() -> new DragonParticle.Type(false)
+	);
 
-		peaceBeaconParticle = new SimpleParticleType(false);
-		DS_PARTICLES.register("gold_particle", ()->peaceBeaconParticle);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<DragonParticle.Data>> LARGE_POISON = DS_PARTICLES.register(
+			"large_poison",
+			() -> new DragonParticle.Type(false)
+	);
 
-		magicBeaconParticle = new SimpleParticleType(false);
-		DS_PARTICLES.register("diamond_particle", ()->magicBeaconParticle);
+	public static final DeferredHolder<ParticleType<?>, ParticleType<DragonParticle.Data>> LIGHTNING = DS_PARTICLES.register(
+			"lightning",
+			() -> new DragonParticle.Type(false)
+	);
 
-		seaSweep = new SimpleParticleType(false);
-		DS_PARTICLES.register("sea_sweep", ()->seaSweep);
-	}
+	public static final DeferredHolder<ParticleType<?>, ParticleType<DragonParticle.Data>> LARGE_LIGHTNING = DS_PARTICLES.register(
+			"large_lightning",
+			() -> new DragonParticle.Type(false)
+	);
+
+	public static final DeferredHolder<ParticleType<?>, ParticleType<TreasureParticle.Data>> TREASURE = DS_PARTICLES.register(
+			"treasures",
+			() -> new TreasureParticle.Type(false)
+	);
+
+	public static final DeferredHolder<ParticleType<?>, ParticleType<SimpleParticleType>> SEA_SWEEP = DS_PARTICLES.register(
+			"sea_sweep",
+			() -> new SimpleParticleType(false)
+	);
+
+	public static final DeferredHolder<ParticleType<?>, ParticleType<SimpleParticleType>> FIRE_BEACON_PARTICLE = DS_PARTICLES.register(
+			"netherite_particle",
+			() -> new SimpleParticleType(false)
+	);
+
+	public static final DeferredHolder<ParticleType<?>, ParticleType<SimpleParticleType>> MAGIC_BEACON_PARTICLE = DS_PARTICLES.register(
+			"diamond_particle",
+			() -> new SimpleParticleType(false)
+	);
+
+	public static final DeferredHolder<ParticleType<?>, ParticleType<SimpleParticleType>> PEACE_BEACON_PARTICLE = DS_PARTICLES.register(
+			"gold_particle",
+			() -> new SimpleParticleType(false)
+	);
 
 	@SubscribeEvent( priority = EventPriority.LOWEST)
 	public static void registerParticles(RegisterParticleProvidersEvent event){
-		event.registerSpriteSet(DSParticles.FIRE.get(), SmallFireParticle.FireFactory::new);
-		event.registerSpriteSet(DSParticles.LARGE_FIRE.get(), LargeFireParticle.FireFactory::new);
-		event.registerSpriteSet(DSParticles.POISON.get(), ForestFactory::new);
-		event.registerSpriteSet(DSParticles.LARGE_POISON.get(), LargePoisonParticle.ForestFactory::new);
-		event.registerSpriteSet(DSParticles.LIGHTNING.get(), SeaFactory::new);
-		event.registerSpriteSet(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.SeaFactory::new);
+		event.registerSpriteSet(DSParticles.FIRE.get(), SmallFireParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.LARGE_FIRE.get(), LargeFireParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.POISON.get(), SmallPoisonParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.LARGE_POISON.get(), LargePoisonParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.LIGHTNING.get(), SmallLightningParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.LARGE_LIGHTNING.get(), LargeLightningParticle.Factory::new);
 		event.registerSpriteSet(DSParticles.TREASURE.get(), TreasureParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.SEA_SWEEP.get(), SeaSweepParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.FIRE_BEACON_PARTICLE.get(), BeaconParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.MAGIC_BEACON_PARTICLE.get(), BeaconParticle.Factory::new);
+		event.registerSpriteSet(DSParticles.PEACE_BEACON_PARTICLE.get(), BeaconParticle.Factory::new);
 	}
-
-	public static final RegistryObject<ParticleType<SmallFireParticleData>> FIRE = DS_PARTICLES.register("fire", () -> new ParticleType<>(false, SmallFireParticleData.DESERIALIZER) {
-        @Override
-        public Codec<SmallFireParticleData> codec() {
-            return SmallFireParticleData.CODEC(FIRE.get());
-        }
-    });
-
-	public static final DeferredHolder<ParticleType<?>, ParticleType<LargeFireParticle>> LARGE_FIRE = DS_PARTICLES.register("large_fire", () -> new ParticleType<>(false, LargeFireParticleData.DESERIALIZER) {
-		@Override
-		public Codec<LargeFireParticleData> codec() {
-			return LargeFireParticleData.CODEC(LARGE_FIRE.get());
-		}
-	});
-
-
-	public static final RegistryObject<ParticleType<LargeFireParticleData>> LARGE_FIRE = DS_PARTICLES.register("large_fire", () -> new ParticleType<>(false, LargeFireParticleData.DESERIALIZER) {
-        @Override
-        public Codec<LargeFireParticleData> codec() {
-            return LargeFireParticleData.CODEC(LARGE_FIRE.get());
-        }
-    });
-
-
-	public static final RegistryObject<ParticleType<SmallPoisonParticleData>> POISON = DS_PARTICLES.register("poison", () -> new ParticleType<>(false, SmallPoisonParticleData.DESERIALIZER) {
-        @Override
-        public Codec<SmallPoisonParticleData> codec() {
-            return SmallPoisonParticleData.CODEC(POISON.get());
-        }
-    });
-
-	public static final RegistryObject<ParticleType<LargePoisonParticleData>> LARGE_POISON = DS_PARTICLES.register("large_poison", () -> new ParticleType<>(false, LargePoisonParticleData.DESERIALIZER) {
-        @Override
-        public Codec<LargePoisonParticleData> codec() {
-            return LargePoisonParticleData.CODEC(LARGE_POISON.get());
-        }
-    });
-
-	public static final RegistryObject<ParticleType<SmallLightningParticleData>> LIGHTNING = DS_PARTICLES.register("lightning", () -> new ParticleType<>(false, SmallLightningParticleData.DESERIALIZER) {
-        @Override
-        public Codec<SmallLightningParticleData> codec() {
-            return SmallLightningParticleData.CODEC(LIGHTNING.get());
-        }
-    });
-
-	public static final RegistryObject<ParticleType<LargeLightningParticleData>> LARGE_LIGHTNING = DS_PARTICLES.register("large_lightning", () -> new ParticleType<>(false, LargeLightningParticleData.DESERIALIZER) {
-        @Override
-        public Codec<LargeLightningParticleData> codec() {
-            return LargeLightningParticleData.CODEC(LARGE_LIGHTNING.get());
-        }
-    });
 }

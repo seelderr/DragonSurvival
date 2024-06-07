@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.SeaDragon;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
@@ -105,17 +106,17 @@ public class SmallLightningParticle extends TextureSheetParticle{
 	}
 
 	@OnlyIn( Dist.CLIENT )
-	public static final class SeaFactory implements ParticleProvider<SmallLightningParticleData>{
+	public static final class Factory implements ParticleProvider<DragonParticle.Data>{
 		private final SpriteSet spriteSet;
 
-		public SeaFactory(SpriteSet sprite){
+		public Factory(SpriteSet sprite){
 
 			spriteSet = sprite;
 		}
 
 		@Override
 
-		public Particle createParticle(SmallLightningParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(DragonParticle.Data typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
 
 			SmallLightningParticle particle = new SmallLightningParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);

@@ -17,6 +17,7 @@ import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,11 +28,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin( Entity.class )
-public abstract class MixinEntity extends net.minecraftforge.common.capabilities.CapabilityProvider<Entity>{
-	protected MixinEntity(Class<Entity> baseClass){
-		super(baseClass);
-	}
-
+public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, DragonStateHandler> {
 	@Inject( at = @At( value = "HEAD" ), method = "positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", cancellable = true )
 	private void positionRider(Entity entity, Entity.MoveFunction move, CallbackInfo callbackInfo){
 		Object self = this;
@@ -40,13 +37,10 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 			if(hasPassenger(entity)) {
 				if ((Object)this instanceof Player player && entity instanceof Player passenger) {
 					DragonMovementData md = DragonStateProvider.getOrGenerateHandler((Entity) self).getMovementData();
-					double heightOffset = -0.2 * this.getPassengersRidingOffset();
+					Vec3 originalPassPos = passenger.getPassengerRidingPosition((Entity) self);
+					double heightOffset = -0.2 * (originalPassPos.y() - player.getY()); // FIXME: This is a guess? Probably ask Psither about this
 					Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.5 * player.getBbWidth());
-					Vec3 offsetFromCenter = new Vec3(0, this.getPassengersRidingOffset() - heightOffset, 0);
-					offsetFromCenter = offsetFromCenter.xRot((float) Math.toRadians(md.prevXRot * 1.5)).zRot(-(float) Math.toRadians(md.prevZRot * 90));
-					offsetFromCenter = offsetFromCenter.multiply(1, Math.signum(offsetFromCenter.y), 1);
-					Vec3 totalOffset = offsetFromCenter.add(offsetFromBb).yRot(-(float) Math.toRadians(md.bodyYawLastTick));
-					Vec3 passPos = player.position().add(totalOffset);
+					Vec3 passPos = originalPassPos.add(offsetFromBb);
 					move.accept(passenger, passPos.x(), passPos.y(), passPos.z());
 
 					((Entity)(Object)this).onPassengerTurned(passenger);
@@ -96,11 +90,6 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	}
 
 	@Shadow
-	public double getPassengersRidingOffset(){
-		throw new IllegalStateException("Mixin failed to shadow getPassengersRidingOffset()");
-	}
-
-	@Shadow
 	public double getX(){
 		throw new IllegalStateException("Mixin failed to shadow getX()");
 	}
@@ -124,7 +113,8 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 		});
 	}
 
-	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;getPassengersRidingOffset()D", cancellable = true )
+	// FIXME
+	/*@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;getPassengerRidingPosition(Lnet/minecraft/world/entity/Entity);V", cancellable = true )
 	public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci){
 		if(DragonStateProvider.isDragon((Entity)(Object)this)){
 			if (!DragonStateProvider.isDragon(((Entity)(Object)this).getPassengers().get(0))) { // Human
@@ -143,7 +133,7 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 				}
 			}
 		}
-	}
+	}*/
 
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;isVisuallyCrawling()Z", cancellable = true )
 	public void isDragonVisuallyCrawling(CallbackInfoReturnable<Boolean> ci){
@@ -161,7 +151,8 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 		}
 	}
 
-	@Redirect( method = "canEnterPose(Lnet/minecraft/world/entity/Pose;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;" ) )
+	// FIXME
+	/*@Redirect( method = "canEnterPose(Lnet/minecraft/g/entity/Pose;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;" ) )
 	public AABB dragonPoseBB(Entity entity, Pose pose){
 		if(DragonStateProvider.isDragon(entity) && ServerConfig.sizeChangesHitbox){
 			boolean squish = DragonUtils.getDragonBody(entity) != null ? DragonUtils.getDragonBody(entity).isSquish() : false;
@@ -181,5 +172,5 @@ public abstract class MixinEntity extends net.minecraftforge.common.capabilities
 	@Shadow
 	protected AABB getBoundingBoxForPose(Pose pose){
 		throw new IllegalStateException("Mixin failed to shadow getBoundingBoxForPose()");
-	}
+	}*/
 }

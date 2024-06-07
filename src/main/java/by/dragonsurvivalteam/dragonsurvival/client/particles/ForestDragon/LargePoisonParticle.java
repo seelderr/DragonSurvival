@@ -1,11 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles.ForestDragon;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.CaveDragon.SmallFireParticle;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Camera;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -93,20 +105,16 @@ public class LargePoisonParticle extends TextureSheetParticle{
 		super.render(buffer, renderInfo, partialTicks);
 	}
 
-
 	@OnlyIn( Dist.CLIENT )
-	public static final class ForestFactory implements ParticleProvider<LargePoisonParticleData>{
+	public static final class Factory implements ParticleProvider<DragonParticle.Data>{
 		private final SpriteSet spriteSet;
 
-		public ForestFactory(SpriteSet sprite){
-
+		public Factory(SpriteSet sprite){
 			spriteSet = sprite;
 		}
 
 		@Override
-
-		public Particle createParticle(LargePoisonParticleData typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
-
+		public @NotNull Particle createParticle(DragonParticle.Data typeIn, @NotNull ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			LargePoisonParticle particle = new LargePoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.getDuration(), typeIn.getSwirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;
