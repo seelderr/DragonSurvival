@@ -387,7 +387,8 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 			double sizeDistance = playerStateHandler.getSize() - baseSize;
 			double sizeFactor = sizeDistance >= 0 ? bigSizeFactor : smallSizeFactor;
 			double sizeComponent = baseSize / (baseSize + sizeDistance * sizeFactor);
- 			finalAnimationSpeed = (animationSpeed + speedComponent) * sizeComponent;
+			// We need a minimum speed here to prevent the animation from ever being truly at 0 speed (otherwise the animation state machine implodes)
+ 			finalAnimationSpeed = Math.min(0.05, (animationSpeed + speedComponent) * sizeComponent);
 		}
 		RenderingUtils.setAnimationSpeed(finalAnimationSpeed, animationEvent.getAnimationTick(), animationController);
 
