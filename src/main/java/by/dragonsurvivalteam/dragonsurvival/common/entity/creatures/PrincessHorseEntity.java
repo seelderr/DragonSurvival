@@ -92,7 +92,7 @@ public class PrincessHorseEntity extends Villager implements GeoEntity, CommonTr
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
 		super.defineSynchedData(pBuilder);
-		entityData.set(COLOR, 0);
+		pBuilder.define(COLOR, 0);
 	}
 
 	@Override

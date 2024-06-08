@@ -59,7 +59,7 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
 		super.defineSynchedData(pBuilder);
-		entityData.set(variety, 0);
+		pBuilder.define(variety, 0);
 	}
 
 	@Override

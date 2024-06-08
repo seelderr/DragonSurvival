@@ -53,9 +53,9 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
 		super.defineSynchedData(pBuilder);
-		entityData.set(SKILL_LEVEL, 1);
-		entityData.set(MOVE_DISTANCE, 0f);
-		entityData.set(LIFESPAN, 0);
+		pBuilder.define(SKILL_LEVEL, 1);
+		pBuilder.define(MOVE_DISTANCE, 0f);
+		pBuilder.define(LIFESPAN, 0);
 	}
 
 	@Override

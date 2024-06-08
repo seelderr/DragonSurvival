@@ -90,7 +90,7 @@ public class Princess extends Villager{
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
 		super.defineSynchedData(pBuilder);
-		entityData.set(color, 0);
+		pBuilder.define(color, 0);
 	}
 
 	@Override

@@ -161,7 +161,7 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
 		super.defineSynchedData(pBuilder);
-		entityData.set(IS_CHARGING_CROSSBOW, false);
+		pBuilder.define(IS_CHARGING_CROSSBOW, false);
 	}
 
 	@Override

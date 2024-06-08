@@ -41,7 +41,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 	@Override
 	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
 		super.defineSynchedData(pBuilder);
-		entityData.set(ARROW_LEVEL, 1);
+		pBuilder.define(ARROW_LEVEL, 1);
 	}
 
 
