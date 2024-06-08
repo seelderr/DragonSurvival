@@ -435,7 +435,7 @@ public class DragonEditorScreen extends Screen {
 		defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.default_skin.tooltip")));
 		addRenderableWidget(defaultSkinCheckbox);
 
-		addRenderableWidget(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
+		ExtendedButton confirmButton = new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
 			Renderable renderButton;
 			boolean toggled;
 
@@ -447,10 +447,6 @@ public class DragonEditorScreen extends Screen {
 					Screen screen = Minecraft.getInstance().screen;
 					screen.children().removeIf(s -> s == conf);
 					screen.renderables.removeIf(s -> s == renderButton);
-				}
-
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
 				}
 			}
 
@@ -494,25 +490,15 @@ public class DragonEditorScreen extends Screen {
 					renderables.removeIf(s -> s == renderButton);
 				}
 			}
-		});
+		};
+		confirmButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));
+		addRenderableWidget(confirmButton);
 
-		addRenderableWidget(new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.back"), null){
-			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
+		ExtendedButton discardButton = new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.back"), btn -> Minecraft.getInstance().setScreen(source));
+		discardButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.back")));
+		addRenderableWidget(discardButton);
 
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.back"), mouseX, mouseY);
-				}
-			}
-
-			@Override
-			public void onPress(){
-				Minecraft.getInstance().setScreen(source);
-			}
-		});
-
-		addRenderableWidget(new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
+		ExtendedButton resetButton = new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
 			preset.skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, dragonType)));
 			handler.getSkinData().compileSkin();
 			update();
@@ -520,12 +506,10 @@ public class DragonEditorScreen extends Screen {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick){
 				guiGraphics.blit(RESET, getX(), getY(), 0, 0, width, height, width, height);
-
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
-				}
 			}
-		});
+		};
+		resetButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.reset")));
+		addRenderableWidget(resetButton);
 
 
 		ExtendedButton randomButton = new ExtendedButton(guiLeft + 260, 11, 18, 18, Component.empty(), btn -> {
