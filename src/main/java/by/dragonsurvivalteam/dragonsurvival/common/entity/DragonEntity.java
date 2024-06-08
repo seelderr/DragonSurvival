@@ -366,8 +366,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			double sizeDistance = handler.getSize() - baseSize;
 			double sizeFactor = sizeDistance >= 0 ? bigSizeFactor : smallSizeFactor;
 			double sizeComponent = baseSize / (baseSize + sizeDistance * sizeFactor);
-			// Prevent animation speed from being zero (as that breaks things!)
- 			finalAnimationSpeed = Math.max(0.05, (animationSpeed + speedComponent) * sizeComponent);
+			// We need a minimum speed here to prevent the animation from ever being truly at 0 speed (otherwise the animation state machine implodes)
+ 			finalAnimationSpeed = Math.min(ClientConfig.maxAnimationSpeed, Math.max(ClientConfig.minAnimationSpeed, (animationSpeed + speedComponent) * sizeComponent));
 		}
 		AnimationUtils.setAnimationSpeed(finalAnimationSpeed, state.getAnimationTick(), animationController);
 
