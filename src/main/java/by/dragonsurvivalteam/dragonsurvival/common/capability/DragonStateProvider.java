@@ -12,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DragonStateProvider implements ICapabilityProvider<Entity, Void, DragonStateHandler> {
-	private static DragonStateHandler getFakePlayer(Entity entity) {
+	private static DragonStateHandler getFakePlayerHandler(Entity entity) {
 		if (entity instanceof FakeClientPlayer fakeClientPlayer) {
 			if (fakeClientPlayer.handler != null) {
 				return fakeClientPlayer.handler;
@@ -31,6 +31,11 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 			return new DragonStateHandler();
 		}
 
+		DragonStateHandler fakePlayerHandler = getFakePlayerHandler(entity);
+		if (fakePlayerHandler != null) {
+			return fakePlayerHandler;
+		}
+
 		return entity.getData(DRAGON_HANDLER);
 	}
 
@@ -45,7 +50,7 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 	@Override
 	public @Nullable DragonStateHandler getCapability(@NotNull Entity entity, @NotNull Void context) {
 		if (entity.level().isClientSide()) {
-			DragonStateHandler fakeState = getFakePlayer(entity);
+			DragonStateHandler fakeState = getFakePlayerHandler(entity);
 
 			if (fakeState != null) {
 				return fakeState;

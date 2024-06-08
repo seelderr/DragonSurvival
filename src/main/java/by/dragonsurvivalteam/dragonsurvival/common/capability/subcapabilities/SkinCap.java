@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import net.minecraft.core.HolderLookup;
@@ -20,6 +22,7 @@ public class SkinCap extends SubCap{
 	public void compileSkin() {
 		recompileSkin = true;
 		isCompiled = false;
+		FakeClientPlayerUtils.getFakePlayer(0, handler);
 	}
 
 	public SkinCap(DragonStateHandler handler){

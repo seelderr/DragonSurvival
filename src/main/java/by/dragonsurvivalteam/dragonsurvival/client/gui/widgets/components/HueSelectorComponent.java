@@ -54,7 +54,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		LayerSettings set = settings.get();
 		DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
-		// FIXME
 		glowing = Checkbox.builder(Component.translatable("ds.gui.dragon_editor.glowing"), Minecraft.getInstance().font)
 				.pos(x + 3, y)
 				.selected(set.glowing)
@@ -214,7 +213,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		guiGraphics.pose().translate(0, 0, 150);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
 
-		//glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		glowing.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 
 		hueReset.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		saturationReset.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
