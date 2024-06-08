@@ -3,7 +3,9 @@
   "ingredient": {
     "tag": "dragonsurvival:cooked_mushrooms"
   },
-  "result": "dragonsurvival:charred_mushroom",
+  "result": {
+    "id": "dragonsurvival:charred_mushroom"
+  },
   "experience": 0.35,
   "cookingtime": 100
 }

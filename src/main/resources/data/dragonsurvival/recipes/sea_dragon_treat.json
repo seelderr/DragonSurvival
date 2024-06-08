@@ -10,11 +10,11 @@
       "item": "dragonsurvival:elder_dragon_dust"
     },
     "S": {
-      "tag": "forge:raw_fishes"
+      "tag": "c:foods/raw_fishes"
     }
   },
   "result": {
-    "item": "dragonsurvival:sea_dragon_treat",
+    "id": "dragonsurvival:sea_dragon_treat",
     "count": 1
   }
 }

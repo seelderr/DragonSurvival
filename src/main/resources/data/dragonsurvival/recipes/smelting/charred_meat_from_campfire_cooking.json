@@ -3,7 +3,9 @@
   "ingredient": {
     "tag": "dragonsurvival:cooked_meats"
   },
-  "result": "dragonsurvival:charred_meat",
+  "result": {
+    "id": "dragonsurvival:charred_meat"
+  },
   "experience": 0.35,
   "cookingtime": 100
 }

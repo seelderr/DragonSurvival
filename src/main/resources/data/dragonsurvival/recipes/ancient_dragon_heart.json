@@ -20,7 +20,7 @@
     }
   },
   "result": {
-    "item": "dragonsurvival:elder_dragon_heart",
+    "id": "dragonsurvival:elder_dragon_heart",
     "count": 1
   }
 }

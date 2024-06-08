@@ -20,7 +20,7 @@
     }
   },
   "result": {
-    "item": "dragonsurvival:weak_dragon_heart",
+    "id": "dragonsurvival:weak_dragon_heart",
     "count": 1
   }
 }

@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "dragonsurvival:cave_dragon_treat",
+    "id": "dragonsurvival:cave_dragon_treat",
     "count": 1
   }
 }

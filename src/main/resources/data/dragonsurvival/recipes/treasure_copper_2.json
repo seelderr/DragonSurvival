@@ -2,14 +2,14 @@
   "type": "crafting_shapeless",
   "ingredients": [
     {
-      "tag": "forge:ingots/copper"
+      "tag": "c:ingots/copper"
     },
     {
       "item": "dragonsurvival:elder_dragon_dust"
     }
   ],
   "result": {
-    "item": "dragonsurvival:treasure_copper",
+    "id": "dragonsurvival:treasure_copper",
     "count": 1
   }
 }

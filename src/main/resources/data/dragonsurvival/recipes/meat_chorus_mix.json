@@ -2,20 +2,20 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "tag": "forge:raw_meats"
+            "tag": "c:foods/raw_meats"
         },
         {
-            "tag": "forge:raw_meats"
+            "tag": "c:foods/raw_meats"
         },
         {
-            "tag": "forge:raw_meats"
+            "tag": "c:foods/raw_meats"
         },
         {
             "item": "minecraft:chorus_fruit"
         }
     ],
     "result": {
-        "item": "dragonsurvival:meat_chorus_mix",
+        "id": "dragonsurvival:meat_chorus_mix",
         "count": 1
     }
 }

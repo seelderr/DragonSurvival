@@ -9,7 +9,7 @@
     }
   ],
   "result": {
-    "item": "dragonsurvival:treasure_gold",
+    "id": "dragonsurvival:treasure_gold",
     "count": 1
   }
 }

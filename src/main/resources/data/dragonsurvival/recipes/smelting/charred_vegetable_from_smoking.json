@@ -3,7 +3,9 @@
   "ingredient": {
     "tag": "dragonsurvival:cooked_vegetables"
   },
-  "result": "dragonsurvival:charred_vegetable",
+  "result": {
+    "id": "dragonsurvival:charred_vegetable"
+  },
   "experience": 0.35,
   "cookingtime": 50
 }

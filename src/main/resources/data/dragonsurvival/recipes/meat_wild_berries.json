@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "tag": "forge:raw_meats"
+            "tag": "c:foods/raw_meats"
         },
         {
             "item": "minecraft:sweet_berries"
@@ -24,7 +24,7 @@
         }
     ],
     "result": {
-        "item": "dragonsurvival:meat_wild_berries",
+        "id": "dragonsurvival:meat_wild_berries",
         "count": 1
     }
 }

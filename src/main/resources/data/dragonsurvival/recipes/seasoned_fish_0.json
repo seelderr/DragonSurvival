@@ -2,7 +2,7 @@
     "type": "minecraft:crafting_shapeless",
     "ingredients": [
         {
-            "tag": "forge:raw_fishes"
+            "tag": "c:foods/raw_fishes"
         },
         {
             "item": "minecraft:glow_ink_sac"
@@ -12,7 +12,7 @@
         }
     ],
     "result": {
-        "item": "dragonsurvival:seasoned_fish",
+        "id": "dragonsurvival:seasoned_fish",
         "count": 1
     }
 }

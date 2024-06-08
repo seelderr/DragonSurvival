@@ -14,7 +14,7 @@
     }
   },
   "result": {
-    "item": "dragonsurvival:charged_coal",
+    "id": "dragonsurvival:charged_coal",
     "count": 2
   }
 }
