@@ -22,7 +22,6 @@ public class SkinCap extends SubCap{
 	public void compileSkin() {
 		recompileSkin = true;
 		isCompiled = false;
-		FakeClientPlayerUtils.getFakePlayer(0, handler);
 	}
 
 	public SkinCap(DragonStateHandler handler){

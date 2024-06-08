@@ -13,6 +13,9 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.BackgroundColorButton.BUTTON_TEXTURE;
+import static by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList.BACKGROUND_TEXTURE;
+
 public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	public final ExtendedButton colorPicker;
 	private final DragonEditorScreen screen;
@@ -51,10 +54,13 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, 10);
-		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
-		guiGraphics.pose().popPose();
-		colorPicker.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		if(visible) {
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 100);
+			guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
+			guiGraphics.pose().translate(0, 0, 100);
+			colorPicker.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+			guiGraphics.pose().popPose();
+		}
 	}
 }

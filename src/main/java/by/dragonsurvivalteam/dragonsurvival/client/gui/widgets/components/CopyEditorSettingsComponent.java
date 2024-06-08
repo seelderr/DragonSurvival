@@ -12,6 +12,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
@@ -44,17 +45,8 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, Component.empty(), null){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-				guiGraphics.pose().pushPose();
-				// Render pop-up contents above the other elements
-				guiGraphics.pose().translate(0, 0, 100);
-				setMessage(Component.empty());
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				guiGraphics.blit(DragonAltarGUI.CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
-				guiGraphics.pose().popPose();
-
-				if (isHovered) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
-				}
 			}
 
 			@Override
@@ -89,6 +81,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				btn.onPress();
 			}
 		};
+		confirm.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));
 
 		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, Component.empty(), null){
 			@Override
@@ -99,18 +92,14 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				guiGraphics.blit(DragonAltarGUI.CANCEL_BUTTON, getX(), getY(), 0, 0, 15, 15, 15, 15);
 //				guiGraphics.pose().popPose();
-
-				if (isHovered) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
-				}
 			}
-
 
 			@Override
 			public void onPress(){
 				btn.onPress();
 			}
 		};
+		cancel.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.cancel")));
 
 		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {}){
 
@@ -163,15 +152,16 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-//		guiGraphics.pose().pushPose();
-//		guiGraphics.pose().translate(0, 0, 10);
+		// Render pop-up contents above the other elements
+		guiGraphics.pose().pushPose();
+		guiGraphics.pose().translate(0, 0, 200);
 		guiGraphics.blitWithBorder(DropdownList.BACKGROUND_TEXTURE, x, y - 3, 0, 0, xSize, ySize + 6, 32, 32, 10, 10, 10, 10);
-//		guiGraphics.pose().popPose();
 		confirm.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		cancel.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		newborn.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		young.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		adult.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+		guiGraphics.pose().popPose();
 		guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.copy_to"), x + xSize / 2, y + 1, 14737632);
 	}
 }

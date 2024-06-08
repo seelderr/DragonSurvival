@@ -105,7 +105,7 @@ public class DragonEditorScreen extends Screen {
 	private HashMap<DragonLevel, Integer> presetSelections = new HashMap<DragonLevel, Integer>();
 
 	private List<ColorSelectorButton> colorButtons = new ArrayList<>();
-	private ExtendedCheckbox defaultSkinCheckbox;
+	public ExtendedCheckbox defaultSkinCheckbox;
 	private ExtendedCheckbox showUiCheckbox;
 
 	public int backgroundColor = -804253680;
@@ -125,19 +125,6 @@ public class DragonEditorScreen extends Screen {
 		super(Component.translatable("ds.gui.dragon_editor"));
 		this.source = source;
 		this.dragonType = dragonType;
-	}
-
-	private static void reverseQueue(Queue<CompoundTag> queue){
-		int n = queue.size();
-		Stack<CompoundTag> stack = new Stack<>();
-		for(int i = 0; i < n; i++){
-			CompoundTag curr = queue.poll();
-			stack.push(curr);
-		}
-		for(int i = 0; i < n; i++){
-			CompoundTag curr = stack.pop();
-			queue.add(curr);
-		}
 	}
 
 	@Override
@@ -211,10 +198,11 @@ public class DragonEditorScreen extends Screen {
 			for(ColorSelectorButton colorSelectorButton : colorButtons){
 				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, this.handler), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, this.handler.getType());
 
-				colorSelectorButton.visible = text != null && text.colorable || defaultSkinCheckbox.isActive();
+				colorSelectorButton.visible = (text != null && text.colorable) && !defaultSkinCheckbox.selected;
 			}
 		}
 
+		defaultSkinCheckbox.selected = preset.skinAges.get(level).get().defaultSkin;
 		showUiCheckbox.visible = true;
 	}
 
@@ -437,23 +425,13 @@ public class DragonEditorScreen extends Screen {
 			addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
 		}
 
-		addRenderableWidget(new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected()){
-			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				selected = preset.skinAges.get(level).get().wings;
-				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.wings.tooltip"), pMouseX, pMouseY);
-				}
-			}
-		});
 
-		defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
-			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-			}
-		};
+		ExtendedCheckbox wingsCheckBox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected());
+		wingsCheckBox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.wings.tooltip")));
+		wingsCheckBox.selected = preset.skinAges.get(level).get().wings;
+		addRenderableWidget(wingsCheckBox);
+
+		defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected());
 		defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.default_skin.tooltip")));
 		addRenderableWidget(defaultSkinCheckbox);
 
@@ -550,7 +528,7 @@ public class DragonEditorScreen extends Screen {
 		});
 
 
-		addRenderableWidget(new ExtendedButton(guiLeft + 260, 11, 18, 18, Component.empty(), btn -> {
+		ExtendedButton randomButton = new ExtendedButton(guiLeft + 260, 11, 18, 18, Component.empty(), btn -> {
 
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), EnumSkinLayer.EXTRA);
 
@@ -559,12 +537,12 @@ public class DragonEditorScreen extends Screen {
 				if (text == null) { DragonSurvivalMod.LOGGER.error("Key " + s + " not found!"); return true; }
 				return !text.random;
 			});
-			
+
 			//if (!isEditor) {
 			//	int bodytype = minecraft.player.getRandom().nextInt(DragonBodies.ORDER.length);
 			//	dragonBody = DragonBodies.bodyMappings.get(DragonBodies.ORDER[bodytype].toLowerCase()).get();
 			//}
-			
+
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, handler), layer);
 
@@ -610,31 +588,22 @@ public class DragonEditorScreen extends Screen {
 		}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick){
-				guiGraphics.blit(RANDOM, getX(), getY(), 0, 0, width, height, width, height);
-
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.random"), pMouseX, pMouseY);
-				}
+				guiGraphics.blit(RANDOM, getX(), getY(), 0, 0, 16, 16, 16, 16);
 			}
-		});
+		};
+		randomButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.random")));
+		addRenderableWidget(randomButton);
 
 		ExtendedButton saveButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }){
 			@Override
 			public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
-				if (visible) {
-					guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
-
-					if (isHoveredOrFocused()) {
-						guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.save_slot"), mouseX, mouseY);
-					}
-				}
+				guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
 			}
 		};
 		saveButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.save_slot")));
-
 		addRenderableWidget(saveButton);
 
-		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), button -> { /* Nothing to do */ }));
+		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.translatable("ds.gui.dragon_editor.copy"), button -> { /* Nothing to do */ }));
 
 		showUiCheckbox = new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected());
 		addRenderableWidget(showUiCheckbox);

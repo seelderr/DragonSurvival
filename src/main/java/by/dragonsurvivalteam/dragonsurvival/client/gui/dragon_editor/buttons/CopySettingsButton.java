@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,13 +25,12 @@ public class CopySettingsButton extends ExtendedButton {
 	public CopySettingsButton(DragonEditorScreen screen, int xPos, int yPos, int width, int height, Component displayString, OnPress handler){
 		super(xPos, yPos, width, height, displayString, handler);
 		this.screen = screen;
+		setTooltip(Tooltip.create(displayString));
 	}
 
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		active = visible = screen.showUi;
-
 		if(visible){
 			guiGraphics.blit(ICON, getX(), getY(), 0, 0, 16, 16, 16, 16);
 		}
@@ -40,10 +40,6 @@ public class CopySettingsButton extends ExtendedButton {
 			Screen screen = Minecraft.getInstance().screen;
 			screen.children().removeIf(s -> s == component);
 			screen.renderables.removeIf(s -> s == renderButton);
-		}
-
-		if (isHoveredOrFocused() && (component != null && !component.isMouseOver(pMouseX, pMouseY) || !toggled)) {
-			guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.copy"), pMouseX, pMouseY);
 		}
 	}
 
