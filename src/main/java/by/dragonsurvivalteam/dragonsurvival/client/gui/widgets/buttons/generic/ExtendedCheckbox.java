@@ -7,21 +7,31 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.narration.NarratedElementType;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class ExtendedCheckbox extends AbstractButton {
+
+	@OnlyIn(Dist.CLIENT)
+	public interface OnValueChange {
+		ExtendedCheckbox.OnValueChange NOP = (p_309046_, p_309014_) -> {
+		};
+
+		void onValueChange(ExtendedCheckbox pCheckbox, boolean pValue);
+	}
+
 	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
 	final ResourceLocation TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/checkbox.png");
 	private final int renderWidth;
 	public Consumer<ExtendedCheckbox> pressable;
 	public boolean selected;
-	private final Checkbox.OnValueChange onValueChange;
+	private final ExtendedCheckbox.OnValueChange onValueChange;
 
 	public ExtendedCheckbox(int pX, int pY, int pWidth, int renderWidth, int pHeight, Component pMessage, boolean pSelected, Consumer<ExtendedCheckbox> pressable){
 		super(pX, pY, pWidth, pHeight, pMessage);
@@ -31,15 +41,10 @@ public class ExtendedCheckbox extends AbstractButton {
 		this.renderWidth = renderWidth;
 	}
 
-	public static int getBoxSize(Font pFont) {
-		return 9 + 8;
-	}
-
 	@Override
 	public void onPress() {
 		this.selected = !this.selected;
-		// FIXME
-		//this.onValueChange.onValueChange(this, this.selected);
+		this.onValueChange.onValueChange(this, this.selected);
 		pressable.accept(this);
 	}
 

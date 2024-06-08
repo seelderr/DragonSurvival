@@ -192,6 +192,7 @@ public class ToolTipHandler{
 		}
 	}
 
+	// FIXME: This is currently broken.
 	/** Renders the special border elements for the info tooltips */
 	@SubscribeEvent
 	public static void onTooltipEvent(RenderTooltipEvent.Pre event){

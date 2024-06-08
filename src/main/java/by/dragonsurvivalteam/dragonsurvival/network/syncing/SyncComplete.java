@@ -47,7 +47,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 
 		@Override
 		public Type<? extends CustomPacketPayload> type() {
-			return null;
+			return TYPE;
 		}
 	}
 }

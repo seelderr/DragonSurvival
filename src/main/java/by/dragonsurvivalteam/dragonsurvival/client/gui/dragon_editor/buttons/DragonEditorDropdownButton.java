@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.List;
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks){
 		active = visible = dragonEditorScreen.showUi;
+		super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
 		String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
 
 		if (!Objects.equals(currentValue, current)) {
@@ -85,21 +87,19 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			if(!screen.children().isEmpty()){
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
-				// FIXME
-				//screen.children().add(0, list);
-				//screen.children().add(list);
+
+				((AccessorScreen)screen).children().add(0, list);
+				((AccessorScreen)screen).children().add(list);
 
 				for(GuiEventListener child : screen.children())
 					if(child instanceof ContainerObjectSelectionList){
-						// FIXME
-						//if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
-						//	hasBorder = true;
-						//	break;
-						//}
+						if(((ContainerObjectSelectionList<?>)child).visible){
+							hasBorder = true;
+							break;
+						}
 					}
 			}else{
-				// FIXME
-				//screen.children().add(list);
+				((AccessorScreen)screen).children().add(list);
 				screen.renderables.add(list);
 			}
 
@@ -120,12 +120,11 @@ public class DragonEditorDropdownButton extends DropDownButton{
 						RenderSystem.disableScissor();
 				}
 			};
-			// FIXME
-			//screen.children().add(renderButton);
+			((AccessorScreen)screen).children().add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
 			LayerSettings settings = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get();
-			DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, dragonEditorScreen.handler), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
+			DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.handler), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
 			if (text != null && !settings.modifiedColor) {
 				settings.hue = text.average_hue;
 			}

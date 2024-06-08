@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.CopyEditorSettingsComponent;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -65,9 +66,8 @@ public class CopySettingsButton extends ExtendedButton {
 
 			int offset = screen.height - (getY() + 80);
 			component = new CopyEditorSettingsComponent(screen, this, getX() + width - 80, getY() + Math.min(offset, 0), 80, 70);
-			// FIXME: Why doesn't this work?
-			//screen.children().add(0, component);
-			//screen.children().add(component);
+			((AccessorScreen)screen).children().add(0, component);
+			((AccessorScreen)screen).children().add(component);
 			screen.renderables.add(renderButton);
 		}else{
 			screen.children().removeIf(s -> s == component);

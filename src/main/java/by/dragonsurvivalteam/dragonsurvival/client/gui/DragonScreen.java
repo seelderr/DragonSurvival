@@ -147,13 +147,12 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 		// Info button at the bottom of the claw menu
 		addRenderableWidget(new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0){
-			// FIXME
-			/*@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = clawsMenu;
 				active = clawsMenu;
-				super.render(guiGraphics, mouseX, mouseY, partialTick);
-			}*/
+				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+			}
 		});
 
 		// Button to enable / disable the rendering of claws
@@ -164,9 +163,8 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
 			PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws));
 		}, Component.translatable("ds.gui.claws.rendering")){
-			// FIXME
-			/*@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				active = clawsMenu;
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
@@ -175,7 +173,9 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 				}
 
 				isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + width && mouseY < getY() + height;
-			}*/
+
+				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
+			}
 		});
 
 		//DSButton

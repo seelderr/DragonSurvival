@@ -14,7 +14,10 @@ import com.google.common.collect.ImmutableList;
 import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
@@ -28,7 +31,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final ExtendedButton hueReset;
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;
-	//private final Checkbox glowing;
+	private final Checkbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -52,10 +55,14 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
 		// FIXME
-		/*glowing = new ExtendedCheckbox(x + 3, y, xSize - 5, 10, 10, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, s -> {
-			settings.get().glowing = s.selected();
-			screen.handler.getSkinData().compileSkin();
-		});*/
+		glowing = Checkbox.builder(Component.translatable("ds.gui.dragon_editor.glowing"), Minecraft.getInstance().font)
+				.pos(x + 3, y)
+				.selected(set.glowing)
+				.onValueChange((s, b) -> {
+					settings.get().glowing = s.selected();
+					screen.handler.getSkinData().compileSkin();
+				})
+				.build();
 
 		float[] hsb = new float[]{set.hue, set.saturation, set.brightness};
 

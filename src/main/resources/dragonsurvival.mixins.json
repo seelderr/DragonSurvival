@@ -26,6 +26,7 @@
     "AccessorEntityRendererManager",
     "AccessorGameRenderer",
     "AccessorLivingRenderer",
+    "AccessorScreen",
     "MixinAbstractContainerEventHandler",
     "MixinClientWorld",
     "MixinEntityRenderDispatcher",

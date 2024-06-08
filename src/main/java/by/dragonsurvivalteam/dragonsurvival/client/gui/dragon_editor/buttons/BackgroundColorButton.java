@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.BackgroundColorSelectorComponent;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -50,12 +51,11 @@ public class BackgroundColorButton extends ExtendedButton {
 			Screen screen = Minecraft.getInstance().screen;
 
 			colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
-			// FIXME: WHy doesn't this work?
-			/*colorComponent.children().forEach(
+			colorComponent.children().forEach(
 				s -> {
-					screen.children().add(s);
+					((AccessorScreen)screen).children().add(s);
 				}
-			);*/
+			);
 			screen.renderables.add(renderButton);
 		}else{
 			screen.children().removeIf(s -> s == colorComponent);

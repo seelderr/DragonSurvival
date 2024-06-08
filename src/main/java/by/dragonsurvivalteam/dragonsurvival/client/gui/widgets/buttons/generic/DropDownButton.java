@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEdito
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.List;
 import java.util.Objects;
@@ -47,7 +48,7 @@ public class DropDownButton extends ExtendedButton {
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		// TODO :: Is this safe?
-		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && !list.isMouseOver(mouseX, mouseY))){
+		if(toggled && (!visible || !isHoveredOrFocused() && !list.isMouseOver(mouseX, mouseY))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
 			screen.children().removeIf(s -> s == list);
@@ -65,7 +66,8 @@ public class DropDownButton extends ExtendedButton {
 
 		Minecraft mc = Minecraft.getInstance();
 		int k = !isActive() ? 0 : isHoveredOrFocused() ? 2 : 1;
-		guiGraphics.blitWithBorder(SPRITES.get(this.active, this.isHoveredOrFocused()), getX(), getY(), 0, 46 + k * 20, width, height, 200, 20, 2, 3, 2, 2/*, getBlitOffset()*/);
+		guiGraphics.blitSprite(SPRITES.get(this.active, this.isHoveredOrFocused()), getX(), getY(), width, height);
+		guiGraphics.renderOutline(getX(), getY(), width, height, k);
 
 		Component buttonText = getMessage();
 		int strWidth = mc.font.width(buttonText);
@@ -116,21 +118,18 @@ public class DropDownButton extends ExtendedButton {
 			if(!screen.children().isEmpty()){
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
-				// FIXME
-				//screen.children().add(0, list);
-				//screen.children().add(list);
+				((AccessorScreen)screen).children().add(0, list);
+				((AccessorScreen)screen).children().add(list);
 
 				for(GuiEventListener child : screen.children())
 					if(child instanceof ContainerObjectSelectionList){
-						// FIXME
-						/*if(((ContainerObjectSelectionList<?>)child).renderTopAndBottom){
+						if(((ContainerObjectSelectionList<?>)child).visible){
 							hasBorder = true;
 							break;
-						}*/
+						}
 					}
 			}else{
-				// FIXME
-				//screen.children().add(list);
+				((AccessorScreen)screen).children().add(list);
 				screen.renderables.add(list);
 			}
 
@@ -151,8 +150,7 @@ public class DropDownButton extends ExtendedButton {
 						RenderSystem.disableScissor();
 				}
 			};
-			// FIXME
-			//screen.children().add(renderButton);
+			((AccessorScreen)screen).children().add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
 			screen.children().removeIf(s -> s == list);

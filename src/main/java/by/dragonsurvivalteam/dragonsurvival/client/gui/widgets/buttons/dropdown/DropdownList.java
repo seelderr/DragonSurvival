@@ -23,8 +23,6 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight) {
 		super(Minecraft.getInstance(), 0, 0, 0,  itemHeight);
 		listWidth = xSize;
-		//setRenderBackground(false);
-		//setRenderTopAndBottom(false);
 		reposition(x, y, xSize, ySize);
 	}
 
@@ -135,8 +133,8 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		guiGraphics.pose().popPose();
 	}
 
-	@Override
+	/*@Override
 	public boolean isMouseOver(double mouseX, double mouseY) {
 		return visible && mouseY >= (double) getY() - 3 && mouseY <= (double) getHeight() - getY() + 3 && mouseX >= (double) getX() && mouseX <= (double) getWidth() - getX();
-	}
+	}*/
 }

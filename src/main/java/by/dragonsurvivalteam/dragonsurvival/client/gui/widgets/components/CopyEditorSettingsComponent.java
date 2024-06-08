@@ -61,8 +61,6 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			public void onPress(){
 				SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, Lazy.of(()->new SkinAgeGroup(screen.level))).get();
 
-				screen.doAction();
-
 				if(newborn.active && newborn.selected()){
 					screen.preset.skinAges.put(DragonLevel.NEWBORN, Lazy.of(()->{
 						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.NEWBORN);
@@ -115,9 +113,9 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		};
 
 		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {}){
-			// FIXME
-			//@Override
-			/*public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.NEWBORN){
 					selected = true;
@@ -125,12 +123,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}else{
 					active = true;
 				}
-			}*/
+			}
 		};
 		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {}){
-			// FIXME
-			/*@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.YOUNG){
 					selected = true;
@@ -138,12 +135,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}else{
 					active = true;
 				}
-			}*/
+			}
 		};
 		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {}){
-			// FIXME
-			//@Override
-			/*public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
 				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.ADULT){
 					selected = true;
@@ -151,7 +147,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 				}else{
 					active = true;
 				}
-			}*/
+			}
 		};
 	}
 

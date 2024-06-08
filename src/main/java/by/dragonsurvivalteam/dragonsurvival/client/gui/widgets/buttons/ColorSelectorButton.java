@@ -10,6 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import java.awt.*;
 import java.util.function.Consumer;
+
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -75,9 +77,8 @@ public class ColorSelectorButton extends ExtendedButton {
 
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
-				// FIXME We need to append this functionality to renderWidget
-				/*@Override
-				public void render(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				@Override
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
 					active = visible = false;
 
 					if (hueComponent != null && text.defaultColor == null) {
@@ -91,7 +92,7 @@ public class ColorSelectorButton extends ExtendedButton {
 						if (colorComponent.visible)
 							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
-				}*/
+				}
 			};
 
 			Screen screen = Minecraft.getInstance().screen;
@@ -99,15 +100,13 @@ public class ColorSelectorButton extends ExtendedButton {
 			if(text.defaultColor == null){
 				int offset = screen.height - (getY() + 80);
 				hueComponent = new HueSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 76, layer);
-				// FIXME
-				//screen.children().add(0, hueComponent);
-				//screen.children().add(hueComponent);
+				((AccessorScreen)screen).children().add(0, hueComponent);
+				((AccessorScreen)screen).children().add(hueComponent);
 			}else{
 				int offset = screen.height - (getY() + 80);
 				colorComponent = new ColorSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 71, layer);
-				// FIXME
-				//screen.children().add(0, colorComponent);
-				//screen.children().add(colorComponent);
+				((AccessorScreen)screen).children().add(0, colorComponent);
+				((AccessorScreen)screen).children().add(colorComponent);
 			}
 			screen.renderables.add(renderButton);
 		}else{
