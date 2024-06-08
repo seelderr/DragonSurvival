@@ -37,6 +37,9 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 
 		Player player = animatable.getPlayer();
+		if (player == null) {
+			return;
+		}
 
 		if (player.isSpectator()) {
 			return;

@@ -34,6 +34,10 @@ public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
     public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
         Player player = animatable.getPlayer();
 
+        if (player == null) {
+            return;
+        }
+
         if (player.isSpectator()) {
             return;
         }
