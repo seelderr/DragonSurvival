@@ -288,12 +288,6 @@ public class DragonModifiers{
 		return Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get())).getModifier(DRAGON_STEP_HEIGHT_MODIFIER);
 	}
 
-
-	@Nullable
-	public static AttributeModifier getStepHeightModifier(Player player) {
-		return Objects.requireNonNull(player.getAttribute(ForgeMod.STEP_HEIGHT_ADDITION.get())).getModifier(DRAGON_STEP_HEIGHT_MODIFIER);
-	}
-
 	@Nullable
 	public static AttributeModifier getMovementSpeedModifier(Player player) {
 		return Objects.requireNonNull(player.getAttribute(Attributes.MOVEMENT_SPEED)).getModifier(DRAGON_MOVEMENT_SPEED_MODIFIER);
