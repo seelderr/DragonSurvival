@@ -196,7 +196,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 		AnimationController<DragonEntity> animationController = state.getController();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		
+
 		if (handler.refreshBody) {
 			animationController.forceAnimationReset();
 			handler.refreshBody = false;
@@ -204,10 +204,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 		boolean useDynamicScaling = false;
 		double animationSpeed = 1;
-		double speedFactor = 1;
+		double speedFactor = ClientConfig.movementAnimationSpeedFactor;
 		double baseSpeed = defaultPlayerWalkSpeed;
-		double smallSizeFactor = 0.3;
-		double bigSizeFactor = 1;
+		double smallSizeFactor = ClientConfig.smallSizeAnimationSpeedFactor;
+		double bigSizeFactor = ClientConfig.largeSizeAnimationSpeedFactor;
 		double baseSize = ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 		double distanceFromGround = ServerFlightHandler.distanceFromGround(player);
 		double height = DragonSizeHandler.calculateDragonHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
@@ -362,7 +362,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		double finalAnimationSpeed = animationSpeed;
 		if(useDynamicScaling) {
 			double horizontalDistance = deltaMovement.horizontalDistance();
-			double speedComponent = (horizontalDistance - baseSpeed) / baseSpeed * speedFactor;
+			double speedComponent = Math.min(ClientConfig.maxAnimationSpeedFactor, (horizontalDistance - baseSpeed) / baseSpeed * speedFactor);
 			double sizeDistance = handler.getSize() - baseSize;
 			double sizeFactor = sizeDistance >= 0 ? bigSizeFactor : smallSizeFactor;
 			double sizeComponent = baseSize / (baseSize + sizeDistance * sizeFactor);
