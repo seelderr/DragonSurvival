@@ -372,10 +372,10 @@ public class ServerConfig{
 			"minecraft:base_stone_overworld",
 			"minecraft:stone_bricks",
 			"minecraft:beacon_base_blocks",
-			"forge:cobblestone",
-			"forge:sandstone",
-			"forge:stone",
-			"forge:ores",
+			"c:cobblestone",
+			"c:sandstone/blocks",
+			"c:stones",
+			"c:ores",
 			"quark:deepslate",
 			"quark:deepslate_bricks",
 			"quark:cobbled_deepslate",
@@ -401,7 +401,7 @@ public class ServerConfig{
 			"minecraft:logs",
 			"minecraft:leaves",
 			"minecraft:planks",
-			"forge:dirt",
+			"minecraft:dirt",
 			"minecraft:grass",
 			"minecraft:dirt",
 			"minecraft:wooden_slab"
@@ -413,7 +413,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea"}, key = "seaSpeedupBlocks", comment = "Blocks sea dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:mud", "minecraft:coral_blocks", "forge:sand", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water", "quark:permafrost", "immersive_weathering:permafrost", "architects_palette:polished_packed_ice");
+	public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:mud", "minecraft:coral_blocks", "c:sands", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water", "quark:permafrost", "immersive_weathering:permafrost", "architects_palette:polished_packed_ice");
 
 	//Dragon Penalties
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penalties", comment = "Set to false to toggle off all dragon penalties." )
@@ -520,7 +520,7 @@ public class ServerConfig{
 
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "oresTag", comment = "The tag that contains all ores that can drop dust/bones when harvested. Will not drop if the ore drops another of the items in this tag. Format: modid:id" )
-	public static String oresTag = "forge:ores";
+	public static String oresTag = "c:ores";
 
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"food", "cave_dragon", "other"}, key = "hurtfulToCaveDragon", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage" )
