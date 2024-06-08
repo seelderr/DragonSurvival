@@ -90,6 +90,9 @@ public class ServerConfig{
 	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMaxHealth", comment = "The maximum health when the dragon is at maximum growth size if large scaling is enabled.")
 	public static Integer largeMaxHealth = 80;
+	@ConfigRange( min = 0.0, max = 100.0 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMovementSpeedScalar", comment = "The bonus movement speed multiplier per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
+	public static Double largeMovementSpeedScalar = 0.0;
 
 	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMovementSpeedScalar", comment = "The bonus movement speed multiplier per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
