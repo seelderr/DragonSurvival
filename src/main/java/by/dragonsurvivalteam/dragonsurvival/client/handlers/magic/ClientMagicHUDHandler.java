@@ -27,7 +27,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 
 public class ClientMagicHUDHandler {
-	public static final ResourceLocation VANILLA_WIDGETS = new ResourceLocation("textures/gui/widgets.png");
 	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
 	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
 
@@ -143,8 +142,8 @@ public class ClientMagicHUDHandler {
 		posY += skillbarYOffset;
 
 		if (handler.getMagicData().shouldRenderAbilities()) {
-			guiGraphics.blit(VANILLA_WIDGETS, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
-			guiGraphics.blit(VANILLA_WIDGETS, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
+			guiGraphics.blit(widgetTextures, posX, posY - 2, 0, 0, 0, 41, 22, 256, 256);
+			guiGraphics.blit(widgetTextures, posX + 41, posY - 2, 0, 141, 0, 41, 22, 256, 256);
 
 			for (int x = 0; x < MagicCap.activeAbilitySlots; x++) {
 				ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(x);
@@ -164,7 +163,7 @@ public class ClientMagicHUDHandler {
 				}
 			}
 
-			guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
+			guiGraphics.blit(widgetTextures, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
 			int maxMana = ManaHandler.getMaxMana(localPlayer);
 			int curMana = ManaHandler.getCurrentMana(localPlayer);

@@ -79,16 +79,4 @@ public class DragonUtils {
 
 		return Tiers.NETHERITE;
 	}
-
-	public static Holder<DamageType> getBreathDamageType(final BreathAbility breathAbility) {
-		if (DragonUtils.isDragonType(breathAbility.getDragonType(), DragonTypes.CAVE)) {
-			return CAVE_DRAGON_BREATH;
-		} else if (DragonUtils.isDragonType(breathAbility.getDragonType(), DragonTypes.FOREST)) {
-			return FOREST_DRAGON_BREATH;
-		} else if (DragonUtils.isDragonType(breathAbility.getDragonType(), DragonTypes.SEA)) {
-			return SEA_DRAGON_BREATH;
-		}
-
-		return DRAGON_BREATH;
-	}
 }

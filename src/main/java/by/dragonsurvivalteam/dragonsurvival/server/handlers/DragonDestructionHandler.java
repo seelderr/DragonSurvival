@@ -106,7 +106,7 @@ public class DragonDestructionHandler {
                 continue;
             }
 
-            entity.hurt(new DamageSource(DSDamageTypes.CRUSHED, player), (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
+            entity.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CRUSHED), player), (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
             crushTickCounter = ServerConfig.crushingTickDelay;
         }
     }

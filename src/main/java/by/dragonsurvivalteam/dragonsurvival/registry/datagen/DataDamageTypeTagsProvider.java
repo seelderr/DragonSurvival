@@ -27,27 +27,27 @@ public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
     @Override
     protected void addTags(@NotNull final HolderLookup.Provider provider) {
         tag(DamageTypeTags.BYPASSES_ARMOR)
-                .add(DSDamageTypes.FOREST_DRAGON_DRAIN.unwrapKey().get())
-                .add(DSDamageTypes.CAVE_DRAGON_BURN.unwrapKey().get())
-                .add(DSDamageTypes.SPECTRAL_IMPACT.unwrapKey().get());
+                .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
+                .add(DSDamageTypes.CAVE_DRAGON_BURN)
+                .add(DSDamageTypes.SPECTRAL_IMPACT);
 
         tag(DamageTypeTags.IS_FIRE)
-                .add(DSDamageTypes.CAVE_DRAGON_BURN.unwrapKey().get())
-                .add(DSDamageTypes.CAVE_DRAGON_BREATH.unwrapKey().get());
+                .add(DSDamageTypes.CAVE_DRAGON_BURN)
+                .add(DSDamageTypes.CAVE_DRAGON_BREATH);
 
         tag(DamageTypeTags.IS_LIGHTNING)
-                .add(DSDamageTypes.SEA_DRAGON_BREATH.unwrapKey().get());
+                .add(DSDamageTypes.SEA_DRAGON_BREATH);
 
         tag(DRAGON_BREATH)
-                .add(DSDamageTypes.DRAGON_BREATH.unwrapKey().get())
-                .add(DSDamageTypes.CAVE_DRAGON_BURN.unwrapKey().get())
-                .add(DSDamageTypes.FOREST_DRAGON_DRAIN.unwrapKey().get())
-                .add(DSDamageTypes.SEA_DRAGON_BREATH.unwrapKey().get());
+                .add(DSDamageTypes.DRAGON_BREATH)
+                .add(DSDamageTypes.CAVE_DRAGON_BURN)
+                .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
+                .add(DSDamageTypes.SEA_DRAGON_BREATH);
 
         tag(NO_KNOCKBACK)
-                .add(DSDamageTypes.CAVE_DRAGON_BURN.unwrapKey().get())
-                .add(DSDamageTypes.FOREST_DRAGON_DRAIN.unwrapKey().get())
-                .add(DSDamageTypes.CRUSHED.unwrapKey().get());
+                .add(DSDamageTypes.CAVE_DRAGON_BURN)
+                .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
+                .add(DSDamageTypes.CRUSHED);
     }
 
     private static TagKey<DamageType> createKey(@NotNull final String name) {

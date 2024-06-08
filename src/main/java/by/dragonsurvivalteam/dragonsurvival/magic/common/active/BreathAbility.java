@@ -148,7 +148,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public abstract boolean canHitEntity(LivingEntity entity);
 
 	public void onEntityHit(final LivingEntity entityHit) {
-		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new DamageSource(DSDamageTypes.DRAGON_BREATH, player), getDamage()), entityHit)) {
+		if (TargetingFunctions.attackTargets(getPlayer(), entity -> entity.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.DRAGON_BREATH), player), getDamage()), entityHit)) {
 			entityHit.setDeltaMovement(entityHit.getDeltaMovement().multiply(0.25, 1, 0.25));
 			onDamage(entityHit);
 		}

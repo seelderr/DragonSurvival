@@ -77,14 +77,14 @@ public class CaveDragonType extends AbstractDragonType{
 			if(!world.isClientSide() ) {
 				if (player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0 || player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0 || isInSeaBlock && ServerConfig.caveRainDamage != 0.0) {
 					if (player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0) {
-						player.hurt(new DamageSource(DSDamageTypes.WATER_BURN), ServerConfig.caveWaterDamage.floatValue());
+						player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveWaterDamage.floatValue());
 					} else if ((player.isInWaterOrRain() && !player.isInWaterOrBubble() || isInSeaBlock) && ServerConfig.caveRainDamage != 0.0) {
 						timeInRain++;
 					}
 					
 					if (timeInRain >= maxRainTime) {
 						if (player.tickCount % 40 == 0) {
-							player.hurt(new DamageSource(DSDamageTypes.RAIN_BURN), ServerConfig.caveRainDamage.floatValue());
+							player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveRainDamage.floatValue());
 						}
 					}
 					

@@ -3,71 +3,33 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageType;
+import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class DSDamageTypes {
-    public static final DeferredRegister<DamageType> DS_DAMAGE_TYPES = DeferredRegister.create(
-            Registries.DAMAGE_TYPE,
-            DragonSurvivalMod.MODID
-    );
+    // We don't need to use a DeferredRegister for DamageTypes, as they are fully data driven.
+    public static final ResourceKey<DamageType> WATER_BURN = createKey("water_burn");
+    public static final ResourceKey<DamageType> RAIN_BURN = createKey("rain_burn");
+    public static final ResourceKey<DamageType> DEHYDRATION = createKey("dehydration");
+    public static final ResourceKey<DamageType> SPECTRAL_IMPACT = createKey("spectral_impact");
+    public static final ResourceKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
+    public static final ResourceKey<DamageType> CAVE_DRAGON_BREATH = createKey("cave_dragon_breath");
+    public static final ResourceKey<DamageType> FOREST_DRAGON_BREATH = createKey("forest_dragon_breath");
+    public static final ResourceKey<DamageType> SEA_DRAGON_BREATH = createKey("sea_dragon_breath");
+    public static final ResourceKey<DamageType> FOREST_DRAGON_DRAIN = createKey("forest_dragon_drain"); // TODO 1.20 :: tags -> setMagic()
+    public static final ResourceKey<DamageType> CAVE_DRAGON_BURN = createKey("cave_dragon_burn");
+    public static final ResourceKey<DamageType> DRAGON_BALL_LIGHTNING = createKey("dragon_ball_lightning");
+    public static final ResourceKey<DamageType> CRUSHED = createKey("crushed");
 
-    public static final Holder<DamageType> WATER_BURN = DS_DAMAGE_TYPES.register(
-            "water_burn",
-            () -> new DamageType("dragonsurvival.water_burn", 0.1F)
-    );
+    public static Holder<DamageType> get(final Level level, final ResourceKey<DamageType> damageType) {
+        return level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType);
+    }
 
-    public static final Holder<DamageType> RAIN_BURN = DS_DAMAGE_TYPES.register(
-            "rain_burn",
-            () -> new DamageType("dragonsurvival.rain_burn", 0.1F)
-    );
-
-    public static final Holder<DamageType> DEHYDRATION = DS_DAMAGE_TYPES.register(
-            "dehydration",
-            () -> new DamageType("dragonsurvival.dehydration", 0.1F)
-    );
-
-    public static final Holder<DamageType> SPECTRAL_IMPACT = DS_DAMAGE_TYPES.register(
-            "spectral_impact",
-            () -> new DamageType("dragonsurvival.spectral_impact", 0.1F)
-    );
-
-    public static final Holder<DamageType> DRAGON_BREATH = DS_DAMAGE_TYPES.register(
-            "dragon_breath",
-            () -> new DamageType("dragonsurvival.dragon_breath", 0.1F)
-    );
-
-    public static final Holder<DamageType> CAVE_DRAGON_BREATH = DS_DAMAGE_TYPES.register(
-            "cave_dragon_breath",
-            () -> new DamageType("cave_dragon_breath", 0.1F)
-    );
-
-    public static final Holder<DamageType> FOREST_DRAGON_BREATH = DS_DAMAGE_TYPES.register(
-            "forest_dragon_breath",
-            () -> new DamageType("forest_dragon_breath", 0.1F)
-    );
-
-    public static final Holder<DamageType> SEA_DRAGON_BREATH = DS_DAMAGE_TYPES.register(
-            "sea_dragon_breath",
-            () -> new DamageType("sea_dragon_breath", 0.1F)
-    );
-
-    public static final Holder<DamageType> FOREST_DRAGON_DRAIN = DS_DAMAGE_TYPES.register(
-            "forest_dragon_drain",
-            () -> new DamageType("dragonsurvival.forest_dragon_drain", 0.1F)
-    );
-
-    public static final Holder<DamageType> CAVE_DRAGON_BURN = DS_DAMAGE_TYPES.register(
-            "cave_dragon_burn",
-            () -> new DamageType("dragonsurvival.cave_dragon_burn", 0.1F)
-    );
-
-    public static final Holder<DamageType> DRAGON_BALL_LIGHTNING = DS_DAMAGE_TYPES.register(
-            "dragon_ball_lightning",
-            () -> new DamageType("dragonsurvival.dragon_ball_lightning", 0.1F)
-    );
-
-    public static final Holder<DamageType> CRUSHED = DS_DAMAGE_TYPES.register("crushed",
-            () -> new DamageType("dragonsurvival.crushed", 0.1F)
-    );
+    private static ResourceKey<DamageType> createKey(final String name) {
+        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(DragonSurvivalMod.MODID, name));
+    }
 }

@@ -146,7 +146,7 @@ public class MagicHandler{
 						Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
 
 						if (player != null) {
-							TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.FOREST_DRAGON_DRAIN, player), drainEffect.getAmplifier() + 1), entity);
+							TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN), player), drainEffect.getAmplifier() + 1), entity);
 						} else {
 							entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
 						}
@@ -177,7 +177,7 @@ public class MagicHandler{
 								}
 								Player player = cap.lastAfflicted != -1 && entity.level().getEntity(cap.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(cap.lastAfflicted) : null;
 								if (player != null) {
-									TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.CAVE_DRAGON_BURN, player), damage), entity);
+									TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CAVE_DRAGON_BURN), player), damage), entity);
 								} else {
 									entity.hurt(entity.damageSources().onFire(), damage);
 								}
@@ -257,7 +257,7 @@ public class MagicHandler{
 					if (hit) {
 						// FIXME 1.20
 						// event.getSource().bypassArmor();
-						event.getEntity().hurt(new DamageSource(DSDamageTypes.SPECTRAL_IMPACT, player), (float) (event.getAmount() * 0.15));
+						event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
 						double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
 						double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 

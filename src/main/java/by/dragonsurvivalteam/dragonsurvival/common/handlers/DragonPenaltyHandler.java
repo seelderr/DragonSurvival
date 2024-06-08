@@ -57,7 +57,7 @@ public class DragonPenaltyHandler{
 						if(dragonStateHandler.getType() == null || !Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
 							return;
 						}
-						player.hurt(new DamageSource(DSDamageTypes.WATER_BURN), ServerConfig.caveSplashDamage.floatValue());
+						player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveSplashDamage.floatValue());
 					}
 				});
 			}

@@ -104,12 +104,12 @@ public class SeaDragonType extends AbstractDragonType {
 						
 						if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
 							if (player.tickCount % 40 == 0) {
-								player.hurt(new DamageSource(DSDamageTypes.DEHYDRATION), hydrationDamage);
+								player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.DEHYDRATION)), hydrationDamage);
 							}
 							
 						} else if (timeWithoutWater >= maxTicksOutofWater * 2) {
 							if (player.tickCount % 20 == 0) {
-								player.hurt(new DamageSource(DSDamageTypes.DEHYDRATION), hydrationDamage);
+								player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.DEHYDRATION)), hydrationDamage);
 							}
 						}
 					}

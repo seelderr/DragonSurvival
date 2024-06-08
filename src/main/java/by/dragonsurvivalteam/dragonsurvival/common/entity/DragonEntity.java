@@ -376,8 +376,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 	@Override
 	public double getTick(Object obj) {
-		// Add some offset so that when the game starts we don't go into negative ticks
-		return RenderUtil.getCurrentTick() + 100;
+		// Add some offset so that when the game starts we don't go into negative time
+		return RenderUtil.getCurrentSystemTick() + 100;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {

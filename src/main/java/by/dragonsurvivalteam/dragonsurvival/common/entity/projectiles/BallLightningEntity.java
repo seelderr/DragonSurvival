@@ -59,7 +59,7 @@ public class BallLightningEntity extends DragonBallEntity{
 	@Override
 	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){
 		// This damage source is used since it is specifically not fire damage, so that cave dragons don't ignore the ball lightning damage
-		return new DamageSource(DSDamageTypes.DRAGON_BALL_LIGHTNING);
+		return new DamageSource(DSDamageTypes.get(pIndirectEntity.level(), DSDamageTypes.DRAGON_BALL_LIGHTNING));
 	}
 
 	@Override
