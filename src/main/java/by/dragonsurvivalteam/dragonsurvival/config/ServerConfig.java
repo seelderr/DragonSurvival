@@ -95,10 +95,6 @@ public class ServerConfig{
 	public static Double largeMovementSpeedScalar = 0.0;
 
 	@ConfigRange( min = 0.0, max = 100.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMovementSpeedScalar", comment = "The bonus movement speed multiplier per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
-	public static Double largeMovementSpeedScalar = 0.0;
-
-	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeDamageBonus", comment = "The bonus damage when the dragon is at maximum growth size if large scaling is enabled.")
 	public static Double largeDamageBonus = 6.0;
 
