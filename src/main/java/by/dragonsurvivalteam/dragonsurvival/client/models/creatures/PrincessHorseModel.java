@@ -34,6 +34,6 @@ public class PrincessHorseModel extends GeoModel<PrincessHorseEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(PrincessHorseEntity animatable){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/horseback_rider.animations.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/horseback_rider.animation.json");
 	}
 }

@@ -25,6 +25,6 @@ public class StormBreathEffectModel extends GeoModel<StormBreathEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final StormBreathEntity entity) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/storms_breath.animations.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/storms_breath.animation.json");
 	}
 }

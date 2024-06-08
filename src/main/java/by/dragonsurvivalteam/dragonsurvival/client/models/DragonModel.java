@@ -186,7 +186,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 				return new ResourceLocation(DragonSurvivalMod.MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
 			}
 		}
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animations.json");
+		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animation.json");
 	}
 
 	@Override
