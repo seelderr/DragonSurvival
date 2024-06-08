@@ -105,6 +105,7 @@ public class DragonEditorScreen extends Screen {
 	private HashMap<DragonLevel, Integer> presetSelections = new HashMap<DragonLevel, Integer>();
 
 	private List<ColorSelectorButton> colorButtons = new ArrayList<>();
+	private ExtendedCheckbox defaultSkinCheckbox;
 	private ExtendedCheckbox showUiCheckbox;
 
 	public int backgroundColor = -804253680;
@@ -210,7 +211,7 @@ public class DragonEditorScreen extends Screen {
 			for(ColorSelectorButton colorSelectorButton : colorButtons){
 				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, this.handler), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, this.handler.getType());
 
-				colorSelectorButton.visible = text != null && text.colorable;
+				colorSelectorButton.visible = text != null && text.colorable || defaultSkinCheckbox.isActive();
 			}
 		}
 
@@ -447,17 +448,14 @@ public class DragonEditorScreen extends Screen {
 			}
 		});
 
-		addRenderableWidget(new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
+		defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected()){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				selected = preset.skinAges.get(level).get().defaultSkin;
 				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.default_skin.tooltip"), pMouseX, pMouseY);
-				}
 			}
-		});
+		};
+		defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.default_skin.tooltip")));
+		addRenderableWidget(defaultSkinCheckbox);
 
 		addRenderableWidget(new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
 			Renderable renderButton;
