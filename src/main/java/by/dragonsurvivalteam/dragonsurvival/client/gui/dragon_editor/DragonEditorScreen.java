@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.UndoRedoButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -43,21 +42,19 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
-import com.google.common.collect.EvictingQueue;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.components.Checkbox;
-import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
@@ -72,8 +69,6 @@ import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
-
-import javax.tools.Tool;
 
 public class DragonEditorScreen extends Screen {
 	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
@@ -108,6 +103,9 @@ public class DragonEditorScreen extends Screen {
 	public SkinPreset preset;
 	public int currentSelected;
 	private HashMap<DragonLevel, Integer> presetSelections = new HashMap<DragonLevel, Integer>();
+
+	private List<ColorSelectorButton> colorButtons = new ArrayList<>();
+	private ExtendedCheckbox showUiCheckbox;
 
 	public int backgroundColor = -804253680;
 	float tick;
@@ -195,6 +193,28 @@ public class DragonEditorScreen extends Screen {
                 ((Renderable) child).render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
             }
         }
+
+		if(!showUi) {
+			for(Renderable renderable : renderables) {
+				if(renderable instanceof AbstractWidget widget) {
+					widget.visible = false;
+				}
+			}
+		} else {
+			for(Renderable renderable : renderables) {
+				if(renderable instanceof AbstractWidget widget) {
+					widget.visible = true;
+				}
+			}
+
+			for(ColorSelectorButton colorSelectorButton : colorButtons){
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, this.handler), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, this.handler.getType());
+
+				colorSelectorButton.visible = text != null && text.colorable;
+			}
+		}
+
+		showUiCheckbox.visible = true;
 	}
 
 	public SkinPreset save(){
@@ -342,17 +362,7 @@ public class DragonEditorScreen extends Screen {
 				if (text != null && !settings.modifiedColor) {
 					settings.hue = text.average_hue;
 				}
-			})
-			{
-				@Override
-				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-					active = showUi;
-
-					if(active){
-						super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-					}
-				}
-			});
+			}));
 
 			addRenderableWidget(new ArrowButton(btn.getX() + btn.getWidth() - 1, btn.getY() + 1, 16, 16, true, s -> {
 				int index = 0;
@@ -374,23 +384,15 @@ public class DragonEditorScreen extends Screen {
 				if (text != null && !settings.modifiedColor) {
 					settings.hue = text.average_hue;
 				}
-			})
-			{
-				@Override
-				public void renderWidget( @NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-					active = showUi || btn.values == null || btn.values.length <= 1;
+			}));
 
-					if(showUi){
-						super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
-					}
-				}
-			});
-
-			addRenderableWidget(new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {
+			ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {
 				preset.skinAges.get(level).get().layerSettings.get(layers).get().hue = s.floatValue();
 				handler.getSkinData().compileSkin();
 				update();
-			}));
+			});
+			addRenderableWidget(colorButton);
+			colorButtons.add(colorButton);
 			i++;
 		}
 
@@ -403,7 +405,6 @@ public class DragonEditorScreen extends Screen {
 		}, Supplier::get) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				active = visible = showUi;
 				if(isHoveredOrFocused()){
 					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
@@ -421,7 +422,6 @@ public class DragonEditorScreen extends Screen {
 		}, Supplier::get) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				active = visible = showUi;
 				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
 
 				if(isHoveredOrFocused()){
@@ -623,8 +623,6 @@ public class DragonEditorScreen extends Screen {
 		ExtendedButton saveButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }){
 			@Override
 			public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
-				active = visible = showUi;
-
 				if (visible) {
 					guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
@@ -640,33 +638,10 @@ public class DragonEditorScreen extends Screen {
 
 		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.empty(), button -> { /* Nothing to do */ }));
 
-		/*addRenderableWidget(new ExtendedButton(dragonRender.x + dragonRender.width - 17, dragonRender.y + dragonRender.height + 3, 15, 15, Component.empty(), btn -> {
-			dragonRender.yRot = -3;
-			dragonRender.xRot = -5;
-			dragonRender.xOffset = 0;
-			dragonRender.yOffset = 0;
-			dragonRender.zoom = (float)(level.size * preset.sizeMul);
-		}){
-			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				guiGraphics.blit(RESET_POSITION, getX(), getY(), 0, 0, width, height, width, height);
-			}
-
-			@Override
-			public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				active = visible = showUi;
-				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-
-				if (isHoveredOrFocused()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.reset"), pMouseX, pMouseY);
-				}
-			}
-		});*/
-
-		addRenderableWidget(new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected()));
+		showUiCheckbox = new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected());
+		addRenderableWidget(showUiCheckbox);
 		addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), s -> {}, this));
-		// FIXME
-		//addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
+		addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
 	}
 
 	public void update(){

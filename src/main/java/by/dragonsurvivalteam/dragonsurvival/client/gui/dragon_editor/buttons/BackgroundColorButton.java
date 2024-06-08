@@ -58,6 +58,7 @@ public class BackgroundColorButton extends ExtendedButton {
 			);
 			screen.renderables.add(renderButton);
 		}else{
+			screen.children().removeIf(s -> s == colorComponent.colorPicker);
 			screen.children().removeIf(s -> s == colorComponent);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}

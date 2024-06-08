@@ -132,9 +132,4 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		RenderSystem.disableBlend();
 		guiGraphics.pose().popPose();
 	}
-
-	/*@Override
-	public boolean isMouseOver(double mouseX, double mouseY) {
-		return visible && mouseY >= (double) getY() - 3 && mouseY <= (double) getHeight() - getY() + 3 && mouseX >= (double) getX() && mouseX <= (double) getWidth() - getX();
-	}*/
 }

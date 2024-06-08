@@ -116,7 +116,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.NEWBORN){
 					selected = true;
 					active = false;
@@ -128,7 +128,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.YOUNG){
 					selected = true;
 					active = false;
@@ -140,7 +140,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-				super.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 				if(screen.level == DragonLevel.ADULT){
 					selected = true;
 					active = false;

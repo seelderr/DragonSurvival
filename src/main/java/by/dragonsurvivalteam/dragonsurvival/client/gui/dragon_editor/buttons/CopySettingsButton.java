@@ -68,6 +68,7 @@ public class CopySettingsButton extends ExtendedButton {
 			component = new CopyEditorSettingsComponent(screen, this, getX() + width - 80, getY() + Math.min(offset, 0), 80, 70);
 			((AccessorScreen)screen).children().add(0, component);
 			((AccessorScreen)screen).children().add(component);
+			screen.renderables.add(0, renderButton);
 			screen.renderables.add(renderButton);
 		}else{
 			screen.children().removeIf(s -> s == component);

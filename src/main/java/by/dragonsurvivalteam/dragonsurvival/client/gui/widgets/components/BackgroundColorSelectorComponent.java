@@ -14,7 +14,7 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
-	private final ExtendedButton colorPicker;
+	public final ExtendedButton colorPicker;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;

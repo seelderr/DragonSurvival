@@ -22,7 +22,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ColorSelectorButton extends ExtendedButton {
 	private final DragonEditorScreen screen;
-	private final EnumSkinLayer layer;
+	public final EnumSkinLayer layer;
 	public Consumer<Double> setter;
 	public boolean toggled;
 	public int xSize, ySize;
@@ -42,10 +42,6 @@ public class ColorSelectorButton extends ExtendedButton {
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
-		if(!screen.showUi){
-			active = false;
-			return;
-		}
 		super.renderWidget(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 		active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 

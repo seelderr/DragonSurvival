@@ -178,20 +178,6 @@ public class ToolTipHandler{
 		}
 	}
 
-	@SubscribeEvent
-	public static void postScreenRender(ScreenEvent.Render.Post event) {
-		if (Minecraft.getInstance().screen != null && Minecraft.getInstance().screen.children() != null) {
-			for (GuiEventListener button : Minecraft.getInstance().screen.children()) {
-				if (button instanceof HelpButton helpButton) {
-					// FIXME: This functionality no longer exists
-					//if (helpButton.isHoveredOrFocused()) {
-						helpButton.renderTooltip(event.getGuiGraphics(), event.getMouseX(), event.getMouseY());
-					//}
-				}
-			}
-		}
-	}
-
 	// FIXME: This is currently broken.
 	/** Renders the special border elements for the info tooltips */
 	@SubscribeEvent
