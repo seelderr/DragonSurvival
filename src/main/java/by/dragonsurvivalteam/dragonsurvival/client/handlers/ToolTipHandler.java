@@ -178,9 +178,12 @@ public class ToolTipHandler{
 		}
 	}
 
-	// FIXME: This is currently broken.
 	/** Renders the special border elements for the info tooltips */
-	@SubscribeEvent
+	// TODO: This doesn't work properly
+	// Tooltips no longer strictly follow the mouse cursor, but this event was never updated to reflect that
+	// I'm not sure how to factor in the "nudge factor" on tooltips where they render slightly offset from
+	// the cursor depending on where your cursor is on the current UI element that has a tooltip component.
+	/*@SubscribeEvent
 	public static void onTooltipEvent(RenderTooltipEvent.Pre event){
 		boolean render = isHelpText();
 
@@ -207,8 +210,8 @@ public class ToolTipHandler{
 		int width = event.getComponents().stream().map(s -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
 		int height = event.getComponents().stream().map(ClientTooltipComponent::getHeight).reduce(Integer::sum).orElse(0);
 
-		int x = event.getX() + 12;
-		int y = event.getY() - 12;
+		int x = event.getX();
+		int y = event.getY();
 
 		if(x + width > screen.width){
 			x -= 28 + width;
@@ -229,7 +232,7 @@ public class ToolTipHandler{
 
 		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y - 16, 400,16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
 		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y + height, 400,16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
-	}
+	}*/
 
 	private static boolean isHelpText(){
 		if(!tooltipChanges || !helpTooltips){
@@ -246,10 +249,9 @@ public class ToolTipHandler{
 		}
 
 		for(GuiEventListener btn : Minecraft.getInstance().screen.children()){
-			// FIXME: This functionality no longer exists
-			//if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
+			if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
 				return true;
-			//}
+			}
 		}
 
 		return false;
