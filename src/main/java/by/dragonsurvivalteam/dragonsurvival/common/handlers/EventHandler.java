@@ -1,9 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
@@ -15,13 +12,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DragonModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
@@ -31,7 +24,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
 import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.entity.animal.Wolf;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ElytraItem;
@@ -42,19 +34,15 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootContext;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.PlayerTickEvent;
 import net.minecraftforge.event.entity.EntityJoinLevelEvent;
-import net.minecraftforge.event.entity.living.LivingDropsEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingJumpEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -64,9 +52,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.network.PacketDistributor;
-import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.List;
 
 @SuppressWarnings( "unused" )
 @Mod.EventBusSubscriber
@@ -122,48 +107,6 @@ public class EventHandler{
 		}
 	}
 
-	@SubscribeEvent
-	public static void mobDeath(LivingDropsEvent event){
-		LivingEntity entity = event.getEntity();
-		float health = entity.getMaxHealth();
-
-		//if(entity instanceof AnimalEntity) return;
-		if(event.getSource() == null || !(event.getSource().getEntity() instanceof Player)){
-			return;
-		}
-		if(!DragonUtils.isDragon(event.getSource().getEntity())){
-			return;
-		}
-
-		boolean canDropDragonHeart = ServerConfig.dragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.dragonHeartWhiteList;
-		boolean canDropWeakDragonHeart = ServerConfig.weakDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.weakDragonHeartWhiteList;
-		boolean canDropElderDragonHeart = ServerConfig.elderDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.elderDragonHeartWhiteList;
-
-		if(canDropDragonHeart){
-			if(ServerConfig.dragonHeartUseList || health >= 14 && health < 20){
-				if(entity.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + event.getLootingLevel() * (ServerConfig.dragonHeartShardChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.dragonHeartShard)));
-				}
-			}
-		}
-
-		if(canDropWeakDragonHeart){
-			if(ServerConfig.weakDragonHeartUseList || health >= 20 && health < 50){
-				if(entity.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.weakDragonHeartChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.weakDragonHeart)));
-				}
-			}
-		}
-
-		if(canDropElderDragonHeart){
-			if(ServerConfig.elderDragonHeartUseList || health >= 50){
-				if(entity.getRandom().nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + event.getLootingLevel() * (ServerConfig.elderDragonHeartChance * 100 / 4)){
-					event.getDrops().add(new ItemEntity(entity.level, entity.position().x, entity.position().y, entity.position().z, new ItemStack(DSItems.elderDragonHeart)));
-				}
-			}
-		}
-	}
-
 	/**
 	 * Adds dragon avoidance goal
 	 */
@@ -185,92 +128,6 @@ public class EventHandler{
 			}
 		}
 	}
-
-	@SubscribeEvent
-	public static void blockBroken(BlockEvent.BreakEvent breakEvent){
-		if(breakEvent.isCanceled()){
-			return;
-		}
-
-		Player player = breakEvent.getPlayer();
-		if(player.isCreative()){
-			return;
-		}
-
-		int i = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, player);
-
-		if(i <= 0){
-			LevelAccessor world = breakEvent.getLevel();
-			if(world instanceof ServerLevel level){
-				BlockState blockState = breakEvent.getState();
-				BlockPos blockPos = breakEvent.getPos();
-				Block block = blockState.getBlock();
-				ItemStack mainHandItem = ClawToolHandler.getDragonHarvestTool(player, blockState);
-				double random;
-				// Modded Ore Support
-				String[] tagStringSplit = ServerConfig.oresTag.split(":");
-				ResourceLocation ores = new ResourceLocation(tagStringSplit[0], tagStringSplit[1]);
-				// Checks to make sure the ore does not drop itself or another ore from the tag (no going infinite with ores)
-				TagKey<Item> tagKey = TagKey.create(Registry.ITEM_REGISTRY, ores);
-				boolean isOre = ForgeRegistries.ITEMS.tags().getTag(tagKey).stream().anyMatch(s -> s == block.asItem());
-
-				if(!isOre){
-					return;
-				}
-
-				List<ItemStack> drops = block.getDrops(blockState, new LootContext.Builder((ServerLevel)world).withParameter(LootContextParams.ORIGIN, new Vec3(blockPos.getX(), blockPos.getY(), blockPos.getZ())).withParameter(LootContextParams.TOOL, mainHandItem));
-				DragonStateHandler dragonStateHandler = DragonUtils.getHandler(player);
-
-
-				int fortuneLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.BLOCK_FORTUNE, player.getMainHandItem());
-				int silkTouchLevel = EnchantmentHelper.getItemEnchantmentLevel(Enchantments.SILK_TOUCH, player.getMainHandItem());
-				int expDrop = block.getExpDrop(blockState, level, player.getRandom(), blockPos, fortuneLevel, silkTouchLevel);
-				boolean suitableOre = expDrop > 0 && (mainHandItem.isCorrectToolForDrops(blockState) || dragonStateHandler.isDragon() && dragonStateHandler.canHarvestWithPaw(blockState)) && drops.stream().noneMatch(s -> s.getItem() == block.asItem());
-
-
-				if(suitableOre && !player.isCreative()){
-					boolean isCave = DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE);
-
-					if(dragonStateHandler.isDragon()){
-						if(player.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
-						}
-						if(player.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
-						}
-					}else{
-						if(player.getRandom().nextDouble() < ServerConfig.humanOreDustChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonDust)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
-						}
-						if(player.getRandom().nextDouble() < ServerConfig.humanOreBoneChance){
-							world.addFreshEntity(new ItemEntity((Level)world, blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5, new ItemStack(DSItems.elderDragonBone)){
-								@Override
-								public boolean fireImmune(){
-									return isCave || super.fireImmune();
-								}
-							});
-						}
-					}
-				}
-			}
-		}
-	}
-
 
 	@SubscribeEvent
 	public static void createAltar(PlayerInteractEvent.RightClickBlock rightClickBlock){

@@ -209,10 +209,10 @@ public class SkinsScreen extends Screen{
 
 		setTextures();
 
-		addRenderableWidget(new TabButton(startX + 128 + 4, startY - 26, 0, this));
-		addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, 1, this));
-		addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, 2, this));
-		addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, 3, this));
+		addRenderableWidget(new TabButton(startX + 128 + 4, startY - 26, TabButton.TabType.INVENTORY, this));
+		addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, TabButton.TabType.ABILITY, this));
+		addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, TabButton.TabType.GITHUB_REMINDER, this));
+		addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, TabButton.TabType.SKINS, this));
 		
 		for (int i = 0;  i < DragonBodies.ORDER.length; i++) {
 			addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (i * 27), height / 2 + 90, 25, 25, DragonBodies.getStatic(DragonBodies.ORDER[i]), i));

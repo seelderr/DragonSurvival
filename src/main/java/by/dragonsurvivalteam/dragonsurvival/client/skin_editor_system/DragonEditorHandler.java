@@ -115,9 +115,9 @@ public class DragonEditorHandler{
 					Texture skinTexture = getSkin(player, layer, selectedSkin, handler.getType());
 
 					if (skinTexture != null) {
-						float hueVal = settings.hue - 0.5f;
-						float satVal = settings.saturation - 0.5f;
-						float brightVal = settings.brightness - 0.5f;
+						float hueVal = settings.hue - skinTexture.average_hue;
+						float satVal = settings.saturation;
+						float brightVal = settings.brightness;
 
 						try {
 							ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
@@ -178,27 +178,13 @@ public class DragonEditorHandler{
 		Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsb);
 
 		if(text.colorable){
-			if(settings.glowing && hsb[0] == 0 && hsb[1] == 0){
+			if(settings.glowing && hsb[0] == 0.5f && hsb[1] == 0.5f){
 				return null;
 			}
 
-			if(hueVal > 0){
-				hsb[0] = (float)(hsb[0] - hueVal + 1 % 1);
-			}else{
-				hsb[0] = (float)(hsb[0] - hueVal + 1 % 1);
-			}
-
-			if(satVal > 0){
-				hsb[1] = (float)Mth.lerp(Math.abs(satVal) * 2, hsb[1], 1.0);
-			}else{
-				hsb[1] = (float)Mth.lerp(Math.abs(satVal) * 2, hsb[1], 0.0);
-			}
-
-			if(brightVal > 0){
-				hsb[2] = (float)Mth.lerp(Math.abs(brightVal) * 2, hsb[2], 1.0);
-			}else{
-				hsb[2] = (float)Mth.lerp(Math.abs(brightVal) * 2, hsb[2], 0.0);
-			}
+            hsb[0] = (float)(hsb[0] - hueVal);
+			hsb[1] = (float)Mth.lerp(Math.abs(satVal - 0.5f) * 2 , hsb[1], satVal > 0.5f ? 1.0 : 0.0);
+			hsb[2] = (float)Mth.lerp(Math.abs(brightVal - 0.5f) * 2, hsb[2], brightVal > 0.5f ? 1.0 : 0.0);
 		}
 
 		Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
@@ -206,18 +192,23 @@ public class DragonEditorHandler{
 	}
 
 	private static void registerCompiledTexture(NativeImage image, ResourceLocation key){
-		try(image){
-			if(Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture){
+		try (image) {
+			// DEBUG :: Export the texture
+//			if (key.toString().contains("dynamic_normal")) {
+//				File file = new File(Minecraft.getInstance().gameDirectory, "texture");
+//				file.mkdirs();
+//				file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
+//				image.writeToFile(file);
+//			}
+			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
 				texture.setPixels(image);
 				texture.upload();
 			}else{
 				DynamicTexture layer = new DynamicTexture(image);
 				Minecraft.getInstance().getTextureManager().register(key, layer);
 			}
-
-//			System.out.println("Compiled skin " + key);
-		}catch(Exception e){
-			e.printStackTrace();
+		} catch (Exception e) {
+			DragonSurvivalMod.LOGGER.error(e);
 		}
 	}
 }

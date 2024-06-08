@@ -250,7 +250,7 @@ public class ClientDragonRender{
 				Vector3f lookVector = Functions.getDragonCameraOffset(player);
 				matrixStack.translate(-lookVector.x(), lookVector.y(), -lookVector.z());
 
-				double size = handler.getSize() * handler.getSkinData().skinPreset.sizeMul;
+				double size = handler.getSize();
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
 				float scale = (float)Math.max(size / 40.0D, 0.4D); // FIXME
 				String playerModelType = player.getModelName();
@@ -592,6 +592,7 @@ public class ClientDragonRender{
 		}
 	}
 
+	// TODO: Port the fixes down from 1.20.1 to this version for renderEntityInInventory
 	// Called for the dragon editor and skins screen (but not the actual inventory?)
 	public static void renderEntityInInventory(LivingEntity entity, int x, int y, float scale, float xRot, float yRot, float xOffset, float yOffset){
 		if(entity == null)

@@ -154,10 +154,6 @@ public class ServerConfig{
 	@ConfigRange( min = 0, max = 1000000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "reachBonus", comment = "The bonus that is given to dragons at 60 size. The bonus gradually scales up to the maximum size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default values.")
 	public static Double reachBonus = 0.5;
-	
-	@ConfigRange( min = 0, max = 1000000.0 )
-	@ConfigOption ( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "attackRangeBonus", comment = "The bonus that is given to dragons at every 60 size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default value. Only applies to combat." )
-	public static Double attackRangeBonus = 0.5;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth"}, key = "saveGrowthStage", comment = "Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist..." )
 	public static Boolean saveGrowthStage = false;

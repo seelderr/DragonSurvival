@@ -16,9 +16,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentContro
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler.Event_busHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.items.DragonSurvivalCreativeTab;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonHeartLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.data.loot.DragonOreLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.network.NetworkHandler;
 import com.mojang.brigadier.CommandDispatcher;
+import com.mojang.serialization.Codec;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -29,6 +32,7 @@ import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+import net.minecraftforge.common.loot.IGlobalLootModifier;
 import net.minecraftforge.data.loading.DatagenModLoader;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -39,13 +43,16 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.forgespi.locating.IModFile;
-import net.minecraftforge.resource.PathPackResources;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import net.minecraftforge.forgespi.locating.IModFile;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
+import net.minecraftforge.resource.PathPackResources;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib3.GeckoLib;
@@ -55,6 +62,9 @@ public class DragonSurvivalMod{
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
 	public static DragonSurvivalCreativeTab items = new DragonSurvivalCreativeTab("dragon.survival.blocks");
+	private static final DeferredRegister<Codec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(ForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+	private static final RegistryObject<Codec<DragonOreLootModifier>> DRAGON_ORE = GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
+	private static final RegistryObject<Codec<DragonHeartLootModifier>> DRAGON_HEART = GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MODID, name);
@@ -78,6 +88,8 @@ public class DragonSurvivalMod{
 		// TODO :: Move to clientSetup?
 		DSParticles.REGISTRY.register(modEventBus);
 		SoundRegistry.SOUNDS.register(modEventBus);
+		GLM.register(FMLJavaModLoadingContext.get().getModEventBus());
+
 
 		MinecraftForge.EVENT_BUS.register(this);
 		MinecraftForge.EVENT_BUS.register(new DragonFoodHandler());

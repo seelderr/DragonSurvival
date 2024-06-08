@@ -22,12 +22,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 
+import static by.dragonsurvivalteam.dragonsurvival.config.ClientConfig.skinTimeoutInSeconds;
+
 public class DragonSkins{
 	public static NetSkinLoader skinLoader = new GithubSkinLoaderAPI();
 	private static final ArrayList<String> hasFailedFetch = new ArrayList<>();
 	public static HashMap<DragonLevel, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerSkinCache = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerGlowCache = new HashMap<>();
+	public static long lastAttempt = 0;
 
 	public static ResourceLocation getPlayerSkin(String playerName, DragonLevel level){
 		String skinKey = playerName + "_" + level.name;
@@ -97,7 +100,8 @@ public class DragonSkins{
 
 		HashMap<String, SkinObject> playerSkinMap = SKIN_USERS.getOrDefault(level, null);
 
-		if (playerSkinMap == null) {
+		Player p = Minecraft.getInstance().player;
+		if (playerSkinMap == null && p != null && lastAttempt + (skinTimeoutInSeconds * 20L) < p.level.getGameTime()) {
 			DragonSurvivalMod.LOGGER.warn("Customs skins are not yet fetched, re-fetching...");
 			init();
 
@@ -105,6 +109,7 @@ public class DragonSkins{
 
 			if (playerSkinMap == null) {
 				DragonSurvivalMod.LOGGER.error("Custom skins could not be fetched");
+				lastAttempt = p.level.getGameTime();
 			}
 		}
 

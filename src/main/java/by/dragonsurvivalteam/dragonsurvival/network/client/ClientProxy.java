@@ -330,8 +330,8 @@ public class ClientProxy {
 
             if (entity instanceof Player player) {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
-                    handler.setType(message.dragonType);
-                    handler.setBody(message.dragonBody);
+                    handler.setType(message.dragonType, player);
+                    handler.setBody(message.dragonBody, player);
                     handler.setIsHiding(message.hiding);
                     handler.setHasFlight(message.hasWings);
                     handler.setSize(message.size, player);

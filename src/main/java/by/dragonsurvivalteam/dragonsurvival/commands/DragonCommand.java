@@ -123,8 +123,8 @@ public class DragonCommand{
 			reInsertClawTools(player, cap);
 		}
 
-		cap.setType(dragonType1);
-		cap.setBody(dragonBody);
+		cap.setType(dragonType1, player);
+		cap.setBody(dragonBody, player);
 		cap.setHasFlight(flight);
 		cap.getMovementData().spinLearned = flight;
 		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
