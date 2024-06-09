@@ -283,6 +283,10 @@ public class DragonEditorScreen extends Screen {
 		handler.setBody(dragonBody);
 	}
 
+	public boolean dragonWouldChange(DragonStateHandler handler) {
+		return (handler.getType() != null && !handler.getType().equals(dragonType)) || (handler.getBody() != null && !handler.getBody().equals(dragonBody));
+	}
+
 	@Override
 	public void init(){
 		super.init();
@@ -435,7 +439,7 @@ public class DragonEditorScreen extends Screen {
 		defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.default_skin.tooltip")));
 		addRenderableWidget(defaultSkinCheckbox);
 
-		ExtendedButton confirmButton = new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
+		ExtendedButton saveButton = new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), null){
 			Renderable renderButton;
 			boolean toggled;
 
@@ -455,23 +459,18 @@ public class DragonEditorScreen extends Screen {
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
 				minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-				if((handler.getType() != null && !handler.getType().equals(dragonType)) || (handler.getBody() != null && !handler.getBody().equals(dragonBody))){
-					if(!ServerConfig.saveAllAbilities || !ServerConfig.saveGrowthStage){
-						confirmation = true;
-						return;
-					}
-				}
-				if(!confirmation){
+				boolean dragonDataIsPreserved = ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage;
+				if(dragonWouldChange(handler) && !dragonDataIsPreserved){
+					confirmation = true;
+				} else {
 					confirm();
 				}
 
 				if(confirmation){
 					if(!toggled){
-						renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
+						renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), b -> {}){
 							@Override
 							public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick){
-								active = visible = false;
-
 								if(conf != null && confirmation){
 									conf.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
 								}
@@ -479,9 +478,8 @@ public class DragonEditorScreen extends Screen {
 								super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
 							}
 						};
-
-						((AccessorScreen)(Object)this).children().add(0, conf);
-						((AccessorScreen)(Object)this).children().add(conf);
+						((AccessorScreen)(Object)DragonEditorScreen.this).children().add(0, conf);
+						((AccessorScreen)(Object)DragonEditorScreen.this).children().add(conf);
 						renderables.add(renderButton);
 					}
 					toggled = !toggled;
@@ -491,8 +489,8 @@ public class DragonEditorScreen extends Screen {
 				}
 			}
 		};
-		confirmButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));
-		addRenderableWidget(confirmButton);
+		saveButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));
+		addRenderableWidget(saveButton);
 
 		ExtendedButton discardButton = new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.back"), btn -> Minecraft.getInstance().setScreen(source));
 		discardButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.back")));
@@ -578,14 +576,14 @@ public class DragonEditorScreen extends Screen {
 		randomButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.random")));
 		addRenderableWidget(randomButton);
 
-		ExtendedButton saveButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }){
+		ExtendedButton saveSlotButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }){
 			@Override
 			public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
 				guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
 			}
 		};
-		saveButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.save_slot")));
-		addRenderableWidget(saveButton);
+		saveSlotButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.save_slot")));
+		addRenderableWidget(saveSlotButton);
 
 		addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.translatable("ds.gui.dragon_editor.copy"), button -> { /* Nothing to do */ }));
 
@@ -645,7 +643,7 @@ public class DragonEditorScreen extends Screen {
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-			if((cap.getType() == null || !cap.getType().equals(dragonType)) || (cap.getBody() == null || !cap.getBody().equals(dragonBody))){
+			if(dragonWouldChange(cap)){
 				minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeName().toLowerCase() + "_dragon_choice"));
 
 				if(dragonType == null && cap.getType() != null){
