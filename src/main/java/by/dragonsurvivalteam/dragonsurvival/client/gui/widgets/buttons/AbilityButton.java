@@ -144,7 +144,7 @@ public class AbilityButton extends Button {
 				guiGraphics.pose().pushPose();
 				// Render above the other UI elements
 				guiGraphics.pose().translate(0, 0, 150);
-				MagicDragonRender.drawAbilityHover(guiGraphics, getX() + width * 2, yPos, ability);
+				MagicDragonRender.drawAbilityHover(guiGraphics, getX() + width, yPos, ability);
 				guiGraphics.pose().popPose();
 			}
 		}

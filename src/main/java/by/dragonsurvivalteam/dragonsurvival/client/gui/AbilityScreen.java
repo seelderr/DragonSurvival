@@ -20,6 +20,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -53,7 +54,7 @@ public class AbilityScreen extends Screen{
 			return;
 		}
 
-		renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+		this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
 
 		int startX = guiLeft + 10;
 		int startY = guiTop - 30;
@@ -108,7 +109,10 @@ public class AbilityScreen extends Screen{
 			guiGraphics.drawString(minecraft.font, textComponent, finalXPos, startY + 26, 0, false);
 		}
 
-		super.render(guiGraphics, mouseX, mouseY, partialTick);
+		// Originally we called super.render(guiGraphics, mouseX, mouseY, partialTick) here but this causes the background to be blurred
+		for (Renderable renderable : this.renderables) {
+			renderable.render(guiGraphics, mouseX, mouseY, partialTick);
+		}
 
 		renderables.forEach(s-> {
 			if(s instanceof AbilityButton btn){
