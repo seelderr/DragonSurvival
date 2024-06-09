@@ -284,13 +284,10 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		int scissorX1 = 140 + leftPos;
 		double renderedSize = Math.min(handler.getSize(), ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 12;
 		int scissorY1 = 130 + topPos - (int)(renderedSize * 8);
-		// TODO: Fix scissor. These parameters don't work for some reason, not sure how to frame the scissor correctly.
-		//guiGraphics.enableScissor(scissorX0, scissorY0, scissorX1, scissorY1);
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, 100);
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, (int)renderedSize + 15, 0, mouseX, mouseY, minecraft.player);
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, 20, 0, mouseX, mouseY, minecraft.player);
 		guiGraphics.pose().popPose();
-		//guiGraphics.disableScissor();
 
 		renderTooltip(guiGraphics, mouseX, mouseY);
 

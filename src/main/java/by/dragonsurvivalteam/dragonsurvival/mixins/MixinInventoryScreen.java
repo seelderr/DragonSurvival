@@ -42,42 +42,41 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 
 	// This is to angle the dragon entity (including its head) to correctly follow the angle specified when rendering.
 	@Redirect(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"))
-	private static void dragonScreenEntityRender(final Runnable runnable){
-		LocalPlayer player = Minecraft.getInstance().player;
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+	private static void dragonScreenEntityRender(final Runnable runnable, @Local(argsOnly = true) LivingEntity entity){
+		DragonStateProvider.getCap(entity).ifPresentOrElse(cap -> {
+			if (cap.isDragon()) {
+				double bodyYaw = cap.getMovementData().bodyYaw;
+				double headYaw = cap.getMovementData().headYaw;
+				double headPitch = cap.getMovementData().headPitch;
 
-		if (handler.isDragon()) {
-			double bodyYaw = handler.getMovementData().bodyYaw;
-			double headYaw = handler.getMovementData().headYaw;
-			double headPitch = handler.getMovementData().headPitch;
+				double lastBodyYaw = cap.getMovementData().bodyYawLastTick;
+				double lastHeadYaw = cap.getMovementData().headYawLastTick;
+				double lastHeadPitch = cap.getMovementData().headPitchLastTick;
 
-			double lastBodyYaw = handler.getMovementData().bodyYawLastTick;
-			double lastHeadYaw = handler.getMovementData().headYawLastTick;
-			double lastHeadPitch = handler.getMovementData().headPitchLastTick;
+				cap.getMovementData().bodyYaw = entity.yBodyRot;
+				cap.getMovementData().headYaw = -Math.toDegrees(dragon_Survival$storedXAngle);
+				cap.getMovementData().headPitch = -Math.toDegrees(dragon_Survival$storedYAngle);
 
-			handler.getMovementData().bodyYaw = player.yBodyRot;
-			handler.getMovementData().headYaw = -Math.toDegrees(dragon_Survival$storedXAngle);
-			handler.getMovementData().headPitch = -Math.toDegrees(dragon_Survival$storedYAngle);
+				cap.getMovementData().bodyYawLastTick = entity.yBodyRot;
+				cap.getMovementData().headYawLastTick = -Math.toDegrees(dragon_Survival$storedXAngle);
+				cap.getMovementData().headPitchLastTick = -Math.toDegrees(dragon_Survival$storedYAngle);
 
-			handler.getMovementData().bodyYawLastTick = player.yBodyRot;
-			handler.getMovementData().headYawLastTick = -Math.toDegrees(dragon_Survival$storedXAngle);
-			handler.getMovementData().headPitchLastTick = -Math.toDegrees(dragon_Survival$storedYAngle);
+				RenderSystem.runAsFancy(runnable);
 
-			RenderSystem.runAsFancy(runnable);
+				dragon_Survival$storedXAngle = 0;
+				dragon_Survival$storedYAngle = 0;
 
-			dragon_Survival$storedXAngle = 0;
-			dragon_Survival$storedYAngle = 0;
+				cap.getMovementData().bodyYaw = bodyYaw;
+				cap.getMovementData().headYaw = headYaw;
+				cap.getMovementData().headPitch = headPitch;
 
-			handler.getMovementData().bodyYaw = bodyYaw;
-			handler.getMovementData().headYaw = headYaw;
-			handler.getMovementData().headPitch = headPitch;
-
-			handler.getMovementData().bodyYawLastTick = lastBodyYaw;
-			handler.getMovementData().headYawLastTick = lastHeadYaw;
-			handler.getMovementData().headPitchLastTick = lastHeadPitch;
-		} else {
-			RenderSystem.runAsFancy(runnable);
-		}
+				cap.getMovementData().bodyYawLastTick = lastBodyYaw;
+				cap.getMovementData().headYawLastTick = lastHeadYaw;
+				cap.getMovementData().headPitchLastTick = lastHeadPitch;
+			} else {
+				RenderSystem.runAsFancy(runnable);
+			}
+		}, () -> RenderSystem.runAsFancy(runnable));
 	}
 
 	// If we are a dragon, we don't want to angle the entire entity when rendering it with a follows mouse command (like vanilla does).
@@ -93,18 +92,18 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 	}
 
 	@ModifyArgs(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;scale(FFF)V"))
-	private static void dragonScreenEntityRescaler(Args args) {
-		LocalPlayer player = Minecraft.getInstance().player;
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-
-		if (handler.isDragon()) {
-			double size = handler.getSize();
-			if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE)
-			{
-				// Scale the matrix back to the MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
-				float scale = (float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size);
-				args.setAll(scale, scale, scale);
-			}
-		}
+	private static void dragonScreenEntityRescaler(Args args, @Local(argsOnly = true) LivingEntity entity) {
+		DragonStateProvider.getCap(entity)
+			.ifPresent(cap -> {
+				if (cap.isDragon()) {
+					double size = cap.getSize();
+					if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE)
+					{
+						// Scale the matrix back to the MAX_GROWTH_SIZE to prevent the entity from clipping in the inventory panel
+						float scale = (float)(ServerConfig.DEFAULT_MAX_GROWTH_SIZE / size);
+						args.setAll(scale * (float)args.get(0), scale * (float)args.get(1), scale * (float)args.get(2));
+					}
+				}
+			});
 	}
 }

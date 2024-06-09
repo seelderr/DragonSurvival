@@ -107,8 +107,10 @@ public class DragonAltarGUI extends Screen{
 					FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
 
 					LivingEntity entity1;
+					int entity1Scale = 40;
 					if(handler1.isDragon()) {
 						entity1 = FakeClientPlayerUtils.getFakeDragon(0, handler1);
+						entity1Scale = 20;
 					} else {
 						entity1 = FakeClientPlayerUtils.getFakePlayer(0, handler1);
 					}
@@ -122,7 +124,7 @@ public class DragonAltarGUI extends Screen{
 
 					Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 					quaternion.rotateY((float)Math.toRadians(150));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), 20, new Vector3f(), quaternion, null, entity1);
+					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), entity1Scale, new Vector3f(), quaternion, null, entity1);
 
 					Quaternionf quaternion2 = Axis.ZP.rotationDegrees(180.0F);
 					quaternion2.rotateY((float)Math.toRadians(210));
