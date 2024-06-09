@@ -460,7 +460,7 @@ public class DragonEditorScreen extends Screen {
 				minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 				boolean dragonDataIsPreserved = ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage;
-				if(dragonWouldChange(handler) && !dragonDataIsPreserved){
+				if(handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved){
 					confirmation = true;
 				} else {
 					confirm();
@@ -643,7 +643,7 @@ public class DragonEditorScreen extends Screen {
 		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-			if(dragonWouldChange(cap)){
+			if(!cap.isDragon() || dragonWouldChange(cap)){
 				minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeName().toLowerCase() + "_dragon_choice"));
 
 				if(dragonType == null && cap.getType() != null){
