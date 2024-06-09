@@ -349,7 +349,7 @@ public class DragonEntity extends LivingEntity implements IAnimatable, CommonTra
 		}else if(ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
 			RenderingUtils.addAnimation(builder, "jump", EDefaultLoopTypes.PLAY_ONCE, 2, animationController);
 		// Extra condition to prevent the player from triggering the fall animation when falling a trivial distance (this happens when you are really big)
-		}else if(!player.isOnGround() && (distanceFromGround > height * 0.15)) {
+		}else if(!player.isOnGround()) {
 			RenderingUtils.addAnimation(builder, "fall_loop", EDefaultLoopTypes.LOOP, 2, animationController);
 		} else if(player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)){
 			// Player is Sneaking
