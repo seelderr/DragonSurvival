@@ -54,7 +54,7 @@ public class AbilityScreen extends Screen{
 			return;
 		}
 
-		this.renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+		this.renderBlurredBackground(partialTick);
 
 		int startX = guiLeft + 10;
 		int startY = guiTop - 30;
@@ -109,10 +109,7 @@ public class AbilityScreen extends Screen{
 			guiGraphics.drawString(minecraft.font, textComponent, finalXPos, startY + 26, 0, false);
 		}
 
-		// Originally we called super.render(guiGraphics, mouseX, mouseY, partialTick) here but this causes the background to be blurred
-		for (Renderable renderable : this.renderables) {
-			renderable.render(guiGraphics, mouseX, mouseY, partialTick);
-		}
+		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
 		renderables.forEach(s-> {
 			if(s instanceof AbilityButton btn){
@@ -122,6 +119,12 @@ public class AbilityScreen extends Screen{
 				}
 			}
 		});
+	}
+
+	@Override
+	public void renderBackground(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		this.renderMenuBackground(pGuiGraphics);
+		net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.client.event.ScreenEvent.BackgroundRendered(this, pGuiGraphics));
 	}
 
 	@Override
