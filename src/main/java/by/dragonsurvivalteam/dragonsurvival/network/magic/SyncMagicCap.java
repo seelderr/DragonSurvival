@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
@@ -24,9 +25,8 @@ public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
 	public static void handleServer(final SyncMagicCap.Data message, final IPayloadContext context) {
 		context.enqueueWork(()-> {
 			Player sender = context.player();
-			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(sender);
 			handler.getMagicData().deserializeNBT(context.player().registryAccess(), message.nbt);
-			PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
 		});
 	}
 
