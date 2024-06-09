@@ -106,9 +106,7 @@ public class SkinsScreen extends Screen{
 			return;
 		}
 
-		// Copied from Screen::renderBackground
-		guiGraphics.fillGradient(0, 0, this.width, this.height, -300, -1072689136, -804253680);
-		NeoForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, guiGraphics));
+		this.renderBlurredBackground(partialTick);
 
 		int startX = guiLeft;
 		int startY = guiTop;
@@ -151,7 +149,7 @@ public class SkinsScreen extends Screen{
 			Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 			quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
 			quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
-			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, new Vector3f(0, 0, 0), quaternion, null, dragon);
+			InventoryScreen.renderEntityInInventory(guiGraphics, startX + 15, startY + 70, (int)scale, new Vector3f(0, 0, 100), quaternion, null, dragon);
 		}
 
 		((DragonRenderer)dragonRenderer).glowTexture = null;
@@ -172,6 +170,13 @@ public class SkinsScreen extends Screen{
 		}
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
+	}
+
+	// We override this to not blur the background
+	@Override
+	public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+		this.renderMenuBackground(pGuiGraphics);
+		net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.client.event.ScreenEvent.BackgroundRendered(this, pGuiGraphics));
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
