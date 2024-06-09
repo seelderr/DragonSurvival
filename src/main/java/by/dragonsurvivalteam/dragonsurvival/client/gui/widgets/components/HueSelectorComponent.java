@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSSlider;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject;
@@ -24,6 +24,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import org.jetbrains.annotations.NotNull;
 
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
@@ -31,7 +32,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final ExtendedButton hueReset;
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;
-	private final Checkbox glowing;
+	private final ExtendedCheckbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -39,9 +40,9 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final int ySize;
 	private final Supplier<LayerSettings> settings;
 	public boolean visible;
-	private DSSlider hueSlider;
-	private DSSlider saturationSlider;
-	private DSSlider brightnessSlider;
+	private ExtendedSlider hueSlider;
+	private ExtendedSlider saturationSlider;
+	private ExtendedSlider brightnessSlider;
 
 	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer){
 		this.screen = screen;
@@ -54,14 +55,11 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		LayerSettings set = settings.get();
 		DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
-		glowing = Checkbox.builder(Component.translatable("ds.gui.dragon_editor.glowing"), Minecraft.getInstance().font)
-				.pos(x + 3, y)
-				.selected(set.glowing)
-				.onValueChange((s, b) -> {
-					settings.get().glowing = s.selected();
-					screen.handler.getSkinData().compileSkin();
-				})
-				.build();
+		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
+			settings.get().glowing = !settings.get().glowing;
+			box.selected = settings.get().glowing;
+			screen.handler.getSkinData().compileSkin();
+		});
 
 		float[] hsb = new float[]{set.hue, set.saturation, set.brightness};
 
@@ -75,7 +73,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			hsb[2] = 0.5f;
 		}
 
-		hueSlider = new DSSlider(x + 3, y + 12, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[0] * 360.0f, true){
+		hueSlider = new ExtendedSlider(x + 3, y + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[0] * 360.0f, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -95,16 +93,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-				if(visible){
-					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
-					RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
-
-					guiGraphics.blitWithBorder(getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, getHeight()/* FIXME */ /*this.getHandleTextureY()*/, 8, this.height, 200, 20, 2, 3, 2, 2);
-				}
+				RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
+				guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
 			}
 		};
 
-		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 12, 20, 20, Component.empty(), button -> hueSlider.setValue(text != null ? Math.round(text.average_hue * 360f) : 180)) {
+		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 24, 20, 20, Component.empty(), button -> hueSlider.setValue(text != null ? Math.round(text.average_hue * 360f) : 180)) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
@@ -112,7 +106,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		saturationSlider = new DSSlider(x + 3, y + 22 + 12, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[1] * 360, true){
+		saturationSlider = new ExtendedSlider(x + 3, y + 22 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[1] * 360, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -141,12 +135,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
-					guiGraphics.blitWithBorder(getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0,  getHeight() /* FIXME */ /*this.getHandleTextureY()*/, 8, this.height, 200, 20, 2, 3, 2, 2);
+					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
 				}
 			}
 		};
 
-		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 12, 20, 20, Component.empty(), button -> saturationSlider.setValue(180)) {
+		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 24, 20, 20, Component.empty(), button -> saturationSlider.setValue(180)) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
@@ -154,7 +148,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 12, 20, 20, Component.empty(), button -> brightnessSlider.setValue(180)) {
+		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 24, 20, 20, Component.empty(), button -> brightnessSlider.setValue(180)) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
@@ -162,7 +156,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessSlider = new DSSlider(x + 3, y + 44 + 12, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[2] * 360, true){
+		brightnessSlider = new ExtendedSlider(x + 3, y + 44 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[2] * 360, true){
 			@Override
 			protected void applyValue(){
 				super.applyValue();
@@ -190,7 +184,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
-					guiGraphics.blitWithBorder(getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 0, getHeight()/* FIXME */ /*this.getHandleTextureY()*/, 8, this.height, 200, 20, 2, 3, 2, 2);
+					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
 				}
 			}
 		};
@@ -203,7 +197,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 	@Override
 	public @NotNull List<? extends GuiEventListener> children() {
-		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset); /*glowing);*/
+		return ImmutableList.of(hueSlider, saturationSlider, brightnessSlider, hueReset, saturationReset, brightnessReset, glowing);
 	}
 
 	@Override

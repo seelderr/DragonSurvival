@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class ColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	private final ExtendedButton colorPicker;
-	private final Checkbox glowing;
+	private final ExtendedCheckbox glowing;
 	private final DragonEditorScreen screen;
 	private final int x;
 	private final int y;
@@ -48,14 +48,11 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 		LayerSettings set = settings.get();
 		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
 
-		glowing = Checkbox.builder(Component.translatable("ds.gui.dragon_editor.glowing"), Minecraft.getInstance().font)
-				.pos(x + 3, y)
-				.selected(set.glowing)
-				.onValueChange((s, b) -> {
-					settings.get().glowing = s.selected();
-					screen.handler.getSkinData().compileSkin();
-				})
-				.build();
+		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
+			settings.get().glowing = !settings.get().glowing;
+			box.selected = settings.get().glowing;
+			screen.handler.getSkinData().compileSkin();
+		});
 
 		Color defaultC = Color.decode(text.defaultColor);
 
@@ -63,7 +60,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 			defaultC = Color.getHSBColor(set.hue, set.saturation, set.brightness);
 		}
 
-		colorPicker = new ColorPickerButton(x + 3, y + 11, xSize - 5, ySize - 11, defaultC, c -> {
+		colorPicker = new ColorPickerButton(x + 3, y + 24, xSize - 5, ySize - 11, defaultC, c -> {
 			float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
 
 			settings.get().hue = hsb[0];

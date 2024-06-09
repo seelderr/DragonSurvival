@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DSButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
@@ -117,19 +116,21 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, TabButton.TabType.GITHUB_REMINDER, this));
 		addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, TabButton.TabType.SKINS, this));
 
-		addRenderableWidget(new DSButton(leftPos + 27, topPos + 10, 11, 11 , button -> {
+		ExtendedButton clawToggle = new ExtendedButton(leftPos + 27, topPos + 10, 11, 11, Component.empty(), button -> {
 			clawsMenu = !clawsMenu;
 			clearWidgets();
 			init();
 
 			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenu));
 			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
-		}, Component.translatable("ds.gui.claws")) {
+		}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				guiGraphics.blit(DRAGON_CLAW_BUTTON, getX(), getY(), 0, 0, 11, 11, 11, 11);
 			}
-		});
+		};
+		clawToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws")));
+		addRenderableWidget(clawToggle);
 
 		// (Unsure) Growth icon in the claw menu
 		HelpButton growthIcon = new HelpButton(leftPos - 58, topPos - 40, 32, 32, "", 0);

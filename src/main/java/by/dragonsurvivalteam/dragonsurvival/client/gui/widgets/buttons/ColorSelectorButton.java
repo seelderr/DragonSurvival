@@ -94,12 +94,12 @@ public class ColorSelectorButton extends ExtendedButton {
 
 			if(text.defaultColor == null){
 				int offset = screen.height - (getY() + 80);
-				hueComponent = new HueSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 76, layer);
+				hueComponent = new HueSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 90, layer);
 				((AccessorScreen)screen).children().add(0, hueComponent);
 				((AccessorScreen)screen).children().add(hueComponent);
 			}else{
 				int offset = screen.height - (getY() + 80);
-				colorComponent = new ColorSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 71, layer);
+				colorComponent = new ColorSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 90, layer);
 				((AccessorScreen)screen).children().add(0, colorComponent);
 				((AccessorScreen)screen).children().add(colorComponent);
 			}
