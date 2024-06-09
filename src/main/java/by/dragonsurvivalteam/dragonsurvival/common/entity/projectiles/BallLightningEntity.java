@@ -25,9 +25,13 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.HitResult;
-import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.*;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
+
+import javax.annotation.Nullable;
+import java.util.List;
 
 public class BallLightningEntity extends DragonBallEntity{
 	protected boolean isLingering = false;
@@ -62,12 +66,14 @@ public class BallLightningEntity extends DragonBallEntity{
 		return new DamageSource(DSDamageTypes.get(pIndirectEntity.level(), DSDamageTypes.DRAGON_BALL_LIGHTNING));
 	}
 
-	@Override
-	protected void onHit(HitResult hitResult){
+	protected void onHitCommon(){
 		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-			if(this.level().isClientSide) {
-				level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, false);
-			} else {
+			if (!this.level().isClientSide) {
+				level().playSound((Player)this.getOwner(), getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f);
+			}
+
+			if(!isLingering) {
+				level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, true);
 				isLingering = true;
 				// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
 				xPower = 0;
@@ -77,7 +83,19 @@ public class BallLightningEntity extends DragonBallEntity{
 			}
 		}
 	}
-	
+
+	@Override
+	protected void onHitEntity(EntityHitResult hitResult){
+		super.onHitEntity(hitResult);
+		onHitCommon();
+	}
+
+	@Override
+	protected void onHitBlock(BlockHitResult hitResult){
+		super.onHitBlock(hitResult);
+		onHitCommon();
+	}
+
 	@Override
 	public void tick() {
 		super.tick();
@@ -152,4 +170,21 @@ public class BallLightningEntity extends DragonBallEntity{
 			}
 		}
 	}
+	@Override
+	public PlayState predicate(final AnimationState<DragonBallEntity> state) {
+		if(!isLingering) {
+			state.getController().setAnimation(FLY);
+			return PlayState.CONTINUE;
+		} else if (lingerTicks < 16) {
+			state.getController().setAnimation(EXPLOSION);
+		} else {
+			state.getController().setAnimation(IDLE);
+		}
+
+		return PlayState.CONTINUE;
+	}
+
+	private static final RawAnimation EXPLOSION = RawAnimation.begin().thenLoop("explosion");
+	private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
+	private static final RawAnimation FLY = RawAnimation.begin().thenLoop("fly");
 }
