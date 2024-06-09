@@ -278,7 +278,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		double guiScaleOffset = (Minecraft.getInstance().getWindow().getGuiScale() - 2);
 		int scissorX0 =  leftPos;
 		int scissorY0 = topPos;
 		int scissorX1 = 140 + leftPos;
