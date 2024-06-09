@@ -171,15 +171,19 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		clawMenuButtons.add(clawRenderButton);
 
 		if(ClientEvents.inventoryToggle){
-			addRenderableWidget(new ExtendedButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, Component.empty(), p_onPress_1_ -> {
+			ExtendedButton inventoryToggle = new ExtendedButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, Component.empty(), p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(player));
 				PacketDistributor.sendToServer(new RequestOpenInventory.Data());
 			}){
 				@Override
 				public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-					guiGraphics.blit(INVENTORY_TOGGLE_BUTTON, getX(), getY(), 0, 0, 20, 18, 20, 18);
+					float u = 21f;
+					float v = isHoveredOrFocused() ? 20f : 0f;
+					guiGraphics.blit(INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
 				}
-			});
+			};
+			inventoryToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.vanilla")));
+			addRenderableWidget(inventoryToggle);
 		}
 	}
 
