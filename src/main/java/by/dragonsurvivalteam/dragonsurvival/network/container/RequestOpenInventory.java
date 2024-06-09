@@ -7,21 +7,22 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class RequestOpenInventory implements IMessage<RequestOpenInventory.Data> {
 
 	public static void handleServer(final RequestOpenInventory.Data message, final IPayloadContext context) {
-		Player sender = context.player();
+		ServerPlayer sender = (ServerPlayer)context.player();
 		context.enqueueWork(() -> {
-            sender.containerMenu.removed(sender);
+			sender.containerMenu.removed(sender);
 
             InventoryMenu inventory = sender.inventoryMenu;
-			sender.openMenu((MenuProvider) inventory);
-			//sender.initMenu(inventory);
+			sender.initMenu(inventory);
 		});
 	}
 

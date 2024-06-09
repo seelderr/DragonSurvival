@@ -93,11 +93,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	}
 
 	private PlayState headPredicate(final AnimationState<DragonEntity> state) {
-		if (!neckLocked) {
+		//if (!neckLocked) {
 			return state.setAndContinue(HEAD_TURN);
-		} else {
-			return PlayState.STOP;
-		}
+		//} else {
+		//	return PlayState.STOP;
+		//}
 	}
 
 	private PlayState bitePredicate(final AnimationState<DragonEntity> state) {
