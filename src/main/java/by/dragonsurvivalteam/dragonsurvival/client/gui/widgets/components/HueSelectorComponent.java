@@ -14,10 +14,7 @@ import com.google.common.collect.ImmutableList;
 import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Checkbox;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;

@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlace
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

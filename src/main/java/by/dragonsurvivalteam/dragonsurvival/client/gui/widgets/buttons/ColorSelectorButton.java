@@ -8,10 +8,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
+import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import java.awt.*;
 import java.util.function.Consumer;
-
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;

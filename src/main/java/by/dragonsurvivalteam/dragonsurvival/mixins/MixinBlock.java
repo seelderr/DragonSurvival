@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-
 import java.util.Stack;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;

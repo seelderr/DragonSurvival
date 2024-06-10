@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DS_ATTACHMENT_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
@@ -10,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -44,9 +42,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class DragonStateHandler extends EntityStateHandler {

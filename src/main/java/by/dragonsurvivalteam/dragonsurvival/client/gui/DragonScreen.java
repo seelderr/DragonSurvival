@@ -18,7 +18,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuTogg
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.awt.*;
@@ -26,9 +25,7 @@ import java.util.*;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.Tooltip;
-import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;

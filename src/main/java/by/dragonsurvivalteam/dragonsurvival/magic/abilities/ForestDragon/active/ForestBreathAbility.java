@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.LargePoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;

@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.DragonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.SmallLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;

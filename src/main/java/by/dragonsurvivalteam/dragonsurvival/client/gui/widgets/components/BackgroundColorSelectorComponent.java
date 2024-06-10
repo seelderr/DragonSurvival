@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import static by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList.BACKGROUND_TEXTURE;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ColorPickerButton;
 import com.google.common.collect.ImmutableList;
 import java.awt.*;
@@ -12,9 +13,6 @@ import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.BackgroundColorButton.BUTTON_TEXTURE;
-import static by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList.BACKGROUND_TEXTURE;
 
 public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	public final ExtendedButton colorPicker;

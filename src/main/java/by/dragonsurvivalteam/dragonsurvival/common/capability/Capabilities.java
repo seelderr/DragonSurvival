@@ -2,22 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
-import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
-import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.EntityCapability;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber( modid = MODID, bus = EventBusSubscriber.Bus.MOD)
 public class Capabilities{

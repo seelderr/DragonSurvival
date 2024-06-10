@@ -26,7 +26,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
