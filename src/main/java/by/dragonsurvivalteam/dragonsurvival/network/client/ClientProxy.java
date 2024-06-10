@@ -6,9 +6,11 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonAltarHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
@@ -24,6 +26,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
@@ -40,6 +44,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 
 /** To avoid loading client classes on the server side */
@@ -105,9 +110,25 @@ public class ClientProxy {
     public static void handleRequestClientData(final RequestClientData.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
-        if (localPlayer != null) {
-            ClientEvents.sendClientData(message);
+        if (localPlayer == null || message.type() == null) {
+            return;
         }
+
+        PacketDistributor.sendToServer(new SyncDragonClawRender.Data(localPlayer.getId(), ClientDragonRender.renderDragonClaws));
+        PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(localPlayer.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
+
+        DragonStateProvider.getCap(localPlayer).ifPresent(cap -> {
+            // We aren't checking if the player is a dragon here, since on login that data might not be ready yet.
+            // Instead we'll just check if stuff is null and just not send the data in the case of an empty dragon object (which will happen on login).
+            if(DragonEditorRegistry.getSavedCustomizations() != null){
+                AbstractDragonType type = message.dragonType();
+                if(type != null) {
+                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(message.level(), 0);
+                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+                    PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
+                }
+            }
+        });
     }
 
     public static void handleSyncPlayerSkinPreset(final SyncPlayerSkinPreset.Data message, HolderLookup.Provider provider) {
