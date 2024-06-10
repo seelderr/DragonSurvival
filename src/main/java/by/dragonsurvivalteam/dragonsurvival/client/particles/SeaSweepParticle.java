@@ -1,8 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
+import com.mojang.serialization.MapCodec;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -41,20 +47,50 @@ public class SeaSweepParticle extends TextureSheetParticle{
 	}
 
 	@Override
-	public int getLightColor(float p_189214_1_){
+	public int getLightColor(float pPartialTicks){
 		return 15728880;
 	}
 
-	@OnlyIn (Dist.CLIENT)
-	public static class Factory implements ParticleProvider<SimpleParticleType> {
-		private final SpriteSet sprites;
-
-		public Factory(SpriteSet p_i50563_1_){
-			sprites = p_i50563_1_;
+	public static class Type extends ParticleType<Data> {
+		public Type(boolean pOverrideLimitter) {
+			super(pOverrideLimitter);
 		}
 
 		@Override
-		public Particle createParticle(SimpleParticleType type, ClientLevel level, double x, double y, double z, double quadSize, double unused, double unused2){
+		public MapCodec<Data> codec() {
+			return Data.CODEC;
+		}
+
+		@Override
+		public StreamCodec<? super RegistryFriendlyByteBuf, Data> streamCodec() {
+			return Data.STREAM_CODEC;
+		}
+	}
+
+	public static class Data implements ParticleOptions {
+		public static final Type TYPE = new Type(false);
+
+		public static final MapCodec<Data> CODEC = MapCodec.unit(new Data());
+
+		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = StreamCodec.unit(new Data());
+
+		@Override
+		public @NotNull ParticleType<?> getType() {
+			return TYPE;
+		}
+	}
+
+
+	@OnlyIn (Dist.CLIENT)
+	public static class Factory implements ParticleProvider<Data> {
+		private final SpriteSet sprites;
+
+		public Factory(SpriteSet spriteSet){
+			sprites = spriteSet;
+		}
+
+		@Override
+		public Particle createParticle(@NotNull Data type, @NotNull ClientLevel level, double x, double y, double z, double quadSize, double unused, double unused2){
 			return new SeaSweepParticle(level, x, y, z, quadSize, sprites);
 		}
 	}

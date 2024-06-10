@@ -21,12 +21,12 @@ public class TreasureParticle extends TextureSheetParticle{
 	public TreasureParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, TreasureParticle.Data data, SpriteSet spriteSet){
 		super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
 		sprites = spriteSet;
-		rCol = data.getR();
-		gCol = data.getG();
-		bCol = data.getB();
-		quadSize *= 0.75F * data.getScale();
+		rCol = data.r();
+		gCol = data.g();
+		bCol = data.b();
+		quadSize *= 0.75F * data.scale();
 		int i = (int)(8.0D / (Math.random() * 0.8D + 0.2D));
-		lifetime = (int)Math.max((float)i * data.getScale(), 1.0F);
+		lifetime = (int)Math.max((float)i * data.scale(), 1.0F);
 		pickSprite(spriteSet);
 	}
 
@@ -75,7 +75,7 @@ public class TreasureParticle extends TextureSheetParticle{
 
 		@Override
 		public @NotNull MapCodec<Data> codec() {
-			return Data.CODEC(this);
+			return Data.CODEC;
 		}
 
 		@Override
@@ -84,23 +84,16 @@ public class TreasureParticle extends TextureSheetParticle{
 		}
 	}
 
-	public static class Data implements ParticleOptions {
-		private final float r;
-		private final float g;
-		private final float b;
-		private final float scale;
+	public record Data(float r, float g, float b, float scale) implements ParticleOptions {
+		public static MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(codecBuilder -> {
+			return codecBuilder.group(
+					Codec.FLOAT.fieldOf("r").forGetter(Data::r),
+					Codec.FLOAT.fieldOf("g").forGetter(Data::g),
+					Codec.FLOAT.fieldOf("b").forGetter(Data::b),
+					Codec.FLOAT.fieldOf("scale").forGetter(Data::scale)).apply(codecBuilder, Data::new);
+		});
 
-		public static MapCodec<Data> CODEC(ParticleType<Data> particleType) {
-			return RecordCodecBuilder.mapCodec(codecBuilder -> {
-				return codecBuilder.group(
-						Codec.FLOAT.fieldOf("r").forGetter(Data::getR),
-						Codec.FLOAT.fieldOf("g").forGetter(Data::getG),
-						Codec.FLOAT.fieldOf("b").forGetter(Data::getB),
-						Codec.FLOAT.fieldOf("scale").forGetter(Data::getScale)).apply(codecBuilder, Data::new);
-			});
-		}
-
-		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>() {
 			@Override
 			public void encode(ByteBuf pBuffer, Data pValue) {
 				pBuffer.writeFloat(pValue.r);
@@ -115,36 +108,42 @@ public class TreasureParticle extends TextureSheetParticle{
 			}
 		};
 
-		public Data(float r, float g, float b, float scale){
+		public static final Type TYPE = new Type(false);
+
+		public Data(float r, float g, float b, float scale) {
 			this.r = r;
 			this.g = g;
 			this.b = b;
 			this.scale = Mth.clamp(scale, 0.01F, 4.0F);
 		}
 
-		@OnlyIn( Dist.CLIENT )
-		public float getR(){
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public float r() {
 			return r;
 		}
 
-		@OnlyIn( Dist.CLIENT )
-		public float getG(){
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public float g() {
 			return g;
 		}
 
-		@OnlyIn( Dist.CLIENT )
-		public float getB(){
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public float b() {
 			return b;
 		}
 
-		@OnlyIn( Dist.CLIENT )
-		public float getScale(){
+		@Override
+		@OnlyIn(Dist.CLIENT)
+		public float scale() {
 			return scale;
 		}
 
 		@Override
-		public @NotNull ParticleType<Data> getType(){
-			return new Type(false);
+		public @NotNull ParticleType<Data> getType() {
+			return TYPE;
 		}
 	}
 }

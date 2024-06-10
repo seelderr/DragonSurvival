@@ -1,7 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.DragonParticle;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.DragonParticle;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
@@ -32,7 +33,7 @@ import net.minecraft.world.phys.Vec3;
 public class BallLightningEntity extends DragonBallEntity{
 	protected boolean isLingering = false;
 	protected int lingerTicks = 100;
-	protected DragonParticle.Data trail = new DragonParticle.Data(37, false);
+	protected LargeLightningParticle.Data trail = new LargeLightningParticle.Data(37, false);
 	public BallLightningEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
 		super(DSEntities.BALL_LIGHTNING.get(), p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
 	}
@@ -134,7 +135,7 @@ public class BallLightningEntity extends DragonBallEntity{
 				for (int i = 0; i < steps; i++) {
 					// the current entity coordinate + ((the distance between it and the target) * (the fraction of the total))
 					Vec3 step = ent.position().add(distV.scale(stepSize * i));
-					level().addParticle(new DragonParticle.Data(16F, false), step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
+					level().addParticle(trail, step.x(), step.y(), step.z(), 0.0, 0.0, 0.0);
 				}
 			}
 		}
