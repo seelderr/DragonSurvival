@@ -56,11 +56,10 @@ public class ClientMagicHUDHandler {
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
 	public static Integer manabarYOffset = 0;
 
-	public static boolean renderExperienceBar(final Gui gui, GuiGraphics guiGraphics, int screenWidth) {
+	public static boolean renderExperienceBar(GuiGraphics guiGraphics, int screenWidth) {
 		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		// FIXME: Figure out how to draw gui in correct situation
-		if (localPlayer == null || /*!gui.shouldDrawSurvivalElements() ||*/ !Minecraft.getInstance().gameMode.hasExperience()) {
+		if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer() ||!Minecraft.getInstance().gameMode.hasExperience()) {
 			return false;
 		}
 

@@ -303,8 +303,7 @@ public class DragonFoodHandler {
 	public static boolean renderFoodBar(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
 		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		// FIXME: Figure out how to handle this
-		if (localPlayer == null /*!gui.shouldDrawSurvivalElements()*/) {
+		if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer()) {
 			return false;
 		}
 

@@ -45,7 +45,7 @@ public class RenderHudEvents {
                 event.setCanceled(true);
             }
         } else if (ServerConfig.consumeEXPAsMana && !vanillaExperienceBar && id == VanillaGuiLayers.EXPERIENCE_BAR) {
-            boolean wasRendered = ClientMagicHUDHandler.renderExperienceBar(Minecraft.getInstance().gui, event.getGuiGraphics(), screenWidth);
+            boolean wasRendered = ClientMagicHUDHandler.renderExperienceBar(event.getGuiGraphics(), screenWidth);
 
             if (wasRendered) {
                 event.setCanceled(true);
