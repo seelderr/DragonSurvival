@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -135,13 +136,11 @@ public class SourceOfMagicHandler{
 
 									if(pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()){
 										if(!minecraft.isPaused()){
-											// FIXME: How to spawn generic particles?
-											//player.level().addParticle(DSParticles.MAGIC_BEACON_PARTICLE, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											player.level().addParticle(new BeaconParticle.MagicData(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}else if(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()){
 										if(!minecraft.isPaused()){
-											// FIXME: How to spawn generic particles?
-											//player.level().addParticle(DSParticles.FIRE_BEACON_PARTICLE, player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+											player.level().addParticle(new BeaconParticle.FireData(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
 										}
 									}
 								}

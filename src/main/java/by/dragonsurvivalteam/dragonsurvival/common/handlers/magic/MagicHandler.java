@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
@@ -262,8 +263,7 @@ public class MagicHandler{
 						double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 
 						if (player.level() instanceof ServerLevel serverLevel) {
-							// FIXME: How to spawn generic particles?
-							//serverLevel.sendParticles(DSParticles.SEA_SWEEP, player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+							serverLevel.sendParticles(new SeaSweepParticle.Data(), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
 						}
 					}
 				} else if (Objects.equals(handler.getType(), DragonTypes.CAVE)) {
