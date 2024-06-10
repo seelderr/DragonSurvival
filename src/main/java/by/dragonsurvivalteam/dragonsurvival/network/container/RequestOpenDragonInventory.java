@@ -5,7 +5,9 @@ import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonState
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -20,13 +22,18 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInventory.Data> {
 
-	// FIXME: This randomly fails rarely (about 1 in 20 times) and I have no idea why.
+	// TODO: This randomly fails rarely (about 1 in 20 times) and I have no idea why.
 	// This is needed since an OpenInventory message normally resets the cursor back to the center of the screen.
 	// This is disruptive when navigating between various dragon menus, so we set the cursor back to prevent this behavior in that case.
 	public static void SendOpenDragonInventoryAndMaintainCursorPosition() {
 		ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
 		ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 		PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+			boolean clawsMenuOpen = cap.getClawToolData().isMenuOpen();
+			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenuOpen));
+			cap.getClawToolData().setMenuOpen(clawsMenuOpen);
+		});
 	}
 
 	public static void handleServer(final RequestOpenDragonInventory.Data message, final IPayloadContext context) {

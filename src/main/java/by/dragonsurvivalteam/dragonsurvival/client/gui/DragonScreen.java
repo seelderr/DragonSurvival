@@ -33,6 +33,7 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -132,8 +133,17 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		clawToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws")));
 		addRenderableWidget(clawToggle);
 
-		// (Unsure) Growth icon in the claw menu
-		HelpButton growthIcon = new HelpButton(leftPos - 58, topPos - 40, 32, 32, "", 0);
+		// Growth icon in the claw menu
+		ExtendedButton growthIcon = new ExtendedButton(leftPos - 58, topPos - 40, 32, 32, Component.empty(), btn -> {}){
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+				// Do nothing
+			}
+		};
+		String age = (int)handler.getSize() - handler.getLevel().size + "/";
+		MutableComponent componentList = Component.translatable("ds.gui.growth_stage", handler.getLevel().getName());
+		componentList.append(Component.translatable("ds.gui.growth_age", age));
+		growthIcon.setTooltip(Tooltip.create(componentList));
 		addRenderableWidget(growthIcon);
 		clawMenuButtons.add(growthIcon);
 

@@ -26,6 +26,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Wa
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -42,6 +43,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
@@ -65,6 +67,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -81,6 +84,7 @@ public class ClientEvents{
 	public static ConcurrentHashMap<Integer, Integer> dragonsJumpingTicks = new ConcurrentHashMap<>(20);
 	public static double mouseX = -1;
 	public static double mouseY = -1;
+	public static ExtendedButton creativeModeDragonInventoryButton;
 	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "dragonInventory", comment = "Should the default inventory be replaced as a dragon?" )
 	public static Boolean dragonInventory = true;
 	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "dragonTabs", comment = "Should dragon tabs be added to the default player inventory?" )
@@ -139,6 +143,15 @@ public class ClientEvents{
 	}
 
 	@SubscribeEvent
+	public static void removeCraftingButtonInOtherCreativeModeTabs(ScreenEvent.Render.Pre renderEvent){
+		if(renderEvent.getScreen() instanceof CreativeModeInventoryScreen screen){
+			if(creativeModeDragonInventoryButton != null) {
+                creativeModeDragonInventoryButton.visible = screen.isInventoryOpen();
+			}
+		}
+	}
+
+	@SubscribeEvent
 	public static void addCraftingButton(ScreenEvent.Init.Post initGuiEvent){
 		Screen sc = initGuiEvent.getScreen();
 
@@ -158,48 +171,35 @@ public class ClientEvents{
 			}
 
 			if(inventoryToggle){
-				// FIXME: Figure out how to actually position this correctly
-				//initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, 20, 0, 19, DragonScreen.INVENTORY_TOGGLE_BUTTON, p_onPress_1_ -> {
-				//	SendOpenDragonInventoryAndMaintainCursorPosition();
-				//}){
-				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128, screen.height / 2 - 50, 20, 20, new WidgetSprites(DragonScreen.INVENTORY_TOGGLE_BUTTON, DragonScreen.INVENTORY_TOGGLE_BUTTON), p_onPress_1_ -> {
+				ExtendedButton inventoryToggle = new ExtendedButton(screen.getGuiLeft() + 128, screen.height / 2 - 50, 20, 18, Component.empty(), p_onPress_1_ -> {
 					SendOpenDragonInventoryAndMaintainCursorPosition();
 				}){
 					@Override
-					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-						super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-
-						if(isHoveredOrFocused()){
-							ArrayList<Component> description = new ArrayList<>(List.of(Component.translatable("ds.gui.toggle_inventory.dragon")));
-							guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, mouseX, mouseY);
-						}
+					public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+						float u = 21f;
+						float v = isHoveredOrFocused() ? 20f : 0f;
+						guiGraphics.blit(DragonScreen.INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
 					}
-				});
+				};
+				inventoryToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.dragon")));
+				initGuiEvent.addListener(inventoryToggle);
 			}
 		}
 
 		if (sc instanceof CreativeModeInventoryScreen screen) {
 			if (inventoryToggle) {
-				// FIXME: Figure out how to actually position this correctly
-				initGuiEvent.addListener(new ImageButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 20, new WidgetSprites(DragonScreen.INVENTORY_TOGGLE_BUTTON, DragonScreen.INVENTORY_TOGGLE_BUTTON), p_onPress_1_ -> {
+				creativeModeDragonInventoryButton = new ExtendedButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, Component.empty(), p_onPress_1_ -> {
 					SendOpenDragonInventoryAndMaintainCursorPosition();
 				}){
-					// FIXME
-					//@Override
-					//public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-					//	active = visible = screen.isInventoryOpen();
-					//	super.render(guiGraphics, mouseX, mouseY, partialTick);
-					//}
-
 					@Override
-					public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTick) {
-						super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTick);
-
-						if (isHovered()) {
-							guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.toggle_inventory.dragon"), mouseX, mouseY);
-						}
+					public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+						float u = 21f;
+						float v = isHoveredOrFocused() ? 20f : 0f;
+						guiGraphics.blit(DragonScreen.INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
 					}
-				});
+				};
+				creativeModeDragonInventoryButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.dragon")));
+				initGuiEvent.addListener(creativeModeDragonInventoryButton);
 			}
 		}
 	}
