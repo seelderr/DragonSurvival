@@ -12,10 +12,6 @@ public class ClientConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.CLIENT);
 	}
 
-	// FIXME :: Remove - unused
-	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "clientDebugMessages", comment = "Enable client-side debug messages" )
-	public static Boolean clientDebugMessages = false;
-
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "renderBreathRange", comment = "Whether the range of the breath should be rendered (while hitboxes are shown)")
 	public static Boolean renderBreathRange = true;
 
