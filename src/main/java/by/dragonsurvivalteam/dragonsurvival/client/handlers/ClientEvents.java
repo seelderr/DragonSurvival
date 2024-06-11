@@ -335,8 +335,7 @@ public class ClientEvents{
 	public static void renderOverlay(final DragonStateHandler handler, final Gui gui, final GuiGraphics guiGraphics) {
 		LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-		// FIXME: We need this condition still, but forgeGUI is not a thing anymore
-		if (localPlayer == null /*!forgeGUI.shouldDrawSurvivalElements()*/) {
+		if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer()) {
 			return;
 		}
 
