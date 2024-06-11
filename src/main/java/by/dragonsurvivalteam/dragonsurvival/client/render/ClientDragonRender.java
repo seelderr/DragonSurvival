@@ -455,9 +455,8 @@ public class ClientDragonRender{
 		}
 	}
 
-	// TODO: This event type might be wrong.
 	@SubscribeEvent
-	public static void onClientTick(ClientTickEvent.Pre renderTickEvent){
+	public static void onClientTick(RenderFrameEvent.Pre renderTickEvent){
 			Minecraft minecraft = Minecraft.getInstance();
 			LocalPlayer player = minecraft.player;
 			if(player != null){
