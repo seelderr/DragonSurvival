@@ -3,16 +3,23 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.VillageRelationShips;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrincessHorseEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
+
+import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
+import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -33,6 +40,7 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -212,9 +220,8 @@ public class VillagerRelationsHandler{
 				if(serverLevel.dimension() == Level.OVERWORLD){
 					VillageRelationShips villageRelationShips = DragonStateProvider.getOrGenerateHandler(player).getVillageRelationShips();
 						if(villageRelationShips.hunterSpawnDelay == 0){
-							// FIXME
-							//BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
-							/*if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
+							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
+							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
 								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_AQUATIC)) {
 									return;
 								}
@@ -227,7 +234,7 @@ public class VillagerRelationsHandler{
 								}else{
 									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
 								}
-							}*/
+							}
 						}else{
 							villageRelationShips.hunterSpawnDelay--;
 						}
@@ -314,8 +321,7 @@ public class VillagerRelationsHandler{
 					if(timeLeft == 0){
 						ServerPlayer player = serverWorld.getRandomPlayer();
 						if(player != null && player.isAlive() && !player.isCreative() && !player.isSpectator()){
-							// FIXME
-							/*BlockPos blockPos = SpawningUtils.findRandomSpawnPosition(player, 1, 2, 20.0F);
+							BlockPos blockPos = SpawningUtils.findRandomSpawnPosition(player, 1, 2, 20.0F);
 							if(blockPos != null && blockPos.getY() >= ServerConfig.riderSpawnLowerBound && blockPos.getY() <= ServerConfig.riderSpawnUpperBound && serverWorld.isVillage(blockPos)){
 								if (serverWorld.getBiome(blockPos).is(Tags.Biomes.IS_AQUATIC)) {
 									return;
@@ -336,7 +342,7 @@ public class VillagerRelationsHandler{
 								}
 
 								timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(world.random.nextInt(ServerConfig.royalSpawnDelay / 2));
-							}*/
+							}
 						}
 					}else{
 						timeLeft--;
