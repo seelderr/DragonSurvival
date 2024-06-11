@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -101,10 +102,8 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 	}
 
 	@Override
-	// FIXME: How to generate DSParticles.MAGIC_BEACON_PARTICLE specifically?
 	public ParticleOptions getParticleEffect(){
-		return new SimpleParticleType(false);
-		/*return DSParticles.MAGIC_BEACON_PARTICLE;*/
+		return new BeaconParticle.MagicData();
 	}
 
 	@Override

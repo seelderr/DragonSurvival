@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -87,9 +88,8 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	}
 
 	@Override
-	// FIXME: How to generate DSParticles.PEACE_BEACON_PARTICLE specifically?
 	public ParticleOptions getParticleEffect(){
-		return new SimpleParticleType(false);
+		return new BeaconParticle.PeaceData();
 	}
 
 	@Override

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -92,10 +93,8 @@ public class InspirationAbility extends AoeBuffAbility{
 	}
 
 	@Override
-	// FIXME: How to generate DSParticles.FIRE_BEACON_PARTICLE specifically?
 	public ParticleOptions getParticleEffect(){
-		return new SimpleParticleType(false);
-		/*return DSParticles.FIRE_BEACON_PARTICLE;*/
+		return new BeaconParticle.FireData();
 	}
 
 	@Override
