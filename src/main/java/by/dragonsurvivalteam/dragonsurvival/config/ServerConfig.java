@@ -443,7 +443,7 @@ public class ServerConfig{
 			, "spartanweaponry:longbow_.*"
 		);
 
-	// FIXME :: Currently lists of integer are not properly supported - they get converted to string lists or sth
+	// TODO: Currently lists of integer are not properly supported - they get converted to string lists or sth
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedSlots", comment = "List of slots to handle blacklistedItems option" )
 	public static List<Integer> blacklistedSlots = Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 40, 45, 38);
 

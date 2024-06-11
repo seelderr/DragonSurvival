@@ -259,7 +259,7 @@ public class ClientDragonRender{
 
 				poseStack.mulPose(Axis.YN.rotationDegrees((float) handler.getMovementData().bodyYaw));
 
-				// FIXME :: This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
+				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
 				float scale = (float) Math.max(size / 40.0D, 0.4D);
 				poseStack.scale(scale, scale, scale);
 
