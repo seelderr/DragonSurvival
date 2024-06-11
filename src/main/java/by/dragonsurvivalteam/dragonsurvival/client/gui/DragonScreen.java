@@ -131,21 +131,17 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(clawToggle);
 
 		// Growth icon in the claw menu
-		ExtendedButton growthIcon = new ExtendedButton(leftPos - 58, topPos - 40, 32, 32, Component.empty(), btn -> {}){
+		ExtendedButton growthIcon = new ExtendedButton(leftPos - 58, topPos - 35, 32, 32, Component.empty(), btn -> {}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				// Do nothing
+				isGrowthIconHovered = isHovered();
 			}
 		};
-		String age = (int)handler.getSize() - handler.getLevel().size + "/";
-		MutableComponent componentList = Component.translatable("ds.gui.growth_stage", handler.getLevel().getName());
-		componentList.append(Component.translatable("ds.gui.growth_age", age));
-		growthIcon.setTooltip(Tooltip.create(componentList));
 		addRenderableWidget(growthIcon);
 		clawMenuButtons.add(growthIcon);
 
 		// Info button at the bottom of the claw menu
-		HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 140, 9, 9, "ds.skill.help.claws", 0);
+		HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0);
 		addRenderableWidget(infoButton);
 		clawMenuButtons.add(infoButton);
 
@@ -169,8 +165,6 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 					guiGraphics.blit(DRAGON_CLAW_CHECKMARK, getX(), getY(), 0, 0, 9, 9, 9, 9);
 					guiGraphics.pose().popPose();
 				}
-
-				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
 			}
 		};
 		clawRenderButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws.rendering")));
@@ -230,7 +224,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			int size = 34;
 			int thickness = 5;
 			int circleX = leftPos - 58;
-			int circleY = topPos - 40;
+			int circleY = topPos - 35;
 			int sides = 6;
 
 			int radius = size / 2;
@@ -364,7 +358,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			List<Component> components = List.of(
 					Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()),
 					Component.translatable("ds.gui.growth_age", age),
-					Component.translatable("ds.gui.growth_help", result)
+					Component.translatable("ds.gui.growth_help", result.toString())
 			);
 
 			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, components, mouseX, mouseY);

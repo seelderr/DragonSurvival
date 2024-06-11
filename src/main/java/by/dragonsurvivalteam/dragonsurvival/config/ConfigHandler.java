@@ -486,9 +486,9 @@ public class ConfigHandler{
 	 * @return List of the resource element and the resolved tag
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
-	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) { // TODO :: Filter duplicates
+	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) {
 		Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
-		ArrayList<T> list = new ArrayList<>();
+		List<T> list = new ArrayList<>();
 
 		for (Object object : values) {
 			if (object == null) {
@@ -499,18 +499,18 @@ public class ConfigHandler{
 				ResourceLocation location = ResourceLocation.tryParse(stringValue);
 				Optional<? extends Holder<?>> optional = registry.getA().get().getHolder(location);
 				optional.ifPresent(holder -> list.add((T) holder.value()));
-
-				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>) registry.getB().get(), location);
-
-				if (tagKey.isFor(registry.getA().get().key())) {
-					// TODO: This might not work.
-					//ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
-					return (List<T>) registry.getA().get().stream().toList();
-				}
 			}
 		}
 
-		return list;
+		// Remove duplicates
+		List<T> distinctList;
+		distinctList = list.stream().filter(
+				distinct -> list.stream().noneMatch(
+						t -> t != distinct && t.equals(distinct)
+				)
+		).toList();
+
+		return distinctList;
 	}
 
 	public static String createConfigPath(final String[] category, final String key) {
