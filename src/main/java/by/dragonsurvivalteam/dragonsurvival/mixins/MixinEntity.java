@@ -6,12 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.Objects;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +26,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -108,27 +116,33 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 		});
 	}
 
-	// FIXME
-	/*@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;getPassengerRidingPosition(Lnet/minecraft/world/entity/Entity);V", cancellable = true )
-	public void getDragonPassengersRidingOffset(CallbackInfoReturnable<Double> ci){
+	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "getPassengerRidingPosition")
+	public Vec3 getDragonPassengersRidingPosition(Vec3 original){
 		if(DragonStateProvider.isDragon((Entity)(Object)this)){
 			if (!DragonStateProvider.isDragon(((Entity)(Object)this).getPassengers().get(0))) { // Human
 				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
 				switch(((Entity)(Object)this).getPose()){
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue(height * 0.6D);
-					case CROUCHING -> ci.setReturnValue(height * 0.45D);
-					default -> ci.setReturnValue(height * 0.5D);
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+						return original.add(0, height * 0.6D, 0);
+					}
+                    case CROUCHING -> {
+                        return original.add(0, height * 0.45D, 0);
+                    }
+                    default -> {
+						return original.add(0, height * 0.5D, 0);
+					}
 				}
 			} else { // Dragon
 				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
-				switch(((Entity)(Object)this).getPose()){
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> ci.setReturnValue(height * 0.66D);
-					case CROUCHING -> ci.setReturnValue(height * 0.61D);
-					default -> ci.setReturnValue(height * 0.66D);
-				}
-			}
+                if (Objects.requireNonNull(((Entity) (Object) this).getPose()) == Pose.CROUCHING) {
+                    return original.add(0, height * 0.61D, 0);
+                }
+                return original.add(0, height * 0.66D, 0);
+            }
 		}
-	}*/
+
+		return original;
+	}
 
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;isVisuallyCrawling()Z", cancellable = true )
 	public void isDragonVisuallyCrawling(CallbackInfoReturnable<Boolean> ci){
@@ -137,16 +151,18 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 		}
 	}
 
-	@Inject( at = @At( value = "RETURN" ), method = "canRide", cancellable = true )
-	public void canRide(Entity entity, CallbackInfoReturnable<Boolean> ci){
-		if(ci.getReturnValue() && DragonStateProvider.isDragon((Entity)(Object)this) && !DragonStateProvider.isDragon(entity)){
+	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "canRide")
+	public boolean canRide(boolean original, @Local(argsOnly = true, ordinal = 0) Entity entity){
+		if(DragonStateProvider.isDragon((Entity)(Object)this) && !DragonStateProvider.isDragon(entity)){
 			if(ServerConfig.ridingBlacklist){
-				ci.setReturnValue(ServerConfig.allowedVehicles.contains(ResourceHelper.getKey(entity).toString()));
+				return ServerConfig.allowedVehicles.contains(ResourceHelper.getKey(entity).toString());
 			}
 		}
+
+		return original;
 	}
 
-	// FIXME
+	// TODO: I don't think this code is necessary. Will leave it here for a bit and if there are no issues will fully remove it.
 	/*@Redirect( method = "canEnterPose(Lnet/minecraft/g/entity/Pose;)Z", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/entity/Entity;getBoundingBoxForPose(Lnet/minecraft/world/entity/Pose;)Lnet/minecraft/world/phys/AABB;" ) )
 	public AABB dragonPoseBB(Entity entity, Pose pose){
 		if(DragonStateProvider.isDragon(entity) && ServerConfig.sizeChangesHitbox){
