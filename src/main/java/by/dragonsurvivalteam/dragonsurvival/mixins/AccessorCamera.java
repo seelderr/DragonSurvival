@@ -8,5 +8,5 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 public interface AccessorCamera {
 
     @Invoker("move")
-    void move(double pDistanceOffset, double pVerticalOffset, double pHorizontalOffset);
+    void invokeMove(double pDistanceOffset, double pVerticalOffset, double pHorizontalOffset);
 }
