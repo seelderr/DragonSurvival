@@ -22,6 +22,7 @@
     "tool_swap.MixinServerPlayerGameModeStart"
   ],
   "client": [
+    "AccessorCamera",
     "AccessorEntityRenderer",
     "AccessorEntityRendererManager",
     "AccessorGameRenderer",
