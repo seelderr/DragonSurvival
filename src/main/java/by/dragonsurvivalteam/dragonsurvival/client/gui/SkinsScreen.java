@@ -227,19 +227,18 @@ public class SkinsScreen extends Screen{
 			setTextures();
 		}, Supplier::get) {
 			@Override
-			public void renderWidget(GuiGraphics p_230431_1_, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				super.renderWidget(p_230431_1_, p_230431_2_, p_230431_3_, p_230431_4_);
+			public void renderWidget(GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
+				super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
 
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-				//RenderSystem.setShaderTexture(0, !handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED);
-				p_230431_1_.blit(!handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
+				guiGraphics.blit(!handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
 		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-			boolean newValue = !handler.getSkinData().renderNewborn;
+			boolean newValue = !handler.getSkinData().renderYoung;
 
 			handler.getSkinData().renderYoung = newValue;
 			renderYoung = newValue;
@@ -286,7 +285,7 @@ public class SkinsScreen extends Screen{
 
 		int screenWidth = width;
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
+		Button discordURLButton = new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
 			try{
 				URI uri = new URI(DISCORD_URL);
 				clickedLink = uri;
@@ -298,14 +297,12 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				guiGraphics.blit(DISCORD, getX(), getY(), 0, 0, 16, 16, 16, 16);
-
-				if (isHovered()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Minecraft.getInstance().font.split(Component.translatable("ds.gui.skins.tooltip.discord"), screenWidth / 2), mouseX, mouseY);
-				}
 			}
-		});
+		};
+		discordURLButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.discord")));
+		addRenderableWidget(discordURLButton);
 
-		addRenderableWidget(new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
+		Button wikiButton = new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
 			try{
 				URI uri = new URI(WIKI_URL);
 				clickedLink = uri;
@@ -317,12 +314,10 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				guiGraphics.blit(WIKI, getX(), getY(), 0, 0, 16, 16, 16, 16);
-
-				if (isHovered()) {
-					guiGraphics.renderTooltip(Minecraft.getInstance().font, Minecraft.getInstance().font.split(Component.translatable("ds.gui.skins.tooltip.wiki"), screenWidth / 2), mouseX, mouseY);
-				}
 			}
-		});
+		};
+		wikiButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.wiki")));
+		addRenderableWidget(wikiButton);
 
 		addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16,  "ds.gui.skins.tooltip.help", 1));
 
@@ -365,13 +360,16 @@ public class SkinsScreen extends Screen{
 		}).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.random"))).build());
 
 		addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
-			int pos = Mth.clamp(level.ordinal() + 1, 0, DragonLevel.values().length - 1);
+			int pos = level.ordinal() + 1;
+			if (pos == DragonLevel.values().length) {
+				pos = 0;
+			}
 			level = DragonLevel.values()[pos];
 			setTextures();
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				if (isHoveredOrFocused()) {
+				if (isHovered()) {
 					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				} else {
 					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
@@ -380,13 +378,16 @@ public class SkinsScreen extends Screen{
 		});
 
 		addRenderableWidget(new Button(startX - 70, startY - 20, 11, 17, Component.empty(), button -> {
-			int pos = Mth.clamp(level.ordinal() - 1, 0, DragonLevel.values().length - 1);
+			int pos = level.ordinal() - 1;
+			if (pos == -1) {
+				pos = DragonLevel.values().length - 1;
+			}
 			level = DragonLevel.values()[pos];
 			setTextures();
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				if (isHoveredOrFocused()) {
+				if (isHovered()) {
 					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
 					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
