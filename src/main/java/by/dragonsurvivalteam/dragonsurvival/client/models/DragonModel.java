@@ -50,20 +50,20 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player = dragon.getPlayer();
-		Vec3 deltaMovement = dragon.getDeltaMovement();
+		Vec3 deltaMovement = player.getDeltaMovement();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		MathParser.setVariable("query.delta_y", () -> deltaMovement.y);
 		MathParser.setVariable("query.head_yaw", () -> handler.getMovementData().headYaw);
 		MathParser.setVariable("query.head_pitch", () -> handler.getMovementData().headPitch);
 
-		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastTick, (float)handler.getMovementData().bodyYaw);
-		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastTick, (float)handler.getMovementData().headYaw);
-		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastTick, (float)handler.getMovementData().headPitch);
+		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastFrame, (float)handler.getMovementData().bodyYaw);
+		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastFrame, (float)handler.getMovementData().headYaw);
+		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastFrame, (float)handler.getMovementData().headPitch);
 
 		double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
 
-		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (deltaMovement.y + gravity) * 50), -10, 10);
+		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (deltaMovement.y - gravity) * 50), -10, 10);
 		dragon.tailMotionSide = Mth.lerp(0.1, Mth.clamp(dragon.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
 
 		dragon.bodyYawAverage.add(bodyYawChange);
@@ -86,7 +86,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			dragon.tailSideAverage.remove(0);
 		}
 
-		dragon.tailUpAverage.add(dragon.tailMotionUp * -1);
+		dragon.tailUpAverage.add(dragon.tailMotionUp);
 		while (dragon.tailUpAverage.size() > 10) {
 			dragon.tailUpAverage.remove(0);
 		}
@@ -103,7 +103,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		double query_tail_motion_up = Mth.lerp(0.1, dragon.tail_motion_up, tailUpAvg);
 		double query_tail_motion_side = Mth.lerp(0.1, dragon.tail_motion_side, tailSideAvg);
 
-		if (dragon.tailLocked || !ClientConfig.enableTailPhysics) {
+		if (dragon.tailLocked) {
 			dragon.tailMotionUp = 0;
 			dragon.tailMotionSide = 0;
 
