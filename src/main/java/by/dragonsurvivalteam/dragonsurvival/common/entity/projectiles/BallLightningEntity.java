@@ -121,7 +121,7 @@ public class BallLightningEntity extends DragonBallEntity{
             source = damageSources().lightningBolt();
         }
 
-        List<Entity> entities = level().getEntities(owner, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
+        List<Entity> entities = level().getEntities(null, new AABB(position().x - range, position().y - range, position().z - range, position().x + range, position().y + range, position().z + range));
 		entities.removeIf(e -> e instanceof BallLightningEntity);
 		entities.removeIf(e -> !(e instanceof LivingEntity));
 

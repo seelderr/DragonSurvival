@@ -37,10 +37,6 @@ public class FireBallEntity extends DragonBallEntity{
 	@Override
 	protected boolean canSelfDamage(){
 		return false;
-		// This config would only work if I added a way to ignore the fire resistance of the cave dragon
-		// that shot the fireball. Since the default would be to not damage them anyways, I'm not
-		// going to bother to implement this for now.
-		//return ServerConfig.allowSelfDamageFromFireball;
 	}
 
 	@Override
@@ -88,5 +84,6 @@ public class FireBallEntity extends DragonBallEntity{
 
 		Entity attacker = getOwner();
 		hitResult.getEntity().hurt(getDamageSource(this, attacker), damage);
+		hitResult.getEntity().setRemainingFireTicks(getSkillLevel() + 5);
 	}
 }

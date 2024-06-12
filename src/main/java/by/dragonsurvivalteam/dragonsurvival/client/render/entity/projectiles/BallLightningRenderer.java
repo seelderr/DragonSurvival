@@ -32,18 +32,6 @@ public class BallLightningRenderer extends GeoEntityRenderer<BallLightningEntity
 	}
 
 	@Override
-	public void actuallyRender(PoseStack poseStack, @NotNull BallLightningEntity entity, BakedGeoModel model, @Nullable RenderType renderType, MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha_){
-		if(entity.tickCount >= 2 || !(entityRenderDispatcher.camera.getEntity().distanceToSqr(entity) < 12.25D)){
-			poseStack.pushPose();
-			poseStack.translate(0F, -0.2F, 0F);
-			poseStack.scale(2.0F, 2.0F, 2.0F);
-			poseStack.mulPose(entityRenderDispatcher.cameraOrientation());
-			poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
-			poseStack.popPose();
-		}
-	}
-
-	@Override
 	public @NotNull ResourceLocation getTextureLocation(@NotNull final BallLightningEntity entity) {
 		return TEXTURE_LOCATION;
 	}
