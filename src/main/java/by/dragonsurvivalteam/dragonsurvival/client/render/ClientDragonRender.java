@@ -61,7 +61,9 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
+import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.util.Color;
+import software.bernie.geckolib.util.RenderUtil;
 
 @EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRender{
@@ -72,6 +74,7 @@ public class ClientDragonRender{
 	 */
 	public static DragonEntity dragonArmor;
 	public static DragonEntity dummyDragon;
+	public static float lastPartialTick;
 
 	/**
 	 * Instances used for rendering third-person dragon models
@@ -456,127 +459,129 @@ public class ClientDragonRender{
 	}
 
 	@SubscribeEvent
-	public static void onClientTick(RenderFrameEvent.Pre renderTickEvent){
-			Minecraft minecraft = Minecraft.getInstance();
-			LocalPlayer player = minecraft.player;
-			if(player != null){
-				DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-					if(playerStateHandler.isDragon()){
-						DragonMovementData md = playerStateHandler.getMovementData();
-						md.headYawLastTick = Mth.lerp(0.05, md.headYawLastTick, md.headYaw);
-						md.headPitchLastTick = Mth.lerp(0.05, md.headPitchLastTick, md.headPitch);
-						md.bodyYawLastTick = Mth.lerp(0.05, md.bodyYawLastTick, md.bodyYaw);
+	public static void setDragonYawAndPitch(RenderFrameEvent.Pre event){
+		Minecraft minecraft = Minecraft.getInstance();
+		LocalPlayer player = minecraft.player;
+		float deltaPartialTick = event.getPartialTick() > lastPartialTick ? event.getPartialTick() - lastPartialTick : 1 - lastPartialTick + event.getPartialTick();
+		lastPartialTick = event.getPartialTick();
+		if(player != null) {
+			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+				if (playerStateHandler.isDragon()) {
+					// Handle headYaw
+					float headYaw = Functions.angleDifference((float) playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : player.yHeadRot));
+					headYaw = (float) RenderUtil.lerpYaw(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
-						double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-						float headRot = Functions.angleDifference((float)bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : player.yHeadRot));
+					// Handle headPitch
+					float headPitch = (float) Mth.lerp(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headPitch, player.getXRot());
 
-						if(rotateBodyWithCamera && !KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook){
-							if(headRot > 150){
-								bodyYaw += 150 - headRot;
-							}else if(headRot < -150){
-								bodyYaw -= 150 + headRot;
-							}
+					// Handle bodyYaw
+					double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
+					if (rotateBodyWithCamera && !KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook) {
+						if (headYaw > 150) {
+							bodyYaw += 150 - headYaw;
+						} else if (headYaw < -150) {
+							bodyYaw -= 150 + headYaw;
 						}
-						headRot = (float)Mth.lerp(0.05, md.headYaw, headRot);
+					}
 
+					Vec3 moveVector = getInputVector(new Vec3(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.getYRot());
+					if (ServerFlightHandler.isFlying(player)) {
+						moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+					}
 
-						double headPitch = Mth.lerp(0.1, md.headPitch, player.getXRot());
-						Vec3 moveVector = getInputVector(new Vec3(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.getYRot());
+					float f = (float) Mth.atan2(moveVector.z, moveVector.x) * (180F / (float) Math.PI) - 90F;
+					float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
 
-						if(ServerFlightHandler.isFlying(player)){
-							moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-						}
+					if (KeyInputHandler.FREE_LOOK.isDown()) {
+						wasFreeLook = true;
+					}
 
-						float f = (float)Mth.atan2(moveVector.z, moveVector.x) * (180F / (float)Math.PI) - 90F;
-						float f1 = (float)(Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
+					if (wasFreeLook && !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+						wasFreeLook = false;
+					}
 
-						if(KeyInputHandler.FREE_LOOK.isDown()){
-							wasFreeLook = true;
-						}
-
-						if(wasFreeLook && !Minecraft.getInstance().options.getCameraType().isFirstPerson()){
+					if (!firstPersonRotation && !KeyInputHandler.FREE_LOOK.isDown()) {
+						if ((!wasFreeLook || moveVector.length() > 0) && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+							bodyYaw = player.getYRot();
 							wasFreeLook = false;
-						}
-
-						if(!firstPersonRotation && !KeyInputHandler.FREE_LOOK.isDown()){
-							if((!wasFreeLook || moveVector.length() > 0) && Minecraft.getInstance().options.getCameraType().isFirstPerson()){
-								bodyYaw = player.getYRot();
-								wasFreeLook = false;
-								if(moveVector.length() > 0){
-									float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
-									if(95.0F < f5 && f5 < 265.0F){
-										f -= 180.0F;
-									}
-
-									float _f = Mth.wrapDegrees(f - (float)bodyYaw);
-									bodyYaw += _f * 0.3F;
-									float _f1 = Mth.wrapDegrees(player.getYRot() - (float)bodyYaw);
-
-									if(_f1 < -75.0F){
-										_f1 = -75.0F;
-									}
-
-									if(_f1 >= 75.0F){
-										_f1 = 75.0F;
-
-										bodyYaw = player.getYRot() - _f1;
-										if(_f1 * _f1 > 2500.0F){
-											bodyYaw += _f1 * 0.2F;
-										}
-									}
-								}
-								
-								if(md.bodyYaw != bodyYaw || headRot != md.headYaw || headPitch != md.headPitch){
-									bodyYaw = Mth.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
-									bodyYaw = Mth.wrapDegrees(bodyYaw);
-
-									playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
-									PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
-									return;
-								}
-							}
-						}
-
-
-						if(f1 > 0.000028){
-							float f2 = Mth.wrapDegrees(f - (float)bodyYaw);
-							bodyYaw += 0.5F * f2;
-
-							if(minecraft.options.getCameraType() == CameraType.FIRST_PERSON){
+							if (moveVector.length() > 0) {
 								float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
-								if(95.0F < f5 && f5 < 265.0F){
+								if (95.0F < f5 && f5 < 265.0F) {
 									f -= 180.0F;
 								}
 
-								float _f = Mth.wrapDegrees(f - (float)bodyYaw);
+								float _f = Mth.wrapDegrees(f - (float) bodyYaw);
 								bodyYaw += _f * 0.3F;
-								float _f1 = Mth.wrapDegrees(player.getYRot() - (float)bodyYaw);
+								float _f1 = Mth.wrapDegrees(player.getYRot() - (float) bodyYaw);
 
-								if(_f1 < -75.0F){
+								if (_f1 < -75.0F) {
 									_f1 = -75.0F;
 								}
 
-								if(_f1 >= 75.0F){
+								if (_f1 >= 75.0F) {
 									_f1 = 75.0F;
 
 									bodyYaw = player.getYRot() - _f1;
-									if(_f1 * _f1 > 2500.0F){
+									if (_f1 * _f1 > 2500.0F) {
 										bodyYaw += _f1 * 0.2F;
 									}
 								}
 							}
-						}
-
-						if(md.bodyYaw != bodyYaw || md.headYaw != headRot || md.headPitch != headPitch){
-							bodyYaw = Mth.rotLerp(0.1f, (float)playerStateHandler.getMovementData().bodyYaw, (float)bodyYaw);
 							bodyYaw = Mth.wrapDegrees(bodyYaw);
-
-							playerStateHandler.setMovementData(bodyYaw, headRot, headPitch, playerStateHandler.getMovementData().bite);
-							PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
 						}
 					}
-				});
-			}
+
+
+					if (f1 > 0.000028) {
+						float f2 = Mth.wrapDegrees(f - (float) bodyYaw);
+						bodyYaw += 0.5F * f2;
+
+						if (minecraft.options.getCameraType() == CameraType.FIRST_PERSON) {
+							float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
+							if (95.0F < f5 && f5 < 265.0F) {
+								f -= 180.0F;
+							}
+
+							float _f = Mth.wrapDegrees(f - (float) bodyYaw);
+							bodyYaw += _f * 0.3F;
+							float _f1 = Mth.wrapDegrees(player.getYRot() - (float) bodyYaw);
+
+							if (_f1 < -75.0F) {
+								_f1 = -75.0F;
+							}
+
+							if (_f1 >= 75.0F) {
+								_f1 = 75.0F;
+
+								bodyYaw = player.getYRot() - _f1;
+								if (_f1 * _f1 > 2500.0F) {
+									bodyYaw += _f1 * 0.2F;
+								}
+							}
+						}
+					}
+					bodyYaw = RenderUtil.lerpYaw(deltaPartialTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
+
+					// Update the movement data
+					DragonMovementData md = playerStateHandler.getMovementData();
+					playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, md.bite);
+				}
+			});
+		}
+	}
+
+	@SubscribeEvent
+	public static void renderPlayer(RenderPlayerEvent.Post renderPlayerEvent){
+		Minecraft minecraft = Minecraft.getInstance();
+		LocalPlayer player = minecraft.player;
+		if(player != null) {
+			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+				if (playerStateHandler.isDragon()) {
+					DragonMovementData md = playerStateHandler.getMovementData();
+					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
+				}
+			});
+		}
 	}
 
 	public static Vec3 getInputVector(Vec3 movement, float fricSpeed, float yRot){

@@ -303,9 +303,6 @@ public class ClientFlightHandler {
 								deltaMovement = deltaMovement.add(ax, ay, az);
 							}
 
-							// TODO :: Why 0.99 etc.?
-							deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
-
 							player.setDeltaMovement(deltaMovement);
 							ay = player.getDeltaMovement().y;
 						}

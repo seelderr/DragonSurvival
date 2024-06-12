@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.Objects;
 
@@ -18,7 +17,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
@@ -26,7 +24,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -67,22 +64,22 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 		if (DragonStateProvider.isDragon(passenger)) {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(passenger);
 			DragonMovementData md = handler.getMovementData();
-			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
+			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastFrame);
 			float facingClamped = Mth.clamp(facing, -150.0F, 150.0F);
 			passenger.yRotO += facingClamped - facing + self.yRotO;
-			md.bodyYaw = selfmd.bodyYawLastTick;
+			md.bodyYaw = selfmd.bodyYawLastFrame;
 			md.headYaw = -facing;
-			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastTick - selfmd.bodyYaw) : 0)));
+			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastFrame - selfmd.bodyYaw) : 0)));
 			if (passenger instanceof DragonEntity de) {
 				de.prevZRot = ((DragonEntity) self).prevZRot;
 			}
 		}
 		else {
-			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastTick);
+			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastFrame);
 			float facingClamped = Mth.clamp(facing, -120.0F, 120.0F);
 			passenger.yRotO += facingClamped - facing + self.yRotO;
-			passenger.setYBodyRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastTick - selfmd.bodyYaw) : 0)));
-			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastTick - selfmd.bodyYaw) : 0)));
+			passenger.setYBodyRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastFrame - selfmd.bodyYaw) : 0)));
+			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastFrame - selfmd.bodyYaw) : 0)));
 			passenger.setYHeadRot(passenger.getYRot());
 		}
 	}

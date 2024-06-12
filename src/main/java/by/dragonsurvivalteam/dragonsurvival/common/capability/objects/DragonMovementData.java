@@ -5,9 +5,11 @@ public class DragonMovementData{
 	public double headYaw;
 	public double headPitch;
 
-	public double headYawLastTick;
-	public double headPitchLastTick;
-	public double bodyYawLastTick;
+	public double headYawLastFrame;
+	public double headPitchLastFrame;
+	public double bodyYawLastFrame;
+
+	public float deltaPartialTick = 1;
 	
 	public float prevXRot;
 	public float prevZRot;

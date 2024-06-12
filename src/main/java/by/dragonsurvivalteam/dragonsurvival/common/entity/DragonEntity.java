@@ -85,7 +85,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	}
 
 	private PlayState tailPredicate(final AnimationState<DragonEntity> state) {
-		if (!tailLocked || !ClientConfig.enableTailPhysics) {
+		if (!tailLocked) {
 			return state.setAndContinue(TAIL_TURN);
 		} else {
 			return PlayState.STOP;

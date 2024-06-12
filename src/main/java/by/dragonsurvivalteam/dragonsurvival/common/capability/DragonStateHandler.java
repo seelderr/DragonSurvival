@@ -127,9 +127,9 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
-		movementData.headYawLastTick = movementData.headYaw;
-		movementData.bodyYawLastTick = movementData.bodyYaw;
-		movementData.headPitchLastTick = movementData.headPitch;
+		movementData.headYawLastFrame = movementData.headYaw;
+		movementData.bodyYawLastFrame = movementData.bodyYaw;
+		movementData.headPitchLastFrame = movementData.headPitch;
 
 		movementData.bodyYaw = bodyYaw;
 		movementData.headYaw = headYaw;
@@ -606,9 +606,9 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		if (isDragon()) {
 			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
-			getMovementData().headYawLastTick = getMovementData().headYaw;
-			getMovementData().bodyYawLastTick = getMovementData().bodyYaw;
-			getMovementData().headPitchLastTick = getMovementData().headPitch;
+			getMovementData().headYawLastFrame = getMovementData().headYaw;
+			getMovementData().bodyYawLastFrame = getMovementData().bodyYaw;
+			getMovementData().headPitchLastFrame = getMovementData().headPitch;
 			setIsHiding(tag.getBoolean("isHiding"));
 			getMovementData().dig = tag.getBoolean("dig");
 

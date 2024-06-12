@@ -36,17 +36,17 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 				double headYaw = cap.getMovementData().headYaw;
 				double headPitch = cap.getMovementData().headPitch;
 
-				double lastBodyYaw = cap.getMovementData().bodyYawLastTick;
-				double lastHeadYaw = cap.getMovementData().headYawLastTick;
-				double lastHeadPitch = cap.getMovementData().headPitchLastTick;
+				double lastBodyYaw = cap.getMovementData().bodyYawLastFrame;
+				double lastHeadYaw = cap.getMovementData().headYawLastFrame;
+				double lastHeadPitch = cap.getMovementData().headPitchLastFrame;
 
 				cap.getMovementData().bodyYaw = entity.yBodyRot;
 				cap.getMovementData().headYaw = -Math.toDegrees(dragon_Survival$storedXAngle);
 				cap.getMovementData().headPitch = -Math.toDegrees(dragon_Survival$storedYAngle);
 
-				cap.getMovementData().bodyYawLastTick = entity.yBodyRot;
-				cap.getMovementData().headYawLastTick = -Math.toDegrees(dragon_Survival$storedXAngle);
-				cap.getMovementData().headPitchLastTick = -Math.toDegrees(dragon_Survival$storedYAngle);
+				cap.getMovementData().bodyYawLastFrame = entity.yBodyRot;
+				cap.getMovementData().headYawLastFrame = -Math.toDegrees(dragon_Survival$storedXAngle);
+				cap.getMovementData().headPitchLastFrame = -Math.toDegrees(dragon_Survival$storedYAngle);
 
 				RenderSystem.runAsFancy(runnable);
 
@@ -57,9 +57,9 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 				cap.getMovementData().headYaw = headYaw;
 				cap.getMovementData().headPitch = headPitch;
 
-				cap.getMovementData().bodyYawLastTick = lastBodyYaw;
-				cap.getMovementData().headYawLastTick = lastHeadYaw;
-				cap.getMovementData().headPitchLastTick = lastHeadPitch;
+				cap.getMovementData().bodyYawLastFrame = lastBodyYaw;
+				cap.getMovementData().headYawLastFrame = lastHeadYaw;
+				cap.getMovementData().headPitchLastFrame = lastHeadPitch;
 			} else {
 				RenderSystem.runAsFancy(runnable);
 			}
