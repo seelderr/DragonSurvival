@@ -33,7 +33,7 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect.Dat
 
 		@Override
 		public Type<? extends CustomPacketPayload> type() {
-			return null;
+			return TYPE;
 		}
 	}
 }
