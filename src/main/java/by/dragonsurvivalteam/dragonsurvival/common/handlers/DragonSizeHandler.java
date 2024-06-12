@@ -30,11 +30,11 @@ public class DragonSizeHandler{
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-
-		if (!handler.isDragon()) {
+		if (!DragonStateProvider.isDragon(player)) {
 			return;
 		}
+
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		double size = handler.getSize();
 		// Calculate base values

@@ -31,7 +31,6 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -57,10 +56,10 @@ public class ClientProxy {
     }
 
     public static void handleSyncDragonClawRender(final SyncDragonClawRender.Data message) {
-        Player localPlayer = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
 
-        if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId());
+        if (player != null) {
+            Entity entity = player.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
                 DragonStateProvider.getCap(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state());
@@ -69,10 +68,10 @@ public class ClientProxy {
     }
 
     public static void handleSyncDragonClawsMenu(final SyncDragonClawsMenu.Data message, HolderLookup.Provider provider) {
-        Player localPlayer = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
 
-        if (localPlayer != null) {
-            Entity entity = localPlayer.level().getEntity(message.playerId());
+        if (player != null) {
+            Entity entity = player.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
                 DragonStateProvider.getCap(entity).ifPresent(handler -> {
@@ -84,10 +83,10 @@ public class ClientProxy {
     }
 
     public static void handleSyncDragonSkinSettings(final SyncDragonSkinSettings.Data message) {
-        Player localPlayer = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
 
-        if (localPlayer != null) {
-            Level world = localPlayer.level();
+        if (player != null) {
+            Level world = player.level();
             Entity entity = world.getEntity(message.playerId());
 
             if (entity instanceof Player) {
@@ -328,7 +327,7 @@ public class ClientProxy {
     }
 
     public static void handleSynchronizeDragonCap(final SyncDragonHandler.Data message) {
-        LocalPlayer localPlayer = Minecraft.getInstance().player;
+        Player localPlayer = Minecraft.getInstance().player;
 
         // TODO :: use string uuid?
         if (localPlayer != null) {
@@ -388,7 +387,7 @@ public class ClientProxy {
     }
 
     public static void handleRefreshDragons(final RefreshDragon.Data message) {
-        LocalPlayer localPlayer = Minecraft.getInstance().player;
+        Player localPlayer = Minecraft.getInstance().player;
 
         ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(localPlayer.level());
 

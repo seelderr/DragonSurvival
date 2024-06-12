@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;

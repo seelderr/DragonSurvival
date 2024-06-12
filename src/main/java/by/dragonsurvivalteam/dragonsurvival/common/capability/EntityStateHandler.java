@@ -13,10 +13,6 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class EntityStateHandler implements INBTSerializable<CompoundTag> {
-    public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register(
-            "entity_handler",
-            () -> AttachmentType.serializable(EntityStateHandler::new).copyOnDeath().build()
-    );
 
     // Last entity this entity recieved a debuff from
     public int lastAfflicted = -1;

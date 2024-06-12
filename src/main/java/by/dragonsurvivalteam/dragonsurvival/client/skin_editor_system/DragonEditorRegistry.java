@@ -25,7 +25,9 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
+import software.bernie.geckolib.GeckoLibClient;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DragonEditorRegistry{
@@ -47,16 +49,17 @@ public class DragonEditorRegistry{
 		return savedCustomizations;
 	}
 
-	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
 	public static void clientStart(FMLClientSetupEvent event){
-		genDefaults();
+		if(FMLEnvironment.dist  == Dist.CLIENT){
+			genDefaults();
 
-		if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
-			((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
-				CUSTOMIZATIONS.clear();
-				reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
-			});
+			if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
+				((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
+					CUSTOMIZATIONS.clear();
+					reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
+				});
+			}
 		}
 	}
 

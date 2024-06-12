@@ -12,6 +12,8 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
@@ -20,10 +22,13 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import com.mojang.serialization.MapCodec;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -32,6 +37,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
@@ -51,13 +57,23 @@ public class DragonSurvivalMod{
 			NeoForgeRegistries.Keys.ATTACHMENT_TYPES,
 			MODID);
 	public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
+	public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register(
+			"entity_handler",
+			() -> AttachmentType.serializable(EntityStateHandler::new).copyOnDeath().build()
+	);
+	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register(
+			"dragon_handler",
+			() -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
+	);
 
     public static ResourceLocation res(String name) {
         return new ResourceLocation(MODID, name);
     }
 
 	public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer){
-		GeckoLibClient.init();
+		if(FMLEnvironment.dist  == Dist.CLIENT){
+			GeckoLibClient.init();
+		}
 		DragonTypes.registerTypes();
 		DragonBodies.registerBodies();
 

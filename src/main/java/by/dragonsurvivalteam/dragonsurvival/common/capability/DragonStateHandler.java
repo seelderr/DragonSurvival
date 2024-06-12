@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DS_ATTACHMENT_TYPES;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -40,16 +38,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class DragonStateHandler extends EntityStateHandler {
-
-	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register(
-			"dragon_handler",
-			() -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
-	);
 
 	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
 

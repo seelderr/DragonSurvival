@@ -1,21 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import java.util.Optional;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DragonStateProvider implements ICapabilityProvider<Entity, Void, DragonStateHandler> {
 	private static DragonStateHandler getFakePlayerHandler(Entity entity) {
-		if (entity instanceof FakeClientPlayer fakeClientPlayer) {
-			if (fakeClientPlayer.handler != null) {
-				return fakeClientPlayer.handler;
+		if(FMLEnvironment.dist  == Dist.CLIENT){
+			if (entity instanceof FakeClientPlayer fakeClientPlayer) {
+				if (fakeClientPlayer.handler != null) {
+					return fakeClientPlayer.handler;
+				}
 			}
 		}
 

@@ -1,13 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
+import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.Minecraft;
@@ -29,7 +30,7 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 		ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
 		ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 		PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+		DragonStateProvider.getCap(ClientProxy.getLocalPlayer()).ifPresent(cap -> {
 			boolean clawsMenuOpen = cap.getClawToolData().isMenuOpen();
 			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenuOpen));
 			cap.getClawToolData().setMenuOpen(clawsMenuOpen);

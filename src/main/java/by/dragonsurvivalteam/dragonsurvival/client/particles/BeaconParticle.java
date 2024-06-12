@@ -84,7 +84,6 @@ public class BeaconParticle extends TextureSheetParticle{
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static class FireFactory implements ParticleProvider<FireData> {
 		private final SpriteSet spriteSet;
 
@@ -127,7 +126,6 @@ public class BeaconParticle extends TextureSheetParticle{
 		}
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	public static class MagicFactory implements ParticleProvider<MagicData> {
 		private final SpriteSet spriteSet;
 

@@ -23,6 +23,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
@@ -32,17 +33,18 @@ public class DSEmotes {
 
 	private static boolean hasStarted = false;
 
-	@OnlyIn( Dist.CLIENT )
 	@SubscribeEvent
 	public static void clientStart(FMLClientSetupEvent event){
-		DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
+		if(FMLEnvironment.dist  == Dist.CLIENT) {
+			DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
 
-		if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
-			((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
-				DSEmotes.EMOTES.clear();
-				DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
-				initEmoteRotation();
-			});
+			if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
+				((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
+					DSEmotes.EMOTES.clear();
+					DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
+					initEmoteRotation();
+				});
+			}
 		}
 	}
 

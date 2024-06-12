@@ -79,8 +79,6 @@ public class SeaSweepParticle extends TextureSheetParticle{
 		}
 	}
 
-
-	@OnlyIn (Dist.CLIENT)
 	public static class Factory implements ParticleProvider<Data> {
 		private final SpriteSet sprites;
 

@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.ENTITY_HANDLER;
 import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.ENTITY_CAPABILITY;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler.ENTITY_HANDLER;
 
 import java.util.Optional;
 import net.minecraft.world.entity.Entity;

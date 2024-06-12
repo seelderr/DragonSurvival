@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.util;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -14,7 +12,6 @@ public class AnimationTimer {
 	protected ConcurrentHashMap<String, Double> animationTimes = new ConcurrentHashMap<>();
 
 	@SubscribeEvent
-	@OnlyIn(Dist.CLIENT)
 	public static void renderTick(final ClientTickEvent.Post event) {
 		for (AnimationTimer timer : timers) {
 			timer.animationTimes.keySet().forEach(key -> {

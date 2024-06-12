@@ -118,25 +118,21 @@ public class TreasureParticle extends TextureSheetParticle{
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
 		public float r() {
 			return r;
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
 		public float g() {
 			return g;
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
 		public float b() {
 			return b;
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
 		public float scale() {
 			return scale;
 		}

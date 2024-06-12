@@ -53,13 +53,11 @@ public class LargeFireParticle extends DragonParticle {
 		public static final ParticleType<Data> TYPE = new Type(false);
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
 		public float duration() {
 			return duration;
 		}
 
 		@Override
-		@OnlyIn(Dist.CLIENT)
 		public boolean swirls() {
 			return swirls;
 		}

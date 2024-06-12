@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
@@ -21,16 +21,16 @@ public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
 
     public static void handleClient(final SyncBrokenTool.Data message, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            Player localPlayer = ClientProxy.getLocalPlayer();
+            Player player = ClientProxy.getLocalPlayer();
 
-            if (localPlayer != null) {
-                Entity entity = localPlayer.level().getEntity(message.playerId);
+            if (player != null) {
+                Entity entity = player.level().getEntity(message.playerId);
 
                 if (entity instanceof Player) {
                     DragonStateHandler handler = entity.getData(DRAGON_HANDLER);
 
                     if (handler.switchedTool || handler.switchedWeapon) {
-                        localPlayer.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                        player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                     } else {
                         handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
                     }
