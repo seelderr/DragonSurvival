@@ -16,8 +16,8 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class FireBallEntity extends DragonBallEntity{
-	public FireBallEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
-		super(DSEntities.FIREBALL.get(), p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
+	public FireBallEntity(Level level, LivingEntity livingEntity, double x, double y, double z){
+		super(DSEntities.FIREBALL.get(), livingEntity, x, y, z, level);
 	}
 
 	public FireBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
@@ -39,16 +39,8 @@ public class FireBallEntity extends DragonBallEntity{
 		return false;
 	}
 
-	@Override
-	protected void onHit(HitResult pResult){
-		super.onHit(pResult);
-		if(!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-			this.discard();
-		}
-	}
-
 	private void onCommonHit() {
-		if (!level().isClientSide) {
+		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
 			float explosivePower = getExplosivePower();
 			DamageSource damagesource;
 			if(getOwner() == null){
@@ -85,5 +77,6 @@ public class FireBallEntity extends DragonBallEntity{
 		Entity attacker = getOwner();
 		hitResult.getEntity().hurt(getDamageSource(this, attacker), damage);
 		hitResult.getEntity().setRemainingFireTicks(getSkillLevel() + 5);
+		onCommonHit();
 	}
 }

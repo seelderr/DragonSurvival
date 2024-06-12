@@ -13,6 +13,7 @@ import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.Level.ExplosionInteraction;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -73,9 +74,12 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 		if(!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
 			entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float)getDeltaMovement().length());
 			entityData.set(LIFESPAN, entityData.get(LIFESPAN) + 1);
+			System.out.println(entityData.get(MOVE_DISTANCE));
 		}
 		if (entityData.get(MOVE_DISTANCE) > DRAGON_BALL_DISTANCE || entityData.get(LIFESPAN) > MAX_LIFESPAN) {
-			this.onHit(ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity));
+			// Call onHitBlock rather than onHit, since calling onHit using the helper function from
+			// vanilla will result in HitResult.Miss from 1.20.6 onwards, causing nothing to happen
+			this.onHitBlock(new BlockHitResult(this.position(), this.getDirection(), this.blockPosition(), false));
 		}
 	}
 

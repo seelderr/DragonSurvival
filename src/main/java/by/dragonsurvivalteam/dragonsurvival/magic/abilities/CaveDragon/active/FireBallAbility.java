@@ -150,31 +150,35 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@Override
 	public void castingComplete(Player player){
-		Vec3 vector3d = player.getViewVector(1.0F);
-
-		double speed = 1d;
-
-		double d2 = vector3d.x * speed;
-		double d3 = vector3d.y * speed;
-		double d4 = vector3d.z * speed;
-
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
-		float f1 = -(float)handler.getMovementData().bodyYaw * ((float)Math.PI / 180F);
+		float speed = 1;
+		float yaw = (float) Math.toRadians(-player.getYRot());
+		float pitch = (float) Math.toRadians(-player.getXRot());
 
-		float f4 = Mth.sin(f1);
-		float f5 = Mth.cos(f1);
+		float xComp = (float)(Math.sin(yaw) * Math.cos(pitch));
+		float yComp = (float)Math.sin(pitch);
+		float zComp = (float)(Math.cos(yaw) * Math.cos(pitch));
 
-		Double size = DragonStateProvider.getCap(player).map(DragonStateHandler::getSize).get();
+		Vec3 eyePos = player.getEyePosition();
+		Vec3 lookAngle = player.getLookAngle();
 
-		double x = player.getX() + f4;
-		double y = player.getY() + size / 20F - 0.2;
-		double z = player.getZ() + f5;
+		double size = handler.getSize();
 
-		FireBallEntity entity = new FireBallEntity(player.level(), player, d2, d3, d4);
-		entity.setPos(x + vector3d.x * speed, y, z + vector3d.z * speed);
+		Vec3 projPos;
+		if (player.getAbilities().flying) {
+			Vec3 forward = lookAngle.scale(2.0F);
+			projPos = eyePos.add(forward).add(0F, -0.1-0.5F*(size / 30F), 0F);
+		} else {
+			Vec3 forward = lookAngle.scale(1.0F);
+			projPos = eyePos.add(forward).add(0F, -0.1F-0.2F*(size / 30F), 0F);
+		}
+		Vec3 velocity = new Vec3(xComp * speed, yComp * speed, zComp * speed);
+
+		FireBallEntity entity = new FireBallEntity(player.level(), player, velocity.x, velocity.y, velocity.z);
+		entity.setPos(projPos.x + velocity.x, projPos.y + velocity.y, projPos.z + velocity.z);
 		entity.setLevel(getLevel());
-		entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, (float)speed, 1.0F);
+		entity.setDeltaMovement(velocity);
 		player.level().addFreshEntity(entity);
 	}
 }
