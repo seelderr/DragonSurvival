@@ -74,7 +74,6 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 		if(!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
 			entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float)getDeltaMovement().length());
 			entityData.set(LIFESPAN, entityData.get(LIFESPAN) + 1);
-			System.out.println(entityData.get(MOVE_DISTANCE));
 		}
 		if (entityData.get(MOVE_DISTANCE) > DRAGON_BALL_DISTANCE || entityData.get(LIFESPAN) > MAX_LIFESPAN) {
 			// Call onHitBlock rather than onHit, since calling onHit using the helper function from
