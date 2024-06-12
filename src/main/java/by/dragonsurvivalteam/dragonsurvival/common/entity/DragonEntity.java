@@ -234,6 +234,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		boolean isMovingHorizontalWalk = player.getDeltaMovement().horizontalDistance() > defaultPlayerWalkSpeed / 5;
 		boolean isMovingHorizontalSneak = player.getDeltaMovement().horizontalDistance() > defaultPlayerSneakSpeed / 5;
 
+		// TODO: The transition length of animations doesn't work correctly when the framerate varies too much from 60 FPS
 		if(handler.getMagicData().onMagicSource){
 			neckLocked = false;
 			tailLocked = false;
