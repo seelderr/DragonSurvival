@@ -571,7 +571,7 @@ public class ClientDragonRender{
 	}
 
 	@SubscribeEvent
-	public static void renderPlayer(RenderPlayerEvent.Post renderPlayerEvent){
+	public static void sendDragonMovementDataToOthers(ClientTickEvent.Post event){
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
 		if(player != null) {
