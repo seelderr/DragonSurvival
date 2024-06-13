@@ -78,7 +78,7 @@ public class SkinPreset implements NBTInterface{
 								if (text.average_hue == null) {
 									throw new NullPointerException("Average hue for customization is null. Did you run colors.py for any new data?");
 								}
-								layerSettings.put(layer, Lazy.of(()->new LayerSettings(part, text.average_hue)));
+								layerSettings.put(layer, Lazy.of(()->new LayerSettings(part, text.average_hue != null ? text.average_hue : 0.5f)));
 								break;
 							}
 						}
