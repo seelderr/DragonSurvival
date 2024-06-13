@@ -27,7 +27,7 @@ public class SyncDragonHandler implements IMessage<SyncDragonHandler.Data> {
 	}
 
 	public static void handleServer(final Data message, final IPayloadContext context) {
-		PacketDistributor.sendToAllPlayers(message);
+		PacketDistributor.sendToPlayersTrackingEntity(context.player(), message);
 
 		context.enqueueWork(() -> {
 			Player sender = context.player();

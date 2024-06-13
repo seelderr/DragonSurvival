@@ -36,6 +36,7 @@ import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -663,7 +664,7 @@ public class DragonEditorScreen extends Screen {
 				cap.setIsHiding(false);
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
-				PacketDistributor.sendToServer(new SyncComplete.Data(minecraft.player.getId(), cap.serializeNBT(minecraft.player.registryAccess())));
+				PacketDistributor.sendToServer(new SyncDragonHandler.Data(minecraft.player.getId(), cap.isHiding(), cap.getType(), cap.getBody(), cap.getSize(), cap.hasFlight(), 0));
 				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				PacketDistributor.sendToServer(new SyncSpinStatus.Data(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 
