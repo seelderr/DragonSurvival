@@ -2,9 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -17,7 +15,9 @@ import java.util.List;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class PlayerLoginHandler {
-    static List<MutablePair<ServerPlayer, Integer>> loginDataRequestTimings = new ArrayList<MutablePair<ServerPlayer, Integer>>();
+    static List<MutablePair<ServerPlayer, Integer>> loginDataRequestTimings = new ArrayList<>();
+
+    // TODO: There is probably a more clever way to do this that does not involve waiting. Ask NeoForge devs about how to properly check when a Data Attachment is actually loaded in?
 
     // We need to delay the syncing of player data a little bit, since if we let the player sync too fast then it is possible for the player
     // to attempt to sync data whilst their data is still being loaded, causing the sync to fail.
