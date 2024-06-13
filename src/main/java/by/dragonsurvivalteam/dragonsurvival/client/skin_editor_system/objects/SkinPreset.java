@@ -1,9 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -78,7 +76,7 @@ public class SkinPreset implements NBTInterface{
 								if (text.average_hue == null) {
 									throw new NullPointerException("Average hue for customization is null. Did you run colors.py for any new data?");
 								}
-								layerSettings.put(layer, Lazy.of(()->new LayerSettings(part, text.average_hue)));
+								layerSettings.put(layer, Lazy.of(()->new LayerSettings(part, text.average_hue != null ? text.average_hue : 0.5f)));
 								break;
 							}
 						}
