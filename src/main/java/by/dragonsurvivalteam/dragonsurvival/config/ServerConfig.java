@@ -296,28 +296,28 @@ public class ServerConfig{
 	public static Double adultBonusDamage = 3.0;
 
 	@ConfigRange( min = 0.0, max = 0.9 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "newbornJump", comment = "Jumping height for a newborn dragon. Default is 1 block." )
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "newbornJump", comment = "Jumping height bonus for a newborn dragon." )
 	public static Double newbornJump = 0.025;
 
 	@ConfigRange( min = 0.0, max = 0.9 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngJump", comment = "Jumping height for a young dragon. Default is 1.5 block." )
-	public static Double youngJump = 0.1;
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngJump", comment = "Jumping height bonus for a young dragon." )
+	public static Double youngJump = 0.05;
 
 	@ConfigRange( min = 0.0, max = 0.9 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultJump", comment = "Jumping height for a adult dragon. Default is 2 block." )
-	public static Double adultJump = 0.15;
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultJump", comment = "Jumping height bonus for an adult dragon." )
+	public static Double adultJump = 0.1;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "newbornStepHeight", comment = "Step height for a newborn dragon. Default is 1 block." )
 	public static Double newbornStepHeight = 0.0;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngStepHeight", comment = "Step height for a young dragon. Default is 1.5 block." )
-	public static Double youngStepHeight = 0.5;
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "youngStepHeight", comment = "Step height for a young dragon. Default is 1.25 block." )
+	public static Double youngStepHeight = 0.25;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultStepHeight", comment = "Step height for a adult dragon. Default is 2 block." )
-	public static Double adultStepHeight = 1.0;
+	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "adultStepHeight", comment = "Step height for a adult dragon. Default is 1.5 block." )
+	public static Double adultStepHeight = 0.5;
 
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "bonuses", key = "clawsAreTools", comment = "Whether dragon claws function as tools." )

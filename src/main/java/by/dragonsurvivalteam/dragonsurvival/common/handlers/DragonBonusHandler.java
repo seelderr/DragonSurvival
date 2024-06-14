@@ -70,6 +70,7 @@ public class DragonBonusHandler {
 		}
 	}
 
+	// TODO: This can be completely removed and have these events utilize Attributes.SAFE_FALL_DISTANCE
 	@SubscribeEvent
 	public static void reduceFallDistance(LivingFallEvent livingFallEvent){
 		LivingEntity living = livingFallEvent.getEntity();
@@ -85,24 +86,6 @@ public class DragonBonusHandler {
 
 					CliffhangerAbility ability = DragonAbilities.getSelfAbility(living, CliffhangerAbility.class);
 					distance -= ability.getHeight();
-				}
-
-				float gravity = (float) livingFallEvent.getEntity().getAttributeValue(Attributes.GRAVITY);
-				// TODO: Added a fudge factor of 1.5 here. Not sure why it is needed but otherwise you begin to hurt yourself at very high jump heights even though the calculation here is identical to the push force calculation.
-				float jumpHeight = (float) DSModifiers.getJumpBonus(dragonStateHandler) * 1.5f;
-
-				// Calculating the peak of the jump
-				distance -= (float) (Math.pow(jumpHeight, 2.0) / (2 * gravity));
-
-				AbstractDragonBody body = dragonStateHandler.getBody();
-				if (body != null && body.getGravityMult() <= 1.0) {
-					if (body.getGravityMult() == 0) {
-						distance = 0;
-					} else {
-						distance *= body.getGravityMult();
-					}
-				} else if (body != null) {
-					distance *= ((body.getGravityMult() - 1) / 2) + 1;
 				}
 
 				livingFallEvent.setDistance(distance);

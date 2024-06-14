@@ -26,6 +26,8 @@ public class DSModifiers {
 	private static final UUID DRAGON_SWIM_SPEED_MODIFIER = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
 	private static final UUID DRAGON_STEP_HEIGHT_MODIFIER = UUID.fromString("f3b0b3e3-3b7d-4b1b-8f3d-3b7d4b1b8f3d");
 	private static final UUID DRAGON_MOVEMENT_SPEED_MODIFIER = UUID.fromString("a11bba07-27e2-4c98-ac2c-34ae9f9b0694");
+	private static final UUID DRAGON_JUMP_BONUS = UUID.fromString("07de67e5-0f13-4be5-8ee9-715284bb8feb");
+	private static final UUID DRAGON_SAFE_FALL_DISTANCE = UUID.fromString("07de67e5-0f13-4be5-8ee9-715284bb8feb");
 
 	private static final UUID DRAGON_BODY_MOVEMENT_SPEED = UUID.fromString("114fe18b-60fd-4284-b6ce-14d090454402");
 	private static final UUID DRAGON_BODY_ARMOR = UUID.fromString("8728438d-c838-4968-9382-efb95a36d72a");
@@ -36,6 +38,8 @@ public class DSModifiers {
 	private static final UUID DRAGON_BODY_STEP_HEIGHT_BONUS = UUID.fromString("df2b333e-46c8-4315-a50d-096785e4f592");
 	private static final UUID DRAGON_BODY_GRAVITY_MULT = UUID.fromString("de994497-1cca-45e6-b398-a1736f43e5ec");
 	private static final UUID DRAGON_BODY_HEALTH_MULT = UUID.fromString("9068f914-511d-44cf-a2a3-0808f7c67326");
+	private static final UUID DRAGON_BODY_JUMP_BONUS = UUID.fromString("a1202eb6-4a3f-459b-b87c-05349ceb3303");
+	private static final UUID DRAGON_BODY_SAFE_FALL_DISTANCE = UUID.fromString("3c98aaac-df49-4e7c-b7b8-4c40507dcb87");
 
 	public static AttributeModifier buildHealthMod(double size){
 		double healthModifier;
@@ -100,6 +104,31 @@ public class DSModifiers {
 		return new AttributeModifier(DRAGON_MOVEMENT_SPEED_MODIFIER, "Dragon Movement Speed Adjustment", moveSpeedMultiplier - 1, Operation.ADD_MULTIPLIED_TOTAL);
 	}
 
+	private static double calculateJumpMod(DragonStateHandler handler) {
+		double jumpBonus = 0;
+		if (handler.getBody() != null) {
+			jumpBonus = handler.getBody().getJumpBonus();
+			if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+				jumpBonus += ServerConfig.largeJumpHeightScalar * (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
+			}
+		}
+		switch(handler.getLevel()){
+			case NEWBORN -> jumpBonus += ServerConfig.newbornJump; //1+ block
+			case YOUNG -> jumpBonus += ServerConfig.youngJump; //1.5+ block
+			case ADULT -> jumpBonus += ServerConfig.adultJump; //2+ blocks
+		}
+		return jumpBonus;
+	}
+
+	public static AttributeModifier buildJumpMod(DragonStateHandler handler) {
+		return new AttributeModifier(DRAGON_JUMP_BONUS, "Dragon Jump Bonus", calculateJumpMod(handler), Operation.ADD_VALUE);
+	}
+
+	public static AttributeModifier buildSafeFallDistanceMod(DragonStateHandler handler) {
+		// TODO: Not really sure about why this magic number is needed?
+		return new AttributeModifier(DRAGON_SAFE_FALL_DISTANCE, "Dragon Safe Fall Distance", calculateJumpMod(handler) * 4, Operation.ADD_VALUE);
+	}
+
 	public static void updateModifiers(Player player) {
 		updateTypeModifiers(player);
 		updateSizeModifiers(player);
@@ -144,6 +173,12 @@ public class DSModifiers {
 
 				AttributeModifier moveSpeed = buildMovementSpeedMod(handler, size);
 				updateMovementSpeedModifier(player, moveSpeed);
+
+				AttributeModifier jumpMod = buildJumpMod(handler);
+				updateJumpModifier(player, jumpMod);
+
+				AttributeModifier safeFallDistance = buildSafeFallDistanceMod(handler);
+				updateSafeFallDistanceModifier(player, safeFallDistance);
 			} else {
 				// Remove the dragon attribute modifiers
 				AttributeModifier oldMod = getHealthModifier(player);
@@ -184,6 +219,18 @@ public class DSModifiers {
 					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.MOVEMENT_SPEED));
 					max.removeModifier(oldMod);
 				}
+
+				oldMod = getJumpModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.JUMP_STRENGTH));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getSafeFallDistanceModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.SAFE_FALL_DISTANCE));
+					max.removeModifier(oldMod);
+				}
 			}
 		}
 	}
@@ -200,6 +247,8 @@ public class DSModifiers {
 		AttributeInstance stepAttr = player.getAttribute(Attributes.STEP_HEIGHT);
 		AttributeInstance gravityAttr = player.getAttribute(Attributes.GRAVITY);
 		AttributeInstance healthAttr = player.getAttribute(Attributes.MAX_HEALTH);
+		AttributeInstance jumpAttr = player.getAttribute(Attributes.JUMP_STRENGTH);
+		AttributeInstance safeFallAttr = player.getAttribute(Attributes.SAFE_FALL_DISTANCE);
 
 		if (body != null && isDragon) {
 			if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).amount() != body.getRunMult()) {
@@ -246,6 +295,16 @@ public class DSModifiers {
 				if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) != null) { healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT); }
 				healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, "BODY_HEALTH_MULT", body.getHealthMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
+
+			if (jumpAttr.getModifier(DRAGON_BODY_JUMP_BONUS) == null || jumpAttr.getModifier(DRAGON_BODY_JUMP_BONUS).amount() != body.getJumpBonus()) {
+				if (jumpAttr.getModifier(DRAGON_BODY_JUMP_BONUS) != null) { jumpAttr.removeModifier(DRAGON_BODY_JUMP_BONUS); }
+				jumpAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_JUMP_BONUS, "BODY_JUMP_BONUS", body.getJumpBonus(), Operation.ADD_VALUE));
+			}
+
+			if (safeFallAttr.getModifier(DRAGON_BODY_SAFE_FALL_DISTANCE) == null || safeFallAttr.getModifier(DRAGON_BODY_SAFE_FALL_DISTANCE).amount() != body.getJumpBonus()) {
+				if (safeFallAttr.getModifier(DRAGON_BODY_SAFE_FALL_DISTANCE) != null) { safeFallAttr.removeModifier(DRAGON_BODY_SAFE_FALL_DISTANCE); }
+				safeFallAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SAFE_FALL_DISTANCE, "BODY_SAFE_FALL_DISTANCE", body.getJumpBonus(), Operation.ADD_VALUE));
+			}
 		} else {
 			speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED);
 			armorAttr.removeModifier(DRAGON_BODY_ARMOR);
@@ -256,6 +315,7 @@ public class DSModifiers {
 			stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS);
 			gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT);
 			healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT);
+			jumpAttr.removeModifier(DRAGON_BODY_JUMP_BONUS);
 		}
 	}
 
@@ -285,6 +345,14 @@ public class DSModifiers {
 
 	@Nullable public static AttributeModifier getMovementSpeedModifier(Player player) {
 		return Objects.requireNonNull(player.getAttribute(Attributes.MOVEMENT_SPEED)).getModifier(DRAGON_MOVEMENT_SPEED_MODIFIER);
+	}
+
+	@Nullable public static AttributeModifier getJumpModifier(Player player) {
+		return Objects.requireNonNull(player.getAttribute(Attributes.JUMP_STRENGTH)).getModifier(DRAGON_JUMP_BONUS);
+	}
+
+	@Nullable public static AttributeModifier getSafeFallDistanceModifier(Player player) {
+		return Objects.requireNonNull(player.getAttribute(Attributes.SAFE_FALL_DISTANCE)).getModifier(DRAGON_SAFE_FALL_DISTANCE);
 	}
 
 	public static void updateReachModifier(Player player, AttributeModifier mod){
@@ -348,20 +416,21 @@ public class DSModifiers {
 		max.addPermanentModifier(mod);
 	}
 
-	public static double getJumpBonus(DragonStateHandler handler) {
-		double jumpBonus = 0;
-		if (handler.getBody() != null) {
-			jumpBonus = handler.getBody().getJumpBonus();
-			if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
-				jumpBonus += ServerConfig.largeJumpHeightScalar * (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
-			}
+	public static void updateJumpModifier(Player player, AttributeModifier mod) {
+		if(!ServerConfig.bonuses) {
+			return;
 		}
-		switch(handler.getLevel()){
-			case NEWBORN -> jumpBonus += ServerConfig.newbornJump; //1+ block
-			case YOUNG -> jumpBonus += ServerConfig.youngJump; //1.5+ block
-			case ADULT -> jumpBonus += ServerConfig.adultJump; //2+ blocks
-		}
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.JUMP_STRENGTH));
+		max.removeModifier(mod);
+		max.addPermanentModifier(mod);
+	}
 
-		return jumpBonus;
+	public static void updateSafeFallDistanceModifier(Player player, AttributeModifier mod) {
+		if(!ServerConfig.bonuses) {
+			return;
+		}
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.SAFE_FALL_DISTANCE));
+		max.removeModifier(mod);
+		max.addPermanentModifier(mod);
 	}
 }

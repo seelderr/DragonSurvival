@@ -325,7 +325,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		}else if(AnimationUtils.isAnimationPlaying(animationController, "fly_land")) {
 			state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND_END));
 			animationController.transitionLength(2);
-		} else if(AnimationUtils.isAnimationPlaying(animationController, "fly_land_end")) {
+		}else if(AnimationUtils.isAnimationPlaying(animationController, "fly_land_end")) {
 			// Don't add any animation
 		}else if(!player.onGround() && ClientEvents.dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
 			state.setAnimation(AnimationUtils.createAnimation(builder, JUMP));

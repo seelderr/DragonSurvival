@@ -232,19 +232,8 @@ public class EventHandler{
 
 		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
-				Double jumpBonus = 0.0;
-				if (dragonStateHandler.getBody() != null) {
-					jumpBonus = DSModifiers.getJumpBonus(dragonStateHandler);
-				}
-
-				living.push(0, jumpBonus, 0);
-
 				if(living instanceof ServerPlayer){
-					if(living.getServer().isSingleplayer()){
-						PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 20));
-					}else{
-						PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
-					}
+					PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
 				}
 			}
 		});
