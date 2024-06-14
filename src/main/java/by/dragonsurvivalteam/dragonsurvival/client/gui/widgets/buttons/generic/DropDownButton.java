@@ -26,7 +26,7 @@ public class DropDownButton extends ExtendedButton {
 	public String[] values;
 	public String current;
 	public Consumer<String> setter;
-	public List<FormattedCharSequence> tooltip; // FIXME :: what is the tooltip supposed to be
+	public List<FormattedCharSequence> tooltip;
 	public boolean toggled;
 	public DropdownList list;
 	public AbstractWidget renderButton;

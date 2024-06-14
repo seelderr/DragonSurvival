@@ -33,7 +33,7 @@ public class AnimationUtils {
         }
     }
 
-    // FIXME: This is a hack since GeckoLib's state.isCurrentAnimation() doesn't work. If they ever fix that, we can remove this.
+    // TODO: This is a hack since GeckoLib's state.isCurrentAnimation() doesn't work. If they ever fix that, we can remove this.
     public static boolean isAnimationPlaying(AnimationController<?> controller, String animationName) {
         return controller.getCurrentAnimation() != null && controller.getCurrentAnimation().animation().name().equals(animationName);
     }

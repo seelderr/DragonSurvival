@@ -40,7 +40,7 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 
 	@Override
 	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-		// FIXME :: Similar to other entities - extract into method?
+		// TODO :: Similar to other entities - extract into method?
 		controllers.add(new AnimationController<>(this, "everything", 3, state -> {
 			AnimationController<KnightEntity> animationController = state.getController();
 			double movement = getMovementSpeed(this);

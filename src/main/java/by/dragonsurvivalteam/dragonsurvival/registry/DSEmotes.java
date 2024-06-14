@@ -79,94 +79,12 @@ public class DSEmotes {
 		}
 	}
 
-	// FIXME 1.20 :: Not sure what this was meant to do
-	public static void initEmoteRotation() {
-//		BakedAnimations bakedAnimations = GeckoLibCache.getBakedAnimations().get(ClientDragonRender.dragonModel.getAnimationResource(null));
-//
-//		for (Emote emote : EMOTES) {
-//			if (emote.mirror != null && emote.animation != null) {
-//				Animation animation = bakedAnimations.getAnimation(emote.name);
-//
-//				if (animation == null) {
-//					DragonSurvivalMod.LOGGER.warn("Emote animation [{}] could not be found", emote.name);
-//					continue;
-//				}
-//
-//				for (BoneAnimation bone : animation.boneAnimations()) {
-//					if (emote.mirror.xPos) {
-//						bone.positionKeyFrames().xKeyframes().forEach(keyFrame -> {
-//							keyFrame.setStartValue(new Constant(keyFrame.getStartValue().get() * -1));
-//							keyFrame.setEndValue(new Constant(keyFrame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.yPos) {
-//						bone.positionKeyFrames().yKeyframes().forEach(keyFrame -> {
-//							keyFrame.setStartValue(new Constant(keyFrame.getStartValue().get() * -1));
-//							keyFrame.setEndValue(new Constant(keyFrame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.zPos) {
-//						bone.positionKeyFrames().zKeyframes().forEach(Frame -> {
-//							Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-//							Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.xRot) {
-//						bone.rotationKeyFrames().xKeyframes().forEach(Frame -> {
-//							Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-//							Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.yRot) {
-//						bone.rotationKeyFrames().yKeyframes().forEach(Frame -> {
-//							Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-//							Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.zRot) {
-//						bone.rotationKeyFrames().zKeyframes().forEach(Frame -> {
-//							Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-//							Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.xScale) {
-//						bone.scaleKeyFrames().xKeyframes().forEach(Frame -> {
-//							Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-//							Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.yScale) {
-//						bone.scaleKeyFrames().yKeyframes().forEach(Frame -> {
-//							Frame.setStartValue(new Constant(Frame.getStartValue().get() * -1));
-//							Frame.setEndValue(new Constant(Frame.getEndValue().get() * -1));
-//						});
-//					}
-//
-//					if (emote.mirror.zScale) {
-//						bone.scaleKeyFrames().zKeyframes().forEach(keyFrame -> {
-//							keyFrame.setStartValue(new Constant(keyFrame.getStartValue().get() * -1));
-//							keyFrame.setEndValue(new Constant(keyFrame.getEndValue().get() * -1));
-//						});
-//					}
-//				}
-//			}
-//		}
-	}
-
 	@EventBusSubscriber( Dist.CLIENT )
 	public static class clientStart{
 		@OnlyIn( Dist.CLIENT )
 		@SubscribeEvent
 		public static void clientStart(EntityJoinLevelEvent event){
 			if(!hasStarted){
-				initEmoteRotation();
 				hasStarted = true;
 			}
 		}

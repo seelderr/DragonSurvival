@@ -126,15 +126,6 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 		return new SourceOfMagicContainer(p_createMenu_1_, p_createMenu_2_, buffer);
 	}
 
-	// FIXME: Read up on geckolib
-	//@Override
-	//public void registerControllers(final AnimatableManager.ControllerRegistrar controllerRegistrar) { /* TODO :: Nothing to do? */ }
-
-	///@Override
-	//public AnimatableInstanceCache getAnimatableInstanceCache() {
-	//	return cache;
-	//}
-
 	@Override
 	public void clearContent(){
 		stacks.clear();
@@ -147,6 +138,6 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 
 	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return null;
+		return cache;
 	}
 }

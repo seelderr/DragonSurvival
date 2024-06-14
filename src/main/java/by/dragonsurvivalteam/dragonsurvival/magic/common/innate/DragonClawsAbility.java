@@ -80,15 +80,12 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 		} else if(Tiers.IRON.equals(tier)) {
 			textureId = 3;
 		} else if(Tiers.GOLD.equals(tier)) {
-			// FIXME :: If only innate is relevant then this can never be reached (same harvest level as wood)
 			textureId = 4;
 		} else if(Tiers.DIAMOND.equals(tier)) {
 			textureId = 5;
 		} else if(Tiers.NETHERITE.equals(tier)) {
 			textureId = 6;
 		}
-
-		// TODO :: What about the texture for 7?
 
 		return Pair.of(tier, textureId);
 	}

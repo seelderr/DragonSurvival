@@ -217,7 +217,6 @@ public class EventHandler{
 		}
 	}
 
-	// FIXME: We can replace this with Attributes.JUMP_STRENGTH!!
 	@SubscribeEvent
 	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent){
 		final LivingEntity living = jumpEvent.getEntity();

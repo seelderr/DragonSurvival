@@ -562,7 +562,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			tag.putInt("restingTimer", treasureRestTimer);
 		}
 
-		if (isDragon() || ServerConfig.saveAllAbilities) { // FIXME :: Is this growing or abilities?
+		if (isDragon() || ServerConfig.saveAllAbilities) {
 			tag.putBoolean("spinLearned", getMovementData().spinLearned);
 			tag.putBoolean("hasWings", hasFlight());
 		}

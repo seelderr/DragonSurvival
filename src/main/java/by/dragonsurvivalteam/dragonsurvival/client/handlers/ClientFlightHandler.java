@@ -286,7 +286,7 @@ public class ClientFlightHandler {
 							Vec3 deltaMovement = player.getDeltaMovement();
 
 							double maxFlightSpeed = ServerFlightHandler.maxFlightSpeed;
-							// FIXME :: Magic numbers at various places
+							// TODO :: Magic numbers at various places
 							ax = Mth.clamp(ax, -0.4 * maxFlightSpeed, 0.4 * maxFlightSpeed);
 							az = Mth.clamp(az, -0.4 * maxFlightSpeed, 0.4 * maxFlightSpeed);
 
