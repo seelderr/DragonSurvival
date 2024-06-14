@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -398,7 +397,7 @@ public class ClientFlightHandler {
 									wasGliding = false;
 									double maxForward = 0.5 * flightMult * 2;
 
-									Vec3 moveVector = ClientDragonRender.getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.getYRot());
+									Vec3 moveVector = getInputVector(new Vec3(movement.leftImpulse, 0, movement.forwardImpulse), 1F, player.getYRot());
 									moveVector.multiply(1.3 * flightMult * 2, 0, 1.3 * flightMult * 2);
 
 									boolean moving = movement.up || movement.down || movement.left || movement.right;
@@ -574,6 +573,18 @@ public class ClientFlightHandler {
 			}else{
 				player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
 			}
+		}
+	}
+
+	public static Vec3 getInputVector(Vec3 movement, float fricSpeed, float yRot){
+		double d0 = movement.lengthSqr();
+		if(d0 < 1.0E-7D){
+			return Vec3.ZERO;
+		}else{
+			Vec3 vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale(fricSpeed);
+			float f = Mth.sin(yRot * ((float)Math.PI / 180F));
+			float f1 = Mth.cos(yRot * ((float)Math.PI / 180F));
+			return new Vec3(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
 		}
 	}
 }

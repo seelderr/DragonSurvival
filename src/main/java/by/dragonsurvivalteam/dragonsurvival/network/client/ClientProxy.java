@@ -304,7 +304,10 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setMovementData(message.bodyYaw(), message.headYaw(), message.headPitch(), message.bite()));
+                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                    handler.setBite(message.bite());
+                    handler.setFirstPerson(message.isFirstPerson());
+                });
             }
         }
     }

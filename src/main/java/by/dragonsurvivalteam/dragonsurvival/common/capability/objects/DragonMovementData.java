@@ -1,31 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.objects;
 
 public class DragonMovementData{
-	public double bodyYaw;
-	public double headYaw;
-	public double headPitch;
+	public double bodyYaw = 0;
+	public double headYaw = 0;
+	public double headPitch = 0;
 
-	public double headYawLastFrame;
-	public double headPitchLastFrame;
-	public double bodyYawLastFrame;
-
-	public float deltaPartialTick = 1;
+	public double headYawLastFrame = 0;
+	public double headPitchLastFrame = 0;
+	public double bodyYawLastFrame = 0;
 	
 	public float prevXRot;
 	public float prevZRot;
 	public float rotLastTick;
 
-	public boolean bite;
-	public boolean dig;
+	public boolean isFirstPerson = false;
+	public boolean bite = false;
+	public boolean dig = false;
 
 	public boolean spinLearned;
 	public int spinCooldown;
 	public int spinAttack;
 
-	public DragonMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite){
-		this.bodyYaw = bodyYaw;
-		this.headYaw = headYaw;
-		this.headPitch = headPitch;
-		this.bite = bite;
-	}
+	public DragonMovementData(){}
 }

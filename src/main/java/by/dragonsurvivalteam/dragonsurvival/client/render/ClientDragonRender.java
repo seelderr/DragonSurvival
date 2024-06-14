@@ -61,7 +61,6 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import software.bernie.geckolib.GeckoLib;
 import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
@@ -74,6 +73,7 @@ public class ClientDragonRender{
 	 */
 	public static DragonEntity dragonArmor;
 	public static DragonEntity dummyDragon;
+	public static float deltaPartialTick;
 	public static float lastPartialTick;
 
 	/**
@@ -227,11 +227,13 @@ public class ClientDragonRender{
 		}
 
 		if(handler.isDragon()){
+
 			if (player == ClientProxy.getLocalPlayer()) {
 				renderDelay = MAX_DELAY;
 			}
 
 			renderPlayerEvent.setCanceled(true);
+			setDragonYawAndPitch(player, deltaPartialTick);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
 
@@ -458,21 +460,18 @@ public class ClientDragonRender{
 		}
 	}
 
-	@SubscribeEvent
-	public static void setDragonYawAndPitch(RenderFrameEvent.Pre event){
-		Minecraft minecraft = Minecraft.getInstance();
-		LocalPlayer player = minecraft.player;
-		float deltaPartialTick = event.getPartialTick() > lastPartialTick ? event.getPartialTick() - lastPartialTick : 1 - lastPartialTick + event.getPartialTick();
-		lastPartialTick = event.getPartialTick();
+	public static void setDragonYawAndPitch(Player player, float deltaPartialTick) {
 		if(player != null) {
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 				if (playerStateHandler.isDragon()) {
 					// Handle headYaw
-					float headYaw = Functions.angleDifference((float) playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : player.yHeadRot));
+					float yRot = player.getViewYRot(deltaPartialTick);
+					float xRot = player.getViewXRot(deltaPartialTick);
+					float headYaw = Functions.angleDifference((float) playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot));
 					headYaw = (float) RenderUtil.lerpYaw(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
 					// Handle headPitch
-					float headPitch = (float) Mth.lerp(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headPitch, player.getXRot());
+					float headPitch = (float) Mth.lerp(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
 
 					// Handle bodyYaw
 					double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
@@ -484,7 +483,7 @@ public class ClientDragonRender{
 						}
 					}
 
-					Vec3 moveVector = getInputVector(new Vec3(player.input.leftImpulse, 0, player.input.forwardImpulse), 1F, player.getYRot());
+					Vec3 moveVector = player.getDeltaMovement();
 					if (ServerFlightHandler.isFlying(player)) {
 						moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 					}
@@ -492,16 +491,19 @@ public class ClientDragonRender{
 					float f = (float) Mth.atan2(moveVector.z, moveVector.x) * (180F / (float) Math.PI) - 90F;
 					float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
 
+					boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
+
+					// FIXME: THIS NEEDS TO BE SYNCED WITH THE SERVER
 					if (KeyInputHandler.FREE_LOOK.isDown()) {
 						wasFreeLook = true;
 					}
 
-					if (wasFreeLook && !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+					if (wasFreeLook && !isFirstPerson) {
 						wasFreeLook = false;
 					}
 
 					if (!firstPersonRotation && !KeyInputHandler.FREE_LOOK.isDown()) {
-						if ((!wasFreeLook || moveVector.length() > 0) && Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+						if ((!wasFreeLook || moveVector.length() > 0) && isFirstPerson) {
 							bodyYaw = player.getYRot();
 							wasFreeLook = false;
 							if (moveVector.length() > 0) {
@@ -536,7 +538,7 @@ public class ClientDragonRender{
 						float f2 = Mth.wrapDegrees(f - (float) bodyYaw);
 						bodyYaw += 0.5F * f2;
 
-						if (minecraft.options.getCameraType() == CameraType.FIRST_PERSON) {
+						if (isFirstPerson) {
 							float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
 							if (95.0F < f5 && f5 < 265.0F) {
 								f -= 180.0F;
@@ -564,37 +566,29 @@ public class ClientDragonRender{
 
 					// Update the movement data
 					DragonMovementData md = playerStateHandler.getMovementData();
-					playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, md.bite);
+					playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch);
 				}
 			});
 		}
 	}
 
 	@SubscribeEvent
-	public static void sendDragonMovementDataToOthers(ClientTickEvent.Post event){
-		Minecraft minecraft = Minecraft.getInstance();
-		LocalPlayer player = minecraft.player;
-		if(player != null) {
+	public static void updateFirstPersonDataAndSendMovementData(ClientTickEvent.Pre event) {
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player != null) {
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 				if (playerStateHandler.isDragon()) {
 					DragonMovementData md = playerStateHandler.getMovementData();
-					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.bodyYaw, md.headYaw, md.headPitch, md.bite));
+					md.isFirstPerson = Minecraft.getInstance().options.getCameraType().isFirstPerson();
+					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite));
 				}
 			});
 		}
 	}
 
-	public static Vec3 getInputVector(Vec3 movement, float fricSpeed, float yRot){
-		double d0 = movement.lengthSqr();
-		if(d0 < 1.0E-7D){
-			return Vec3.ZERO;
-		}else{
-			Vec3 vector3d = (d0 > 1.0D ? movement.normalize() : movement).scale(fricSpeed);
-			float f = Mth.sin(yRot * ((float)Math.PI / 180F));
-			float f1 = Mth.cos(yRot * ((float)Math.PI / 180F));
-			return new Vec3(vector3d.x * (double)f1 - vector3d.z * (double)f, vector3d.y, vector3d.z * (double)f1 + vector3d.x * (double)f);
-		}
+	@SubscribeEvent
+	public static void calculateDeltaPartialTick(RenderFrameEvent.Pre event) {
+		deltaPartialTick = event.getPartialTick() > lastPartialTick ? event.getPartialTick() - lastPartialTick : 1 - lastPartialTick + event.getPartialTick();
+		lastPartialTick = event.getPartialTick();
 	}
 }
-
-//TODO Fix the problem that causes the dragon to take a T pose after disappearing from view. It doesn't matter if it's its own body or another player's. Occurs with forest dragon effect and in flight for any dragon. Also on the server when you turn away from the flying player and look at him again.

@@ -47,7 +47,6 @@ public class NetworkHandler {
 		registrar.playToClient(SyncGrowthState.Data.TYPE, SyncGrowthState.Data.STREAM_CODEC, SyncGrowthState::handleClient);
 		registrar.playToClient(SyncSize.Data.TYPE, SyncSize.Data.STREAM_CODEC, SyncSize::handleClient);
 		registrar.playToClient(SyncDiggingStatus.Data.TYPE, SyncDiggingStatus.Data.STREAM_CODEC, SyncDiggingStatus::handleClient);
-		registrar.playBidirectional(SyncPlayerSkinPreset.Data.TYPE, SyncPlayerSkinPreset.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncPlayerSkinPreset::handleClient, SyncPlayerSkinPreset::handleServer));
 		registrar.playToClient(RequestOpenDragonEditor.Data.TYPE, RequestOpenDragonEditor.Data.STREAM_CODEC, RequestOpenDragonEditor::handleClient);
 
 		// Flight
@@ -75,6 +74,7 @@ public class NetworkHandler {
 
 		// Client data
 		registrar.playToClient(RequestClientData.Data.TYPE, RequestClientData.Data.STREAM_CODEC, RequestClientData::handleClient);
+		registrar.playBidirectional(SyncPlayerSkinPreset.Data.TYPE, SyncPlayerSkinPreset.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncPlayerSkinPreset::handleClient, SyncPlayerSkinPreset::handleServer));
 		registrar.playBidirectional(SyncDragonClawRender.Data.TYPE, SyncDragonClawRender.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawRender::handleClient, SyncDragonClawRender::handleServer));
 		registrar.playBidirectional(SyncDragonSkinSettings.Data.TYPE, SyncDragonSkinSettings.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonSkinSettings::handleClient, SyncDragonSkinSettings::handleServer));
 	}

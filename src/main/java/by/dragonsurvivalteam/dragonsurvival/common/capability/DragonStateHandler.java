@@ -79,7 +79,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public int lastSync = 0;
 
 
-	private final DragonMovementData movementData = new DragonMovementData(0, 0, 0, false);
+	private final DragonMovementData movementData = new DragonMovementData();
 	private final ClawInventory clawToolData = new ClawInventory(this);
 	private final EmoteCap emoteData = new EmoteCap(this);
 	private final MagicCap magicData = new MagicCap(this);
@@ -124,7 +124,15 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 	}
 
-	public void setMovementData(double bodyYaw, double headYaw, double headPitch, boolean bite) {
+	public void setFirstPerson(boolean isFirstPerson) {
+		movementData.isFirstPerson = isFirstPerson;
+	}
+
+	public void setBite(boolean bite) {
+		movementData.bite = bite;
+	}
+
+	public void setMovementData(double bodyYaw, double headYaw, double headPitch) {
 		movementData.headYawLastFrame = movementData.headYaw;
 		movementData.bodyYawLastFrame = movementData.bodyYaw;
 		movementData.headPitchLastFrame = movementData.headPitch;
@@ -132,7 +140,6 @@ public class DragonStateHandler extends EntityStateHandler {
 		movementData.bodyYaw = bodyYaw;
 		movementData.headYaw = headYaw;
 		movementData.headPitch = headPitch;
-		movementData.bite = bite;
 	}
 
 	// Only call this version of setSize if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
@@ -532,12 +539,9 @@ public class DragonStateHandler extends EntityStateHandler {
 
 			//Rendering
 			DragonMovementData movementData = getMovementData();
-			tag.putDouble("bodyYaw", movementData.bodyYaw);
-			tag.putDouble("headYaw", movementData.headYaw);
-			tag.putDouble("headPitch", movementData.headPitch);
-
 			tag.putBoolean("bite", movementData.bite);
 			tag.putBoolean("dig", movementData.dig);
+
 			tag.putBoolean("isHiding", isHiding());
 
 			//Spin attack
@@ -599,7 +603,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		if (isDragon()) {
-			setMovementData(tag.getDouble("bodyYaw"), tag.getDouble("headYaw"), tag.getDouble("headPitch"), tag.getBoolean("bite"));
+			setBite(tag.getBoolean("bite"));
 			getMovementData().headYawLastFrame = getMovementData().headYaw;
 			getMovementData().bodyYawLastFrame = getMovementData().bodyYaw;
 			getMovementData().headPitchLastFrame = getMovementData().headPitch;
