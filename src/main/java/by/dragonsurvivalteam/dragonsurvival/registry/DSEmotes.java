@@ -42,7 +42,6 @@ public class DSEmotes {
 				((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
 					DSEmotes.EMOTES.clear();
 					DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
-					initEmoteRotation();
 				});
 			}
 		}
