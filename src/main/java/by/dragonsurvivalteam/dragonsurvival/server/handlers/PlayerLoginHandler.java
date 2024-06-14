@@ -33,4 +33,12 @@ public class PlayerLoginHandler {
             });
         }
     }
+
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent event){
+        // Heal the player to full health on respawn as the player's max health attribute being set doesn't change the player's starting health on respawn
+        if(event.getEntity() instanceof ServerPlayer player){
+            player.setHealth(player.getMaxHealth());
+        }
+    }
 }
