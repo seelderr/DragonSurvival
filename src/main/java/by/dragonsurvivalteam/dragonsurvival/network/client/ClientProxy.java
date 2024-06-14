@@ -307,6 +307,7 @@ public class ClientProxy {
                 DragonStateProvider.getCap(player).ifPresent(handler -> {
                     handler.setBite(message.bite());
                     handler.setFirstPerson(message.isFirstPerson());
+                    handler.setFreeLook(message.isFreeLook());
                 });
             }
         }

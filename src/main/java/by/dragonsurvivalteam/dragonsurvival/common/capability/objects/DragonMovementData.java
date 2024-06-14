@@ -14,6 +14,8 @@ public class DragonMovementData{
 	public float rotLastTick;
 
 	public boolean isFirstPerson = false;
+	public boolean isFreeLook = false;
+	public boolean wasFreeLook = false;
 	public boolean bite = false;
 	public boolean dig = false;
 

@@ -28,12 +28,13 @@ public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
 			DragonStateProvider.getCap(entity).ifPresent(handler -> {
 				handler.setFirstPerson(message.isFirstPerson);
 				handler.setBite(message.bite);
+				handler.setFreeLook(message.isFreeLook);
 			});
 		});
 		PacketDistributor.sendToPlayersTrackingEntity(entity, message);
 	}
 
-	public record Data(int playerId, boolean isFirstPerson, boolean bite) implements CustomPacketPayload
+	public record Data(int playerId, boolean isFirstPerson, boolean bite, boolean isFreeLook) implements CustomPacketPayload
 	{
 		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_movement"));
 
@@ -44,6 +45,8 @@ public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
 				Data::isFirstPerson,
 				ByteBufCodecs.BOOL,
 				Data::bite,
+				ByteBufCodecs.BOOL,
+				Data::isFreeLook,
 				Data::new
 		);
 

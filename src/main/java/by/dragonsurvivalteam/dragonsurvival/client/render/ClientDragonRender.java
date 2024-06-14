@@ -129,8 +129,6 @@ public class ClientDragonRender{
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateCameraWithDragon", comment = "Should the player rotate their view when the dragon they are riding rotates their body?")
 	public static Boolean rotateCameraWithDragon = true;
 
-	private static boolean wasFreeLook = false;
-
 	@SubscribeEvent
 	public static void renderFirstPerson(RenderHandEvent renderHandEvent){
 		if(renderInFirstPerson){
@@ -475,7 +473,9 @@ public class ClientDragonRender{
 
 					// Handle bodyYaw
 					double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-					if (rotateBodyWithCamera && !KeyInputHandler.FREE_LOOK.isDown() && !wasFreeLook) {
+					boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
+					boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook;
+					if (rotateBodyWithCamera && !isFreeLook && !wasFreeLook) {
 						if (headYaw > 150) {
 							bodyYaw += 150 - headYaw;
 						} else if (headYaw < -150) {
@@ -492,20 +492,9 @@ public class ClientDragonRender{
 					float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
 
 					boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
-
-					// FIXME: THIS NEEDS TO BE SYNCED WITH THE SERVER
-					if (KeyInputHandler.FREE_LOOK.isDown()) {
-						wasFreeLook = true;
-					}
-
-					if (wasFreeLook && !isFirstPerson) {
-						wasFreeLook = false;
-					}
-
-					if (!firstPersonRotation && !KeyInputHandler.FREE_LOOK.isDown()) {
-						if ((!wasFreeLook || moveVector.length() > 0) && isFirstPerson) {
+					if (!firstPersonRotation && !isFreeLook) {
+						if (moveVector.length() > 0 && isFirstPerson) {
 							bodyYaw = player.getYRot();
-							wasFreeLook = false;
 							if (moveVector.length() > 0) {
 								float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
 								if (95.0F < f5 && f5 < 265.0F) {
@@ -524,9 +513,7 @@ public class ClientDragonRender{
 									_f1 = 75.0F;
 
 									bodyYaw = player.getYRot() - _f1;
-									if (_f1 * _f1 > 2500.0F) {
-										bodyYaw += _f1 * 0.2F;
-									}
+									bodyYaw += _f1 * 0.2F;
 								}
 							}
 							bodyYaw = Mth.wrapDegrees(bodyYaw);
@@ -556,9 +543,7 @@ public class ClientDragonRender{
 								_f1 = 75.0F;
 
 								bodyYaw = player.getYRot() - _f1;
-								if (_f1 * _f1 > 2500.0F) {
-									bodyYaw += _f1 * 0.2F;
-								}
+								bodyYaw += _f1 * 0.2F;
 							}
 						}
 					}
@@ -579,8 +564,9 @@ public class ClientDragonRender{
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 				if (playerStateHandler.isDragon()) {
 					DragonMovementData md = playerStateHandler.getMovementData();
-					md.isFirstPerson = Minecraft.getInstance().options.getCameraType().isFirstPerson();
-					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite));
+					playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
+					playerStateHandler.setFreeLook(KeyInputHandler.FREE_LOOK.isDown());
+					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite, md.isFreeLook));
 				}
 			});
 		}

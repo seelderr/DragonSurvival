@@ -124,6 +124,11 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 	}
 
+	public void setFreeLook(boolean isFreeLook) {
+		movementData.wasFreeLook = movementData.isFreeLook;
+		movementData.isFreeLook = isFreeLook;
+	}
+
 	public void setFirstPerson(boolean isFirstPerson) {
 		movementData.isFirstPerson = isFirstPerson;
 	}
