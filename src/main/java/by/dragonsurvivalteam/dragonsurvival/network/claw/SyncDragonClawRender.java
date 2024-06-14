@@ -23,10 +23,10 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender.Data>
 	}
 
 	public static void handleServer(final SyncDragonClawRender.Data message, final IPayloadContext context) {
-		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-		handler.getClawToolData().shouldRenderClaws = message.state;
-		if (ServerConfig.syncClawRender) {
+		if(ServerConfig.syncClawRender) {
+			Player sender = context.player();
+			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
+			handler.getClawToolData().shouldRenderClaws = message.state;
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
 		}
 	}

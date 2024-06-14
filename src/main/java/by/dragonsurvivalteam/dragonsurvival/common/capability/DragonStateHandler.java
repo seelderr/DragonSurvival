@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -8,10 +10,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,6 +44,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.common.NeoForgeMod;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class DragonStateHandler extends EntityStateHandler {
@@ -136,7 +142,9 @@ public class DragonStateHandler extends EntityStateHandler {
 			this.size = size;
 
 			if (oldLevel != getLevel()) {
-				requestClientData();
+				if (FMLEnvironment.dist == Dist.CLIENT) {
+					ClientProxy.sendClientData();
+				}
 			}
 
 			if (dragonType != null) {
@@ -160,12 +168,6 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		savedDragonSize.put(type, size);
-	}
-
-	public void requestClientData() {
-		if (FMLEnvironment.dist == Dist.CLIENT) {
-			ClientProxy.requestClientData(this);
-		}
 	}
 
 	public AbstractDragonType getType(){

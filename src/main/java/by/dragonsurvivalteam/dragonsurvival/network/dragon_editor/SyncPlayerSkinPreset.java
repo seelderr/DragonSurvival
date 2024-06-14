@@ -30,7 +30,6 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset.Data>
 			SkinPreset preset = new SkinPreset();
 			preset.deserializeNBT(context.player().registryAccess(), message.preset());
 			handler.getSkinData().skinPreset = preset;
-			handler.getSkinData().compileSkin();
 		});
 
 		PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);

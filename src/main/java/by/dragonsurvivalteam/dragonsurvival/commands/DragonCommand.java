@@ -135,7 +135,6 @@ public class DragonCommand{
 		PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonHandler.Data(player.getId(), cap.isHiding(), cap.getType(), cap.getBody(), cap.getSize(), cap.hasFlight(), 0));
 		PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 		PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
-		PacketDistributor.sendToPlayer(player, new RequestClientData.Data(cap.getType(), cap.getBody(), cap.getLevel()));
 		player.refreshDimensions();
 		return 1;
 	}

@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
@@ -135,7 +134,7 @@ public class AltarTypeButton extends Button {
 				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				PacketDistributor.sendToServer(new SyncDragonHandler.Data(player.getId(), cap.isHiding(), cap.getType(), cap.getBody(), cap.getSize(), cap.hasFlight(), 0));
 				PacketDistributor.sendToServer(new SyncSpinStatus.Data(player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				ClientProxy.handleRequestClientData(new RequestClientData.Data(cap.getType(), cap.getBody(), cap.getLevel()));
+				ClientProxy.sendClientData();
 			});
 			player.closeContainer();
 		}else

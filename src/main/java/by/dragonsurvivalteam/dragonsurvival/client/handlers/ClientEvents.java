@@ -96,27 +96,6 @@ public class ClientEvents{
 		dragonsJumpingTicks.computeIfPresent(player.getId(), (playerEntity1, integer) -> integer > 0 ? integer - 1 : integer);
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public static void sendClientData(RequestClientData.Data message){
-		if(message.type() == null){
-			return;
-		}
-
-		Player player = Minecraft.getInstance().player;
-		if(player != null){
-			PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), ClientDragonRender.renderDragonClaws));
-			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
-
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
-				if(cap.isDragon() && DragonEditorRegistry.getSavedCustomizations() != null){
-					int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(message.dragonType().getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(message.level(), 0);
-					SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(message.dragonType().getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
-					PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(player.getId(), preset.serializeNBT(player.registryAccess())));
-				}
-			});
-		}
-	}
-
 	@SubscribeEvent
 	public static void onOpenScreen(ScreenEvent.Opening openEvent){
 		LocalPlayer player = Minecraft.getInstance().player;

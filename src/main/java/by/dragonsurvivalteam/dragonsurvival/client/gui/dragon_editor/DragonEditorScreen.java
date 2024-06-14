@@ -38,7 +38,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkin
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
-import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -668,7 +667,7 @@ public class DragonEditorScreen extends Screen {
 				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				PacketDistributor.sendToServer(new SyncSpinStatus.Data(minecraft.player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
 
-				ClientProxy.requestClientData(handler);
+				ClientProxy.sendClientData();
 			}
 
 			if (minecraft != null && minecraft.player != null) {

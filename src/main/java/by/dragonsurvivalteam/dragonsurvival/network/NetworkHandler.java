@@ -1,10 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network;
 
 import by.dragonsurvivalteam.dragonsurvival.network.claw.*;
-import by.dragonsurvivalteam.dragonsurvival.network.config.SyncBooleanConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.config.SyncEnumConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.config.SyncListConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.config.SyncNumberConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.*;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
@@ -18,7 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.network.event.RegisterConfigurationTasksEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.DirectionalPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
@@ -43,7 +38,6 @@ public class NetworkHandler {
 		registrar.playToClient(RefreshDragon.Data.TYPE, RefreshDragon.Data.STREAM_CODEC, RefreshDragon::handleClient);
 		registrar.playBidirectional(SyncAltarCooldown.Data.TYPE, SyncAltarCooldown.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAltarCooldown::handleClient, SyncAltarCooldown::handleServer));
 		registrar.playToClient(AllowOpenDragonAltar.Data.TYPE, AllowOpenDragonAltar.Data.STREAM_CODEC, AllowOpenDragonAltar::handleClient);
-		registrar.playToClient(RequestClientData.Data.TYPE, RequestClientData.Data.STREAM_CODEC, RequestClientData::handleClient);
 		registrar.playBidirectional(SyncComplete.Data.TYPE, SyncComplete.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncComplete::handleClient, SyncComplete::handleServer));
 		registrar.playToClient(SyncBrokenTool.Data.TYPE, SyncBrokenTool.Data.STREAM_CODEC, SyncBrokenTool::handleClient);
 		registrar.playToServer(RequestOpenDragonInventory.Data.TYPE, RequestOpenDragonInventory.Data.STREAM_CODEC, RequestOpenDragonInventory::handleServer);
@@ -62,8 +56,6 @@ public class NetworkHandler {
 		registrar.playBidirectional(SyncSpinStatus.Data.TYPE, SyncSpinStatus.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncSpinStatus::handleClient, SyncSpinStatus::handleServer));
 
 		// Render settings
-		registrar.playBidirectional(SyncDragonClawRender.Data.TYPE, SyncDragonClawRender.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawRender::handleClient, SyncDragonClawRender::handleServer));
-		registrar.playBidirectional(SyncDragonSkinSettings.Data.TYPE, SyncDragonSkinSettings.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonSkinSettings::handleClient, SyncDragonSkinSettings::handleServer));
 		registrar.playBidirectional(SyncDragonClawsMenuToggle.Data.TYPE, SyncDragonClawsMenuToggle.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawsMenuToggle::handleClient, SyncDragonClawsMenuToggle::handleServer));
 		registrar.playToClient(SyncDragonClawsMenu.Data.TYPE, SyncDragonClawsMenu.Data.STREAM_CODEC, SyncDragonClawsMenu::handleClient);
 
@@ -81,10 +73,9 @@ public class NetworkHandler {
 		// Emote packets
 		registrar.playBidirectional(SyncEmote.Data.TYPE, SyncEmote.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncEmote::handleClient, SyncEmote::handleServer));
 
-		// Config
-		registrar.playBidirectional(SyncBooleanConfig.Data.TYPE, SyncBooleanConfig.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncBooleanConfig::handleClient, SyncBooleanConfig::handleServer));
-		registrar.playBidirectional(SyncNumberConfig.Data.TYPE, SyncNumberConfig.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncNumberConfig::handleClient, SyncNumberConfig::handleServer));
-		registrar.playBidirectional(SyncEnumConfig.Data.TYPE, SyncEnumConfig.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncEnumConfig::handleClient, SyncEnumConfig::handleServer));
-		registrar.playBidirectional(SyncListConfig.Data.TYPE, SyncListConfig.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncListConfig::handleClient, SyncListConfig::handleServer));
+		// Client data
+		registrar.playToClient(RequestClientData.Data.TYPE, RequestClientData.Data.STREAM_CODEC, RequestClientData::handleClient);
+		registrar.playBidirectional(SyncDragonClawRender.Data.TYPE, SyncDragonClawRender.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawRender::handleClient, SyncDragonClawRender::handleServer));
+		registrar.playBidirectional(SyncDragonSkinSettings.Data.TYPE, SyncDragonSkinSettings.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonSkinSettings::handleClient, SyncDragonSkinSettings::handleServer));
 	}
 }
