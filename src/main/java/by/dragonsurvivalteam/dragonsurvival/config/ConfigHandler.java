@@ -9,6 +9,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Supplier;
+
+import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,6 +20,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.ItemLike;
@@ -35,6 +38,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -49,21 +53,22 @@ public class ConfigHandler{
 	public static ModConfigSpec serverSpec;
 
 	public static HashMap<String, Object> defaultConfigValues = new HashMap<>(); // Contains the default values
+	public static HashMap<String, ConfigType> configTypes = new HashMap<>(); // Contains the config types
 	public static HashMap<String, ConfigOption> configObjects = new HashMap<>(); // Contains config options
 	public static HashMap<String, Field> configFields = new HashMap<>(); // Contains all annotated config fields
 	public static HashMap<ConfigSide, List<String>> configs = new HashMap<>(); // Contains all config keys per side
 	public static HashMap<String, ModConfigSpec.ConfigValue<?>> configValues = new HashMap<>(); // contains all config values
 
-	private static final HashMap<Class<?>, Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>>> REGISTRY_HASH_MAP = new HashMap<>();
+	private static final HashMap<Class<?>, Registry<?>> REGISTRY_MAP = new HashMap<>();
 
 	public static void initTypes() {
-		REGISTRY_HASH_MAP.put(Item.class, new Tuple<>(() -> BuiltInRegistries.ITEM, BuiltInRegistries.ITEM::key));
-		REGISTRY_HASH_MAP.put(Block.class,  new Tuple<>(() -> BuiltInRegistries.BLOCK, BuiltInRegistries.BLOCK::key));
-		REGISTRY_HASH_MAP.put(EntityType.class,  new Tuple<>(() -> BuiltInRegistries.ENTITY_TYPE, BuiltInRegistries.ENTITY_TYPE::key));
-		REGISTRY_HASH_MAP.put(BlockEntityType.class, new Tuple<>(() -> BuiltInRegistries.BLOCK_ENTITY_TYPE, BuiltInRegistries.BLOCK_ENTITY_TYPE::key));
-		REGISTRY_HASH_MAP.put(Biome.class,  new Tuple<>(() -> BuiltInRegistries.BIOME_SOURCE, BuiltInRegistries.BIOME_SOURCE::key));
-		REGISTRY_HASH_MAP.put(MobEffect.class,  new Tuple<>(() -> BuiltInRegistries.MOB_EFFECT, BuiltInRegistries.MOB_EFFECT::key));
-		REGISTRY_HASH_MAP.put(Potion.class,  new Tuple<>(() -> BuiltInRegistries.POTION, BuiltInRegistries.POTION::key));
+		REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
+		REGISTRY_MAP.put(Block.class,  BuiltInRegistries.BLOCK);
+		REGISTRY_MAP.put(EntityType.class,  BuiltInRegistries.ENTITY_TYPE);
+		REGISTRY_MAP.put(BlockEntityType.class, BuiltInRegistries.BLOCK_ENTITY_TYPE);
+		REGISTRY_MAP.put(Biome.class,  BuiltInRegistries.BIOME_SOURCE);
+		REGISTRY_MAP.put(MobEffect.class,  BuiltInRegistries.MOB_EFFECT);
+		REGISTRY_MAP.put(Potion.class,  BuiltInRegistries.POTION);
 	}
 
 	private static List<Field> getFields() {
@@ -111,6 +116,11 @@ public class ConfigHandler{
 
 			configFields.put(configOption.key(), field);
 			configObjects.put(configOption.key(), configOption);
+
+			ConfigType configType = field.getAnnotation(ConfigType.class);
+			if(configType != null){
+				configTypes.put(configOption.key(), configType);
+			}
 
 			configs.computeIfAbsent(configOption.side(), key -> new ArrayList<>()).add(configOption.key());
 		});
@@ -304,29 +314,35 @@ public class ConfigHandler{
 	}
 
 	/**
-	 * @param type Class of the resource type
+	 * @param registry Registry to check data for
 	 * @param location Value to parse
 	 * @return Either a list of the resolved tag or the resource element
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
-	public static <T> List<T> parseResourceLocation(final Class<T> type, final ResourceLocation location) {
-		Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
+	public static <T> List<T> parseResourceLocation(final Registry<T> registry, final ResourceLocation location) {
+		if (registry.containsKey(location)) {
+			Optional<Holder.Reference<T>> optional = registry.getHolder(location);
 
-		if (registry != null) {
-			if (registry.getA().get().containsKey(location)) {
-				Optional<? extends Holder<?>> optional = registry.getA().get().getHolder(location);
+			if (optional.isPresent() && optional.get().isBound()) {
+				return List.of(optional.get().value());
+			}
+		} else {
+			Optional<TagKey<T>> tag = registry.getTagNames().filter(registryTag -> registryTag.location().equals(location)).findAny();
 
-				if (optional.isPresent() && optional.get().isBound()) {
-					return List.of((T) optional.get().value());
-				}
-			} else {
-				TagKey<T> tagKey = TagKey.create((ResourceKey<? extends Registry<T>>) registry.getB().get(), location);
-
-				if (tagKey.isFor(registry.getA().get().key())) {
-					// TODO: This might not work.
-					//ITagManager<T> manager = (ITagManager<T>) registry.getA().get().tags();
-					return (List<T>) registry.getA().get().stream().toList();
-				}
+			if(tag.isPresent()) {
+				List<T> list = new ArrayList<>();
+				registry.holders().forEach(
+						(holder) -> {
+							holder.tags().forEach(
+									(holderTag) -> {
+										if (tag.get().equals(holderTag)) {
+											list.add(holder.value());
+										}
+									}
+							);
+						}
+				);
+				return list;
 			}
 		}
 
@@ -344,7 +360,7 @@ public class ConfigHandler{
 	 * Otherwise, it will check if the value is a {@link Number} and return the correct value for that<br>
 	 * If it's also not a number the original value will be returned
 	 */
-	private static Object getRelevantValue(final Field field, final Object object) {
+	private static Object getRelevantValue(final Field field, final Object object, final Class<?> clazz) {
 		if (object instanceof String stringValue) {
 			if (field.getType().isEnum()) {
 				Class<? extends Enum> cs = (Class<? extends Enum>) field.getType();
@@ -352,7 +368,7 @@ public class ConfigHandler{
 			}
 
 			ResourceLocation location = ResourceLocation.tryParse(stringValue);
-			List<?> list = parseResourceLocation((Class<? extends Registry>) field.getType(), location);
+			List<?> list = parseResourceLocation(REGISTRY_MAP.get(clazz), location);
 
 			if (list != null) {
 				if (field.getGenericType() instanceof List<?>) {
@@ -402,7 +418,7 @@ public class ConfigHandler{
 					Field field = ConfigHandler.configFields.get(config);
 
 					if (field != null) {
-						Object object = convertFromGeneric(field, configValues.get(config).get());
+						Object object = convertFromGeneric(field, config);
 
 						if (object != null) {
 							field.set(null, object);
@@ -417,12 +433,13 @@ public class ConfigHandler{
 
 	public static void updateConfigValue(final String configKey, final Object configValue) {
 		if (configValues.containsKey(configKey)) {
-			updateConfigValue(configValues.get(configKey), configValue);
+			updateConfigValue(configValues.get(configKey), configKey);
 		}
 	}
 
 	/** Update and save the config */
-	public static void updateConfigValue(final ModConfigSpec.ConfigValue config, final Object configValue) {
+	public static void updateConfigValue(final ModConfigSpec.ConfigValue config, final String configKey) {
+		Object configValue = convertToString(configKey);
 		config.set(convertToString(configValue));
 		config.save();
 
@@ -431,7 +448,7 @@ public class ConfigHandler{
 				Field field = ConfigHandler.configFields.get(configList.getKey());
 
 				if (field != null) {
-					Object object = convertFromGeneric(field, configValue);
+					Object object = convertFromGeneric(field, configKey);
 
 					if (object != null) {
 						field.set(null, object);
@@ -462,14 +479,20 @@ public class ConfigHandler{
 	}
 
 	/** See {@link ConfigHandler#getRelevantValue(Field, Object)} for more info */
-	private static Object convertFromGeneric(final Field field, final Object object) throws IllegalAccessException {
+	private static Object convertFromGeneric(final Field field, String config) throws IllegalAccessException {
 		Object result;
+		Object object = configValues.get(config).get();
+		ConfigType type = configTypes.get(config);
+		Class clazz = null;
+		if(type != null) {
+			clazz = type.value();
+		}
 
 		if (field.getType().isAssignableFrom(Collection.class)) {
 			ArrayList<Object> list = new ArrayList<>();
 
 			for (Object listValue : (Collection<?>) object) {
-				list.add(getRelevantValue(field, listValue));
+				list.add(getRelevantValue(field, listValue, clazz));
 			}
 
 			result = list;
@@ -477,7 +500,7 @@ public class ConfigHandler{
 			result = object;
 		}
 
-		return getRelevantValue(field, result);
+		return getRelevantValue(field, result, clazz);
 	}
 
 	/**
@@ -486,20 +509,16 @@ public class ConfigHandler{
 	 * @return List of the resource element and the resolved tag
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
-	public static <T> List<T> getResourceElements(final Class<T> type, final List<?> values) {
-		Tuple<Supplier<Registry<?>>, Supplier<ResourceKey<? extends Registry<?>>>> registry = REGISTRY_HASH_MAP.getOrDefault(type, null);
+	public static <T> List<T> getResourceElements(final Class<T> type, final List<String> values) {
+		Registry<T> registry = (Registry<T>) REGISTRY_MAP.getOrDefault(type, null);
 		List<T> list = new ArrayList<>();
 
-		for (Object object : values) {
-			if (object == null) {
+		for (String rawResourceLocation : values) {
+			if (rawResourceLocation == null) {
 				continue;
 			}
 
-			if (object instanceof String stringValue) {
-				ResourceLocation location = ResourceLocation.tryParse(stringValue);
-				Optional<? extends Holder<?>> optional = registry.getA().get().getHolder(location);
-				optional.ifPresent(holder -> list.add((T) holder.value()));
-			}
+            list.addAll(parseResourceLocation(registry, ResourceLocation.tryParse(rawResourceLocation)));
 		}
 
 		// Remove duplicates
