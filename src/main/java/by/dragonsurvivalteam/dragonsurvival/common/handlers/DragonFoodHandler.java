@@ -22,8 +22,10 @@ import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -36,10 +38,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import net.neoforged.bus.EventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
@@ -148,17 +152,37 @@ public class DragonFoodHandler {
 			String[] configuration = entry.split(":");
 			ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(configuration[0], configuration[1]);
 
-			// Add food item
-			if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {
-				Item item = BuiltInRegistries.ITEM.get(resourceLocation);
+			Optional<TagKey<Item>> itemTag = BuiltInRegistries.ITEM.getTagNames().filter(tag -> tag.location().equals(resourceLocation)).findAny();
 
-				if (item != Items.AIR) {
-					FoodProperties foodProperties = getFoodProperties(configuration, item, type);
+			if(itemTag.isEmpty()) {
+				if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {
+					Item item = BuiltInRegistries.ITEM.get(resourceLocation);
 
-					if (foodProperties != null) {
-						map.put(item, foodProperties);
+					if (item != Items.AIR) {
+						FoodProperties foodProperties = getFoodProperties(configuration, item, type);
+
+						if (foodProperties != null) {
+							map.put(item, foodProperties);
+						}
 					}
 				}
+			} else {
+				// Process all items with the tag
+				BuiltInRegistries.ITEM.holders().forEach(
+						(item) -> {
+							item.tags().forEach(
+									(tag) -> {
+										if (tag.equals(itemTag.get())) {
+											FoodProperties foodProperties = getFoodProperties(configuration, item.value(), type);
+
+											if (foodProperties != null) {
+												map.put(item.value(), foodProperties);
+											}
+										}
+									}
+							);
+						}
+				);
 			}
 		}
 
@@ -300,7 +324,7 @@ public class DragonFoodHandler {
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(localPlayer);
 
-		if (handler == null || !handler.isDragon()) {
+		if (!handler.isDragon()) {
 			return false;
 		}
 
@@ -342,7 +366,7 @@ public class DragonFoodHandler {
 	}
 
 	public static int getUseDuration(final ItemStack itemStack, final LivingEntity entity) {
-		FoodProperties foodProperties = itemStack.getFoodProperties(entity);
+		FoodProperties foodProperties = getDragonFoodProperties(itemStack.getItem(), DragonStateProvider.getOrGenerateHandler(entity).getType());
 		if(foodProperties != null) {
 			return foodProperties.eatDurationTicks();
 		} else {

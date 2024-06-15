@@ -58,7 +58,7 @@ public abstract class MixinLivingEntity extends Entity{
 		return getItemBySlot(slotType);
 	}
 
-	@ModifyExpressionValue(method = "eat", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
+	@ModifyExpressionValue(method = "eat(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
 	private FoodProperties replaceFoodPropertiesInEat(FoodProperties original, @Local(argsOnly = true) ItemStack itemStack){
 		if(DragonStateProvider.isDragon((LivingEntity)(Object)this))
 		{
@@ -68,16 +68,6 @@ public abstract class MixinLivingEntity extends Entity{
 
 		return original;
 	}
-
-	// TODO: Figure out how to inject into IForgeItemStack instead to just override getFoodProperties
-	/*@ModifyExpressionValue(method = "addEatEffect", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
-	private FoodProperties replaceFoodPropertiesInAddEatEffect(FoodProperties original, ItemStack pFood, Level pLevel, LivingEntity pLivingEntity){
-		if (DragonStateProvider.isDragon((LivingEntity) (Object) this)) {
-			return DragonFood.getEffectiveFoodProperties(useItem.getItem(), (LivingEntity) (Object) this);
-		}
-
-		return original;
-	}*/
 
 	@Unique private int dragon_Survival$getHumanOrDragonUseDuration(int original){
 		if ((LivingEntity)(Object)this instanceof Player player) {
@@ -94,16 +84,6 @@ public abstract class MixinLivingEntity extends Entity{
 	private int replaceUseDurationInShouldTriggerItemUseEffects(int original){
 		return dragon_Survival$getHumanOrDragonUseDuration(original);
 	}
-
-	// TODO: Figure out how to inject into IForgeItemStack instead to just override getFoodProperties
-	/*@ModifyExpressionValue(method = "shouldTriggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
-	private FoodProperties replaceGetFoodPropertiesInShouldTriggerItemUseEffects(FoodProperties original){
-		if (DragonStateProvider.isDragon((LivingEntity) (Object) this)) {
-			return DragonFood.getEffectiveFoodProperties(useItem.getItem(), (LivingEntity) (Object) this);
-		}
-
-		return original;
-	}*/
 
 	@ModifyExpressionValue(method = "onSyncedDataUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
 	private int replaceUseDurationInSyncedDataUpdated(int original){
@@ -129,7 +109,6 @@ public abstract class MixinLivingEntity extends Entity{
 		return original;
 	}
 
-	// TODO: Possible to combine these into one statement?
 	@ModifyExpressionValue(method = "triggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;", ordinal = 0))
 	private UseAnim replaceGetUseAnimationInTriggerItemUseEffects0(UseAnim original, ItemStack pStack, int pAmount){
 		return dragon_Survival$getUseAnimation(original, pStack);

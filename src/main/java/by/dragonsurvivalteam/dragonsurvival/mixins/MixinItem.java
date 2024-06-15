@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -22,6 +23,17 @@ public class MixinItem{
 		if(DragonStateProvider.isDragon(pPlayer))
 		{
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(pPlayer);
+			return DragonFoodHandler.getDragonFoodProperties(itemStack.getItem(), handler.getType());
+		}
+
+		return original;
+	}
+
+	@ModifyExpressionValue(method = "finishUsingItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
+	private FoodProperties replaceFoodPropertiesInFinishUseItem(FoodProperties original, @Local(argsOnly = true) LivingEntity entity, @Local(argsOnly = true) ItemStack itemStack){
+		if(DragonStateProvider.isDragon(entity))
+		{
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
 			return DragonFoodHandler.getDragonFoodProperties(itemStack.getItem(), handler.getType());
 		}
 

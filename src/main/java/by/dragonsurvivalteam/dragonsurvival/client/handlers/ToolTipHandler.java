@@ -91,7 +91,7 @@ public class ToolTipHandler{
 
 		if (properties != null) {
 			float nutritionValue = properties.nutrition();
-			float saturationValue = properties.nutrition() * properties.saturation() * 2f;
+			float saturationValue = properties.saturation();
 
 			// 1 Icon = 2 points (e.g. 10 nutrition icons for a maximum food level of 20)
 			nutrition = String.format("%.1f", nutritionValue / 2);

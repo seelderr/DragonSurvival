@@ -27,6 +27,7 @@ import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.monster.hoglin.Hoglin;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ElytraItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -44,6 +45,7 @@ import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
@@ -254,6 +256,20 @@ public class EventHandler{
 			if(dragonStateHandler.isDragon()){
 				if(living instanceof ServerPlayer){
 					PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
+				}
+			}
+		});
+	}
+
+	@SubscribeEvent
+	public static void setDragonFoodUseDuration(final LivingEntityUseItemEvent.Start event) {
+		DragonStateProvider.getCap(event.getEntity()).ifPresent(handler -> {
+			if (handler.isDragon()) {
+				if (DragonFoodHandler.isEdible(event.getItem(), handler.getType())) {
+					FoodProperties foodProperties = DragonFoodHandler.getDragonFoodProperties(event.getItem().getItem(), handler.getType());
+					if (foodProperties != null) {
+						event.setDuration(foodProperties.eatDurationTicks());
+					}
 				}
 			}
 		});
