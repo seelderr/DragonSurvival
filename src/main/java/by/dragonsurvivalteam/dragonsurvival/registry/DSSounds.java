@@ -8,10 +8,12 @@ import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DSSounds {
 	public static final DeferredRegister<SoundEvent> DS_SOUNDS = DeferredRegister.create(
 			BuiltInRegistries.SOUND_EVENT,
-			DragonSurvivalMod.MODID
+			MODID
 	);
 	public static Supplier<SoundEvent> ACTIVATE_BEACON = DS_SOUNDS.register("activate_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "activate_beacon")));
 	public static Supplier<SoundEvent> DEACTIVATE_BEACON = DS_SOUNDS.register("deactivate_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "deactivate_beacon")));

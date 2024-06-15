@@ -15,6 +15,8 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
     public static TagKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
     public static TagKey<DamageType> NO_KNOCKBACK = createKey("no_knockback");

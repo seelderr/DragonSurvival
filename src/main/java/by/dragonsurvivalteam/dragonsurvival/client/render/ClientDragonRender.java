@@ -64,6 +64,8 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.util.RenderUtil;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRender{
 	public static DragonModel dragonModel = new DragonModel();
@@ -74,7 +76,6 @@ public class ClientDragonRender{
 	public static DragonEntity dragonArmor;
 	public static DragonEntity dummyDragon;
 	public static float deltaPartialTick;
-	public static float lastPartialTick;
 
 	/**
 	 * Instances used for rendering third-person dragon models
@@ -424,8 +425,7 @@ public class ClientDragonRender{
 
 		if (stack.getItem() instanceof DyeItem dyeItem) {
 			DyeColor dyeColor = dyeItem.getDyeColor();
-			float[] colors = dyeColor.getTextureDiffuseColors();
-			armorColor = Color.ofRGB(colors[0], colors[1], colors[2]);
+			armorColor = new Color(dyeColor.getTextureDiffuseColor());
 		}
 
 		if(!stack.isEmpty()){
@@ -574,7 +574,6 @@ public class ClientDragonRender{
 
 	@SubscribeEvent
 	public static void calculateDeltaPartialTick(RenderFrameEvent.Pre event) {
-		deltaPartialTick = event.getPartialTick() > lastPartialTick ? event.getPartialTick() - lastPartialTick : 1 - lastPartialTick + event.getPartialTick();
-		lastPartialTick = event.getPartialTick();
+		deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();
 	}
 }

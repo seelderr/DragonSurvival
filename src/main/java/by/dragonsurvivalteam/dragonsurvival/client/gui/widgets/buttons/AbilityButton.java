@@ -22,6 +22,8 @@ import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class AbilityButton extends Button {
 	public static final ResourceLocation BLANK_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank.png");
 	public static final ResourceLocation BLANK_1_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank1.png");

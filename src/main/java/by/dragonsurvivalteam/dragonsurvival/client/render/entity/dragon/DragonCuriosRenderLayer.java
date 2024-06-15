@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+// FIXME: Bring this back when Curios is updated
+/*import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -100,4 +101,4 @@ public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
         ));
         return resources;
     }
-}
+}*/

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;

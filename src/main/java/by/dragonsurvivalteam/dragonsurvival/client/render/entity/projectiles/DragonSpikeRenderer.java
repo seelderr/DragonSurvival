@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 
 @OnlyIn( Dist.CLIENT )
 public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity>{

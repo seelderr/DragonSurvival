@@ -16,6 +16,8 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class ExtendedCheckbox extends AbstractButton {
 
 	@OnlyIn(Dist.CLIENT)

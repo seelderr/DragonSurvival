@@ -24,29 +24,32 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DSModifiers {
-	private static final ResourceLocation DRAGON_REACH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_reach_modifier");
-	private static final ResourceLocation DRAGON_HEALTH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_health_modifier");
-	private static final ResourceLocation DRAGON_DAMAGE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_damage_modifier");
-	private static final ResourceLocation DRAGON_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_swim_speed_modifier");
-	private static final ResourceLocation DRAGON_STEP_HEIGHT_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_step_height_modifier");
-	private static final ResourceLocation DRAGON_MOVEMENT_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement_speed_modifier");
-	private static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
-	private static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
+	public static final ResourceLocation DRAGON_REACH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_reach_modifier");
+	public static final ResourceLocation DRAGON_HEALTH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_health_modifier");
+	public static final ResourceLocation DRAGON_DAMAGE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_damage_modifier");
+	public static final ResourceLocation DRAGON_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_swim_speed_modifier");
+	public static final ResourceLocation DRAGON_STEP_HEIGHT_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_step_height_modifier");
+	public static final ResourceLocation DRAGON_MOVEMENT_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement_speed_modifier");
+	public static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
+	public static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
 
-	private static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
-	private static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
-	private static final ResourceLocation DRAGON_BODY_STRENGTH = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength");
-	private static final ResourceLocation DRAGON_BODY_STRENGTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength_mult");
-	private static final ResourceLocation DRAGON_BODY_KNOCKBACK_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_knockback_bonus");
-	private static final ResourceLocation DRAGON_BODY_SWIM_SPEED_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_swim_speed_bonus");
-	private static final ResourceLocation DRAGON_BODY_STEP_HEIGHT_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_step_height_bonus");
-	private static final ResourceLocation DRAGON_BODY_GRAVITY_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_gravity_mult");
-	private static final ResourceLocation DRAGON_BODY_HEALTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_mult");
-	private static final ResourceLocation DRAGON_BODY_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_jump_bonus");
-	private static final ResourceLocation DRAGON_BODY_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_safe_fall_distance");
+	public static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
+	public static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
+	public static final ResourceLocation DRAGON_BODY_STRENGTH = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength");
+	public static final ResourceLocation DRAGON_BODY_STRENGTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength_mult");
+	public static final ResourceLocation DRAGON_BODY_KNOCKBACK_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_knockback_bonus");
+	public static final ResourceLocation DRAGON_BODY_SWIM_SPEED_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_swim_speed_bonus");
+	public static final ResourceLocation DRAGON_BODY_STEP_HEIGHT_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_step_height_bonus");
+	public static final ResourceLocation DRAGON_BODY_GRAVITY_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_gravity_mult");
+	public static final ResourceLocation DRAGON_BODY_HEALTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_mult");
+	public static final ResourceLocation DRAGON_BODY_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_jump_bonus");
+	public static final ResourceLocation DRAGON_BODY_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_safe_fall_distance");
 
 	// Used in MixinPlayerEntity to add the slow falling effect to dragons
 	public static final ResourceLocation SLOW_FALLING = ResourceLocation.fromNamespaceAndPath(MODID, "slow_falling");
+
+	// Used in EmoteHandler to keep track of the no move state
+	public static final ResourceLocation EMOTE_NO_MOVE = ResourceLocation.fromNamespaceAndPath(MODID, "emote_no_move");
 
 	public static AttributeModifier buildHealthMod(double size){
 		double healthModifier;

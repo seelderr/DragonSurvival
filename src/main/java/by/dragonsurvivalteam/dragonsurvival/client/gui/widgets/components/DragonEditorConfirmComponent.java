@@ -19,6 +19,8 @@ import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_altar_warning.png");
 	private final AbstractWidget btn1;

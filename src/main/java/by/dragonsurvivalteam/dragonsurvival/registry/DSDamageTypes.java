@@ -8,6 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.level.Level;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DSDamageTypes {
     // We don't need to use a DeferredRegister for DamageTypes, as they are fully data driven.
     public static final ResourceKey<DamageType> WATER_BURN = createKey("water_burn");

@@ -11,6 +11,8 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @OnlyIn(Dist.CLIENT)
 public class FireBallRenderer extends GeoEntityRenderer<FireBallEntity> {
 	private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/fireball_texture.png");

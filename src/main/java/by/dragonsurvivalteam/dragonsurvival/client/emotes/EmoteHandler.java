@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.EMOTE_NO_MOVE;
 import static net.minecraft.client.CameraType.THIRD_PERSON_BACK;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -27,8 +28,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class EmoteHandler {
-    private static final UUID EMOTE_NO_MOVE = UUID.fromString("09c2716e-0da9-430b-aaaf-8653c643dc09");
-
     @SubscribeEvent
     @OnlyIn(Dist.CLIENT)
     public static void playerTick(final PlayerTickEvent.Post event) {
@@ -87,9 +86,9 @@ public class EmoteHandler {
                     if (ServerConfig.canMoveInEmote) {
                         if (emote.animation != null && !emote.animation.isEmpty()) {
                             AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
-                            AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADD_VALUE);
+                            AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, -attributeInstance.getValue(), AttributeModifier.Operation.ADD_VALUE);
 
-                            if (!attributeInstance.hasModifier(noMove)) {
+                            if (!attributeInstance.hasModifier(EMOTE_NO_MOVE)) {
                                 attributeInstance.addTransientModifier(noMove);
                             }
                         }
@@ -99,9 +98,7 @@ public class EmoteHandler {
 
             if (Arrays.stream(cap.getEmoteData().currentEmotes).noneMatch(Objects::nonNull) && ServerConfig.canMoveInEmote) {
                 AttributeInstance attributeInstance = player.getAttribute(Attributes.MOVEMENT_SPEED);
-                AttributeModifier noMove = new AttributeModifier(EMOTE_NO_MOVE, "EMOTE", -attributeInstance.getValue(), AttributeModifier.Operation.ADD_VALUE);
-
-                if (attributeInstance.hasModifier(noMove)) {
+                if (attributeInstance.hasModifier(EMOTE_NO_MOVE)) {
                     attributeInstance.removeModifier(EMOTE_NO_MOVE);
                 }
             }

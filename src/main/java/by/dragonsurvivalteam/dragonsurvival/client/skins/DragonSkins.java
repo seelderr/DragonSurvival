@@ -21,6 +21,8 @@ import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonSkins{
 	public static NetSkinLoader skinLoader = new GithubSkinLoaderAPI();
 	private static final ArrayList<String> hasFailedFetch = new ArrayList<>();

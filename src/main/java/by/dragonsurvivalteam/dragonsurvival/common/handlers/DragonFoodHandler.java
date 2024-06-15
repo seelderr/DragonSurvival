@@ -41,7 +41,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
+@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DragonFoodHandler {
 	// Food general
 	@ConfigOption(side = ConfigSide.SERVER, category = "food", key = "dragonFoods", comment = "Force dragons to eat a unique diet for their type.")
@@ -74,7 +76,7 @@ public class DragonFoodHandler {
 	public static int rightHeight = 0;
 
 
-	private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID + ":textures/gui/dragon_hud.png");
+	private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
 	private static final RandomSource RANDOM = RandomSource.create();
 
 	private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS;
@@ -355,7 +357,7 @@ public class DragonFoodHandler {
 		if(foodProperties != null) {
 			return foodProperties.eatDurationTicks();
 		} else {
-			return itemStack.getUseDuration();
+			return itemStack.getUseDuration(entity);
 		}
 	}
 

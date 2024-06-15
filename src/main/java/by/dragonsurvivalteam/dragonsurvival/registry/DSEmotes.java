@@ -26,6 +26,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSEmotes {
 	public static final ResourceLocation DS_CLIENT_EMOTES = ResourceLocation.fromNamespaceAndPath(MODID, "emotes.json");

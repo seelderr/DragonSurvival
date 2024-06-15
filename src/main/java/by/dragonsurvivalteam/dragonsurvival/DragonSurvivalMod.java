@@ -11,7 +11,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 
-import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
+//import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;

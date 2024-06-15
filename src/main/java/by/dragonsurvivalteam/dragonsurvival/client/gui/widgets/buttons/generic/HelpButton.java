@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class HelpButton extends ExtendedButton {
 	public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
 	public String text;

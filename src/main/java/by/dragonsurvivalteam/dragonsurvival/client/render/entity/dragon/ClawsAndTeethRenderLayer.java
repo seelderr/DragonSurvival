@@ -18,6 +18,10 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
+import java.awt.*;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;
 
@@ -66,7 +70,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private void renderToolLayer(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, final ResourceLocation texture, float partialTick, int packedLight) {
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, Color.WHITE.getRGB());
 	}
 
 	public String constructClaws(final Player player) {

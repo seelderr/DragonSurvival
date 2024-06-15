@@ -17,6 +17,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class ClawToolSlot extends Slot {
 	static final ResourceLocation AXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_axe");
 	static final ResourceLocation PICKAXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_pickaxe");

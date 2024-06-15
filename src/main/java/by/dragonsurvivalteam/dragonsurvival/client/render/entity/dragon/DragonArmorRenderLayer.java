@@ -22,6 +22,8 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;
 
@@ -79,15 +81,14 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 		if (stack.getItem() instanceof DyeItem dyeItem) {
 			DyeColor dyeColor = dyeItem.getDyeColor();
-			float[] colors = dyeColor.getTextureDiffuseColors();
-			armorColor = new Color(colors[0], colors[1], colors[2]);
+			armorColor = new Color(dyeColor.getTextureDiffuseColor());
 		}
 
 		ClientDragonRender.dragonModel.setCurrentTexture(texture);
 		ClientDragonRender.dragonArmor.copyPosition(animatable);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRed() / 255F, armorColor.getGreen() / 255F, armorColor.getBlue() / 255F, 1F);
+		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
 	}
 
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){

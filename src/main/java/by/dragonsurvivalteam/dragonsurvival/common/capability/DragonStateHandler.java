@@ -109,16 +109,16 @@ public class DragonStateHandler extends EntityStateHandler {
 			DSModifiers.updateSizeModifiers(player);
 		} else {
 			// Remove the dragon attribute modifiers
-			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DSModifiers.getHealthModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DSModifiers.getDamageModifier(player));
-			checkAndRemoveModifier(player.getAttribute(NeoForgeMod.SWIM_SPEED), DSModifiers.getSwimSpeedModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE), DSModifiers.getBlockReachModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE), DSModifiers.getEntityReachModifier(player));
-			checkAndRemoveModifier(player.getAttribute(Attributes.STEP_HEIGHT), DSModifiers.getStepHeightModifier(player));
+			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DSModifiers.DRAGON_HEALTH_MODIFIER);
+			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DSModifiers.DRAGON_DAMAGE_MODIFIER);
+			checkAndRemoveModifier(player.getAttribute(NeoForgeMod.SWIM_SPEED), DSModifiers.DRAGON_SWIM_SPEED_MODIFIER);
+			checkAndRemoveModifier(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE), DSModifiers.DRAGON_REACH_MODIFIER);
+			checkAndRemoveModifier(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE), DSModifiers.DRAGON_REACH_MODIFIER);
+			checkAndRemoveModifier(player.getAttribute(Attributes.STEP_HEIGHT), DSModifiers.DRAGON_STEP_HEIGHT_MODIFIER);
 		}
 	}
 
-	private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final AttributeModifier modifier) {
+	private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final ResourceLocation modifier) {
 		if (attribute != null && modifier != null && attribute.hasModifier(modifier)) {
 			attribute.removeModifier(modifier);
 		}

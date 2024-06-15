@@ -29,6 +29,8 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 import software.bernie.geckolib.GeckoLibClient;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DragonEditorRegistry{
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
