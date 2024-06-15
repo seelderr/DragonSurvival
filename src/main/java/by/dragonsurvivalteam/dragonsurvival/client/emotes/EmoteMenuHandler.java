@@ -41,6 +41,8 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @EventBusSubscriber( Dist.CLIENT )
 public class EmoteMenuHandler {
 	private static final int PER_PAGE = 10;

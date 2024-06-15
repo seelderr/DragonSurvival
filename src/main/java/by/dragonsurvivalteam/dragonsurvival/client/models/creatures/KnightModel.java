@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class KnightModel extends GeoModel<KnightEntity> {
 	@Override
 	public ResourceLocation getModelResource(KnightEntity object){

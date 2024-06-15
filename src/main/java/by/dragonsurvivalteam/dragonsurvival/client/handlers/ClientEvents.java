@@ -1,6 +1,7 @@
 
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -72,7 +73,7 @@ import org.jetbrains.annotations.NotNull;
 @EventBusSubscriber( Dist.CLIENT )
 public class ClientEvents{
 
-	public static final ResourceLocation DRAGON_HUD = ResourceLocation.fromNamespaceAndPath(MODID + ":textures/gui/dragon_hud.png");
+	public static final ResourceLocation DRAGON_HUD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
 	/**
 	 * Durations of jumps
 	 */

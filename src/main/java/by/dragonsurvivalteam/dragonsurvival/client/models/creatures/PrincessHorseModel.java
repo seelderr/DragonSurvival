@@ -6,6 +6,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.DyeColor;
 import software.bernie.geckolib.model.GeoModel;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class PrincessHorseModel extends GeoModel<PrincessHorseEntity> {
 	@Override
 	public ResourceLocation getModelResource(PrincessHorseEntity object){

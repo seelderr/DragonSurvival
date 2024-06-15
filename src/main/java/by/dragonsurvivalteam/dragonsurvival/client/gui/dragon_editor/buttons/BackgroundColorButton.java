@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class BackgroundColorButton extends ExtendedButton {
 	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
 	public static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/background_color_button.png");

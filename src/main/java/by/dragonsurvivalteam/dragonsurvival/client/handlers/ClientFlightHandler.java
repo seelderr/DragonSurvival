@@ -23,15 +23,18 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.core.Holder;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
@@ -45,6 +48,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 /** Used in pair with {@link ServerFlightHandler} */
 @EventBusSubscriber(Dist.CLIENT)
@@ -178,7 +183,7 @@ public class ClientFlightHandler {
 		}
 
 		if (handler.getMovementData().spinLearned && handler.getMovementData().spinCooldown > 0) {
-			if (event.getLayer() == VanillaGuiLayers.AIR_LEVEL) {
+			if (event.getName() == VanillaGuiLayers.AIR_LEVEL) {
 				Window window = Minecraft.getInstance().getWindow();
 
 				int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
@@ -222,17 +227,24 @@ public class ClientFlightHandler {
 						spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);
 					}
 
-					if(EnchantmentHelper.getFireAspect(player) > 0){
+					Holder<Enchantment> fireAspect = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.FIRE_ASPECT);
+					Holder<Enchantment> knockback = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.KNOCKBACK);
+					Holder<Enchantment> sweepingEdge = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SWEEPING_EDGE);
+					Holder<Enchantment> sharpness = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SHARPNESS);
+					Holder<Enchantment> smite = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SMITE);
+					Holder<Enchantment> baneOfArthropods = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.BANE_OF_ARTHROPODS);
+
+					if(EnchantmentHelper.getEnchantmentLevel(fireAspect, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.LAVA);
-					}else if(EnchantmentHelper.getKnockbackBonus(player) > 0){
+					}else if(EnchantmentHelper.getEnchantmentLevel(knockback, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.EXPLOSION);
-					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SWEEPING_EDGE, player) > 0){
+					}else if(EnchantmentHelper.getEnchantmentLevel(sweepingEdge, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK);
-					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SHARPNESS, player) > 0){
+					}else if(EnchantmentHelper.getEnchantmentLevel(sharpness, player) > 0){
 						spawnSpinParticle(player, new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1f));
-					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.SMITE, player) > 0){
+					}else if(EnchantmentHelper.getEnchantmentLevel(smite, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.ENCHANT);
-					}else if(EnchantmentHelper.getEnchantmentLevel(Enchantments.BANE_OF_ARTHROPODS, player) > 0){
+					}else if(EnchantmentHelper.getEnchantmentLevel(baneOfArthropods, player) > 0){
 						spawnSpinParticle(player, ParticleTypes.DRIPPING_OBSIDIAN_TEAR);
 					}
 				}

@@ -14,6 +14,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class CopySettingsButton extends ExtendedButton {
 	private static final ResourceLocation ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/copy_icon.png");
 

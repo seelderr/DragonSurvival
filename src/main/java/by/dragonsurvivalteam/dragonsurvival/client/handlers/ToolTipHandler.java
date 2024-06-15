@@ -30,6 +30,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler{
 	private static final ResourceLocation tooltip_1 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");

@@ -10,6 +10,8 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonBodyButton extends Button {
 	private DragonEditorScreen dragonEditorScreen;
 	private AbstractDragonBody dragonBody;

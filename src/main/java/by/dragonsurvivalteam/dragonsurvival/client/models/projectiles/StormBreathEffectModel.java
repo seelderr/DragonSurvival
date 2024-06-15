@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.StormBreat
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 // TODO :: Unused?
 public class StormBreathEffectModel extends GeoModel<StormBreathEntity> {
 	private ResourceLocation currentTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/storms_breath.png");

@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.PrinceHorseE
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class PrinceModel extends GeoModel<PrinceHorseEntity> {
 	@Override
 	public ResourceLocation getModelResource(final PrinceHorseEntity ignored) {
