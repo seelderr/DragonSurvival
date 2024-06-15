@@ -41,11 +41,13 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
+
 
 @Mixin(Player.class)
 public abstract class MixinPlayerEntity extends LivingEntity{
-	private static final UUID SLOW_FALLING_ID = UUID.fromString("A5B6CF2A-2F7C-31EF-9022-7C3E7D5E6ABA");
-	private static final AttributeModifier SLOW_FALLING = new AttributeModifier(SLOW_FALLING_ID, "Slow falling acceleration reduction", -0.07, AttributeModifier.Operation.ADD_VALUE); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
+
+	AttributeModifier slowFallingMod = new AttributeModifier(SLOW_FALLING,  -0.07, AttributeModifier.Operation.ADD_VALUE); // Add -0.07 to 0.08 so we get the vanilla default of 0.01
 
 	protected MixinPlayerEntity(EntityType<? extends LivingEntity> p_20966_, Level p_20967_){
 		super(p_20966_, p_20967_);
@@ -148,7 +150,7 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 					boolean flag = getDeltaMovement().y <= 0.0D;
 					if(flag && hasEffect(MobEffects.SLOW_FALLING)){
 						if(gravity != null && !gravity.hasModifier(SLOW_FALLING)){
-							gravity.addTransientModifier(SLOW_FALLING);
+							gravity.addTransientModifier(slowFallingMod);
 						}
 						fallDistance = 0.0F;
 					}else if(gravity != null && gravity.hasModifier(SLOW_FALLING)){

@@ -11,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import java.util.Objects;
 import java.util.UUID;
 import javax.annotation.Nullable;
+
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
@@ -19,27 +21,32 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
-public class DSModifiers {
-	private static final UUID DRAGON_REACH_MODIFIER = UUID.fromString("7455d5c7-4e1f-4cca-ab46-d79353764020");
-	private static final UUID DRAGON_HEALTH_MODIFIER = UUID.fromString("03574e62-f9e4-4f1b-85ad-fde00915e446");
-	private static final UUID DRAGON_DAMAGE_MODIFIER = UUID.fromString("5bd3cebc-132e-4f9d-88ef-b686c7ad1e2c");
-	private static final UUID DRAGON_SWIM_SPEED_MODIFIER = UUID.fromString("2a9341f3-d19e-446c-924b-7cf2e5259e10");
-	private static final UUID DRAGON_STEP_HEIGHT_MODIFIER = UUID.fromString("f3b0b3e3-3b7d-4b1b-8f3d-3b7d4b1b8f3d");
-	private static final UUID DRAGON_MOVEMENT_SPEED_MODIFIER = UUID.fromString("a11bba07-27e2-4c98-ac2c-34ae9f9b0694");
-	private static final UUID DRAGON_JUMP_BONUS = UUID.fromString("07de67e5-0f13-4be5-8ee9-715284bb8feb");
-	private static final UUID DRAGON_SAFE_FALL_DISTANCE = UUID.fromString("07de67e5-0f13-4be5-8ee9-715284bb8feb");
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-	private static final UUID DRAGON_BODY_MOVEMENT_SPEED = UUID.fromString("114fe18b-60fd-4284-b6ce-14d090454402");
-	private static final UUID DRAGON_BODY_ARMOR = UUID.fromString("8728438d-c838-4968-9382-efb95a36d72a");
-	private static final UUID DRAGON_BODY_STRENGTH = UUID.fromString("f591516e-749d-41f3-ba5a-b94cdf506193");
-	private static final UUID DRAGON_BODY_STRENGTH_MULT = UUID.fromString("05a4e0c8-f76b-45db-a244-3d588146a4ab");
-	private static final UUID DRAGON_BODY_KNOCKBACK_BONUS = UUID.fromString("f33f6ac0-2dd8-41a6-abe0-37e5cd0a383c");
-	private static final UUID DRAGON_BODY_SWIM_SPEED_BONUS = UUID.fromString("244edf11-e535-4dc1-b8a0-4f56a5a80e0c");
-	private static final UUID DRAGON_BODY_STEP_HEIGHT_BONUS = UUID.fromString("df2b333e-46c8-4315-a50d-096785e4f592");
-	private static final UUID DRAGON_BODY_GRAVITY_MULT = UUID.fromString("de994497-1cca-45e6-b398-a1736f43e5ec");
-	private static final UUID DRAGON_BODY_HEALTH_MULT = UUID.fromString("9068f914-511d-44cf-a2a3-0808f7c67326");
-	private static final UUID DRAGON_BODY_JUMP_BONUS = UUID.fromString("a1202eb6-4a3f-459b-b87c-05349ceb3303");
-	private static final UUID DRAGON_BODY_SAFE_FALL_DISTANCE = UUID.fromString("3c98aaac-df49-4e7c-b7b8-4c40507dcb87");
+public class DSModifiers {
+	private static final ResourceLocation DRAGON_REACH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_reach_modifier");
+	private static final ResourceLocation DRAGON_HEALTH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_health_modifier");
+	private static final ResourceLocation DRAGON_DAMAGE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_damage_modifier");
+	private static final ResourceLocation DRAGON_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_swim_speed_modifier");
+	private static final ResourceLocation DRAGON_STEP_HEIGHT_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_step_height_modifier");
+	private static final ResourceLocation DRAGON_MOVEMENT_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement_speed_modifier");
+	private static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
+	private static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
+
+	private static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
+	private static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
+	private static final ResourceLocation DRAGON_BODY_STRENGTH = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength");
+	private static final ResourceLocation DRAGON_BODY_STRENGTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength_mult");
+	private static final ResourceLocation DRAGON_BODY_KNOCKBACK_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_knockback_bonus");
+	private static final ResourceLocation DRAGON_BODY_SWIM_SPEED_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_swim_speed_bonus");
+	private static final ResourceLocation DRAGON_BODY_STEP_HEIGHT_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_step_height_bonus");
+	private static final ResourceLocation DRAGON_BODY_GRAVITY_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_gravity_mult");
+	private static final ResourceLocation DRAGON_BODY_HEALTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_mult");
+	private static final ResourceLocation DRAGON_BODY_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_jump_bonus");
+	private static final ResourceLocation DRAGON_BODY_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_safe_fall_distance");
+
+	// Used in MixinPlayerEntity to add the slow falling effect to dragons
+	public static final ResourceLocation SLOW_FALLING = ResourceLocation.fromNamespaceAndPath(MODID, "slow_falling");
 
 	public static AttributeModifier buildHealthMod(double size){
 		double healthModifier;
@@ -51,7 +58,7 @@ public class DSModifiers {
 			double healthModifierPercentage = Math.min(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));
 			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.minHealth, ServerConfig.maxHealth) - 20;
 		}
-		return new AttributeModifier(DRAGON_HEALTH_MODIFIER, "Dragon Health Adjustment", healthModifier, Operation.ADD_VALUE);
+		return new AttributeModifier(DRAGON_HEALTH_MODIFIER, healthModifier, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildReachMod(double size){
@@ -62,7 +69,7 @@ public class DSModifiers {
 		else {
 			reachModifier = Math.max(ServerConfig.reachBonus, (size - DragonLevel.NEWBORN.size) / (ServerConfig.DEFAULT_MAX_GROWTH_SIZE - DragonLevel.NEWBORN.size) * ServerConfig.reachBonus);
 		}
-		return new AttributeModifier(DRAGON_REACH_MODIFIER, "Dragon Reach Adjustment", reachModifier, Operation.ADD_MULTIPLIED_BASE);
+		return new AttributeModifier(DRAGON_REACH_MODIFIER, reachModifier, Operation.ADD_MULTIPLIED_BASE);
 	}
 
 	public static AttributeModifier buildDamageMod(DragonStateHandler handler, boolean isDragon){
@@ -71,11 +78,11 @@ public class DSModifiers {
 			double damageModPercentage = Math.min(1.0, (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / (ServerConfig.maxGrowthSize - ServerConfig.DEFAULT_MAX_GROWTH_SIZE));
 			ageBonus = Mth.lerp(damageModPercentage, ageBonus, ServerConfig.largeDamageBonus);
 		}
-		return new AttributeModifier(DRAGON_DAMAGE_MODIFIER, "Dragon Damage Adjustment", ageBonus, Operation.ADD_VALUE);
+		return new AttributeModifier(DRAGON_DAMAGE_MODIFIER, ageBonus, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildSwimSpeedMod(AbstractDragonType dragonType){
-		return new AttributeModifier(DRAGON_SWIM_SPEED_MODIFIER, "Dragon Swim Speed Adjustment", Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADD_VALUE);
+		return new AttributeModifier(DRAGON_SWIM_SPEED_MODIFIER, Objects.equals(dragonType, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildStepHeightMod(DragonStateHandler handler, double size) {
@@ -83,7 +90,7 @@ public class DSModifiers {
 		if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling)  {
 			stepHeightBonus += ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 		}
-		return new AttributeModifier(DRAGON_STEP_HEIGHT_MODIFIER, "Dragon Step Height Adjustment", stepHeightBonus, Operation.ADD_VALUE);
+		return new AttributeModifier(DRAGON_STEP_HEIGHT_MODIFIER, stepHeightBonus, Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildMovementSpeedMod(DragonStateHandler handler, double size) {
@@ -101,7 +108,7 @@ public class DSModifiers {
 				moveSpeedMultiplier = ServerConfig.moveSpeedAdult;
 			}
 		}
-		return new AttributeModifier(DRAGON_MOVEMENT_SPEED_MODIFIER, "Dragon Movement Speed Adjustment", moveSpeedMultiplier - 1, Operation.ADD_MULTIPLIED_TOTAL);
+		return new AttributeModifier(DRAGON_MOVEMENT_SPEED_MODIFIER, moveSpeedMultiplier - 1, Operation.ADD_MULTIPLIED_TOTAL);
 	}
 
 	private static double calculateJumpMod(DragonStateHandler handler) {
@@ -121,12 +128,12 @@ public class DSModifiers {
 	}
 
 	public static AttributeModifier buildJumpMod(DragonStateHandler handler) {
-		return new AttributeModifier(DRAGON_JUMP_BONUS, "Dragon Jump Bonus", calculateJumpMod(handler), Operation.ADD_VALUE);
+		return new AttributeModifier(DRAGON_JUMP_BONUS, calculateJumpMod(handler), Operation.ADD_VALUE);
 	}
 
 	public static AttributeModifier buildSafeFallDistanceMod(DragonStateHandler handler) {
 		// TODO: Not really sure about why this magic number is needed?
-		return new AttributeModifier(DRAGON_SAFE_FALL_DISTANCE, "Dragon Safe Fall Distance", calculateJumpMod(handler) * 4, Operation.ADD_VALUE);
+		return new AttributeModifier(DRAGON_SAFE_FALL_DISTANCE, calculateJumpMod(handler) * 4, Operation.ADD_VALUE);
 	}
 
 	public static void updateModifiers(Player player) {
@@ -253,57 +260,57 @@ public class DSModifiers {
 		if (body != null && isDragon) {
 			if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) == null || speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED).amount() != body.getRunMult()) {
 				if (speedAttr.getModifier(DRAGON_BODY_MOVEMENT_SPEED) != null) { speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED); }
-				speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, "BODY_MOVE_SPEED_BONUS", body.getRunMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
+				speedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_MOVEMENT_SPEED, body.getRunMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
 			if (armorAttr.getModifier(DRAGON_BODY_ARMOR) == null || armorAttr.getModifier(DRAGON_BODY_ARMOR).amount() != body.getArmorBonus()) {
 				if (armorAttr.getModifier(DRAGON_BODY_ARMOR) != null) { armorAttr.removeModifier(DRAGON_BODY_ARMOR); }
-				armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, "BODY_ARMOR_BONUS", body.getArmorBonus(), Operation.ADD_VALUE));
+				armorAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_ARMOR, body.getArmorBonus(), Operation.ADD_VALUE));
 			}
 
 			if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH).amount() != body.getDamageBonus()) {
 				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH); }
-				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, "BODY_STRENGTH_BONUS", body.getDamageBonus(), Operation.ADD_VALUE));
+				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH, body.getDamageBonus(), Operation.ADD_VALUE));
 			}
 
 			if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) == null || strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT).amount() != (body.getDamageMult()  - 1)) {
 				if (strengthAttr.getModifier(DRAGON_BODY_STRENGTH_MULT) != null) { strengthAttr.removeModifier(DRAGON_BODY_STRENGTH_MULT); }
-				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT, "BODY_STRENGTH_MULT", body.getDamageMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
+				strengthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STRENGTH_MULT,body.getDamageMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
 			if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) == null || attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS).amount() != body.getKnockbackBonus()) {
 				if (attackKnockbackAttr.getModifier(DRAGON_BODY_KNOCKBACK_BONUS) != null) { attackKnockbackAttr.removeModifier(DRAGON_BODY_KNOCKBACK_BONUS); }
-				attackKnockbackAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_KNOCKBACK_BONUS, "BODY_KNOCKBACK_BONUS", body.getKnockbackBonus(), Operation.ADD_VALUE));
+				attackKnockbackAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_KNOCKBACK_BONUS, body.getKnockbackBonus(), Operation.ADD_VALUE));
 			}
 
 			if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) == null || swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS).amount() != body.getSwimSpeedBonus()) {
 				if (swimSpeedAttr.getModifier(DRAGON_BODY_SWIM_SPEED_BONUS) != null) { swimSpeedAttr.removeModifier(DRAGON_BODY_SWIM_SPEED_BONUS); }
-				swimSpeedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SWIM_SPEED_BONUS, "BODY_SWIM_SPEED_BONUS", body.getSwimSpeedBonus(), Operation.ADD_VALUE));
+				swimSpeedAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SWIM_SPEED_BONUS, body.getSwimSpeedBonus(), Operation.ADD_VALUE));
 			}
 
 			if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) == null || stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS).amount() != body.getStepBonus()) {
 				if (stepAttr.getModifier(DRAGON_BODY_STEP_HEIGHT_BONUS) != null) { stepAttr.removeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS); }
-				stepAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS, "BODY_STEP_HEIGHT_BONUS", body.getStepBonus(), Operation.ADD_VALUE));
+				stepAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_STEP_HEIGHT_BONUS, body.getStepBonus(), Operation.ADD_VALUE));
 			}
 
 			if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) == null || gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT).amount() != (body.getGravityMult() - 1)) {
 				if (gravityAttr.getModifier(DRAGON_BODY_GRAVITY_MULT) != null) { gravityAttr.removeModifier(DRAGON_BODY_GRAVITY_MULT); }
-				gravityAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_GRAVITY_MULT, "BODY_GRAVITY_MULT", body.getGravityMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
+				gravityAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_GRAVITY_MULT, body.getGravityMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
 			if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) == null || healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT).amount() != (body.getHealthMult() - 1)) {
 				if (healthAttr.getModifier(DRAGON_BODY_HEALTH_MULT) != null) { healthAttr.removeModifier(DRAGON_BODY_HEALTH_MULT); }
-				healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, "BODY_HEALTH_MULT", body.getHealthMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
+				healthAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_HEALTH_MULT, body.getHealthMult() - 1, Operation.ADD_MULTIPLIED_TOTAL));
 			}
 
 			if (jumpAttr.getModifier(DRAGON_BODY_JUMP_BONUS) == null || jumpAttr.getModifier(DRAGON_BODY_JUMP_BONUS).amount() != body.getJumpBonus()) {
 				if (jumpAttr.getModifier(DRAGON_BODY_JUMP_BONUS) != null) { jumpAttr.removeModifier(DRAGON_BODY_JUMP_BONUS); }
-				jumpAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_JUMP_BONUS, "BODY_JUMP_BONUS", body.getJumpBonus(), Operation.ADD_VALUE));
+				jumpAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_JUMP_BONUS, body.getJumpBonus(), Operation.ADD_VALUE));
 			}
 
 			if (safeFallAttr.getModifier(DRAGON_BODY_SAFE_FALL_DISTANCE) == null || safeFallAttr.getModifier(DRAGON_BODY_SAFE_FALL_DISTANCE).amount() != body.getJumpBonus()) {
 				if (safeFallAttr.getModifier(DRAGON_BODY_SAFE_FALL_DISTANCE) != null) { safeFallAttr.removeModifier(DRAGON_BODY_SAFE_FALL_DISTANCE); }
-				safeFallAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SAFE_FALL_DISTANCE, "BODY_SAFE_FALL_DISTANCE", body.getJumpBonus(), Operation.ADD_VALUE));
+				safeFallAttr.addTransientModifier(new AttributeModifier(DRAGON_BODY_SAFE_FALL_DISTANCE, body.getJumpBonus(), Operation.ADD_VALUE));
 			}
 		} else {
 			speedAttr.removeModifier(DRAGON_BODY_MOVEMENT_SPEED);
