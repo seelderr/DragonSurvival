@@ -11,11 +11,10 @@ import net.minecraftforge.common.util.Lazy;
 import java.util.HashMap;
 
 public class SkinPortingSystem {
-    public static SavedSkinPresets upgrade(SavedSkinPresets presets) {
+    public static void upgrade(SavedSkinPresets presets) {
         if (presets.version == 0) {
             upgrade0to3(presets);
         }
-        return presets;
     }
 
     public static void upgrade0to3(SavedSkinPresets presets) {
