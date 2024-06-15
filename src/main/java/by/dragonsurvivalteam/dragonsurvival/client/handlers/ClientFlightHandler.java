@@ -96,7 +96,7 @@ public class ClientFlightHandler {
 
 	/** Acceleration */
 	static double ax, ay, az; // TODO :: Turn into vector?
-	static double lastIncrease;
+	static float lastIncrease;
 	static float lastZoom = 1f;
 
 	private static long lastHungerMessage;
@@ -117,8 +117,8 @@ public class ClientFlightHandler {
 
 					if(flightCameraMovement){
 						Vec3 lookVec = currentPlayer.getLookAngle();
-						double increase = Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
-						double gradualIncrease = Mth.lerp(0.25, lastIncrease, increase);
+						float increase = (float) Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
+						float gradualIncrease = Mth.lerp(0.25f, lastIncrease, increase);
 						((AccessorCamera)info).invokeMove(0, gradualIncrease, 0);
 						lastIncrease = gradualIncrease;
 					}
@@ -138,7 +138,7 @@ public class ClientFlightHandler {
 			}else{
 				if(lastIncrease > 0){
 					if(flightCameraMovement){
-						lastIncrease = Mth.lerp(0.25, lastIncrease, 0);
+						lastIncrease = Mth.lerp(0.25f, lastIncrease, 0);
 						((AccessorCamera)info).invokeMove(0, lastIncrease, 0);
 					}
 				}
@@ -155,7 +155,7 @@ public class ClientFlightHandler {
 					if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 						// I'm not entirely sure why 20 works here, but it seems to be the magic number that
 						// keeps the dragon's size from the camera's perspective constant.
-						double offset = (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20;
+						float offset = (float) ((dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20);
 						((AccessorCamera)info).invokeMove(-offset, 0, 0);
 					}
 				}

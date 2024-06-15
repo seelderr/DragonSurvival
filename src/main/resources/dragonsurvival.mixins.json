@@ -7,7 +7,6 @@
     "AccessorAnimationController",
     "AccessorCreeper",
     "AccessorServerPlayerGameMode",
-    "MixinBlock",
     "MixinEnchantmentHelper",
     "MixinEntity",
     "MixinInventory",

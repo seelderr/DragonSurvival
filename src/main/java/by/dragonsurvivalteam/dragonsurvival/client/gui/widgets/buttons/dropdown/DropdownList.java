@@ -1,11 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.BufferBuilder;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.vertex.Tesselator;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
+import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
@@ -97,7 +93,6 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		int i = getScrollbarPosition();
 		int j = i + 6;
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
 		renderListItems(guiGraphics, mouseX, mouseY, partialTicks);
 
 		if (!children().isEmpty()) {
@@ -112,22 +107,22 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 			int l1 = (int) ((float) ((getWidth()) * (getHeight())) / (float) getMaxPosition());
 			l1 = Mth.clamp(l1, itemHeight, getHeight() - 8);
 			int i2 = Math.max(getY(), (int) getScrollAmount() * (getHeight()- l1) / k1 + getX());
-			double z = zTranslation + 10;
+			float z = zTranslation + 10;
 
-			bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			bufferbuilder.vertex(i, getHeight() - getY(), z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(j, getHeight() - getY(), z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(j, getY(), z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(i, getY(), z).color(0, 0, 0, 255).endVertex();
-			bufferbuilder.vertex(i, i2 + l1, z).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex(j, i2 + l1, 0.0D).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex(j, i2, z).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex(i, i2, z).color(128, 128, 128, 255).endVertex();
-			bufferbuilder.vertex(i, i2 + l1 - 1, z).color(192, 192, 192, 255).endVertex();
-			bufferbuilder.vertex(j - 1, i2 + l1 - 1, z).color(192, 192, 192, 255).endVertex();
-			bufferbuilder.vertex(j - 1, i2, z).color(192, 192, 192, 255).endVertex();
-			bufferbuilder.vertex(i, i2, z).color(192, 192, 192, 255).endVertex();
-			tesselator.end();
+			BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+			bufferbuilder.addVertex(i, getHeight() - getY(), z).setColor(0, 0, 0, 255);
+			bufferbuilder.addVertex(j, getHeight() - getY(), z).setColor(0, 0, 0, 255);
+			bufferbuilder.addVertex(j, getY(), z).setColor(0, 0, 0, 255);
+			bufferbuilder.addVertex(i, getY(), z).setColor(0, 0, 0, 255);
+			bufferbuilder.addVertex(i, i2 + l1, z).setColor(128, 128, 128, 255);
+			bufferbuilder.addVertex(j, i2 + l1, 0.0F).setColor(128, 128, 128, 255);
+			bufferbuilder.addVertex(j, i2, z).setColor(128, 128, 128, 255);
+			bufferbuilder.addVertex(i, i2, z).setColor(128, 128, 128, 255);
+			bufferbuilder.addVertex(i, i2 + l1 - 1, z).setColor(192, 192, 192, 255);
+			bufferbuilder.addVertex(j - 1, i2 + l1 - 1, z).setColor(192, 192, 192, 255);
+			bufferbuilder.addVertex(j - 1, i2, z).setColor(192, 192, 192, 255);
+			bufferbuilder.addVertex(i, i2, z).setColor(192, 192, 192, 255);
+			BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 		}
 
 		renderDecorations(guiGraphics, mouseX, mouseY);

@@ -88,6 +88,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		ClientDragonRender.dragonArmor.copyPosition(animatable);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+		// FIXME: Does this need to be RGBA?
 		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
 	}
 

@@ -49,8 +49,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber
 public class MagicHandler{
-	private static final UUID DRAGON_PASSIVE_MOVEMENT_SPEED = UUID.fromString("cdc3be6e-e17d-4efa-90f4-9dd838e9b000");
-
 	@SubscribeEvent
 	public static void magicUpdate(PlayerTickEvent.Post event){
 		Player player = event.getEntity();
@@ -58,12 +56,6 @@ public class MagicHandler{
 		AttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
 
 		DragonStateProvider.getCap(player).ifPresent(cap -> {
-
-			// TODO: Remove this code after a while once the patch has been in for a bit. For now this is here to prevent any issues with save files that have the old data.
-			if(moveSpeed.getModifier(DRAGON_PASSIVE_MOVEMENT_SPEED) != null){
-				moveSpeed.removeModifier(DRAGON_PASSIVE_MOVEMENT_SPEED);
-			}
-
 			if(cap.isDragon()) {
 				if(cap.getMagicData().abilities.isEmpty() || cap.getMagicData().innateDragonAbilities.isEmpty() || cap.getMagicData().activeDragonAbilities.isEmpty()){
 					cap.getMagicData().initAbilities(cap.getType());

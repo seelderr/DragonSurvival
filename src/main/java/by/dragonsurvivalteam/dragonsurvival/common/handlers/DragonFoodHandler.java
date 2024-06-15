@@ -148,17 +148,6 @@ public class DragonFoodHandler {
 			String[] configuration = entry.split(":");
 			ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(configuration[0], configuration[1]);
 
-			// Add all food items from the tag
-			if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {
-				BuiltInRegistries.ITEM.stream().sequential().forEach(item -> {
-					FoodProperties foodProperties = getFoodProperties(configuration, item, type);
-
-					if (foodProperties != null) {
-						map.put(item, foodProperties);
-					}
-				});
-			}
-
 			// Add food item
 			if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {
 				Item item = BuiltInRegistries.ITEM.get(resourceLocation);

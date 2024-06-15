@@ -116,7 +116,7 @@ public class DragonTreasureHandler{
 		}
 
 		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
-			if(event.getLayer() == VanillaGuiLayers.AIR_LEVEL){
+			if(event.getName() == VanillaGuiLayers.AIR_LEVEL){
 
 				Window window = Minecraft.getInstance().getWindow();
 				float f = playerEntity.level().getSunAngle(1.0F);

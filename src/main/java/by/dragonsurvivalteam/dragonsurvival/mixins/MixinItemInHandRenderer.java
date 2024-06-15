@@ -38,7 +38,7 @@ public class MixinItemInHandRenderer{
 		return original;
 	}
 
-	@ModifyExpressionValue( method = "applyEatTransform", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"))
+	@ModifyExpressionValue( method = "applyEatTransform", at = @At( value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
 	private int dragonUseDuration(int original, @Local(argsOnly = true) ItemStack stack){
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
 		if (handler != null && handler.isDragon()) {

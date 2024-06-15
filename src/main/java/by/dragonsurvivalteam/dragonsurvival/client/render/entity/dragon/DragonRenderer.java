@@ -43,25 +43,25 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		getRenderLayers().add(new ClawsAndTeethRenderLayer(this));
 		getRenderLayers().add(new DragonArmorRenderLayer(this));
 
-		if (ModList.get().isLoaded("curios")) {
+		/*if (ModList.get().isLoaded("curios")) {
 			getRenderLayers().add(new DragonCuriosRenderLayer(this));
-		}
+		}*/
 	}
 
 	@Override
-	public void preRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void preRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
 		Minecraft.getInstance().getProfiler().push("player_dragon");
-		super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
 	}
 
 	@Override
-	public void postRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
-		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+	public void postRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
+		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
 		Minecraft.getInstance().getProfiler().pop();
 	}
 
 	@Override
-	public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
 		Player player = animatable.getPlayer();
 
 		if (player == null || player.hasEffect(MobEffects.INVISIBILITY)) {
@@ -91,13 +91,13 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (smallRightWing != null)
 			smallRightWing.setHidden(!hasWings);
 
-		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
 	}
 
 	@Override
-	public void renderRecursively(final PoseStack poseStack, final DragonEntity animatable, final GeoBone bone, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, float red, float green, float blue, float alpha) {
+	public void renderRecursively(final PoseStack poseStack, final DragonEntity animatable, final GeoBone bone, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
 		if (isReRender) {
-			super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
 			return;
 		}
 
@@ -116,7 +116,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 						RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 
 						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
-						customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
+						// TODO: This isn't allowed for some reason. Fix later
+						//customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 						poseStack.popPose();
 					}
 
@@ -126,7 +127,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 						RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
 
 						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
-						customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
+						// TODO: This isn't allowed for some reason. Fix later
+						//customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
 						poseStack.popPose();
 					}
 				}
@@ -134,8 +136,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
 			poseStack.pushPose();
 			RenderUtil.prepMatrixForBone(poseStack, bone);
-			super.renderCubesOfBone(poseStack, bone, customBuffer, packedLight, packedOverlay, red, green, blue, alpha);
-			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, customBuffer, isReRender, partialTick, packedLight, packedOverlay, red, green, blue, alpha);
+			super.renderCubesOfBone(poseStack, bone, customBuffer, packedLight, packedOverlay, color);
+			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, customBuffer, isReRender, partialTick, packedLight, packedOverlay, color);
 			poseStack.popPose();
 		}
 	}

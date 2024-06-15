@@ -23,12 +23,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.portal.DimensionTransition;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -160,7 +162,8 @@ public class WingObtainmentController{
 			if(living.level().dimension() == Level.END && damageSource == living.damageSources().fellOutOfWorld() && living.position().y < -60){
 				DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
-						living.changeDimension(living.getServer().overworld());
+						DimensionTransition transition = new DimensionTransition((ServerLevel)living.level(), living, DimensionTransition.DO_NOTHING);
+						living.changeDimension(transition);
 						PacketDistributor.sendToAllPlayers(new RefreshDragon.Data(living.getId()));
 						damageEvent.setCanceled(true);
 					}

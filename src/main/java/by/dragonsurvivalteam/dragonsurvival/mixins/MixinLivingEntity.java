@@ -90,7 +90,7 @@ public abstract class MixinLivingEntity extends Entity{
 		return original;
 	}
 
-	@ModifyExpressionValue(method = "shouldTriggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"))
+	@ModifyExpressionValue(method = "shouldTriggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
 	private int replaceUseDurationInShouldTriggerItemUseEffects(int original){
 		return dragon_Survival$getHumanOrDragonUseDuration(original);
 	}
@@ -105,7 +105,7 @@ public abstract class MixinLivingEntity extends Entity{
 		return original;
 	}*/
 
-	@ModifyExpressionValue(method = "onSyncedDataUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration()I"))
+	@ModifyExpressionValue(method = "onSyncedDataUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
 	private int replaceUseDurationInSyncedDataUpdated(int original){
 		return dragon_Survival$getHumanOrDragonUseDuration(original);
 	}

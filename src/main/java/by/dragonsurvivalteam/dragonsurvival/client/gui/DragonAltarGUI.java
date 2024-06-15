@@ -150,23 +150,22 @@ public class DragonAltarGUI extends Screen{
 
 	public static void renderBorders(@NotNull final GuiGraphics guiGraphics, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
 		Tesselator tesselator = Tesselator.getInstance();
-		BufferBuilder bufferbuilder = tesselator.getBuilder();
+		BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 		RenderSystem.setShaderTexture(0, texture);
-		double zLevel = 0;
+		float zLevel = 0;
 
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthFunc(GL_ALWAYS);
-		bufferbuilder.begin(Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
-		bufferbuilder.vertex(x0, y0, zLevel).uv(0.0F, (float)y0 / 32.0F).color(64, 64, 64, 55).endVertex();
-		bufferbuilder.vertex(x0 + width, y0, zLevel).uv((float)width / 32.0F, (float)y0 / 32.0F).color(64, 64, 64, 255).endVertex();
-		bufferbuilder.vertex(x0 + width, 0.0D, zLevel).uv((float)width / 32.0F, 0.0F).color(64, 64, 64, 255).endVertex();
-		bufferbuilder.vertex(x0, 0.0D, zLevel).uv(0.0F, 0.0F).color(64, 64, 64, 255).endVertex();
-		bufferbuilder.vertex(x0, height, zLevel).uv(0.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
-		bufferbuilder.vertex(x0 + width, height, zLevel).uv((float)width / 32.0F, (float)height / 32.0F).color(64, 64, 64, 255).endVertex();
-		bufferbuilder.vertex(x0 + width, y1, zLevel).uv((float)width / 32.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
-		bufferbuilder.vertex(x0, y1, zLevel).uv(0.0F, (float)y1 / 32.0F).color(64, 64, 64, 255).endVertex();
-		tesselator.end();
+		bufferbuilder.addVertex(x0, y0, zLevel).setUv(0.0F, (float)y0 / 32.0F).setColor(64, 64, 64, 55);
+		bufferbuilder.addVertex(x0 + width, y0, zLevel).setUv((float)width / 32.0F, (float)y0 / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0 + width, 0.0F, zLevel).setUv((float)width / 32.0F, 0.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0, 0.0F, zLevel).setUv(0.0F, 0.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0, height, zLevel).setUv(0.0F, (float)height / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0 + width, height, zLevel).setUv((float)width / 32.0F, (float)height / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0 + width, y1, zLevel).setUv((float)width / 32.0F, (float)y1 / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0, y1, zLevel).setUv(0.0F, (float)y1 / 32.0F).setColor(64, 64, 64, 255);
+		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 
 		RenderSystem.depthFunc(GL_LEQUAL);
 		RenderSystem.disableDepthTest();
@@ -175,16 +174,16 @@ public class DragonAltarGUI extends Screen{
 //		RenderSystem.disableTexture();
 		RenderSystem.setShader(GameRenderer::getPositionColorShader);
 
-		bufferbuilder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-		bufferbuilder.vertex(x0, y0 + 4, zLevel).uv(0.0F, 1.0F).color(0, 0, 0, 0).endVertex();
-		bufferbuilder.vertex(x1, y0 + 4, zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 0).endVertex();
-		bufferbuilder.vertex(x1, y0, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 255).endVertex();
-		bufferbuilder.vertex(x0, y0, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 255).endVertex();
-		bufferbuilder.vertex(x0, y1, zLevel).uv(0.0F, 1.0F).color(0, 0, 0, 255).endVertex();
-		bufferbuilder.vertex(x1, y1, zLevel).uv(1.0F, 1.0F).color(0, 0, 0, 255).endVertex();
-		bufferbuilder.vertex(x1, y1 - 4, zLevel).uv(1.0F, 0.0F).color(0, 0, 0, 0).endVertex();
-		bufferbuilder.vertex(x0, y1 - 4, zLevel).uv(0.0F, 0.0F).color(0, 0, 0, 0).endVertex();
-		tesselator.end();
+		bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
+		bufferbuilder.addVertex(x0, y0 + 4, zLevel).setUv(0.0F, 1.0F).setColor(0, 0, 0, 0);
+		bufferbuilder.addVertex(x1, y0 + 4, zLevel).setUv(1.0F, 1.0F).setColor(0, 0, 0, 0);
+		bufferbuilder.addVertex(x1, y0, zLevel).setUv(1.0F, 0.0F).setColor(0, 0, 0, 255);
+		bufferbuilder.addVertex(x0, y0, zLevel).setUv(0.0F, 0.0F).setColor(0, 0, 0, 255);
+		bufferbuilder.addVertex(x0, y1, zLevel).setUv(0.0F, 1.0F).setColor(0, 0, 0, 255);
+		bufferbuilder.addVertex(x1, y1, zLevel).setUv(1.0F, 1.0F).setColor(0, 0, 0, 255);
+		bufferbuilder.addVertex(x1, y1 - 4, zLevel).setUv(1.0F, 0.0F).setColor(0, 0, 0, 0);
+		bufferbuilder.addVertex(x0, y1 - 4, zLevel).setUv(0.0F, 0.0F).setColor(0, 0, 0, 0);
+		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 	}
 
 	@Override

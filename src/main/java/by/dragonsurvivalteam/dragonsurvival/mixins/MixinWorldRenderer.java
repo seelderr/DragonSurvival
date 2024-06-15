@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Camera;
+import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -29,18 +30,18 @@ public abstract class MixinWorldRenderer{
 	@Shadow protected abstract void renderEntity(Entity pEntity, double pCamX, double pCamY, double pCamZ, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource);
 
 	@Inject( method = "renderLevel", at = @At( value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 0 ) )
-	public void render(float pPartialTick, long pNanoTime, boolean pRenderBlockOutline, Camera pCamera, GameRenderer pGameRenderer, LightTexture pLightTexture, Matrix4f pProjectionMatrix, Matrix4f pFrustrumMatrix, CallbackInfo ci, @Local PoseStack poseStack){
-		if(pCamera.isDetached()){
+	public void render(DeltaTracker deltaTracker, boolean p_109603_, Camera camera, GameRenderer renderer, LightTexture lightTex, Matrix4f matrix1, Matrix4f matrix2, CallbackInfo ci, @Local PoseStack poseStack){
+		if(camera.isDetached()){
 			return;
 		}
 		if(!ClientDragonRender.renderInFirstPerson){
 			return;
 		}
-		if(!DragonStateProvider.isDragon(pCamera.getEntity())){
+		if(!DragonStateProvider.isDragon(camera.getEntity())){
 			return;
 		}
 
-		Vec3 vec3d = pCamera.getPosition();
+		Vec3 vec3d = camera.getPosition();
 		double d = vec3d.x();
 		double e = vec3d.y();
 		double f = vec3d.z();
@@ -60,7 +61,7 @@ public abstract class MixinWorldRenderer{
 
 		MultiBufferSource immediate = renderBuffers.bufferSource();
 		entityrenderermanager.setRenderHitBoxes(false);
-		renderEntity(pCamera.getEntity(), d, e, f, pPartialTick, poseStack, immediate);
+		renderEntity(camera.getEntity(), d, e, f, deltaTracker.getGameTimeDeltaPartialTick(false), poseStack, immediate);
 		entityrenderermanager.setRenderHitBoxes(shouldRender);
 		if(neckandHead != null){
 			neckandHead.setHidden(false);

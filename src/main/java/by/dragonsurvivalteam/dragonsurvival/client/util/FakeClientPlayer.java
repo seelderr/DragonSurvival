@@ -47,9 +47,6 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	}
 
 	@Override
-	public Packet<ClientGamePacketListener> getAddEntityPacket(){return null;}
-
-	@Override
 	public void tick(){return;}
 
 	@Override

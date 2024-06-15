@@ -7,11 +7,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
+import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -27,8 +31,9 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 
 public class BlockLootTableSubProvider extends BlockLootSubProvider {
-    protected BlockLootTableSubProvider() {
-        super(Collections.emptySet(), FeatureFlags.VANILLA_SET);
+
+    protected BlockLootTableSubProvider(Set<Item> itemSet, FeatureFlagSet featureFlagSet, HolderLookup.Provider lookupProvider) {
+        super(itemSet, featureFlagSet, lookupProvider);
     }
 
     @Override
