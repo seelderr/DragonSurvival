@@ -103,11 +103,9 @@ public class DragonContainer extends AbstractContainerMenu {
 				public boolean mayPickup(@NotNull final Player player) {
 					ItemStack itemStack = getItem();
 					Holder<Enchantment> bindingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.BINDING_CURSE);
-					return (itemStack.isEmpty() || player.isCreative() || EnchantmentHelper.getTagEnchantmentLevel(bindingCurse, itemStack) != 0) && super.mayPickup(player);
+					return (itemStack.isEmpty() || player.isCreative() || EnchantmentHelper.getTagEnchantmentLevel(bindingCurse, itemStack) == 0) && super.mayPickup(player);
 				}
 			});
-
-			broadcastChanges();
 		}
 
 		// Inventory slots
