@@ -113,7 +113,8 @@ public class EventHandler{
 		}
 	}
 
-	@SubscribeEvent( priority = EventPriority.HIGHEST )
+	// FIXME: Is this still needed?
+	/*@SubscribeEvent( priority = EventPriority.HIGHEST )
 	public static void expDrops(BlockEvent.BreakEvent breakEvent){
 		if(DragonStateProvider.isDragon(breakEvent.getPlayer())){
 			if(breakEvent.getExpToDrop() > 0){
@@ -122,7 +123,7 @@ public class EventHandler{
 				breakEvent.setExpToDrop(breakEvent.getState().getExpDrop(breakEvent.getLevel(), RandomSource.create(), breakEvent.getPos(), bonusLevel, silklevel));
 			}
 		}
-	}
+	}*/
 
 	@SubscribeEvent
 	public static void createAltar(PlayerInteractEvent.RightClickBlock rightClickBlock){

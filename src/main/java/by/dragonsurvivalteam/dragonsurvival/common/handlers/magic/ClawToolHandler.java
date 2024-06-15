@@ -12,6 +12,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
+
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.SimpleContainer;
@@ -21,6 +24,7 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
@@ -49,9 +53,10 @@ public class ClawToolHandler{
 
 			for(int i = 0; i < ClawInventory.Slot.size(); i++){
 				ItemStack clawStack = cap.getClawToolData().getClawsInventory().getItem(i);
-				int mending = clawStack.getEnchantmentLevel(Enchantments.MENDING);
+				Holder<Enchantment> mending = event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.MENDING);
+				int mendingLevel = clawStack.getEnchantmentLevel(mending);
 
-				if(mending > 0 && clawStack.isDamaged()){
+				if(mendingLevel > 0 && clawStack.isDamaged()){
 					stacks.add(clawStack);
 				}
 			}
@@ -84,7 +89,8 @@ public class ClawToolHandler{
 					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
 					if(!stack.isEmpty()){
-						if (!EnchantmentHelper.hasVanishingCurse(stack)) {
+						Holder<Enchantment> vanishingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.VANISHING_CURSE);
+						if (EnchantmentHelper.getTagEnchantmentLevel(vanishingCurse, stack) == 0) {
 							event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
 						}
 
@@ -226,7 +232,7 @@ public class ClawToolHandler{
 			ItemStack clawTool = getDragonHarvestTool(player);
 
 			if (ItemStack.matches(clawTool, event.getOriginal())) {
-				player.broadcastBreakEvent(event.getOriginal().getEquipmentSlot());
+				clawTool.hurtAndBreak(1, player, LivingEntity.getSlotForHand(event.getHand()));
 			} else {
 				if (!player.level().isClientSide()) {
 					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);

@@ -10,6 +10,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -24,7 +27,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
@@ -97,7 +102,8 @@ public class DragonContainer extends AbstractContainerMenu {
 				@Override
 				public boolean mayPickup(@NotNull final Player player) {
 					ItemStack itemStack = getItem();
-					return (itemStack.isEmpty() || player.isCreative() || !EnchantmentHelper.hasBindingCurse(itemStack)) && super.mayPickup(player);
+					Holder<Enchantment> bindingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.BINDING_CURSE);
+					return (itemStack.isEmpty() || player.isCreative() || EnchantmentHelper.getTagEnchantmentLevel(bindingCurse, itemStack) != 0) && super.mayPickup(player);
 				}
 			});
 
@@ -161,7 +167,7 @@ public class DragonContainer extends AbstractContainerMenu {
 			ItemStack slotItemStack = slot.getItem();
 			itemStack = slotItemStack.copy();
 
-			EquipmentSlot equipmentSlot = Mob.getEquipmentSlotForItem(itemStack);
+			EquipmentSlot equipmentSlot = itemStack.getEquipmentSlot();
 
 			if (index == craftingResultIndex) { // Index 45
 				// Move item from the crafting slot into the inventory / hotbar
@@ -171,7 +177,7 @@ public class DragonContainer extends AbstractContainerMenu {
 				}
 
 				slot.onQuickCraft(slotItemStack, itemStack);
-			} else if (equipmentSlot.getType() == Type.ARMOR && !slots.get(3 - equipmentSlot.getIndex()).hasItem()) {
+			} else if (equipmentSlot.getType() == Type.HUMANOID_ARMOR && !slots.get(3 - equipmentSlot.getIndex()).hasItem()) {
 				// Move the item into the relevant armor equipment slot (0 to 4) (if the slot is free)
 				int i = 3 - equipmentSlot.getIndex();
 
@@ -265,13 +271,13 @@ public class DragonContainer extends AbstractContainerMenu {
 	public void slotsChanged(@NotNull final Container inventory) {
 		if (player instanceof ServerPlayer serverPlayer) {
 			ItemStack itemStack = ItemStack.EMPTY;
-			Optional<RecipeHolder<CraftingRecipe>> recipeOptional = serverPlayer.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix, serverPlayer.level());
+			Optional<RecipeHolder<CraftingRecipe>> recipeOptional = serverPlayer.level().getServer().getRecipeManager().getRecipeFor(RecipeType.CRAFTING, craftMatrix.asCraftInput(), serverPlayer.level());
 
 			if (recipeOptional.isPresent()) {
 				RecipeHolder<CraftingRecipe> recipe = recipeOptional.get();
 
 				if (craftResult.setRecipeUsed(player.level(), serverPlayer, recipe)) {
-					itemStack = recipe.value().assemble(craftMatrix, serverPlayer.level().registryAccess());
+					itemStack = recipe.value().assemble(craftMatrix.asCraftInput(), serverPlayer.level().registryAccess());
 				}
 			}
 

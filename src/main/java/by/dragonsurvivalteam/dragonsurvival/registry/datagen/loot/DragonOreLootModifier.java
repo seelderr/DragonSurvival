@@ -10,12 +10,16 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -50,13 +54,12 @@ public class DragonOreLootModifier extends LootModifier {
                         if (breakPos != null) {
                             ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
                             int fortuneLevel = 0;
-                            int silkTouchLevel = 0;
                             if (tool != null) {
-                                fortuneLevel = tool.getEnchantmentLevel(Enchantments.FORTUNE);
-                                silkTouchLevel = tool.getEnchantmentLevel(Enchantments.FORTUNE);
+                                Holder<Enchantment> fortune = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.FORTUNE);
+                                fortuneLevel = EnchantmentHelper.getTagEnchantmentLevel(fortune, tool);
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
-                            int expDrop = blockState.getExpDrop(context.getLevel(), context.getRandom(), blockPos, fortuneLevel, silkTouchLevel);
+                            int expDrop = blockState.getExpDrop(context.getLevel(), context.getLevel().random, blockPos);
                             if(expDrop > 0) {
                                 DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
                                 int fortuneRoll = 1;

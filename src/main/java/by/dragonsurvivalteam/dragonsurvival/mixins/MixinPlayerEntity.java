@@ -10,6 +10,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.UUID;
+
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
@@ -24,7 +27,9 @@ import net.minecraft.world.entity.animal.FlyingAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.Vec3;
@@ -158,7 +163,8 @@ public abstract class MixinPlayerEntity extends LivingEntity{
 						double d8 = getY();
 						float f5 = isSprinting() ? 0.9F : getWaterSlowDown();
 						float f6 = 0.05F;
-						float f7 = Math.min(3, (float)EnchantmentHelper.getDepthStrider(this));
+						Holder<Enchantment> depthStrider = level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.DEPTH_STRIDER);
+						float f7 = Math.min(3, (float)EnchantmentHelper.getEnchantmentLevel(depthStrider, this));
 
 						if(!onGround()){
 							f7 *= 0.5F;

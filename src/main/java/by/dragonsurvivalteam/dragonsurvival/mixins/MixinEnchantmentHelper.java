@@ -13,7 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin( EnchantmentHelper.class )
 public abstract class MixinEnchantmentHelper{
 
-	@ModifyReturnValue(method = "hasAquaAffinity", at = @At("RETURN"))
+	// FIXME: THIS CAN BE DONE WITH A NEW PLAYER ATTRIBUTE INSTEAD
+	/*@ModifyReturnValue(method = "hasAquaAffinity", at = @At("RETURN"))
 	private static boolean modifyHasAquaAffinityForSeaDragon(boolean original, @Local(index = 0, argsOnly = true) LivingEntity pEntity){
 		if(!(pEntity instanceof Player player)){
 			return original;
@@ -24,5 +25,5 @@ public abstract class MixinEnchantmentHelper{
 		}
 
 		return original;
-	}
+	}*/
 }

@@ -8,6 +8,7 @@ import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -32,10 +33,6 @@ public class DragonSpikeEntity extends AbstractArrow{
 
 	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level worldIn){
 		super(type, worldIn);
-	}
-
-	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level world, LivingEntity entity){
-		super(type, world, ItemStack.EMPTY);
 	}
 
 	@Override
@@ -67,8 +64,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 				}
 
 				if(!level().isClientSide() && entity1 instanceof LivingEntity){
-					EnchantmentHelper.doPostHurtEffects(livingentity, entity1);
-					EnchantmentHelper.doPostDamageEffects((LivingEntity)entity1, livingentity);
+					EnchantmentHelper.doPostAttackEffects((ServerLevel)level(), livingentity, damagesource);
 				}
 
 				doPostHurtEffects(livingentity);
