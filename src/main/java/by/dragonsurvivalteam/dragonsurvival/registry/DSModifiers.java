@@ -32,6 +32,7 @@ public class DSModifiers {
 	public static final ResourceLocation DRAGON_MOVEMENT_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement_speed_modifier");
 	public static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
 	public static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
+	public static final ResourceLocation DRAGON_SUBMERGED_MINING_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_submerged_mining_speed");
 
 	public static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
 	public static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
@@ -145,6 +146,10 @@ public class DSModifiers {
 		return new AttributeModifier(DRAGON_SAFE_FALL_DISTANCE, calculateJumpMod(handler) * 4, Operation.ADD_VALUE);
 	}
 
+	public static AttributeModifier buildSubmergedMiningSpeed(DragonStateHandler handler) {
+		return new AttributeModifier(DRAGON_SUBMERGED_MINING_SPEED, Objects.equals(handler.getType(), DragonTypes.SEA) ? 4.0 : 0.0, Operation.ADD_MULTIPLIED_TOTAL);
+	}
+
 	public static void updateModifiers(Player player) {
 		updateTypeModifiers(player);
 		updateSizeModifiers(player);
@@ -158,11 +163,18 @@ public class DSModifiers {
 				// Grant the dragon attribute modifiers
 				AttributeModifier swimSpeed = buildSwimSpeedMod(handler.getType());
 				updateSwimSpeedModifier(player, swimSpeed);
+				updateSubmergedMiningSpeedModifier(player, buildSubmergedMiningSpeed(handler));
 			} else {
 				// Remove the dragon attribute modifiers
 				AttributeModifier oldMod = getSwimSpeedModifier(player);
 				if (oldMod != null) {
 					AttributeInstance max = Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED));
+					max.removeModifier(oldMod);
+				}
+
+				oldMod = getSubmergedMiningSpeedModifier(player);
+				if (oldMod != null) {
+					AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.SUBMERGED_MINING_SPEED));
 					max.removeModifier(oldMod);
 				}
 			}
@@ -355,6 +367,10 @@ public class DSModifiers {
 		return Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED)).getModifier(DRAGON_SWIM_SPEED_MODIFIER);
 	}
 
+	@Nullable public static AttributeModifier getSubmergedMiningSpeedModifier(Player player){
+		return Objects.requireNonNull(player.getAttribute(Attributes.SUBMERGED_MINING_SPEED)).getModifier(DRAGON_SUBMERGED_MINING_SPEED);
+	}
+
 	@Nullable public static AttributeModifier getStepHeightModifier(Player player) {
 		return Objects.requireNonNull(player.getAttribute(Attributes.STEP_HEIGHT)).getModifier(DRAGON_STEP_HEIGHT_MODIFIER);
 	}
@@ -410,6 +426,15 @@ public class DSModifiers {
 			return;
 		}
 		AttributeInstance max = Objects.requireNonNull(player.getAttribute(NeoForgeMod.SWIM_SPEED));
+		max.removeModifier(mod);
+		max.addPermanentModifier(mod);
+	}
+
+	public static void updateSubmergedMiningSpeedModifier(Player player, AttributeModifier mod){
+		if(!ServerConfig.bonuses){
+			return;
+		}
+		AttributeInstance max = Objects.requireNonNull(player.getAttribute(Attributes.SUBMERGED_MINING_SPEED));
 		max.removeModifier(mod);
 		max.addPermanentModifier(mod);
 	}
