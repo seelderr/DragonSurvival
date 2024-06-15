@@ -54,7 +54,8 @@ public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntit
 		PoseStack.scale(-1.0F, -1.0F, 1.0F);
 		VertexConsumer ivertexbuilder = renderTypeBuffer.getBuffer(getRenderType(helmetBlock));
 		humanoidHeadModel.setupAnim(p_228879_4_, p_228879_1_, 0.0F);
-		humanoidHeadModel.renderToBuffer(PoseStack, ivertexbuilder, p_228879_7_, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
+		// FIXME: This might not work?
+		humanoidHeadModel.renderToBuffer(PoseStack, ivertexbuilder, p_228879_7_, OverlayTexture.NO_OVERLAY);
 		PoseStack.popPose();
 	}
 

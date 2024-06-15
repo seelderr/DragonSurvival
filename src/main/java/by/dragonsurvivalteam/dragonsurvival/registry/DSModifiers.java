@@ -51,6 +51,12 @@ public class DSModifiers {
 	// Used in EmoteHandler to keep track of the no move state
 	public static final ResourceLocation EMOTE_NO_MOVE = ResourceLocation.fromNamespaceAndPath(MODID, "emote_no_move");
 
+	// Modifier from the bolas item
+	public static final ResourceLocation SLOW_MOVEMENT = ResourceLocation.fromNamespaceAndPath(MODID, "slow_movement");
+
+	// Modifier for tough skin ability
+	public static final ResourceLocation TOUGH_SKIN = ResourceLocation.fromNamespaceAndPath(MODID, "tough_skin");
+
 	public static AttributeModifier buildHealthMod(double size){
 		double healthModifier;
 		if(ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {

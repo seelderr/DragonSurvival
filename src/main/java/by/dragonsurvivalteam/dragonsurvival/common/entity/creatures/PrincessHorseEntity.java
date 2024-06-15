@@ -191,11 +191,6 @@ public class PrincessHorseEntity extends Villager implements GeoEntity, CommonTr
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 	}
 
-	@Override
-	public int getExperienceReward() {
-		return 1 + getRandom().nextInt(2);
-	}
-
 	@Override // TODO 1.20 :: setAndContinue or add animations?
 	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "everything", 10, state -> {

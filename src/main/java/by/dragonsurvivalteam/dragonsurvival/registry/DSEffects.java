@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.TOUGH_SKIN;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -8,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.To
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -83,7 +86,7 @@ public class DSEffects {
 
 		@Override
 		public boolean applyEffectTick(LivingEntity living, int strength){
-			living.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(Bolas.SLOW_MOVEMENT);
+			living.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(SLOW_MOVEMENT);
 			return true;
 		}
 
@@ -207,7 +210,7 @@ public class DSEffects {
 	public static Holder<MobEffect> STRONG_LEATHER = DS_MOB_EFFECTS.register(
 		"strong_leather",
 		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
-			.addAttributeModifier(Attributes.ARMOR, "1640719a-4c40-11ec-81d3-0242ac130003", ToughSkinAbility.toughSkinArmorValue, Operation.ADD_VALUE)
+			.addAttributeModifier(Attributes.ARMOR, TOUGH_SKIN, ToughSkinAbility.toughSkinArmorValue, Operation.ADD_VALUE)
 	);
 
 	public static Holder<MobEffect> cave_wings = DS_MOB_EFFECTS.register(

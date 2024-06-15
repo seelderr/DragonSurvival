@@ -23,8 +23,9 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
+
 public class Bolas extends ThrowableItemProjectile{
-	public static final UUID SLOW_MOVEMENT = UUID.fromString("eab67409-4834-43d8-bdf6-736dc96375f2");
 
 	public Bolas(Level world){
 		super(DSEntities.BOLAS_ENTITY.get(), world);
@@ -57,9 +58,9 @@ public class Bolas extends ThrowableItemProjectile{
 		if(!entity.level().isClientSide()){
 			if(entity instanceof LivingEntity living){
 				AttributeInstance movementSpeed = living.getAttribute(Attributes.MOVEMENT_SPEED);
-				AttributeModifier bolasTrap = new AttributeModifier(SLOW_MOVEMENT, "Slow Movement", -movementSpeed.getValue() / 2.f, AttributeModifier.Operation.ADD_VALUE);
+				AttributeModifier bolasTrap = new AttributeModifier(SLOW_MOVEMENT, -movementSpeed.getValue() / 2.f, AttributeModifier.Operation.ADD_VALUE);
 				boolean addEffect = false;
-				if(!movementSpeed.hasModifier(bolasTrap)){
+				if(!movementSpeed.hasModifier(SLOW_MOVEMENT)){
 					movementSpeed.addTransientModifier(bolasTrap);
 					addEffect = true;
 				}

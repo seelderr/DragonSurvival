@@ -109,10 +109,8 @@ public class BallLightningAbility extends ChargeCastAbility{
 		}
 		Vec3 velocity = new Vec3(xComp * speed, yComp * speed, zComp * speed);
 
-		BallLightningEntity entity = new BallLightningEntity(player.level(), player, velocity.x, velocity.y, velocity.z);
-		entity.setPos(projPos.x + velocity.x, projPos.y + velocity.y, projPos.z + velocity.z);
-		entity.setLevel(getLevel());
-		entity.setDeltaMovement(velocity);
+		BallLightningEntity entity = new BallLightningEntity(projPos.x, projPos.y, projPos.y, velocity, player.level());
+		player.level().addFreshEntity(entity);
 		player.level().addFreshEntity(entity);
 	}
 

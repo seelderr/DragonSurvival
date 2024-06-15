@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
@@ -24,6 +25,7 @@ import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Fireball;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
 import software.bernie.geckolib.animation.AnimationState;
@@ -37,8 +39,8 @@ public class BallLightningEntity extends DragonBallEntity{
 	protected boolean isLingering = false;
 	protected int lingerTicks = 100;
 	protected LargeLightningParticle.Data trail = new LargeLightningParticle.Data(37, false);
-	public BallLightningEntity(Level p_i50168_9_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_){
-		super(DSEntities.BALL_LIGHTNING.get(), p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
+	public BallLightningEntity(double x, double y, double z, Vec3 velocity, Level level){
+		super(DSEntities.BALL_LIGHTNING.get(), x, y, z, velocity, level);
 	}
 
 	public BallLightningEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
@@ -76,9 +78,7 @@ public class BallLightningEntity extends DragonBallEntity{
 				level().playLocalSound(getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f, true);
 				isLingering = true;
 				// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
-				xPower = 0;
-				zPower = 0;
-				yPower = 0;
+				accelerationPower = 0;
 				setDeltaMovement(Vec3.ZERO);
 			}
 		}
@@ -139,9 +139,7 @@ public class BallLightningEntity extends DragonBallEntity{
 					level().playLocalSound(blockPosition(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.WEATHER, 2.0F, 0.5f, true);
 				}
 
-				if(owner instanceof LivingEntity livingEntity) {
-					doEnchantDamageEffects(livingEntity, ent);
-				}
+				EnchantmentHelper.doPostAttackEffects(((ServerLevel)level()), ent, source);
 			}
 
 			if (level().isClientSide()) {

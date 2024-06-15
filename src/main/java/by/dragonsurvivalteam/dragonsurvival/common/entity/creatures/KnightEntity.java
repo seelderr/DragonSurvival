@@ -156,11 +156,6 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 	}
 
 	@Override
-	public int getExperienceReward(){
-		return 5 + getRandom().nextInt(5);
-	}
-
-	@Override
 	public void tick(){
 		updateSwingTime();
 		super.tick();

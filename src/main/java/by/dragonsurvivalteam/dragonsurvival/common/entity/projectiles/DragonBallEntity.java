@@ -16,6 +16,7 @@ import net.minecraft.world.level.Level.ExplosionInteraction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -31,8 +32,8 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	private boolean hasExploded = false;
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public DragonBallEntity(EntityType<? extends Fireball> p_i50168_1_, LivingEntity p_i50168_2_, double p_i50168_3_, double p_i50168_5_, double p_i50168_7_, Level p_i50168_9_){
-		super(p_i50168_1_, p_i50168_2_, p_i50168_3_, p_i50168_5_, p_i50168_7_, p_i50168_9_);
+	public DragonBallEntity(EntityType<? extends Fireball> entityType, double x, double y, double z, Vec3 velocity, Level level){
+		super(entityType, x, y, z, velocity, level);
 	}
 
 	public DragonBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){

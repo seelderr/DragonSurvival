@@ -96,9 +96,4 @@ public class HunterHoundEntity extends Wolf implements DragonHunter{
 	public boolean removeWhenFarAway(double distance){
 		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
-
-	@Override
-	public int getExperienceReward(){
-		return 1 + random.nextInt(2);
-	}
 }

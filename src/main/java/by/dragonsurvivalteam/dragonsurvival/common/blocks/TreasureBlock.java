@@ -107,9 +107,12 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader levelReader, BlockPos pos, float orientation){
+	public Optional<ServerPlayer.RespawnPosAngle> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader levelReader, BlockPos pos, float orientation){
 		if(levelReader instanceof Level){
-			return RespawnAnchorBlock.findStandUpPosition(type, levelReader, pos);
+			Optional<Vec3> standUpPosition = RespawnAnchorBlock.findStandUpPosition(type, levelReader, pos);
+			if(standUpPosition.isPresent()) {
+				return Optional.of(new ServerPlayer.RespawnPosAngle(standUpPosition.get(), orientation));
+			}
 		}
 
 		return Optional.empty();

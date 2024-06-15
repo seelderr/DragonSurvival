@@ -177,10 +177,7 @@ public class FireBallAbility extends ChargeCastAbility{
 		}
 		Vec3 velocity = new Vec3(xComp * speed, yComp * speed, zComp * speed);
 
-		FireBallEntity entity = new FireBallEntity(player.level(), player, velocity.x, velocity.y, velocity.z);
-		entity.setPos(projPos.x + velocity.x, projPos.y + velocity.y, projPos.z + velocity.z);
-		entity.setLevel(getLevel());
-		entity.setDeltaMovement(velocity);
+		FireBallEntity entity = new FireBallEntity(projPos.x, projPos.y, projPos.y, velocity, player.level());
 		player.level().addFreshEntity(entity);
 	}
 }
