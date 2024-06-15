@@ -122,18 +122,6 @@ public class EventHandler{
 		}
 	}
 
-	// FIXME: Is this still needed?
-	/*@SubscribeEvent( priority = EventPriority.HIGHEST )
-	public static void expDrops(BlockEvent.BreakEvent breakEvent){
-		if(DragonStateProvider.isDragon(breakEvent.getPlayer())){
-			if(breakEvent.getExpToDrop() > 0){
-				int bonusLevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.FORTUNE, breakEvent.getPlayer());
-				int silklevel = EnchantmentHelper.getEnchantmentLevel(Enchantments.SILK_TOUCH, breakEvent.getPlayer());
-				breakEvent.setExpToDrop(breakEvent.getState().getExpDrop(breakEvent.getLevel(), RandomSource.create(), breakEvent.getPos(), bonusLevel, silklevel));
-			}
-		}
-	}*/
-
 	@SubscribeEvent
 	public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
 		if (dropsEvent.getBreaker() == null) return;
