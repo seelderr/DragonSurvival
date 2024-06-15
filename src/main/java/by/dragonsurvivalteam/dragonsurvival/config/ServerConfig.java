@@ -48,7 +48,10 @@ public class ServerConfig{
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "destructibleBlocks", comment = "Blocks that are destructible when block destruction is enabled. Blocks that can be harvested with an axe are also destroyable by default on whitelist mode. Formatting: block/modid:id" )
 	public static List<String> destructibleBlocks = List.of(
-			"minecraft:leaves"
+			"minecraft:leaves",
+			"minecraft:mineable/axe",
+			"minecraft:flowers",
+			"minecraft:replaceable"
 	);
 	
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "disableDefaultDestructionTags", comment = "Disable the default blocks that are destroyed (MINEABLE_WITH_AXE) when block destruction is enabled" )
