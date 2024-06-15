@@ -16,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class LightInDarknessAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "lightInDarkness", comment = "Whether the light in darkness ability should be enabled" )
@@ -43,15 +45,15 @@ public class LightInDarknessAbility extends PassiveDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_4.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_5.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_6.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_7.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/light_in_darkness_8.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_4.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_5.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_6.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_7.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_8.png")};
 	}
 
 	public int getDuration(){

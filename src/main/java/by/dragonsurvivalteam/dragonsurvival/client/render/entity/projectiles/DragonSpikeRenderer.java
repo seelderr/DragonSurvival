@@ -17,6 +17,6 @@ public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity>{
 
 	@Override
 	public ResourceLocation getTextureLocation(DragonSpikeEntity entity){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
 	}
 }

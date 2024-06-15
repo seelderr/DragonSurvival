@@ -18,6 +18,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class RevealingTheSoulAbility extends AoeBuffAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoul", comment = "Whether the revealing The Soul ability should be enabled" )
@@ -64,11 +66,11 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/revealing_the_soul_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/revealing_the_soul_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/revealing_the_soul_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/revealing_the_soul_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/revealing_the_soul_4.png"),};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_4.png"),};
 	}
 
 	@Override

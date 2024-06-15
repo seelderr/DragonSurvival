@@ -7,6 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import net.minecraft.resources.ResourceLocation;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class CaveDragonInfoAbility extends InnateDragonAbility{
 	@Override
@@ -21,7 +23,7 @@ public class CaveDragonInfoAbility extends InnateDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_dragon_1.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_dragon_1.png")};
 	}
 
 	@Override

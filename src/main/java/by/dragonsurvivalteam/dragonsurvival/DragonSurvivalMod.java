@@ -67,7 +67,7 @@ public class DragonSurvivalMod{
 	);
 
     public static ResourceLocation res(String name) {
-        return new ResourceLocation(MODID, name);
+        return ResourceLocation.fromNamespaceAndPath(MODID, name);
     }
 
 	public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer){
@@ -103,9 +103,10 @@ public class DragonSurvivalMod{
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-		if (ModList.get().isLoaded("appleskin")) {
+		// FIXME: When AppleSkin updates
+		/*if (ModList.get().isLoaded("appleskin")) {
 			NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
-		}
+		}*/
 	}
 	
 	@SubscribeEvent

@@ -17,7 +17,7 @@ public class SyncDiggingStatus implements IMessage<SyncDiggingStatus.Data> {
 	}
 
 	public record Data(int playerId, boolean status) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "digging_status"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "digging_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

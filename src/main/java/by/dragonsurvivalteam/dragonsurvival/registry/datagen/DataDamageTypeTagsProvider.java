@@ -51,6 +51,6 @@ public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
     }
 
     private static TagKey<DamageType> createKey(@NotNull final String name) {
-        return TagKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(DragonSurvivalMod.MODID, name));
+        return TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, name));
     }
 }

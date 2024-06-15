@@ -8,10 +8,12 @@ import net.minecraft.client.renderer.entity.WolfRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.animal.Wolf;
 
-public class HunterHoundRenderer extends WolfRenderer{
-	static final List<ResourceLocation> SKINS = Arrays.asList(new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_1.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_2.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_3.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_4.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_5.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_6.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_7.png"), new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_8.png"));
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-	static final ResourceLocation HECTOR_SKIN = new ResourceLocation("dragonsurvival", "textures/hounds/dragon_hound_hector.png");
+public class HunterHoundRenderer extends WolfRenderer{
+	static final List<ResourceLocation> SKINS = Arrays.asList(ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_1.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_2.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_3.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_4.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_5.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_6.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_7.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_8.png"));
+
+	static final ResourceLocation HECTOR_SKIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_hector.png");
 
 	public HunterHoundRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager);

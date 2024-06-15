@@ -11,6 +11,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class FearOfDarkAbility extends InnateDragonAbility{
 	@Override
@@ -25,8 +27,8 @@ public class FearOfDarkAbility extends InnateDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/fear_of_dark_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/fear_of_dark_1.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_1.png")};
 	}
 
 	@Override

@@ -51,14 +51,14 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 public class SkinsScreen extends Screen{
-	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_interface.png");
+	private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_interface.png");
 
-	private static final ResourceLocation UNCHECKED = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/unchecked.png");
-	private static final ResourceLocation CHECKED = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_checked.png");
+	private static final ResourceLocation UNCHECKED = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/unchecked.png");
+	private static final ResourceLocation CHECKED = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_checked.png");
 
-	private static final ResourceLocation DISCORD = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/discord_button.png");
-	private static final ResourceLocation WIKI = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/wiki_button.png");
-	private static final ResourceLocation HELP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/skin_help.png");
+	private static final ResourceLocation DISCORD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/discord_button.png");
+	private static final ResourceLocation WIKI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/wiki_button.png");
+	private static final ResourceLocation HELP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_help.png");
 
 	private static final String DISCORD_URL = "https://discord.gg/8SsB8ar";
 	private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";

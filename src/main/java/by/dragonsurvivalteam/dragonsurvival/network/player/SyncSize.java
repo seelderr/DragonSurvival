@@ -18,7 +18,7 @@ public class SyncSize implements IMessage<SyncSize.Data> {
 	}
 
 	public record Data(int playerId, double size) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "size"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "size"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

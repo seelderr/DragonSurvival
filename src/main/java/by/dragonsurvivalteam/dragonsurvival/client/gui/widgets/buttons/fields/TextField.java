@@ -11,7 +11,7 @@ import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.NotNull;
 
 public class TextField extends EditBox /*implements TooltipAccessor*/ {
-	private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
+	private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
 	public List<FormattedCharSequence> tooltip;
 
 	public TextField(int pX, int pY, int pWidth, int pHeight, Component pMessage){

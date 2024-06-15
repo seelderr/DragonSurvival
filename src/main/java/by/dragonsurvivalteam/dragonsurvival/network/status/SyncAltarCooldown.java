@@ -29,7 +29,7 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown.Data> {
 	}
 
 	public record Data (int playerId, int cooldown) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "altar_cooldown"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "altar_cooldown"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

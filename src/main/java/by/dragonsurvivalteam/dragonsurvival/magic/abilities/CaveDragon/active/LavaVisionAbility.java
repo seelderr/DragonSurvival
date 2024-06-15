@@ -23,6 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class LavaVisionAbility extends ChargeCastAbility {
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVision", comment = "Whether the lava vision ability should be enabled" )
@@ -110,11 +112,11 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/lava_vision_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/lava_vision_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/lava_vision_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/lava_vision_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/lava_vision_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_4.png")};
 	}
 
 	@Override

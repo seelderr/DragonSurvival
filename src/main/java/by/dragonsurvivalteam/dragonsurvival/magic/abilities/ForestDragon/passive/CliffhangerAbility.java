@@ -15,6 +15,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class CliffhangerAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHanger", comment = "Whether the cliffhanger ability should be enabled" )
@@ -42,13 +44,13 @@ public class CliffhangerAbility extends PassiveDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_4.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_5.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/cliffhanger_6.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_4.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_5.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/cliffhanger_6.png")};
 	}
 
 	public int getHeight(){

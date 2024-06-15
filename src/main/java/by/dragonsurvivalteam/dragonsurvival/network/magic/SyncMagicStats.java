@@ -18,7 +18,7 @@ public class SyncMagicStats implements IMessage<SyncMagicStats.Data> {
 	}
 
 	public record Data(int playerid, int selectedSlot, int currentMana, boolean renderHotbar) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "magic_stats"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_stats"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

@@ -18,7 +18,7 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu.Data> {
 	}
 
 	public record Data(int playerId, boolean state, CompoundTag clawInventory) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_claws_menu"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_claws_menu"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

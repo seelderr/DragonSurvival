@@ -7,11 +7,11 @@ import software.bernie.geckolib.model.GeoModel;
 
 // TODO :: Unused?
 public class StormBreathEffectModel extends GeoModel<StormBreathEntity> {
-	private ResourceLocation currentTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/storms_breath.png");
+	private ResourceLocation currentTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/storms_breath.png");
 
 	@Override
 	public ResourceLocation getModelResource(final StormBreathEntity entity) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/storms_breath.geo.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "geo/storms_breath.geo.json");
 	}
 
 	@Override
@@ -25,6 +25,6 @@ public class StormBreathEffectModel extends GeoModel<StormBreathEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final StormBreathEntity entity) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/storms_breath.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/storms_breath.animation.json");
 	}
 }

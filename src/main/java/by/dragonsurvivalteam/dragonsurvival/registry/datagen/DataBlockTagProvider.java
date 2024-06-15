@@ -156,7 +156,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 	}
 
 	private static TagKey<Block> createKey(@NotNull final String name) {
-		return BlockTags.create(new ResourceLocation(DragonSurvivalMod.MODID, name));
+		return BlockTags.create(ResourceLocation.fromNamespaceAndPath(MODID, name));
 	}
 
 	@Override

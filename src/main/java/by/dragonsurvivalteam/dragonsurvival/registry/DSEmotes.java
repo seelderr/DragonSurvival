@@ -28,7 +28,7 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DSEmotes {
-	public static final ResourceLocation DS_CLIENT_EMOTES = new ResourceLocation(DragonSurvivalMod.MODID, "emotes.json");
+	public static final ResourceLocation DS_CLIENT_EMOTES = ResourceLocation.fromNamespaceAndPath(MODID, "emotes.json");
 	public static final ArrayList<Emote> EMOTES = new ArrayList<>();
 
 	private static boolean hasStarted = false;

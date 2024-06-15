@@ -51,10 +51,10 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			neck.setHidden(false);
 		}
 
-		ResourceLocation helmetTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.HEAD));
-		ResourceLocation chestPlateTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.CHEST));
-		ResourceLocation legsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.LEGS));
-		ResourceLocation bootsTexture = new ResourceLocation(DragonSurvivalMod.MODID, constructArmorTexture(player, EquipmentSlot.FEET));
+		ResourceLocation helmetTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.HEAD));
+		ResourceLocation chestPlateTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.CHEST));
+		ResourceLocation legsTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.LEGS));
+		ResourceLocation bootsTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.FEET));
 
 		((DragonRenderer) renderer).isRenderLayers = true;
 
@@ -96,7 +96,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		String texture2 = itemToResLoc(item);
 		if (texture2 != null) {
 			texture2 = texture + texture2;
-			if (Minecraft.getInstance().getResourceManager().getResource(new ResourceLocation(DragonSurvivalMod.MODID, texture2)).isPresent()) {
+			if (Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath(MODID, texture2)).isPresent()) {
 				return texture2;
 			}
 		}

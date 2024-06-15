@@ -32,7 +32,7 @@ public class DragonOreLootModifier extends LootModifier {
     // No codec at the moment. This is just a formality.
     public static final Supplier<MapCodec<DragonOreLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, DragonOreLootModifier::new)));
 
-    TagKey<Block> ores = BlockTags.create(new ResourceLocation("forge", "ores"));
+    TagKey<Block> ores = BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores"));
 
     public DragonOreLootModifier(LootItemCondition[] conditionsIn) {
         super(conditionsIn);

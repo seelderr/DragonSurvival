@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -339,11 +340,11 @@ public class StormBreathAbility extends BreathAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/storm_breath_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/storm_breath_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/storm_breath_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/storm_breath_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/storm_breath_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_4.png")};
 	}
 
 
@@ -382,7 +383,7 @@ public class StormBreathAbility extends BreathAbility{
 				pos.x,pos.y,pos.z
 		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(ResourceLocation.fromNamespaceAndPath(MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new StormBreathSound(this));
 	}
 
@@ -453,7 +454,7 @@ public class StormBreathAbility extends BreathAbility{
 			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
 
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "storm_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(ResourceLocation.fromNamespaceAndPath(MODID, "storm_breath_loop"), SoundSource.PLAYERS);
 	}
 
 

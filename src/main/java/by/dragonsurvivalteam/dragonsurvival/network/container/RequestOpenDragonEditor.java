@@ -17,7 +17,7 @@ public class RequestOpenDragonEditor implements IMessage<RequestOpenDragonEditor
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<RequestOpenDragonEditor.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_editor"));
+		public static final Type<RequestOpenDragonEditor.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_editor"));
 
 		public static final StreamCodec<ByteBuf, RequestOpenDragonEditor.Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override

@@ -28,6 +28,6 @@ public class DSDamageTypes {
     }
 
     private static ResourceKey<DamageType> createKey(final String name) {
-        return ResourceKey.create(Registries.DAMAGE_TYPE, new ResourceLocation(DragonSurvivalMod.MODID, name));
+        return ResourceKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, name));
     }
 }

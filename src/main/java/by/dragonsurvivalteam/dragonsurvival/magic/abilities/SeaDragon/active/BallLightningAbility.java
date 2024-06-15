@@ -24,6 +24,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class BallLightningAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "ball_lightning"}, key = "ballLightning", comment = "Whether the lightning ball ability should be enabled" )
@@ -162,11 +164,11 @@ public class BallLightningAbility extends ChargeCastAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/ball_lightning_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/ball_lightning_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/ball_lightning_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/ball_lightning_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/ball_lightning_4.png"),};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_4.png"),};
 	}
 
 	@Override

@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class CopySettingsButton extends ExtendedButton {
-	private static final ResourceLocation ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/copy_icon.png");
+	private static final ResourceLocation ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/copy_icon.png");
 
 	private final DragonEditorScreen screen;
 	public boolean toggled;

@@ -18,10 +18,10 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class ClawToolSlot extends Slot {
-	static final ResourceLocation AXE_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe");
-	static final ResourceLocation PICKAXE_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe");
-	static final ResourceLocation SHOVEL_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel");
-	static final ResourceLocation SWORD_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword");
+	static final ResourceLocation AXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_axe");
+	static final ResourceLocation PICKAXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_pickaxe");
+	static final ResourceLocation SHOVEL_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_shovel");
+	static final ResourceLocation SWORD_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_sword");
 	private final DragonContainer dragonContainer;
 	private final int clawSlot;
 

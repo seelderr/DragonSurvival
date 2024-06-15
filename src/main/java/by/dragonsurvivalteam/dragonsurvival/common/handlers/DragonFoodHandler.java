@@ -74,7 +74,7 @@ public class DragonFoodHandler {
 	public static int rightHeight = 0;
 
 
-	private static final ResourceLocation FOOD_ICONS = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
+	private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID + ":textures/gui/dragon_hud.png");
 	private static final RandomSource RANDOM = RandomSource.create();
 
 	private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS;
@@ -144,7 +144,7 @@ public class DragonFoodHandler {
 			}
 
 			String[] configuration = entry.split(":");
-			ResourceLocation resourceLocation = new ResourceLocation(configuration[0], configuration[1]);
+			ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(configuration[0], configuration[1]);
 
 			// Add all food items from the tag
 			if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {

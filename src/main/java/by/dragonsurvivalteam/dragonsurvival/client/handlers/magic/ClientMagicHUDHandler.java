@@ -27,9 +27,9 @@ import net.minecraft.world.entity.player.Player;
 
 public class ClientMagicHUDHandler {
 	// 1.20.6 moved a whole bunch of widgets around, so to keep compatibiltiy with older versions, we need to use the old widgets texture
-	public static final ResourceLocation VANILLA_WIDGETS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/pre-1.20.1-widgets.png");
-	public static final ResourceLocation widgetTextures = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widgets.png");
-	public static final ResourceLocation castBars = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cast_bars.png");
+	public static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
+	public static final ResourceLocation widgetTextures = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
+	public static final ResourceLocation castBars = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cast_bars.png");
 
 	public static final Color COLOR = new Color(243, 48, 59);
 

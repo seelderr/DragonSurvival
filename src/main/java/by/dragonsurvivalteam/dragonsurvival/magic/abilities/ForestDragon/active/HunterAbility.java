@@ -23,6 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class HunterAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunter", comment = "Whether the hunter ability should be enabled" )
@@ -137,11 +139,11 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/hunter_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/hunter_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/hunter_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/hunter_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/hunter_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_4.png")};
 	}
 
 

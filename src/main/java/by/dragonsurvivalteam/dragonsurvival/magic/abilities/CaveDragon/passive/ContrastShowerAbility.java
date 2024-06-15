@@ -41,12 +41,12 @@ public class ContrastShowerAbility extends PassiveDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/contrast_shower_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/contrast_shower_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/contrast_shower_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/contrast_shower_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/contrast_shower_4.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/contrast_shower_5.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_4.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_5.png")};
 	}
 
 

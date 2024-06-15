@@ -9,7 +9,7 @@ public class HunterEntityCheckProcedure {
     public static boolean execute(Entity entity) {
         if (entity == null)
             return false;
-        if (entity.getType().is(TagKey.create(BuiltInRegistries.ENTITY_TYPE.key(), new ResourceLocation("dragonsurvival:hunters_goal")))) {
+        if (entity.getType().is(TagKey.create(BuiltInRegistries.ENTITY_TYPE.key(), ResourceLocation.parse("dragonsurvival:hunters_goal")))) {
             return false;
         }
         return true;

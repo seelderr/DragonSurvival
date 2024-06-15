@@ -32,7 +32,7 @@ import software.bernie.geckolib.GeckoLibClient;
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DragonEditorRegistry{
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
-	public static final ResourceLocation CUSTOMIZATION = new ResourceLocation(DragonSurvivalMod.MODID, "customization.json");
+	public static final ResourceLocation CUSTOMIZATION = ResourceLocation.fromNamespaceAndPath(MODID, "customization.json");
 	public static final HashMap<String, HashMap<EnumSkinLayer, Texture[]>> CUSTOMIZATIONS = new HashMap<>();
 	private static boolean init = false;
 	private static SavedSkinPresets savedCustomizations = null;

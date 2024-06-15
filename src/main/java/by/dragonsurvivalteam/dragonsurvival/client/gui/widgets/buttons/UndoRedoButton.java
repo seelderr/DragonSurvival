@@ -7,8 +7,8 @@ import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
 public class UndoRedoButton extends ArrowButton{
-	public static final ResourceLocation undo = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrow_undo.png");
-	public static final ResourceLocation redo = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/arrow_redo.png");
+	public static final ResourceLocation undo = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_undo.png");
+	public static final ResourceLocation redo = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_redo.png");
 
 	public UndoRedoButton(int x, int y, int xSize, int ySize, boolean next, OnPress pressable){
 		super(x, y, xSize, ySize, next, pressable);

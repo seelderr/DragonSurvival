@@ -13,11 +13,11 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 public class Capabilities{
 
 	public static final EntityCapability<EntityStateHandler, Void> ENTITY_CAPABILITY = EntityCapability.createVoid(
-			new ResourceLocation(MODID, "entity_capability"),
+			ResourceLocation.fromNamespaceAndPath(MODID, "entity_capability"),
 			EntityStateHandler.class);
 
 	public static final EntityCapability<DragonStateHandler, Void> DRAGON_CAPABILITY = EntityCapability.createVoid(
-			new ResourceLocation(MODID, "dragon_capability"),
+			ResourceLocation.fromNamespaceAndPath(MODID, "dragon_capability"),
 			DragonStateHandler.class);
 
 	@SubscribeEvent

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -96,11 +97,11 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/nether_breath_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/nether_breath_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/nether_breath_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/nether_breath_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/nether_breath_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_4.png")};
 	}
 
 	@Override
@@ -253,7 +254,7 @@ public class NetherBreathAbility extends BreathAbility{
 				pos.x, pos.y, pos.z
 		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(ResourceLocation.fromNamespaceAndPath(MODID, "fire_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new FireBreathSound(this));
 	}
 
@@ -272,7 +273,7 @@ public class NetherBreathAbility extends BreathAbility{
 			Minecraft.getInstance().getSoundManager().playDelayed(endSound, 0);
 		}
 
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "fire_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(ResourceLocation.fromNamespaceAndPath(MODID, "fire_breath_loop"), SoundSource.PLAYERS);
 	}
 
 	@Override

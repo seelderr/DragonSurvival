@@ -29,7 +29,7 @@ public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
 	}
 
 	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "magic_cap"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_cap"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

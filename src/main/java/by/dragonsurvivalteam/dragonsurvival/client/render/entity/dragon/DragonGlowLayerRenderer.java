@@ -62,7 +62,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 		}
 
 		if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
-			ResourceLocation location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
+			ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + "_glow.png");
 
 			if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
 				glowTexture = location;
@@ -75,7 +75,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			dragonRenderer.isRenderLayers = true;
 			dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 1.0F, 1.0F, 1.0F, 1.0F);
 		} else {
-			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 			dragonRenderer.isRenderLayers = true;
 
 			if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {

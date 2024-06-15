@@ -15,6 +15,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class SpectralImpactAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "spectralImpact", comment = "Whether the spectralImpact ability should be enabled" )
@@ -46,10 +48,10 @@ public class SpectralImpactAbility extends PassiveDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/spectral_impact_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/spectral_impact_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/spectral_impact_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/spectral_impact_3.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_3.png")};
 	}
 
 	public int getChance(){

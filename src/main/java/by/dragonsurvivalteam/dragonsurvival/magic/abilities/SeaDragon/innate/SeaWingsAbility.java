@@ -7,6 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonWingAbility;
 import net.minecraft.resources.ResourceLocation;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class SeaWingsAbility extends DragonWingAbility{
 	@Override
@@ -21,8 +23,8 @@ public class SeaWingsAbility extends DragonWingAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_wings_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_wings_1.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_1.png")};
 	}
 
 	@Override

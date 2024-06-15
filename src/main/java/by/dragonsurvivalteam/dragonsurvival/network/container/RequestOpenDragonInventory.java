@@ -50,7 +50,7 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<RequestOpenDragonInventory.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_inventory"));
+		public static final Type<RequestOpenDragonInventory.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_inventory"));
 
 		public static final StreamCodec<ByteBuf, RequestOpenDragonInventory.Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override

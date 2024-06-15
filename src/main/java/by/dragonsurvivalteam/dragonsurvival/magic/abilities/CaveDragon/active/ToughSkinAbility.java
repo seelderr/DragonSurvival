@@ -23,6 +23,8 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility{
 
@@ -129,10 +131,10 @@ public class ToughSkinAbility extends AoeBuffAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/strong_leather_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/strong_leather_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/strong_leather_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/strong_leather_3.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")};
 	}
 
 

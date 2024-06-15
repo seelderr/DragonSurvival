@@ -23,6 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class SeaEyesAbility extends ChargeCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVision", comment = "Whether the sea vision ability should be enabled" )
@@ -134,11 +136,11 @@ public class SeaEyesAbility extends ChargeCastAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_eyes_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_eyes_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_eyes_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_eyes_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/sea_eyes_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_4.png")};
 	}
 
 	@Override

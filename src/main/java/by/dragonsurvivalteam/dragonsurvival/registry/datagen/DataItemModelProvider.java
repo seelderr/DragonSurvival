@@ -24,10 +24,10 @@ public class DataItemModelProvider extends ItemModelProvider {
 		// TODO: Test this
 		DSBlocks.DS_BLOCKS.getEntries().forEach((key) -> {
 			if (key.get() instanceof DragonPressurePlates || key.get() instanceof DragonAltarBlock) {
-				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/");
+				ResourceLocation resource = ResourceLocation.fromNamespaceAndPath(MODID, "block/");
 				withExistingParent(key.toString(), resource);
 			} else if (key.get() instanceof TreasureBlock) {
-				ResourceLocation resource = new ResourceLocation(DragonSurvivalMod.MODID, "block/");
+				ResourceLocation resource = ResourceLocation.fromNamespaceAndPath(MODID, "block/");
 				withExistingParent(key.toString(), resource);
 			}
 		});

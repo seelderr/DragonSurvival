@@ -8,7 +8,7 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 
 public class DragonArmorModel extends GeoModel<DragonEntity> {
-	private ResourceLocation armorTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/armor/empty_armor.png");
+	private ResourceLocation armorTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/armor/empty_armor.png");
 
 	public DragonArmorModel(final DragonModel model) {
 		Collection<GeoBone> armorBones = model.getAnimationProcessor().getRegisteredBones();
@@ -26,7 +26,7 @@ public class DragonArmorModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getModelResource(final DragonEntity ignored) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_armor_model.geo.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "geo/dragon_armor_model.geo.json");
 	}
 
 	@Override
@@ -40,6 +40,6 @@ public class DragonArmorModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity animatable) {
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon.animation.json");
 	}
 }

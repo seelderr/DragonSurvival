@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
 import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
 
@@ -37,9 +38,9 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public class DragonAltarGUI extends Screen{
-	public static final ResourceLocation CONFIRM_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/confirm_button.png");
-	public static final ResourceLocation CANCEL_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/cancel_button.png");
-	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
+	public static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");
+	public static final ResourceLocation CANCEL_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cancel_button.png");
+	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
 	private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "dig_head_locked", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "rocking_on_back" };
 	public DragonStateHandler handler1 = new DragonStateHandler();
 	public DragonStateHandler handler2 = new DragonStateHandler();

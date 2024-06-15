@@ -15,7 +15,7 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class HelpButton extends ExtendedButton {
-	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/help_button.png");
+	public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
 	public String text;
 	public int variation;
 	public AbstractDragonType type;

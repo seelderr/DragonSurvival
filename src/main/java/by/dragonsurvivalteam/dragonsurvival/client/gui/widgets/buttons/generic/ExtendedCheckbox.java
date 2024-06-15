@@ -26,8 +26,8 @@ public class ExtendedCheckbox extends AbstractButton {
 		void onValueChange(ExtendedCheckbox pCheckbox, boolean pValue);
 	}
 
-	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
-	final ResourceLocation TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/checkbox.png");
+	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
+	final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/checkbox.png");
 	private final int renderWidth;
 	public Consumer<ExtendedCheckbox> pressable;
 	public boolean selected;

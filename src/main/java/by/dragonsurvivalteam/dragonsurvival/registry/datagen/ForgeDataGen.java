@@ -31,7 +31,7 @@ public class ForgeDataGen {
 
 		// Server
 		// FIXME: We need a Set<ResourceKey<LootTable>> pRequiredTables and I don't know how to get it
-		//Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.getEntries().stream().map(key -> new ResourceLocation(DragonSurvivalMod.MODID, "blocks/" + key.getId())).collect(Collectors.toSet());
+		//Set<ResourceLocation> blocks = DSBlocks.DS_BLOCKS.getEntries().stream().map(key -> ResourceLocation.fromNamespaceAndPath(MODID, "blocks/" + key.getId())).collect(Collectors.toSet());
 		//generator.addProvider(event.includeServer(), new DataLootTableProvider(generator.getPackOutput(), blocks, List.of(new LootTableProvider.SubProviderEntry(BlockLootTableSubProvider::new, LootContextParamSets.BLOCK))));
 
 		BlockTagsProvider blockTagsProvider = new DataBlockTagProvider(generator.getPackOutput(), event.getLookupProvider(), DragonSurvivalMod.MODID, existingFileHelper);

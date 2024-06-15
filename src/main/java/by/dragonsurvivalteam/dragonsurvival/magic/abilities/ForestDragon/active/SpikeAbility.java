@@ -25,6 +25,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class SpikeAbility extends InstantCastAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spike", comment = "Whether the spike ability should be enabled" )
@@ -71,11 +73,11 @@ public class SpikeAbility extends InstantCastAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/spike_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_4.png")};
 	}
 
 

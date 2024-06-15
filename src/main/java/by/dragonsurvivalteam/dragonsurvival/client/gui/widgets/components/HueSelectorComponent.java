@@ -25,7 +25,7 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import org.jetbrains.annotations.NotNull;
 
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
-	public static final ResourceLocation resetSettingsTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
+	public static final ResourceLocation resetSettingsTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
 	private final ExtendedButton hueReset;
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;

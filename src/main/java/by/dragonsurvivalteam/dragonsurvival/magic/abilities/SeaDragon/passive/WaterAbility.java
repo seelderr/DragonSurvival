@@ -16,6 +16,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class WaterAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "water", comment = "Whether the water ability should be enabled" )
@@ -43,14 +45,14 @@ public class WaterAbility extends PassiveDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_4.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_5.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_6.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/sea/water_7.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_4.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_5.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_6.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_7.png")};
 	}
 
 

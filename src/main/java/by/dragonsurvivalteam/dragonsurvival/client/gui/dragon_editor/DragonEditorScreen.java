@@ -69,12 +69,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonEditorScreen extends Screen {
-	private static final ResourceLocation backgroundTexture = new ResourceLocation("textures/block/black_concrete.png");
-	private static final ResourceLocation RESET_POSITION = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_position_button.png");
-	private static final ResourceLocation SAVE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/save_icon.png");
-	private static final ResourceLocation RANDOM = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/random_icon.png");
-	private static final ResourceLocation RESET = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_button.png");
+	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
+	private static final ResourceLocation RESET_POSITION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_position_button.png");
+	private static final ResourceLocation SAVE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
+	private static final ResourceLocation RANDOM = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/random_icon.png");
+	private static final ResourceLocation RESET = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_button.png");
 	private final Screen source;
 	private final String[] animations = {"sit_dentist",
 	                                     "sit_head_locked",

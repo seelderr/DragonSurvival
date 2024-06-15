@@ -17,7 +17,7 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect.Dat
 	}
 
 	public record Data(int entityId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "potion_added_effect"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_added_effect"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

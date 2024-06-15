@@ -32,7 +32,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender.Data>
 	}
 
 	public record Data(int playerId, boolean state) implements CustomPacketPayload {
-		public static final Type<SyncDragonClawRender.Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_claw_render"));
+		public static final Type<SyncDragonClawRender.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_claw_render"));
 
 		public static final StreamCodec<FriendlyByteBuf, SyncDragonClawRender.Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

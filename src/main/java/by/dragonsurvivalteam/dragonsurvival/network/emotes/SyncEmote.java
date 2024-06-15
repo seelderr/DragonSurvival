@@ -33,7 +33,7 @@ public class SyncEmote implements IMessage<SyncEmote.Data> {
 	}
 
 	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "emote"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "emote"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

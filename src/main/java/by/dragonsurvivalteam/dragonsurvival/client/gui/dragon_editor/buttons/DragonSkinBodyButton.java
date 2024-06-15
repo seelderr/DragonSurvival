@@ -18,7 +18,7 @@ public class DragonSkinBodyButton extends Button {
 		super(x, y, xSize, ySize, Component.literal(body.toString()), btn -> {
 			screen.dragonBody = body;
 		}, DEFAULT_NARRATION);
-		texture_location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/body_type_icon_skintab.png");
+		texture_location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_skintab.png");
 		this.screen = screen;
 		this.dragonBody = body;
 		this.pos = pos;

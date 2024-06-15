@@ -11,8 +11,10 @@ import net.minecraft.client.renderer.entity.layers.ItemInHandLayer;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class ShooterHunterRenderer extends MobRenderer<Shooter, HunterModel<Shooter>>{ // TODO :: Use Geckolib and CustomBlockAndItemGeoLayer?
-	private static final ResourceLocation TEXTURE = new ResourceLocation("dragonsurvival", "textures/dragon_hunter.png");
+	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon_hunter.png");
 
 	public ShooterHunterRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager, new HunterModel<>(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);

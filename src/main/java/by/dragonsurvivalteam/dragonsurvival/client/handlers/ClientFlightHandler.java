@@ -84,7 +84,7 @@ public class ClientFlightHandler {
 	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownYOffset", comment = "Offset the y position of the spin cooldown indicator in relation to its normal position")
 	public static Integer spinCooldownYOffset = 0;
 
-	public static final ResourceLocation SPIN_COOLDOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/spin_cooldown.png");
+	public static final ResourceLocation SPIN_COOLDOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/spin_cooldown.png");
 	public static int lastSync;
 	public static boolean wasGliding;
 	public static boolean wasFlying;

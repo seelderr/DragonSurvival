@@ -29,7 +29,7 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Dat
 	}
 
 	public record Data(int playerId, int selectedSlot, boolean displayHotbar) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_ability_slot"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_ability_slot"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

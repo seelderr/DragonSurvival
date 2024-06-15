@@ -15,8 +15,8 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 public class BackgroundColorButton extends ExtendedButton {
-	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
-	public static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/background_color_button.png");
+	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
+	public static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/background_color_button.png");
 
 	private final DragonEditorScreen screen;
 	public boolean toggled;

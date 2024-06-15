@@ -119,6 +119,6 @@ public class ClientGrowthHudHandler {
 	}
 
 	private static ResourceLocation getOrCreate(final String path) {
-		return CACHE.computeIfAbsent(path, key -> new ResourceLocation(DragonSurvivalMod.MODID, path));
+		return CACHE.computeIfAbsent(path, key -> ResourceLocation.fromNamespaceAndPath(MODID, path));
 	}
 }

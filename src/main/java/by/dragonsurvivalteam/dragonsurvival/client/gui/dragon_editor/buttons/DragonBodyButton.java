@@ -24,7 +24,7 @@ public class DragonBodyButton extends Button {
 				dragonEditorScreen.update();
 			}
 		}, DEFAULT_NARRATION);
-		texture_location = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeName().toLowerCase() + ".png");
+		texture_location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeName().toLowerCase() + ".png");
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.dragonBody = dragonBody;
 		this.pos = pos;

@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.api.jei;
+/*package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
@@ -14,7 +14,7 @@ import org.jetbrains.annotations.NotNull;
 public class JEIPlugin implements IModPlugin{
 	@Override
 	public @NotNull ResourceLocation getPluginUid(){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "fix");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "fix");
 	}
 	@Override
 	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration){
@@ -25,4 +25,4 @@ public class JEIPlugin implements IModPlugin{
 	public void registerGuiHandlers(IGuiHandlerRegistration registration){
 		registration.addGuiContainerHandler(DragonScreen.class, new DragonInventoryGUIHandler());
 	}
-}
+}*/

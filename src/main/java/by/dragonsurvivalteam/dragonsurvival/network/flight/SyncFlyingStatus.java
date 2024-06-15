@@ -29,7 +29,7 @@ public class SyncFlyingStatus implements IMessage<SyncFlyingStatus.Data> {
 	}
 
 	public record Data(int playerId, boolean state) implements CustomPacketPayload  {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "flying_status"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "flying_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

@@ -90,8 +90,8 @@ public class DragonCuriosRenderLayer extends GeoRenderLayer<DragonEntity> {
                             if (resId != null) {
                                 resId = "textures/armor/" + resId;
                                 if (Minecraft.getInstance().getResourceManager().getResource(
-                                        new ResourceLocation(DragonSurvivalMod.MODID, resId)).isPresent()) {
-                                    resources.add(new ResourceLocation(DragonSurvivalMod.MODID, resId));
+                                        ResourceLocation.fromNamespaceAndPath(MODID, resId)).isPresent()) {
+                                    resources.add(ResourceLocation.fromNamespaceAndPath(MODID, resId));
                                 }
                             }
                         }

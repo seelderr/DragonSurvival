@@ -23,10 +23,10 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class AbilityButton extends Button {
-	public static final ResourceLocation BLANK_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank.png");
-	public static final ResourceLocation BLANK_1_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank1.png");
-	public static final ResourceLocation BLANK_2_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank2.png");
-	public static final ResourceLocation BLANK_3_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/blank3.png");
+	public static final ResourceLocation BLANK_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank.png");
+	public static final ResourceLocation BLANK_1_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank1.png");
+	public static final ResourceLocation BLANK_2_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank2.png");
+	public static final ResourceLocation BLANK_3_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank3.png");
 
 	private final Screen screen;
 	private AbstractDragonType type;

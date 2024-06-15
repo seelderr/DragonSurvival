@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.api.appleskin;
+/*package by.dragonsurvivalteam.dragonsurvival.api.appleskin;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ToolTipHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -16,4 +16,4 @@ public class AppleSkinEventHandler {
             event.setCanceled(true);
         }
     }
-}
+}*/

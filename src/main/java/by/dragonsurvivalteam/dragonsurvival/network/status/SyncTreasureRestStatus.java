@@ -44,7 +44,7 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.D
 
 	public record Data(int playerId, boolean state) implements CustomPacketPayload
 	{
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "treasure_rest_status"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_rest_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

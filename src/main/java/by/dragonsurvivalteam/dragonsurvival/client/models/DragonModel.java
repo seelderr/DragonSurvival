@@ -25,8 +25,8 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 
 public class DragonModel extends GeoModel<DragonEntity> {
-	private final ResourceLocation defaultTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/cave_newborn.png");
-	private final ResourceLocation model = new ResourceLocation(DragonSurvivalMod.MODID, "geo/dragon_model.geo.json");
+	private final ResourceLocation defaultTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/cave_newborn.png");
+	private final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(MODID, "geo/dragon_model.geo.json");
 	private ResourceLocation currentTexture;
 
 	/**TODO Body Types Update
@@ -146,7 +146,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			}
 
 			if (handler.getSkinData().blankSkin) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
+				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
 			}
 
 			if (ageGroup.defaultSkin) {
@@ -154,11 +154,11 @@ public class DragonModel extends GeoModel<DragonEntity> {
 					return currentTexture;
 				}
 
-				return new ResourceLocation(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
 			}
 
 			if (handler.getSkinData().isCompiled && currentTexture == null) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+				return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 			}
 		}
 
@@ -166,7 +166,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
 
 			if (localPlayer != null) { // TODO :: Check if skin is compiled?
-				return new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonStateProvider.getOrGenerateHandler(dragon.getPlayer()).getLevel().name);
+				return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonStateProvider.getOrGenerateHandler(dragon.getPlayer()).getLevel().name);
 			}
 		}
 
@@ -183,10 +183,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragon.getPlayer());
 			AbstractDragonBody body = handler.getBody();
 			if (body != null) {
-				return new ResourceLocation(DragonSurvivalMod.MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
+				return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
 			}
 		}
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/dragon.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon.animation.json");
 	}
 
 	@Override

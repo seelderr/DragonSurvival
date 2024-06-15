@@ -45,7 +45,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 		String clawTexture = constructClaws(animatable.getPlayer());
 
 		if (clawTexture != null) {
-			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, clawTexture);
+			ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, clawTexture);
 
 			((DragonRenderer) renderer).isRenderLayers = true;
 			renderToolLayer(poseStack, animatable, bakedModel, bufferSource, texture, partialTick, packedLight);
@@ -55,7 +55,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 		String teethTexture = constructTeethTexture(animatable.getPlayer());
 
 		if (teethTexture != null) {
-			ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, teethTexture);
+			ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, teethTexture);
 
 			((DragonRenderer) renderer).isRenderLayers = true;
 			renderToolLayer(poseStack, animatable, bakedModel, bufferSource, texture, partialTick, packedLight);

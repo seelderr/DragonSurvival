@@ -15,6 +15,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class BurnAbility extends PassiveDragonAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "burn", comment = "Whether the burn ability should be enabled" )
@@ -46,11 +48,11 @@ public class BurnAbility extends PassiveDragonAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/burn_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/burn_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/burn_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/burn_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/burn_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/burn_4.png")};
 	}
 
 	public int getChance(){

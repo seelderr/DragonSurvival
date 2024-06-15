@@ -44,16 +44,16 @@ import org.lwjgl.glfw.GLFW;
 @EventBusSubscriber( Dist.CLIENT )
 public class EmoteMenuHandler {
 	private static final int PER_PAGE = 10;
-	private static final ResourceLocation EMPTY_SLOT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/empty_slot.png");
-	private static final ResourceLocation PLAY_ONCE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/play_once.png");
-	private static final ResourceLocation PLAY_LOOPED = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/play_looped.png");
-	private static final ResourceLocation SOUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/sound.png");
-	private static final ResourceLocation NO_SOUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/no_sound.png");
-	private static final ResourceLocation BUTTON_UP = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_up.png");
-	private static final ResourceLocation BUTTON_DOWN = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_down.png");
-	private static final ResourceLocation BUTTON_LEFT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_left.png");
-	private static final ResourceLocation BUTTON_RIGHT = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/emote/button_right.png");
-	public static final ResourceLocation resetTexture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/reset_icon.png");
+	private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/empty_slot.png");
+	private static final ResourceLocation PLAY_ONCE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/play_once.png");
+	private static final ResourceLocation PLAY_LOOPED = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/play_looped.png");
+	private static final ResourceLocation SOUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/sound.png");
+	private static final ResourceLocation NO_SOUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/no_sound.png");
+	private static final ResourceLocation BUTTON_UP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_up.png");
+	private static final ResourceLocation BUTTON_DOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_down.png");
+	private static final ResourceLocation BUTTON_LEFT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_left.png");
+	private static final ResourceLocation BUTTON_RIGHT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_right.png");
+	public static final ResourceLocation resetTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
 
 	@ConfigRange( min = -1000, max = 1000 )
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteXOffset", comment = "Offset the x position of the emote button in relation to its normal position" )

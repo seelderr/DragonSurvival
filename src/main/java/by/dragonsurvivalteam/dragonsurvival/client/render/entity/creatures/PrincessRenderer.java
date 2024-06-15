@@ -8,13 +8,15 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.item.DyeColor;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class PrincessRenderer extends VillagerRenderer{
-	private static final ResourceLocation BLACK = new ResourceLocation("dragonsurvival", "textures/princess/princess_black.png");
-	private static final ResourceLocation BLUE = new ResourceLocation("dragonsurvival", "textures/princess/princess_blue.png");
-	private static final ResourceLocation PURPLE = new ResourceLocation("dragonsurvival", "textures/princess/princess_purple.png");
-	private static final ResourceLocation RED = new ResourceLocation("dragonsurvival", "textures/princess/princess_red.png");
-	private static final ResourceLocation WHITE = new ResourceLocation("dragonsurvival", "textures/princess/princess_white.png");
-	private static final ResourceLocation YELLOW = new ResourceLocation("dragonsurvival", "textures/princess/princess_yellow.png");
+	private static final ResourceLocation BLACK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/princess/princess_black.png");
+	private static final ResourceLocation BLUE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/princess/princess_blue.png");
+	private static final ResourceLocation PURPLE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/princess/princess_purple.png");
+	private static final ResourceLocation RED = ResourceLocation.fromNamespaceAndPath(MODID,"textures/princess/princess_red.png");
+	private static final ResourceLocation WHITE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/princess/princess_white.png");
+	private static final ResourceLocation YELLOW = ResourceLocation.fromNamespaceAndPath(MODID,"textures/princess/princess_yellow.png");
 
 	public PrincessRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager);

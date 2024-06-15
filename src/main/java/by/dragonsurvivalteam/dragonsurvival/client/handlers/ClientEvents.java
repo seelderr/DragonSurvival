@@ -72,7 +72,7 @@ import org.jetbrains.annotations.NotNull;
 @EventBusSubscriber( Dist.CLIENT )
 public class ClientEvents{
 
-	public static final ResourceLocation DRAGON_HUD = new ResourceLocation(DragonSurvivalMod.MODID + ":textures/gui/dragon_hud.png");
+	public static final ResourceLocation DRAGON_HUD = ResourceLocation.fromNamespaceAndPath(MODID + ":textures/gui/dragon_hud.png");
 	/**
 	 * Durations of jumps
 	 */

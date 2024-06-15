@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
 
 
 public class EditorPartButton extends ExtendedButton{
-	public static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/textbox.png");
+	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
 	public MutableComponent message;
 	private DragonEditorScreen screen;
 	public String value;
@@ -20,7 +20,7 @@ public class EditorPartButton extends ExtendedButton{
 		message = Component.translatable("ds.skin_part." + screen.dragonType.getTypeName().toLowerCase(Locale.ROOT) + "." + value.toLowerCase(Locale.ROOT));
 
 		if(!value.equals("None")){
-			texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/editor_icons/" + screen.dragonType.getTypeName().toLowerCase(Locale.ROOT) + "/" + layer.name.toLowerCase(Locale.ROOT) + "/" + value.toLowerCase(Locale.ROOT) + ".png");
+			texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/editor_icons/" + screen.dragonType.getTypeName().toLowerCase(Locale.ROOT) + "/" + layer.name.toLowerCase(Locale.ROOT) + "/" + value.toLowerCase(Locale.ROOT) + ".png");
 		}
 	}
 

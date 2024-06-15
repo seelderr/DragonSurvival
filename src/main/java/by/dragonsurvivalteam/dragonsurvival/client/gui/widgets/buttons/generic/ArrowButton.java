@@ -8,7 +8,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ArrowButton extends Button {
-	public static final ResourceLocation texture = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/magic_gui.png");
+	public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_gui.png");
 	public boolean next;
 
 	public ArrowButton(int x, int y, int xSize, int ySize, boolean next, OnPress pressable){

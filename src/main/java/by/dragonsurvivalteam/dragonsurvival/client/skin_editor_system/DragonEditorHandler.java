@@ -41,7 +41,7 @@ public class DragonEditorHandler{
 
 		for(Texture texture : texts){
 			if(Objects.equals(texture.key, key)){
-				return new ResourceLocation(texture.texture);
+				return ResourceLocation.parse(texture.texture);
 			}
 		}
 
@@ -159,8 +159,8 @@ public class DragonEditorHandler{
 			}
 
 			String uuid = player.getStringUUID();
-			ResourceLocation dynamicNormalKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
-			ResourceLocation dynamicGlowKey = new ResourceLocation(DragonSurvivalMod.MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
+			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
+			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
 
 			registerCompiledTexture(normal, dynamicNormalKey);
 			registerCompiledTexture(glow, dynamicGlowKey);

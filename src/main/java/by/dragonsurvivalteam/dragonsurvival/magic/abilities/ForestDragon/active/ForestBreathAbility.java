@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
@@ -111,11 +112,11 @@ public class ForestBreathAbility extends BreathAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/poisonous_breath_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/poisonous_breath_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/poisonous_breath_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/poisonous_breath_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/forest/poisonous_breath_4.png")};
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_4.png")};
 	}
 
 
@@ -201,7 +202,7 @@ public class ForestBreathAbility extends BreathAbility{
 					String[] data = element.split(":");
 
 					if (player.getRandom().nextInt(100) < Integer.parseInt(data[2])) {
-						ResourceLocation resourceLocation = new ResourceLocation(data[0], data[1]);
+						ResourceLocation resourceLocation = ResourceLocation.fromNamespaceAndPath(data[0], data[1]);
 
 						if (BuiltInRegistries.BLOCK.containsKey(resourceLocation)) {
 							serverLevel.setBlock(blockPosition, BuiltInRegistries.BLOCK.get(resourceLocation).defaultBlockState(), Block.UPDATE_ALL);
@@ -295,7 +296,7 @@ public class ForestBreathAbility extends BreathAbility{
 		}
 
 
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(ResourceLocation.fromNamespaceAndPath(MODID, "forest_breath_loop"), SoundSource.PLAYERS);
 	}
 
 	@Override
@@ -339,7 +340,7 @@ public class ForestBreathAbility extends BreathAbility{
 				pos.x,pos.y,pos.z
 		);
 		Minecraft.getInstance().getSoundManager().playDelayed(startingSound, 0);
-		Minecraft.getInstance().getSoundManager().stop(new ResourceLocation(DragonSurvivalMod.MODID, "forest_breath_loop"), SoundSource.PLAYERS);
+		Minecraft.getInstance().getSoundManager().stop(ResourceLocation.fromNamespaceAndPath(MODID, "forest_breath_loop"), SoundSource.PLAYERS);
 		Minecraft.getInstance().getSoundManager().queueTickingSound(new PoisonBreathSound(this));
 	}
 

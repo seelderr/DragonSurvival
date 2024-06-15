@@ -19,7 +19,7 @@ public class SyncDragonType implements IMessage<SyncDragonType.Data> {
 
 	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload
 	{
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_type"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_type"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

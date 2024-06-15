@@ -17,7 +17,7 @@ public class SyncGrowthState implements IMessage<SyncGrowthState.Data> {
 	}
 
 	public record Data(boolean growing) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "growth_state"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "growth_state"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.BOOL,

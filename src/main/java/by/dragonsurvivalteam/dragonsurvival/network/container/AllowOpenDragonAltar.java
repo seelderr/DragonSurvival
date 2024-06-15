@@ -18,7 +18,7 @@ public class AllowOpenDragonAltar implements IMessage<AllowOpenDragonAltar.Data>
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<AllowOpenDragonAltar.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_dragon_altar"));
+		public static final Type<AllowOpenDragonAltar.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_altar"));
 
 		public static final StreamCodec<ByteBuf, AllowOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override

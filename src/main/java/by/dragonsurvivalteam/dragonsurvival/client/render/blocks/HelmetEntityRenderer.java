@@ -23,11 +23,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SkullBlock;
 import net.minecraft.world.level.block.state.BlockState;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntity>{
 	private static final Map<Block, ResourceLocation> TEXTURE_BY_TYPE = Util.make(Maps.newHashMap(), resourceLocationHashMap -> {
-		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_1.get(), new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_0.png"));
-		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_2.get(), new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_1.png"));
-		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_3.get(), new ResourceLocation(DragonSurvivalMod.MODID, "textures/block/broken_knight_helmet_2.png"));
+		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_1.get(), ResourceLocation.fromNamespaceAndPath(MODID, "textures/block/broken_knight_helmet_0.png"));
+		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_2.get(), ResourceLocation.fromNamespaceAndPath(MODID, "textures/block/broken_knight_helmet_1.png"));
+		resourceLocationHashMap.put(DSBlocks.HELMET_BLOCK_3.get(), ResourceLocation.fromNamespaceAndPath(MODID, "textures/block/broken_knight_helmet_2.png"));
 	});
 	static SkullModel humanoidHeadModel = new SkullModel(Minecraft.getInstance().getEntityModels().bakeLayer(ModelLayers.PLAYER_HEAD));
 

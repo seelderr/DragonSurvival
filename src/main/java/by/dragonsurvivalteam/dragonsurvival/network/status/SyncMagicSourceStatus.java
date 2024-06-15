@@ -28,7 +28,7 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus.Dat
 
 	public record Data(int playerId, boolean state, int timer) implements CustomPacketPayload
 	{
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "magic_source_status"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_source_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

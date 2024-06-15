@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.Color;
 
 public class MagicDragonRender{
-	public static final ResourceLocation BARS = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/widget_bars.png");
-	public static final ResourceLocation INVALID_ICON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/disabled.png");
+	public static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
+	public static final ResourceLocation INVALID_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/disabled.png");
 
 	public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbility ability) {
 		int colorXPos = ability instanceof ActiveDragonAbility ? 0 : ability instanceof InnateDragonAbility ? 20 : 0;

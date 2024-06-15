@@ -41,7 +41,7 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting.Data> {
 	}
 
 	public record Data(int playerId, boolean isCasting, int abilitySlot, CompoundTag nbt, long castStartTime, long clientTime) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "ability_casting"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "ability_casting"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

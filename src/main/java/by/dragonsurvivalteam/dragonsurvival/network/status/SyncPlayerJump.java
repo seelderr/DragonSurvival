@@ -19,7 +19,7 @@ public class SyncPlayerJump implements IMessage<SyncPlayerJump.Data> {
 	}
 
 	public record Data(int playerId, int ticks) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "player_jump"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "player_jump"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

@@ -36,7 +36,7 @@ public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
 
 	public record Data(int playerId, boolean isFirstPerson, boolean bite, boolean isFreeLook) implements CustomPacketPayload
 	{
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_movement"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

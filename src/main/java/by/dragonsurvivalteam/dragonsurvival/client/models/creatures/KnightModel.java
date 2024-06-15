@@ -8,16 +8,16 @@ import software.bernie.geckolib.model.GeoModel;
 public class KnightModel extends GeoModel<KnightEntity> {
 	@Override
 	public ResourceLocation getModelResource(KnightEntity object){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "geo/horseback_rider.geo.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "geo/horseback_rider.geo.json");
 	}
 
 	@Override
 	public ResourceLocation getTextureResource(KnightEntity object){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "textures/riders/dragon_knight_black.png");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/riders/dragon_knight_black.png");
 	}
 
 	@Override
 	public ResourceLocation getAnimationResource(KnightEntity animatable){
-		return new ResourceLocation(DragonSurvivalMod.MODID, "animations/knight.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/knight.animation.json");
 	}
 }

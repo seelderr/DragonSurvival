@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import net.minecraft.resources.ResourceLocation;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 @RegisterDragonAbility
 public class CaveMagicAbility extends MagicAbility{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "caveMagic", comment = "Whether the cave magic ability should be enabled" )
@@ -31,27 +33,27 @@ public class CaveMagicAbility extends MagicAbility{
 
 	@Override
 	public ResourceLocation[] getSkillTextures(){
-		return new ResourceLocation[]{new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_0.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_1.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_2.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_3.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_4.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_5.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_6.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_7.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_8.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_9.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_10.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_11.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_12.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_13.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_14.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_15.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_16.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_17.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_18.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_19.png"),
-		                              new ResourceLocation(DragonSurvivalMod.MODID, "textures/skills/cave/cave_magic_20.png")
+		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_0.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_1.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_2.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_3.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_4.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_5.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_6.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_7.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_8.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_9.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_10.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_11.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_12.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_13.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_14.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_15.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_16.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_17.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_18.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_19.png"),
+		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_20.png")
 		                              };
 	}
 

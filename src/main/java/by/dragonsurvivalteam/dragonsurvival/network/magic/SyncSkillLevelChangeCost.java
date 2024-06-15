@@ -38,7 +38,7 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 	}
 
 	public record Data(int level, String skill, int levelChange) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "skill_level_change_cost"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "skill_level_change_cost"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 			ByteBufCodecs.VAR_INT,

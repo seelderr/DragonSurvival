@@ -19,7 +19,7 @@ public class RefreshDragon implements IMessage<RefreshDragon.Data> {
 	}
 
 	public record Data(int playerId) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "refresh_dragon"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "refresh_dragon"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

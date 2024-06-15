@@ -40,13 +40,15 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer>{
-	public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/inventory_button.png");
-	public static final ResourceLocation SETTINGS_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/settings_button.png");
-	static final ResourceLocation BACKGROUND = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_inventory.png");
-	private static final ResourceLocation CLAWS_TEXTURE = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws.png");
-	private static final ResourceLocation DRAGON_CLAW_BUTTON = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_button.png");
-	private static final ResourceLocation DRAGON_CLAW_CHECKMARK = new ResourceLocation(DragonSurvivalMod.MODID, "textures/gui/dragon_claws_checked.png");
+	public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/inventory_button.png");
+	public static final ResourceLocation SETTINGS_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/settings_button.png");
+	static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_inventory.png");
+	private static final ResourceLocation CLAWS_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws.png");
+	private static final ResourceLocation DRAGON_CLAW_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_button.png");
+	private static final ResourceLocation DRAGON_CLAW_CHECKMARK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_checked.png");
 	private final List<ExtendedButton> clawMenuButtons = new ArrayList<>();
 	private final Player player;
 	public boolean clawsMenu = false;
@@ -72,11 +74,11 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 
 			for (int i = 1; i <= DragonLevel.values().length; i++) {
 				String growthResource = createTextureKey(type, "growth", "_" + i);
-				textures.put(growthResource, new ResourceLocation(DragonSurvivalMod.MODID, start + growthResource + end));
+				textures.put(growthResource, ResourceLocation.fromNamespaceAndPath(MODID, start + growthResource + end));
 			}
 
 			String circleResource = createTextureKey(type, "circle", "");
-			textures.put(circleResource, new ResourceLocation(DragonSurvivalMod.MODID, start + circleResource + end));
+			textures.put(circleResource, ResourceLocation.fromNamespaceAndPath(MODID, start + circleResource + end));
 		}
 	}
 

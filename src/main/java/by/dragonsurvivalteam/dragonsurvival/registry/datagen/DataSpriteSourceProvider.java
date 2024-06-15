@@ -19,13 +19,13 @@ public class DataSpriteSourceProvider extends SpriteSourceProvider {
     @Override
     protected void gather() {
         atlas(SpriteSourceProvider.BLOCKS_ATLAS)
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/cage"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/open_eye"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "te/star/wind_vertical"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_axe"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_pickaxe"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_shovel"), Optional.empty()))
-                .addSource(new SingleFile(new ResourceLocation(DragonSurvivalMod.MODID, "gui/dragon_claws_sword"), Optional.empty()));
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "te/star/cage"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "te/star/wind"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "te/star/open_eye"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "te/star/wind_vertical"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_axe"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_pickaxe"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_shovel"), Optional.empty()))
+                .addSource(new SingleFile(ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_sword"), Optional.empty()));
     }
 }

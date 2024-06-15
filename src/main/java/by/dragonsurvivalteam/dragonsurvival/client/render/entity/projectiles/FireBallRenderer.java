@@ -13,7 +13,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT)
 public class FireBallRenderer extends GeoEntityRenderer<FireBallEntity> {
-	private static final ResourceLocation TEXTURE_LOCATION = new ResourceLocation(DragonSurvivalMod.MODID, "textures/entity/fireball_texture.png");
+	private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/fireball_texture.png");
 
 	public FireBallRenderer(final EntityRendererProvider.Context context, final GeoModel<FireBallEntity> model) {
 		super(context, model);

@@ -18,7 +18,7 @@ public class RequestClientData implements IMessage<RequestClientData.Data> {
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "request_client_data"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "request_client_data"));
 
 		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override

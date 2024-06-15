@@ -47,7 +47,7 @@ public class SyncDragonHandler implements IMessage<SyncDragonHandler.Data> {
 
 	public record Data(int playerId, boolean hiding, AbstractDragonType dragonType, AbstractDragonBody dragonBody, double size, boolean hasWings, int passengerId) implements CustomPacketPayload
 	{
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_cap"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_cap"));
 
 		public static StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<ByteBuf, Data>() {
 			@Override

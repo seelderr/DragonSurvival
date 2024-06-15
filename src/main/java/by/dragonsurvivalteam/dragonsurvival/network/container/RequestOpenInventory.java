@@ -25,7 +25,7 @@ public class RequestOpenInventory implements IMessage<RequestOpenInventory.Data>
 
 	public record Data() implements CustomPacketPayload {
 
-		public static final Type<RequestOpenInventory.Data> TYPE = new Type<>(new ResourceLocation(MODID, "open_inventory"));
+		public static final Type<RequestOpenInventory.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_inventory"));
 
 		public static final StreamCodec<ByteBuf, RequestOpenInventory.Data> STREAM_CODEC = new StreamCodec<>(){
 			@Override

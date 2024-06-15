@@ -36,7 +36,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset.Data>
 	}
 
 	public record Data(int playerId, CompoundTag preset) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "player_skin_preset"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "player_skin_preset"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,

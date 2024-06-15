@@ -37,7 +37,7 @@ public class SyncDragonClawsMenuToggle implements IMessage<SyncDragonClawsMenuTo
 	}
 
 	public record Data(boolean state) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "dragon_claw_menu_toggle"));
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_claw_menu_toggle"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.BOOL,

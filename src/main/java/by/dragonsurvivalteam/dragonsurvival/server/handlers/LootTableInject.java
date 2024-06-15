@@ -61,7 +61,7 @@ public class LootTableInject{
 	}
 
 	private static LootPoolEntryContainer.Builder<?> getInjectEntry(String name, int weight){
-		ResourceLocation table = new ResourceLocation(DragonSurvivalMod.MODID, "inject/" + name);
+		ResourceLocation table = ResourceLocation.fromNamespaceAndPath(MODID, "inject/" + name);
 		return NestedLootTable.lootTableReference(table).setWeight(weight);
 	}
 }*/

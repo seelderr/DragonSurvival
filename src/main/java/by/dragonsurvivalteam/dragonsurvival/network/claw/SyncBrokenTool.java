@@ -40,7 +40,7 @@ public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
     }
 
     public record Data(int playerId, int slot) implements CustomPacketPayload {
-        public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "broken_tool"));
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "broken_tool"));
 
         public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT,

@@ -18,7 +18,7 @@ public class SyncChatEvent implements IMessage<SyncChatEvent.Data> {
     }
 
     public record Data(String signerId, String chatId) implements CustomPacketPayload {
-        public static final Type<Data> TYPE = new Type<>(new ResourceLocation(MODID, "chat_event"));
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "chat_event"));
 
         public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.STRING_UTF8,
