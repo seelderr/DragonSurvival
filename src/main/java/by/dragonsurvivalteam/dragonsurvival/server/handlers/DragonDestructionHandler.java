@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigH
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
@@ -186,7 +187,7 @@ public class DragonDestructionHandler {
 
                 AABB boundingBox;
                 if (ServerConfig.sizeChangesHitbox) {
-                    boolean squish = dragonStateHandler.getBody() == null ? dragonStateHandler.getBody().isSquish() : false;
+                    boolean squish = dragonStateHandler.getBody() != null ? dragonStateHandler.getBody().isSquish() : false;
                     double size = dragonStateHandler.getSize();
                     double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), event.getEntity().getPose(), ServerConfig.sizeChangesHitbox, squish);
                     double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
