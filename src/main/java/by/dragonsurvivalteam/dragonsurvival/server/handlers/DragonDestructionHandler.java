@@ -68,8 +68,7 @@ public class DragonDestructionHandler {
                             }
                         }
                         else {
-                            // #TODO: Make the MINEABLE_WITH_AXE and FLOWERS tag configurable in data
-                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock()) || blockstate.canBeReplaced() || blockstate.is(BlockTags.MINEABLE_WITH_AXE) || blockstate.is(BlockTags.FLOWERS)) {
+                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock())) {
                                 if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
                                     player.level().destroyBlock(blockpos, false);
                                 }
@@ -196,7 +195,7 @@ public class DragonDestructionHandler {
                     boundingBox = player.getBoundingBox();
                 }
 
-                boundingBox = boundingBox.inflate(1.25);
+                boundingBox = boundingBox.inflate(1.25 + (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.1f);
 
                 checkAndDestroyCollidingBlocks(dragonStateHandler, event, boundingBox);
                 checkAndDamageCrushedEntities(dragonStateHandler, player, boundingBox);
