@@ -27,7 +27,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -38,6 +40,7 @@ import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
 import software.bernie.geckolib.util.RenderUtil;
 
+@EventBusSubscriber
 public class DragonEntity extends LivingEntity implements GeoEntity, CommonTraits {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -68,6 +71,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private final double defaultPlayerFastSwimSpeed = 0.13;
 	private final double defaultPlayerSwimSpeed = 0.051;
 	private final double defaultPlayerSprintSpeed = 0.165;
+
+	private static int globalTickCount = 0;
 
 	public DragonEntity(EntityType<? extends LivingEntity> type, Level worldIn){
 		super(type, worldIn);
@@ -382,10 +387,16 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		return PlayState.CONTINUE;
 	}
 
+	// TODO: This makes any fake dragon player animations (e.g. stuff in the menus) a little stuttery compared to the real animations.
+	@SubscribeEvent
+	public static void tickEntity(ClientTickEvent.Pre event) {
+		globalTickCount++;
+	}
+
 	@Override
 	public double getTick(Object obj) {
 		// Prevent being on a negative tick (will cause t-posing!) by adding 100 here
-		return level().getEntity(playerId).tickCount + 100;
+		return playerId != null ? level().getEntity(playerId).tickCount + 100 : globalTickCount;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {

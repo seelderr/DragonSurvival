@@ -180,7 +180,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			}){
 				@Override
 				public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-					float u = 21f;
+					float u = 0f;
 					float v = isHoveredOrFocused() ? 20f : 0f;
 					guiGraphics.blit(INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
 				}

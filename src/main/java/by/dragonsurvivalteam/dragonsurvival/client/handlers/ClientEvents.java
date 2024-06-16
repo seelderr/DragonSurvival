@@ -146,7 +146,7 @@ public class ClientEvents{
 			}
 
 			if(inventoryToggle){
-				ExtendedButton inventoryToggle = new ExtendedButton(screen.getGuiLeft() + 128, screen.height / 2 - 50, 20, 18, Component.empty(), p_onPress_1_ -> {
+				ExtendedButton inventoryToggle = new ExtendedButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, Component.empty(), p_onPress_1_ -> {
 					SendOpenDragonInventoryAndMaintainCursorPosition();
 				}){
 					@Override

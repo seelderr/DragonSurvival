@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
@@ -43,17 +42,10 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		renderBackground(guiGraphics, mouseX, mouseY, partialTick);
-		super.render(guiGraphics, mouseX, mouseY, partialTick);
-	}
-
-	@Override
 	protected void renderLabels(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY) { /* Nothing to do */ }
 
 	@Override
-	protected void renderBg(@NotNull final GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) { // WIP <- TODO?
-		renderBackground(guiGraphics, mouseX, mouseY, partialTick);
+	protected void renderBg(@NotNull final GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
 		guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 
 		boolean hasItem = !nest.getItem(0).isEmpty();
@@ -61,11 +53,11 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 
 		ResourceLocation resourceLocation = null;
 
-		if(DSBlocks.CAVE_SOURCE_OF_MAGIC.equals(block)){
+		if(DSBlocks.CAVE_SOURCE_OF_MAGIC.get().equals(block)){
 			resourceLocation = hasItem ? CAVE_NEST1 : CAVE_NEST0;
-		}else if(DSBlocks.FOREST_SOURCE_OF_MAGIC.equals(block)){
+		}else if(DSBlocks.FOREST_SOURCE_OF_MAGIC.get().equals(block)){
 			resourceLocation = hasItem ? FOREST_NEST1 : FOREST_NEST0;
-		}else if(DSBlocks.SEA_SOURCE_OF_MAGIC.equals(block)){
+		}else if(DSBlocks.SEA_SOURCE_OF_MAGIC.get().equals(block)){
 			resourceLocation = hasItem ? SEA_NEST1 : SEA_NEST0;
 		}
 
