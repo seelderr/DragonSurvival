@@ -12,22 +12,19 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class PlayerLoginHandler {
-    @SubscribeEvent
-    public static void onTrackingStart(PlayerEvent.StartTracking startTracking){
-        Player trackingPlayer = startTracking.getEntity();
-        if(trackingPlayer instanceof ServerPlayer target){
-            Entity tracked = startTracking.getTarget();
+
+    public static void syncComplete(Entity tracker, Entity tracked) {
+        if(tracker instanceof ServerPlayer){
             if(tracked instanceof ServerPlayer){
                 DragonStateProvider.getCap(tracked).ifPresent(dragonStateHandler -> {
-                    PacketDistributor.sendToPlayer(target, new SyncComplete.Data(tracked.getId(), dragonStateHandler.serializeNBT(tracked.registryAccess())));
+                    PacketDistributor.sendToPlayer((ServerPlayer)tracker, new SyncComplete.Data(tracked.getId(), dragonStateHandler.serializeNBT(tracked.registryAccess())));
                 });
             }
         }
     }
 
-    @SubscribeEvent
-    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event){
-        if(event.getEntity() instanceof ServerPlayer player) {
+    public static void syncComplete(Entity entity) {
+        if(entity instanceof ServerPlayer player) {
             DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
                 PacketDistributor.sendToPlayer(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
             });
@@ -35,10 +32,24 @@ public class PlayerLoginHandler {
     }
 
     @SubscribeEvent
+    public static void onTrackingStart(PlayerEvent.StartTracking startTracking){
+        Entity tracker = startTracking.getEntity();
+        Entity tracked = startTracking.getTarget();
+        syncComplete(tracker, tracked);
+    }
+
+    @SubscribeEvent
+    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event){
+        syncComplete(event.getEntity());
+    }
+
+    @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event){
-        // Heal the player to full health on respawn as the player's max health attribute being set doesn't change the player's starting health on respawn
-        if(event.getEntity() instanceof ServerPlayer player){
-            player.setHealth(player.getMaxHealth());
-        }
+        syncComplete(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event){
+        syncComplete(event.getEntity());
     }
 }
