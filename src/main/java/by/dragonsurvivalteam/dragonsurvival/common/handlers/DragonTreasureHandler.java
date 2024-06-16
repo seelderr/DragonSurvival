@@ -114,7 +114,7 @@ public class DragonTreasureHandler{
 	public static void sleepScreenRender(RenderGuiLayerEvent.Post event){
 		Player playerEntity = Minecraft.getInstance().player;
 
-		if(playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator()){
+		if(!DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator()){
 			return;
 		}
 
