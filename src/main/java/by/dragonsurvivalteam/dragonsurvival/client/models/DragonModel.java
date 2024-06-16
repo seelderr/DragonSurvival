@@ -50,7 +50,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player = dragon.getPlayer();
-		Vec3 deltaMovement = player.getDeltaMovement();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		DragonMovementData md = handler.getMovementData();
 
