@@ -351,26 +351,6 @@ public class ClientDragonRender{
 					}
 					if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight) {
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
-
-						ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
-						ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
-						ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
-						ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
-							
-						ResourceLocation helmetTexture;
-						ResourceLocation chestPlateTexture;
-						ResourceLocation legsTexture;
-						ResourceLocation bootsTexture;
-
-						helmetTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.HEAD));
-						chestPlateTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.CHEST));
-						legsTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
-						bootsTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
-
-						renderArmorPiece(helmet, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
-						renderArmorPiece(chestPlate, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
-						renderArmorPiece(legs, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
-						renderArmorPiece(boots, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
 					}
 				}
 
@@ -410,29 +390,6 @@ public class ClientDragonRender{
 			} else {
 				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
 			}
-		}
-	}
-
-	private static void renderArmorPiece(ItemStack stack, PoseStack matrixStackIn, MultiBufferSource bufferIn, float yaw, int packedLightIn, DragonEntity entitylivingbaseIn, float partialTicks, ResourceLocation helmetTexture){
-		Color armorColor = Color.ofRGB(1f, 1f, 1f);
-
-		if(stack == null || stack.isEmpty()) return;
-
-		if (stack.getItem() instanceof DyeItem dyeItem) {
-			DyeColor dyeColor = dyeItem.getDyeColor();
-			armorColor = new Color(dyeColor.getTextureDiffuseColor());
-		}
-
-		if(!stack.isEmpty()){
-			EntityRenderer<? super DragonEntity> dragonArmorRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(ClientDragonRender.dragonArmor);
-			ClientDragonRender.dragonArmor.copyPosition(entitylivingbaseIn);
-			ClientDragonRender.dragonArmorModel.setArmorTexture(helmetTexture);
-			Color preColor = ((DragonRenderer)dragonArmorRenderer).renderColor;
-			((DragonRenderer)dragonArmorRenderer).shouldRenderLayers = false;
-			((DragonRenderer)dragonArmorRenderer).renderColor = armorColor;
-			dragonArmorRenderer.render(entitylivingbaseIn, yaw, partialTicks, matrixStackIn, bufferIn, packedLightIn);
-			((DragonRenderer)dragonArmorRenderer).renderColor = preColor;
-			((DragonRenderer)dragonArmorRenderer).shouldRenderLayers = true;
 		}
 	}
 
