@@ -20,6 +20,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -382,8 +384,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 	@Override
 	public double getTick(Object obj) {
-		// Add some offset so that when the game starts we don't go into negative time
-		return RenderUtil.getCurrentTick() + 100;
+		return level().getEntity(playerId).tickCount;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
@@ -484,11 +485,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	@Override
 	public @NotNull HumanoidArm getMainArm(){
 		return playerId != null ? getPlayer().getMainArm() : HumanoidArm.LEFT;
-	}
-
-	@Override
-	public boolean isAlwaysTicking() {
-		return true;
 	}
 
 	// Animations
