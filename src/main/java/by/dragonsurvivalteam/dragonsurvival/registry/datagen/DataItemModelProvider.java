@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.BlockItem;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -21,16 +22,9 @@ public class DataItemModelProvider extends ItemModelProvider {
 
 	@Override
 	protected void registerModels(){
-		DSItems.DS_ITEMS.getEntries().forEach((key) -> basicItem(key.get().asItem()));
-
-		// TODO: Test this
-		DSBlocks.DS_BLOCKS.getEntries().forEach((key) -> {
-			if (key.get() instanceof DragonPressurePlates || key.get() instanceof DragonAltarBlock) {
-				ResourceLocation resource = ResourceLocation.fromNamespaceAndPath(MODID, "block/");
-				withExistingParent(key.toString(), resource);
-			} else if (key.get() instanceof TreasureBlock) {
-				ResourceLocation resource = ResourceLocation.fromNamespaceAndPath(MODID, "block/");
-				withExistingParent(key.toString(), resource);
+		DSItems.DS_ITEMS.getEntries().forEach((holder) -> {
+			if(!(holder.get() instanceof BlockItem)) {
+				basicItem(holder.get());
 			}
 		});
 	}

@@ -25,7 +25,6 @@ public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
         super(pOutput, pLookupProvider, modId, existingFileHelper);
     }
 
-    // TODO: I don't believe these tags are actually getting properly applied at this moment
     @Override
     protected void addTags(@NotNull final HolderLookup.Provider provider) {
         tag(DamageTypeTags.BYPASSES_ARMOR)
@@ -49,7 +48,10 @@ public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
         tag(NO_KNOCKBACK)
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
                 .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
-                .add(DSDamageTypes.CRUSHED);
+                .add(DSDamageTypes.CRUSHED)
+                .add(DSDamageTypes.DEHYDRATION)
+                .add(DSDamageTypes.WATER_BURN)
+                .add(DSDamageTypes.RAIN_BURN);
     }
 
     private static TagKey<DamageType> createKey(@NotNull final String name) {

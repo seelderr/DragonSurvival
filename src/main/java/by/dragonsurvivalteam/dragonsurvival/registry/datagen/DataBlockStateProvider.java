@@ -23,40 +23,43 @@ public class DataBlockStateProvider extends BlockStateProvider {
 	// FIXME: This almost certainly does not work as intended. Will probably need a refactor.
 	@Override
 	protected void registerStatesAndModels() {
-		DSBlocks.DS_BLOCKS.getEntries().forEach((key) -> {
-			if (key.get() instanceof DragonDoor) {
+		DSBlocks.DS_BLOCKS.getEntries().forEach((holder) -> {
+			if (holder.get() instanceof DragonDoor) {
 				// TODO
-			} else if (key.get() instanceof DragonPressurePlates plate) {
-				ResourceLocation texture = modLoc("block/" + key);
-				ModelFile pressurePlate = models().pressurePlate(key.toString(), texture);
-				ModelFile pressurePlateDown = models().pressurePlateDown(key + "_down", texture);
+			} else if (holder.get() instanceof DragonPressurePlates plate) {
+				String name = holder.getId().getPath();
+				ResourceLocation texture = modLoc("block/" + name);
+				ModelFile pressurePlate = models().pressurePlate(name, texture);
+				ModelFile pressurePlateDown = models().pressurePlateDown(name + "_down", texture);
 				horizontalFacingPressurePlate(plate, pressurePlateDown, pressurePlate);
-			} else if (key.get() instanceof DragonAltarBlock) {
-				BlockModelBuilder builder = models().withExistingParent(key.toString(), "orientable")
-						.texture("up", modLoc("block/" + key + "_top"))
-						.texture("down", modLoc("block/" + key + "_top"))
-						.texture("east", modLoc("block/" + key + "_east"))
-						.texture("west", modLoc("block/" + key + "_west"))
-						.texture("north", modLoc("block/" + key + "_north"))
-						.texture("south", modLoc("block/" + key + "_south"))
-						.texture("particle", modLoc("block/" + key + "_top"));
+			} else if (holder.get() instanceof DragonAltarBlock) {
+				String name = holder.getId().getPath();
+				BlockModelBuilder builder = models().withExistingParent(name, "orientable")
+						.texture("up", modLoc("block/" + name + "_top"))
+						.texture("down", modLoc("block/" + name + "_top"))
+						.texture("east", modLoc("block/" + name + "_east"))
+						.texture("west", modLoc("block/" + name + "_west"))
+						.texture("north", modLoc("block/" + name + "_north"))
+						.texture("south", modLoc("block/" + name + "_south"))
+						.texture("particle", modLoc("block/" + name + "_top"));
 
-				getVariantBuilder(key.get())
+				getVariantBuilder(holder.get())
 						.forAllStates(state ->
 								ConfiguredModel.builder()
 										.modelFile(builder)
 										.rotationY((int) state.getValue(DragonAltarBlock.FACING).toYRot())
 										.build()
 						);
-			} else if (key.get() instanceof TreasureBlock treasureBlock) {
+			} else if (holder.get() instanceof TreasureBlock treasureBlock) {
 				getVariantBuilder(treasureBlock)
 						.forAllStatesExcept(state -> {
 							int layers = state.getValue(TreasureBlock.LAYERS);
+							String name = holder.getId().getPath();
 							BlockModelBuilder builder = layers != 8 ? models()
-									.withExistingParent(key.toString() + layers * 2, "block/snow_height" + layers * 2)
-									.texture("particle", modLoc("block/" + key))
-									.texture("texture", modLoc("block/" + key))
-									: /* 8 layers */ models().cubeAll(key.toString(), modLoc("block/" + key));
+									.withExistingParent(name + layers * 2, "block/snow_height" + layers * 2)
+									.texture("particle", modLoc("block/" + name))
+									.texture("texture", modLoc("block/" + name))
+									: /* 8 layers */ models().cubeAll(name, modLoc("block/" + name));
 							return ConfiguredModel.builder().modelFile(builder).build();
 						}, TreasureBlock.WATERLOGGED);
 			}

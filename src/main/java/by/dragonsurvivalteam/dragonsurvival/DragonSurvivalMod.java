@@ -66,10 +66,6 @@ public class DragonSurvivalMod{
 			() -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
 	);
 
-    public static ResourceLocation res(String name) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, name);
-    }
-
 	public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer){
 		if(FMLEnvironment.dist  == Dist.CLIENT){
 			GeckoLibClient.init();
