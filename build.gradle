@@ -7,7 +7,7 @@ plugins {
 	//id 'com.diffplug.spotless' version "7.0.0.BETA1" // FIXME: Bring back once we can bring back the other plugins
 }
 
-version = minecraft_version + "-" + new Date().format("dd.MM.yyyy")
+version = minecraft_version + "-v" + mod_version + "-" + new Date().format("dd.MM.yyyy")
 group = mod_group
 
 base {
