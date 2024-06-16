@@ -87,7 +87,7 @@ public class DragonContainer extends AbstractContainerMenu {
 		for (int i = 0; i < 4; i++) {
 			EquipmentSlot equipmentSlot = VALID_EQUIPMENT_SLOTS[i];
 
-			addSlot(new Slot(inventory, 39 - i, 8, 8 + i * 18) {
+			Slot s = new Slot(inventory, 39 - i, 8, 8 + i * 18) {
 				@Override
 				public boolean mayPlace(@NotNull final ItemStack itemStack) {
 					return itemStack.canEquip(equipmentSlot, player);
@@ -105,7 +105,9 @@ public class DragonContainer extends AbstractContainerMenu {
 					Holder<Enchantment> bindingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.BINDING_CURSE);
 					return (itemStack.isEmpty() || player.isCreative() || EnchantmentHelper.getTagEnchantmentLevel(bindingCurse, itemStack) == 0) && super.mayPickup(player);
 				}
-			});
+			};
+			addSlot(s);
+			inventorySlots.add(s);
 		}
 
 		// Inventory slots
@@ -165,7 +167,7 @@ public class DragonContainer extends AbstractContainerMenu {
 			ItemStack slotItemStack = slot.getItem();
 			itemStack = slotItemStack.copy();
 
-			EquipmentSlot equipmentSlot = itemStack.getEquipmentSlot();
+			EquipmentSlot equipmentSlot = player.getEquipmentSlotForItem(itemStack);
 
 			if (index == craftingResultIndex) { // Index 45
 				// Move item from the crafting slot into the inventory / hotbar

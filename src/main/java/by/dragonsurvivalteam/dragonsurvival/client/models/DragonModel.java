@@ -1,15 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.Locale;
 import net.minecraft.client.Minecraft;
@@ -54,83 +52,51 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		Player player = dragon.getPlayer();
 		Vec3 deltaMovement = player.getDeltaMovement();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonMovementData md = handler.getMovementData();
 
-		MathParser.setVariable("query.delta_y", () -> deltaMovement.y);
-		MathParser.setVariable("query.head_yaw", () -> handler.getMovementData().headYaw);
-		MathParser.setVariable("query.head_pitch", () -> handler.getMovementData().headPitch);
+		MathParser.setVariable("query.y_velocity", () -> md.deltaMovement.y);
+		MathParser.setVariable("query.head_yaw", () -> md.headYaw);
+		MathParser.setVariable("query.head_pitch", () -> md.headPitch);
 
-		double bodyYawChange = Functions.angleDifference((float)handler.getMovementData().bodyYawLastFrame, (float)handler.getMovementData().bodyYaw);
-		double headYawChange = Functions.angleDifference((float)handler.getMovementData().headYawLastFrame, (float)handler.getMovementData().headYaw);
-		double headPitchChange = Functions.angleDifference((float)handler.getMovementData().headPitchLastFrame, (float)handler.getMovementData().headPitch);
+		double bodyYawChange = Functions.angleDifference(md.bodyYawLastFrame, md.bodyYaw) * md.getTickFactor();
+		double headYawChange = Functions.angleDifference(md.headYawLastFrame, md.headYaw) * md.getTickFactor();
+		double headPitchChange = Functions.angleDifference(md.headPitchLastFrame, md.headPitch) * md.getTickFactor();
 
 		double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
+		MathParser.setVariable("query.gravity", () -> gravity);
 
-		dragon.tailMotionUp = Mth.clamp(Mth.lerp(0.25, dragon.tailMotionUp, ServerFlightHandler.isFlying(player) ? 0 : (deltaMovement.y - gravity) * 50), -10, 10);
-		dragon.tailMotionSide = Mth.lerp(0.1, Mth.clamp(dragon.tailMotionSide + (ServerFlightHandler.isGliding(player) ? 0 : bodyYawChange), -50, 50), 0);
+        double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
 
-		dragon.bodyYawAverage.add(bodyYawChange);
-		while (dragon.bodyYawAverage.size() > 10) {
-			dragon.bodyYawAverage.remove(0);
+		dragon.bodyYawHistory.add(bodyYawChange);
+		while (dragon.bodyYawHistory.size() > 10 * md.getTickFactor()) {
+			dragon.bodyYawHistory.removeFirst();
 		}
 
-		dragon.headYawAverage.add(headYawChange);
-		while (dragon.headYawAverage.size() > 10) {
-			dragon.headYawAverage.remove(0);
+		dragon.headYawHistory.add(headYawChange);
+		while (dragon.headYawHistory.size() > 10 * md.getTickFactor()) {
+			dragon.headYawHistory.removeFirst();
 		}
 
-		dragon.headPitchAverage.add(headPitchChange);
-		while (dragon.headPitchAverage.size() > 10) {
-			dragon.headPitchAverage.remove(0);
+		dragon.headPitchHistory.add(headPitchChange);
+		while (dragon.headPitchHistory.size() > 10 * md.getTickFactor()) {
+			dragon.headPitchHistory.removeFirst();
 		}
 
-		dragon.tailSideAverage.add(dragon.tailMotionSide);
-		while (dragon.tailSideAverage.size() > 10) {
-			dragon.tailSideAverage.remove(0);
+		dragon.yAccelHistory.add(yAccel);
+		while (dragon.yAccelHistory.size() > 10 * md.getTickFactor()) {
+			dragon.yAccelHistory.removeFirst();
 		}
 
-		dragon.tailUpAverage.add(dragon.tailMotionUp);
-		while (dragon.tailUpAverage.size() > 10) {
-			dragon.tailUpAverage.remove(0);
-		}
+		double bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(a -> a).sum() / dragon.bodyYawHistory.size();
+		double headYawAvg = dragon.headYawHistory.stream().mapToDouble(a -> a).sum() / dragon.headYawHistory.size();
+		double headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(a -> a).sum() / dragon.headPitchHistory.size();
+		double yAccelAvg = dragon.yAccelHistory.stream().mapToDouble(a -> a).sum() / dragon.yAccelHistory.size();
 
-		double bodyYawAvg = dragon.bodyYawAverage.stream().mapToDouble(a -> a).sum() / dragon.bodyYawAverage.size();
-		double headYawAvg = dragon.headYawAverage.stream().mapToDouble(a -> a).sum() / dragon.headYawAverage.size();
-		double headPitchAvg = dragon.headPitchAverage.stream().mapToDouble(a -> a).sum() / dragon.headPitchAverage.size();
-		double tailSideAvg = dragon.tailSideAverage.stream().mapToDouble(a -> a).sum() / dragon.tailSideAverage.size();
-		double tailUpAvg = dragon.tailUpAverage.stream().mapToDouble(a -> a).sum() / dragon.tailUpAverage.size();
+		MathParser.setVariable("query.body_yaw_change", () -> bodyYawAvg);
+		MathParser.setVariable("query.head_yaw_change", () -> headYawAvg);
+		MathParser.setVariable("query.head_pitch_change", () -> headPitchAvg);
 
-		double query_body_yaw_change = Mth.lerp(0.1, dragon.body_yaw_change, bodyYawAvg);
-		double query_head_yaw_change = Mth.lerp(0.1, dragon.head_yaw_change, headYawAvg);
-		double query_head_pitch_change = Mth.lerp(0.1, dragon.head_pitch_change, headPitchAvg);
-		double query_tail_motion_up = Mth.lerp(0.1, dragon.tail_motion_up, tailUpAvg);
-		double query_tail_motion_side = Mth.lerp(0.1, dragon.tail_motion_side, tailSideAvg);
-
-		if (dragon.tailLocked) {
-			dragon.tailMotionUp = 0;
-			dragon.tailMotionSide = 0;
-
-			dragon.tail_motion_up = 0;
-			dragon.tail_motion_side = 0;
-
-			query_tail_motion_up = 0;
-			query_tail_motion_side = 0;
-		}
-
-		MathParser.setVariable("query.body_yaw_change", () -> query_body_yaw_change);
-		MathParser.setVariable("query.head_yaw_change", () -> query_head_yaw_change);
-		MathParser.setVariable("query.head_pitch_change", () -> query_head_pitch_change);
-
-		double finalQuery_tail_motion_up = query_tail_motion_up;
-		MathParser.setVariable("query.tail_motion_up", () -> finalQuery_tail_motion_up);
-
-		double finalQuery_tail_motion_side = query_tail_motion_side;
-		MathParser.setVariable("query.tail_motion_side", () -> finalQuery_tail_motion_side);
-
-		dragon.body_yaw_change = query_body_yaw_change;
-		dragon.head_yaw_change = query_head_yaw_change;
-		dragon.head_pitch_change = query_head_pitch_change;
-		dragon.tail_motion_up = query_tail_motion_up;
-		dragon.tail_motion_side = query_tail_motion_side;
+		MathParser.setVariable("query.y_accel", () -> yAccelAvg);
 	}
 	
 	@Override

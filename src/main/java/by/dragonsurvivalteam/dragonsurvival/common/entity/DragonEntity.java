@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -38,31 +37,27 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
-import software.bernie.geckolib.util.RenderUtil;
 
 @EventBusSubscriber
 public class DragonEntity extends LivingEntity implements GeoEntity, CommonTraits {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public final ArrayList<Double> bodyYawAverage = new ArrayList<>();
-	public final ArrayList<Double> headYawAverage = new ArrayList<>();
-	public final ArrayList<Double> headPitchAverage = new ArrayList<>();
-	public final ArrayList<Double> tailSideAverage = new ArrayList<>();
-	public final ArrayList<Double> tailUpAverage = new ArrayList<>();
+	public final ArrayList<Double> bodyYawHistory = new ArrayList<>();
+	public final ArrayList<Double> headYawHistory = new ArrayList<>();
+	public final ArrayList<Double> headPitchHistory = new ArrayList<>();
+	public final ArrayList<Double> yAccelHistory = new ArrayList<>();
 	/** This reference must be updated whenever player is remade, for example, when changing dimensions */
 	public volatile Integer playerId; // TODO :: Use string uuid?
 	public boolean neckLocked = false;
 	public boolean tailLocked = false;
-	public float prevZRot;
-	public float prevXRot;
+	public float prevZRot = 0;
+	public float prevXRot = 0;
 
-	public double tailMotionSide;
-	public double tailMotionUp;
+
 	public double body_yaw_change = 0;
 	public double head_yaw_change = 0;
 	public double head_pitch_change = 0;
-	public double tail_motion_up = 0;
-	public double tail_motion_side = 0;
+	public double y_accel = 0;
 	ActiveDragonAbility lastCast = null;
 	boolean started, ended;
 	AnimationTimer animationTimer = new AnimationTimer();
@@ -203,6 +198,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		}
 	}
 
+	private void lockTailAndNeck(){
+		neckLocked = true;
+		tailLocked = true;
+	}
+
 	private PlayState predicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
 
@@ -229,14 +229,15 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			return PlayState.STOP;
 		}
 
-		// TODO :: Do these need to be re-set to false when the ability sets it to true?
-		neckLocked = false;
-		tailLocked = false;
-
 		Vec3 deltaMovement = player.getDeltaMovement();
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
 
 		RawAnimation builder = null;
+
+		// This predicate runs first, so we reset neck and tail lock here. If any animation locks them, they will be re-locked in time before the neck/tail animations are played.
+		// It is also important we reset these values before trying to render abilities
+		neckLocked = false;
+		tailLocked = false;
 
 		if (!(currentCast instanceof ISecondAnimation) && !(lastCast instanceof ISecondAnimation)) {
 			builder = renderAbility(state, currentCast);
@@ -248,31 +249,24 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 		// TODO: The transition length of animations doesn't work correctly when the framerate varies too much from 60 FPS
 		if(handler.getMagicData().onMagicSource){
-			neckLocked = false;
-			tailLocked = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT_ON_MAGIC_SOURCE));
 		}else if(player.isSleeping() || handler.treasureResting){
-			neckLocked = false;
-			tailLocked = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SLEEP));
 		}else if(player.isPassenger()){
-			neckLocked = false;
-			tailLocked = false;
 			return state.setAndContinue(AnimationUtils.createAnimation(builder, SIT));
 		}else if(player.getAbilities().flying || ServerFlightHandler.isFlying(player)){
 			if(ServerFlightHandler.isGliding(player)){
-				neckLocked = false;
-				tailLocked = false;
 				if(ServerFlightHandler.isSpin(player)){
-					neckLocked = false;
-					tailLocked = false;
 					animationSpeed = 2;
+					lockTailAndNeck();
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
 					animationController.transitionLength(2);
 				}else if(deltaMovement.y < -1){
+					lockTailAndNeck();
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_DIVE_ALT));
 					animationController.transitionLength(4);
 				}else if(deltaMovement.y < -0.25){
+					lockTailAndNeck();
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_DIVE));
 					animationController.transitionLength(4);
 				}else if(deltaMovement.y > 0.5){
@@ -285,18 +279,13 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 				}
 			}else{
 				if(player.isCrouching() && deltaMovement.y < 0 && distanceFromGround < 10 && deltaMovement.length() < 4){
-					neckLocked = false;
-					tailLocked = false;
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND));
 					animationController.transitionLength(2);
 				} else if(ServerFlightHandler.isSpin(player)){
-					neckLocked = false;
-					tailLocked = false;
+					lockTailAndNeck();
 					state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
 					animationController.transitionLength(2);
 				}else{
-					neckLocked = false;
-					tailLocked = false;
 					if(deltaMovement.y > 0) {
 						animationSpeed = 2;
 					}
@@ -306,11 +295,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 		}else if(player.getPose() == Pose.SWIMMING){
 			if(ServerFlightHandler.isSpin(player)){
-				neckLocked = false;
-				tailLocked = false;
+				lockTailAndNeck();
 				state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
 				animationController.transitionLength(2);
 			}else{
+				lockTailAndNeck();
 				useDynamicScaling = true;
 				baseSpeed = defaultPlayerFastSwimSpeed; // Default base fast speed for the player
 				state.setAnimation(AnimationUtils.createAnimation(builder, SWIM_FAST));
@@ -318,12 +307,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			}
 		}else if((player.isInLava() || player.isInWaterOrBubble()) && !player.onGround()){
 			if(ServerFlightHandler.isSpin(player)){
-				neckLocked = false;
-				tailLocked = false;
 				animationSpeed = 2;
+				lockTailAndNeck();
 				state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
 				animationController.transitionLength(2);
 			}else{
+				lockTailAndNeck();
 				useDynamicScaling = true;
 				baseSpeed = defaultPlayerSwimSpeed;
 				state.setAnimation(AnimationUtils.createAnimation(builder, SWIM));

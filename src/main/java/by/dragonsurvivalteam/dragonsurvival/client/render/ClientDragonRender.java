@@ -5,8 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonArmorModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonArmorRenderLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -36,7 +34,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-import net.minecraft.client.CameraType;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
@@ -48,11 +46,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.DyeItem;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -61,10 +55,7 @@ import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import software.bernie.geckolib.util.Color;
 import software.bernie.geckolib.util.RenderUtil;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRender{
@@ -229,7 +220,7 @@ public class ClientDragonRender{
 			}
 
 			renderPlayerEvent.setCanceled(true);
-			setDragonYawAndPitch(player, deltaPartialTick);
+			setDragonMovementData(player, deltaPartialTick);
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
 
@@ -410,18 +401,18 @@ public class ClientDragonRender{
 		}
 	}
 
-	public static void setDragonYawAndPitch(Player player, float deltaPartialTick) {
+	public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
 		if(player != null) {
 			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
 				if (playerStateHandler.isDragon()) {
 					// Handle headYaw
-					float yRot = player.getViewYRot(deltaPartialTick);
-					float xRot = player.getViewXRot(deltaPartialTick);
-					float headYaw = Functions.angleDifference((float) playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot));
-					headYaw = (float) RenderUtil.lerpYaw(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
+					float yRot = player.getViewYRot(realtimeDeltaTick);
+					float xRot = player.getViewXRot(realtimeDeltaTick);
+					double headYaw = Functions.angleDifference(playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot));
+					headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
 					// Handle headPitch
-					float headPitch = (float) Mth.lerp(deltaPartialTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
+					double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
 
 					// Handle bodyYaw
 					double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
@@ -440,22 +431,22 @@ public class ClientDragonRender{
 						moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 					}
 
-					float f = (float) Mth.atan2(moveVector.z, moveVector.x) * (180F / (float) Math.PI) - 90F;
-					float f1 = (float) (Math.pow(moveVector.x, 2) + Math.pow(moveVector.z, 2));
+					double f = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
+					double f1 = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
 
 					boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
 					if (!firstPersonRotation && !isFreeLook) {
 						if (moveVector.length() > 0 && isFirstPerson) {
 							bodyYaw = player.getYRot();
 							if (moveVector.length() > 0) {
-								float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
+								double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
 								if (95.0F < f5 && f5 < 265.0F) {
 									f -= 180.0F;
 								}
 
-								float _f = Mth.wrapDegrees(f - (float) bodyYaw);
+								double _f = Mth.wrapDegrees(f - bodyYaw);
 								bodyYaw += _f * 0.3F;
-								float _f1 = Mth.wrapDegrees(player.getYRot() - (float) bodyYaw);
+								double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
 
 								if (_f1 < -75.0F) {
 									_f1 = -75.0F;
@@ -474,18 +465,18 @@ public class ClientDragonRender{
 
 
 					if (f1 > 0.000028) {
-						float f2 = Mth.wrapDegrees(f - (float) bodyYaw);
+						double f2 = Mth.wrapDegrees(f - bodyYaw);
 						bodyYaw += 0.5F * f2;
 
 						if (isFirstPerson) {
-							float f5 = Mth.abs(Mth.wrapDegrees(player.getYRot()) - f);
+							double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
 							if (95.0F < f5 && f5 < 265.0F) {
 								f -= 180.0F;
 							}
 
-							float _f = Mth.wrapDegrees(f - (float) bodyYaw);
+							double _f = Mth.wrapDegrees(f - bodyYaw);
 							bodyYaw += _f * 0.3F;
-							float _f1 = Mth.wrapDegrees(player.getYRot() - (float) bodyYaw);
+							double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
 
 							if (_f1 < -75.0F) {
 								_f1 = -75.0F;
@@ -499,11 +490,10 @@ public class ClientDragonRender{
 							}
 						}
 					}
-					bodyYaw = RenderUtil.lerpYaw(deltaPartialTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
+					bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
 
 					// Update the movement data
-					DragonMovementData md = playerStateHandler.getMovementData();
-					playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch);
+					playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, moveVector, realtimeDeltaTick);
 				}
 			});
 		}
@@ -525,7 +515,7 @@ public class ClientDragonRender{
 	}
 
 	@SubscribeEvent
-	public static void calculateDeltaPartialTick(RenderFrameEvent.Pre event) {
+	public static void calculateRealtimeDeltaTick(RenderFrameEvent.Pre event) {
 		deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();
 	}
 }
