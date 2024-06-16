@@ -17,6 +17,10 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.Data> {
 	public static void handleClient(Data message, IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncTreasureRestStatus(message));
+	}
+
+	public static void handleServer(Data message, IPayloadContext context) {
 		context.enqueueWork(() -> {
 			DragonStateHandler handler = context.player().getData(DRAGON_HANDLER);
 			if (handler.isDragon()) {
@@ -37,9 +41,6 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.D
 
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message);
 		});
-	}
-	public static void handleServer(Data message, IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncTreasureRestStatus(message));
 	}
 
 	public record Data(int playerId, boolean state) implements CustomPacketPayload

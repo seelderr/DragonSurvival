@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncDiggingStatus;
+import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.world.entity.player.Player;
@@ -24,6 +25,11 @@ public class MiningTickHandler{
 					if(isMining != dragonStateHandler.getMovementData().dig){
 						dragonStateHandler.getMovementData().dig = isMining;
 						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDiggingStatus.Data(player.getId(), isMining));
+					}
+
+					if(dragonStateHandler.treasureResting && isMining) {
+						dragonStateHandler.treasureResting = false;
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
 					}
 				}
 			}
