@@ -137,14 +137,17 @@ public class DragonStateHandler extends EntityStateHandler {
 		movementData.bite = bite;
 	}
 
-	public void setMovementData(double bodyYaw, double headYaw, double headPitch) {
+	public void setMovementData(double bodyYaw, double headYaw, double headPitch, Vec3 deltaMovement, double realTimeDeltaTick) {
 		movementData.headYawLastFrame = movementData.headYaw;
 		movementData.bodyYawLastFrame = movementData.bodyYaw;
 		movementData.headPitchLastFrame = movementData.headPitch;
+		movementData.deltaMovementLastFrame = movementData.deltaMovement;
 
 		movementData.bodyYaw = bodyYaw;
 		movementData.headYaw = headYaw;
 		movementData.headPitch = headPitch;
+		movementData.deltaMovement = deltaMovement;
+		movementData.realtimeDeltaTick = realTimeDeltaTick;
 	}
 
 	// Only call this version of setSize if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
