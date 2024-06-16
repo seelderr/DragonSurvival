@@ -118,9 +118,6 @@ public class ClientDragonRender{
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderOtherPlayerSkins", comment = "Should other player skins be rendered?" )
 	public static Boolean renderOtherPlayerSkins = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "armorRenderLayer", comment = "Should the armor be rendered as a layer on the dragon? Some shaders requires this to be off. Can cause some weird effects with armor when turned off." )
-	public static Boolean armorRenderLayer = true;
-
 	@ConfigOption( side = ConfigSide.CLIENT, category = "nametag", key = "dragonNameTags", comment = "Show name tags for dragons." )
 	public static Boolean dragonNameTags = false;
 
@@ -355,27 +352,25 @@ public class ClientDragonRender{
 					if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight) {
 						dragonRenderer.render(dummyDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
 
-						if (!armorRenderLayer) {
-							ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
-							ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
-							ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
-							ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
+						ItemStack helmet = player.getItemBySlot(EquipmentSlot.HEAD);
+						ItemStack chestPlate = player.getItemBySlot(EquipmentSlot.CHEST);
+						ItemStack legs = player.getItemBySlot(EquipmentSlot.LEGS);
+						ItemStack boots = player.getItemBySlot(EquipmentSlot.FEET);
 							
-							ResourceLocation helmetTexture;
-							ResourceLocation chestPlateTexture;
-							ResourceLocation legsTexture;
-							ResourceLocation bootsTexture;
+						ResourceLocation helmetTexture;
+						ResourceLocation chestPlateTexture;
+						ResourceLocation legsTexture;
+						ResourceLocation bootsTexture;
 
-							helmetTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.HEAD));
-							chestPlateTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.CHEST));
-							legsTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
-							bootsTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
+						helmetTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.HEAD));
+						chestPlateTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.CHEST));
+						legsTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.LEGS));
+						bootsTexture = ResourceLocation.fromNamespaceAndPath(MODID, DragonArmorRenderLayer.constructArmorTexture(player, EquipmentSlot.FEET));
 
-							renderArmorPiece(helmet, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
-							renderArmorPiece(chestPlate, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
-							renderArmorPiece(legs, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
-							renderArmorPiece(boots, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
-						}
+						renderArmorPiece(helmet, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, helmetTexture);
+						renderArmorPiece(chestPlate, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, chestPlateTexture);
+						renderArmorPiece(legs, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, legsTexture);
+						renderArmorPiece(boots, poseStack, renderTypeBuffer, yaw, eventLight, dummyDragon, partialRenderTick, bootsTexture);
 					}
 				}
 

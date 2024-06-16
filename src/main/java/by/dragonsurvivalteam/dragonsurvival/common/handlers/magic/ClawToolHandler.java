@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorItem;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -23,6 +22,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -72,8 +72,7 @@ public class ClawToolHandler{
 			}
 
 			event.getOrb().value = Math.max(0, event.getOrb().value);
-			// FIXME: Is this still needed?
-			//player.detectEquipmentUpdates();
+			player.detectEquipmentUpdates();
 		});
 	}
 
@@ -190,7 +189,7 @@ public class ClawToolHandler{
 		}
 
 		Level world = player.level();
-		BlockHitResult result = AccessorItem.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
+		BlockHitResult result = Item.getPlayerPOVHitResult(world, player, ClipContext.Fluid.NONE);
 
 		if (result.getType() != HitResult.Type.MISS) {
 			BlockState state = world.getBlockState(result.getBlockPos());

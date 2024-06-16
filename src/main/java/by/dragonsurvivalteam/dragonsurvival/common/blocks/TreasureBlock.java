@@ -235,8 +235,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		boolean belowEmpty = isFree(p_225534_2_.getBlockState(p_225534_3_.below())) && p_225534_3_.getY() >= p_225534_2_.getMinBuildHeight();
 		boolean lowerLayer = p_225534_2_.getBlockState(p_225534_3_.below()).getBlock() == p_225534_1_.getBlock() && p_225534_2_.getBlockState(p_225534_3_.below()).getValue(LAYERS) < 8;
 		if(belowEmpty || lowerLayer){
-			// FIXME: Re-add falling block logic, FallingBlockEntity is private and some things are different.
-			/*FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_225534_2_, (double)p_225534_3_.getX() + 0.5D, p_225534_3_.getY(), (double)p_225534_3_.getZ() + 0.5D, p_225534_2_.getBlockState(p_225534_3_)){
+			FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_225534_2_, (double)p_225534_3_.getX() + 0.5D, p_225534_3_.getY(), (double)p_225534_3_.getZ() + 0.5D, p_225534_2_.getBlockState(p_225534_3_)){
 				@Override
 				public void tick(){
 					BlockState state = level().getBlockState(blockPosition().below());
@@ -272,7 +271,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 			};
 			p_225534_2_.setBlock(p_225534_3_, p_225534_1_.getFluidState().createLegacyBlock(), Block.UPDATE_ALL);
 			p_225534_2_.addFreshEntity(fallingblockentity);
-			falling(fallingblockentity);*/
+			falling(fallingblockentity);
 		}
 	}
 

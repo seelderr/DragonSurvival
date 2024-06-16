@@ -34,10 +34,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 	@Override
 	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		if (!ClientDragonRender.armorRenderLayer) {
-			return;
-		}
-
 		Player player = animatable.getPlayer();
 		if (player == null) {
 			return;

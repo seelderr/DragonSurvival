@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
+import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.MobEffectUtils;
 import java.util.Optional;
@@ -179,6 +180,6 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 	// FIXME: Figure out what is the replacement for createTickerHelper
 	@Override
 	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
-		return pLevel.isClientSide() ? null : null; //: BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.DRAGON_BEACON.get(), DragonBeaconTileEntity::serverTick);
+		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);
 	}
 }

@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -8,8 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorCamera;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorGameRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
@@ -23,6 +20,7 @@ import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
@@ -110,7 +108,7 @@ public class ClientFlightHandler {
 
 		if(currentPlayer != null && currentPlayer.isAddedToWorld() && DragonStateProvider.isDragon(currentPlayer)){
 			DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(currentPlayer);
-			AccessorGameRenderer gameRenderer = (AccessorGameRenderer)minecraft.gameRenderer;
+			GameRenderer gameRenderer = minecraft.gameRenderer;
 
 			if(ServerFlightHandler.isGliding(currentPlayer)){
 				if(setup.getCamera().isDetached()){
@@ -119,7 +117,7 @@ public class ClientFlightHandler {
 						Vec3 lookVec = currentPlayer.getLookAngle();
 						float increase = (float) Mth.clamp(lookVec.y * 10, 0, lookVec.y * 5);
 						float gradualIncrease = Mth.lerp(0.25f, lastIncrease, increase);
-						((AccessorCamera)info).invokeMove(0, gradualIncrease, 0);
+						info.move(0, gradualIncrease, 0);
 						lastIncrease = gradualIncrease;
 					}
 				}
@@ -130,7 +128,7 @@ public class ClientFlightHandler {
 							Vec3 lookVec = currentPlayer.getLookAngle();
 							float f = Math.min(Math.max(0.5F, 1F - (float)(lookVec.y * 5 / 2.5 * 0.5)), 3F);
 							float newZoom = Mth.lerp(0.25f, lastZoom, f);
-							gameRenderer.setZoom(newZoom);
+							gameRenderer.zoom = newZoom;
 							lastZoom = newZoom;
 						}
 					}
@@ -139,14 +137,14 @@ public class ClientFlightHandler {
 				if(lastIncrease > 0){
 					if(flightCameraMovement){
 						lastIncrease = Mth.lerp(0.25f, lastIncrease, 0);
-						((AccessorCamera)info).invokeMove(0, lastIncrease, 0);
+						info.move(0, lastIncrease, 0);
 					}
 				}
 
 				if(lastZoom != 1){
 					if(flightZoomEffect){
 						lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
-						gameRenderer.setZoom(lastZoom);
+						gameRenderer.zoom = lastZoom;
 					}
 				}
 
@@ -156,7 +154,7 @@ public class ClientFlightHandler {
 						// I'm not entirely sure why 20 works here, but it seems to be the magic number that
 						// keeps the dragon's size from the camera's perspective constant.
 						float offset = (float) ((dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20);
-						((AccessorCamera)info).invokeMove(-offset, 0, 0);
+						info.move(-offset, 0, 0);
 					}
 				}
 			}

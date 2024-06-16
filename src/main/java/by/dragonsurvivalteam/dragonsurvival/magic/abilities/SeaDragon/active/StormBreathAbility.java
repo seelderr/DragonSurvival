@@ -18,7 +18,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorCreeper;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
@@ -180,7 +179,7 @@ public class StormBreathAbility extends BreathAbility{
 		if(entity instanceof Creeper creeper){
 
 			if(!creeper.isPowered()){
-				creeper.getEntityData().set(AccessorCreeper.getDataIsPowered(), true);
+				creeper.getEntityData().set(Creeper.DATA_IS_POWERED, true);
 			}
 		}
 	}

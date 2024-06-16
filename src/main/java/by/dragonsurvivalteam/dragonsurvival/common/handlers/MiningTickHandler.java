@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorServerPlayerGameMode;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncDiggingStatus;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.level.ServerPlayerGameMode;
@@ -20,7 +19,7 @@ public class MiningTickHandler{
 			if(dragonStateHandler.isDragon()){
 				if(player instanceof ServerPlayer){
 					ServerPlayerGameMode interactionManager = ((ServerPlayer)player).gameMode;
-					boolean isMining = ((AccessorServerPlayerGameMode)interactionManager).getIsDestroyingBlock() && player.swinging;
+					boolean isMining = interactionManager.isDestroyingBlock && player.swinging;
 
 					if(isMining != dragonStateHandler.getMovementData().dig){
 						dragonStateHandler.getMovementData().dig = isMining;

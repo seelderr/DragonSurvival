@@ -5,8 +5,6 @@
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
     "AccessorAnimationController",
-    "AccessorCreeper",
-    "AccessorServerPlayerGameMode",
     "MixinEntity",
     "MixinInventory",
     "MixinItem",
@@ -20,10 +18,7 @@
     "tool_swap.MixinServerPlayerGameModeStart"
   ],
   "client": [
-    "AccessorCamera",
     "AccessorEntityRenderer",
-    "AccessorEntityRendererManager",
-    "AccessorGameRenderer",
     "AccessorLivingRenderer",
     "AccessorScreen",
     "MixinAbstractContainerEventHandler",
