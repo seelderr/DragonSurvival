@@ -215,10 +215,10 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		}
 	}
 
-	// FIXME: Implement!
+	// TODO: Is unit codec okay here?
 	@Override
 	protected MapCodec<? extends FallingBlock> codec() {
-		return null;
+		return MapCodec.unit(this);
 	}
 
 	@Override

@@ -227,11 +227,10 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		}
 
 		if(!player.isCrouching()){
-			if(player instanceof ServerPlayer){
+			if(player instanceof ServerPlayer serverPlayer){
 				BlockPos finalPos = pos1;
 				BlockEntity blockEntity1 = getBlockEntity(worldIn, pos1);
-				// FIXME: What is the replacement for this?
-				//NetworkHooks.openScreen((ServerPlayer)player, (MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
+				serverPlayer.openMenu((MenuProvider)blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
 			}
 		}else{
 			if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()){
@@ -412,9 +411,8 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		return DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get().create(pPos, pState);
 	}
 
-	// FIXME: What is the replacement for this createTickerHelper?
 	@Override
 	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
-		return pLevel.isClientSide() ? null : null; //BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY, SourceOfMagicTileEntity::serverTick);
+		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);
 	}
 }
