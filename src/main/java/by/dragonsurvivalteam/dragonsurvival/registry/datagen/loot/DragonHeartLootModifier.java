@@ -37,7 +37,13 @@ public class DragonHeartLootModifier extends LootModifier {
 
 
         Player player = context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER);
-        if(player != null && !DragonStateProvider.isDragon(player)){
+
+        // If it wasn't killed by a player, don't drop anything
+        if(player == null) {
+            return generatedLoot;
+        }
+
+        if(!DragonStateProvider.isDragon(player)){
             return generatedLoot;
         }
 
