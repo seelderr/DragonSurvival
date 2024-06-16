@@ -384,7 +384,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 	@Override
 	public double getTick(Object obj) {
-		return level().getEntity(playerId).tickCount;
+		// Prevent being on a negative tick (will cause t-posing!) by adding 100 here
+		return level().getEntity(playerId).tickCount + 100;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
