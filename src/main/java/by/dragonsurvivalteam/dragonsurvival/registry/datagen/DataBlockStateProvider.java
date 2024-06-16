@@ -20,7 +20,6 @@ public class DataBlockStateProvider extends BlockStateProvider {
 		super(output, modId, existingFileHelper);
 	}
 
-	// FIXME: This almost certainly does not work as intended. Will probably need a refactor.
 	@Override
 	protected void registerStatesAndModels() {
 		DSBlocks.DS_BLOCKS.getEntries().forEach((holder) -> {

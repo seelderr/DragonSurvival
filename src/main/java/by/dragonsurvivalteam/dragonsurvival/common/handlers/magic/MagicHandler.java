@@ -248,8 +248,6 @@ public class MagicHandler{
 					boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
 
 					if (hit) {
-						// FIXME 1.20
-						// event.getSource().bypassArmor();
 						event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
 						double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
 						double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));

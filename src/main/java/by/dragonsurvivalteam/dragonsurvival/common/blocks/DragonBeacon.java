@@ -177,7 +177,6 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		return DSTileEntities.DRAGON_BEACON.get().create(pPos, pState);
 	}
 
-	// FIXME: Figure out what is the replacement for createTickerHelper
 	@Override
 	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
 		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);

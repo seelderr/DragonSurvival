@@ -70,10 +70,10 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(PRIMARY_BLOCK, true).setValue(BACK_BLOCK, false).setValue(TOP_BLOCK, false).setValue(FILLED, false));
 	}
 
-	// FIXME: Implement!
+	// TODO: Is it fine to use a unit codec here?
 	@Override
 	protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-		return null;
+		return MapCodec.unit(this);
 	}
 
 	private static void breakBlock(Level world, BlockPos pos){
