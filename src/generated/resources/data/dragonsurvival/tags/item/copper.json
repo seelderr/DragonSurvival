@@ -1,0 +1,9 @@
+{
+  "values": [
+    "#c:ingots/copper",
+    {
+      "id": "cavesandcliffs:raw_copper",
+      "required": false
+    }
+  ]
+}

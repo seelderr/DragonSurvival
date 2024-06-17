@@ -186,16 +186,11 @@ public class DragonDestructionHandler {
                 }
 
                 AABB boundingBox;
-                if (ServerConfig.sizeChangesHitbox) {
-                    boolean squish = dragonStateHandler.getBody() != null ? dragonStateHandler.getBody().isSquish() : false;
-                    double size = dragonStateHandler.getSize();
-                    double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman), event.getEntity().getPose(), ServerConfig.sizeChangesHitbox, squish);
-                    double width = DragonSizeHandler.calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman) / 2.0D;
-                    boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
-                } else {
-                    boundingBox = player.getBoundingBox();
-                }
-
+                boolean squish = dragonStateHandler.getBody() != null ? dragonStateHandler.getBody().isSquish() : false;
+                double size = dragonStateHandler.getSize();
+                double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size), event.getEntity().getPose(), squish);
+                double width = DragonSizeHandler.calculateDragonWidth(size) / 2.0D;
+                boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
                 boundingBox = boundingBox.inflate(1.25 + (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.1f);
 
                 checkAndDestroyCollidingBlocks(dragonStateHandler, event, boundingBox);

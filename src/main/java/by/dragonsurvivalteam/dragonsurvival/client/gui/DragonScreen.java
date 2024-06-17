@@ -152,7 +152,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 			boolean claws = !handler.getClawToolData().shouldRenderClaws;
 
 			handler.getClawToolData().shouldRenderClaws = claws;
-			ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
+			ConfigHandler.updateConfigValue("rendering/renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
 			PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws)
 			);
 		})

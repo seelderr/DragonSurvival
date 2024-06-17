@@ -224,7 +224,7 @@ public class SkinsScreen extends Screen{
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
-			ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
+			ConfigHandler.updateConfigValue("rendering/renderNewbornSkin", handler.getSkinData().renderNewborn);
 			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
@@ -244,7 +244,7 @@ public class SkinsScreen extends Screen{
 
 			handler.getSkinData().renderYoung = newValue;
 			renderYoung = newValue;
-			ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
+			ConfigHandler.updateConfigValue("rendering/renderYoungSkin", handler.getSkinData().renderYoung);
 			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
@@ -262,7 +262,7 @@ public class SkinsScreen extends Screen{
 
 			handler.getSkinData().renderAdult = newValue;
 			renderAdult = newValue;
-			ConfigHandler.updateConfigValue("renderAdultSkin", handler.getSkinData().renderAdult);
+			ConfigHandler.updateConfigValue("rendering/renderAdultSkin", handler.getSkinData().renderAdult);
 			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
 		}, Supplier::get) {
@@ -275,7 +275,8 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable the rendering of customized skins (of other players)
 		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
-			ConfigHandler.updateConfigValue("renderOtherPlayerSkins", !ClientDragonRender.renderOtherPlayerSkins);
+			ClientDragonRender.renderOtherPlayerSkins = !ClientDragonRender.renderOtherPlayerSkins;
+			ConfigHandler.updateConfigValue("rendering/renderOtherPlayerSkins", ClientDragonRender.renderOtherPlayerSkins);
 			setTextures();
 		}, Supplier::get) {
 			@Override

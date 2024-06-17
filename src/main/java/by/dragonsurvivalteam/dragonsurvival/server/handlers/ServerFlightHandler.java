@@ -175,13 +175,13 @@ public class ServerFlightHandler{
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
 						if(DragonUtils.isDragonType(player, DragonTypes.SEA)) {
-							player.addEffect(new MobEffectInstance(DSEffects.sea_wings, 500, 0, false, false));
+							player.addEffect(new MobEffectInstance(DSEffects.sea_wings, 500, 0, true, false));
 
 						}if(DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
-							player.addEffect(new MobEffectInstance(DSEffects.cave_wings, 500, 0, false, false));
+							player.addEffect(new MobEffectInstance(DSEffects.cave_wings, 500, 0, true, false));
 
 						}if(DragonUtils.isDragonType(player, DragonTypes.FOREST)) {
-							player.addEffect(new MobEffectInstance(DSEffects.forest_wings, 500, 0, false, false));
+							player.addEffect(new MobEffectInstance(DSEffects.forest_wings, 500, 0, true, false));
 						}
 					}
 				}

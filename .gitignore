@@ -32,10 +32,5 @@ gradle/crowdin.properties
 package-lock.json
 node_modules/.bin/cdl
 /node_modules/
-src/generated/resources
-src/generated/resources/.cache/cache
-src/generated/resources/.cache
 /mcmodsrepo/
 runs/
-
-src/generated
