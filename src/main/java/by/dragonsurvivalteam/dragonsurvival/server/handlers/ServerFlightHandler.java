@@ -72,9 +72,6 @@ public class ServerFlightHandler{
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "foldWingsOnLand", comment = "Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually." )
 	public static Boolean foldWingsOnLand = false;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "alternateFlight", comment = "Whether to use flight similar to creative rather then gliding." )
-	public static Boolean creativeFlight = false;
-
 	@ConfigRange( min = 0, max = 100000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight" )
 	public static Integer flightSpinCooldown = 5;
@@ -280,12 +277,6 @@ public class ServerFlightHandler{
 		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
-				if(creativeFlight && !player.level().isClientSide()){
-					if(player.getAbilities().flying != wingsSpread && !player.isCreative() && !player.isSpectator()){
-						player.getAbilities().flying = wingsSpread;
-						player.onUpdateAbilities();
-					}
-				}
 
 				if(wingsSpread){
 					if(flyingUsesHunger){
