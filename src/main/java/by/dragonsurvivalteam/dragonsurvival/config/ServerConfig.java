@@ -116,12 +116,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled. A block radius of 0 disables this feature. Crouching allows you to mine one block at a time.")
 	public static Double largeBlockBreakRadiusScalar = 0.7;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "sizeChangesHitbox", comment = "Whether the dragon size determines its hitbox size. The bigger the dragon, the bigger the hitbox. If false standard player's hitbox be used." )
-	public static Boolean sizeChangesHitbox = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "largerDragonHitbox", comment = "Whether the dragon hitbox grows past a human hitbox." )
-	public static Boolean hitboxGrowsPastHuman = true;
-
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth"}, key = "growNewborn", comment = "List of items to grow newborn dragon. Format: item/modid:id" )
 	public static List<String> growNewborn = List.of("dragonsurvival:heart_element", "dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");

@@ -38,9 +38,9 @@ public class DragonSizeHandler{
 
 		double size = handler.getSize();
 		// Calculate base values
-		double height = calculateDragonHeight(size, ServerConfig.hitboxGrowsPastHuman);
-		double width = calculateDragonWidth(size, ServerConfig.hitboxGrowsPastHuman);
-		double eyeHeight = calculateDragonEyeHeight(size, ServerConfig.hitboxGrowsPastHuman);
+		double height = calculateDragonHeight(size);
+		double width = calculateDragonWidth(size);
+		double eyeHeight = calculateDragonEyeHeight(size);
 		boolean squish = false;
 		if (handler.getBody() != null) {
 			squish = handler.getBody().isSquish();
@@ -48,51 +48,36 @@ public class DragonSizeHandler{
 			eyeHeight *= handler.getBody().getEyeHeightMult();
 		}
 		// Handle Pose stuff
-		if(ServerConfig.sizeChangesHitbox){
-			Pose overridePose = overridePose(player);
-			height = calculateModifiedHeight(height, overridePose, true, squish);
-			eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);
-			// Apply changes
-			event.setNewEyeHeight((float)eyeHeight);
-			// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-			event.setNewSize(calculateDimensions(width, height));
-		}
+		Pose overridePose = overridePose(player);
+		height = calculateModifiedHeight(height, overridePose, squish);
+		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);// Apply changes
+		event.setNewEyeHeight((float)eyeHeight);
+		// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
+		event.setNewSize(calculateDimensions(width, height));
 	}
 	
 	public static double getDragonHeight(Player player) {
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		double height = calculateDragonHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
+		double height = calculateDragonHeight(handler.getSize());
 		boolean squish = false;
 		if (handler.getBody() != null) {
 			height *= handler.getBody().getHeightMult();
 			squish = handler.getBody().isSquish();
 		}
 		Pose overridePose = overridePose(player);
-		return calculateModifiedHeight(height, overridePose, true, squish);
+		return calculateModifiedHeight(height, overridePose, squish);
 	}
 
-	public static double calculateDragonHeight(double size, boolean growsPastHuman){
-		double height = (size + 4.0D) / 20.0D; // 0.9 -> Config Dragon Max
-		if(!growsPastHuman){
-			height = 0.9D + 0.9D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D); // 0.9 -> 1.8 (Min to Human Max)
-		}
-		return height;
+	public static double calculateDragonHeight(double size){
+        return 0.9D + 0.9D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
-	public static double calculateDragonWidth(double size, boolean growsPastHuman){
-		double width = (3.0D * size + 62.0D) / 260.0D; // 0.4 -> Config Dragon Max
-		if(!growsPastHuman){
-			width = 0.4D + 0.2D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D); // 0.4 -> 0.6 (Min to Human Max)
-		}
-		return width;
+	public static double calculateDragonWidth(double size){
+        return 0.4D + 0.2D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
-	public static double calculateDragonEyeHeight(double size, boolean growsPastHuman){
-		double eyeHeight = (11.0D * size + 54.0D) / 260.0D; // 0.8 -> Config Dragon Max
-		if(!growsPastHuman){
-			eyeHeight = 0.8D + 0.8D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D); // 0.8 -> 1.6 (Min to Human Max)
-		}
-		return eyeHeight;
+	public static double calculateDragonEyeHeight(double size){
+        return 0.8D + 0.8D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateModifiedEyeHeight(double eyeHeight, Pose pose, boolean squish){
@@ -157,26 +142,20 @@ public class DragonSizeHandler{
 		
 		double size = capability.orElseThrow(() -> new IllegalStateException("Dragon State was not valid")).getSize();
 		boolean squish = DragonUtils.getDragonBody(player) != null ? DragonUtils.getDragonBody(player).isSquish() : false;
-		double height = calculateModifiedHeight(calculateDragonHeight((float)size, ServerConfig.hitboxGrowsPastHuman), pose, ServerConfig.sizeChangesHitbox, squish);
-		double width = calculateDragonWidth((float)size, ServerConfig.hitboxGrowsPastHuman);
+		double height = calculateModifiedHeight(calculateDragonHeight(size), pose, squish);
+		double width = calculateDragonWidth(size);
 		return player.level().noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));
 	}
 
-	public static double calculateModifiedHeight(double height, Pose pose, boolean sizeChangesHitbox, boolean squish){
+	public static double calculateModifiedHeight(double height, Pose pose, boolean squish){
 		if(pose == Pose.CROUCHING){
-			if(sizeChangesHitbox && !squish){
-				height *= 5.0D / 6.0D;
-			}else if (sizeChangesHitbox) {
+			if(squish){
 				height *= 3.0D / 6.0D;
-			}else{
-				height = 1.5D;
+			} else {
+				height *= 5.0D / 6.0D;
 			}
-		}else if(pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK){
-			if(sizeChangesHitbox){
-				height *= 7.0D / 12.0D;
-			}else{
-				height = 0.6D;
-			}
+		} else if(pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK){
+			height *= 7.0D / 12.0D;
 		}
 		return height;
 	}
@@ -184,10 +163,6 @@ public class DragonSizeHandler{
 	@SubscribeEvent
 	public static void playerTick(final PlayerTickEvent.Pre event) {
 		Player player = event.getEntity();
-
-		if (!ServerConfig.sizeChangesHitbox) {
-			return;
-		}
 
 		// In cases where client and server runs on the same machine
 		// Only using the player id results in one side not refreshing the dimensions
