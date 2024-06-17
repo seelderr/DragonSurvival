@@ -222,9 +222,9 @@ public class ConfigHandler{
 				String[] split = string.split(":");
 
 				if (split.length == 2) {
-					return ResourceLocation.isValidPath(string);
+					return ResourceLocation.tryParse(string) != null;
 				} else if (split.length == 4) {
-					return ResourceLocation.isValidPath(split[0] + ":" + split[1]);
+					return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
 				}
 			}
 
@@ -237,7 +237,7 @@ public class ConfigHandler{
 				String[] split = string.split(":");
 
 				if (split.length == 3) {
-					return ResourceLocation.isValidPath(split[0] + ":" + split[1]);
+					return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
 				}
 			}
 
@@ -273,7 +273,7 @@ public class ConfigHandler{
 				String[] data = string.split(":");
 
 				if (data.length == 3) {
-					return isInteger(data[2]) && ResourceLocation.isValidPath(data[0] + ":" + data[1]);
+					return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
 				}
 
 				return false;
@@ -284,7 +284,7 @@ public class ConfigHandler{
 
 		if (string.split(":").length == 2) {
 			// Simply checking for this at the start is unsafe since `awtaj` is a valid resource location but can cause problems if it's just some gibberish
-			return ResourceLocation.isValidPath(string);
+			return ResourceLocation.tryParse(string) != null;
 		}
 
 		return false;

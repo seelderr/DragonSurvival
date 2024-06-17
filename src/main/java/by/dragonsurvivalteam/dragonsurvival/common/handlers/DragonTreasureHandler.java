@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerPlayerGameMode;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -23,6 +25,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import software.bernie.geckolib.util.Color;
 
@@ -98,7 +101,7 @@ public class DragonTreasureHandler{
 			if(handler.treasureResting){
 				Vec3 velocity = player.getDeltaMovement();
 				float groundSpeed = Mth.sqrt((float)(velocity.x * velocity.x + velocity.z * velocity.z));
-				if(Math.abs(groundSpeed) > 0.05){
+				if(Math.abs(groundSpeed) > 0.05 || handler.getMovementData().dig){
 					handler.treasureResting = false;
 					PacketDistributor.sendToServer(new SyncTreasureRestStatus.Data(player.getId(), false));
 				}
@@ -111,7 +114,7 @@ public class DragonTreasureHandler{
 	public static void sleepScreenRender(RenderGuiLayerEvent.Post event){
 		Player playerEntity = Minecraft.getInstance().player;
 
-		if(playerEntity == null || !DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator()){
+		if(!DragonStateProvider.isDragon(playerEntity) || playerEntity.isSpectator()){
 			return;
 		}
 
@@ -137,12 +140,13 @@ public class DragonTreasureHandler{
 		});
 	}
 
+
 	@SubscribeEvent
 	public static void playerAttacked(LivingHurtEvent event){
 		LivingEntity entity = event.getEntity();
 
 		if(entity instanceof Player player){
-			
+
 			if(!player.level().isClientSide()){
 				DragonStateProvider.getCap(player).ifPresent(cap -> {
 					if(cap.treasureResting){
@@ -153,4 +157,6 @@ public class DragonTreasureHandler{
 			}
 		}
 	}
+
+	// There is a third case for mining as well. See MiningTickHandler.java
 }

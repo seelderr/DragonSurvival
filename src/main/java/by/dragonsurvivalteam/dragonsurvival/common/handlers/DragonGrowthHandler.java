@@ -114,7 +114,6 @@ public class DragonGrowthHandler{
 			}
 
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
-			player.refreshDimensions();
 		});
 	}
 

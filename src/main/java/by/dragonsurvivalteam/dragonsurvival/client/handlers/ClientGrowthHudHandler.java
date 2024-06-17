@@ -116,7 +116,10 @@ public class ClientGrowthHudHandler {
 			RenderSystem.setShader(GameRenderer::getPositionTexShader);
 			RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
+			guiGraphics.pose().pushPose();
+			guiGraphics.pose().translate(0, 0, 300);
 			guiGraphics.blit(getOrCreate("textures/gui/growth/growth_" + handler.getTypeName().toLowerCase() + "_" + (handler.getLevel().ordinal() + 1) + ".png"), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
+			guiGraphics.pose().popPose();
 		}
 	}
 

@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 import net.minecraft.core.Holder;
@@ -30,10 +31,25 @@ public class DSCreativeTabs {
         );
     };
 
+    static List<Holder<Item>> hiddenCreativeModeItems = Arrays.asList(
+            DSItems.HUNTING_NET,
+            DSItems.LIGHTNING_TEXTURE_ITEM,
+            DSItems.PASSIVE_MAGIC_BEACON,
+            DSItems.PASSIVE_PEACE_BEACON,
+            DSItems.PASSIVE_FIRE_BEACON,
+            DSItems.INACTIVE_MAGIC_DRAGON_BEACON,
+            DSItems.INACTIVE_PEACE_DRAGON_BEACON,
+            DSItems.INACTIVE_FIRE_DRAGON_BEACON
+    );
+
     static CreativeModeTab.DisplayItemsGenerator displayItemsGenerator = (parameters, output) -> {
         Stream.of(DSItems.DS_ITEMS).forEach(
                 holder -> holder.getEntries().forEach(
-                        entry -> output.accept(entry.get().asItem())
+                        entry -> {
+                            if(!hiddenCreativeModeItems.contains(entry)) {
+                                output.accept(entry.get().asItem());
+                            }
+                        }
                 )
         );
     };
