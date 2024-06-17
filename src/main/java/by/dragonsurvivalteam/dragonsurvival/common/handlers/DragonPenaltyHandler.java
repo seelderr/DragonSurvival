@@ -32,7 +32,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber
 public class DragonPenaltyHandler{
 	@SubscribeEvent
-	public static void hitByPotion(ProjectileImpactEvent potionEvent){
+	public static void hitByWaterPotion(ProjectileImpactEvent potionEvent){
 		if(!ServerConfig.penalties || ServerConfig.caveSplashDamage == 0.0){
 			return;
 		}
@@ -41,8 +41,9 @@ public class DragonPenaltyHandler{
 			if(potion.getItem().getItem() != Items.SPLASH_POTION){
 				return;
 			}
-			if(PotionUtils.getPotion(potion.getItem()).getEffects().isEmpty()){
-				return; //Remove this line if you want potions with effects to also damage rather then just water ones.
+
+			if(!PotionUtils.getPotion(potion.getItem()).getEffects().isEmpty()){
+				return;
 			}
 
 			Vec3 pos = potionEvent.getRayTraceResult().getLocation();
