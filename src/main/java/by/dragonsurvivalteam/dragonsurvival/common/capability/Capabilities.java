@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,6 +24,8 @@ public class Capabilities{
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent event) {
 		event.registerEntity(DRAGON_CAPABILITY, EntityType.PLAYER, new DragonStateProvider());
-		event.registerEntity(ENTITY_CAPABILITY, EntityType.PLAYER, new EntityStateProvider());
+		for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
+			event.registerEntity(ENTITY_CAPABILITY, entityType, new EntityStateProvider());
+		}
 	}
 }
