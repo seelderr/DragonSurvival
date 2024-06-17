@@ -202,7 +202,7 @@ public class ClientEvents{
 			if(entity instanceof Player) {
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
 				if(handler != null && handler.isDragon()) {
-					scale = (float)DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman);
+					scale = (float)DragonSizeHandler.calculateDragonEyeHeight(handler.getSize());
 				}
 			}
 			renderBolas(light, overlayCoords, buffers, matrixStack, scale);

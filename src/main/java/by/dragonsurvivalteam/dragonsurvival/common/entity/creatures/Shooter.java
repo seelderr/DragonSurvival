@@ -103,12 +103,12 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 			Vec3 targetPos = target.position();
 			if(target instanceof Player player)
 			{
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(ClientProxy.getLocalPlayer());
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
-				if (handler == null || !handler.isDragon()) {
+				if (!DragonStateProvider.isDragon(player)) {
 					targetPos = targetPos.add(0, player.getEyeHeight(), 0);
 				} else {
-					targetPos = targetPos.add(0, DragonSizeHandler.calculateDragonEyeHeight(handler.getSize(), ServerConfig.hitboxGrowsPastHuman), 0);
+					targetPos = targetPos.add(0, DragonSizeHandler.calculateDragonEyeHeight(handler.getSize()), 0);
 				}
 			}
 
