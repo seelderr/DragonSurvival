@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
@@ -8,6 +10,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
@@ -51,5 +54,28 @@ public class PlayerLoginHandler {
     @SubscribeEvent
     public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event){
         syncComplete(event.getEntity());
+    }
+
+    @SubscribeEvent
+    public static void startWithDragonChoice(PlayerTickEvent.Post event){
+        if(!ServerConfig.startWithDragonChoice) return;
+        if(event.getEntity().level().isClientSide()) return;
+
+        if(event.getEntity() instanceof ServerPlayer player){
+            if(player.isDeadOrDying()) return;
+
+            if(player.tickCount > 5 * 20){
+                DragonStateProvider.getCap(player).ifPresent(cap -> {
+                    if(!cap.hasUsedAltar && !DragonStateProvider.isDragon(player)){
+                        PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
+                        cap.hasUsedAltar = true;
+                    }
+
+                    if(cap.altarCooldown > 0){
+                        cap.altarCooldown--;
+                    }
+                });
+            }
+        }
     }
 }

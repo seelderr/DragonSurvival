@@ -367,10 +367,27 @@ public class DragonFoodHandler {
 
 	public static int getUseDuration(final ItemStack itemStack, final LivingEntity entity) {
 		FoodProperties foodProperties = getDragonFoodProperties(itemStack.getItem(), DragonStateProvider.getOrGenerateHandler(entity).getType());
-		if(foodProperties != null) {
+		if (foodProperties != null) {
 			return foodProperties.eatDurationTicks();
 		} else {
 			return itemStack.getUseDuration(entity);
+		}
+	}
+
+	@EventBusSubscriber
+	public static class GameEvents {
+		@SubscribeEvent
+		public static void setDragonFoodUseDuration(final LivingEntityUseItemEvent.Start event) {
+			DragonStateProvider.getCap(event.getEntity()).ifPresent(handler -> {
+				if (handler.isDragon()) {
+					if (DragonFoodHandler.isEdible(event.getItem(), handler.getType())) {
+						FoodProperties foodProperties = DragonFoodHandler.getDragonFoodProperties(event.getItem().getItem(), handler.getType());
+						if (foodProperties != null) {
+							event.setDuration(foodProperties.eatDurationTicks());
+						}
+					}
+				}
+			});
 		}
 	}
 

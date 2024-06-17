@@ -12,13 +12,13 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownPotion;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.PotionItem;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -26,6 +26,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
@@ -109,5 +110,31 @@ public class DragonPenaltyHandler{
 				}
 			}
 		});
+	}
+
+	static int cycle = 0;
+
+	/**
+	 * Check every 2 seconds
+	 */
+	//TODO: Could probably do this in a cleaner way with a mixin somewhere
+	@SubscribeEvent
+	public static void removeElytraFromDragon(PlayerTickEvent.Post playerTickEvent){
+		if(!ServerConfig.dragonsAllowedToUseElytra){
+			Player player = playerTickEvent.getEntity();
+			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				if(dragonStateHandler.isDragon() && player instanceof ServerPlayer && cycle >= 40){
+					//chestplate slot is #38
+					ItemStack stack = player.getInventory().getItem(38);
+					Item item = stack.getItem();
+					if(item instanceof ElytraItem){
+						player.drop(player.getInventory().removeItemNoUpdate(38), true, false);
+					}
+					cycle = 0;
+				}else{
+					cycle++;
+				}
+			});
+		}
 	}
 }

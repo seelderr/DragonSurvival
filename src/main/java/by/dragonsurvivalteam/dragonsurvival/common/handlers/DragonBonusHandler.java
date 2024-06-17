@@ -6,22 +6,30 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
+import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import java.util.Objects;
+
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Snowball;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
+import net.neoforged.neoforge.event.level.BlockDropsEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class DragonBonusHandler {
@@ -91,5 +99,39 @@ public class DragonBonusHandler {
 				livingFallEvent.setDistance(distance);
 			}
 		});
+	}
+
+	@SubscribeEvent
+	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent){
+		final LivingEntity living = jumpEvent.getEntity();
+
+
+		if(living.getEffect(DSEffects.TRAPPED) != null){
+			Vec3 deltaMovement = living.getDeltaMovement();
+			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
+			living.setJumping(false);
+			return;
+		}
+
+		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
+			if(dragonStateHandler.isDragon()){
+				if(living instanceof ServerPlayer){
+					PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
+				}
+			}
+		});
+	}
+
+	@SubscribeEvent
+	public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
+		if (dropsEvent.getBreaker() == null) return;
+		if (DragonUtils.isDragonType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
+			dropsEvent.getDrops().replaceAll(itemEntity -> new ItemEntity(itemEntity.level(), itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
+				@Override
+				public boolean fireImmune() {
+					return true;
+				}
+			});
+		}
 	}
 }
