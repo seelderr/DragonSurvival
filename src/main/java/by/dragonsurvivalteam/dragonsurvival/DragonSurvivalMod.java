@@ -20,6 +20,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentContro
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import com.mojang.serialization.MapCodec;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -28,18 +29,18 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.repository.PackSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -108,61 +109,16 @@ public class DragonSurvivalMod{
 	@SubscribeEvent
 	public static void addPackFinders(AddPackFindersEvent event) {
 		if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-			HashMap<MutableComponent, String> resourcePacks = new HashMap<MutableComponent, String>();
-			//resourcePacks.put(Component.literal("- Dragon East"), "ds_east");
-			//resourcePacks.put(Component.literal("- Dragon North"), "ds_north");
-			//resourcePacks.put(Component.literal("- Dragon South"), "ds_south");
-			//resourcePacks.put(Component.literal("- Dragon West"), "ds_west");
-			resourcePacks.put(Component.literal("- Old Magic Icons for DS"), "ds_old_magic");
-			resourcePacks.put(Component.literal("- Dark GUI for DS"), "ds_dark_gui");
+			HashMap<MutableComponent, String> resourcePacks = new HashMap<>();
+			//resourcePacks.put(Component.literal("- Dragon East"), "resourcepacks/ds_east");
+			//resourcePacks.put(Component.literal("- Dragon North"), "resourcepacks/ds_north");
+			//resourcePacks.put(Component.literal("- Dragon South"), "resourcepacks/ds_south");
+			//resourcePacks.put(Component.literal("- Dragon West"), "resourcepacks/ds_west");
+			resourcePacks.put(Component.literal("- Old Magic Icons for DS"), "resourcepacks/ds_old_magic");
+			resourcePacks.put(Component.literal("- Dark GUI for DS"), "resourcepacks/ds_dark_gui");
 			for (Map.Entry<MutableComponent, String> entry : resourcePacks.entrySet()) {
-				registerBuiltinResourcePack(event, entry.getKey(), entry.getValue());
+				event.addPackFinders(ResourceLocation.fromNamespaceAndPath(MODID, entry.getValue()), PackType.CLIENT_RESOURCES, entry.getKey(), PackSource.BUILT_IN, false, Pack.Position.TOP);
 			}
 		}
-	}
-
-	private static void registerBuiltinResourcePack(AddPackFindersEvent event, MutableComponent name, String folder) {
-		LOGGER.info("Registering " + name);
-		/*try(PathPackResources pack = new PathPackResources(path, true, file.findResource("resourcepacks/" + folder));) {
-			
-		} catch (IOException e) {
-			if (!DatagenModLoader.isRunningDataGen())
-				e.printStackTrace();
-			
-			
-		}*/
-		
-		/*event.addRepositorySource((constructor) -> {
-			String path = res(folder).toString();
-			IModFile file = ModList.get().getModFileById(MODID).getFile();
-			try(PathPackResources pack = new PathPackResources(path, true, file.findResource("resourcepacks/" + folder));) {
-				constructor.create(
-					res(folder).toString(),
-					name,
-					false,
-					() -> pack,
-					pack.getMetadataSection(PackMetadataSection.TYPE),
-					Pack.Position.TOP,
-					PackSource.BUILT_IN,
-					false);
-			};
-		});*/ // -> {
-			/*String path = res(folder).toString();
-			IModFile file = ModList.get().getModFileById(MODID).getFile();
-			try(PathPackResources pack = new PathPackResources(path, true, file.findResource("resourcepacks/" + folder));) {
-				consumer.accept(constructor.create(
-					res(folder).toString(),
-					name,
-					false,
-					() -> pack,
-					pack.getMetadataSection(PackMetadataSection.SERIALIZER),
-					Pack.Position.TOP,
-					PackSource.BUILT_IN,
-					false));
-			} catch (IOException e) {
-				if (!DatagenModLoader.isRunningDataGen())
-					e.printStackTrace();
-			}
-		});*/
 	}
 }
