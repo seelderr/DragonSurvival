@@ -1,0 +1,10 @@
+// 1.21	2024-06-16T22:44:55.7741749	Dragon Survival Block tags
+bcd9fc9215902ea5cae88a8bbf012021624d977e data/dragonsurvival/tags/block/dragon_altars.json
+50d0e46d98181ed48f2323211041c958002f5e4c data/dragonsurvival/tags/block/dragon_treasures.json
+0fd05ce24f7e0237534571ed952465bbb582b59d data/dragonsurvival/tags/block/hunter_ability_blocks.json
+10d403f7ef80facaca35aec79c7fadf7cf066ad2 data/dragonsurvival/tags/block/wooden_dragon_doors.json
+e4a43a2505031c577298e729f1b98ec87b4dfdc6 data/dragonsurvival/tags/block/wooden_dragon_doors_small.json
+4f77dfd68927b9086fdc21084a376b2b66d4c9f5 data/minecraft/tags/block/mineable/axe.json
+fdece799d1a60ca557192eb0c2c9874ec93fabff data/minecraft/tags/block/mineable/pickaxe.json
+f8b7e9e4f0aa25288ee0a0f60da5d3c1567a837b data/minecraft/tags/block/needs_iron_tool.json
+80ab5b730b6eb2a74ed2d62ab6b29f54a591860e data/minecraft/tags/block/needs_stone_tool.json
