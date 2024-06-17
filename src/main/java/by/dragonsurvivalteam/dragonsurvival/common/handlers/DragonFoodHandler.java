@@ -25,8 +25,13 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -40,10 +45,12 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.EventBus;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.LogicalSide;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
@@ -228,7 +235,7 @@ public class DragonFoodHandler {
 			}
 
 			humanFoodProperties.effects().forEach(possibleEffect -> {
-				if ((shouldKeepEffects || isDragonFood) && possibleEffect.effect().equals(MobEffects.HUNGER) && !possibleEffect.effect().equals(MobEffects.POISON)) {
+				if ((shouldKeepEffects || isDragonFood) && possibleEffect.effect().getEffect().value().isBeneficial()) {
 					builder.effect(possibleEffect.effectSupplier(), possibleEffect.probability());
 				}
 			});
@@ -240,6 +247,15 @@ public class DragonFoodHandler {
 			builder.nutrition(nutrition).saturationModifier(saturation / (float) nutrition / 2.0F);
 		}
 
+		return builder.build();
+	}
+
+	private static FoodProperties calculateBadFoodProperties() {
+		FoodProperties.Builder builder = new FoodProperties.Builder();
+		builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 600, 0), 1.0F);
+		builder.effect(() -> new MobEffectInstance(MobEffects.POISON, 600, 0), 0.5F);
+		builder.nutrition(1);
+		builder.saturationModifier(0.0F);
 		return builder.build();
 	}
 
@@ -298,12 +314,7 @@ public class DragonFoodHandler {
 			return DRAGON_FOODS.get(type.getTypeName()).get(item);
 		}
 
-		FoodProperties foodProperties = item.getFoodProperties(new ItemStack(item), null);
-		if(foodProperties != null) {
-			return calculateDragonFoodProperties(item, type, foodProperties.nutrition(), foodProperties.saturation(), false);
-		}
-
-		return null;
+		return calculateBadFoodProperties();
 	}
 
 	public static boolean isEdible(final ItemStack itemStack, final AbstractDragonType type) {
@@ -390,53 +401,4 @@ public class DragonFoodHandler {
 			});
 		}
 	}
-
-	// TODO: Do we still need this?
-	/*@SubscribeEvent
-	public void onItemRightClick(final PlayerInteractEvent.RightClickItem event) {
-		DragonStateProvider.getCap(event.getEntity()).ifPresent(handler -> {
-			if (handler.isDragon()) {
-				if (event.getSide() == LogicalSide.SERVER) {
-					ServerPlayer player = (ServerPlayer) event.getEntity();
-					ServerLevel level = player.serverLevel();
-					InteractionHand hand = event.getHand();
-					ItemStack itemStackInHand = player.getItemInHand(event.getHand());
-
-					if (isDragonEdible(itemStackInHand.getItem(), handler.getType())) {
-						int stackCount = itemStackInHand.getCount();
-						int damageValue = itemStackInHand.getDamageValue();
-
-						InteractionResultHolder<ItemStack> result = itemStackInHand.use(level, player, hand);
-						ItemStack resultItemStack = result.getObject();
-
-						if (resultItemStack == itemStackInHand && resultItemStack.getCount() == stackCount && getUseDuration(resultItemStack, handler.getType()) <= 0 && resultItemStack.getDamageValue() == damageValue) {
-							// After using the item nothing happened
-							event.setCancellationResult(result.getResult());
-						} else if (result.getResult() == InteractionResult.FAIL && getUseDuration(resultItemStack, handler.getType()) > 0 && !player.isUsingItem()) {
-							// Player cannot use the item
-							event.setCancellationResult(result.getResult());
-							event.setCanceled(true);
-						} else {
-							player.setItemInHand(hand, resultItemStack);
-
-							if (player.isCreative()) {
-								resultItemStack.setCount(stackCount);
-
-								if (resultItemStack.isDamageableItem() && resultItemStack.getDamageValue() != damageValue) {
-									resultItemStack.setDamageValue(damageValue);
-								}
-							}
-
-							if (resultItemStack.isEmpty()) {
-								player.setItemInHand(hand, ItemStack.EMPTY);
-							}
-
-							event.setCancellationResult(result.getResult());
-							event.setCanceled(true);
-						}
-					}
-				}
-			}
-		});
-	}*/
 }
