@@ -112,30 +112,4 @@ public class DragonPenaltyHandler{
 			}
 		});
 	}
-
-	static int cycle = 0;
-
-	/**
-	 * Check every 2 seconds
-	 */
-	//TODO: Could probably do this in a cleaner way with a mixin somewhere
-	@SubscribeEvent
-	public static void removeElytraFromDragon(PlayerTickEvent.Post playerTickEvent){
-		if(!ServerConfig.dragonsAllowedToUseElytra){
-			Player player = playerTickEvent.getEntity();
-			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				if(dragonStateHandler.isDragon() && player instanceof ServerPlayer && cycle >= 40){
-					//chestplate slot is #38
-					ItemStack stack = player.getInventory().getItem(38);
-					Item item = stack.getItem();
-					if(item instanceof ElytraItem){
-						player.drop(player.getInventory().removeItemNoUpdate(38), true, false);
-					}
-					cycle = 0;
-				}else{
-					cycle++;
-				}
-			});
-		}
-	}
 }

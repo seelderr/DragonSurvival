@@ -69,7 +69,7 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 			passenger.yRotO += facingClamped - facing + self.yRotO;
 			md.bodyYaw = selfmd.bodyYawLastFrame;
 			md.headYaw = -facing;
-			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastFrame - selfmd.bodyYaw) : 0)));
+			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (selfmd.bodyYawLastFrame - selfmd.bodyYaw)));
 			if (passenger instanceof DragonEntity de) {
 				de.prevZRot = ((DragonEntity) self).prevZRot;
 			}
@@ -78,8 +78,8 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 			float facing = (float) Mth.wrapDegrees(passenger.getYRot() - selfmd.bodyYawLastFrame);
 			float facingClamped = Mth.clamp(facing, -120.0F, 120.0F);
 			passenger.yRotO += facingClamped - facing + self.yRotO;
-			passenger.setYBodyRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastFrame - selfmd.bodyYaw) : 0)));
-			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (ClientDragonRender.rotateCameraWithDragon ? (selfmd.bodyYawLastFrame - selfmd.bodyYaw) : 0)));
+			passenger.setYBodyRot((float) (passenger.getYRot() + facingClamped - facing + (selfmd.bodyYawLastFrame - selfmd.bodyYaw)));
+			passenger.setYRot((float) (passenger.getYRot() + facingClamped - facing + (selfmd.bodyYawLastFrame - selfmd.bodyYaw)));
 			passenger.setYHeadRot(passenger.getYRot());
 		}
 	}

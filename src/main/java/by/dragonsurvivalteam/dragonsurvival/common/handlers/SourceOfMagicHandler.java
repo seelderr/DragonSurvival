@@ -65,8 +65,7 @@ public class SourceOfMagicHandler{
 					if(!tile.isEmpty()){
 						BlockState pState = sourceOfMagic.getBlockState();
 						
-						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
-							if(ServerConfig.sourceOfMagicInfiniteMagic){
+						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative()){
 								if(handler.getMagicData().magicSourceTimer >= Functions.secondsToTicks(10)){
 									handler.getMagicData().magicSourceTimer = 0;
 									MobEffectInstance effectInstance = player.getEffect(DSEffects.SOURCE_OF_MAGIC);
@@ -79,8 +78,6 @@ public class SourceOfMagicHandler{
 									}
 
 									tile.removeItem(0, 1);
-								}else{
-									handler.getMagicData().magicSourceTimer++;
 								}
 							}
 						}else{
@@ -98,7 +95,6 @@ public class SourceOfMagicHandler{
 				}
 			}
 		}
-	}
 
 	@SubscribeEvent
 	public static void playerParticles(PlayerTickEvent.Post event){
@@ -126,8 +122,7 @@ public class SourceOfMagicHandler{
 					if(!tile.isEmpty()){
 						BlockState pState = sourceOfMagic.getBlockState();
 						
-						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative() || ServerConfig.canUseAllSourcesOfMagic){
-							if(ServerConfig.sourceOfMagicInfiniteMagic){
+						if(!SourceOfMagicBlock.shouldHarmPlayer(pState, player) || player.isCreative()){
 								if(player.level().isClientSide()){
 									Minecraft minecraft = Minecraft.getInstance();
 									RandomSource random = player.getRandom();
@@ -144,7 +139,6 @@ public class SourceOfMagicHandler{
 										}
 									}
 								}
-							}
 						}
 					}
 				}

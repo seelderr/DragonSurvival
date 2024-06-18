@@ -46,12 +46,6 @@ public class ToolTipHandler{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
 	public static Boolean dragonFoodTooltips = true;
 
-	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "helpTooltips", comment = "Should the effect of the help tooltips be enabled?")
-	public static Boolean helpTooltips = true;
-
-	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "alwaysShowHelpTooltip", comment = "Always show the help tooltip border")
-	public static Boolean alwaysShowHelpTooltip = false;
-
 	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
 	public static Boolean hideAppleskinTooltip = true;
 
@@ -233,15 +227,13 @@ public class ToolTipHandler{
 	}*/
 
 	private static boolean isHelpText(){
-		if(!tooltipChanges || !helpTooltips){
+		if(!tooltipChanges){
 			return false;
 		}
 		if(Minecraft.getInstance().level == null){
 			return false;
 		}
-		if(alwaysShowHelpTooltip){
-			return true;
-		}
+
 		if(Minecraft.getInstance().screen == null){
 			return false;
 		}

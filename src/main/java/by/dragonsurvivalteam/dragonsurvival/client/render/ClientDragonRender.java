@@ -79,12 +79,6 @@ public class ClientDragonRender{
 	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "renderFirstPersonFlight", comment = "Render dragon model in first person while gliding. We don't advise you to turn it on." )
 	public static Boolean renderFirstPersonFlight = false;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "firstPersonRotation", comment = "Use rotation of your tail in first person, otherwise the tail is always opposite of your camera. If the tail is constantly climbing in your face, put false." )
-	public static Boolean firstPersonRotation = false;
-
-	@ConfigOption( side = ConfigSide.CLIENT, category = "flight", key = "renderOtherPlayerRotation", comment = "Should the rotation effect during gliding of other players be shown?" )
-	public static Boolean renderOtherPlayerRotation = true;
-
 	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "alternateHeldItem", comment = "Should held items be rendered as if you are in third-person even in first person as a dragon?" )
 	public static Boolean alternateHeldItem = false;
 
@@ -111,12 +105,6 @@ public class ClientDragonRender{
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "nametag", key = "dragonNameTags", comment = "Show name tags for dragons." )
 	public static Boolean dragonNameTags = false;
-
-	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateBodyWithCamera", comment = "Should the body rotate with the camera when turning around." )
-	public static Boolean rotateBodyWithCamera = true;
-	
-	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "rotateCameraWithDragon", comment = "Should the player rotate their view when the dragon they are riding rotates their body?")
-	public static Boolean rotateCameraWithDragon = true;
 
 	@SubscribeEvent
 	public static void renderFirstPerson(RenderHandEvent renderHandEvent){
@@ -279,7 +267,7 @@ public class ClientDragonRender{
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonStateProvider.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))){
-						if(renderOtherPlayerRotation || minecraft.player == player){
+						if(minecraft.player == player){
 							float upRot = 0;
 							if (ServerFlightHandler.isGliding(player)) {
 								upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
@@ -418,7 +406,7 @@ public class ClientDragonRender{
 					double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
 					boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
 					boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook;
-					if (rotateBodyWithCamera && !isFreeLook && !wasFreeLook) {
+					if (!isFreeLook && !wasFreeLook) {
 						if (headYaw > 150) {
 							bodyYaw += 150 - headYaw;
 						} else if (headYaw < -150) {
@@ -435,7 +423,7 @@ public class ClientDragonRender{
 					double f1 = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
 
 					boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
-					if (!firstPersonRotation && !isFreeLook) {
+					if (!isFreeLook) {
 						if (moveVector.length() > 0 && isFirstPerson) {
 							bodyYaw = player.getYRot();
 							if (moveVector.length() > 0) {

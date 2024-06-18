@@ -57,10 +57,6 @@ public class ClientFlightHandler {
 	@ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
 	public static Integer levitationAfterEffect = 3;
 
-
-	@ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "notifyWingStatus", comment = "Notifies of wing status in chat message")
-	public static Boolean notifyWingStatus = false;
-
 	@ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "jumpToFly", comment = "Should flight be activated when jumping in the air")
 	public static Boolean jumpToFly = false;
 
@@ -72,12 +68,6 @@ public class ClientFlightHandler {
 
 	@ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flightCameraMovement", comment = "Should the camera movement while gliding as a dragon be enabled")
 	public static Boolean flightCameraMovement = true;
-
-	@ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "ownSpinParticles", comment = "Should particles from your own spin attack be displayed for you?")
-	public static Boolean ownSpinParticles = true;
-
-	@ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "othersSpinParticles", comment = "Should other players particles from spin attack be shown for you?")
-	public static Boolean othersSpinParticles = true;
 
 	@ConfigRange(min = -1000, max = 1000)
 	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownXOffset", comment = "Offset the x position of the spin cooldown indicator in relation to its normal position")
@@ -207,13 +197,6 @@ public class ClientFlightHandler {
 		DragonStateProvider.getCap(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
-					if(!ownSpinParticles && player == Minecraft.getInstance().player){
-						return;
-					}
-					if(!othersSpinParticles && player != Minecraft.getInstance().player){
-						return;
-					}
-
 
 					// TODO: Removed because I don't think it does anything. Prove me wrong!
 					/*if(player.tickCount - lastSync >= 20){
@@ -318,7 +301,7 @@ public class ClientFlightHandler {
 
 						if (handler.isWingsSpread()) {
 							Input movement = player.input;
-							boolean hasFood = player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger;
+							boolean hasFood = player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative();
 
 							if (!hasFood) {
 								// TODO :: If you use Math.abs you always get a positive number, shouldn't this be max() instead of clamp()?
@@ -548,7 +531,7 @@ public class ClientFlightHandler {
 				if(keyInputEvent.getAction() == GLFW.GLFW_PRESS){
 					if(handler.hasFlight() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
 						if(!player.onGround() && !player.isInLava() && !player.isInWater()){
-							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || ServerFlightHandler.allowFlyingWithoutHunger){
+							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative()){
 								PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
 							}else{
 								if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()){
@@ -565,15 +548,8 @@ public class ClientFlightHandler {
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
 			if(handler.hasFlight()){
 				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-				if(!player.hasEffect(DSEffects.TRAPPED) && (player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState || ServerFlightHandler.allowFlyingWithoutHunger)){
+				if(!player.hasEffect(DSEffects.TRAPPED) && (player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState)){
 					PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !currentState));
-					if(notifyWingStatus){
-						if(!currentState){
-							player.sendSystemMessage(Component.translatable("ds.wings.enabled"));
-						}else{
-							player.sendSystemMessage(Component.translatable("ds.wings.disabled"));
-						}
-					}
 				}else{
 					if(!player.hasEffect(DSEffects.TRAPPED))
 					{

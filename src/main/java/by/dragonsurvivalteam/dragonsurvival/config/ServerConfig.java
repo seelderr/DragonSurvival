@@ -18,10 +18,6 @@ public class ServerConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 
-	@ConfigRange(min = -1, max = 60000)
-	@ConfigOption(side = ConfigSide.SERVER, category = "general", key = "serverSyncTime", comment = "The time in seconds between server syncs. -1 to disable. Only modify this if you know exactly what you are doing. Here be dragons!")
-	public static Integer serverSyncTime = 600;
-
 	@ConfigRange( min = 0, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use." )
 	public static Integer altarUsageCooldown = 0;
@@ -239,14 +235,8 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "treasure", key = "maxTreasures", comment = "The max amount of additional treasure that can be used to reduce the regen time" )
 	public static Integer maxTreasures = 240;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "sourceOfMagicInfiniteMagic", comment = "Whether using the source of magic block will grant the infinite magic buff." )
-	public static Boolean sourceOfMagicInfiniteMagic = true;
-
 	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "damageWrongSourceOfMagic", comment = "Whether using the the source of magic intended for another dragon type will hurt you." )
 	public static Boolean damageWrongSourceOfMagic = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "canUseAllSourcesOfMagic", comment = "Whether you are able to use all types of source of magic no matter your dragon type." )
-	public static Boolean canUseAllSourcesOfMagic = false;
 
 	@ConfigRange( min = 1, max = 10000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonDustTime", comment = "How long duration of the infinite magic effect using elder dragon dust gives in seconds. Note that you also spend 10 seconds while waiting." )
@@ -591,9 +581,6 @@ public class ServerConfig{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "endVoidTeleport", comment = "Should the player be teleported to the overworld when they fall in the end?" )
 	public static Boolean endVoidTeleport = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "elytraForDragon", comment = "Whether dragons are allowed to use Elytra" )
-	public static Boolean dragonsAllowedToUseElytra = false;
 
 	@ConfigRange( min = 1, max = 120 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter, princess and prince group may despawn after this many minutes" )

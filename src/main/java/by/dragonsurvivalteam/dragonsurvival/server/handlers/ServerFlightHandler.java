@@ -49,9 +49,6 @@ public class ServerFlightHandler{
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin", comment = "Whether you should be able to obtain the spin ability from the ender dragon or take special item." )
 	public static Boolean enderDragonGrantsSpin = true;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "allowFlyingWhenTotallyHungry", comment = "Whether dragons can fly when totally hungry. You can't open your wings if you're hungry." )
-	public static Boolean allowFlyingWithoutHunger = false;
-
 	@ConfigRange( min = 0, max = 20 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is below this parameter, he can't open his wings." )
 	public static Integer flightHungerThreshold = 6;
@@ -59,9 +56,6 @@ public class ServerFlightHandler{
 	@ConfigRange( min = 0, max = 20 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight." )
 	public static Integer foldWingsThreshold = 0;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "flyingUsesHunger", comment = "Whether you use up hunger while flying." )
-	public static Boolean flyingUsesHunger = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Whether fall damage in flight is included. If true dragon will take damage from the fall." )
 	public static Boolean enableFlightFallDamage = true;
@@ -136,7 +130,7 @@ public class ServerFlightHandler{
 			return;
 		}
 
-		if(!foldWingsOnLand || player.getFoodData().getFoodLevel() <= flightHungerThreshold && !player.isCreative() && !allowFlyingWithoutHunger){
+		if(!foldWingsOnLand || player.getFoodData().getFoodLevel() <= flightHungerThreshold && !player.isCreative()){
 			return;
 		}
 
@@ -279,10 +273,9 @@ public class ServerFlightHandler{
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
 
 				if(wingsSpread){
-					if(flyingUsesHunger){
 						if(isFlying(player)){
 							if(!player.level().isClientSide()){
-								if(player.getFoodData().getFoodLevel() <= foldWingsThreshold && !allowFlyingWithoutHunger && !player.isCreative()){
+								if(player.getFoodData().getFoodLevel() <= foldWingsThreshold && !player.isCreative()){
 									player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 									dragonStateHandler.setWingsSpread(false);
 									PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
@@ -303,14 +296,13 @@ public class ServerFlightHandler{
 							player.causeFoodExhaustion(drain);
 						}
 					}
-				}
 			}
 		});
 	}
 
 	public static boolean isGliding(Player player){
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
-		boolean hasFood = player.getFoodData().getFoodLevel() > flightHungerThreshold || player.isCreative() || allowFlyingWithoutHunger;
+		boolean hasFood = player.getFoodData().getFoodLevel() > flightHungerThreshold || player.isCreative();
 		return hasFood && player.isSprinting() && isFlying(player);
 	}
 
