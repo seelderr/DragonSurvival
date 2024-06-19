@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,25 +23,24 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.D
 
 	public static void handleServer(Data message, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			DragonStateHandler handler = context.player().getData(DRAGON_HANDLER);
-			if (handler.isDragon()) {
-				boolean update = false;
+			DragonStateProvider.getCap(context.player()).ifPresent(handler -> {
+				if (handler.isDragon()) {
+					boolean update = false;
 
-				if (message.state() != handler.treasureResting) {
-					handler.treasureRestTimer = 0;
-					handler.treasureSleepTimer = 0;
-					update = true;
+					if (message.state() != handler.treasureResting) {
+						handler.treasureRestTimer = 0;
+						handler.treasureSleepTimer = 0;
+						update = true;
+					}
+
+					handler.treasureResting = message.state();
+
+					if (update) {
+						((ServerLevel) context.player().level()).updateSleepingPlayerList();
+					}
 				}
-
-				handler.treasureResting = message.state();
-
-				if (update) {
-					((ServerLevel) context.player().level()).updateSleepingPlayerList();
-				}
-			}
-
-			PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message);
-		});
+			});
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
 
 	public record Data(int playerId, boolean state) implements CustomPacketPayload

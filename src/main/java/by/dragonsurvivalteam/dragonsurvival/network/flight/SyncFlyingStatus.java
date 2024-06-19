@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -23,9 +24,8 @@ public class SyncFlyingStatus implements IMessage<SyncFlyingStatus.Data> {
 
 	public static void handleServer(final SyncFlyingStatus.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-		handler.setWingsSpread(message.state);
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
+		context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler -> handler.setWingsSpread(message.state)))
+				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
 	public record Data(int playerId, boolean state) implements CustomPacketPayload  {

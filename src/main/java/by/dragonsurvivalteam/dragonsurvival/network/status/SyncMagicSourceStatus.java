@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -20,10 +21,10 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus.Dat
 	}
 
 	public static void handleServer(Data message, IPayloadContext context) {
-		DragonStateHandler handler = context.player().getData(DRAGON_HANDLER);
-		handler.getMagicData().onMagicSource = message.state;
-		handler.getMagicData().magicSourceTimer = message.timer;
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message);
+		context.enqueueWork(() -> DragonStateProvider.getCap(context.player()).ifPresent(cap -> {
+			cap.getMagicData().onMagicSource = message.state;
+			cap.getMagicData().magicSourceTimer = message.timer;
+		})).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
 
 	public record Data(int playerId, boolean state, int timer) implements CustomPacketPayload

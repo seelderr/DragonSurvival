@@ -314,7 +314,11 @@ public class DragonFoodHandler {
 			return DRAGON_FOODS.get(type.getTypeName()).get(item);
 		}
 
-		return calculateBadFoodProperties();
+		if(item.getFoodProperties(new ItemStack(item), null) != null) {
+			return calculateBadFoodProperties();
+		}
+
+		return null;
 	}
 
 	public static boolean isEdible(final ItemStack itemStack, final AbstractDragonType type) {
