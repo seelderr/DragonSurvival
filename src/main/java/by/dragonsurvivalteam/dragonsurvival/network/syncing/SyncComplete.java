@@ -12,26 +12,33 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+// We getOrGenerateHandler here since we might not have created the handler when doing a SyncComplete (this happens when the player selects a dragon for the first time)
 public class SyncComplete implements IMessage<SyncComplete.Data> {
 	public static void handleClient(final Data message, final IPayloadContext context) {
-		Player player = (Player) context.player().level().getEntity(message.playerId);
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		handler.deserializeNBT(context.player().registryAccess(), message.nbt);
-		player.refreshDimensions();
+		Entity entity = context.player().level().getEntity(message.playerId);
+		if(entity instanceof Player player) {
+			context.enqueueWork(() -> {
+				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+				handler.deserializeNBT(player.registryAccess(), message.nbt);
+				player.refreshDimensions();
+			});
+		}
 	}
 
 	public static void handleServer(final Data message, final IPayloadContext context) {
+		Player player = context.player();
 		context.enqueueWork(() -> {
-			Player player = context.player();
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-			handler.deserializeNBT(context.player().registryAccess(), message.nbt);
-			player.refreshDimensions();
-			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message);
-		}).thenAccept(v  -> context.reply(new RequestClientData.Data()));
+					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+					handler.deserializeNBT(player.registryAccess(), message.nbt);
+					player.refreshDimensions();
+				})
+				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))
+				.thenAccept(v  -> context.reply(new RequestClientData.Data()));
 	}
 
 	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {

@@ -21,10 +21,11 @@ public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
 	}
 
 	public static void handleServer(final SyncMagicCap.Data message, final IPayloadContext context) {
+		Player sender = context.player();
 		context.enqueueWork(()-> {
-			Player sender = context.player();
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(sender);
-			handler.getMagicData().deserializeNBT(context.player().registryAccess(), message.nbt);
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				handler.getMagicData().deserializeNBT(context.player().registryAccess(), message.nbt);
+			});
 		});
 	}
 

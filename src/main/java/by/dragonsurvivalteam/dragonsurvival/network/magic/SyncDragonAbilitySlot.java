@@ -5,6 +5,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
@@ -18,13 +19,14 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Dat
 	public static void handleServer(final SyncDragonAbilitySlot.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-			if (handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()) != null) {
-				handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(sender);
-			}
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				if (handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()) != null) {
+					handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(sender);
+				}
 
-			handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
-			handler.getMagicData().setRenderAbilities(message.displayHotbar);
+				handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot);
+				handler.getMagicData().setRenderAbilities(message.displayHotbar);
+			});
 		});
 	}
 

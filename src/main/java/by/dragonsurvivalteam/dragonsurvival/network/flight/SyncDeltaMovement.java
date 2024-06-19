@@ -9,21 +9,18 @@ import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class SyncFlightSpeed implements IMessage<SyncFlightSpeed.Data> {
-	public static void handleClient(final SyncFlightSpeed.Data message, final IPayloadContext context) {
+public class SyncDeltaMovement implements IMessage<SyncDeltaMovement.Data> {
+	public static void handleClient(final SyncDeltaMovement.Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> ClientProxy.handleSyncFlightSpeed(message));
 	}
 
-	public static void handleServer(final SyncFlightSpeed.Data message, final IPayloadContext context) {
+	public static void handleServer(final SyncDeltaMovement.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		sender.setDeltaMovement(message.flightSpeedX, message.flightSpeedY, message.flightSpeedZ);
-		PacketDistributor.sendToPlayersNear((ServerLevel) sender.level(), (ServerPlayer) sender, sender.position().x, sender.position().y, sender.position().z, 32, message);
+		PacketDistributor.sendToPlayersTrackingEntity(sender, new SyncDeltaMovement.Data(sender.getId(), message.flightSpeedX(), message.flightSpeedY(), message.flightSpeedZ()));
 	}
 
 	public record Data (int playerId, double flightSpeedX, double flightSpeedY, double flightSpeedZ) implements CustomPacketPayload {

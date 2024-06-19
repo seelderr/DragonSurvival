@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,12 +23,15 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings.D
 
 	public static void handleServer(final SyncDragonSkinSettings.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DragonSurvivalMod.DRAGON_HANDLER);
-		handler.getSkinData().renderNewborn = message.newborn;
-		handler.getSkinData().renderYoung = message.young;
-		handler.getSkinData().renderAdult = message.adult;
 
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
+		context.enqueueWork(() ->
+				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+					handler.getSkinData().renderNewborn = message.newborn();
+					handler.getSkinData().renderYoung = message.young();
+					handler.getSkinData().renderAdult = message.adult();
+				})
+		).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
+
 	}
 
 	public record Data(int playerId, boolean newborn, boolean young, boolean adult) implements CustomPacketPayload {

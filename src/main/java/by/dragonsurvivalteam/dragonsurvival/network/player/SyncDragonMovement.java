@@ -30,8 +30,7 @@ public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
 				handler.setBite(message.bite);
 				handler.setFreeLook(message.isFreeLook);
 			});
-		});
-		PacketDistributor.sendToPlayersTrackingEntity(entity, message);
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
 	}
 
 	public record Data(int playerId, boolean isFirstPerson, boolean bite, boolean isFreeLook) implements CustomPacketPayload

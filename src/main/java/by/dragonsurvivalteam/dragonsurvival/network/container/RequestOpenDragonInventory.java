@@ -39,13 +39,16 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 
 	public static void handleServer(final RequestOpenDragonInventory.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-		if (handler.isDragon()) {
-			context.enqueueWork(() -> {
-				sender.containerMenu.removed(sender);
-				sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
-			});
-		}
+		context.enqueueWork(
+				() -> DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				if (handler.isDragon()) {
+					context.enqueueWork(() -> {
+						sender.containerMenu.removed(sender);
+						sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
+					});
+				}
+			})
+		);
 	}
 
 	public record Data() implements CustomPacketPayload {

@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -464,14 +463,6 @@ public class ClientFlightHandler {
 							az = 0;
 							ay = 0;
 						}
-					}
-
-					// TODO: Revisit the sync rate of this event? Maybe can afford it now?
-					if (player.tickCount % 5 == 0) {
-						// Delta movement is not part of the regular sync (server itself seems to only keep track of the y value?)
-						// TODO :: Check ClientboundSetEntityMotionPacket
-						// Currently still used for ServerFlightHandler (there might be some other part which runs for other players too)
-						PacketDistributor.sendToServer(new SyncFlightSpeed.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
 					}
 				});
 			}
