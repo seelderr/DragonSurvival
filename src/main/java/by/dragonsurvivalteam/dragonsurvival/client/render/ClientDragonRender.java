@@ -370,6 +370,7 @@ public class ClientDragonRender{
 				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
 			}
 		}
+		dragonModel.setCurrentTexture(null);
 	}
 
 	@SubscribeEvent
