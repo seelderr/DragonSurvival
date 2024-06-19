@@ -2,9 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.capabilities.EntityCapability;
@@ -24,8 +26,10 @@ public class Capabilities{
 	@SubscribeEvent
 	public static void register(RegisterCapabilitiesEvent event) {
 		event.registerEntity(DRAGON_CAPABILITY, EntityType.PLAYER, new DragonStateProvider());
+		event.registerEntity(DRAGON_CAPABILITY, DSEntities.DRAGON.get(), new DragonStateProvider());
 		for(EntityType<?> entityType : BuiltInRegistries.ENTITY_TYPE) {
-			event.registerEntity(ENTITY_CAPABILITY, entityType, new EntityStateProvider());
+			if (entityType.getCategory() != MobCategory.MISC)
+				event.registerEntity(ENTITY_CAPABILITY, entityType, new EntityStateProvider());
 		}
 	}
 }
