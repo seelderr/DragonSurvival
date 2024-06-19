@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -30,7 +31,16 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 	// This is to angle the dragon entity (including its head) to correctly follow the angle specified when rendering.
 	@Redirect(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"))
 	private static void dragonScreenEntityRender(final Runnable runnable, @Local(argsOnly = true) LivingEntity entity){
-		DragonStateProvider.getCap(entity).ifPresentOrElse(cap -> {
+		if (entity == null)
+			return;
+
+		LivingEntity newEntity;
+		if (entity instanceof DragonEntity de) {
+			newEntity = de.getPlayer();
+		} else {
+            newEntity = entity;
+        }
+        DragonStateProvider.getCap(newEntity).ifPresentOrElse(cap -> {
 			if (cap.isDragon()) {
 				double bodyYaw = cap.getMovementData().bodyYaw;
 				double headYaw = cap.getMovementData().headYaw;
@@ -40,11 +50,11 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 				double lastHeadYaw = cap.getMovementData().headYawLastFrame;
 				double lastHeadPitch = cap.getMovementData().headPitchLastFrame;
 
-				cap.getMovementData().bodyYaw = entity.yBodyRot;
+				cap.getMovementData().bodyYaw = newEntity.yBodyRot;
 				cap.getMovementData().headYaw = -Math.toDegrees(dragon_Survival$storedXAngle);
 				cap.getMovementData().headPitch = -Math.toDegrees(dragon_Survival$storedYAngle);
 
-				cap.getMovementData().bodyYawLastFrame = entity.yBodyRot;
+				cap.getMovementData().bodyYawLastFrame = newEntity.yBodyRot;
 				cap.getMovementData().headYawLastFrame = -Math.toDegrees(dragon_Survival$storedXAngle);
 				cap.getMovementData().headPitchLastFrame = -Math.toDegrees(dragon_Survival$storedYAngle);
 
