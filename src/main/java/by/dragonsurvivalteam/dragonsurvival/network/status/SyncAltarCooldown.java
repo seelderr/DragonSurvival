@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -21,11 +22,11 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown.Data> {
 	}
 
 	public static void handleServer (final Data message, final IPayloadContext context) {
-		DragonStateHandler handler = context.player().getData(DRAGON_HANDLER);
-		handler.altarCooldown = message.cooldown;
-		handler.hasUsedAltar = true;
-
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message);
+		context.enqueueWork(() -> DragonStateProvider.getCap(context.player()).ifPresent(cap -> {
+				cap.altarCooldown = message.cooldown;
+				cap.hasUsedAltar = true;
+			})
+		).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
 
 	public record Data (int playerId, int cooldown) implements CustomPacketPayload {

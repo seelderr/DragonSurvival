@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -27,13 +28,13 @@ public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
                 Entity entity = player.level().getEntity(message.playerId);
 
                 if (entity instanceof Player) {
-                    DragonStateHandler handler = entity.getData(DRAGON_HANDLER);
-
-                    if (handler.switchedTool || handler.switchedWeapon) {
-                        player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-                    } else {
-                        handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
-                    }
+                    DragonStateProvider.getCap(entity).ifPresent(handler -> {
+                        if (handler.switchedTool || handler.switchedWeapon) {
+                            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                        } else {
+                            handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
+                        }
+                    });
                 }
             }
         });

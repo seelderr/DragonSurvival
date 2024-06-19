@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.network.player;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -27,22 +26,21 @@ public class SyncDragonHandler implements IMessage<SyncDragonHandler.Data> {
 	}
 
 	public static void handleServer(final Data message, final IPayloadContext context) {
-		PacketDistributor.sendToAllPlayers(message);
-
+		Player sender = context.player();
 		context.enqueueWork(() -> {
-			Player sender = context.player();
-			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-			if (message.dragonType == null && handler.getType() != null) {
-				DragonCommand.reInsertClawTools(sender, handler);
-			}
+			DragonStateProvider.getCap(sender).ifPresent(cap -> {
+				if (message.dragonType == null && cap.getType() != null) {
+					DragonCommand.reInsertClawTools(sender, cap);
+				}
 
-			handler.setIsHiding(message.hiding);
-			handler.setType(message.dragonType, sender);
-			handler.setBody(message.dragonBody, sender);
-			handler.setSize(message.size, sender);
-			handler.setHasFlight(message.hasWings);
-			handler.setPassengerId(message.passengerId);
-		});
+				cap.setIsHiding(message.hiding);
+				cap.setType(message.dragonType, sender);
+				cap.setBody(message.dragonBody, sender);
+				cap.setSize(message.size, sender);
+				cap.setHasFlight(message.hasWings);
+				cap.setPassengerId(message.passengerId);
+			});
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
 
 	public record Data(int playerId, boolean hiding, AbstractDragonType dragonType, AbstractDragonBody dragonBody, double size, boolean hasWings, int passengerId) implements CustomPacketPayload

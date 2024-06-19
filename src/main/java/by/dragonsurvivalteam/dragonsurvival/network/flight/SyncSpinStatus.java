@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -22,11 +23,13 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus.Data> {
 
 	public static void handleServer(final SyncSpinStatus.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-		handler.getMovementData().spinAttack = message.spinAttack;
-		handler.getMovementData().spinCooldown = message.spinCooldown;
-		handler.getMovementData().spinLearned = message.spinLearned;
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
+		context.enqueueWork(() -> {
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				handler.getMovementData().spinAttack = message.spinAttack;
+				handler.getMovementData().spinCooldown = message.spinCooldown;
+				handler.getMovementData().spinLearned = message.spinLearned;
+			});
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
 	public record Data(int playerId, int spinAttack, int spinCooldown, boolean spinLearned) implements CustomPacketPayload {

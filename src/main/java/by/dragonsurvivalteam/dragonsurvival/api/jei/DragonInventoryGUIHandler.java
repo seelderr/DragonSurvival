@@ -1,4 +1,4 @@
-/*package by.dragonsurvivalteam.dragonsurvival.api.jei;
+package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
@@ -47,4 +47,4 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonCont
 	public @NotNull List<Slot> getInventorySlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
 		return container.inventorySlots;
 	}
-}*/
+}

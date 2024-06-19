@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
@@ -21,19 +22,20 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 	public static void handleServer(final SyncSkillLevelChangeCost.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-			if(handler.isDragon()) {
-				DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				if (handler.isDragon()) {
+					DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
-				if (staticAbility instanceof PassiveDragonAbility ability) {
-					PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(sender, ability.getClass());
-					int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : Math.max((int) (playerAbility.getLevelCost() * 0.8F), 1);
+					if (staticAbility instanceof PassiveDragonAbility ability) {
+						PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(sender, ability.getClass());
+						int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : Math.max((int) (playerAbility.getLevelCost() * 0.8F), 1);
 
-					if (levelCost != 0 && !sender.isCreative()) {
-						sender.giveExperienceLevels(levelCost);
+						if (levelCost != 0 && !sender.isCreative()) {
+							sender.giveExperienceLevels(levelCost);
+						}
 					}
 				}
-			}
+			});
 		});
 	}
 

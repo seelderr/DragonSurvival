@@ -22,6 +22,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -44,6 +45,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
+import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -267,7 +269,6 @@ public class ClientDragonRender{
 				}
 				if(!player.isInvisible()){
 					if(ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonStateProvider.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))){
-						if(minecraft.player == player){
 							float upRot = 0;
 							if (ServerFlightHandler.isGliding(player)) {
 								upRot = Mth.clamp((float)(player.getDeltaMovement().y * 20), -80, 80);
@@ -323,7 +324,6 @@ public class ClientDragonRender{
 							handler.getMovementData().prevZRot = rot;
 
 							poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
-						}
 					} else {
 						handler.getMovementData().prevZRot = 0;
 						handler.getMovementData().prevXRot = 0;
@@ -497,6 +497,7 @@ public class ClientDragonRender{
 					DragonMovementData md = playerStateHandler.getMovementData();
 					playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
 					playerStateHandler.setFreeLook(KeyInputHandler.FREE_LOOK.isDown());
+					PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
 					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite, md.isFreeLook));
 				}
 			});

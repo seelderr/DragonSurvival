@@ -18,7 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlightSpeed;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
@@ -161,7 +161,7 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncFlightSpeed(final SyncFlightSpeed.Data message) {
+    public static void handleSyncFlightSpeed(final SyncDeltaMovement.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
