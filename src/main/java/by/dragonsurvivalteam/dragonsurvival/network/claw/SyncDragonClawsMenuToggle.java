@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import net.minecraft.network.FriendlyByteBuf;
@@ -18,22 +19,30 @@ public class SyncDragonClawsMenuToggle implements IMessage<SyncDragonClawsMenuTo
 
 	public static void handleClient(final SyncDragonClawsMenuToggle.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-		handler.getClawToolData().setMenuOpen(message.state);
 
-		if (sender.containerMenu instanceof DragonContainer container) {
-			container.update();
-		}
+		context.enqueueWork(() -> {
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				handler.getClawToolData().setMenuOpen(message.state);
+
+				if (sender.containerMenu instanceof DragonContainer container) {
+					container.update();
+				}
+			});
+		});
 	}
 
 	public static void handleServer(final SyncDragonClawsMenuToggle.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-		handler.getClawToolData().setMenuOpen(message.state);
 
-		if (sender.containerMenu instanceof DragonContainer container) {
-			container.update();
-		}
+		context.enqueueWork(() -> {
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				handler.getClawToolData().setMenuOpen(message.state);
+
+				if (sender.containerMenu instanceof DragonContainer container) {
+					container.update();
+				}
+			});
+		});
 	}
 
 	public record Data(boolean state) implements CustomPacketPayload {

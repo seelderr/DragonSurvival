@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
+
+import java.util.List;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -31,8 +33,6 @@ public class HelpButton extends ExtendedButton {
 		this.text = text;
 		this.variation = variation;
 		this.type = type;
-
-		setTooltip(Tooltip.create(Component.translatable(text)));
 	}
 
 	@Override
@@ -46,6 +46,9 @@ public class HelpButton extends ExtendedButton {
 		int i = 0;
 		if (isHoveredOrFocused()) {
 			i += (int) (type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 : Objects.equals(type, DragonTypes.FOREST) ? 2 : Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
+
+			// Render the tooltip manually since minecraft's tooltip positioner often fails with this button type
+			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(Component.translatable(text)), mouseX, mouseY);
 		}
 
 		guiGraphics.pose().pushPose();

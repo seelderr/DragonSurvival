@@ -12,6 +12,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 
 //import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
+import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -117,10 +118,9 @@ public class DragonSurvivalMod{
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-		// FIXME: When AppleSkin updates
-		/*if (ModList.get().isLoaded("appleskin")) {
+		if (ModList.get().isLoaded("appleskin")) {
 			NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
-		}*/
+		}
 	}
 	
 	@SubscribeEvent

@@ -5,6 +5,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HAND
 
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.nbt.CompoundTag;
@@ -26,13 +27,11 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset.Data>
 		Player sender = context.player();
 
 		context.enqueueWork(() -> {
-			DragonStateHandler handler = sender.getData(DRAGON_HANDLER);
-			SkinPreset preset = new SkinPreset();
-			preset.deserializeNBT(context.player().registryAccess(), message.preset());
-			handler.getSkinData().skinPreset = preset;
-		});
-
-		PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				handler.getSkinData().skinPreset = new SkinPreset();
+				handler.getSkinData().skinPreset.deserializeNBT(sender.registryAccess(), message.preset());
+			});
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
 	public record Data(int playerId, CompoundTag preset) implements CustomPacketPayload {

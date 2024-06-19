@@ -4,6 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -23,21 +24,20 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting.Data> {
 	}
 
 	public static void handleServer(final SyncAbilityCasting.Data message, final IPayloadContext context) {
+		Player sender = context.player();
 		context.enqueueWork(() -> {
-			Player sender = context.player();
-			DragonStateHandler handler = sender.getData(DragonSurvivalMod.DRAGON_HANDLER);
-			ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot);
-			ability.loadNBT(message.nbt);
-			handler.getMagicData().isCasting = message.isCasting;
+			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot);
+				ability.loadNBT(message.nbt);
+				handler.getMagicData().isCasting = message.isCasting;
 
-			if (message.isCasting) {
-				ability.onKeyPressed(sender, () -> {}, message.castStartTime, message.clientTime);
-			} else {
-				ability.onKeyReleased(sender);
-			}
-
-			PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message);
-		});
+				if (message.isCasting) {
+					ability.onKeyPressed(sender, () -> {}, message.castStartTime, message.clientTime);
+				} else {
+					ability.onKeyReleased(sender);
+				}
+			});
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
 	public record Data(int playerId, boolean isCasting, int abilitySlot, CompoundTag nbt, long castStartTime, long clientTime) implements CustomPacketPayload {
