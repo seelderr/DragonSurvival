@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.network.chat.Component;
@@ -51,11 +52,11 @@ public class DragonGrowthHandler{
 
 			boolean canContinue = false;
 
-			List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-			List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-			List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+			HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+			HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+			HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
-			List<Item> allowedItems = new ArrayList<>();
+			HashSet<Item> allowedItems = new HashSet<>();
 
 			switch(handler.getLevel()){
 				case NEWBORN:
@@ -118,9 +119,9 @@ public class DragonGrowthHandler{
 	}
 
 	public static int getIncrement(Item item, DragonLevel level){
-		List<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-		List<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-		List<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+		HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+		HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+		HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
 		int increment = 0;
 

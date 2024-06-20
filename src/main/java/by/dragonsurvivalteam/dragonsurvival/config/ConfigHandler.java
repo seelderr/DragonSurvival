@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
+import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
 import java.lang.annotation.ElementType;
@@ -9,6 +10,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Holder;
@@ -319,15 +322,42 @@ public class ConfigHandler{
 	 * @return Either a list of the resolved tag or the resource element
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
-	public static <T> List<T> parseResourceLocation(final Registry<T> registry, final ResourceLocation location) {
-		if (registry.containsKey(location)) {
-			Optional<Holder.Reference<T>> optional = registry.getHolder(location);
+	public static <T> List<T> parseResourceLocation(final Registry<T> registry, final String location) {
+		ResourceLocation resourceLocation = ResourceLocation.tryParse(location);
+
+		if(resourceLocation == null){
+			// Try parsing regex if it's not a valid resource location
+			String[] split = location.split(":");
+
+			// Just to be sure
+			if (split.length != 2) {
+				DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist has the wrong format: " + location);
+				return Collections.emptyList();
+			}
+
+			List<T> list = new ArrayList<>();
+			registry.registryKeySet().forEach((key) -> {
+				ResourceLocation keyLocation = key.location();
+				if (keyLocation.getNamespace().equals(split[0])) {
+					Pattern pattern = Pattern.compile(split[1]);
+
+					Matcher matcher = pattern.matcher(keyLocation.getPath());
+					if (matcher.matches()) {
+						list.add(registry.get(key));
+					}
+				}
+			});
+			return list;
+		}
+
+		if (registry.containsKey(resourceLocation)) {
+			Optional<Holder.Reference<T>> optional = registry.getHolder(resourceLocation);
 
 			if (optional.isPresent() && optional.get().isBound()) {
 				return List.of(optional.get().value());
 			}
 		} else {
-			Optional<TagKey<T>> tag = registry.getTagNames().filter(registryTag -> registryTag.location().equals(location)).findAny();
+			Optional<TagKey<T>> tag = registry.getTagNames().filter(registryTag -> registryTag.location().equals(resourceLocation)).findAny();
 
 			if(tag.isPresent()) {
 				List<T> list = new ArrayList<>();
@@ -367,8 +397,7 @@ public class ConfigHandler{
 				return EnumGetMethod.ORDINAL_OR_NAME.get(object, cs);
 			}
 
-			ResourceLocation location = ResourceLocation.tryParse(stringValue);
-			List<?> list = parseResourceLocation(REGISTRY_MAP.get(clazz), location);
+			List<?> list = parseResourceLocation(REGISTRY_MAP.get(clazz), stringValue);
 
 			if (list != null) {
 				if (field.getGenericType() instanceof List<?>) {
@@ -506,30 +535,22 @@ public class ConfigHandler{
 	/**
 	 * @param type Class of the resource type
 	 * @param values Resource locations
-	 * @return List of the resource element and the resolved tag
+	 * @return HashSet of the resource element and the resolved tag
 	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
-	public static <T> List<T> getResourceElements(final Class<T> type, final List<String> values) {
+	public static <T> HashSet<T> getResourceElements(final Class<T> type, final List<String> values) {
 		Registry<T> registry = (Registry<T>) REGISTRY_MAP.getOrDefault(type, null);
-		List<T> list = new ArrayList<>();
+		HashSet<T> hashSet = new HashSet<T>();
 
 		for (String rawResourceLocation : values) {
 			if (rawResourceLocation == null) {
 				continue;
 			}
 
-            list.addAll(parseResourceLocation(registry, ResourceLocation.tryParse(rawResourceLocation)));
+			hashSet.addAll(parseResourceLocation(registry, rawResourceLocation));
 		}
 
-		// Remove duplicates
-		List<T> distinctList;
-		distinctList = list.stream().filter(
-				distinct -> list.stream().noneMatch(
-						t -> t != distinct && t.equals(distinct)
-				)
-		).toList();
-
-		return distinctList;
+		return hashSet;
 	}
 
 	public static String createConfigPath(final String[] category, final String key) {
