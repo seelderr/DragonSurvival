@@ -7,7 +7,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -17,10 +19,14 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.ArrayList;
 import java.util.Locale;
+
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Arrow;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -148,22 +154,25 @@ public class SpikeAbility extends InstantCastAbility{
 
 	@Override
 	public void onCast(Player player){
-		Vec3 vector3d = player.getViewVector(1.0F);
-		double speed = 1d;
-		double d2 = vector3d.x * speed;
-		double d3 = vector3d.y * speed;
-		double d4 = vector3d.z * speed;
+		float speed = 1;
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		handler.getMovementData().bite = true;
+		Vec3 eyePos = player.getEyePosition();
+		Vec3 lookAngle = player.getLookAngle();
+
+		Vec3 projPos;
+		if (player.getAbilities().flying) {
+			projPos = lookAngle.scale(2.0F).add(eyePos);
+		} else {
+			projPos = lookAngle.scale(1.0F).add(eyePos);
+		}
 
 		for (int i = 0; i < getLevel(); i++) {
 			DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE.get(), player.level());
-			entity.setPos(entity.getX() + d2, entity.getY() + d3, entity.getZ() + d4);
+			entity.setPos(projPos);
 			entity.setArrow_level(getLevel());
 			entity.setBaseDamage(getDamage());
 			entity.pickup = AbstractArrow.Pickup.DISALLOWED;
-			entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, 4F, i * spikeSpread);
+			entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, i * spikeSpread);
 			player.level().addFreshEntity(entity);
 			if (!spikeMultishot)
 				break;
