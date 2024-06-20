@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -8,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.Objects;
 
@@ -15,6 +15,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
@@ -35,15 +36,22 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 
 		if(DragonStateProvider.isDragon((Entity) self)){
 			if(hasPassenger(entity)) {
-				if ((Object)this instanceof Player player && entity instanceof Player passenger) {
+				if ((Entity) self instanceof Player player && entity instanceof Player passenger) {
 					DragonMovementData md = DragonStateProvider.getOrGenerateHandler((Entity) self).getMovementData();
-					Vec3 originalPassPos = passenger.getPassengerRidingPosition((Entity) self);
-					double heightOffset = -0.2 * (originalPassPos.y() - player.getY()); // FIXME: This is a guess? Probably ask Psither about this
+
+					Vec3 originalPassPos = player.getPassengerRidingPosition((Entity) self);
+					double size = DragonStateProvider.getOrGenerateHandler(entity).getSize();
+					double heightOffset = size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE ? -0.55 : -0.15 - size / DragonLevel.ADULT.size * 0.2;
+
 					Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.5 * player.getBbWidth());
-					Vec3 passPos = originalPassPos.add(offsetFromBb);
+					Vec3 offsetFromCenter = originalPassPos.subtract(player.position());
+					offsetFromCenter = offsetFromCenter.xRot((float) Math.toRadians(md.prevXRot * 1.5)).zRot(-(float) Math.toRadians(md.prevZRot * 90));
+					//offsetFromCenter = offsetFromCenter.multiply(1, Math.signum(offsetFromCenter.y), 1);
+					Vec3 totalOffset = offsetFromCenter.add(offsetFromBb).yRot(-(float) Math.toRadians(md.bodyYawLastFrame));
+					Vec3 passPos = player.position().add(totalOffset);
 					move.accept(passenger, passPos.x(), passPos.y(), passPos.z());
 
-					((Entity)(Object)this).onPassengerTurned(passenger);
+					((Entity) self).onPassengerTurned(passenger);
 					callbackInfo.cancel();
 				}
 			}
@@ -53,11 +61,11 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 	@Inject(method = "onPassengerTurned(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
 	private void onPassengerTurned(Entity passenger, CallbackInfo callbackInfo) {
 		if (passenger instanceof Player player && player.getVehicle() != null && DragonStateProvider.getOrGenerateHandler(player.getVehicle()).isDragon() && player.level().isClientSide()) {
-			this.clampRotation(passenger);
+			this.dragonSurvival$clampRotation(passenger);
 		}
 	}
 	
-	@Unique private void clampRotation(Entity passenger) {
+	@Unique private void dragonSurvival$clampRotation(Entity passenger) {
 		Entity self = (Entity)(Object) this;
 		DragonStateHandler selfHandler = DragonStateProvider.getOrGenerateHandler(self);
 		DragonMovementData selfmd = selfHandler.getMovementData();
@@ -111,34 +119,6 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 				ci.setReturnValue(false);
 			}
 		});
-	}
-
-	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "getPassengerRidingPosition")
-	public Vec3 getDragonPassengersRidingPosition(Vec3 original){
-		if(DragonStateProvider.isDragon((Entity)(Object)this)){
-			if (!DragonStateProvider.isDragon(((Entity)(Object)this).getPassengers().get(0))) { // Human
-				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
-				switch(((Entity)(Object)this).getPose()){
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
-						return original.add(0, height * 0.6D, 0);
-					}
-                    case CROUCHING -> {
-                        return original.add(0, height * 0.45D, 0);
-                    }
-                    default -> {
-						return original.add(0, height * 0.5D, 0);
-					}
-				}
-			} else { // Dragon
-				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
-                if (Objects.requireNonNull(((Entity) (Object) this).getPose()) == Pose.CROUCHING) {
-                    return original.add(0, height * 0.61D, 0);
-                }
-                return original.add(0, height * 0.66D, 0);
-            }
-		}
-
-		return original;
 	}
 
 	@Inject( at = @At( value = "HEAD" ), method = "Lnet/minecraft/world/entity/Entity;isVisuallyCrawling()Z", cancellable = true )

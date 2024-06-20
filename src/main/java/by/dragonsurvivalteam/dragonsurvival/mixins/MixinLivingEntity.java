@@ -3,9 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -19,6 +21,7 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -56,6 +59,28 @@ public abstract class MixinLivingEntity extends Entity{
 		}
 
 		return getItemBySlot(slotType);
+	}
+
+	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "getPassengerRidingPosition")
+	public Vec3 getDragonPassengersRidingOffset(Vec3 original){
+		if(DragonStateProvider.getOrGenerateHandler((Entity)this).isDragon()){
+			if (!DragonStateProvider.getOrGenerateHandler(((Entity)(Object)this).getPassengers().get(0)).isDragon()) { // Human
+				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
+				switch(((Entity)(Object)this).getPose()){
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> { return original.add(new Vec3(0, (height * 0.6D), 0)); }
+					case CROUCHING -> { return original.add(new Vec3(0, (height * 0.45D), 0)); }
+					default -> { return original.add(new Vec3(0, (height * 0.5D), 0)); }
+				}
+			} else { // Dragon
+				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
+				switch(((Entity)(Object)this).getPose()){
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> { return original.add(new Vec3(0, (height * 0.66D), 0)); }
+					case CROUCHING -> { return original.add(new Vec3(0, (height * 0.61D), 0)); }
+					default -> { return original.add(new Vec3(0, (height * 0.66D), 0)); }
+				}
+			}
+		}
+		return original;
 	}
 
 	@ModifyExpressionValue(method = "eat(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))
