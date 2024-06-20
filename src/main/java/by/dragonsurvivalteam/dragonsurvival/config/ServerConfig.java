@@ -419,8 +419,6 @@ public class ServerConfig{
 			"c:tools/shields",
 			"c:tools/bows",
 			"c:tools/crossbows",
-			"c:tools/swords",
-			"c:tools",
 			"minecraft:trident",
 			"minecraft:elytra",
 			"quark:flamerang",
