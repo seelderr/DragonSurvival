@@ -84,34 +84,21 @@ public class BallLightningAbility extends ChargeCastAbility{
 
 	@Override
 	public void castingComplete(Player player){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-
 		float speed = 1;
-		float yaw = (float) Math.toRadians(-player.getYRot());
-		float pitch = (float) Math.toRadians(-player.getXRot());
-
-		float xComp = (float)(Math.sin(yaw) * Math.cos(pitch));
-		float yComp = (float)Math.sin(pitch);
-		float zComp = (float)(Math.cos(yaw) * Math.cos(pitch));
 
 		Vec3 eyePos = player.getEyePosition();
 		Vec3 lookAngle = player.getLookAngle();
 
-		double size = handler.getSize();
-
 		Vec3 projPos;
 		if (player.getAbilities().flying) {
-			Vec3 forward = lookAngle.scale(2.0F);
-			projPos = eyePos.add(forward).add(0F, -0.1-0.5F*(size / 30F), 0F);
+			projPos = lookAngle.scale(2.0F).add(eyePos);
 		} else {
-			Vec3 forward = lookAngle.scale(1.0F);
-			projPos = eyePos.add(forward).add(0F, -0.1F-0.2F*(size / 30F), 0F);
+			projPos = lookAngle.scale(1.0F).add(eyePos);
 		}
-		Vec3 velocity = new Vec3(xComp * speed, yComp * speed, zComp * speed);
 
 		BallLightningEntity entity = new BallLightningEntity(projPos.x, projPos.y, projPos.z, Vec3.ZERO, player.level());
 		entity.accelerationPower = 0;
-		entity.setDeltaMovement(velocity);
+		entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, 0);
 		player.level().addFreshEntity(entity);
 	}
 

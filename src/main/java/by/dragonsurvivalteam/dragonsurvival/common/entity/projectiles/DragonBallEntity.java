@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import javax.annotation.Nullable;
+
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -28,7 +30,7 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	public static final EntityDataAccessor<Integer> LIFESPAN = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.INT);
 	public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.FLOAT);
 	public static final float DRAGON_BALL_DISTANCE = 32.f;
-	public static final int MAX_LIFESPAN = 1200; // 60 seconds
+	public static final int MAX_LIFESPAN = Functions.secondsToTicks(5);
 	private boolean hasExploded = false;
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
@@ -85,7 +87,6 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 
 	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){
 		return pFireball.damageSources().fireball(this, pIndirectEntity);
-		//return DamageSource.fireball(pFireball, pIndirectEntity);
 	}
 
 
@@ -97,6 +98,12 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	@Override
 	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar){
 		registrar.add(new AnimationController<>(this, "everything", this::predicate));
+	}
+
+	// We don't want these entities to slow down
+	@Override
+	protected float getInertia() {
+		return 1.0F;
 	}
 
 	@Override
