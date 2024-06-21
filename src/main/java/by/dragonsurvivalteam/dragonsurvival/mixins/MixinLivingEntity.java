@@ -100,8 +100,8 @@ public abstract class MixinLivingEntity extends Entity{
 				}
 			}
 		}
-	}
-  }
+		return original;
+  	}
 
 	@Inject( method = "getEquipmentSlotForItem", at = @At( value = "HEAD"), cancellable = true)
 	private void disallowBlackListedItemsFromBeingEquipped(ItemStack pStack, CallbackInfoReturnable<EquipmentSlot> info){
