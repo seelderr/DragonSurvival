@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -12,10 +14,14 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.SlotAccess;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.*;
@@ -26,8 +32,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
+import net.neoforged.neoforge.event.entity.living.LivingSwapItemsEvent;
+import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_BLACKLISTED_ITEMS;
 
 @EventBusSubscriber
 public class DragonPenaltyHandler{
@@ -111,5 +122,35 @@ public class DragonPenaltyHandler{
 				}
 			}
 		});
+	}
+
+	public static boolean itemIsBlacklisted(Item item) {
+        return DRAGON_BLACKLISTED_ITEMS.contains(item);
+    }
+
+	@SubscribeEvent
+	public static void preventBlackListedItemsFromBeingEquipped(EntityTickEvent.Pre event){
+		if(!ServerConfig.penalties){
+			return;
+		}
+
+		if(event.getEntity() instanceof Player player) {
+			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				if(dragonStateHandler.isDragon()){
+					ItemStack mainHandItem = player.getMainHandItem();
+					ItemStack offHandItem = player.getOffhandItem();
+
+					if(!mainHandItem.isEmpty() && itemIsBlacklisted(mainHandItem.getItem())){
+						player.getInventory().removeItem(mainHandItem);
+						player.drop(mainHandItem, false);
+					}
+
+					if(!offHandItem.isEmpty() && itemIsBlacklisted(offHandItem.getItem())){
+						player.getInventory().removeItem(offHandItem);
+						player.drop(offHandItem, false);
+					}
+				}
+			});
+		}
 	}
 }
