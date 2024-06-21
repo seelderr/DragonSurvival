@@ -129,28 +129,27 @@ public class DragonPenaltyHandler{
     }
 
 	@SubscribeEvent
-	public static void preventBlackListedItemsFromBeingEquipped(EntityTickEvent.Pre event){
+	public static void preventBlackListedItemsFromBeingEquipped(PlayerTickEvent.Pre event){
 		if(!ServerConfig.penalties){
 			return;
 		}
 
-		if(event.getEntity() instanceof Player player) {
-			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
-				if(dragonStateHandler.isDragon()){
-					ItemStack mainHandItem = player.getMainHandItem();
-					ItemStack offHandItem = player.getOffhandItem();
+		Player player = event.getEntity();
+		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+			if(dragonStateHandler.isDragon()){
+				ItemStack mainHandItem = player.getMainHandItem();
+				ItemStack offHandItem = player.getOffhandItem();
 
-					if(!mainHandItem.isEmpty() && itemIsBlacklisted(mainHandItem.getItem())){
-						player.getInventory().removeItem(mainHandItem);
-						player.drop(mainHandItem, false);
-					}
-
-					if(!offHandItem.isEmpty() && itemIsBlacklisted(offHandItem.getItem())){
-						player.getInventory().removeItem(offHandItem);
-						player.drop(offHandItem, false);
-					}
+				if(!mainHandItem.isEmpty() && itemIsBlacklisted(mainHandItem.getItem())){
+					player.getInventory().removeItem(mainHandItem);
+					player.drop(mainHandItem, false);
 				}
-			});
-		}
+
+				if(!offHandItem.isEmpty() && itemIsBlacklisted(offHandItem.getItem())){
+					player.getInventory().removeItem(offHandItem);
+					player.drop(offHandItem, false);
+				}
+			}
+		});
 	}
 }
