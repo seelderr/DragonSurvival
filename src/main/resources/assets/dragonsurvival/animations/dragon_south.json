@@ -2,7 +2,7 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"idle": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -715,7 +715,7 @@
 			}
 		},
 		"idle_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -1866,7 +1866,7 @@
 			}
 		},
 		"walk": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.7,
 			"bones": {
 				"FrontLegLeft": {
@@ -3306,7 +3306,7 @@
 			}
 		},
 		"run": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.48,
 			"bones": {
 				"FrontLegLeft": {
@@ -4664,7 +4664,7 @@
 			}
 		},
 		"run_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.48,
 			"bones": {
 				"FrontLegLeft": {
@@ -5808,7 +5808,7 @@
 			}
 		},
 		"cast_mass_buff": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 8.24,
 			"bones": {
 				"Body": {
@@ -10067,7 +10067,7 @@
 			}
 		},
 		"mass_buff": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.84,
 			"bones": {
 				"Body": {
@@ -12723,7 +12723,7 @@
 			}
 		},
 		"cast_self_buff": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -14116,7 +14116,7 @@
 			}
 		},
 		"self_buff": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.68,
 			"bones": {
 				"FrontLegLeft": {
@@ -15589,7 +15589,7 @@
 			}
 		},
 		"dig": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -16819,7 +16819,7 @@
 			}
 		},
 		"dig_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -18098,7 +18098,7 @@
 			}
 		},
 		"sneak": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -19346,7 +19346,7 @@
 			}
 		},
 		"dig_sneak": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 3.28,
 			"bones": {
 				"FrontLegLeft": {
@@ -20863,7 +20863,7 @@
 			}
 		},
 		"sneak_walk": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 1.4,
 			"bones": {
 				"FrontLegLeft": {
@@ -23735,7 +23735,7 @@
 			}
 		},
 		"fall_loop": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.52,
 			"bones": {
 				"FrontLegLeft": {
@@ -26463,7 +26463,7 @@
 			}
 		},
 		"swim": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 1.4,
 			"bones": {
 				"FrontLegLeft": {
@@ -27614,7 +27614,7 @@
 			}
 		},
 		"swim_fast": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 1.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -28888,7 +28888,7 @@
 			}
 		},
 		"swim_fast_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 1.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -29473,7 +29473,7 @@
 			}
 		},
 		"fly": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.52,
 			"bones": {
 				"FrontLegLeft": {
@@ -30268,7 +30268,7 @@
 			}
 		},
 		"fly_fast": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.52,
 			"bones": {
 				"FrontLegLeft": {
@@ -31829,7 +31829,7 @@
 			}
 		},
 		"fly_alt": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.52,
 			"bones": {
 				"FrontLegLeft": {
@@ -32620,7 +32620,7 @@
 			}
 		},
 		"fly_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.52,
 			"bones": {
 				"FrontLegLeft": {
@@ -33354,7 +33354,7 @@
 			}
 		},
 		"fly_head_locked_magic": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.4,
 			"bones": {
 				"FrontLegLeft": {
@@ -37128,7 +37128,7 @@
 			}
 		},
 		"fly_dive": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.76,
 			"bones": {
 				"FrontLegLeft": {
@@ -37981,7 +37981,7 @@
 			}
 		},
 		"fly_dive_alt": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.76,
 			"bones": {
 				"FrontLegLeft": {
@@ -38830,7 +38830,7 @@
 			}
 		},
 		"fly_spin": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.76,
 			"bones": {
 				"FrontLegLeft": {
@@ -39446,7 +39446,7 @@
 			}
 		},
 		"fly_spin_fast": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.76,
 			"bones": {
 				"FrontLegLeft": {
@@ -40062,7 +40062,7 @@
 			}
 		},
 		"fly_soaring": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.52,
 			"bones": {
 				"FrontLegLeft": {
@@ -40806,7 +40806,7 @@
 			}
 		},
 		"fly_land": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 1.28,
 			"bones": {
 				"FrontLegLeft": {
@@ -42345,7 +42345,7 @@
 			}
 		},
 		"sit": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -43338,7 +43338,7 @@
 			}
 		},
 		"sit_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -44220,7 +44220,7 @@
 			}
 		},
 		"sit_dentist": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -45711,7 +45711,7 @@
 			}
 		},
 		"sit_on_magic_source": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -47118,7 +47118,7 @@
 			}
 		},
 		"sitting_curled_tail_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -48074,7 +48074,7 @@
 			}
 		},
 		"sitting_curled_tail_left_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -48931,7 +48931,7 @@
 			}
 		},
 		"sitting_curled_tail_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -49903,7 +49903,7 @@
 			}
 		},
 		"sitting_curled_tail_right_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -50790,7 +50790,7 @@
 			}
 		},
 		"sitting_spinning_item": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -51829,7 +51829,7 @@
 			}
 		},
 		"sad_sitting": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -52718,7 +52718,7 @@
 			}
 		},
 		"sad_lying": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -53629,7 +53629,7 @@
 			}
 		},
 		"resting_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -54445,7 +54445,7 @@
 			}
 		},
 		"resting_left_head_locked": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -55193,7 +55193,7 @@
 			}
 		},
 		"resting_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -56015,7 +56015,7 @@
 			}
 		},
 		"resting_covering_with_wing_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -56802,7 +56802,7 @@
 			}
 		},
 		"resting_covering_with_wing_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -57592,7 +57592,7 @@
 			}
 		},
 		"resting_sleepy_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -58321,7 +58321,7 @@
 			}
 		},
 		"resting_sleepy_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -59053,7 +59053,7 @@
 			}
 		},
 		"resting_on_back": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"Dragon": {
@@ -59840,7 +59840,7 @@
 			}
 		},
 		"resting_leaning_on_wall": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"Dragon": {
@@ -60666,7 +60666,7 @@
 			}
 		},
 		"sleeping_on_back": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"Dragon": {
@@ -61386,7 +61386,7 @@
 			}
 		},
 		"sleeping_straight": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -62057,7 +62057,7 @@
 			}
 		},
 		"sleeping_on_side_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -62786,7 +62786,7 @@
 			}
 		},
 		"sleeping_on_side_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -63320,7 +63320,7 @@
 			}
 		},
 		"sleeping_on_side_straight_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -63864,7 +63864,7 @@
 			}
 		},
 		"sleeping_on_side_straight_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -64373,7 +64373,7 @@
 			}
 		},
 		"sleeping_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -65124,7 +65124,7 @@
 			}
 		},
 		"sleep": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -65926,7 +65926,7 @@
 			}
 		},
 		"spinning_on_back": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"Dragon": {
@@ -66662,7 +66662,7 @@
 			}
 		},
 		"spinning_on_back_fast": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"Dragon": {
@@ -67402,7 +67402,7 @@
 			}
 		},
 		"vibing_sitting": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 3.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -68669,7 +68669,7 @@
 			}
 		},
 		"vibing_standing": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.48,
 			"bones": {
 				"Body": {
@@ -69938,7 +69938,7 @@
 			}
 		},
 		"shy_sitting": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -70898,7 +70898,7 @@
 			}
 		},
 		"shy_lying": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.16,
 			"bones": {
 				"FrontLegLeft": {
@@ -73568,7 +73568,7 @@
 			}
 		},
 		"hugging_sitting": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -74388,7 +74388,7 @@
 			}
 		},
 		"rocking_on_back": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 3.04,
 			"bones": {
 				"Dragon": {
@@ -75748,7 +75748,7 @@
 			}
 		},
 		"kissing_sitting_winged": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -76645,7 +76645,7 @@
 			}
 		},
 		"kissing_sitting": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -77525,7 +77525,7 @@
 			}
 		},
 		"holding_paws_sitting": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -78351,7 +78351,7 @@
 			}
 		},
 		"hugging_sitting_winged": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.2,
 			"bones": {
 				"FrontLegLeft": {
@@ -79118,7 +79118,7 @@
 			}
 		},
 		"holding_passenger_standing_biped": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.08,
 			"bones": {
 				"Dragon": {
@@ -80027,7 +80027,7 @@
 			}
 		},
 		"flapping_wings_standing": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.08,
 			"bones": {
 				"FrontLegLeft": {
@@ -81571,7 +81571,7 @@
 			}
 		},
 		"flapping_wings_standing_biped": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.08,
 			"bones": {
 				"Dragon": {
@@ -82456,7 +82456,7 @@
 			}
 		},
 		"blend_maw": {
-			"loop": true,
+			"loop": "loop",
 			"bones": {
 				"BlendHandlerJaw": {
 					"rotation": {
@@ -82476,7 +82476,7 @@
 			}
 		},
 		"blend_sad": {
-			"loop": true,
+			"loop": "loop",
 			"bones": {
 				"BlendHandlerNeck3": {
 					"rotation": {
@@ -82511,7 +82511,7 @@
 			}
 		},
 		"blend_angry": {
-			"loop": true,
+			"loop": "loop",
 			"bones": {
 				"BlendHandlerEyeLeft": {
 					"rotation": {
@@ -82532,7 +82532,7 @@
 			}
 		},
 		"blend_licking": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2,
 			"bones": {
 				"BlendHandlerJaw": {
@@ -82680,7 +82680,7 @@
 			}
 		},
 		"blend_yawning": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 3,
 			"bones": {
 				"BlendHandlerNeck1": {
@@ -82813,7 +82813,7 @@
 			}
 		},
 		"blend_blep": {
-			"loop": true,
+			"loop": "loop",
 			"bones": {
 				"BlendHandlerJaw": {
 					"rotation": {
@@ -82823,7 +82823,7 @@
 			}
 		},
 		"blend_sniffing": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 4.8,
 			"bones": {
 				"BlendHandlerNeck3": {
@@ -83231,10 +83231,10 @@
 			}
 		},
 		"tail_turn": {
-			"loop": true
+			"loop": "loop"
 		},
 		"spell_charge": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.32,
 			"bones": {
 				"BlendHandlerNeck4": {
@@ -83303,7 +83303,7 @@
 			}
 		},
 		"bite": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.44,
 			"bones": {
 				"BlendHandlerNeck4": {
@@ -83428,7 +83428,7 @@
 			}
 		},
 		"spell_shot": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.32,
 			"bones": {
 				"BlendHandlerNeck4": {
@@ -83553,10 +83553,10 @@
 			}
 		},
 		"head_turn": {
-			"loop": true
+			"loop": "loop"
 		},
 		"eat_item_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.24,
 			"bones": {
 				"BlendHandlerHead": {
@@ -83588,7 +83588,7 @@
 			}
 		},
 		"use_item_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.44,
 			"bones": {
 				"MolangHandlerLefttItem": {
@@ -83642,7 +83642,7 @@
 			}
 		},
 		"use_item_right": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.44,
 			"bones": {
 				"MolangHandlerRightItem": {
@@ -83696,7 +83696,7 @@
 			}
 		},
 		"eat_item_left": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 0.24,
 			"bones": {
 				"BlendHandlerHead": {
@@ -83728,7 +83728,7 @@
 			}
 		},
 		"breath": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.08,
 			"bones": {
 				"BlendHandlerNeck3": {
@@ -83805,7 +83805,7 @@
 			}
 		},
 		"new": {
-			"loop": true
+			"loop": "loop"
 		}
 	},
 	"geckolib_format_version": 2
