@@ -70,24 +70,37 @@ public abstract class MixinLivingEntity extends Entity{
 	}
 
 	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "getPassengerRidingPosition")
-	public Vec3 getDragonPassengersRidingOffset(Vec3 original){
-		if(DragonStateProvider.getOrGenerateHandler((Entity)this).isDragon()){
-			if (!DragonStateProvider.getOrGenerateHandler(((Entity)(Object)this).getPassengers().get(0)).isDragon()) { // Human
-				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
-				switch(((Entity)(Object)this).getPose()){
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> { return original.add(new Vec3(0, (height * 0.6D), 0)); }
-					case CROUCHING -> { return original.add(new Vec3(0, (height * 0.45D), 0)); }
-					default -> { return original.add(new Vec3(0, (height * 0.5D), 0)); }
+	public Vec3 getDragonPassengersRidingOffset(Vec3 original) {
+		if (DragonStateProvider.getOrGenerateHandler((Entity) this).isDragon()) {
+			if (!DragonStateProvider.getOrGenerateHandler(((Entity) (Object) this).getPassengers().get(0)).isDragon()) { // Human
+				double height = DragonSizeHandler.getDragonHeight((Player) (Object) this);
+				switch (((Entity) (Object) this).getPose()) {
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+						return original.add(new Vec3(0, (height * 0.6D), 0));
+					}
+					case CROUCHING -> {
+						return original.add(new Vec3(0, (height * 0.45D), 0));
+					}
+					default -> {
+						return original.add(new Vec3(0, (height * 0.5D), 0));
+					}
 				}
 			} else { // Dragon
-				double height = DragonSizeHandler.getDragonHeight((Player)(Object)this);
-				switch(((Entity)(Object)this).getPose()){
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> { return original.add(new Vec3(0, (height * 0.66D), 0)); }
-					case CROUCHING -> { return original.add(new Vec3(0, (height * 0.61D), 0)); }
-					default -> { return original.add(new Vec3(0, (height * 0.66D), 0)); }
+				double height = DragonSizeHandler.getDragonHeight((Player) (Object) this);
+				switch (((Entity) (Object) this).getPose()) {
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+						return original.add(new Vec3(0, (height * 0.66D), 0));
+					}
+					case CROUCHING -> {
+						return original.add(new Vec3(0, (height * 0.61D), 0));
+					}
+					default -> {
+						return original.add(new Vec3(0, (height * 0.66D), 0));
+					}
 				}
 			}
 		}
+	}
   }
 
 	@Inject( method = "getEquipmentSlotForItem", at = @At( value = "HEAD"), cancellable = true)
