@@ -6,7 +6,6 @@
   "mixins": [
     "AccessorAnimationController",
     "MixinEntity",
-    "MixinInventory",
     "MixinItem",
     "MixinLivingEntity",
     "MixinPlayerEnd",

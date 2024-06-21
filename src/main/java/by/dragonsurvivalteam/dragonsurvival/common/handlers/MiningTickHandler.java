@@ -31,6 +31,10 @@ public class MiningTickHandler{
 						dragonStateHandler.treasureResting = false;
 						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
 					}
+
+					if(dragonStateHandler.getMagicData().onMagicSource && isMining){
+						SourceOfMagicHandler.cancelSourceOfMagicServer(player);
+					}
 				}
 			}
 		});

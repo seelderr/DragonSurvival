@@ -2,10 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
@@ -19,11 +23,18 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.event.entity.living.LivingEquipmentChangeEvent;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import java.util.Map;
 
 @Mixin( LivingEntity.class )
 public abstract class MixinLivingEntity extends Entity{
@@ -45,7 +56,7 @@ public abstract class MixinLivingEntity extends Entity{
 					DragonStateHandler cap = DragonStateProvider.getOrGenerateHandler(entity);
 					if (ToolUtils.shouldUseDragonTools(getMainHandItem())) {
 						// Without this the item in the dragon slot for the sword would not grant any of its attributes
-						ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(0);
+						ItemStack sword = cap.getClawToolData().getClawsInventory().getItem(ClawInventory.Slot.SWORD.ordinal());
 
 						if (!sword.isEmpty()) {
 							return sword;
@@ -56,6 +67,49 @@ public abstract class MixinLivingEntity extends Entity{
 		}
 
 		return getItemBySlot(slotType);
+	}
+
+	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "getPassengerRidingPosition")
+	public Vec3 getDragonPassengersRidingOffset(Vec3 original) {
+		if (DragonStateProvider.getOrGenerateHandler((Entity) this).isDragon()) {
+			if (!DragonStateProvider.getOrGenerateHandler(((Entity) (Object) this).getPassengers().get(0)).isDragon()) { // Human
+				double height = DragonSizeHandler.getDragonHeight((Player) (Object) this);
+				switch (((Entity) (Object) this).getPose()) {
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+						return original.add(new Vec3(0, (height * 0.6D), 0));
+					}
+					case CROUCHING -> {
+						return original.add(new Vec3(0, (height * 0.45D), 0));
+					}
+					default -> {
+						return original.add(new Vec3(0, (height * 0.5D), 0));
+					}
+				}
+			} else { // Dragon
+				double height = DragonSizeHandler.getDragonHeight((Player) (Object) this);
+				switch (((Entity) (Object) this).getPose()) {
+					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+						return original.add(new Vec3(0, (height * 0.66D), 0));
+					}
+					case CROUCHING -> {
+						return original.add(new Vec3(0, (height * 0.61D), 0));
+					}
+					default -> {
+						return original.add(new Vec3(0, (height * 0.66D), 0));
+					}
+				}
+			}
+		}
+		return original;
+  	}
+
+	@Inject( method = "getEquipmentSlotForItem", at = @At( value = "HEAD"), cancellable = true)
+	private void disallowBlackListedItemsFromBeingEquipped(ItemStack pStack, CallbackInfoReturnable<EquipmentSlot> info){
+		if(DragonStateProvider.isDragon((LivingEntity)(Object)this)) {
+			if (DragonPenaltyHandler.itemIsBlacklisted(pStack.getItem())) {
+				info.setReturnValue(EquipmentSlot.MAINHAND);
+			}
+		}
 	}
 
 	@ModifyExpressionValue(method = "eat(Lnet/minecraft/world/level/Level;Lnet/minecraft/world/item/ItemStack;)Lnet/minecraft/world/item/ItemStack;", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getFoodProperties(Lnet/minecraft/world/entity/LivingEntity;)Lnet/minecraft/world/food/FoodProperties;"))

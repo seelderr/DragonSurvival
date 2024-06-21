@@ -8,12 +8,15 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
 import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
 import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
+
+import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK_FOLDER;
 
 public class DataBlockStateProvider extends BlockStateProvider {
 	public DataBlockStateProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
@@ -24,7 +27,56 @@ public class DataBlockStateProvider extends BlockStateProvider {
 	protected void registerStatesAndModels() {
 		DSBlocks.DS_BLOCKS.getEntries().forEach((holder) -> {
 			if (holder.get() instanceof DragonDoor) {
-				// TODO
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							boolean partTop = state.getValue(DragonDoor.PART) == DragonDoor.Part.TOP;
+							boolean partMiddle = state.getValue(DragonDoor.PART) == DragonDoor.Part.MIDDLE;
+							boolean hingeRight = state.getValue(DragonDoor.HINGE) == DoorHingeSide.RIGHT;
+							boolean open = state.getValue(DragonDoor.OPEN);
+							String name = holder.getId().getPath();
+							String suffix = (partTop ? "_top" : partMiddle ? "_middle" : "_bottom") + (hingeRight ? "_hinge" : "") + (open ? "_open" : "");
+							String modelName = BLOCK_FOLDER + "/" + name + suffix;
+							ResourceLocation bottom = modLoc(BLOCK_FOLDER + "/" + name + "_bottom");
+							ResourceLocation center = modLoc(BLOCK_FOLDER + "/" + name + "_center");
+							ResourceLocation top = modLoc(BLOCK_FOLDER + "/" + name + "_top");
+							ResourceLocation selected = partTop ? top : partMiddle ? center : bottom;
+							ModelFile door;
+							if(hingeRight) {
+								if(partTop) {
+									if(open) {
+										door = models().doorTopRightOpen(modelName, selected, selected).renderType("cutout");
+									} else {
+										door = models().doorTopRight(modelName, selected, selected).renderType("cutout");
+									}
+								} else {
+									if(open) {
+										door = models().doorBottomRightOpen(modelName, selected, selected).renderType("cutout");
+									} else {
+										door = models().doorBottomRight(modelName, selected, selected).renderType("cutout");
+									}
+								}
+							} else {
+								if(partTop) {
+									if(open) {
+										door = models().doorTopLeftOpen(modelName, selected, selected).renderType("cutout");
+									} else {
+										door = models().doorTopLeft(modelName, selected, selected).renderType("cutout");
+									}
+								} else {
+									if(open) {
+										door = models().doorBottomLeftOpen(modelName, selected, selected).renderType("cutout");
+									} else {
+										door = models().doorBottomLeft(modelName, selected, selected).renderType("cutout");
+									}
+								}
+							}
+							int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 90;
+							yRot = open && hingeRight ? yRot - 90 : yRot;
+							yRot = open && !hingeRight ? yRot + 90 : yRot;
+							yRot = yRot < 0 ? 360 + yRot : yRot;
+							yRot = yRot % 360;
+							return ConfiguredModel.builder().modelFile(door).rotationY(yRot).build();
+						});
 			} else if (holder.get() instanceof DragonPressurePlates plate) {
 				String name = holder.getId().getPath();
 				ResourceLocation texture = modLoc("block/" + name);
@@ -34,13 +86,13 @@ public class DataBlockStateProvider extends BlockStateProvider {
 			} else if (holder.get() instanceof DragonAltarBlock) {
 				String name = holder.getId().getPath();
 				BlockModelBuilder builder = models().withExistingParent(name, "orientable")
-						.texture("up", modLoc("block/" + name + "_top"))
-						.texture("down", modLoc("block/" + name + "_top"))
-						.texture("east", modLoc("block/" + name + "_east"))
-						.texture("west", modLoc("block/" + name + "_west"))
-						.texture("north", modLoc("block/" + name + "_north"))
-						.texture("south", modLoc("block/" + name + "_south"))
-						.texture("particle", modLoc("block/" + name + "_top"));
+						.texture("up", modLoc(BLOCK_FOLDER + "/" + name + "_top"))
+						.texture("down", modLoc(BLOCK_FOLDER + "/" + name + "_top"))
+						.texture("east", modLoc(BLOCK_FOLDER + "/" + name + "_east"))
+						.texture("west", modLoc(BLOCK_FOLDER + "/" + name + "_west"))
+						.texture("north", modLoc(BLOCK_FOLDER + "/" + name + "_north"))
+						.texture("south", modLoc(BLOCK_FOLDER + "/" + name + "_south"))
+						.texture("particle", modLoc(BLOCK_FOLDER + "/" + name + "_top"));
 
 				getVariantBuilder(holder.get())
 						.forAllStates(state ->
@@ -55,10 +107,10 @@ public class DataBlockStateProvider extends BlockStateProvider {
 							int layers = state.getValue(TreasureBlock.LAYERS);
 							String name = holder.getId().getPath();
 							BlockModelBuilder builder = layers != 8 ? models()
-									.withExistingParent(name + layers * 2, "block/snow_height" + layers * 2)
-									.texture("particle", modLoc("block/" + name))
-									.texture("texture", modLoc("block/" + name))
-									: /* 8 layers */ models().cubeAll(name, modLoc("block/" + name));
+									.withExistingParent(name + layers * 2, BLOCK_FOLDER + "/" + "snow_height" + layers * 2)
+									.texture("particle", modLoc(BLOCK_FOLDER + "/" + name))
+									.texture("texture", modLoc(BLOCK_FOLDER + "/" + name))
+									: /* 8 layers */ models().cubeAll(name, modLoc(BLOCK_FOLDER + "/" + name));
 							return ConfiguredModel.builder().modelFile(builder).build();
 						}, TreasureBlock.WATERLOGGED);
 			}

@@ -69,15 +69,18 @@ public class DragonSizeHandler{
 	}
 
 	public static double calculateDragonHeight(double size){
-        return 0.9D + 0.9D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
+		return (size + 4.0D) / 20.0D;
+        //return 0.9D + 0.9D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateDragonWidth(double size){
-        return 0.4D + 0.2D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
+		return (3.0D * size + 62.0D) / 260.0D; // 0.4 -> Config Dragon Max;
+        //return 0.4D + 0.2D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateDragonEyeHeight(double size){
-        return 0.8D + 0.8D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
+		return (11.0D * size + 54.0D) / 260.0D; // 0.8 -> Config Dragon Max
+        //return 0.8D + 0.8D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateModifiedEyeHeight(double eyeHeight, Pose pose, boolean squish){

@@ -241,8 +241,10 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
 
 						if(source != null && !source.isEmpty()){
-							if(worldIn.isClientSide()){
-								PacketDistributor.sendToServer(new SyncMagicSourceStatus.Data(player.getId(), true, 0));
+							if(!worldIn.isClientSide()){
+								handler.getMagicData().magicSourceTimer = 0;
+								handler.getMagicData().onMagicSource = true;
+								PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicSourceStatus.Data(player.getId(), true, 0));
 							}
 						}
 					}
