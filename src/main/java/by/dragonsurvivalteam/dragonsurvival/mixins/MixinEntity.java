@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -15,8 +14,6 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -43,7 +40,7 @@ public abstract class MixinEntity implements ICapabilityProvider<Entity, Void, D
 					double size = DragonStateProvider.getOrGenerateHandler(entity).getSize();
 					double heightOffset = size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE ? -0.55 : -0.15 - size / DragonLevel.ADULT.size * 0.2;
 
-					Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.5 * player.getBbWidth());
+					Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.4 * player.getBbWidth());
 					Vec3 offsetFromCenter = originalPassPos.subtract(player.position());
 					offsetFromCenter = offsetFromCenter.xRot((float) Math.toRadians(md.prevXRot * 1.5)).zRot(-(float) Math.toRadians(md.prevZRot * 90));
 					//offsetFromCenter = offsetFromCenter.multiply(1, Math.signum(offsetFromCenter.y), 1);
