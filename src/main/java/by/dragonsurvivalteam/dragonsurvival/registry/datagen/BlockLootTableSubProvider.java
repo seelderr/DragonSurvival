@@ -32,13 +32,13 @@ import org.jetbrains.annotations.NotNull;
 
 public class BlockLootTableSubProvider extends BlockLootSubProvider {
 
-    protected BlockLootTableSubProvider(Set<Item> itemSet, FeatureFlagSet featureFlagSet, HolderLookup.Provider lookupProvider) {
-        super(itemSet, featureFlagSet, lookupProvider);
+    public BlockLootTableSubProvider(HolderLookup.Provider provider) {
+        super(Collections.emptySet(), FeatureFlags.REGISTRY.allFlags(), provider);
     }
 
     @Override
     protected void generate() {
-        DS_BLOCKS.getRegistry().get().forEach((key) -> {
+        DS_BLOCKS.getEntries().forEach((key) -> {
             Function<Block, LootTable.Builder> builder = block -> {
                 if (block instanceof DragonDoor) {
                     return createSinglePropConditionTable(block, DragonDoor.PART, DragonDoor.Part.BOTTOM);
@@ -65,10 +65,10 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block))));
                 }
 
-                return createSingleItemTable(key.asItem());
+                return createSingleItemTable(key.get().asItem());
             };
 
-            add(key, builder);
+            add(key.get(), builder);
         });
     }
 
