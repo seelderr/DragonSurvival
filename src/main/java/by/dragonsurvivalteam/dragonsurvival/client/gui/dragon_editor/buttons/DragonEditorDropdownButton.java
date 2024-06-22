@@ -50,10 +50,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			updateMessage();
 		}
 
-		List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, layers);
+		List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, dragonEditorScreen.dragonBody, layers);
 
 		if(layers != EnumSkinLayer.BASE){
-			valueList.add(0, SkinCap.defaultSkinValue);
+			valueList.addFirst(SkinCap.defaultSkinValue);
 		}
 
 		valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
@@ -85,10 +85,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 			boolean hasBorder = false;
 			if(!screen.children().isEmpty()){
-				screen.renderables.add(0, list);
+				screen.renderables.addFirst(list);
 				screen.renderables.add(list);
 
-				((AccessorScreen)screen).children().add(0, list);
+				((AccessorScreen)screen).children().addFirst(list);
 				((AccessorScreen)screen).children().add(list);
 
 				for(GuiEventListener child : screen.children())

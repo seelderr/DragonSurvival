@@ -588,37 +588,58 @@
                 {
                     "key": "extra_fins_1",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_1.png",
-                    "average_hue": 0.05786008146257555
+                    "average_hue": 0.05786008146257555,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_2",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_2.png",
-                    "average_hue": 0.06834778898828565
+                    "average_hue": 0.06834778898828565,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_3",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_3.png",
-                    "average_hue": 0.06910243194746689
+                    "average_hue": 0.06910243194746689,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_4",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_4.png",
-                    "average_hue": 0.23702738186317573
+                    "average_hue": 0.23702738186317573,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_5",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_5.png",
-                    "average_hue": 0.7348722138998594
+                    "average_hue": 0.7348722138998594,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_6",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_6.png",
-                    "average_hue": 0.06812933025404154
+                    "average_hue": 0.06812933025404154,
+                    "bodies": [ 
+                        "north", "east", "south"
+                    ]
                 },
                 {
                     "key": "extra_fins_7",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_7.png",
-                    "average_hue": 0.07737477457583455
+                    "average_hue": 0.07737477457583455,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_horns_1",
@@ -1794,37 +1815,58 @@
                 {
                     "key": "extra_fins_1",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_1.png",
-                    "average_hue": 0.05786008146257555
+                    "average_hue": 0.05786008146257555,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_2",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_2.png",
-                    "average_hue": 0.06834778898828565
+                    "average_hue": 0.06834778898828565,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_3",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_3.png",
-                    "average_hue": 0.06910243194746689
+                    "average_hue": 0.06910243194746689,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_4",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_4.png",
-                    "average_hue": 0.23702738186317573
+                    "average_hue": 0.23702738186317573,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_5",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_5.png",
-                    "average_hue": 0.7348722138998594
+                    "average_hue": 0.7348722138998594,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_6",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_6.png",
-                    "average_hue": 0.06812933025404154
+                    "average_hue": 0.06812933025404154,
+                    "bodies": [ 
+                        "north", "east", "south"
+                    ]
                 },
                 {
                     "key": "extra_fins_7",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_7.png",
-                    "average_hue": 0.07737477457583455
+                    "average_hue": 0.07737477457583455,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_horns_1",
@@ -3035,37 +3077,58 @@
                 {
                     "key": "extra_fins_1",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_1.png",
-                    "average_hue": 0.05786008146257555
+                    "average_hue": 0.05786008146257555,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_2",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_2.png",
-                    "average_hue": 0.06834778898828565
+                    "average_hue": 0.06834778898828565,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_3",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_3.png",
-                    "average_hue": 0.06910243194746689
+                    "average_hue": 0.06910243194746689,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_4",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_4.png",
-                    "average_hue": 0.23702738186317573
+                    "average_hue": 0.23702738186317573,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_5",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_5.png",
-                    "average_hue": 0.7348722138998594
+                    "average_hue": 0.7348722138998594,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_fins_6",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_6.png",
-                    "average_hue": 0.06812933025404154
+                    "average_hue": 0.06812933025404154,
+                    "bodies": [ 
+                        "north", "east", "south"
+                    ]
                 },
                 {
                     "key": "extra_fins_7",
                     "texture": "dragonsurvival:textures/dragon/custom/extra_fins_7.png",
-                    "average_hue": 0.07737477457583455
+                    "average_hue": 0.07737477457583455,
+                    "bodies": [ 
+                        "north"
+                    ]
                 },
                 {
                     "key": "extra_horns_1",

@@ -406,6 +406,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penalties", comment = "Set to false to toggle off all dragon penalties." )
 	public static Boolean penalties = true;
 
+	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "dragonsAreScary", comment = "Whether dragons are scary or not." )
+	public static Boolean dragonsAreScary = true;
+
 	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "allowedVehicles", comment = "List of rideable entities. Format: modid:id" )
 	public static List<String> allowedVehicles = List.of("minecraft:boat", "littlelogistics:seater_barge", "minecraft:minecart", "create:seat", "create:contraption", "create:gantry_contraption", "create:stationary_contraption", "hexerei:broom", "botania:player_mover", "quark:quark_boat");

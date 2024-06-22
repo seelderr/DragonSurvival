@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -70,23 +71,25 @@ public class DragonEditorHandler{
 		return null;
 	}
 
-	public static ArrayList<String> getKeys(AbstractDragonType type, EnumSkinLayer layers){
+	public static ArrayList<String> getKeys(AbstractDragonType type, AbstractDragonBody body, EnumSkinLayer layers){
 		if(Objects.equals(layers.name, "Extra") && layers != EnumSkinLayer.EXTRA){
-			return getKeys(type, EnumSkinLayer.EXTRA);
+			return getKeys(type, body, EnumSkinLayer.EXTRA);
 		}
 
 		ArrayList<String> list = new ArrayList<>();
 
 		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layers, new Texture[0]);
 		for(Texture texture : texts){
-			list.add(texture.key);
+			if (texture.bodies == null || Arrays.asList(texture.bodies).contains(body.toString())) {
+				list.add(texture.key);
+			}
 		}
 
 		return list;
 	}
 
 	public static ArrayList<String> getKeys(Player player, EnumSkinLayer layers){
-		return getKeys(DragonUtils.getDragonType(player), layers);
+		return getKeys(DragonUtils.getDragonType(player), DragonUtils.getDragonBody(player), layers);
 	}
 
 	public static void generateSkinTextures(final DragonEntity dragon) {
@@ -183,7 +186,7 @@ public class DragonEditorHandler{
 				return null;
 			}
 
-            hsb[0] = (float)(hsb[0] - hueVal);
+            hsb[0] = hsb[0] - hueVal;
 			hsb[1] = (float)Mth.lerp(Math.abs(satVal - 0.5f) * 2 , hsb[1], satVal > 0.5f ? 1.0 : 0.0);
 			hsb[2] = (float)Mth.lerp(Math.abs(brightVal - 0.5f) * 2, hsb[2], brightVal > 0.5f ? 1.0 : 0.0);
 		}

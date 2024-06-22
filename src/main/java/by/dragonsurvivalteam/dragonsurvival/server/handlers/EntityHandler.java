@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
@@ -21,7 +22,7 @@ public class EntityHandler {
     public static void onJoin(EntityJoinLevelEvent joinWorldEvent){
         Entity entity = joinWorldEvent.getEntity();
         if(entity instanceof Animal && !(entity instanceof Wolf || entity instanceof Hoglin)){
-            ((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal((Animal)entity, Player.class, living -> DragonStateProvider.isDragon((Player)living) && !((Player)living).hasEffect(DSEffects.ANIMAL_PEACE), 20.0F, 1.3F, 1.5F, s -> true));
+            ((Animal)entity).goalSelector.addGoal(5, new AvoidEntityGoal<>((Animal)entity, Player.class, living -> DragonStateProvider.isDragon((Player)living) && !((Player)living).hasEffect(DSEffects.ANIMAL_PEACE) && ServerConfig.dragonsAreScary, 20.0F, 1.3F, 1.5F, s -> true));
         }
     }
 }
