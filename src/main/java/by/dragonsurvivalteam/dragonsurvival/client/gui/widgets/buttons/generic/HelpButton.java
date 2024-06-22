@@ -23,9 +23,19 @@ public class HelpButton extends ExtendedButton {
 	public String text;
 	public int variation;
 	public AbstractDragonType type;
+	boolean usesVanillaTooltip = false;
 
 	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation){
 		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
+	}
+
+	// This is needed for the DragonScreen, as otherwise we'll get cut out by the scissoring used for the rendering of the player entity in the window
+	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation, boolean usesVanillaTooltip){
+		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
+		if(usesVanillaTooltip){
+			setTooltip(Tooltip.create(Component.translatable(text)));
+		}
+		this.usesVanillaTooltip = usesVanillaTooltip;
 	}
 
 	public HelpButton(AbstractDragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
@@ -44,7 +54,7 @@ public class HelpButton extends ExtendedButton {
 		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
 
 		int i = 0;
-		if (isHoveredOrFocused()) {
+		if (isHoveredOrFocused() && !usesVanillaTooltip) {
 			i += (int) (type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 : Objects.equals(type, DragonTypes.FOREST) ? 2 : Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
 
 			// Render the tooltip manually since minecraft's tooltip positioner often fails with this button type
