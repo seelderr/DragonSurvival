@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -91,6 +90,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 
 			@Override
+			public void setValue(double value) {
+				super.setValue(value);
+				this.applyValue();
+			}
+
+			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
 				guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
@@ -122,6 +127,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 				DragonEditorScreen.handler.getSkinData().compileSkin();
 				screen.update();
+			}
+
+			@Override
+			public void setValue(double value) {
+				super.setValue(value);
+				this.applyValue();
 			}
 
 			@Override
@@ -171,6 +182,12 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 				DragonEditorScreen.handler.getSkinData().compileSkin();
 				screen.update();
+			}
+
+			@Override
+			public void setValue(double value) {
+				super.setValue(value);
+				this.applyValue();
 			}
 
 			@Override

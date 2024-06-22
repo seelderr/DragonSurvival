@@ -33,11 +33,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
-import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -224,7 +220,7 @@ public class DragonEditorScreen extends Screen {
 			gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
 			writer.close();
 		}catch(IOException e){
-			DragonSurvivalMod.LOGGER.error("An error occured while trying to save the dragon skin", e);
+			DragonSurvivalMod.LOGGER.error("An error occurred while trying to save the dragon skin", e);
 		}
 
 		return newPreset;
@@ -325,10 +321,10 @@ public class DragonEditorScreen extends Screen {
 
 		int i = 0;
 		for (EnumSkinLayer layers : EnumSkinLayer.values()) {
-			ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonType, layers);
+			ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonType, dragonBody, layers);
 
 			if (layers != EnumSkinLayer.BASE) {
-				valueList.add(0, SkinCap.defaultSkinValue);
+				valueList.addFirst(SkinCap.defaultSkinValue);
 			}
 
 			String[] values = valueList.toArray(new String[0]);
@@ -479,7 +475,7 @@ public class DragonEditorScreen extends Screen {
 								super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
 							}
 						};
-						((AccessorScreen)(Object)DragonEditorScreen.this).children().add(0, conf);
+						((AccessorScreen)(Object)DragonEditorScreen.this).children().addFirst(conf);
 						((AccessorScreen)(Object)DragonEditorScreen.this).children().add(conf);
 						renderables.add(renderButton);
 					}
@@ -637,7 +633,7 @@ public class DragonEditorScreen extends Screen {
 		dragonRender.xOffset = xOffset;
 		dragonRender.yOffset = yOffset;
 
-		((AccessorScreen)this).children().add(0, dragonRender);
+		((AccessorScreen)this).children().addFirst(dragonRender);
 	}
 
 	public void confirm(){
