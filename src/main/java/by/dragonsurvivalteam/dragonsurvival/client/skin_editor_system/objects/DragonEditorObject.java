@@ -18,6 +18,7 @@ public class DragonEditorObject{
 	public static class Texture{
 		public String key;
 		public String texture;
+		public String[] bodies;
 		public boolean colorable = true;
 		public String defaultColor;
 		public Float average_hue;
