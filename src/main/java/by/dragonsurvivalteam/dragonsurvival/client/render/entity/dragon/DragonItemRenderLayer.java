@@ -44,14 +44,15 @@ public class DragonItemRenderLayer extends BlockAndItemGeoLayer<DragonEntity> {
                 rotation.rotateY((float) Math.toRadians(90));
                 rotation.rotateX((float) Math.toRadians(60));
                 poseStack.rotateAround(rotation, 0, 0, 0);
+                poseStack.scale(0.75F, 0.75F, 0.75F);
             } else if(bone.getName().equals("LeftItem")) {
                 Quaternionf rotation = new Quaternionf();
                 rotation.rotateZ((float) Math.toRadians(90));
                 rotation.rotateY((float) Math.toRadians(90));
                 rotation.rotateX((float) Math.toRadians(-120d));
                 poseStack.rotateAround(rotation, 0, 0, 0);
+                poseStack.scale(0.75F, 0.75F, 0.75F);
             }
-            poseStack.scale(0.75F, 0.75F, 0.75F);
             super.renderStackForBone(poseStack, bone, stack, animatable, bufferSource, partialTick, packedLight, packedOverlay);
             poseStack.popPose();
         }
