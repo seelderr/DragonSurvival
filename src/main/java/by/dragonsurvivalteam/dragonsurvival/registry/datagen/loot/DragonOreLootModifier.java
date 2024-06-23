@@ -59,7 +59,7 @@ public class DragonOreLootModifier extends LootModifier {
                                 fortuneLevel = EnchantmentHelper.getTagEnchantmentLevel(fortune, tool);
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
-                            int expDrop = blockState.getExpDrop(context.getLevel(), context.getLevel().random, blockPos);
+                            int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
                             if(expDrop > 0) {
                                 DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
                                 int fortuneRoll = 1;
