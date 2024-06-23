@@ -9,10 +9,16 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.function.Supplier;
+
+import net.minecraft.core.Holder;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -59,21 +65,23 @@ public class DragonHeartLootModifier extends LootModifier {
                 (ServerConfig.elderDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.elderDragonHeartWhiteList && ServerConfig.elderDragonHeartUseList)
                 || health >= 50;
 
-        //FIXME: Is context.getLuck() right?
+        Holder<Enchantment> looting = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.LOOTING);
+        int lootingLevel = EnchantmentHelper.getEnchantmentLevel(looting, player);
+
         if(canDropDragonHeart){
-            if(context.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + context.getLuck() * (ServerConfig.dragonHeartShardChance * 100 / 4)){
+            if(context.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + lootingLevel * (ServerConfig.dragonHeartShardChance * 100 / 4)){
                 generatedLoot.add(new ItemStack(DSItems.DRAGON_HEART_SHARD));
             }
         }
 
         if(canDropWeakDragonHeart){
-            if(context.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + context.getLuck() * (ServerConfig.weakDragonHeartChance * 100 / 4)){
+            if(context.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + lootingLevel * (ServerConfig.weakDragonHeartChance * 100 / 4)){
                 generatedLoot.add(new ItemStack(DSItems.WEAK_DRAGON_HEART));
             }
         }
 
         if(canDropElderDragonHeart){
-            if(context.getRandom().nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + context.getLuck() * (ServerConfig.elderDragonHeartChance * 100 / 4)){
+            if(context.getRandom().nextInt(100) <= ServerConfig.elderDragonHeartChance * 100 + lootingLevel * (ServerConfig.elderDragonHeartChance * 100 / 4)){
                 generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_HEART));
             }
         }
