@@ -42,6 +42,14 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		getRenderLayers().add(new DragonGlowLayerRenderer(this));
 		getRenderLayers().add(new ClawsAndTeethRenderLayer(this));
 		getRenderLayers().add(new DragonArmorRenderLayer(this));
+		getRenderLayers().add(new DragonItemRenderLayer(this, (bone, animatable) -> {
+			if(bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "RightItem_jaw" : "RightItem")) {
+				return animatable.getMainHandItem();
+			} else if(bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem")) {
+				return animatable.getOffhandItem();
+			}
+			return null;
+		}, (bone, animatable) -> null));
 
 		/*if (ModList.get().isLoaded("curios")) {
 			getRenderLayers().add(new DragonCuriosRenderLayer(this));
@@ -92,54 +100,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 			smallRightWing.setHidden(!hasWings);
 
 		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
-	}
-
-	@Override
-	public void renderRecursively(final PoseStack poseStack, final DragonEntity animatable, final GeoBone bone, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
-		if (isReRender) {
-			super.renderRecursively(poseStack, animatable, bone, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
-			return;
-		}
-
-		if (!isRenderLayers) {
-			Player player = animatable.getPlayer();
-
-			ResourceLocation currentTexture = getTextureLocation(animatable);
-			VertexConsumer customBuffer = buffer;
-
-			if (renderHeldItem) {
-				if (player != Minecraft.getInstance().player || ClientDragonRender.alternateHeldItem || !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-					if (bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem") && !player.getInventory().offhand.get(0).isEmpty()) {
-						poseStack.pushPose();
-
-						RenderUtil.prepMatrixForBone(poseStack, bone);
-						RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-
-						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().offhand.get(0), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_LEFT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
-						// TODO: This isn't allowed for some reason. Fix later
-						//customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
-						poseStack.popPose();
-					}
-
-					if (bone.getName().equals(ClientDragonRender.renderItemsInMouth ? "RightItem_jaw" : "RightItem") && !player.getInventory().getSelected().isEmpty()) {
-						poseStack.pushPose();
-						RenderUtil.prepMatrixForBone(poseStack, bone);
-						RenderUtil.translateAndRotateMatrixForBone(poseStack, bone);
-
-						Minecraft.getInstance().getItemRenderer().renderStatic(player.getInventory().getSelected(), ClientDragonRender.thirdPersonItemRender ? ItemDisplayContext.THIRD_PERSON_RIGHT_HAND : ItemDisplayContext.GROUND, packedLight, packedOverlay, poseStack, bufferSource, player.level(), 0);
-						// TODO: This isn't allowed for some reason. Fix later
-						//customBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(currentTexture));
-						poseStack.popPose();
-					}
-				}
-			}
-
-			poseStack.pushPose();
-			RenderUtil.prepMatrixForBone(poseStack, bone);
-			super.renderCubesOfBone(poseStack, bone, customBuffer, packedLight, packedOverlay, color);
-			super.renderChildBones(poseStack, animatable, bone, renderType, bufferSource, customBuffer, isReRender, partialTick, packedLight, packedOverlay, color);
-			poseStack.popPose();
-		}
 	}
 
 	@Override
