@@ -11,7 +11,7 @@ version = minecraft_version + "-v" + mod_version + "-" + new Date().format("dd.M
 group = mod_group
 
 base {
-	archivesName = mod_id
+	archivesName = "DragonSurvival"
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
