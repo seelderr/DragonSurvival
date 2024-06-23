@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +16,7 @@ import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -38,7 +40,7 @@ public class AddTableLootExtendedLootModifier extends LootModifier {
     private final ResourceKey<LootTable> table;
     private final List<String> tablesToApply;
     private final boolean blacklist;
-    private final List<ResourceKey<LootTable>> resolvedTables = new ObjectArrayList<>();
+    private final HashSet<ResourceKey<LootTable>> resolvedTables = new HashSet<>();
     private boolean hasResolvedTables = false;
 
     public AddTableLootExtendedLootModifier(LootItemCondition[] conditionsIn, ResourceKey<LootTable> table, List<String> lootTables, boolean blacklist) {
@@ -83,18 +85,10 @@ public class AddTableLootExtendedLootModifier extends LootModifier {
             hasResolvedTables = true;
         }
 
-        AtomicBoolean shouldApply = new AtomicBoolean(false);
-        for(ResourceKey<LootTable> table : this.resolvedTables) {
-            context.getResolver().get(Registries.LOOT_TABLE, table).ifPresent(tableToApply -> {
-                tableToApply.unwrapKey().ifPresent(key -> {
-                    if(key.location().equals(context.getQueriedLootTableId())) {
-                        shouldApply.set(true);
-                    }
-                });
-            });
-        }
+        ResourceKey<LootTable> queriedKey = ResourceKey.create(Registries.LOOT_TABLE, context.getQueriedLootTableId());
+        boolean shouldApply = resolvedTables.contains(queriedKey);
 
-        if(shouldApply.get() == blacklist) {
+        if(shouldApply == blacklist) {
             return generatedLoot;
         }
 
