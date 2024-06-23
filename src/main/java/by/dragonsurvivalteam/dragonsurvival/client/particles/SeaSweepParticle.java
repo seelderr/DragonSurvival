@@ -1,12 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
+import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.LargePoisonParticle;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -66,12 +70,20 @@ public class SeaSweepParticle extends TextureSheetParticle{
 		}
 	}
 
-	public static class Data implements ParticleOptions {
+	public record Data(double quadSize) implements ParticleOptions {
 		public static final Type TYPE = new Type(false);
 
-		public static final MapCodec<Data> CODEC = MapCodec.unit(new Data());
+		public static final MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(codecBuilder -> codecBuilder.group(Codec.DOUBLE.fieldOf("quadSize").forGetter(Data::quadSize)).apply(codecBuilder, Data::new));
 
-		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = StreamCodec.unit(new Data());
+		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.DOUBLE,
+				Data::quadSize,
+				Data::new
+		);
+
+		public double quadSize() {
+			return quadSize;
+		}
 
 		@Override
 		public @NotNull ParticleType<?> getType() {
@@ -87,8 +99,8 @@ public class SeaSweepParticle extends TextureSheetParticle{
 		}
 
 		@Override
-		public Particle createParticle(@NotNull Data type, @NotNull ClientLevel level, double x, double y, double z, double quadSize, double unused, double unused2){
-			return new SeaSweepParticle(level, x, y, z, quadSize, sprites);
+		public Particle createParticle(@NotNull Data data, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+			return new SeaSweepParticle(level, x, y, z, data.quadSize, sprites);
 		}
 	}
 }
