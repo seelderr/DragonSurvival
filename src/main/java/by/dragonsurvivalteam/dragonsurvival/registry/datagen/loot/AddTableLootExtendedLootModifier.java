@@ -67,20 +67,20 @@ public class AddTableLootExtendedLootModifier extends LootModifier {
         // Generate the resolved tables list if we haven't already
         if(!hasResolvedTables) {
             for(String table : this.tablesToApply) {
-                context.getLevel().getServer().reloadableRegistries().get().registryOrThrow(Registries.LOOT_TABLE).registryKeySet().forEach(
-                        key -> {
-                            ResourceLocation parsedTable = ResourceLocation.tryParse(table);
-                            if(parsedTable != null && key.location().equals(parsedTable)) {
-                                resolvedTables.add(key);
-                            } else {
-                                // Regex check
+                ResourceLocation parsedTable = ResourceLocation.tryParse(table);
+                if(parsedTable != null) {
+                    resolvedTables.add(ResourceKey.create(Registries.LOOT_TABLE, parsedTable));
+                } else {
+                    // Try regex if we don't have a valid key
+                    context.getLevel().getServer().reloadableRegistries().get().registryOrThrow(Registries.LOOT_TABLE).registryKeySet().forEach(
+                            key -> {
                                 String path = key.location().toString();
                                 if(path.matches(table) && !path.equals(this.table.location().toString())) {
                                     resolvedTables.add(key);
                                 }
                             }
-                        }
-                );
+                    );
+                }
             }
             hasResolvedTables = true;
         }
