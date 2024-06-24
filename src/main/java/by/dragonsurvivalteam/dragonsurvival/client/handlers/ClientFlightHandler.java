@@ -93,15 +93,14 @@ public class ClientFlightHandler {
 	public static void flightCamera(CalculateDetachedCameraDistanceEvent event) {
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
-		if (DragonStateProvider.isDragon(player)) {
-			DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
-			if (dragonStateHandler.isDragon()) {
+		DragonStateProvider.getCap(player).ifPresent(handler -> {
+			if (handler.isDragon()) {
 				// I'm not entirely sure why 20 works here, but it seems to be the magic number that
 				// keeps the dragon's size from the camera's perspective constant.
-				float offset = (float) ((dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20);
+				float offset = (float) ((handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20);
 				event.setDistance(event.getDistance() + offset);
 			}
-		}
+		});
 	}
 
 	@SubscribeEvent
