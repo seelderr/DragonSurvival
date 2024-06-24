@@ -191,9 +191,9 @@ public class DragonDestructionHandler {
                 double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size), event.getEntity().getPose(), squish);
                 double width = DragonSizeHandler.calculateDragonWidth(size) / 2.0D;
                 boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
-                boundingBox = boundingBox.inflate(1.25 + (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.1f);
+                AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.15f);
 
-                checkAndDestroyCollidingBlocks(dragonStateHandler, event, boundingBox);
+                checkAndDestroyCollidingBlocks(dragonStateHandler, event, blockCollisionBoundingBox);
                 checkAndDamageCrushedEntities(dragonStateHandler, player, boundingBox);
             }
         });

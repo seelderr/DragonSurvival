@@ -15,26 +15,28 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SyncDeltaMovement implements IMessage<SyncDeltaMovement.Data> {
 	public static void handleClient(final SyncDeltaMovement.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncFlightSpeed(message));
+		context.enqueueWork(() -> ClientProxy.handleSyncDeltaMovement(message));
 	}
 
 	public static void handleServer(final SyncDeltaMovement.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		PacketDistributor.sendToPlayersTrackingEntity(sender, new SyncDeltaMovement.Data(sender.getId(), message.flightSpeedX(), message.flightSpeedY(), message.flightSpeedZ()));
+		// This needs to be set so that it can be read back in some server side logic that uses deltamovement (e.g. DragonDestructionHandler)
+		sender.setDeltaMovement(message.speedX(), message.speedY(), message.speedZ());
+		PacketDistributor.sendToPlayersTrackingEntity(sender, new SyncDeltaMovement.Data(sender.getId(), message.speedX(), message.speedY(), message.speedZ()));
 	}
 
-	public record Data (int playerId, double flightSpeedX, double flightSpeedY, double flightSpeedZ) implements CustomPacketPayload {
+	public record Data (int playerId, double speedX, double speedY, double speedZ) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "flight_speed"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
 				ByteBufCodecs.VAR_INT,
 				Data::playerId,
 				ByteBufCodecs.DOUBLE,
-				Data::flightSpeedX,
+				Data::speedX,
 				ByteBufCodecs.DOUBLE,
-				Data::flightSpeedY,
+				Data::speedY,
 				ByteBufCodecs.DOUBLE,
-				Data::flightSpeedZ,
+				Data::speedZ,
 				Data::new
 		);
 

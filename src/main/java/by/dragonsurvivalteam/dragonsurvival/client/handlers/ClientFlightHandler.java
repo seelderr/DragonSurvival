@@ -90,6 +90,21 @@ public class ClientFlightHandler {
 	private static int levitationLeft;
 
 	@SubscribeEvent
+	public static void flightCamera(CalculateDetachedCameraDistanceEvent event) {
+		Minecraft minecraft = Minecraft.getInstance();
+		LocalPlayer player = minecraft.player;
+		if (DragonStateProvider.isDragon(player)) {
+			DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+			if (dragonStateHandler.isDragon()) {
+				// I'm not entirely sure why 20 works here, but it seems to be the magic number that
+				// keeps the dragon's size from the camera's perspective constant.
+				float offset = (float) ((dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20);
+				event.setDistance(event.getDistance() + offset);
+			}
+		}
+	}
+
+	@SubscribeEvent
 	public static void flightCamera(ViewportEvent.ComputeCameraAngles setup){
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer currentPlayer = minecraft.player;
@@ -134,16 +149,6 @@ public class ClientFlightHandler {
 					if(flightZoomEffect){
 						lastZoom = Mth.lerp(0.25f, lastZoom, 1f);
 						gameRenderer.zoom = lastZoom;
-					}
-				}
-
-				// Move the third person camera into a more suitable position if the player is too large (otherwise it ends up clipping inside the player)
-				if(setup.getCamera().isDetached()) {
-					if(dragonStateHandler.isDragon() && dragonStateHandler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
-						// I'm not entirely sure why 20 works here, but it seems to be the magic number that
-						// keeps the dragon's size from the camera's perspective constant.
-						float offset = (float) ((dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 20);
-						info.move(-offset, 0, 0);
 					}
 				}
 			}
