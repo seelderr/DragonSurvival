@@ -32,7 +32,6 @@ public class DSModifiers {
 			return new AttributeModifier(modifier, calculator.apply(handler), operation);
 		}
 
-
 		public void updateModifier(Player player) {
 			// Special case for health modifier
 			float oldMax = player.getMaxHealth();
@@ -46,9 +45,9 @@ public class DSModifiers {
 
 			if(handler.isDragon()) {
 				AttributeModifier builtModifier = buildModifier(handler);
-				instance.addTransientModifier(builtModifier);
+				instance.addPermanentModifier(builtModifier);
 				if(attribute == Attributes.MAX_HEALTH) {
-					float newHealth = player.getHealth() * player.getMaxHealth() / oldMax;
+					float newHealth = Math.min(player.getMaxHealth(), player.getHealth() * player.getMaxHealth() / oldMax);
 					player.setHealth(newHealth);
 				}
 			}

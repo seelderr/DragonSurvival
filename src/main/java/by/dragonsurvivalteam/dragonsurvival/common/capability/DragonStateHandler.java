@@ -97,25 +97,9 @@ public class DragonStateHandler extends EntityStateHandler {
 	private double size;
 
 	/** Sets the size, health and base damage */
-	public void setSize(double size, final Player player) {
-		double oldSize = this.size;
+	public void setSize(double size, Player player) {
 		setSize(size);
-		updateModifiers(size, player);
-	}
-
-	private void updateModifiers(double size, final Player player) {
-		if (isDragon()) {
-			// Grant the dragon attribute modifiers
-			DSModifiers.updateSizeModifiers(player);
-		} else {
-			// Remove the dragon attribute modifiers
-			checkAndRemoveModifier(player.getAttribute(Attributes.MAX_HEALTH), DSModifiers.DRAGON_HEALTH_MODIFIER);
-			checkAndRemoveModifier(player.getAttribute(Attributes.ATTACK_DAMAGE), DSModifiers.DRAGON_DAMAGE_MODIFIER);
-			checkAndRemoveModifier(player.getAttribute(NeoForgeMod.SWIM_SPEED), DSModifiers.DRAGON_SWIM_SPEED_MODIFIER);
-			checkAndRemoveModifier(player.getAttribute(Attributes.BLOCK_INTERACTION_RANGE), DSModifiers.DRAGON_REACH_MODIFIER);
-			checkAndRemoveModifier(player.getAttribute(Attributes.ENTITY_INTERACTION_RANGE), DSModifiers.DRAGON_REACH_MODIFIER);
-			checkAndRemoveModifier(player.getAttribute(Attributes.STEP_HEIGHT), DSModifiers.DRAGON_STEP_HEIGHT_MODIFIER);
-		}
+		DSModifiers.updateSizeModifiers(player);
 	}
 
 	private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final ResourceLocation modifier) {

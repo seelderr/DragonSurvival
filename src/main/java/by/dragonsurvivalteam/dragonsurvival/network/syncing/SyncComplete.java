@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.RequestClientData;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
@@ -29,12 +30,13 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 			context.enqueueWork(() -> {
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 				handler.deserializeNBT(player.registryAccess(), message.nbt);
+				DSModifiers.updateAllModifiers(player);
 				player.refreshDimensions();
 			});
 		}
 	}
 
-	private static void dropAllItemsInList(Player player, NonNullList<ItemStack> items) {
+	public static void dropAllItemsInList(Player player, NonNullList<ItemStack> items) {
 		items.forEach(stack -> {
 			if(DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
 				player.getInventory().removeItem(stack);
@@ -43,21 +45,27 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 		});
 	}
 
+	public static void handleDragonSync(Player player) {
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DSModifiers.updateAllModifiers(player);
+		player.refreshDimensions();
+
+		// If we are a dragon, make sure to drop any blacklisted items equipped
+		if(handler.isDragon()) {
+			dropAllItemsInList(player, player.getInventory().armor);
+			dropAllItemsInList(player, player.getInventory().offhand);
+			ItemStack mainHandItem = player.getMainHandItem();
+			if(DragonPenaltyHandler.itemIsBlacklisted(mainHandItem.getItem())) {
+				player.getInventory().removeItem(mainHandItem);
+				player.drop(mainHandItem, false);
+			}
+		}
+	}
+
 	public static void handleServer(final Data message, final IPayloadContext context) {
 		Player player = context.player();
 		context.enqueueWork(() -> {
-					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-					handler.deserializeNBT(player.registryAccess(), message.nbt);
-					player.refreshDimensions();
-
-					// If we are a dragon, make sure to drop any blacklisted items equipped
-					if(handler.isDragon()) {
-						dropAllItemsInList(player, player.getInventory().armor);
-						dropAllItemsInList(player, player.getInventory().offhand);
-						ItemStack mainHandItem = player.getMainHandItem();
-						player.getInventory().removeItem(mainHandItem);
-						player.drop(mainHandItem, false);
-					}
+					handleDragonSync(player);
 				})
 				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))
 				.thenAccept(v  -> context.reply(new RequestClientData.Data()));
