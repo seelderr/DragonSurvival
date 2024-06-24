@@ -65,6 +65,8 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 	public static void handleServer(final Data message, final IPayloadContext context) {
 		Player player = context.player();
 		context.enqueueWork(() -> {
+					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+					handler.deserializeNBT(player.registryAccess(), message.nbt);
 					handleDragonSync(player);
 				})
 				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))

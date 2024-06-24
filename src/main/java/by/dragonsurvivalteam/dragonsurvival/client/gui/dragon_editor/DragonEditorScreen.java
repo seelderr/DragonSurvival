@@ -34,6 +34,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
+import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -663,6 +664,7 @@ public class DragonEditorScreen extends Screen {
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
 				handler.getSkinData().skinPreset = save();
+				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
 				PacketDistributor.sendToServer(new SyncComplete.Data(minecraft.player.getId(), cap.serializeNBT(minecraft.player.registryAccess())));
 			} else {
 				PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(minecraft.player.getId(), save().serializeNBT(minecraft.player.registryAccess())));

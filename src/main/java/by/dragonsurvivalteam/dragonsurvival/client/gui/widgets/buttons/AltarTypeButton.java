@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
+import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -134,9 +135,7 @@ public class AltarTypeButton extends Button {
 				}
 
 				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
-				PacketDistributor.sendToServer(new SyncDragonHandler.Data(player.getId(), cap.isHiding(), cap.getType(), cap.getBody(), cap.getSize(), cap.hasFlight(), 0));
-				PacketDistributor.sendToServer(new SyncSpinStatus.Data(player.getId(), cap.getMovementData().spinAttack, cap.getMovementData().spinCooldown, cap.getMovementData().spinLearned));
-				ClientProxy.sendClientData();
+				PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
 			});
 			player.closeContainer();
 		}else
