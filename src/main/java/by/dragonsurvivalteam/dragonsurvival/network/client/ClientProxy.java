@@ -161,7 +161,7 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncFlightSpeed(final SyncDeltaMovement.Data message) {
+    public static void handleSyncDeltaMovement(final SyncDeltaMovement.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -169,7 +169,7 @@ public class ClientProxy {
 
             // Local player already has the correct values of themselves
             if (entity instanceof Player player && player != localPlayer) {
-                player.setDeltaMovement(message.flightSpeedX(), message.flightSpeedY(), message.flightSpeedZ());
+                player.setDeltaMovement(message.speedX(), message.speedY(), message.speedZ());
             }
         }
     }
