@@ -15,6 +15,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+// TODO: Maybe remove? Only needed in situations when we are calling SyncComplete anyways
 public class SyncAltarCooldown implements IMessage<SyncAltarCooldown.Data> {
 
 	public static void handleClient(final Data message, final IPayloadContext context) {

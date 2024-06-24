@@ -134,7 +134,9 @@ public class AltarTypeButton extends Button {
 					cap.setHasFlight(false);
 				}
 
-				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
+				cap.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+				cap.hasUsedAltar = true;
+
 				PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
 			});
 			player.closeContainer();

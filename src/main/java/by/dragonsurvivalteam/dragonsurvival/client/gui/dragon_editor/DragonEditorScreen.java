@@ -664,7 +664,10 @@ public class DragonEditorScreen extends Screen {
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
 				handler.getSkinData().skinPreset = save();
-				PacketDistributor.sendToServer(new SyncAltarCooldown.Data(minecraft.player.getId(), Functions.secondsToTicks(ServerConfig.altarUsageCooldown)));
+
+				cap.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+				cap.hasUsedAltar = true;
+
 				PacketDistributor.sendToServer(new SyncComplete.Data(minecraft.player.getId(), cap.serializeNBT(minecraft.player.registryAccess())));
 			} else {
 				PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(minecraft.player.getId(), save().serializeNBT(minecraft.player.registryAccess())));
