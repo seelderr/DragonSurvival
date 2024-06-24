@@ -313,6 +313,18 @@ public class ClientProxy {
         }
     }
 
+    public static void handleSyncPassengerID(final SyncDragonPassengerID.Data message) {
+        Player localPlayer = Minecraft.getInstance().player;
+
+        if (localPlayer != null) {
+            Entity entity = localPlayer.level().getEntity(message.playerId());
+
+            if (entity instanceof Player player) {
+                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setPassengerId(message.passengerId()));
+            }
+        }
+    }
+
     public static void handleSyncChatEvent(final SyncChatEvent.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 

@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonPassengerID;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragon;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
@@ -37,13 +38,13 @@ public class DragonRidingHandler{
 			Player self = event.getEntity();
 
 			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
-				if(targetCap.isDragon() && target.getPose() == Pose.CROUCHING && targetCap.getSize() >= 40 && !target.isVehicle()){
+				if(targetCap.isDragon() /*&& target.getPose() == Pose.CROUCHING*/ && targetCap.getSize() >= 40 && !target.isVehicle()){
 					DragonStateProvider.getCap(self).ifPresent(selfCap -> {
 						if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.NEWBORN){
 							self.startRiding(target);
 							target.connection.send(new ClientboundSetPassengersPacket(target));
 							targetCap.setPassengerId(self.getId());
-							PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonHandler.Data(target.getId(), targetCap.isHiding(), targetCap.getType(), targetCap.getBody(), targetCap.getSize(), targetCap.hasFlight(), self.getId()));
+							PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonPassengerID.Data(target.getId(), self.getId()));
 							event.setCancellationResult(InteractionResult.SUCCESS);
 							event.setCanceled(true);
 						}
@@ -54,7 +55,7 @@ public class DragonRidingHandler{
 	}
 
 	@SubscribeEvent
-	public static void onServerPlayerTick(PlayerTickEvent.Post event){ // TODO: Find a better way of doing this.
+	public static void onServerPlayerTick(PlayerTickEvent.Post event){
 		if(!(event.getEntity() instanceof ServerPlayer player)){
 			return;
 		}
@@ -92,8 +93,10 @@ public class DragonRidingHandler{
 				}
 			}
 			if(flag || passenger == null || !player.hasPassenger(passenger) || passenger.isSpectator() || player.isSpectator()){
-				dragonStateHandler.setPassengerId(0);
-				PacketDistributor.sendToPlayer(player, new SyncDragonHandler.Data(player.getId(), dragonStateHandler.isHiding(), dragonStateHandler.getType(), dragonStateHandler.getBody(), dragonStateHandler.getSize(), dragonStateHandler.hasFlight(), 0));
+				if(dragonStateHandler.getPassengerId() != 0){
+					dragonStateHandler.setPassengerId(0);
+					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonPassengerID.Data(player.getId(), 0));
+				}
 			}
 		});
 	}
@@ -109,7 +112,7 @@ public class DragonRidingHandler{
 				player.stopRiding();
 				vehicle.connection.send(new ClientboundSetPassengersPacket(vehicle));
 				vehicleCap.setPassengerId(0);
-				PacketDistributor.sendToPlayer(vehicle, new SyncDragonHandler.Data(player.getId(), vehicleCap.isHiding(), vehicleCap.getType(), vehicleCap.getBody(), vehicleCap.getSize(), vehicleCap.hasFlight(), 0));
+				PacketDistributor.sendToPlayersTrackingEntityAndSelf(vehicle, new SyncDragonPassengerID.Data(vehicle.getId(), 0));
 			});
 		});
 	}
