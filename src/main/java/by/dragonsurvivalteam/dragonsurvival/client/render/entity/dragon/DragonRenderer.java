@@ -110,6 +110,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (smallRightWing != null)
 			smallRightWing.setHidden(!hasWings);
 
+		// FIXME: This breaks down when we try to render the fake players that are in menus. They are always considered "idle"
 		// Hide the magic bones if we aren't using an animation that requires it. Prevents some jank from happening during animation transitions.
 		if(animatable.mainAnimationController != null) {
 			AnimationProcessor.QueuedAnimation queuedAnimation = animatable.mainAnimationController.getCurrentAnimation();
