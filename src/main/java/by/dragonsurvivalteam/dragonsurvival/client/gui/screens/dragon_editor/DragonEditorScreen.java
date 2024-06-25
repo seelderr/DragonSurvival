@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
