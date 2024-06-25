@@ -72,9 +72,9 @@ public class PlayerLoginHandler {
 
             if(player.tickCount > 5 * 20){
                 DragonStateProvider.getCap(player).ifPresent(cap -> {
-                    if(!cap.hasUsedAltar && !DragonStateProvider.isDragon(player)){
+                    if(!cap.hasUsedAltar && !cap.isInAltar && !DragonStateProvider.isDragon(player)){
                         PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
-                        cap.hasUsedAltar = true;
+                        cap.isInAltar = true;
                     }
 
                     if(cap.altarCooldown > 0){

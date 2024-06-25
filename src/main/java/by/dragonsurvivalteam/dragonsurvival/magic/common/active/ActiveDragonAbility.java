@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
@@ -83,18 +83,18 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 		if(!canConsumeMana(player)){
-			ClientMagicHUDHandler.castingError(Component.translatable("ds.skill_mana_check_failure"));
+			MagicHUD.castingError(Component.translatable("ds.skill_mana_check_failure"));
 			return false;
 		}
 
 		if(getCurrentCooldown() != 0){
-			ClientMagicHUDHandler.castingError(Component.translatable("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
+			MagicHUD.castingError(Component.translatable("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
 			return false;
 		}
 
 		if(requiresStationaryCasting() || ServerFlightHandler.isGliding(player)){
 			if(handler.isWingsSpread() && player.isFallFlying() || !player.onGround() && player.fallDistance > 0.15F){
-				ClientMagicHUDHandler.castingError(Component.translatable("ds.skill.nofly"));
+				MagicHUD.castingError(Component.translatable("ds.skill.nofly"));
 				return false;
 			}
 		}

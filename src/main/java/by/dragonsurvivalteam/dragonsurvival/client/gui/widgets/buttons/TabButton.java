@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.InventoryScreenHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -43,7 +43,7 @@ public class TabButton extends Button {
 			Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
 			PacketDistributor.sendToServer(new RequestOpenInventory.Data());
 			return true;
-		} else if (sourceScreen instanceof DragonScreen) {
+		} else if (sourceScreen instanceof DragonInventoryScreen) {
 			SendOpenDragonInventoryAndMaintainCursorPosition();
 			return true;
 		}
@@ -68,7 +68,7 @@ public class TabButton extends Button {
 					}
 
 					if(!setSuccessfully) {
-						if(ClientEvents.dragonInventory){
+						if(InventoryScreenHandler.dragonInventory){
 							SendOpenDragonInventoryAndMaintainCursorPosition();
 						} else {
 							Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
@@ -83,7 +83,7 @@ public class TabButton extends Button {
 
 	public boolean isCurrent(){
 		return switch(tabType){
-			case INVENTORY -> parent instanceof DragonScreen || parent instanceof InventoryScreen;
+			case INVENTORY -> parent instanceof DragonInventoryScreen || parent instanceof InventoryScreen;
 			case ABILITY -> parent instanceof AbilityScreen;
 			case SKINS -> parent instanceof SkinsScreen;
 			default -> false;
@@ -93,17 +93,17 @@ public class TabButton extends Button {
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_){
 		if (isCurrent()) {
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), tabType == TabType.INVENTORY ? 0 : 28, 0, 28, 32);
+			guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), tabType == TabType.INVENTORY ? 0 : 28, 0, 28, 32);
 		} else if (isHovered()) {
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 84, 0, 28, 32);
+			guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 84, 0, 28, 32);
 		} else {
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 56, 0, 28, 32);
+			guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 56, 0, 28, 32);
 		}
 
 		if (isHovered() || isCurrent()) {
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), tabType.ordinal() * 24, 67, 24, 24);
+			guiGraphics.blit(MagicHUD.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), tabType.ordinal() * 24, 67, 24, 24);
 		} else {
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), tabType.ordinal() * 24, 41, 24, 24);
+			guiGraphics.blit(MagicHUD.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), tabType.ordinal() * 24, 41, 24, 24);
 		}
 	}
 }

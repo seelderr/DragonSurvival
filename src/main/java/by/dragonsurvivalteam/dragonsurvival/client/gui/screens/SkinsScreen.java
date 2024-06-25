@@ -1,11 +1,10 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.DragonSkinBodyButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.SkinObject;
@@ -111,7 +110,7 @@ public class SkinsScreen extends Screen{
 		int startX = guiLeft;
 		int startY = guiTop;
 
-		final GeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(false);
@@ -121,10 +120,10 @@ public class SkinsScreen extends Screen{
 		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 
 		if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-			ClientDragonRender.dragonModel.setCurrentTexture(null);
+			ClientDragonRenderer.dragonModel.setCurrentTexture(null);
 			((DragonRenderer)dragonRenderer).glowTexture = null;
 		}else{
-			ClientDragonRender.dragonModel.setCurrentTexture(skinTexture);
+			ClientDragonRenderer.dragonModel.setCurrentTexture(skinTexture);
 			((DragonRenderer)dragonRenderer).glowTexture = glowTexture;
 		}
 
@@ -275,14 +274,14 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable the rendering of customized skins (of other players)
 		addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
-			ClientDragonRender.renderOtherPlayerSkins = !ClientDragonRender.renderOtherPlayerSkins;
-			ConfigHandler.updateConfigValue("rendering/renderOtherPlayerSkins", ClientDragonRender.renderOtherPlayerSkins);
+			ClientDragonRenderer.renderOtherPlayerSkins = !ClientDragonRenderer.renderOtherPlayerSkins;
+			ConfigHandler.updateConfigValue("rendering/renderOtherPlayerSkins", ClientDragonRenderer.renderOtherPlayerSkins);
 			setTextures();
 		}, Supplier::get) {
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-				guiGraphics.blit(ClientDragonRender.renderOtherPlayerSkins ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
+				guiGraphics.blit(ClientDragonRenderer.renderOtherPlayerSkins ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
@@ -373,9 +372,9 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				if (isHovered()) {
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				} else {
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});
@@ -391,9 +390,9 @@ public class SkinsScreen extends Screen{
 			@Override
 			protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				if (isHovered()) {
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});

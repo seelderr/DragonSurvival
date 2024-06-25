@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.CopySettingsButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.CopySettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
@@ -46,7 +46,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(DragonAltarGUI.CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
+				guiGraphics.blit(DragonAltarScreen.CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
 			}
 
 			@Override
@@ -90,7 +90,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 //				guiGraphics.pose().translate(0, 0, 100);
 				setMessage(Component.empty());
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(DragonAltarGUI.CANCEL_BUTTON, getX(), getY(), 0, 0, 15, 15, 15, 15);
+				guiGraphics.blit(DragonAltarScreen.CANCEL_BUTTON, getX(), getY(), 0, 0, 15, 15, 15, 15);
 //				guiGraphics.pose().popPose();
 			}
 

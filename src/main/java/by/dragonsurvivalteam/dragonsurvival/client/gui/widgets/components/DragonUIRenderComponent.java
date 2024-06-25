@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.math.Axis;
@@ -42,7 +42,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		}
 
 		guiGraphics.pose().pushPose();
-		final GeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
+		final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(false);

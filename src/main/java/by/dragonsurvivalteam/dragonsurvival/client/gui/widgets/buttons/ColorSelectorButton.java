@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.ColorSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.HueSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;

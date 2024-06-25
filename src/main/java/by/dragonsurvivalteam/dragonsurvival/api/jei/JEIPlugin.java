@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IGuiHandlerRegistration;
@@ -24,6 +24,6 @@ public class JEIPlugin implements IModPlugin{
 
 	@Override
 	public void registerGuiHandlers(IGuiHandlerRegistration registration){
-		registration.addGuiContainerHandler(DragonScreen.class, new DragonInventoryGUIHandler());
+		registration.addGuiContainerHandler(DragonInventoryScreen.class, new DragonInventoryGUIHandler());
 	}
 }

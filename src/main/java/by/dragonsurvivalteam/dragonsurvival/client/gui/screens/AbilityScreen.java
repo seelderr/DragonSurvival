@@ -1,10 +1,9 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -71,12 +70,12 @@ public class AbilityScreen extends Screen{
 
 			startX += 0.5F;
 			startY += 0.75F;
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-			guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress1), 3, 128, 128);
+			guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+			guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+			guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress1), 3, 128, 128);
 
 			if(progress > 0.5){
-				guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress2), 3, 128, 128);
+				guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int)(105 * progress2), 3, 128, 128);
 			}
 
 			int expChange = -1;
@@ -97,10 +96,10 @@ public class AbilityScreen extends Screen{
 				float Changeprogress1 = Math.min(1F, Math.min(0.5F, Changeprogress) * 2F);
 				float Changeprogress2 = Math.min(1F, Math.min(0.5F, Changeprogress - 0.5F) * 2F);
 
-				guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress1), 3, 128, 128);
+				guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress1), 3, 128, 128);
 
 				if(Changeprogress2 > 0.5){
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int)(105 * Changeprogress2), 3, 128, 128);
 				}
 			}
 

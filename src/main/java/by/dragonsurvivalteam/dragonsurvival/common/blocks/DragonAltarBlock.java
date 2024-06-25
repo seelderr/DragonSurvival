@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -80,7 +80,7 @@ public class DragonAltarBlock extends Block{
 
 	@OnlyIn( Dist.CLIENT )
 	private void openGUi(){
-		Minecraft.getInstance().setScreen(new DragonAltarGUI());
+		Minecraft.getInstance().setScreen(new DragonAltarScreen());
 	}
 
 	@Override

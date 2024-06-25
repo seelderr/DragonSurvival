@@ -1,11 +1,10 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
 import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
@@ -18,7 +17,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
-import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -37,7 +35,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class DragonAltarGUI extends Screen{
+public class DragonAltarScreen extends Screen{
 	public static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cancel_button.png");
 	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
@@ -55,7 +53,7 @@ public class DragonAltarGUI extends Screen{
 	static double yrot = 0;
 	static double zrot = 0;
 
-	public DragonAltarGUI(){
+	public DragonAltarScreen(){
 		super(Component.translatable("ds.gui.dragon_altar"));
 	}
 

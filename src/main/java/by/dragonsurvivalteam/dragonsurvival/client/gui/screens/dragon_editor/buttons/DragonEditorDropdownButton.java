@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;

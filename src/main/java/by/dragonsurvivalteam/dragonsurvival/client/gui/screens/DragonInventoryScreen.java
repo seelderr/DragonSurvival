@@ -1,9 +1,7 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -30,7 +28,6 @@ import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -42,13 +39,15 @@ import org.jetbrains.annotations.NotNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer>{
+public class DragonInventoryScreen extends EffectRenderingInventoryScreen<DragonContainer>{
 	public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/inventory_button.png");
 	public static final ResourceLocation SETTINGS_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/settings_button.png");
 	static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_inventory.png");
 	private static final ResourceLocation CLAWS_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws.png");
 	private static final ResourceLocation DRAGON_CLAW_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_button.png");
 	private static final ResourceLocation DRAGON_CLAW_CHECKMARK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_checked.png");
+	public static double mouseX = -1;
+	public static double mouseY = -1;
 	private final List<ExtendedButton> clawMenuButtons = new ArrayList<>();
 	private final Player player;
 	public boolean clawsMenu = false;
@@ -86,7 +85,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		return textureType + "_" + type.getTypeName().toLowerCase() + addition;
 	}
 
-	public DragonScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){
+	public DragonInventoryScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){
 		super(screenContainer, inv, titleIn);
 		player = inv.player;
 
@@ -99,11 +98,11 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 	protected void init(){
 		super.init();
 
-		if(ClientEvents.mouseX != -1 && ClientEvents.mouseY != -1){
+		if(mouseX != -1 && mouseY != -1){
 			if(minecraft.getWindow() != null){
-				InputConstants.grabOrReleaseMouse(minecraft.getWindow().getWindow(), 212993, ClientEvents.mouseX, ClientEvents.mouseY);
-				ClientEvents.mouseX = -1;
-				ClientEvents.mouseY = -1;
+				InputConstants.grabOrReleaseMouse(minecraft.getWindow().getWindow(), 212993, mouseX, mouseY);
+				mouseX = -1;
+				mouseY = -1;
 			}
 		}
 
@@ -173,7 +172,7 @@ public class DragonScreen extends EffectRenderingInventoryScreen<DragonContainer
 		addRenderableWidget(clawRenderButton);
 		clawMenuButtons.add(clawRenderButton);
 
-		if(ClientEvents.inventoryToggle){
+		if(InventoryScreenHandler.inventoryToggle){
 			ExtendedButton inventoryToggle = new ExtendedButton(leftPos + imageWidth - 28, height / 2 - 30 + 47, 20, 18, Component.empty(), p_onPress_1_ -> {
 				Minecraft.getInstance().setScreen(new InventoryScreen(player));
 				PacketDistributor.sendToServer(new RequestOpenInventory.Data());

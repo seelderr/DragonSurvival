@@ -1,9 +1,9 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarGUI;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.*;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
@@ -11,7 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.E
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonEditorConfirmComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonUIRenderComponent;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
@@ -34,7 +34,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.network.status.SyncAltarCooldown;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -153,7 +152,7 @@ public class DragonEditorScreen extends Screen {
 		renderBackground(guiGraphics, pMouseX, pMouseY, pPartialTicks);
 		children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent)s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
 
-		DragonAltarGUI.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
+		DragonAltarScreen.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
 
 		TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
@@ -397,9 +396,9 @@ public class DragonEditorScreen extends Screen {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				if(isHoveredOrFocused()){
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});
@@ -413,12 +412,12 @@ public class DragonEditorScreen extends Screen {
 		}, Supplier::get) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
-				RenderSystem.setShaderTexture(0, ClientMagicHUDHandler.widgetTextures);
+				RenderSystem.setShaderTexture(0, MagicHUD.widgetTextures);
 
 				if(isHoveredOrFocused()){
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
 				}else{
-					guiGraphics.blit(ClientMagicHUDHandler.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
+					guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
 				}
 			}
 		});

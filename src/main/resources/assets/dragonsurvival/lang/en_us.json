@@ -484,6 +484,7 @@
   "ds.level.adult": "Adult",
   "ds.gui.toggle_inventory.vanilla": "Go to vanilla inventory",
   "ds.gui.toggle_inventory.dragon": "Go to dragon inventory",
+  "ds.gui.open_dragon_altar": "Open dragon altar",
   "ds.gui.sort": "Sort inventory",
   "ds.gui.claws": "§6Dragon Tab§r",
   "ds.gui.claws.rendering": "Toggle showing of claws and teeth.",
