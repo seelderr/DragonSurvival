@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import java.util.List;
 import java.util.Optional;

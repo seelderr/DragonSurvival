@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;

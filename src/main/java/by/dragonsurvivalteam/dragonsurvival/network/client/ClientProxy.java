@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.client;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;

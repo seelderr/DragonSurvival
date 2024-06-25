@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.SourceOfMagicScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SourceOfMagicScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import net.minecraft.core.registries.BuiltInRegistries;

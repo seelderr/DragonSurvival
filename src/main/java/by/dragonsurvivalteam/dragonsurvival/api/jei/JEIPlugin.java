@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IGuiHandlerRegistration;

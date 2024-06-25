@@ -2,10 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.InventoryScreenHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.InventoryScreenHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import net.minecraft.client.Minecraft;
