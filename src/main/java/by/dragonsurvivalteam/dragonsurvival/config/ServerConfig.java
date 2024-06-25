@@ -52,9 +52,6 @@ public class ServerConfig{
 			"minecraft:flowers",
 			"minecraft:replaceable"
 	);
-	
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "disableDefaultDestructionTags", comment = "Disable the default blocks that are destroyed (MINEABLE_WITH_AXE) when block destruction is enabled" )
-	public static Boolean disableDefaultDestructionTags = false;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
 	public static Boolean useBlacklistForDestructibleBlocks = false;
