@@ -15,11 +15,14 @@ import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
+import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.Color;
+
+import java.util.HashSet;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
@@ -32,6 +35,17 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
 	/** Used when rendering dyeable armor pieces in {@link ClientDragonRenderer#renderArmorPiece} */
 	public Color renderColor = Color.ofRGB(255, 255, 255);
+
+	private static final HashSet<String> magicAnimations = new HashSet<>();
+	static {
+		magicAnimations.add("cast_mass_buff");
+		magicAnimations.add("mass_buff");
+		magicAnimations.add("cast_self_buff");
+		magicAnimations.add("self_buff");
+		magicAnimations.add("fly_head_locked_magic");
+		magicAnimations.add("sit_dentist_on_magic_source");
+		magicAnimations.add("flapping_wings_standing");
+	}
 
 	public DragonRenderer(final EntityRendererProvider.Context context, final GeoModel<DragonEntity> model) {
 		super(context, model);
@@ -95,6 +109,23 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		
 		if (smallRightWing != null)
 			smallRightWing.setHidden(!hasWings);
+
+		// Hide the magic bones if we aren't using an animation that requires it. Prevents some jank from happening during animation transitions.
+		if(animatable.mainAnimationController != null) {
+			AnimationProcessor.QueuedAnimation queuedAnimation = animatable.mainAnimationController.getCurrentAnimation();
+			if(queuedAnimation != null) {
+				GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
+				GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
+
+				if (!magicAnimations.contains(queuedAnimation.animation().name())) {
+					magic.setHidden(true);
+					magicCircle.setHidden(true);
+				} else {
+					magic.setHidden(false);
+					magicCircle.setHidden(false);
+				}
+			}
+		}
 
 		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
 	}

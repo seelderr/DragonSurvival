@@ -64,13 +64,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	public double head_pitch_change = 0;
 	public double y_accel = 0;
 	ActiveDragonAbility lastCast = null;
-	boolean started, ended;
+	public boolean started, ended;
 	AnimationTimer animationTimer = new AnimationTimer();
 	private final double defaultPlayerWalkSpeed = 0.1;
 	private final double defaultPlayerSneakSpeed = 0.03;
 	private final double defaultPlayerFastSwimSpeed = 0.13;
 	private final double defaultPlayerSwimSpeed = 0.051;
 	private final double defaultPlayerSprintSpeed = 0.165;
+	public AnimationController<DragonEntity> mainAnimationController;
 
 	private static int globalTickCount = 0;
 
@@ -91,7 +92,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 			registrar.add(new AnimationController<>(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
 		}
 
-		registrar.add(new AnimationController<>(this, "3", 2, this::predicate));
+		mainAnimationController = new AnimationController<>(this, "3", 2, this::predicate);
+		registrar.add(mainAnimationController);
 		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
 		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
 		registrar.add(new AnimationController<>(this, "1", this::headPredicate));
