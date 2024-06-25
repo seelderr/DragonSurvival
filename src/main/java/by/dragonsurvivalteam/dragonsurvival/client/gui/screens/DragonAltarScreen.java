@@ -4,7 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
 import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;

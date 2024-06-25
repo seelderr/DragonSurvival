@@ -1,7 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;

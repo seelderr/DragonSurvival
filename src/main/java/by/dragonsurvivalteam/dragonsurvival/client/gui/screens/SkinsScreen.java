@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons.DragonSkinBodyButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;

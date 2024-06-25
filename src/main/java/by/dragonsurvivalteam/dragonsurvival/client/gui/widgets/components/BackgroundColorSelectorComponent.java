@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
 import static by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList.BACKGROUND_TEXTURE;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ColorPickerButton;
 import com.google.common.collect.ImmutableList;
 import java.awt.*;

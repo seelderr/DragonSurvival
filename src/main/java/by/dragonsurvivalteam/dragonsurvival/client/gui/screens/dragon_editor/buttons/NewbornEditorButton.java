@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.buttons;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.client.gui.GuiGraphics;
