@@ -58,6 +58,19 @@ public class DragonAltarScreen extends Screen{
 	}
 
 	@Override
+	public void onClose() {
+		super.onClose();
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(
+			cap -> {
+				cap.isInAltar = false;
+				if(!cap.hasUsedAltar) {
+					Minecraft.getInstance().player.displayClientMessage(Component.translatable("ds.gui.altar.can_still_use"), false);
+				}
+			}
+		);
+	}
+
+	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		if(minecraft == null){
 			return;
