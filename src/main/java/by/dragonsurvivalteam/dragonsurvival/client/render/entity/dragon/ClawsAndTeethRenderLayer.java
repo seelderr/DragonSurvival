@@ -40,13 +40,13 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
                 case Tiers.GOLD -> texture += "gold_";
                 case Tiers.STONE -> texture += "stone_";
                 case Tiers.WOOD -> texture += "wooden_";
-                default -> texture += "moded_";
+                default -> texture += "modded_";
             }
 
             return texture;
         }
 
-        return texture + "moded_";
+        return texture + "modded_";
     }
 
     @Override
