@@ -22,7 +22,9 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.Color;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
@@ -110,15 +112,29 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (smallRightWing != null)
 			smallRightWing.setHidden(!hasWings);
 
-		// FIXME: This breaks down when we try to render the fake players that are in menus. They are always considered "idle"
 		// Hide the magic bones if we aren't using an animation that requires it. Prevents some jank from happening during animation transitions.
-		if(animatable.mainAnimationController != null) {
-			AnimationProcessor.QueuedAnimation queuedAnimation = animatable.mainAnimationController.getCurrentAnimation();
-			if(queuedAnimation != null) {
+		if(animatable.mainAnimationController != null || animatable.fakeAnimationController != null) {
+			List<String> animations = new ArrayList<>();
+
+			if(animatable.mainAnimationController != null) {
+				AnimationProcessor.QueuedAnimation queuedAnimation = animatable.mainAnimationController.getCurrentAnimation();
+				if(queuedAnimation != null) {
+					animations.add(queuedAnimation.animation().name());
+				}
+			}
+
+			if(animatable.fakeAnimationController != null) {
+				AnimationProcessor.QueuedAnimation queuedAnimation = animatable.fakeAnimationController.getCurrentAnimation();
+				if(queuedAnimation != null) {
+					animations.add(queuedAnimation.animation().name());
+				}
+			}
+
+			if(!animations.isEmpty()) {
 				GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
 				GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
 
-				if (!magicAnimations.contains(queuedAnimation.animation().name())) {
+				if (animations.stream().anyMatch(magicAnimations::contains)) {
 					magic.setHidden(true);
 					magicCircle.setHidden(true);
 				} else {

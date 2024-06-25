@@ -29,21 +29,20 @@ public class FakeClientPlayerUtils {
 		FAKE_DRAGONS.computeIfAbsent(index, key -> new DragonEntity(DSEntities.DRAGON.get(), clientPlayer.level()) {
 			@Override
 			public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-				AnimationController<DragonEntity> ac = new AnimationController<DragonEntity>(this, "fake_player_controller", 2, state -> {
-					if (FAKE_PLAYERS.get(index).handler.refreshBody) {
-						clientPlayer.animationController.forceAnimationReset();
-						FAKE_PLAYERS.get(index).handler.refreshBody = false;
+				fakeAnimationController = new AnimationController<>(this, "fake_controller", 2, state -> {
+					if (handler.refreshBody) {
+						fakeAnimationController.forceAnimationReset();
+						handler.refreshBody = false;
 						return PlayState.STOP;
 					}
 
-					if (getPlayer() instanceof FakeClientPlayer) {
-						if (clientPlayer.animationSupplier != null) {
-							return state.setAndContinue(RawAnimation.begin().thenLoop(clientPlayer.animationSupplier.get()));
-						}
+					if (clientPlayer.animationSupplier != null) {
+						return state.setAndContinue(RawAnimation.begin().thenLoop(clientPlayer.animationSupplier.get()));
 					}
 
 					return PlayState.STOP;
 				});
+				AnimationController<DragonEntity> ac = fakeAnimationController;
 				if (getPlayer() instanceof FakeClientPlayer fcp) {
 					fcp.animationController = ac;
 				}

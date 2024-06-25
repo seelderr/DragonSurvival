@@ -73,6 +73,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private final double defaultPlayerSwimSpeed = 0.051;
 	private final double defaultPlayerSprintSpeed = 0.165;
 	public AnimationController<DragonEntity> mainAnimationController;
+	public AnimationController<DragonEntity> fakeAnimationController;
 
 	private static double globalTickCount = 0;
 
@@ -397,8 +398,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 
 	@Override
 	public double getTick(Object obj) {
-		// Prevent being on a negative tick (will cause t-posing!) by adding 100 here
-		return (playerId != null ? level().getEntity(playerId).tickCount : globalTickCount) + 100;
+		// Prevent being on a negative tick (will cause t-posing!) by adding 200 here
+		return (playerId != null ? level().getEntity(playerId).tickCount : globalTickCount) + 200;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
