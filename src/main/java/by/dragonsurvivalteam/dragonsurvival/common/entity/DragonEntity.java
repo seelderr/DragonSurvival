@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -73,7 +74,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private final double defaultPlayerSprintSpeed = 0.165;
 	public AnimationController<DragonEntity> mainAnimationController;
 
-	private static int globalTickCount = 0;
+	private static double globalTickCount = 0;
 
 	public DragonEntity(EntityType<? extends LivingEntity> type, Level worldIn){
 		super(type, worldIn);
@@ -389,16 +390,15 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		return PlayState.CONTINUE;
 	}
 
-	// TODO: This makes any fake dragon player animations (e.g. stuff in the menus) a little stuttery compared to the real animations.
 	@SubscribeEvent
-	public static void tickEntity(ClientTickEvent.Pre event) {
-		globalTickCount++;
+	public static void tickEntity(RenderFrameEvent.Pre event) {
+		globalTickCount += ClientDragonRenderer.deltaPartialTick;
 	}
 
 	@Override
 	public double getTick(Object obj) {
 		// Prevent being on a negative tick (will cause t-posing!) by adding 100 here
-		return playerId != null ? level().getEntity(playerId).tickCount + 100 : globalTickCount;
+		return (playerId != null ? level().getEntity(playerId).tickCount : globalTickCount) + 100;
 	}
 
 	private RawAnimation renderAbility(final AnimationState<DragonEntity> state, final ActiveDragonAbility currentCast) {
