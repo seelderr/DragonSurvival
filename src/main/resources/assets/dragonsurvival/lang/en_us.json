@@ -1237,5 +1237,6 @@
   "ds.gui.body_types.stepbonus": "■ Step Height: %s",
   "ds.gui.body_types.jumpbonus": "■ Jump: %s",
   "ds.keybind.category": "Dragon Survival",
+  "entity.dragonsurvival.dummy_dragon": "",
   "ds.gui.altar.can_still_use": "You didn't make your initial choice in the Dragon Altar.\nYou may still open the altar in your inventory."
 }
