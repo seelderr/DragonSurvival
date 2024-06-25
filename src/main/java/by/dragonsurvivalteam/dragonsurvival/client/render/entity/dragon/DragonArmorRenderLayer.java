@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -43,7 +42,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		GeoBone neck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+		GeoBone neck = ClientDragonRenderer.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
 		if (neck != null) {
 			neck.setHidden(false);
@@ -80,8 +79,8 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			armorColor = new Color(dyeColor.getTextureDiffuseColor());
 		}
 
-		ClientDragonRender.dragonModel.setCurrentTexture(texture);
-		ClientDragonRender.dragonArmor.copyPosition(animatable);
+		ClientDragonRenderer.dragonModel.setCurrentTexture(texture);
+		ClientDragonRenderer.dragonArmor.copyPosition(animatable);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
 		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());

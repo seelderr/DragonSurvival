@@ -1,6 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.client.handlers;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
@@ -22,7 +21,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class ClientGrowthHudHandler {
+public class GrowthHUD {
 	private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();
 	private static final Color COLOR = new Color(99, 99, 99);
 	private static final Color BRIGHTER_COLOR = COLOR.brighter();
@@ -35,7 +34,7 @@ public class ClientGrowthHudHandler {
 	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthYOffset", comment = "Offset the y position of the item growth icon in relation to its normal position" )
 	public static Integer growthYOffset = 0;
 
-	public static void renderGrowth(final DragonStateHandler handler, @NotNull final GuiGraphics guiGraphics, int width, int height){
+	public static void renderGrowthHUD(final DragonStateHandler handler, @NotNull final GuiGraphics guiGraphics, int width, int height){
 		Player localPlayer = Minecraft.getInstance().player;
 
 		if (localPlayer == null || localPlayer.isSpectator()) {

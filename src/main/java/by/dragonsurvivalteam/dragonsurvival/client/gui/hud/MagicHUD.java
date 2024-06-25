@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
@@ -27,7 +27,7 @@ import net.minecraft.world.entity.player.Player;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-public class ClientMagicHUDHandler {
+public class MagicHUD {
 	// 1.20.6 moved a whole bunch of widgets around, so to keep compatibiltiy with older versions, we need to use the old widgets texture
 	public static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
 	public static final ResourceLocation widgetTextures = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
@@ -126,7 +126,7 @@ public class ClientMagicHUDHandler {
 		errorMessage = component;
 	}
 
-	public static void renderAbilityHud(final DragonStateHandler handler, final GuiGraphics guiGraphics, int width, int height){
+	public static void renderAbilityHUD(final DragonStateHandler handler, final GuiGraphics guiGraphics, int width, int height){
 		Player localPlayer = Minecraft.getInstance().player;
 
 		if (localPlayer == null || localPlayer.isSpectator()) {

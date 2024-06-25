@@ -40,6 +40,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "startWithDragonChoice", comment = "Should the dragon altar interface be opened when the player first joins the world?" )
 	public static Boolean startWithDragonChoice = true;
 
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "allowDragonChoiceFromInventory", comment = "Should the dragon altar be accessible from the vanilla inventory if the player has not made a choice yet?" )
+	public static Boolean allowDragonChoiceFromInventory = true;
+
 	// Growth
 	@ConfigType(Block.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "destructibleBlocks", comment = "Blocks that are destructible when block destruction is enabled. Blocks that can be harvested with an axe are also destroyable by default on whitelist mode. Formatting: block/modid:id" )

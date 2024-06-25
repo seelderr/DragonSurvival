@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -34,7 +34,7 @@ public abstract class MixinWorldRenderer{
 		if(camera.isDetached()){
 			return;
 		}
-		if(!ClientDragonRender.renderInFirstPerson){
+		if(!ClientDragonRenderer.renderInFirstPerson){
 			return;
 		}
 		if(!DragonStateProvider.isDragon(camera.getEntity())){
@@ -46,8 +46,8 @@ public abstract class MixinWorldRenderer{
 		double e = vec3d.y();
 		double f = vec3d.z();
 
-		final GeoBone neckandHead = ClientDragonRender.dragonModel.getAnimationProcessor().getBone("Neck");
-		final GeoBone armorNeck = ClientDragonRender.dragonArmorModel.getAnimationProcessor().getBone("Neck");
+		final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
+		final GeoBone armorNeck = ClientDragonRenderer.dragonArmorModel.getAnimationProcessor().getBone("Neck");
 
 		if(neckandHead != null){
 			neckandHead.setHidden(true);

@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrinceModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.PrincessHorseModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.DragonBeaconRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.blocks.HelmetEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures.*;
@@ -27,7 +27,7 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
-public class ClientModEvents{
+public class ClientModSetup {
 	@SubscribeEvent
 	public static void setup(FMLClientSetupEvent event)
 	{
@@ -49,8 +49,8 @@ public class ClientModEvents{
 		EntityRenderers.register(DSEntities.BALL_LIGHTNING.get(), manager -> new BallLightningRenderer(manager, new LightningBallModel()));
 		EntityRenderers.register(DSEntities.FIREBALL.get(), manager -> new FireBallRenderer(manager, new FireballModel()));
 
-		EntityRenderers.register(DSEntities.DRAGON.get(), manager -> new DragonRenderer(manager, ClientDragonRender.dragonModel));
-		EntityRenderers.register(DSEntities.DRAGON_ARMOR.get(), manager -> new DragonRenderer(manager, ClientDragonRender.dragonArmorModel));
+		EntityRenderers.register(DSEntities.DRAGON.get(), manager -> new DragonRenderer(manager, ClientDragonRenderer.dragonModel));
+		EntityRenderers.register(DSEntities.DRAGON_ARMOR.get(), manager -> new DragonRenderer(manager, ClientDragonRenderer.dragonArmorModel));
 		EntityRenderers.register(DSEntities.KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));
 		EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE.get(), manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
 		EntityRenderers.register(DSEntities.PRINCE_ON_HORSE.get(), manager -> new PrinceHorseRenderer(manager, new PrinceModel()));

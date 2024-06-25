@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import java.util.List;
 import java.util.Optional;
@@ -15,7 +15,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 
 // TODO: This might not work? Test JEI integration
-public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonContainer, RecipeHolder<CraftingRecipe>>, IGuiContainerHandler<DragonScreen>{
+public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonContainer, RecipeHolder<CraftingRecipe>>, IGuiContainerHandler<DragonInventoryScreen>{
 	@Override
 	public @NotNull Class<? extends DragonContainer> getContainerClass(){
 		return DragonContainer.class;

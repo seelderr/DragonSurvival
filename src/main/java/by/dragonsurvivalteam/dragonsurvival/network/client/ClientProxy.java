@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.network.client;
 
+import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.dragon_editor.DragonEditorScreen;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonAltarHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRender;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -106,8 +105,8 @@ public class ClientProxy {
             return;
         }
 
-        PacketDistributor.sendToServer(new SyncDragonClawRender.Data(localPlayer.getId(), ClientDragonRender.renderDragonClaws));
-        PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(localPlayer.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
+        PacketDistributor.sendToServer(new SyncDragonClawRender.Data(localPlayer.getId(), ClientDragonRenderer.renderDragonClaws));
+        PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(localPlayer.getId(), ClientDragonRenderer.renderNewbornSkin, ClientDragonRenderer.renderYoungSkin, ClientDragonRenderer.renderAdultSkin));
 
         DragonStateProvider.getCap(localPlayer).ifPresent(cap -> {
             if(DragonEditorRegistry.getSavedCustomizations() != null){
@@ -127,8 +126,8 @@ public class ClientProxy {
     public static void sendClientData(final IPayloadContext context) {
         Player sender = context.player();
 
-        context.reply(new SyncDragonClawRender.Data(sender.getId(), ClientDragonRender.renderDragonClaws));
-        context.reply(new SyncDragonSkinSettings.Data(sender.getId(), ClientDragonRender.renderNewbornSkin, ClientDragonRender.renderYoungSkin, ClientDragonRender.renderAdultSkin));
+        context.reply(new SyncDragonClawRender.Data(sender.getId(), ClientDragonRenderer.renderDragonClaws));
+        context.reply(new SyncDragonSkinSettings.Data(sender.getId(), ClientDragonRenderer.renderNewbornSkin, ClientDragonRenderer.renderYoungSkin, ClientDragonRenderer.renderAdultSkin));
 
         DragonStateProvider.getCap(sender).ifPresent(cap -> {
             if(DragonEditorRegistry.getSavedCustomizations() != null){
@@ -175,7 +174,7 @@ public class ClientProxy {
     }
 
     public static void handleOpenDragonAltar() {
-        DragonAltarHandler.openAltar();
+        Minecraft.getInstance().setScreen(new DragonAltarScreen());
     }
 
     public static void handleOpenDragonEditorPacket() {
@@ -362,8 +361,8 @@ public class ClientProxy {
 
         // TODO :: use string uuid?
         if (localPlayer != null) {
-            if (ClientDragonRender.dragonArmor != null) {
-                ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
+            if (ClientDragonRenderer.dragonArmor != null) {
+                ClientDragonRenderer.dragonArmor.playerId = localPlayer.getId();
             }
 
             Entity entity = localPlayer.level().getEntity(message.playerId());
@@ -382,7 +381,7 @@ public class ClientProxy {
                 if (player != localPlayer) {
                     DragonEntity dragon = DSEntities.DRAGON.get().create(localPlayer.level());
                     dragon.playerId = player.getId();
-                    ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
+                    ClientDragonRenderer.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
                 }
             }
         }
@@ -413,17 +412,17 @@ public class ClientProxy {
         Entity entity = Minecraft.getInstance().level.getEntity(message.playerId());
 
         if (entity instanceof Player player) {
-            ClientEvents.dragonsJumpingTicks.put(player.getId(), message.ticks());
+            DragonEntity.dragonsJumpingTicks.put(player.getId(), message.ticks());
         }
     }
 
     public static void handleRefreshDragons(final RefreshDragon.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
-        ClientDragonRender.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(localPlayer.level());
+        ClientDragonRenderer.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(localPlayer.level());
 
-        if (ClientDragonRender.dragonArmor != null) {
-            ClientDragonRender.dragonArmor.playerId = localPlayer.getId();
+        if (ClientDragonRenderer.dragonArmor != null) {
+            ClientDragonRenderer.dragonArmor.playerId = localPlayer.getId();
         }
 
         Entity entity = localPlayer.level().getEntity(message.playerId());
@@ -431,7 +430,7 @@ public class ClientProxy {
         if (entity instanceof Player player) {
             DragonEntity dragon = DSEntities.DRAGON.get().create(localPlayer.level());
             dragon.playerId = player.getId();
-            ClientDragonRender.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
+            ClientDragonRenderer.playerDragonHashMap.computeIfAbsent(player.getId(), integer -> new AtomicReference<>(dragon)).getAndSet(dragon);
         }
     }
 

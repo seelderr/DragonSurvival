@@ -1,10 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
@@ -27,8 +25,8 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 	// This is needed since an OpenInventory message normally resets the cursor back to the center of the screen.
 	// This is disruptive when navigating between various dragon menus, so we set the cursor back to prevent this behavior in that case.
 	public static void SendOpenDragonInventoryAndMaintainCursorPosition() {
-		ClientEvents.mouseX = Minecraft.getInstance().mouseHandler.xpos();
-		ClientEvents.mouseY = Minecraft.getInstance().mouseHandler.ypos();
+		DragonInventoryScreen.mouseX = Minecraft.getInstance().mouseHandler.xpos();
+		DragonInventoryScreen.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 		PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
 		DragonStateProvider.getCap(ClientProxy.getLocalPlayer()).ifPresent(cap -> {
 			boolean clawsMenuOpen = cap.getClawToolData().isMenuOpen();

@@ -1,7 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.client.handlers;
+package by.dragonsurvivalteam.dragonsurvival.client.gui;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;

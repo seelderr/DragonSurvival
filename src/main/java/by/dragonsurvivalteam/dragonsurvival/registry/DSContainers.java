@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.SourceOfMagicScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
@@ -29,6 +29,6 @@ public class DSContainers{
 	@SubscribeEvent
 	public static void registerScreens(RegisterMenuScreensEvent event) {
 		event.register(SOURCE_OF_MAGIC_CONTAINER.get(), SourceOfMagicScreen::new);
-		event.register(DRAGON_CONTAINER.get(), DragonScreen::new);
+		event.register(DRAGON_CONTAINER.get(), DragonInventoryScreen::new);
 	}
 }

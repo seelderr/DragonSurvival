@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonArmorModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
@@ -45,7 +44,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
-import net.minecraft.network.protocol.game.ClientboundSetEntityMotionPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -55,12 +53,13 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import software.bernie.geckolib.util.RenderUtil;
 
 @EventBusSubscriber( Dist.CLIENT )
-public class ClientDragonRender{
+public class ClientDragonRenderer {
 	public static DragonModel dragonModel = new DragonModel();
 	public static DragonArmorModel dragonArmorModel = new DragonArmorModel(dragonModel);
 	/**
@@ -351,7 +350,7 @@ public class ClientDragonRender{
 						if(handler.isDragon()) {
 							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize());
 						}
-						ClientEvents.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, poseStack, bolasScale);
+						BolasOnPlayerRenderer.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, poseStack, bolasScale);
 					}
 				}
 			} catch (Throwable throwable) {
@@ -504,5 +503,10 @@ public class ClientDragonRender{
 	@SubscribeEvent
 	public static void calculateRealtimeDeltaTick(RenderFrameEvent.Pre event) {
 		deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();
+	}
+
+	@SubscribeEvent
+	public static void unloadWorld(LevelEvent.Unload worldEvent){
+		playerDragonHashMap.clear();
 	}
 }

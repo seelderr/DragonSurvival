@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -14,11 +12,12 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Tier;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.Tiers;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import java.awt.*;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
@@ -30,7 +29,27 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 		this.renderer = renderer;
 	}
 
-	@Override
+    private static String getMaterial(String texture, ItemStack clawItem){
+        if (clawItem.getItem() instanceof TieredItem item) {
+            Tier tier = item.getTier();
+
+            switch (tier) {
+                case Tiers.NETHERITE -> texture += "netherite_";
+                case Tiers.DIAMOND -> texture += "diamond_";
+                case Tiers.IRON -> texture += "iron_";
+                case Tiers.GOLD -> texture += "gold_";
+                case Tiers.STONE -> texture += "stone_";
+                case Tiers.WOOD -> texture += "wooden_";
+                default -> texture += "moded_";
+            }
+
+            return texture;
+        }
+
+        return texture + "moded_";
+    }
+
+    @Override
 	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
 		if(!((DragonRenderer) renderer).shouldRenderLayers) {
 			return;
@@ -83,7 +102,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 		ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().slotForBonus);
 
 		if (!clawItem.isEmpty()) {
-			texturePath = ClientEvents.getMaterial(texturePath, clawItem);
+			texturePath = getMaterial(texturePath, clawItem);
 		} else {
 			return null;
 		}
@@ -96,7 +115,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 		ItemStack swordItem = DragonStateProvider.getOrGenerateHandler(player).getClawToolData().getClawsInventory().getItem(0);
 
 		if (!swordItem.isEmpty()) {
-			texturePath = ClientEvents.getMaterial(texturePath, swordItem);
+			texturePath = getMaterial(texturePath, swordItem);
 		} else {
 			return null;
 		}

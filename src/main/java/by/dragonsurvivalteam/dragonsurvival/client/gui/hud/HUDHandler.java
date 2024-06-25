@@ -1,8 +1,5 @@
-package by.dragonsurvivalteam.dragonsurvival.client;
+package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientEvents;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientGrowthHudHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientMagicHUDHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
@@ -19,7 +16,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
-public class RenderHudEvents {
+public class HUDHandler {
     @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaFoodLevel", comment = "Re-enable the vanilla hud for the food level")
     public static Boolean vanillaFoodLevel = false;
 
@@ -45,7 +42,7 @@ public class RenderHudEvents {
                 event.setCanceled(true);
             }
         } else if (ServerConfig.consumeEXPAsMana && !vanillaExperienceBar && id == VanillaGuiLayers.EXPERIENCE_BAR) {
-            boolean wasRendered = ClientMagicHUDHandler.renderExperienceBar(event.getGuiGraphics(), screenWidth);
+            boolean wasRendered = MagicHUD.renderExperienceBar(event.getGuiGraphics(), screenWidth);
 
             if (wasRendered) {
                 event.setCanceled(true);
@@ -58,11 +55,11 @@ public class RenderHudEvents {
             }
 
             // Render dragon specific hud elements (e.g. time in rain for cave dragons or time without water for sea dragons)
-            ClientEvents.renderOverlay(handler, Minecraft.getInstance().gui, event.getGuiGraphics());
+            DragonPenaltyHUD.renderDragonPenaltyHUD(handler, Minecraft.getInstance().gui, event.getGuiGraphics());
             // Renders the abilities
-            ClientMagicHUDHandler.renderAbilityHud(handler, event.getGuiGraphics(), screenWidth, screenHeight);
+            MagicHUD.renderAbilityHUD(handler, event.getGuiGraphics(), screenWidth, screenHeight);
             // Renders the growth icon above the experience bar when an item is selected which grants growth
-            ClientGrowthHudHandler.renderGrowth(handler, event.getGuiGraphics(), screenWidth, screenHeight);
+            GrowthHUD.renderGrowthHUD(handler, event.getGuiGraphics(), screenWidth, screenHeight);
         }
     }
 }
