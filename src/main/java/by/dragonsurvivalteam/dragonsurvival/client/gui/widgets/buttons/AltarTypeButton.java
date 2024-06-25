@@ -64,7 +64,9 @@ public class AltarTypeButton extends Button {
 		List<Component> tooltips = new ArrayList<>();
 
 		for (String string : I18n.get("ds.altar_dragon_info." + dragonType).split("\n")) {
-			if (string.equals("{0}")) {
+			// TODO: This is a hack to get rid of the format error that happens when parsing these altar dragon info strings; not sure how to fix it without modifying the data everywhere
+			string = string.replace("Format error: ", "");
+			if (string.equals("%s")) {
 				string = foodInfo;
 			}
 

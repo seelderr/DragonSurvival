@@ -55,7 +55,7 @@ public class HelpButton extends ExtendedButton {
 
 		int i = 0;
 		if (isHoveredOrFocused() && !usesVanillaTooltip) {
-			i += (int) (type == null ? 4 : (Objects.equals(type, DragonTypes.CAVE) ? 1 : Objects.equals(type, DragonTypes.FOREST) ? 2 : Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
+			i += (int) ((Objects.equals(type, DragonTypes.CAVE) ? 1 : Objects.equals(type, DragonTypes.FOREST) ? 2 : Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
 
 			// Render the tooltip manually since minecraft's tooltip positioner often fails with this button type
 			guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(Component.translatable(text)), mouseX, mouseY);
