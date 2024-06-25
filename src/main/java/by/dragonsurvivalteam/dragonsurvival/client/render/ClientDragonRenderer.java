@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonArmorModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -46,6 +47,7 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -53,6 +55,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
@@ -171,6 +174,14 @@ public class ClientDragonRenderer {
 	private static final int MAX_DELAY = 10;
 	private static int renderDelay;
 
+	@SubscribeEvent(receiveCanceled = true)
+	public static void cancelNameplatesFromDummyEntities(RenderNameTagEvent renderNameplateEvent){
+		Entity entity = renderNameplateEvent.getEntity();
+		if(entity.getType() == DSEntities.DRAGON.get() || entity.getType() == DSEntities.DRAGON_ARMOR.get()) {
+			renderNameplateEvent.setCanRender(TriState.FALSE);
+		}
+	}
+
 	/** Called for every player */
 	@SubscribeEvent
 	public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
@@ -225,7 +236,7 @@ public class ClientDragonRenderer {
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 
-				if (dragonNameTags) {
+				if (dragonNameTags && player != ClientProxy.getLocalPlayer()) {
 					RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, poseStack, renderTypeBuffer, eventLight, partialRenderTick);
 					NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
