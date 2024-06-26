@@ -44,6 +44,7 @@ import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.LevelTickEvent;
@@ -191,7 +192,7 @@ public class VillagerRelationsHandler{
 	}
 
 	@SubscribeEvent
-	public static void hurtEntity(LivingDamageEvent attackEntityEvent){
+	public static void hurtEntity(LivingIncomingDamageEvent attackEntityEvent){
 		Entity attacked = attackEntityEvent.getEntity();
 		Player attacker = attackEntityEvent.getSource().getEntity() instanceof Player ? (Player)attackEntityEvent.getSource().getEntity() : null;
 

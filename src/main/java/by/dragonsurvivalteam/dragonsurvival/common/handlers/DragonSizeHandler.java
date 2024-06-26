@@ -51,9 +51,8 @@ public class DragonSizeHandler{
 		Pose overridePose = overridePose(player);
 		height = calculateModifiedHeight(height, overridePose, squish);
 		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);// Apply changes
-		event.setNewEyeHeight((float)eyeHeight);
 		// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-		event.setNewSize(calculateDimensions(width, height));
+		event.setNewSize(calculateDimensions(width, height, eyeHeight));
 	}
 	
 	public static double getDragonHeight(Player player) {
@@ -92,6 +91,11 @@ public class DragonSizeHandler{
 			eyeHeight *= 7.0D / 12.0D;
 		}
 		return eyeHeight;
+	}
+
+	public static EntityDimensions calculateDimensions(double width, double height, double eyeHeight)
+	{
+		return EntityDimensions.scalable((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D)).withEyeHeight((float)eyeHeight);
 	}
 
 	public static EntityDimensions calculateDimensions(double width, double height)

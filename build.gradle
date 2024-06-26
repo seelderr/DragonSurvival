@@ -3,7 +3,7 @@ plugins {
 	id 'idea'
 	id 'maven-publish'
 	id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
-	id 'net.neoforged.gradle.userdev' version '7.0.145'
+	id 'net.neoforged.gradle.userdev' version '7.0.150'
 	//id 'com.diffplug.spotless' version "7.0.0.BETA1" // FIXME: Bring back once we can bring back the other plugins
 }
 
@@ -127,10 +127,9 @@ tasks.withType(ProcessResources).configureEach {
 
 tasks.withType(JavaCompile).configureEach {
 	options.encoding = 'UTF-8'
-}
+};
 
-// TODO: Parchment is not available yet for this version
-/* {
+subsystems {
 	parchment {
 		// The Minecraft version for which the Parchment mappings were created.
 		// This does not necessarily need to match the Minecraft version your mod targets
@@ -158,7 +157,7 @@ tasks.withType(JavaCompile).configureEach {
 		// The built-in default value can also be overriden using the Gradle property neogradle.subsystems.parchment.enabled
 		// enabled = true
 	}
-}*/
+}
 
 // IDEA no longer automatically downloads sources/javadoc jars for dependencies, so we need to explicitly enable the behavior.
 idea {
