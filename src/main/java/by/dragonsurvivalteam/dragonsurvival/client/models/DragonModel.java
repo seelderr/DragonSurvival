@@ -153,7 +153,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 				return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
 			}
 		}
-		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
 	}
 
 	@Override
