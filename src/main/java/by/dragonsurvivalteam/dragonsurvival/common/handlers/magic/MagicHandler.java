@@ -39,16 +39,16 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
-import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber
 public class MagicHandler{
+
+	private static boolean takeKnockback = true;
+
 	@SubscribeEvent
 	public static void magicUpdate(PlayerTickEvent.Post event){
 		Player player = event.getEntity();
@@ -293,6 +293,22 @@ public class MagicHandler{
 					event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
 				}
 			});
+		}
+	}
+
+	@SubscribeEvent
+	public static void markNoKnockbackForMagicDamage(final LivingIncomingDamageEvent event)  {
+		if (event.getSource().is(DataDamageTypeTagsProvider.NO_KNOCKBACK)) {
+			takeKnockback = false;
+		}
+	}
+
+	@SubscribeEvent
+	public static void cancelKnockbackIfDisabled(final LivingKnockBackEvent event)  {
+		if (!takeKnockback) {
+			event.setCanceled(true);
+
+			takeKnockback = true;
 		}
 	}
 }
