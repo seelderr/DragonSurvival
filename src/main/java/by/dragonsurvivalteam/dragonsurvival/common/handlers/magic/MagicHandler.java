@@ -24,7 +24,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import java.util.Objects;
-import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -46,9 +45,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber
 public class MagicHandler{
-
-	private static boolean takeKnockback = true;
-
 	@SubscribeEvent
 	public static void magicUpdate(PlayerTickEvent.Post event){
 		Player player = event.getEntity();
@@ -293,22 +289,6 @@ public class MagicHandler{
 					event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
 				}
 			});
-		}
-	}
-
-	@SubscribeEvent
-	public static void markNoKnockbackForMagicDamage(final LivingIncomingDamageEvent event)  {
-		if (event.getSource().is(DataDamageTypeTagsProvider.NO_KNOCKBACK)) {
-			takeKnockback = false;
-		}
-	}
-
-	@SubscribeEvent
-	public static void cancelKnockbackIfDisabled(final LivingKnockBackEvent event)  {
-		if (!takeKnockback) {
-			event.setCanceled(true);
-
-			takeKnockback = true;
 		}
 	}
 }
