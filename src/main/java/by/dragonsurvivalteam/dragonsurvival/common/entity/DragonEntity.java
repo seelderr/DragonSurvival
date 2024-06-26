@@ -99,7 +99,35 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
 		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
 		registrar.add(new AnimationController<>(this, "1", this::headPredicate));
+		registrar.add(new AnimationController<>(this, "6", this::breathPredicate));
 	}
+
+	// For the breath weapon only, we want it to play on a seperate controller so it can play at the same time as other animations
+	private PlayState breathPredicate(final AnimationState<DragonEntity> state) {
+		Player player = getPlayer();
+
+		AnimationController<DragonEntity> animationController = state.getController();
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+
+		if (handler.refreshBody) {
+			animationController.forceAnimationReset();
+			handler.refreshBody = false;
+		}
+
+		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
+
+		if (currentCast != null) {
+			RawAnimation ability = renderAbility(state, currentCast);
+			if(ability != null) {
+				if(ability.getAnimationStages().stream().anyMatch(stage -> stage.animationName().equals("breath"))){
+					state.getController().transitionLength(5);
+					return state.setAndContinue(ability);
+				}
+			}
+		}
+
+        return PlayState.STOP;
+    }
 
 	private PlayState tailPredicate(final AnimationState<DragonEntity> state) {
 		if (!tailLocked) {
