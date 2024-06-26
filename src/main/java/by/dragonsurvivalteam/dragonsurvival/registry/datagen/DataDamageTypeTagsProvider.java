@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -19,7 +18,6 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
     public static TagKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
-    public static TagKey<DamageType> NO_KNOCKBACK = createKey("no_knockback");
 
     public DataDamageTypeTagsProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pLookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
         super(pOutput, pLookupProvider, modId, existingFileHelper);
@@ -45,7 +43,7 @@ public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
                 .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
                 .add(DSDamageTypes.SEA_DRAGON_BREATH);
 
-        tag(NO_KNOCKBACK)
+        tag(DamageTypeTags.NO_KNOCKBACK)
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
                 .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
                 .add(DSDamageTypes.CRUSHED)
