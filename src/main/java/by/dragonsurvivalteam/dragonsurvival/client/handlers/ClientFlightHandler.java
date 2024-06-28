@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
+import by.dragonsurvivalteam.dragonsurvival.util.ActionWithCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -87,6 +88,11 @@ public class ClientFlightHandler {
 	static float lastIncrease;
 	static float lastZoom = 1f;
 
+	private static final ActionWithCooldown hungerMessageWithCooldown = new ActionWithCooldown(30_000, () -> {
+		var localPlayer = Minecraft.getInstance().player;
+		if (localPlayer == null) return;
+		localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+	});
 	private static long lastHungerMessage;
 	private static int levitationLeft;
 
@@ -570,10 +576,7 @@ public class ClientFlightHandler {
 			return;
 		}
 
-		if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
-			lastHungerMessage = System.currentTimeMillis();
-			player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-		}
+		hungerMessageWithCooldown.tryRun();
 	}
 
 	private static boolean isTrapped(LivingEntity entity) {
