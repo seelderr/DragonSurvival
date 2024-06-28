@@ -29,6 +29,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -514,47 +515,64 @@ public class ClientFlightHandler {
 			return;
 		}
 
-		boolean currentState = handler.isWingsSpread();
-		Vec3 lookVec = player.getLookAngle();
-
 		if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()){
 			spinKeybind(player, handler);
 		}
 
-		if(jumpToFly && !player.isCreative() && !player.isSpectator()){
-			if(minecraft.options.keyJump.isDown()){
-				if(keyInputEvent.getAction() == GLFW.GLFW_PRESS){
-					if(handler.hasFlight() && !currentState && (lookVec.y > 0.8 || !lookAtSkyForFlight)){
-						if(!player.onGround() && !player.isInLava() && !player.isInWater()){
-							if(player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative()){
-								PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
-							}else{
-								if(lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()){
-									lastHungerMessage = System.currentTimeMillis();
-									player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-								}
-							}
-						}
-					}
-				}
-			}
-		}
+        if (jumpToFly && minecraft.options.keyJump.isDown() && keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
+            tryJumpToFly(player, handler);
+        }
 
 		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
-			if(handler.hasFlight()){
-				//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-				if(!player.hasEffect(DSEffects.TRAPPED) && (player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative() || currentState)){
-					PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !currentState));
-				}else{
-					if(!player.hasEffect(DSEffects.TRAPPED))
-					{
-						player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-					}
-				}
-			}else{
-				player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
-			}
-		}
+            tryManualToggleWings(player, handler);
+        }
+	}
+
+    private static void tryManualToggleWings(LocalPlayer player, DragonStateHandler handler) {
+        if (!handler.hasFlight()) {
+            player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
+            return;
+        }
+
+        //Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
+        if(!isTrapped(player) && (hasEnoughFoodToStartFlight(player) || player.isCreative() || handler.isWingsSpread())){
+            PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !handler.isWingsSpread()));
+            return;
+        }
+
+        if(!isTrapped(player))
+        {
+            player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+        }
+    }
+
+    private static void tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
+        if (player.isCreative() || player.isSpectator()) return;
+
+        if (!handler.hasFlight()) return;
+        if (handler.isWingsSpread()) return;
+
+        Vec3 lookVec = player.getLookAngle();
+        if (lookAtSkyForFlight && lookVec.y <= 0.8) return;
+
+        if (player.onGround() || player.isInLava() || player.isInWater()) return;
+
+        if (hasEnoughFoodToStartFlight(player) || player.isCreative()) {
+            PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
+        } else {
+            if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
+                lastHungerMessage = System.currentTimeMillis();
+                player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+            }
+        }
+    }
+
+	private static boolean isTrapped(LivingEntity entity) {
+		return entity.hasEffect(DSEffects.TRAPPED);
+	}
+
+	private static boolean hasEnoughFoodToStartFlight(Player player) {
+		return player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold;
 	}
 
 	public static Vec3 getInputVector(Vec3 movement, float fricSpeed, float yRot){
