@@ -93,7 +93,6 @@ public class ClientFlightHandler {
 		if (localPlayer == null) return;
 		localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 	});
-	private static long lastHungerMessage;
 	private static int levitationLeft;
 
 	@SubscribeEvent
