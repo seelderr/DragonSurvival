@@ -480,6 +480,9 @@ public class ClientFlightHandler {
 		}
 	}
 
+	// FIXME: spin and toggleWings are duplicates for handling mouse and keyboard inputs
+	// Handling should be done by checking KeyMappings while listening to ClientTickEvent.Post via #consumeClick()
+	// Spin is currently checked for both times, but toggleWings only for the keyboard
 	@SubscribeEvent
 	public static void spin(InputEvent.MouseButton.Pre keyInputEvent) {
 		Minecraft minecraft = Minecraft.getInstance();
