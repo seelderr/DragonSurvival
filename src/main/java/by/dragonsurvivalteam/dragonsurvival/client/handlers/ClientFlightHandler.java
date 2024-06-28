@@ -475,69 +475,74 @@ public class ClientFlightHandler {
 	}
 
 	@SubscribeEvent
-	public static void spin(InputEvent.MouseButton.Pre keyInputEvent){
+	public static void spin(InputEvent.MouseButton.Pre keyInputEvent) {
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
-		if(player == null){
-			return;
-		}
+		if (player == null) return;
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		if(!handler.isDragon()){
-			return;
-		}
+		if (!handler.isDragon()) return;
 
-		if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()){
+		if (KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
 			spinKeybind(player, handler);
 		}
 	}
 
-	private static void spinKeybind(LocalPlayer player, DragonStateHandler handler){
-		if(!ServerFlightHandler.isSpin(player) && handler.getMovementData().spinCooldown <= 0 && handler.getMovementData().spinLearned){
-			if(ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)){
-				handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
-				handler.getMovementData().spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
-				PacketDistributor.sendToServer(new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-			}
+	private static void spinKeybind(LocalPlayer player, DragonStateHandler handler) {
+		if (ServerFlightHandler.isSpin(player)) return;
+		if (handler.getMovementData().spinCooldown > 0) return;
+		if (!handler.getMovementData().spinLearned) return;
+
+		if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
+			handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+			handler.getMovementData().spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
+			PacketDistributor.sendToServer(
+					new SyncSpinStatus.Data(
+							player.getId(),
+							handler.getMovementData().spinAttack,
+							handler.getMovementData().spinCooldown,
+							handler.getMovementData().spinLearned
+					)
+			);
 		}
 	}
 
 	@SubscribeEvent
-	public static void toggleWings(InputEvent.Key keyInputEvent){
+	public static void toggleWings(InputEvent.Key keyInputEvent) {
 		Minecraft minecraft = Minecraft.getInstance();
 		LocalPlayer player = minecraft.player;
-		if(player == null){
+		if (player == null) {
 			return;
 		}
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		if(handler == null || !handler.isDragon()){
+		if (handler == null || !handler.isDragon()) {
 			return;
 		}
 
-		if(KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()){
+		if (KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
 			spinKeybind(player, handler);
 		}
 
-        if (jumpToFly && minecraft.options.keyJump.isDown() && keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
-            tryJumpToFly(player, handler);
-        }
+		if (jumpToFly && minecraft.options.keyJump.isDown() && keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
+			tryJumpToFly(player, handler);
+		}
 
-		if(KeyInputHandler.TOGGLE_WINGS.consumeClick()){
-            tryManualToggleWings(player, handler);
-        }
+		if (KeyInputHandler.TOGGLE_WINGS.consumeClick()) {
+			tryManualToggleWings(player, handler);
+		}
 	}
 
-    private static void tryManualToggleWings(LocalPlayer player, DragonStateHandler handler) {
-        if (!handler.hasFlight()) {
-            player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
-            return;
-        }
+	private static void tryManualToggleWings(LocalPlayer player, DragonStateHandler handler) {
+		if (!handler.hasFlight()) {
+			player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
+			return;
+		}
 
 		if (isTrapped(player)) return;
 
 		//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-		// NOTE: Folding wings is currently disallowed when trapped; but the Trapped status effect already folds wings
+		// NOTE: Folding wings is currently disallowed when trapped, but the Trapped status effect already folds wings
 		boolean isWingsSpread = handler.isWingsSpread();
 		if (isWingsSpread || player.isCreative() || hasEnoughFoodToStartFlight(player)) {
 			PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !isWingsSpread));
@@ -547,29 +552,29 @@ public class ClientFlightHandler {
 		player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
 	}
 
-    private static void tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
-        if (player.isCreative() || player.isSpectator()) return;
+	private static void tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
+		if (player.isCreative() || player.isSpectator()) return;
 
-        if (!handler.hasFlight()) return;
-        if (handler.isWingsSpread()) return;
+		if (!handler.hasFlight()) return;
+		if (handler.isWingsSpread()) return;
 
 		if (isTrapped(player)) return;
 
-        Vec3 lookVec = player.getLookAngle();
-        if (lookAtSkyForFlight && lookVec.y <= 0.8) return;
+		Vec3 lookVec = player.getLookAngle();
+		if (lookAtSkyForFlight && lookVec.y <= 0.8) return;
 
-        if (player.onGround() || player.isInLava() || player.isInWater()) return;
+		if (player.onGround() || player.isInLava() || player.isInWater()) return;
 
-        if (hasEnoughFoodToStartFlight(player)) { // Creative players are already disallowed from using jump-to-fly
-            PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
+		if (hasEnoughFoodToStartFlight(player)) { // Creative players are already disallowed from using jump-to-fly
+			PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
 			return;
-        }
+		}
 
-        if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
-            lastHungerMessage = System.currentTimeMillis();
-            player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-        }
-    }
+		if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
+			lastHungerMessage = System.currentTimeMillis();
+			player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+		}
+	}
 
 	private static boolean isTrapped(LivingEntity entity) {
 		return entity.hasEffect(DSEffects.TRAPPED);
