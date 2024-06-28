@@ -558,13 +558,14 @@ public class ClientFlightHandler {
 
         if (player.onGround() || player.isInLava() || player.isInWater()) return;
 
-        if (hasEnoughFoodToStartFlight(player) || player.isCreative()) {
+        if (hasEnoughFoodToStartFlight(player)) { // Creative players are already disallowed from using jump-to-fly
             PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
-        } else {
-            if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
-                lastHungerMessage = System.currentTimeMillis();
-                player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-            }
+			return;
+        }
+
+        if (lastHungerMessage == 0 || lastHungerMessage + TimeUnit.MILLISECONDS.convert(30, TimeUnit.SECONDS) < System.currentTimeMillis()) {
+            lastHungerMessage = System.currentTimeMillis();
+            player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
         }
     }
 
