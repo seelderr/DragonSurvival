@@ -553,6 +553,8 @@ public class ClientFlightHandler {
         if (!handler.hasFlight()) return;
         if (handler.isWingsSpread()) return;
 
+		if (isTrapped(player)) return;
+
         Vec3 lookVec = player.getLookAngle();
         if (lookAtSkyForFlight && lookVec.y <= 0.8) return;
 
