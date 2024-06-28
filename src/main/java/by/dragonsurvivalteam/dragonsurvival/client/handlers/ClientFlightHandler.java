@@ -534,17 +534,18 @@ public class ClientFlightHandler {
             return;
         }
 
-        //Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-        if(!isTrapped(player) && (hasEnoughFoodToStartFlight(player) || player.isCreative() || handler.isWingsSpread())){
-            PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !handler.isWingsSpread()));
-            return;
-        }
+		if (isTrapped(player)) return;
 
-        if(!isTrapped(player))
-        {
-            player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-        }
-    }
+		//Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
+		// NOTE: Folding wings is currently disallowed when trapped; but the Trapped status effect already folds wings
+		boolean isWingsSpread = handler.isWingsSpread();
+		if (isWingsSpread || player.isCreative() || hasEnoughFoodToStartFlight(player)) {
+			PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !isWingsSpread));
+			return;
+		}
+
+		player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+	}
 
     private static void tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
         if (player.isCreative() || player.isSpectator()) return;
