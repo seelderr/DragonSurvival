@@ -15,6 +15,8 @@ public class DSSounds {
 			BuiltInRegistries.SOUND_EVENT,
 			MODID
 	);
+	public static Supplier<SoundEvent> BONK = DS_SOUNDS.register("bonk", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "bonk")));
+
 	public static Supplier<SoundEvent> ACTIVATE_BEACON = DS_SOUNDS.register("activate_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "activate_beacon")));
 	public static Supplier<SoundEvent> DEACTIVATE_BEACON = DS_SOUNDS.register("deactivate_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "deactivate_beacon")));
 	public static Supplier<SoundEvent> UPGRADE_BEACON = DS_SOUNDS.register("upgrade_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "upgrade_beacon")));
