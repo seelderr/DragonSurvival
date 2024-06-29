@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonArmorModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -48,6 +47,8 @@ import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -249,7 +250,8 @@ public class ClientDragonRenderer {
 				poseStack.mulPose(Axis.YN.rotationDegrees((float) handler.getMovementData().bodyYaw));
 
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
-				float scale = (float) Math.max(size / 40.0D, 0.4D);
+				AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
+				float scale = (float) (Math.max(size / 40.0D, 0.4D) * (attributeInstance != null ? attributeInstance.getValue() : 1.0D));
 				poseStack.scale(scale, scale, scale);
 
 				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
