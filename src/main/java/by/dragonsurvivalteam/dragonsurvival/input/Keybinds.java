@@ -30,8 +30,7 @@ public enum Keybinds {
     ABILITY3("ds.keybind.ability3", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_3),
     ABILITY4("ds.keybind.ability4", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_4),
 
-    // TODO: Verify that this should use GUI?
-    SPIN_ABILITY("ds.keybind.spin", KeyConflictContext.GUI, GLFW.GLFW_KEY_V),
+    SPIN_ABILITY("ds.keybind.spin", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_V),
     FREE_LOOK("ds.keybind.free_look", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
     ;
 
