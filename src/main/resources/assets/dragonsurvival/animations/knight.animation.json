@@ -2,7 +2,7 @@
   "format_version": "1.8.0",
   "animations": {
     "idle": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 4.4,
       "bones": {
         "all": {
@@ -371,7 +371,7 @@
       }
     },
     "idle_2": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 2.44,
       "bones": {
         "all": {
@@ -850,7 +850,7 @@
       }
     },
     "walk": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 2.08,
       "bones": {
         "all": {
@@ -1229,7 +1229,7 @@
       }
     },
     "run": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 1.16,
       "bones": {
         "all": {
