@@ -141,15 +141,6 @@ public abstract class MixinLivingEntity extends Entity{
 		return dragon_Survival$getHumanOrDragonUseDuration(original);
 	}
 
-	@WrapOperation(method = "hurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;knockback(DDD)V"))
-	public void disableKnockbackForMagic(LivingEntity instance, double pX, double pZ, double pStrength, Operation<Void> original, @Local(argsOnly = true) final DamageSource damageSource) {
-		if (damageSource.is(DataDamageTypeTagsProvider.NO_KNOCKBACK)) {
-			this.knockback(0.0D, pX, pZ);
-		} else {
-			original.call(instance, pX, pZ, pStrength);
-		}
-	}
-
 	@Unique private UseAnim dragon_Survival$getUseAnimation(UseAnim original, ItemStack pStack){
 
 		if(DragonStateProvider.isDragon((LivingEntity)(Object)this)) {

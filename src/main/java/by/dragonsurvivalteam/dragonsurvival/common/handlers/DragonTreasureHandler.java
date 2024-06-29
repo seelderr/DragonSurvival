@@ -23,9 +23,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.event.entity.living.LivingHurtEvent;
+import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import software.bernie.geckolib.util.Color;
 
@@ -142,7 +141,7 @@ public class DragonTreasureHandler{
 
 
 	@SubscribeEvent
-	public static void playerAttacked(LivingHurtEvent event){
+	public static void playerAttacked(LivingDamageEvent.Post event){
 		LivingEntity entity = event.getEntity();
 
 		if(entity instanceof Player player){
