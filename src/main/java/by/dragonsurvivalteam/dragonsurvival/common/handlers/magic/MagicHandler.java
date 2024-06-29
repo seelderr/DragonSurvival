@@ -24,7 +24,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import java.util.Objects;
-import java.util.UUID;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -39,10 +38,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
-import net.neoforged.neoforge.event.entity.living.LivingAttackEvent;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
+import net.neoforged.neoforge.event.entity.living.*;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -201,7 +197,7 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerDamaged(LivingDamageEvent event){
+	public static void playerDamaged(LivingDamageEvent.Post event){
 		if(event.getEntity() instanceof Player player){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				if(!cap.isDragon()){
@@ -232,12 +228,12 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingHurt(final LivingAttackEvent event) {
+	public static void livingHurt(final LivingIncomingDamageEvent event) {
 		if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_BREATH)) {
 			return;
 		}
 
-		if (event.getEntity() != null && event.getSource().getEntity() instanceof Player player) {
+		if (event.getSource().getEntity() instanceof Player player) {
 			DragonStateProvider.getCap(player).ifPresent(handler -> {
 				if (!handler.isDragon()) {
 					return;

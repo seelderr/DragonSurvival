@@ -42,6 +42,6 @@ public class DragonArmorModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity animatable) {
-		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
 	}
 }

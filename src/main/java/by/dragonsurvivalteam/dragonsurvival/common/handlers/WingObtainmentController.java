@@ -39,6 +39,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.event.ServerChatEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -151,7 +152,7 @@ public class WingObtainmentController{
 	}
 
 	@SubscribeEvent
-	public static void teleportAway(LivingDamageEvent damageEvent){
+	public static void teleportAway(LivingIncomingDamageEvent damageEvent){
 		if(!ServerConfig.endVoidTeleport){
 			return;
 		}
