@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEn
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.InstantCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
@@ -134,12 +135,12 @@ public class SpikeAbility extends InstantCastAbility{
 		ArrayList<Component> components = super.getInfo();
 		components.add(Component.translatable("ds.skill.damage", getDamage()));
 
-		if(!KeyInputHandler.ABILITY2.isUnbound()){
+		if(!Keybinds.ABILITY2.get().isUnbound()){
 
-			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+			String key = Keybinds.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty()){
-				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
+				key = Keybinds.ABILITY2.getKey().getDisplayName().getString();
 			}
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}

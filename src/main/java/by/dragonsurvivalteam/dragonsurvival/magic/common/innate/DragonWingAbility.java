@@ -4,15 +4,17 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import java.util.Locale;
+
+import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
 import net.minecraft.network.chat.Component;
 
 public abstract class DragonWingAbility extends InnateDragonAbility{
 	@Override
 	public Component getDescription(){
-		String key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+		String key = Keybinds.TOGGLE_WINGS.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 		if(key.isEmpty())
-			key = KeyInputHandler.TOGGLE_WINGS.getKey().getDisplayName().getString();
+			key = Keybinds.TOGGLE_WINGS.getKey().getDisplayName().getString();
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		return Component.translatable("ds.skill.description." + getName(), key).append("\n").append(Component.translatable("ds.skill.description." + getName() + (handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));

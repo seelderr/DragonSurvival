@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
@@ -263,7 +264,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 	public boolean keyPressed(int p_231046_1_, int p_231046_2_, int p_231046_3_){
 		InputConstants.Key mouseKey = InputConstants.getKey(p_231046_1_, p_231046_2_);
 
-		if(KeyInputHandler.DRAGON_INVENTORY.isActiveAndMatches(mouseKey)){
+		if(Keybinds.DRAGON_INVENTORY.get().isActiveAndMatches(mouseKey)){
 			onClose();
 			return true;
 		}

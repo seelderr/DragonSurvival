@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -491,7 +492,7 @@ public class ClientFlightHandler {
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		if (!handler.isDragon()) return;
 
-		if (KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
+		if (Keybinds.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
 			spinKeybind(player, handler);
 		}
 	}
@@ -528,7 +529,7 @@ public class ClientFlightHandler {
 			return;
 		}
 
-		if (KeyInputHandler.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
+		if (Keybinds.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
 			spinKeybind(player, handler);
 		}
 
@@ -536,7 +537,7 @@ public class ClientFlightHandler {
 			tryJumpToFly(player, handler);
 		}
 
-		if (KeyInputHandler.TOGGLE_WINGS.consumeClick()) {
+		if (Keybinds.TOGGLE_WINGS.consumeClick()) {
 			tryManualToggleWings(player, handler);
 		}
 	}

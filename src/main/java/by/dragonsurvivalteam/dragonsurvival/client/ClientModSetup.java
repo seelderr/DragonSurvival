@@ -55,9 +55,4 @@ public class ClientModSetup {
 		EntityRenderers.register(DSEntities.PRINCESS_ON_HORSE.get(), manager -> new PrincessHorseRenderer(manager, new PrincessHorseModel()));
 		EntityRenderers.register(DSEntities.PRINCE_ON_HORSE.get(), manager -> new PrinceHorseRenderer(manager, new PrinceModel()));
 	}
-
-	@SubscribeEvent
-	public static void onKeyRegister(final RegisterKeyMappingsEvent event) {
-		KeyInputHandler.registerKeys(event);
-	}
 }
