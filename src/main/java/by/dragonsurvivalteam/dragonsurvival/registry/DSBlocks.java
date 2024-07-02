@@ -6,6 +6,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
@@ -22,11 +23,15 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.geckolib.util.Color;
 
+import java.util.HashMap;
+
 public class DSBlocks{
 	public static final DeferredRegister<Block> DS_BLOCKS = DeferredRegister.create(
 			BuiltInRegistries.BLOCK,
 			MODID
 	);
+
+	public static final HashMap<String, Pair<DeferredHolder<Block, SkeletonPieceBlock>, DeferredHolder<Item, BlockItem>>> SKELETON_PIECES = new HashMap<>();
 
 	// Dragon Doors
 
@@ -968,4 +973,19 @@ public class DSBlocks{
 			"broken_knight_helmet_3",
 			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
 	);
+
+	static {
+		for (int i = 1; i < 9; i++) {
+			for (SkeletonPieceBlock.Type type : SkeletonPieceBlock.Types.values()) {
+				DeferredHolder<Block, SkeletonPieceBlock> holder1 = DS_BLOCKS.register(type.getSerializedName() + "_skin" + i,
+						() -> new SkeletonPieceBlock(type, BlockBehaviour.Properties.of()
+								.mapColor(MapColor.WOOL)
+								.strength(2.0F)
+								.sound(SoundType.METAL)));
+				DeferredHolder<Item, BlockItem> holder2 = DS_ITEMS.register(type.getSerializedName() + "_skin" + i,
+						() -> new BlockItem(holder1.get(), new Item.Properties()));
+				SKELETON_PIECES.put(type.getSerializedName(), new Pair<>(holder1, holder2));
+			}
+		}
+	}
 }
