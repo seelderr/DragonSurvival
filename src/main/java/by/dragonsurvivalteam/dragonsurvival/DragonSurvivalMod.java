@@ -20,7 +20,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootExtendedLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
@@ -98,7 +97,6 @@ public class DragonSurvivalMod{
 
 		// We need to register blocks before items, since otherwise the items will register before the item-blocks can be assigned
 		DS_BLOCKS.register(modEventBus);
-		//DSBlocks.registerSkeletonPieces();
 		DS_ITEMS.register(modEventBus);
 		DS_ATTACHMENT_TYPES.register(modEventBus);
 		DS_MOB_EFFECTS.register(modEventBus);
