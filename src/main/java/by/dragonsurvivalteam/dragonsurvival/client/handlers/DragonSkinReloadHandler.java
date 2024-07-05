@@ -11,6 +11,6 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 public class DragonSkinReloadHandler {
     @SubscribeEvent
     public static void onReloadEvent(AddReloadListenerEvent reloadEvent) {
-        DragonSkins.init();
+        DragonSkins.init(true);
     }
 }
