@@ -111,13 +111,13 @@ public class DragonSurvivalMod{
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event){
-		WingObtainmentController.loadDragonPhrases();
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
 		if (ModList.get().isLoaded("appleskin")) {
 			NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
 		}
+		WingObtainmentController.loadDragonPhrases();
 	}
 	
 	@SubscribeEvent
