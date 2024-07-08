@@ -1,5 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -24,9 +27,6 @@ import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class InventoryScreenHandler {

@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -20,8 +22,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility{

@@ -1,10 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
@@ -49,8 +51,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SkinsScreen extends Screen{
 	private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_interface.png");

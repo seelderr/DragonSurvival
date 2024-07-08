@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -38,8 +40,6 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber( Dist.CLIENT )
 public class EmoteMenuHandler {

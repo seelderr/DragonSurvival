@@ -16,8 +16,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ItemBlockRenderTypes.class)
 public class MixinItemBlockRenderTypes {
 
-    @Unique
-    private static RenderType dragonSurvival$onRenderFluidLayer(FluidState fluidState)
+    @Unique private static RenderType dragonSurvival$onRenderFluidLayer(FluidState fluidState)
     {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player == null){

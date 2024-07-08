@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import net.minecraft.client.renderer.entity.ArrowRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 
 @OnlyIn( Dist.CLIENT )

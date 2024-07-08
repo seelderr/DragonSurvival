@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
+import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK_FOLDER;
+
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonDoor;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates;
@@ -15,8 +17,6 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
-
-import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK_FOLDER;
 
 public class DataBlockStateProvider extends BlockStateProvider {
 	public DataBlockStateProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {

@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -22,8 +24,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation resetSettingsTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");

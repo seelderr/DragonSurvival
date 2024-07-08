@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;

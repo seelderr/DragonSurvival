@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers.slots;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
@@ -16,8 +18,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class ClawToolSlot extends Slot {
 	static final ResourceLocation AXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_axe");

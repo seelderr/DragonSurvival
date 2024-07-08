@@ -1,6 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.*;
@@ -11,7 +14,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.E
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonEditorConfirmComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonUIRenderComponent;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
@@ -67,8 +69,6 @@ import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonEditorScreen extends Screen {
 	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
@@ -196,7 +196,7 @@ public class DragonEditorScreen extends Screen {
 			}
 
 			for(ColorSelectorButton colorSelectorButton : colorButtons){
-				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, this.HANDLER), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, this.HANDLER.getType());
+				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
 
 				colorSelectorButton.visible = (text != null && text.colorable) && !defaultSkinCheckbox.selected;
 			}

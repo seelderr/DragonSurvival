@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -20,8 +22,6 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;

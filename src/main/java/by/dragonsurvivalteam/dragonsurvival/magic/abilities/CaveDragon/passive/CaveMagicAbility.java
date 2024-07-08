@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -7,8 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class CaveMagicAbility extends MagicAbility{

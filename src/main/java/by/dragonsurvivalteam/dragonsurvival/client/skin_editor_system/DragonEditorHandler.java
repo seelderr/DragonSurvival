@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
@@ -26,8 +28,6 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonEditorHandler{
 	public static ResourceLocation getSkinTexture(Player player, EnumSkinLayer layer, String key, AbstractDragonType type){
