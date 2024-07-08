@@ -242,7 +242,7 @@ public class ClientDragonRenderer {
 					NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
 					// TODO: Test this, we might not need shouldShowName
-					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player)) {
+					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).dragonsurvival$callShouldShowName(player)) {
 						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
 					}
 				}
@@ -344,7 +344,7 @@ public class ClientDragonRenderer {
 
 				if (!player.isSpectator()) {
 					// Render the parrot on the players shoulder
-					((AccessorLivingRenderer) playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+					((AccessorLivingRenderer) playerRenderer).dragonsurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
 						poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
 						poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
