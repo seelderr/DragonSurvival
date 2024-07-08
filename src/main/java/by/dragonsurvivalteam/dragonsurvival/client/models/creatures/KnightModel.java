@@ -15,11 +15,11 @@ public class KnightModel extends GeoModel<KnightEntity> {
 
 	@Override
 	public ResourceLocation getTextureResource(KnightEntity object){
-		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/riders/dragon_knight_black.png");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/knight_on_horse.png");
 	}
 
 	@Override
 	public ResourceLocation getAnimationResource(KnightEntity animatable){
-		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/knight.animation.json");
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_knight.animation.json");
 	}
 }

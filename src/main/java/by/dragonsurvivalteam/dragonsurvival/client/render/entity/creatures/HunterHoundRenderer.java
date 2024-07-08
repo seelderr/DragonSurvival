@@ -11,9 +11,9 @@ import net.minecraft.world.entity.animal.Wolf;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class HunterHoundRenderer extends WolfRenderer{
-	static final List<ResourceLocation> SKINS = Arrays.asList(ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_1.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_2.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_3.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_4.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_5.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_6.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_7.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_8.png"));
+	static final List<ResourceLocation> SKINS = Arrays.asList(ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_1.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_2.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_3.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_4.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_5.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_6.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_7.png"), ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_8.png"));
 
-	static final ResourceLocation HECTOR_SKIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/hounds/dragon_hound_hector.png");
+	static final ResourceLocation HECTOR_SKIN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/hound_hector.png");
 
 	public HunterHoundRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager);

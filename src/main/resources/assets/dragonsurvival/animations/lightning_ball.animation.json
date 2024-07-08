@@ -2,7 +2,7 @@
 	"format_version": "1.8.0",
 	"animations": {
 		"idle": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.28,
 			"bones": {
 				"1": {
@@ -540,7 +540,7 @@
 			}
 		},
 		"fly": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 2.28,
 			"bones": {
 				"1": {
@@ -1012,7 +1012,7 @@
 			}
 		},
 		"explosion": {
-			"loop": true,
+			"loop": "loop",
 			"animation_length": 1.76,
 			"bones": {
 				"1": {

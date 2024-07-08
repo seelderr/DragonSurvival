@@ -8,6 +8,8 @@ import software.bernie.geckolib.model.GeoModel;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 // TODO :: Unused?
+//  Aures: The answer is yes, you can delete it
+
 public class StormBreathEffectModel extends GeoModel<StormBreathEntity> {
 	private ResourceLocation currentTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/storms_breath.png");
 

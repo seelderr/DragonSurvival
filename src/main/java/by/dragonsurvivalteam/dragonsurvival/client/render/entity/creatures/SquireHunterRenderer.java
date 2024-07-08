@@ -12,7 +12,7 @@ import net.minecraft.resources.ResourceLocation;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SquireHunterRenderer extends MobRenderer<SquireEntity, HunterModel<SquireEntity>>{
-	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon_squire.png");
+	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/squire.png");
 
 	public SquireHunterRenderer(EntityRendererProvider.Context rendererManager){
 		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
