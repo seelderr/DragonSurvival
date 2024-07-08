@@ -7,13 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
-
-import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -46,7 +45,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 public class VillagerRelationsHandler{
 	public static List<Supplier<EntityType<? extends PathfinderMob>>> dragonHunters;
 
-	private static int timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
+	private static final int timeLeft = Functions.minutesToTicks(ServerConfig.royalSpawnDelay) + Functions.minutesToTicks(ThreadLocalRandom.current().nextInt(30));
 
 	/// FIXME: It looks like we are modifying the drops of certain entities here. We shouldn't be doing this in an event like this! Use global loot modifiers or a custom loot table!
 	@SubscribeEvent

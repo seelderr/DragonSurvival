@@ -42,7 +42,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 		settings = () -> screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get();
 
 		LayerSettings set = settings.get();
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, screen.HANDLER.getType());
+		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
 		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
 			settings.get().glowing = !settings.get().glowing;
@@ -64,7 +64,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 			settings.get().brightness = hsb[2];
 			settings.get().modifiedColor = true;
 
-			screen.HANDLER.getSkinData().compileSkin();
+			DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 			screen.update();
 		});
 	}

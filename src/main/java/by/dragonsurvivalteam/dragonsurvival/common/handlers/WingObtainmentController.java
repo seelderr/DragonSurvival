@@ -89,7 +89,7 @@ public class WingObtainmentController{
 	}
 
 
-	private static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
 	@SubscribeEvent
 	public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){

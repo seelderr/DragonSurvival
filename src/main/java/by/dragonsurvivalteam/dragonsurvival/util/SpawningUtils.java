@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
@@ -13,13 +14,10 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.event.EventHooks;
 
-import javax.annotation.Nullable;
-
 public class SpawningUtils
 {
 	// TODO: This used to have more conditions, and now it doesn't. Might lead to too many spawns?
-	@Nullable
-	public static BlockPos findRandomSpawnPosition(Player player, int p_221298_1_, int timesToCheck, float distance){
+	@Nullable public static BlockPos findRandomSpawnPosition(Player player, int p_221298_1_, int timesToCheck, float distance){
 		int i = p_221298_1_ == 0 ? 2 : 2 - p_221298_1_;
 		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
 

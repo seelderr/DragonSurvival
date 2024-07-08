@@ -32,9 +32,6 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 
-import javax.annotation.Nullable;
-import java.util.List;
-
 public class BallLightningEntity extends DragonBallEntity{
 	protected boolean isLingering = false;
 	protected int lingerTicks = 100;

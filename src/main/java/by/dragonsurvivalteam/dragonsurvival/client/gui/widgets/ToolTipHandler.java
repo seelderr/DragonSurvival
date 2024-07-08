@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
@@ -29,8 +31,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 @EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler{
 	private static final ResourceLocation tooltip_1 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
@@ -50,8 +50,8 @@ public class ToolTipHandler{
 
 	private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
 
-	private static boolean blink = false;
-	private static int tick = 0;
+	private static final boolean blink = false;
+	private static final int tick = 0;
 
 	@SubscribeEvent
 	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent){
