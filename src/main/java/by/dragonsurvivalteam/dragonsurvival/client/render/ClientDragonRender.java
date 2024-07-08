@@ -62,9 +62,12 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
+import net.minecraftforge.client.event.RenderNameTagEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.event.TickEvent.RenderTickEvent;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
@@ -257,11 +260,13 @@ public class ClientDragonRender{
 				EntityRenderer<? extends Player> playerRenderer = ((AccessorEntityRendererManager)minecraft.getEntityRenderDispatcher()).getPlayerRenderers().get(playerModelType);
 				int eventLight = renderPlayerEvent.getPackedLight();
 				final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
-				if(dragonNameTags){
-					net.minecraftforge.client.event.RenderNameTagEvent renderNameplateEvent = new net.minecraftforge.client.event.RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
-					net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
-					if(renderNameplateEvent.getResult() != net.minecraftforge.eventbus.api.Event.Result.DENY && (renderNameplateEvent.getResult() == net.minecraftforge.eventbus.api.Event.Result.ALLOW || ((AccessorLivingRenderer)playerRenderer).callShouldShowName(player))){
-						((AccessorEntityRenderer)playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), matrixStack, renderTypeBuffer, eventLight);
+
+				if (dragonNameTags) {
+					RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, matrixStack, renderTypeBuffer, eventLight, partialRenderTick);
+					MinecraftForge.EVENT_BUS.post(renderNameplateEvent);
+
+					if (renderNameplateEvent.getResult() != Event.Result.DENY && (renderNameplateEvent.getResult() == Event.Result.ALLOW || ((AccessorLivingRenderer) playerRenderer).dragonsurvival$callShouldShowName(player))) {
+						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), matrixStack, renderTypeBuffer, eventLight);
 					}
 				}
 
@@ -376,10 +381,11 @@ public class ClientDragonRender{
 					}
 				}
 
-				if(!player.isSpectator()){
-					((AccessorLivingRenderer)playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
-						matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
-						matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
+				if (!player.isSpectator()) {
+					// Render the parrot on the players shoulder
+					((AccessorLivingRenderer) playerRenderer).dragonsurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+                        matrixStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
+                        matrixStack.mulPose(Vector3f.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
 						double forward = 0.3 * scale;
 						float parrotHeadYaw = Mth.clamp(-1.0F * ((float)handler.getMovementData().bodyYaw - (float)handler.getMovementData().headYaw), -75.0F, 75.0F);
@@ -637,19 +643,10 @@ public class ClientDragonRender{
 		entity.yHeadRot = entity.yRot;
 		entity.yHeadRotO = entity.yRot;
 		EntityRenderDispatcher entityrenderermanager = Minecraft.getInstance().getEntityRenderDispatcher();
-		boolean renderHitbox = entityrenderermanager.shouldRenderHitBoxes();
 		quaternion1.conj();
 		entityrenderermanager.overrideCameraOrientation(quaternion1);
 		MultiBufferSource.BufferSource irendertypebuffer$impl = Minecraft.getInstance().renderBuffers().bufferSource();
-		RenderSystem.runAsFancy(() -> {
-			//entityrenderermanager.setRenderHitBoxes(false);
-			//entityrenderermanager.setRenderShadow(false);
-
-			entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 244);
-
-			//entityrenderermanager.setRenderShadow(true);
-			//entityrenderermanager.setRenderHitBoxes(renderHitbox);
-		});
+        RenderSystem.runAsFancy(() -> entityrenderermanager.render(entity, 0.0D, 0.0D, 0.0D, 0.0F, 1F, matrixstack, irendertypebuffer$impl, 244));
 
 		irendertypebuffer$impl.endBatch();
 		matrixstack.popPose();
