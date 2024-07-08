@@ -19,61 +19,58 @@ import software.bernie.geckolib3.core.manager.AnimationData;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-@OnlyIn( Dist.CLIENT )
-@EventBusSubscriber( Dist.CLIENT )
-public class FakeClientPlayerUtils{
-	private static final ConcurrentHashMap<Integer, FakeClientPlayer> fakePlayers = new ConcurrentHashMap<>();
-	private static final ConcurrentHashMap<Integer, DragonEntity> fakeDragons = new ConcurrentHashMap<>();
+@OnlyIn(Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
+public class FakeClientPlayerUtils {
+	private static final ConcurrentHashMap<Integer, FakeClientPlayer> FAKE_PLAYERS = new ConcurrentHashMap<>();
+	private static final ConcurrentHashMap<Integer, DragonEntity> FAKE_DRAGONS = new ConcurrentHashMap<>();
 
-	public static DragonEntity getFakeDragon(int num, DragonStateHandler handler){
-		FakeClientPlayer clientPlayer = getFakePlayer(num, handler);
+	public static DragonEntity getFakeDragon(int index, final DragonStateHandler handler) {
+		FakeClientPlayer fakePlayer = getFakePlayer(index, handler);
 
-		fakeDragons.computeIfAbsent(num, n -> new DragonEntity(DSEntities.DRAGON, clientPlayer.level){
+		return FAKE_DRAGONS.computeIfAbsent(index, key -> new DragonEntity(DSEntities.DRAGON, fakePlayer.getLevel()) {
 			@Override
-			public void registerControllers(AnimationData animationData){
-				animationData.shouldPlayWhilePaused = true;
-				animationData.addAnimationController(new AnimationController<DragonEntity>(this, "fake_player_controller", 2, event -> {
+			public void registerControllers(final AnimationData animationData) {
+                animationData.shouldPlayWhilePaused = true;
+				animationData.addAnimationController(new AnimationController<>(this, "fake_player_controller", 2, event -> {
+                    AnimationBuilder builder = new AnimationBuilder();
 
-					if(getPlayer() instanceof FakeClientPlayer){
-						AnimationBuilder builder = new AnimationBuilder();
+                    if (fakePlayer.animationSupplier != null) {
+                        builder.addAnimation(fakePlayer.animationSupplier.get(), EDefaultLoopTypes.LOOP);
+                    }
 
-						if(clientPlayer.animationSupplier != null){
-							builder.addAnimation(clientPlayer.animationSupplier.get(), EDefaultLoopTypes.LOOP);
-						}
-
-						event.getController().setAnimation(builder);
-						return PlayState.CONTINUE;
-					}else{
-						return PlayState.STOP;
-					}
+                    event.getController().setAnimation(builder);
+                    return PlayState.CONTINUE;
 				}));
 			}
 
 			@Override
-			public Player getPlayer(){
-				return clientPlayer;
+			public Player getPlayer() {
+				return fakePlayer;
 			}
 		});
-
-		return fakeDragons.get(num);
 	}
 
-	public static FakeClientPlayer getFakePlayer(int num, DragonStateHandler handler){
-		fakePlayers.computeIfAbsent(num, FakeClientPlayer::new);
-		fakePlayers.get(num).handler = handler;
-		fakePlayers.get(num).lastAccessed = System.currentTimeMillis();
-		return fakePlayers.get(num);
+	public static FakeClientPlayer getFakePlayer(int index, DragonStateHandler handler) {
+		FAKE_PLAYERS.computeIfAbsent(index, FakeClientPlayer::new);
+		FAKE_PLAYERS.get(index).handler = handler;
+		FAKE_PLAYERS.get(index).lastAccessed = System.currentTimeMillis();
+		return FAKE_PLAYERS.get(index);
 	}
 
 	@SubscribeEvent
-	public static void clientTick(ClientTickEvent event){
-		fakePlayers.forEach((i, v) -> {
-			if(System.currentTimeMillis() - v.lastAccessed >= TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)){
-				v.remove(RemovalReason.DISCARDED);
-				fakeDragons.get(i).remove(RemovalReason.DISCARDED);
+	public static void clientTick(ClientTickEvent event) {
+		FAKE_PLAYERS.forEach((index, player) -> {
+			if (System.currentTimeMillis() - player.lastAccessed >= TimeUnit.MILLISECONDS.convert(10, TimeUnit.MINUTES)) {
+				player.remove(RemovalReason.DISCARDED);
+				DragonEntity dragon = FAKE_DRAGONS.get(index);
 
-				fakeDragons.remove(i);
-				fakePlayers.remove(i);
+				if (dragon != null) {
+					dragon.remove(RemovalReason.DISCARDED);
+					FAKE_DRAGONS.remove(index);
+				}
+
+				FAKE_PLAYERS.remove(index);
 			}
 		});
 	}
