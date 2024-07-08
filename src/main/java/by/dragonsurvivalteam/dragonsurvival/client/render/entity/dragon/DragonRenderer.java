@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -113,34 +114,34 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 			smallRightWing.setHidden(!hasWings);
 
 		// Hide the magic bones if we aren't using an animation that requires it. Prevents some jank from happening during animation transitions.
-		if(animatable.mainAnimationController != null || animatable.fakeAnimationController != null) {
-			List<String> animations = new ArrayList<>();
+		List<String> animations = new ArrayList<>();
 
-			if(animatable.mainAnimationController != null) {
-				AnimationProcessor.QueuedAnimation queuedAnimation = animatable.mainAnimationController.getCurrentAnimation();
-				if(queuedAnimation != null) {
-					animations.add(queuedAnimation.animation().name());
-				}
+		if (animatable.mainAnimationController != null) {
+			AnimationProcessor.QueuedAnimation queuedAnimation = animatable.mainAnimationController.getCurrentAnimation();
+
+			if (queuedAnimation != null) {
+				animations.add(queuedAnimation.animation().name());
 			}
+		}
 
-			if(animatable.fakeAnimationController != null) {
-				AnimationProcessor.QueuedAnimation queuedAnimation = animatable.fakeAnimationController.getCurrentAnimation();
-				if(queuedAnimation != null) {
-					animations.add(queuedAnimation.animation().name());
-				}
+		if (animatable.getPlayer() instanceof FakeClientPlayer fakePlayer && fakePlayer.animationController != null) {
+			AnimationProcessor.QueuedAnimation queuedAnimation = fakePlayer.animationController.getCurrentAnimation();
+
+			if (queuedAnimation != null) {
+				animations.add(queuedAnimation.animation().name());
 			}
+		}
 
-			if(!animations.isEmpty()) {
-				GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
-				GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
+		if (!animations.isEmpty()) {
+			GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
+			GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
 
-				if (animations.stream().anyMatch(magicAnimations::contains)) {
-					magic.setHidden(true);
-					magicCircle.setHidden(true);
-				} else {
-					magic.setHidden(false);
-					magicCircle.setHidden(false);
-				}
+			if (animations.stream().anyMatch(magicAnimations::contains)) {
+				magic.setHidden(true);
+				magicCircle.setHidden(true);
+			} else {
+				magic.setHidden(false);
+				magicCircle.setHidden(false);
 			}
 		}
 

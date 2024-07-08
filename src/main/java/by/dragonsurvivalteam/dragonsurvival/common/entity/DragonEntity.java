@@ -73,7 +73,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private final double defaultPlayerSwimSpeed = 0.051;
 	private final double defaultPlayerSprintSpeed = 0.165;
 	public AnimationController<DragonEntity> mainAnimationController;
-	public AnimationController<DragonEntity> fakeAnimationController;
 
 	private static double globalTickCount = 0;
 
