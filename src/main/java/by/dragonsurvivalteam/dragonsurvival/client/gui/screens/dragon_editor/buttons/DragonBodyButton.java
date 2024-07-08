@@ -12,11 +12,11 @@ import net.minecraft.resources.ResourceLocation;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonBodyButton extends Button {
-	private DragonEditorScreen dragonEditorScreen;
-	private AbstractDragonBody dragonBody;
-	private ResourceLocation texture_location;
-	private int pos;
-	private boolean locked = false;
+	private final DragonEditorScreen dragonEditorScreen;
+	private final AbstractDragonBody dragonBody;
+	private final ResourceLocation location;
+	private final int pos;
+	private final boolean locked;
 	
 	public DragonBodyButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, AbstractDragonBody dragonBody, int pos, boolean locked) {
 		super(x, y, xSize, ySize, Component.literal(dragonBody.toString()), btn -> {
@@ -25,7 +25,7 @@ public class DragonBodyButton extends Button {
 				dragonEditorScreen.update();
 			}
 		}, DEFAULT_NARRATION);
-		texture_location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeName().toLowerCase() + ".png");
+		location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeName().toLowerCase() + ".png");
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.dragonBody = dragonBody;
 		this.pos = pos;
@@ -46,7 +46,7 @@ public class DragonBodyButton extends Button {
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 		active = visible = dragonEditorScreen.showUi;
-		RenderSystem.setShaderTexture(0, texture_location);
+		RenderSystem.setShaderTexture(0, location);
 		RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
 
 		int i = 0;
@@ -57,7 +57,7 @@ public class DragonBodyButton extends Button {
 		} else if (this.isHoveredOrFocused()) {
 			i = 1;
 		}
-		guiGraphics.blit(this.texture_location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height, 256, 256);
+		guiGraphics.blit(this.location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height, 256, 256);
 		//RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 	}
 }

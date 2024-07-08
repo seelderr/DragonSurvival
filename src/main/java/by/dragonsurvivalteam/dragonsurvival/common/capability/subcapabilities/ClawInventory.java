@@ -5,6 +5,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.item.ItemStack;
 
 public class ClawInventory extends SubCap {
 	public enum Slot {
@@ -19,7 +20,7 @@ public class ClawInventory extends SubCap {
 		}
 	}
 
-	private SimpleContainer clawsInventory = new SimpleContainer(4);
+	private final SimpleContainer clawsInventory = new SimpleContainer(4);
 
 	public boolean shouldRenderClaws = true;
 
@@ -47,6 +48,26 @@ public class ClawInventory extends SubCap {
 
 		ListTag listTag = tag.getList("clawsInventory", 10);
 		clawsInventory.fromTag(listTag, provider);
+	}
+
+	public ItemStack get(final Slot slot) {
+		return clawsInventory.getItem(slot.ordinal());
+	}
+
+	public ItemStack getSword() {
+		return clawsInventory.getItem(Slot.SWORD.ordinal());
+	}
+
+	public ItemStack getPickaxe() {
+		return clawsInventory.getItem(Slot.PICKAXE.ordinal());
+	}
+
+	public ItemStack getAxe() {
+		return clawsInventory.getItem(Slot.AXE.ordinal());
+	}
+
+	public ItemStack getShovel() {
+		return clawsInventory.getItem(Slot.SHOVEL.ordinal());
 	}
 
 	public void setMenuOpen(boolean isMenuOpen) {

@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes.*;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -59,7 +57,7 @@ public class DragonUtils {
 		return DragonStateProvider.getOrGenerateHandler(entity).getLevel();
 	}
 
-	/** Converts the supplied {@link Tier#getLevel} to vanilla values (0 to 4) */
+	/** Converts the supplied harvest level to a corresponding vanilla tier */
 	public static @Nullable Tier levelToVanillaTier(int level) {
 		if (level < 0) {
 			return null;

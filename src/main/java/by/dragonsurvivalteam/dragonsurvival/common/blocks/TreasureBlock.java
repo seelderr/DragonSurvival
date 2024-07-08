@@ -68,9 +68,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	public boolean isPathfindable(BlockState pState, PathComputationType pPathComputationType){
 		return switch(pPathComputationType){
 			case LAND -> pState.getValue(LAYERS) < 5;
-			case WATER -> false;
-			case AIR -> false;
-			default -> false;
+			case WATER, AIR -> false;
 		};
 	}
 
@@ -181,7 +179,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		BlockState blockstate = p_196258_1_.getLevel().getBlockState(p_196258_1_.getClickedPos());
 		if(blockstate.is(this)){
 			int i = blockstate.getValue(LAYERS);
-			return blockstate.setValue(LAYERS, Integer.valueOf(Math.min(8, i + 1))).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
+			return blockstate.setValue(LAYERS, Math.min(8, i + 1)).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
 		}else{
 			return super.getStateForPlacement(p_196258_1_).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
 		}
@@ -210,7 +208,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 		if(state.getBlock() instanceof TreasureBlock){
 			if(state.getBlock() == entity.getBlockState().getBlock()){
 				int i = state.getValue(LAYERS);
-				world.setBlockAndUpdate(pos, state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + entity.getBlockState().getValue(LAYERS)))));
+				world.setBlockAndUpdate(pos, state.setValue(LAYERS, Math.min(8, i + entity.getBlockState().getValue(LAYERS))));
 			}
 		}
 	}
@@ -253,10 +251,10 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 								newLayers = missingLayers;
 							}
 
-							level().setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Integer.valueOf(Math.min(8, i + newLayers))));
+							level().setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Math.min(8, i + newLayers)));
 
 							if(leftOver > 0){
-								p_225534_2_.setBlock(blockPosition(), getBlockState().setValue(LAYERS, Integer.valueOf(Math.min(8, leftOver))), Block.UPDATE_ALL);
+								p_225534_2_.setBlock(blockPosition(), getBlockState().setValue(LAYERS, Math.min(8, leftOver)), Block.UPDATE_ALL);
 							}else{
 								p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
 							}

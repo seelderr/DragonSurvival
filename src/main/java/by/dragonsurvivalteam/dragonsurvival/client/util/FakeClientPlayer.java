@@ -11,8 +11,6 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
@@ -20,6 +18,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimationController;
 
 @OnlyIn(Dist.CLIENT )
@@ -47,28 +46,28 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	}
 
 	@Override
-	public void tick(){return;}
+	public void tick(){}
 
 	@Override
-	public void die(DamageSource source){return;}
+	public void die(@NotNull DamageSource source){}
 
 	@Override
-	public void readAdditionalSaveData(CompoundTag pCompound){}
+	public void readAdditionalSaveData(@NotNull CompoundTag pCompound){}
 
 	@Override
-	public void addAdditionalSaveData(CompoundTag pCompound){}
+	public void addAdditionalSaveData(@NotNull CompoundTag pCompound){}
 
 	@Override
-	public boolean isInvulnerableTo(DamageSource source){return true;}
+	public boolean isInvulnerableTo(@NotNull DamageSource source){return true;}
 
 	@Override
-	public boolean canHarmPlayer(Player player){return false;}
+	public boolean canHarmPlayer(@NotNull Player player){return false;}
 
 	@Override
-	public void displayClientMessage(Component chatComponent, boolean actionBar){}
+	public void displayClientMessage(@NotNull Component chatComponent, boolean actionBar){}
 
 	@Override
-	public void awardStat(Stat par1StatBase, int par2){}
+	public void awardStat(@NotNull Stat par1StatBase, int par2){}
 
 	@Override
 	public boolean shouldShowName(){
@@ -81,19 +80,19 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	}
 
 	@Override
-	public boolean saveAsPassenger(CompoundTag pCompound){return false;}
+	public boolean saveAsPassenger(@NotNull CompoundTag pCompound){return false;}
 
 	@Override
-	public boolean save(CompoundTag pCompound){return false;}
+	public boolean save(@NotNull CompoundTag pCompound){return false;}
 
 	@Override
 	@Nullable public MinecraftServer getServer(){return Minecraft.getInstance().getSingleplayerServer();}
 
 	@Override
-	public Vec3 position(){return new Vec3(0, 0, 0);}
+	public @NotNull Vec3 position(){return new Vec3(0, 0, 0);}
 
 	@Override
-	public BlockPos blockPosition(){return BlockPos.ZERO;}
+	public @NotNull BlockPos blockPosition(){return BlockPos.ZERO;}
 
 	@Override
 	public void onAddedToWorld(){}

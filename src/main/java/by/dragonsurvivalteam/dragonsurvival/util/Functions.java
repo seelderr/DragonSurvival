@@ -30,7 +30,7 @@ public class Functions{
 	}
 
 	public static double ticksToSeconds(int ticks){
-		return ticks / 20;
+		return ticks / 20d;
 	}
 
 	public static double angleDifference(double angle1, double angle2){

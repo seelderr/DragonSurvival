@@ -15,7 +15,7 @@ public class SquireHunterRenderer extends MobRenderer<SquireEntity, HunterModel<
 	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/squire.png");
 
 	public SquireHunterRenderer(EntityRendererProvider.Context rendererManager){
-		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
+		super(rendererManager, new HunterModel<>(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
 		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
 	}
 

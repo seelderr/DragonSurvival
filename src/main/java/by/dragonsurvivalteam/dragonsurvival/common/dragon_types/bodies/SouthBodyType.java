@@ -70,8 +70,7 @@ public class SouthBodyType extends AbstractDragonBody {
 
 	@Override
 	public CompoundTag writeNBT() {
-		CompoundTag tag = new CompoundTag();
-		return tag;
+        return new CompoundTag();
 	}
 
 	@Override

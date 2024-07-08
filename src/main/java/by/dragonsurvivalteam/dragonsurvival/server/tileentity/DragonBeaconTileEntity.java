@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
-public class DragonBeaconTileEntity extends BaseBlockTileEntity{
+public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 	public Type type = Type.NONE;
 	public float tick;
 
@@ -42,44 +42,40 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity{
 		bobOffs = new Random().nextFloat() * (float)Math.PI * 2.0F;
 	}
 
-	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, DragonBeaconTileEntity pBlockEntity){
-		BlockState below = pLevel.getBlockState(pPos.below());
+	public static void serverTick(Level level, BlockPos position, BlockState state, DragonBeaconTileEntity beacon) {
+		BlockState below = level.getBlockState(position.below());
 
-		if(below.getBlock() == DSBlocks.DRAGON_MEMORY_BLOCK.get() && pBlockEntity.type != Type.NONE){
-			if(!pState.getValue(DragonBeacon.LIT)){
-				pLevel.setBlockAndUpdate(pPos, pState.cycle(DragonBeacon.LIT));
-				pLevel.playSound(null, pPos, DSSounds.ACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+		if (below.getBlock() == DSBlocks.DRAGON_MEMORY_BLOCK.get() && beacon.type != Type.NONE) {
+			if (!state.getValue(DragonBeacon.LIT)) {
+				level.setBlockAndUpdate(position, state.cycle(DragonBeacon.LIT));
+				level.playSound(null, position, DSSounds.ACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
 			}
-			if(!pLevel.isClientSide()){
-				List<Player> dragons = pLevel.getEntitiesOfClass(Player.class, new AABB(pPos).inflate(50).expandTowards(0, pLevel.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
-				switch(pBlockEntity.type){
-					case PEACE -> dragons.forEach(playerEntity -> {
-						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
-							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+
+			List<Player> dragons = level.getEntitiesOfClass(Player.class, new AABB(position).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
+
+			switch (beacon.type) {
+				case PEACE -> dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+                    if (effect != null) {
+                        player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                    }
+                }));
+				case MAGIC ->
+						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+							if (effect != null) {
+								player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
-						});
-					});
-					case MAGIC -> dragons.forEach(playerEntity -> {
-						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
-							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+						}));
+				case FIRE ->
+						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+							if (effect != null) {
+								player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
 							}
-						});
-					});
-					case FIRE -> dragons.forEach(playerEntity -> {
-						ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
-							if(effect != null){
-								playerEntity.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
-							}
-						});
-					});
-				}
+						}));
 			}
-		}else{
-			if(pState.getValue(DragonBeacon.LIT)){
-				pLevel.setBlockAndUpdate(pPos, pState.cycle(DragonBeacon.LIT));
-				pLevel.playSound(null, pPos, DSSounds.DEACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+		} else {
+			if (state.getValue(DragonBeacon.LIT)) {
+				level.setBlockAndUpdate(position, state.cycle(DragonBeacon.LIT));
+				level.playSound(null, position, DSSounds.DEACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
 			}
 		}
 	}

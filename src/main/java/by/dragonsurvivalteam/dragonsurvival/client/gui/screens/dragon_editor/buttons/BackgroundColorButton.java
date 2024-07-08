@@ -55,19 +55,11 @@ public class BackgroundColorButton extends ExtendedButton {
 
 			colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
 			screen.renderables.add(renderButton);
-			colorComponent.children().forEach(
-				s -> {
-					((AccessorScreen)screen).children().add(s);
-				}
-			);
+			colorComponent.children().forEach(listener -> ((AccessorScreen)screen).children().add(listener));
 		}else{
-			colorComponent.children().forEach(
-					component -> {
-						screen.children().removeIf(other -> component == other);
-					}
-			);
-			screen.children().removeIf(s -> s == colorComponent);
-			screen.renderables.removeIf(s -> s == renderButton);
+			colorComponent.children().forEach(component -> screen.children().removeIf(other -> component == other));
+			screen.children().removeIf(listener -> listener == colorComponent);
+			screen.renderables.removeIf(renderable -> renderable == renderButton);
 		}
 
 		toggled = !toggled;
@@ -80,11 +72,7 @@ public class BackgroundColorButton extends ExtendedButton {
 		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))){
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
-			colorComponent.children().forEach(
-					component -> {
-						screen.children().removeIf(other -> component == other);
-					}
-			);
+			colorComponent.children().forEach(component -> screen.children().removeIf(other -> component == other));
 			screen.children().removeIf(s -> s == colorComponent);
 			screen.renderables.removeIf(s -> s == renderButton);
 		}

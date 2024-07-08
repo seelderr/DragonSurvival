@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;

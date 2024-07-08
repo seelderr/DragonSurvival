@@ -42,7 +42,7 @@ public class DragonBonusHandler {
 						event.setCanceled(true);
 					} else if (ServerConfig.forestBushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
 						event.setCanceled(true);
-					} else if (ServerConfig.forestCactiImmunity && damageSource == living.damageSources().cactus()) {
+					} else if (ServerConfig.forestCactiImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().cactus()) {
 						event.setCanceled(true);
 					}
 				}

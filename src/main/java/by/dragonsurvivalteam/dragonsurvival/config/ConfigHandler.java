@@ -2,28 +2,29 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
-import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.function.Supplier;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import net.minecraft.core.DefaultedRegistry;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
-import net.minecraft.util.Tuple;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.ItemLike;
@@ -41,7 +42,6 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforge.common.ModConfigSpec;
-import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
@@ -114,7 +114,7 @@ public class ConfigHandler{
 			try {
 				defaultConfigValues.put(configOption.key(), field.get(null));
 			} catch (IllegalAccessException e) {
-				DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [" + ConfigHandler.createConfigPath(configOption) + "]", e);
+                DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
 			}
 
 			configFields.put(configOption.key(), field);
@@ -195,10 +195,10 @@ public class ConfigHandler{
 				} else {
 					ModConfigSpec.ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
 					configValues.put(key, value);
-					DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [" + configOption.key() + "]");
+                    DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
 				}
 			} catch (Exception e) {
-				DragonSurvivalMod.LOGGER.error("Invalid configuration found: [" + configOption.key() + "]", e);
+                DragonSurvivalMod.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
 			}
 
 			for (int i = 0; i < categories.length; i++) {
@@ -331,7 +331,7 @@ public class ConfigHandler{
 
 			// Just to be sure
 			if (split.length != 2) {
-				DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist has the wrong format: " + location);
+                DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist has the wrong format: {}", location);
 				return Collections.emptyList();
 			}
 
@@ -362,15 +362,13 @@ public class ConfigHandler{
 			if(tag.isPresent()) {
 				List<T> list = new ArrayList<>();
 				registry.holders().forEach(
-						(holder) -> {
-							holder.tags().forEach(
-									(holderTag) -> {
-										if (tag.get().equals(holderTag)) {
-											list.add(holder.value());
-										}
-									}
-							);
-						}
+						holder -> holder.tags().forEach(
+                                holderTag -> {
+                                    if (tag.get().equals(holderTag)) {
+                                        list.add(holder.value());
+                                    }
+                                }
+                        )
 				);
 				return list;
 			}
@@ -383,7 +381,7 @@ public class ConfigHandler{
 	 * If the value is a {@link String} it can return the following:
 	 * <ul>
 	 *     <li>Enum value if the field is an enum</li>
-	 *     <li>Resource entries from {@link ConfigHandler#parseResourceLocation(Class, ResourceLocation)}</li>
+	 *     <li>Resource entries from {@link ConfigHandler#parseResourceLocation(Registry, String)}</li>
 	 *     <li>Otherwise just the original string value</li>
 	 * </ul>
 	 *
@@ -455,7 +453,7 @@ public class ConfigHandler{
 					}
 				}
 			} catch (IllegalAccessException e) {
-				DragonSurvivalMod.LOGGER.error("An error occured while setting the config [" + config + "]", e);
+                DragonSurvivalMod.LOGGER.error("An error occurred while setting the config [{}]", config, e);
 			}
 		}
 	}
@@ -484,7 +482,7 @@ public class ConfigHandler{
 					}
 				}
 			} catch (IllegalAccessException e) {
-				DragonSurvivalMod.LOGGER.error("An error occured while trying to update the config [" + config.getPath() + "] with the value [" + configValue + "]", e);
+                DragonSurvivalMod.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", config.getPath(), configValue, e);
 			}
 		});
 	}
@@ -507,7 +505,7 @@ public class ConfigHandler{
 		return result;
 	}
 
-	/** See {@link ConfigHandler#getRelevantValue(Field, Object)} for more info */
+	/** See {@link ConfigHandler#getRelevantValue(Field, Object, Class)} for more info */
 	private static Object convertFromGeneric(final Field field, String config) throws IllegalAccessException {
 		Object result;
 		Object object = configValues.get(config).get();
@@ -540,7 +538,7 @@ public class ConfigHandler{
 	 */
 	public static <T> HashSet<T> getResourceElements(final Class<T> type, final List<String> values) {
 		Registry<T> registry = (Registry<T>) REGISTRY_MAP.getOrDefault(type, null);
-		HashSet<T> hashSet = new HashSet<T>();
+		HashSet<T> hashSet = new HashSet<>();
 
 		for (String rawResourceLocation : values) {
 			if (rawResourceLocation == null) {
@@ -578,10 +576,6 @@ public class ConfigHandler{
 			checkType = Primitives.unwrap(type.value());
 		}
 
-		if (ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class) {
-			return true;
-		}
-
-		return false;
-	}
+        return ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class;
+    }
 }

@@ -18,8 +18,8 @@ public enum EnumSkinLayer{
 	EXTRA6("Extra", false),
 	EXTRA7("Extra", false);
 
-	public String name;
-	public boolean base;
+	public final String name;
+	public final boolean base;
 
 	EnumSkinLayer(String name, boolean base){
 		this.name = name;

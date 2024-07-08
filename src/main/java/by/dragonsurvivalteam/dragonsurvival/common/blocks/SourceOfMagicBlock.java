@@ -2,19 +2,17 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import com.mojang.serialization.MapCodec;
-import java.util.Objects;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,12 +23,17 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.*;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -43,7 +46,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
@@ -53,8 +55,11 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
 
-public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock, EntityBlock{
+import javax.annotation.Nullable;
+
+public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock, EntityBlock {
 	public static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.25, 1);
 	public static final VoxelShape OUTLINE = Shapes.box(0, 0, 0, 1, 0.5, 1);
 	public static final VoxelShape FULL_OUTLINE = Shapes.box(0, 0, 0, 1, 0.99, 1);
@@ -334,23 +339,20 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		super.entityInside(pState, world, pos, entity);
 	}
 	
-	public static boolean shouldHarmPlayer(BlockState pState, Entity entity)
-	{
-		boolean harm = false;
-		AbstractDragonType type = DragonUtils.getDragonType(entity);
-		
-		if(!Objects.equals(type, DragonTypes.CAVE) && pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()){
-			harm = true;
+	public static boolean shouldHarmPlayer(BlockState state, Entity entity) {
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
+		Block block = state.getBlock();
+
+		if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+			return true;
 		}
-		if(!Objects.equals(type, DragonTypes.SEA) && pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get()){
-			harm = true;
+
+		if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
+			return true;
 		}
-		if(!Objects.equals(type, DragonTypes.FOREST) && pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()){
-			harm = true;
-		}
-		
-		return harm;
-	}
+
+        return block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.FOREST);
+    }
 	
 	public SourceOfMagicTileEntity getBlockEntity(Level world, BlockPos pos){
 		BlockEntity entity = world.getBlockEntity(pos);
@@ -358,63 +360,89 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	}
 
 	@Override
-	public boolean placeLiquid(LevelAccessor p_204509_1_, BlockPos p_204509_2_, BlockState p_204509_3_, FluidState p_204509_4_){
-		BlockPos rootPos = null;
-
-		BlockEntity tile = p_204509_1_.getBlockEntity(p_204509_2_);
-		if(tile instanceof SourceOfMagicPlaceholder placeholder){
-			rootPos = placeholder.rootPos;
-		}
-
-		if(!p_204509_3_.getValue(BlockStateProperties.WATERLOGGED) && p_204509_4_.getType() == Fluids.WATER){
-			if(!p_204509_1_.isClientSide()){
-				p_204509_1_.setBlock(p_204509_2_, p_204509_3_.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE), Block.UPDATE_ALL);
-				p_204509_1_.scheduleTick(p_204509_2_, p_204509_4_.getType(), p_204509_4_.getType().getTickDelay(p_204509_1_));
-
-				if(rootPos != null){
-					SourceOfMagicPlaceholder placeHolder = (SourceOfMagicPlaceholder)p_204509_1_.getBlockEntity(p_204509_2_);
-					placeHolder.rootPos = rootPos;
-				}
+	public boolean placeLiquid(@NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state, @NotNull final FluidState fluidState) {
+		if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+			if (!level.isClientSide()) {
+				level.setBlock(position, state.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE), Block.UPDATE_ALL);
+				level.scheduleTick(position, fluidState.getType(), fluidState.getType().getTickDelay(level));
 			}
 
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
 
-	public Fluid takeLiquid(LevelAccessor p_204508_1_, BlockPos p_204508_2_, BlockState p_204508_3_){
-		BlockPos rootPos = null;
+	@Override
+	public @NotNull ItemStack pickupBlock(@Nullable final Player player, @NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state) {
+		BlockEntity entity = level.getBlockEntity(position);
+		BlockPos rootPosition = null;
 
-		BlockEntity tile = p_204508_1_.getBlockEntity(p_204508_2_);
-		if(tile instanceof SourceOfMagicPlaceholder placeholder){
-			rootPos = placeholder.rootPos;
+		if (state.getValue(BlockStateProperties.WATERLOGGED)) {
+			level.setBlock(position, state.setValue(BlockStateProperties.WATERLOGGED, false), Block.UPDATE_ALL);
+			return Items.WATER_BUCKET.getDefaultInstance();
 		}
 
-		if(p_204508_3_.getValue(BlockStateProperties.WATERLOGGED)){
-			p_204508_1_.setBlock(p_204508_2_, p_204508_3_.setValue(BlockStateProperties.WATERLOGGED, Boolean.FALSE), Block.UPDATE_ALL);
-
-			if(rootPos != null){
-				SourceOfMagicPlaceholder placeHolder = (SourceOfMagicPlaceholder)p_204508_1_.getBlockEntity(p_204508_2_);
-				placeHolder.rootPos = rootPos;
-			}
-
-			return Fluids.WATER;
-		}else{
-			return Fluids.EMPTY;
+		if (entity instanceof SourceOfMagicPlaceholder placeholder) {
+			rootPosition = placeholder.rootPos;
+		} else if (entity instanceof SourceOfMagicTileEntity source) {
+			return updateAndTakeLiquid(level, position, state, source);
 		}
+
+		if (rootPosition != null && level.getBlockEntity(rootPosition) instanceof SourceOfMagicTileEntity source) {
+			return updateAndTakeLiquid(level, rootPosition, level.getBlockState(rootPosition), source);
+		}
+
+		return ItemStack.EMPTY;
 	}
 
-	@org.jetbrains.annotations.Nullable @Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		if(!pState.getValue(PRIMARY_BLOCK)){
+	private ItemStack updateAndTakeLiquid(final LevelAccessor level, final BlockPos position, final BlockState state, final SourceOfMagicTileEntity source) {
+		if (!state.getValue(SourceOfMagicBlock.FILLED)) {
+			return ItemStack.EMPTY;
+		}
+
+		level.setBlock(position, state.setValue(SourceOfMagicBlock.FILLED, false), Block.UPDATE_ALL);
+		Item item = source.getItem(0).getItem();
+		Block block = state.getBlock();
+
+		boolean decrementStack = false;
+
+		if (item == DSItems.ELDER_DRAGON_DUST.value()) {
+			decrementStack = true;
+		} else if (item == DSItems.ELDER_DRAGON_BONE.value()) {
+			decrementStack = level.getRandom().nextInt(3) == 0;
+		} else if (item == DSItems.DRAGON_HEART_SHARD.value()) {
+			decrementStack = level.getRandom().nextInt(5) == 0;
+		} else if (item == DSItems.DRAGON_HEART_SHARD.value()) {
+			decrementStack = level.getRandom().nextInt(15) == 0;
+		} else if (item == DSItems.ELDER_DRAGON_HEART.value()) {
+			decrementStack = level.getRandom().nextInt(50) == 0;
+		}
+
+		if (decrementStack) {
+			source.removeItem(0, 1);
+		}
+
+		if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
+			return Items.LAVA_BUCKET.getDefaultInstance();
+		} else if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) {
+			return Items.WATER_BUCKET.getDefaultInstance();
+		}
+
+		return ItemStack.EMPTY;
+	}
+
+	@Override
+	public BlockEntity newBlockEntity(@NotNull BlockPos pPos, BlockState pState){
+		if (!pState.getValue(PRIMARY_BLOCK)) {
 			return DSTileEntities.SOURCE_OF_MAGIC_PLACEHOLDER.get().create(pPos, pState);
 		}
+
 		return DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get().create(pPos, pState);
 	}
 
 	@Override
-	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
+	public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType){
 		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);
 	}
 }

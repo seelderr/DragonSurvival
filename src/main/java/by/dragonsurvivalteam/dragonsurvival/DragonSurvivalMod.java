@@ -123,7 +123,7 @@ public class DragonSurvivalMod{
 	@SubscribeEvent
 	public static void addPackFinders(AddPackFindersEvent event) {
 		if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-			HashMap<MutableComponent, String> resourcePacks = new HashMap<MutableComponent, String>();
+			HashMap<MutableComponent, String> resourcePacks = new HashMap<>();
 			//resourcePacks.put(Component.literal("- Dragon East"), "resourcepacks/ds_east");
 			//resourcePacks.put(Component.literal("- Dragon North"), "resourcepacks/ds_north");
 			//resourcePacks.put(Component.literal("- Dragon South"), "resourcepacks/ds_south");
