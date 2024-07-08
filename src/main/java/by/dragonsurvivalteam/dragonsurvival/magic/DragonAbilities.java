@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -52,18 +53,21 @@ public class DragonAbilities{
 					ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
 					ABILITIES.get(type).add(ability);
 
-					if(ability instanceof InnateDragonAbility ab){
-						INNATE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-						INNATE_ABILITIES.get(type).add(ab);
-
-					}else if(ability instanceof PassiveDragonAbility ab){
-						PASSIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-						PASSIVE_ABILITIES.get(type).add(ab);
-
-					}else if(ability instanceof ActiveDragonAbility ab){
-						ACTIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
-						ACTIVE_ABILITIES.get(type).add(ab);
-					}
+                    switch (ability) {
+                        case InnateDragonAbility innate -> {
+                            INNATE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+                            INNATE_ABILITIES.get(type).add(innate);
+                        }
+                        case PassiveDragonAbility passive -> {
+                            PASSIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+                            PASSIVE_ABILITIES.get(type).add(passive);
+                        }
+                        case ActiveDragonAbility active -> {
+                            ACTIVE_ABILITIES.computeIfAbsent(type, s -> new ArrayList<>());
+                            ACTIVE_ABILITIES.get(type).add(active);
+                        }
+                        default -> { /* Nothing to do */ }
+                    }
 				}
 			}else{
 				for (AbstractDragonType type : DragonTypes.getSubtypesOfType(ability.getDragonType().getTypeName())) {
@@ -72,20 +76,24 @@ public class DragonAbilities{
 						ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
 						ABILITIES.get(type.getSubtypeName()).add(ability);
 					}
-					if(ability instanceof InnateDragonAbility ab){
-						INNATE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
-						INNATE_ABILITIES.get(type.getSubtypeName()).add(ab);
 
-					}else if(ability instanceof PassiveDragonAbility ab){
-						PASSIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
-						PASSIVE_ABILITIES.get(type.getSubtypeName()).add(ab);
-
-					}else if (ability instanceof ActiveDragonAbility ab && ability.getDragonType().getSubtypeName() == type.getSubtypeName()){
-						ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
-						ABILITIES.get(type.getSubtypeName()).add(ability);
-						ACTIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
-						ACTIVE_ABILITIES.get(type.getSubtypeName()).add(ab);
-					}
+                    switch (ability) {
+                        case InnateDragonAbility innate -> {
+                            INNATE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+                            INNATE_ABILITIES.get(type.getSubtypeName()).add(innate);
+                        }
+                        case PassiveDragonAbility passive -> {
+                            PASSIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+                            PASSIVE_ABILITIES.get(type.getSubtypeName()).add(passive);
+                        }
+                        case ActiveDragonAbility active when Objects.equals(ability.getDragonType().getSubtypeName(), type.getSubtypeName()) -> {
+                            ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+                            ABILITIES.get(type.getSubtypeName()).add(ability);
+                            ACTIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+                            ACTIVE_ABILITIES.get(type.getSubtypeName()).add(active);
+                        }
+                        default -> { /* Nothing to do */ }
+                    }
 				}
 			}
 		}
@@ -118,7 +126,7 @@ public class DragonAbilities{
 				T instance = constructor.newInstance();
 				instances.add(instance);
 			} catch (ReflectiveOperationException | LinkageError e) {
-				e.printStackTrace();
+				DragonSurvivalMod.LOGGER.error(e);
 			}
 		}
 		return instances;
@@ -146,15 +154,13 @@ public class DragonAbilities{
 		}
 	}
 
-	public static void setAbilityLevel(LivingEntity player, Class<? extends DragonAbility> c, int level){
-		if(!hasAbility(player, c)){
-			addAbility(player, c);
+	public static void setAbilityLevel(LivingEntity player, Class<? extends DragonAbility> abilityClass, int level){
+		if(!hasAbility(player, abilityClass)){
+			addAbility(player, abilityClass);
 		}
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		handler.getMagicData().abilities.values().stream().filter(s-> s.getClass() == c).forEach(s -> {
-			s.level = Mth.clamp(level, s.getMinLevel(), s.getMaxLevel());
-		});
+		handler.getMagicData().abilities.values().stream().filter(ability -> ability.getClass() == abilityClass).forEach(ability -> ability.level = Mth.clamp(level, ability.getMinLevel(), ability.getMaxLevel()));
 
 		if(player.level().isClientSide()){
 			PacketDistributor.sendToServer(new SyncMagicCap.Data(player.getId(), handler.getMagicData().serializeNBT(player.registryAccess())));
@@ -170,10 +176,8 @@ public class DragonAbilities{
 				return false;
 			if (type == null)
 				return false;
-			if (type.getSubtypeName() != null && !type.getSubtypeName().equals(s.getDragonType().getSubtypeName()))
-				return false;
-			return true;
-		});
+            return type.getSubtypeName() == null || type.getSubtypeName().equals(s.getDragonType().getSubtypeName());
+        });
 	}
 	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c) {
 		return hasAbility(player, c, null);
@@ -187,13 +191,11 @@ public class DragonAbilities{
 	}
 	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(s-> {
-			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
+		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(ability-> {
+			if (ability.getClass() != c && !ability.getClass().isAssignableFrom(c) && !c.isAssignableFrom(ability.getClass()))
 				return false;
-			if (dragonType != null && !dragonType.equals(s.getDragonType().getTypeName()))
-				return false;
-			return true;
-		}).findAny();
+            return dragonType == null || dragonType.equals(ability.getDragonType().getTypeName());
+        }).findAny();
 		return optionalT.orElseGet(() -> {
 			if(Modifier.isAbstract(c.getModifiers())) return null;
 			try{

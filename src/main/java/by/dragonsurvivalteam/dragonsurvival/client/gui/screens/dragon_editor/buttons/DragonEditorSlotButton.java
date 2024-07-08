@@ -30,7 +30,7 @@ public class DragonEditorSlotButton extends Button{
 
 		screen.currentSelected = num - 1;
 		screen.update();
-		screen.handler.getSkinData().compileSkin();
+		DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 	}
 
 	@Override

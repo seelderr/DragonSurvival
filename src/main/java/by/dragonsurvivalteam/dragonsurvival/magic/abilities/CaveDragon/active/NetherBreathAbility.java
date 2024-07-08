@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.LargeFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.SmallFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
@@ -337,6 +336,7 @@ public class NetherBreathAbility extends BreathAbility{
 	}
 
 	@Override
+	@SuppressWarnings("RedundantMethodOverride")
 	public boolean requiresStationaryCasting(){
 		return false;
 	}

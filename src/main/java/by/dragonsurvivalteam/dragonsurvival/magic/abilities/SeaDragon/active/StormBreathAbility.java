@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.SmallLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
@@ -139,7 +138,7 @@ public class StormBreathAbility extends BreathAbility{
 	                                                     "storm_breath"}, key = "chargedEffectChainCount", comment = "How many mobs the charged effect is able to chain to at once" )
 	public static Integer chargedEffectChainCount = 2;
 
-	@ConfigRange( min = -1, max = 100 )
+	@ConfigRange(max = 100 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic",
 	                                                     "abilities",
 	                                                     "sea_dragon",
@@ -532,6 +531,7 @@ public class StormBreathAbility extends BreathAbility{
 	}
 
 	@Override
+	@SuppressWarnings("RedundantMethodOverride")
 	public boolean requiresStationaryCasting(){
 		return false;
 	}

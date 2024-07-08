@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import java.util.Collection;
 import net.minecraft.resources.ResourceLocation;

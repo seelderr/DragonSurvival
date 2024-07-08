@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -32,7 +31,7 @@ public class AbilityButton extends Button {
 
 	private final Screen screen;
 	private AbstractDragonType type;
-	private int slot;
+	private final int slot;
 	public int skillType;
 
 	public DragonAbility ability;

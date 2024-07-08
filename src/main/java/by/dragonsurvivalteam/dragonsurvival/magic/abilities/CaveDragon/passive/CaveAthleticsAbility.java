@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -42,11 +41,13 @@ public class CaveAthleticsAbility extends AthleticsAbility{
 	}
 
 	@Override
+	@SuppressWarnings("RedundantMethodOverride")
 	public int getMaxLevel(){
 		return 5;
 	}
 
 	@Override
+	@SuppressWarnings("RedundantMethodOverride")
 	public int getMinLevel(){
 		return 0;
 	}

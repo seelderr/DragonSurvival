@@ -31,12 +31,12 @@ public class DragonEditorDropdownButton extends DropDownButton{
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
 		super(x, y, xSize, ySize, current, values, selected -> {
 			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin = DragonEditorScreen.partToTechnical(selected);
-			dragonEditorScreen.handler.getSkinData().compileSkin();
+			DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 			dragonEditorScreen.update();
 		});
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.layers = layers;
-		this.dragonType = dragonEditorScreen.handler.getTypeName().toLowerCase();
+		this.dragonType = DragonEditorScreen.HANDLER.getTypeName().toLowerCase();
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			screen.renderables.add(renderButton);
 		}else{
 			LayerSettings settings = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get();
-			DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.handler), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
+			DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
 			if (text != null && !settings.modifiedColor) {
 				settings.hue = text.average_hue;
 			}

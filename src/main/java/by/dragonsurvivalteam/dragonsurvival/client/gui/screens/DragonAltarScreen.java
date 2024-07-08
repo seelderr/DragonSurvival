@@ -83,7 +83,7 @@ public class DragonAltarScreen extends Screen{
 		if(tick % 200 * 20 == 0){
 			animation1++;
 			animation2++;
-;
+
 			int randBody = (int) (Math.random() * (DragonBodies.bodyMappings.size()));
 			//System.out.println("body num: " + randBody + " and: " + DragonBodies.bodyMappings.keySet().toArray()[randBody]);
 
@@ -136,11 +136,11 @@ public class DragonAltarScreen extends Screen{
 
 					Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 					quaternion.rotateY((float)Math.toRadians(150));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 + 170, button.getY() + button.getHeight(), entity1Scale, new Vector3f(), quaternion, null, entity1);
+					InventoryScreen.renderEntityInInventory(guiGraphics, (float) width / 2 + 170, button.getY() + button.getHeight(), entity1Scale, new Vector3f(), quaternion, null, entity1);
 
 					Quaternionf quaternion2 = Axis.ZP.rotationDegrees(180.0F);
 					quaternion2.rotateY((float)Math.toRadians(210));
-					InventoryScreen.renderEntityInInventory(guiGraphics, width / 2 - 170, button.getY() + button.getHeight(), 40, new Vector3f(), quaternion2, null, entity2);
+					InventoryScreen.renderEntityInInventory(guiGraphics, (float) width / 2 - 170, button.getY() + button.getHeight(), 40, new Vector3f(), quaternion2, null, entity2);
 				}
 			}
 		}
@@ -215,9 +215,7 @@ public class DragonAltarScreen extends Screen{
 		addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, guiTop + 30));
 		addRenderableWidget(new AltarTypeButton(this, null, width / 2 + 55, guiTop + 30));
 
-		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable("ds.gui.dragon_editor"), btn -> {
-			Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen));
-		}){
+		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable("ds.gui.dragon_editor"), btn -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = DragonStateProvider.isDragon(minecraft.player);

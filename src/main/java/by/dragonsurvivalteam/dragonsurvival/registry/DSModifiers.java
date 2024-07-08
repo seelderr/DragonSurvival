@@ -2,15 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
-import javax.annotation.Nullable;
 
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;

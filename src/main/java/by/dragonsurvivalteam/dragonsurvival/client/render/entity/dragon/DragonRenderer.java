@@ -36,7 +36,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public boolean isRenderLayers = false;
 
 	/** Used when rendering dyeable armor pieces in {@link ClientDragonRenderer#renderArmorPiece} */
-	public Color renderColor = Color.ofRGB(255, 255, 255);
+	public Color renderColor = Color.ofRGB(255, 255, 255); // FIXME :: is this still needed with the armor render layer which handles color itself?
 
 	private static final HashSet<String> magicAnimations = new HashSet<>();
 	static {

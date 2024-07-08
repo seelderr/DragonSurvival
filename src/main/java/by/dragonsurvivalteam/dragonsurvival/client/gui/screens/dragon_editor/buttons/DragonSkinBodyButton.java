@@ -10,16 +10,16 @@ import net.minecraft.resources.ResourceLocation;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonSkinBodyButton extends Button {
-	private SkinsScreen screen;
-	private AbstractDragonBody dragonBody;
-	private ResourceLocation texture_location;
-	private int pos;
+	private final SkinsScreen screen;
+	private final AbstractDragonBody dragonBody;
+	private final ResourceLocation location;
+	private final int pos;
 	
 	public DragonSkinBodyButton(SkinsScreen screen, int x, int y, int xSize, int ySize, AbstractDragonBody body, int pos) {
 		super(x, y, xSize, ySize, Component.literal(body.toString()), btn -> {
 			screen.dragonBody = body;
 		}, DEFAULT_NARRATION);
-		texture_location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_skintab.png");
+		location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_skintab.png");
 		this.screen = screen;
 		this.dragonBody = body;
 		this.pos = pos;
@@ -33,6 +33,6 @@ public class DragonSkinBodyButton extends Button {
 		} else if (this.isHoveredOrFocused()) {
 			i = 1;
 		}
-		guiGraphics.blit(texture_location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height);
+		guiGraphics.blit(location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height);
 	}
 }

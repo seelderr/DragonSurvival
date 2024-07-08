@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;

@@ -13,7 +13,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class BeaconParticle extends TextureSheetParticle{
-	private double fallSpeed;
+	private final double fallSpeed;
 
 	public BeaconParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
 		super(level, x, y, z, xd, yd, zd);
@@ -170,7 +170,7 @@ public class BeaconParticle extends TextureSheetParticle{
 
 	@OnlyIn(Dist.CLIENT)
 	public static class PeaceFactory implements ParticleProvider<PeaceData> {
-		private SpriteSet spriteSet;
+		private final SpriteSet spriteSet;
 
 		public PeaceFactory(SpriteSet spriteSet){
 			this.spriteSet = spriteSet;

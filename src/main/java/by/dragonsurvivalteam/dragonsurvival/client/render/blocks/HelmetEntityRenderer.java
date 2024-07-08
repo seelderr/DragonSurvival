@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.HelmetTileEntity;
 import com.google.common.collect.Maps;

@@ -6,14 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Cl
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -67,36 +63,42 @@ public abstract class MixinLivingEntity extends Entity{
 
 	@ModifyReturnValue( at = @At( value = "RETURN" ), method = "getPassengerRidingPosition")
 	public Vec3 getDragonPassengersRidingOffset(Vec3 original) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler((Entity) this);
-		if (handler.isDragon()) {
-			if (!DragonStateProvider.getOrGenerateHandler(this.getPassengers().getFirst()).isDragon()) { // Human
-				double height = DragonSizeHandler.getDragonHeight((Player) (Object) this);
-				switch (((Entity) (Object) this).getPose()) {
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
-						return original.add(new Vec3(0, (height * 0.65) - 1D, 0));
+		if ((Object) (this) instanceof Player player) {
+			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+
+			if (handler.isDragon()) {
+				double height = DragonSizeHandler.getDragonHeight(player);
+
+				if (!DragonStateProvider.getOrGenerateHandler(getPassengers().getFirst()).isDragon()) {
+					// Human passenger
+					switch (getPose()) {
+						case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+							return original.add(new Vec3(0, (height * 0.65) - 1D, 0));
+						}
+						case CROUCHING -> {
+							return original.add(new Vec3(0, (height * 0.73D) - 2D, 0));
+						}
+						default -> {
+							return original.add(new Vec3(0, (height * 0.66D) - 1.9D, 0));
+						}
 					}
-					case CROUCHING -> {
-						return original.add(new Vec3(0, (height * 0.73D) - 2D, 0));
-					}
-					default -> {
-						return original.add(new Vec3(0, (height * 0.66D) - 1.9D, 0));
-					}
-				}
-			} else { // Dragon
-				double height = DragonSizeHandler.getDragonHeight((Player) (Object) this);
-				switch (((Entity) (Object) this).getPose()) {
-					case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
-						return original.add(new Vec3(0, (height * 0.66) - 0.4D, 0));
-					}
-					case CROUCHING -> {
-						return original.add(new Vec3(0, (height * 0.79D) - 1.7D, 0));
-					}
-					default -> {
-						return original.add(new Vec3(0, (height * 0.72D) - 1.9D, 0));
+				} else {
+					// Dragon passenger
+					switch (getPose()) {
+						case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
+							return original.add(new Vec3(0, (height * 0.66) - 0.4D, 0));
+						}
+						case CROUCHING -> {
+							return original.add(new Vec3(0, (height * 0.79D) - 1.7D, 0));
+						}
+						default -> {
+							return original.add(new Vec3(0, (height * 0.72D) - 1.9D, 0));
+						}
 					}
 				}
 			}
 		}
+
 		return original;
   	}
 

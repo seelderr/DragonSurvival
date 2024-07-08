@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.awt.*;
+import java.awt.Color;
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.ChatFormatting;
@@ -50,10 +50,8 @@ public class ToolTipHandler{
 
 	private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
 
-
 	private static boolean blink = false;
 	private static int tick = 0;
-
 
 	@SubscribeEvent
 	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent){

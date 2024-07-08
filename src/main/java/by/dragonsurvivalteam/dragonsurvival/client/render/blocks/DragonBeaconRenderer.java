@@ -23,7 +23,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 
 	@Override
 	public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, PoseStack PoseStack, MultiBufferSource iRenderTypeBuffer, int light, int overlay){
-		dragonBeaconEntity.tick += 0.5;
+		dragonBeaconEntity.tick += 0.5f;
 		PoseStack.pushPose();
 		DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
 
@@ -61,7 +61,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
 			}
 		}
 
-		float f1 = Mth.sin(((float)dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
+		float f1 = Mth.sin((dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
 		PoseStack.translate(0.5, 0.25 + f1 / 2f, 0.5);
 		PoseStack.mulPose(Axis.YP.rotationDegrees(dragonBeaconEntity.tick));
 		PoseStack.scale(2, 2, 2);

@@ -146,7 +146,7 @@ public class DragonSizeHandler{
 	public static boolean canPoseFit(LivingEntity player, Pose pose){
 		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
 
-		if (!capability.isPresent()){
+		if (capability.isEmpty()){
 			return false;
 		}
 		

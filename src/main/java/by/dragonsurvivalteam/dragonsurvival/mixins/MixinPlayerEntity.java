@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import java.util.Arrays;
 import java.util.Objects;
-import java.util.UUID;
 
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;

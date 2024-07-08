@@ -80,18 +80,17 @@ public class DSEmotes {
 		}
 	}
 
-	@EventBusSubscriber( Dist.CLIENT )
-	public static class clientStart{
-		@OnlyIn( Dist.CLIENT )
+	@EventBusSubscriber(Dist.CLIENT)
+	public static class StartHandler {
 		@SubscribeEvent
-		public static void clientStart(EntityJoinLevelEvent event){
-			if(!hasStarted){
+		public static void clientStart(EntityJoinLevelEvent event) {
+			if (!hasStarted) {
 				hasStarted = true;
 			}
 		}
 	}
 
-	public static class EmoteRegistryClass{
+	public static class EmoteRegistryClass {
 		public Emote[] emotes;
 	}
 }

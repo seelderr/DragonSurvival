@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -20,9 +19,7 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
-import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
@@ -97,7 +94,7 @@ public class EmoteMenuHandler {
 			emotePage = Mth.clamp(emotePage, 0, maxPages() - 1);
 			List<Emote> emotes = getEmotes();
 
-			if(emotes == null || emotes.size() <= 0){
+			if(emotes == null || emotes.isEmpty()){
 				return;
 			}
 
@@ -378,11 +375,8 @@ public class EmoteMenuHandler {
 
 	public static List<Emote> getEmotes(){
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
-
-		ArrayList<Emote> emotes = new ArrayList<>();
-		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
-
-		emotes.addAll(DSEmotes.EMOTES);
+        HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
+        ArrayList<Emote> emotes = new ArrayList<>(DSEmotes.EMOTES);
 
 		emotes.removeIf(em -> {
 			if(em.requirements != null){

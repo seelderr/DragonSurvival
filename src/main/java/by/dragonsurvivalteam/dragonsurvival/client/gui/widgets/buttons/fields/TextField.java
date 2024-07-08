@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.fields;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

@@ -7,15 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
-import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
@@ -45,10 +42,10 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                 } else if (block instanceof SourceOfMagicBlock) {
                     return LootTable.lootTable().withPool(applyExplosionCondition(block, LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F)).add(LootItem.lootTableItem(block).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(SourceOfMagicBlock.PRIMARY_BLOCK, true))))));
                 } else if (block instanceof TreasureBlock) {
-                    ArrayList<LootPoolSingletonContainer.Builder> list = new ArrayList<>();
+                    ArrayList<LootPoolSingletonContainer.Builder<?>> list = new ArrayList<>();
 
                     for (Integer possibleValue : TreasureBlock.LAYERS.getPossibleValues()) {
-                        LootPoolSingletonContainer.Builder entry = LootItem.lootTableItem(block)
+                        LootPoolSingletonContainer.Builder<?> entry = LootItem.lootTableItem(block)
                                 .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
                                         .setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TreasureBlock.LAYERS, possibleValue)))
                                 .apply(SetItemCountFunction.setCount(ConstantValue.exactly(possibleValue)));
@@ -56,7 +53,7 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                         list.add(entry);
                     }
 
-                    LootPoolSingletonContainer.Builder[] arr = list.toArray(new LootPoolSingletonContainer.Builder[0]);
+                    LootPoolSingletonContainer.Builder<?>[] arr = list.toArray(new LootPoolSingletonContainer.Builder[0]);
 
                     return LootTable.lootTable()
                             .withPool(LootPool.lootPool().setRolls(ConstantValue.exactly(1.0F))

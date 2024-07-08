@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;

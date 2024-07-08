@@ -59,10 +59,13 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 		return super.updateShape(blockState, direction, blockState1, world, blockPos, blockPos1);
 	}
 
-	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
+	@Override
+	public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
 		Optional<DragonStateHandler> dragonState = DragonStateProvider.getCap(pPlayer);
+
 		if (dragonState.isPresent()) {
 			DragonStateHandler dragonStateHandler = dragonState.orElse(null);
+
 			if (dragonStateHandler.isDragon() && (pPlayer.totalExperience >= 60 || pPlayer.isCreative())) {
 				if (this == DSBlocks.PEACE_DRAGON_BEACON.get()) {
 					if (!pLevel.isClientSide()) {
@@ -132,8 +135,8 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 				return ItemInteractionResult.SUCCESS;
 			}
 		}
-		pPlayer.hurt(pPlayer.damageSources().generic(), 1);
-		return ItemInteractionResult.SUCCESS;
+
+		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
 	}
 
 	@Override
@@ -167,18 +170,18 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> p_206840_1_){
-		super.createBlockStateDefinition(p_206840_1_);
-		p_206840_1_.add(LIT, WATERLOGGED);
-	}
-
-	@org.jetbrains.annotations.Nullable @Override
-	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState){
-		return DSTileEntities.DRAGON_BEACON.get().create(pPos, pState);
+	protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> builder) {
+		super.createBlockStateDefinition(builder);
+		builder.add(LIT, WATERLOGGED);
 	}
 
 	@Override
-	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level pLevel, BlockState pState, BlockEntityType<T> pBlockEntityType){
-		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);
+	public BlockEntity newBlockEntity(@NotNull BlockPos position, @NotNull BlockState state) {
+		return DSTileEntities.DRAGON_BEACON.get().create(position, state);
+	}
+
+	@Override
+	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
+		return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(type, DSTileEntities.DRAGON_BEACON.get(), DragonBeaconTileEntity::serverTick);
 	}
 }
