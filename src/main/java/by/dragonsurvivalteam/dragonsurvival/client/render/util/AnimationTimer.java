@@ -5,6 +5,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import software.bernie.geckolib.animation.RawAnimation;
 
 @EventBusSubscriber
 public class AnimationTimer {
@@ -12,7 +13,7 @@ public class AnimationTimer {
 	protected ConcurrentHashMap<String, Double> animationTimes = new ConcurrentHashMap<>();
 
 	@SubscribeEvent
-	public static void renderTick(final ClientTickEvent.Post event) {
+	public static void onTick(final ClientTickEvent.Post event) {
 		for (AnimationTimer timer : timers) {
 			timer.animationTimes.keySet().forEach(key -> {
 				timer.animationTimes.computeIfPresent(key, (animation, tick) -> tick - 1);
@@ -34,6 +35,17 @@ public class AnimationTimer {
 
 	public void putAnimation(final String animation, final Double ticks) {
 		putDuration(animation, ticks);
+
+		if (!timers.contains(this)) {
+			timers.add(this);
+		}
+	}
+
+	/**
+	 * The RawAnimation must contain only one stage for this timer to work correctly
+	 */
+	public void putAnimation(final RawAnimation animation, final Double ticks) {
+		putDuration(animation.getAnimationStages().getFirst().animationName(), ticks);
 
 		if (!timers.contains(this)) {
 			timers.add(this);

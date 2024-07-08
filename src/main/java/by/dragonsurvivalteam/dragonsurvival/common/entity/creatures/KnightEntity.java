@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
@@ -29,7 +29,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter, CommonTraits {
+public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private final AnimationTimer animationTimer = new AnimationTimer();
 
@@ -42,7 +42,7 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 		// TODO :: Similar to other entities - extract into method?
 		controllers.add(new AnimationController<>(this, "everything", 3, state -> {
 			AnimationController<KnightEntity> animationController = state.getController();
-			double movement = getMovementSpeed(this);
+			double movement = AnimationUtils.getMovementSpeed(this);
 
 			if (swingTime > 0) {
 				AnimationProcessor.QueuedAnimation currentAnimation = animationController.getCurrentAnimation();

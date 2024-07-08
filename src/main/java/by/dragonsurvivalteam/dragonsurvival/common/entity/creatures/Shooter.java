@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+/*import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
@@ -184,4 +184,4 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	public boolean removeWhenFarAway(double distance){
 		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
-}
+}*/

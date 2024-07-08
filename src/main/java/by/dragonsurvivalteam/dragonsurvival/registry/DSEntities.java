@@ -17,7 +17,6 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.animal.Wolf;
-import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.monster.Vindicator;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.flag.FeatureFlagSet;
@@ -85,20 +84,14 @@ public class DSEntities {
 					.clientTrackingRange(64)
 					.updateInterval(1)
 					.build("hunter_hound"));
-	public static DeferredHolder<EntityType<?>, EntityType<Shooter>> SHOOTER_HUNTER = DS_ENTITY_TYPES.register(
-			"shooter",
-			() -> EntityType.Builder.of(Shooter::new, MobCategory.MONSTER)
+
+	public static DeferredHolder<EntityType<?>, EntityType<SpearmanEntity>> SPEARMAN_HUNTER = DS_ENTITY_TYPES.register(
+			"spearman",
+			() -> EntityType.Builder.of(SpearmanEntity::new, MobCategory.MONSTER)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(64)
 					.updateInterval(1)
-					.build("shooter"));
-	public static DeferredHolder<EntityType<?>, EntityType<SquireEntity>> SQUIRE_HUNTER = DS_ENTITY_TYPES.register(
-			"squire",
-			() -> EntityType.Builder.of(SquireEntity::new, MobCategory.MONSTER)
-					.sized(0.6F, 1.95F)
-					.clientTrackingRange(64)
-					.updateInterval(1)
-					.build("squire"));
+					.build("spearman"));
 
 	public static DeferredHolder<EntityType<?>, EntityType<KnightEntity>> KNIGHT = DS_ENTITY_TYPES.register(
 			"knight", () -> EntityType.Builder.of(KnightEntity::new, MobCategory.MONSTER)
@@ -115,8 +108,7 @@ public class DSEntities {
 		event.put(DRAGON.get(), DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR.get(), DragonEntity.createLivingAttributes().build());
 		event.put(HUNTER_HOUND.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
-		event.put(SHOOTER_HUNTER.get(), Pillager.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.hunterSpeed).add(Attributes.MAX_HEALTH, ServerConfig.hunterHealth).add(Attributes.ARMOR, ServerConfig.hunterArmor).add(Attributes.ATTACK_DAMAGE, ServerConfig.hunterDamage).build());
-		event.put(SQUIRE_HUNTER.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.squireSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.squireDamage).add(Attributes.ARMOR, ServerConfig.squireArmor).add(Attributes.MAX_HEALTH, ServerConfig.squireHealth).build());
+		event.put(SPEARMAN_HUNTER.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.spearmanSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.spearmanDamage).add(Attributes.ARMOR, ServerConfig.spearmanArmor).add(Attributes.MAX_HEALTH, ServerConfig.spearmanHealth).build());
 		event.put(KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
 	}
 
@@ -124,8 +116,7 @@ public class DSEntities {
 	public static void registerSpawn(final SpawnPlacementRegisterEvent event) {
 		SpawnPlacements.SpawnPredicate predicate = (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getBlockState(pPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && serverWorld.canSeeSky(pPos);
 
-		event.register(SHOOTER_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
-		event.register(SQUIRE_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
+		event.register(SPEARMAN_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 		event.register(KNIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 	}
 
@@ -136,12 +127,8 @@ public class DSEntities {
 			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_HOUND));
 		}
 
-		if (ServerConfig.spawnSquire) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(SQUIRE_HUNTER));
-		}
-
-		if (ServerConfig.spawnHunter) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(SHOOTER_HUNTER));
+		if (ServerConfig.spawnSpearman) {
+			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(SPEARMAN_HUNTER));
 		}
 
 		if (ServerConfig.spawnKnight) {

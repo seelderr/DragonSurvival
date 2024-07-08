@@ -721,7 +721,7 @@ public class ServerConfig{
 	public static Boolean spawnKnight = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowSquireSpawning", comment = "Dragon Squire spawning enabled?" )
-	public static Boolean spawnSquire = true;
+	public static Boolean spawnSpearman = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHunterSpawning", comment = "Dragon Hunter spawning enabled?" )
 	public static Boolean spawnHunter = true;
@@ -811,20 +811,20 @@ public class ServerConfig{
 	public static Double hunterTrappedDebuffDuration = 5.0;
 
 	@ConfigRange( min = 10d, max = 60d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
-	public static Double squireHealth = 24d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanHealth", comment = "Dragon Spearman health" )
+	public static Double spearmanHealth = 24d;
 
 	@ConfigRange( min = 2d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireDamage", comment = "Dragon Squire damage" )
-	public static Double squireDamage = 6d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanDamage", comment = "Dragon Spearman damage" )
+	public static Double spearmanDamage = 6d;
 
 	@ConfigRange( min = 0.1d, max = 0.6d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireSpeed", comment = "Dragon Squire speed" )
-	public static Double squireSpeed = 0.35d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanSpeed", comment = "Dragon Spearman speed" )
+	public static Double spearmanSpeed = 0.35d;
 
 	@ConfigRange( min = 0d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireArmor", comment = "Dragon Squire armor" )
-	public static Double squireArmor = 2d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanArmor", comment = "Dragon Spearman armor" )
+	public static Double spearmanArmor = 2d;
 
 	@ConfigRange( min = 1, max = 60 * 60 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "constantEffect", comment = "Duration of effect given by beacon constantly in seconds" )
