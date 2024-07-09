@@ -4,12 +4,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import com.google.common.base.Objects;
-import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
+
+import javax.annotation.Nullable;
 
 public class DragonUtils {
 
@@ -72,5 +76,16 @@ public class DragonUtils {
 		}
 
 		return Tiers.NETHERITE;
+	}
+
+	/** For client usage */
+	public static boolean hasLavaVision() {
+		LocalPlayer player = Minecraft.getInstance().player;
+
+		if (player != null) {
+			return player.hasEffect(DSEffects.LAVA_VISION);
+		}
+
+		return false;
 	}
 }

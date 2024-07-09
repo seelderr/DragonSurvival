@@ -2,6 +2,7 @@
   "required": true,
   "package": "by.dragonsurvivalteam.dragonsurvival.mixins",
   "compatibilityLevel": "JAVA_17",
+  "minVersion": "0.8",
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
     "AccessorAnimationController",
@@ -9,10 +10,10 @@
     "MixinItem",
     "MixinLivingEntity",
     "MixinPlayerEnd",
-    "PlayerMixin",
     "MixinPlayerStart",
     "MixinServerPlayerGameMode",
     "MixinSleepStatus",
+    "PlayerMixin",
     "tool_swap.MixinServerPlayerGameModeEnd",
     "tool_swap.MixinServerPlayerGameModeStart"
   ],
@@ -20,6 +21,7 @@
     "AccessorEntityRenderer",
     "AccessorLivingRenderer",
     "AccessorScreen",
+    "CameraMixin",
     "MixinAbstractContainerEventHandler",
     "MixinClientWorld",
     "MixinEntityRenderDispatcher",
@@ -31,6 +33,5 @@
     "MixinWorldRenderer",
     "tool_swap.MixinMultiPlayerGameModeEnd",
     "tool_swap.MixinMultiPlayerGameModeStart"
-  ],
-  "minVersion": "0.8"
+  ]
 }
