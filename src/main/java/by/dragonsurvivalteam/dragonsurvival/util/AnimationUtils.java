@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorAnimationController;
+import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoAnimatable;
@@ -36,5 +37,9 @@ public class AnimationUtils {
     // TODO: This is a hack since GeckoLib's state.isCurrentAnimation() doesn't work. If they ever fix that, we can remove this.
     public static boolean isAnimationPlaying(AnimationController<?> controller, String animationName) {
         return controller.getCurrentAnimation() != null && controller.getCurrentAnimation().animation().name().equals(animationName);
+    }
+
+    public static double getMovementSpeed(LivingEntity of){
+        return Math.sqrt(Math.pow(of.getX() - of.xo, 2) + Math.pow(of.getZ() - of.zo, 2));
     }
 }
