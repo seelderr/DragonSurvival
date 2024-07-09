@@ -9,7 +9,7 @@
     "MixinItem",
     "MixinLivingEntity",
     "MixinPlayerEnd",
-    "MixinPlayerEntity",
+    "PlayerMixin",
     "MixinPlayerStart",
     "MixinServerPlayerGameMode",
     "MixinSleepStatus",
