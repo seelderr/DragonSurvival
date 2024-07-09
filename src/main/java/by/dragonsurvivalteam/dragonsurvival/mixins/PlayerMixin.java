@@ -91,7 +91,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 			boolean handleLavaSwimming = ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(handler, DragonTypes.CAVE);
 
-			if (handleLavaSwimming && DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()) {
+			if (handleLavaSwimming && /* Only triggers when sprinting when in lava */ DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()) {
 				// Mostly a copy from vanilla Player#travel
 				double lookY = getLookAngle().y;
 				double yModifier = lookY < -0.2 ? 0.185 : 0.06;
