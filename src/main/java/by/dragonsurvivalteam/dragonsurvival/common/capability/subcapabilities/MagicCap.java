@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -58,7 +59,7 @@ public class MagicCap extends SubCap{
 						DragonAbility ability = dragonAbility.getClass().newInstance();
 						abilities.put(ability.getName(), ability);
 					}catch(InstantiationException | IllegalAccessException e){
-						e.printStackTrace();
+						DragonSurvivalMod.LOGGER.error(e);
 					}
 				}
 
@@ -186,7 +187,7 @@ public class MagicCap extends SubCap{
 						ab.loadNBT(tag.getCompound(ability.getName()));
 						abilities.put(ab.getName(), ab);
 					}catch(InstantiationException | IllegalAccessException e){
-						e.printStackTrace();
+						DragonSurvivalMod.LOGGER.error(e);
 					}
 				}
 			}

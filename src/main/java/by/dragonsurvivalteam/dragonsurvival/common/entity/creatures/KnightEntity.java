@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;

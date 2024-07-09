@@ -19,7 +19,6 @@ import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Pillager;
 import net.minecraft.world.entity.monster.Vindicator;
-import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;

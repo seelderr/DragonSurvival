@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
 import com.mojang.datafixers.util.Pair;
+import java.util.HashMap;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.item.BlockItem;
@@ -22,8 +23,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.geckolib.util.Color;
-
-import java.util.HashMap;
 
 public class DSBlocks{
 	public static final DeferredRegister<Block> DS_BLOCKS = DeferredRegister.create(

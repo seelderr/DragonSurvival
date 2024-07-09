@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
@@ -45,7 +46,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber
 public class WingObtainmentController{
 
-	private static final Map<String, Integer> dragonPhrases = new HashMap<String, Integer>();
+	private static final Map<String, Integer> dragonPhrases = new HashMap<>();
 
 	private static final UUID enderDragonUUID = UUID.fromString("426642b9-2e88-4350-afa8-f99f75af5479");
 
@@ -83,12 +84,12 @@ public class WingObtainmentController{
 				}
 			}
 		}catch(Exception ex){
-			ex.printStackTrace();
+			DragonSurvivalMod.LOGGER.error(ex);
 		}
 	}
 
 
-	private static ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
+	private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
 
 	@SubscribeEvent
 	public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent){
@@ -113,7 +114,7 @@ public class WingObtainmentController{
 		if(event.signerId().equals(enderDragonUUID.toString())){
 			Vec3 centerPoint = new Vec3(0D, 128D, 0D);
 			List<EnderDragon> enderDragons = player.level().getEntitiesOfClass(EnderDragon.class, AABB.ofSize(centerPoint,192 ,192 ,192));
-			if (enderDragons.size() == 0)
+			if (enderDragons.isEmpty())
 				return;
 			String dragonName = "<"+enderDragons.get(0).getDisplayName().getString()+"> ";
 			if(event.chatId().equals("ds.endmessage")){

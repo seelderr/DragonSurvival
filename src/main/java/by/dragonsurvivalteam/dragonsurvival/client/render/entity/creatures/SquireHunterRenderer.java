@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.models.HunterModel;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.SquireEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -9,13 +11,11 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.entity.layers.CustomHeadLayer;
 import net.minecraft.resources.ResourceLocation;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 public class SquireHunterRenderer extends MobRenderer<SquireEntity, HunterModel<SquireEntity>>{
 	private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/squire.png");
 
 	public SquireHunterRenderer(EntityRendererProvider.Context rendererManager){
-		super(rendererManager, new HunterModel(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
+		super(rendererManager, new HunterModel<>(rendererManager.bakeLayer(ModelLayers.EVOKER)), 0.5F);
 		addLayer(new CustomHeadLayer<>(this, rendererManager.getModelSet(), rendererManager.getItemInHandRenderer()));
 	}
 

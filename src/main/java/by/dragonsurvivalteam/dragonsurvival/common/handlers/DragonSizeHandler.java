@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
@@ -146,7 +145,7 @@ public class DragonSizeHandler{
 	public static boolean canPoseFit(LivingEntity player, Pose pose){
 		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
 
-		if (!capability.isPresent()){
+		if (capability.isEmpty()){
 			return false;
 		}
 		

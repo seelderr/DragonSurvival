@@ -4,13 +4,11 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.TOUGH_SKIN;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;

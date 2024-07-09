@@ -57,7 +57,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 		quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
 		quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
-		InventoryScreen.renderEntityInInventory(guiGraphics, x + width / 2 + (int)xOffset, y + height - 30 + (int)yOffset, (int)scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
+		InventoryScreen.renderEntityInInventory(guiGraphics, x + (float) width / 2 + (int)xOffset, y + height - 30 + (int)yOffset, (int)scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
 
 		guiGraphics.pose().popPose();
 	}
@@ -76,14 +76,14 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 	public boolean mouseDragged(double x1, double y1, int rightClick, double x2, double y2){
 		if(isMouseOver(x1, y1)){
 			if(rightClick == 0){
-				xRot -= x2 / 5;
-				yRot -= y2 / 5;
+				xRot -= (float) (x2 / 5);
+				yRot -= (float) (y2 / 5);
 			}else if(rightClick == 1){
-				xOffset -= x2 / 5;
-				yOffset -= y2 / 5;
+				xOffset -= (float) (x2 / 5);
+				yOffset -= (float) (y2 / 5);
 
-				xOffset = Mth.clamp(xOffset, -(width / 8), width / 8);
-				yOffset = Mth.clamp(yOffset, -(height / 8), height / 8);
+				xOffset = Mth.clamp(xOffset, -((float) width / 8), (float) width / 8);
+				yOffset = Mth.clamp(yOffset, -((float) height / 8), (float) height / 8);
 			}
 
 			return true;

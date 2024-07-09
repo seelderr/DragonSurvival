@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
-
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
@@ -15,8 +15,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class HelpButton extends ExtendedButton {
 	public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");

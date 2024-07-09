@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import java.util.Optional;

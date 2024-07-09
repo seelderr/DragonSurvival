@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -28,7 +27,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.NotNull;
@@ -73,7 +71,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity, CommonTrait
 	private final double defaultPlayerSwimSpeed = 0.051;
 	private final double defaultPlayerSprintSpeed = 0.165;
 	public AnimationController<DragonEntity> mainAnimationController;
-	public AnimationController<DragonEntity> fakeAnimationController;
 
 	private static double globalTickCount = 0;
 

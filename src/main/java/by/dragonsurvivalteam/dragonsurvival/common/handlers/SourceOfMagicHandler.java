@@ -12,10 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlace
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
