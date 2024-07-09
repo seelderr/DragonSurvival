@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
-import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
@@ -81,6 +80,11 @@ public class SpearmanEntity extends Hunter {
 	}
 
 	@Override
+	public RawAnimation getWalkArmsBlend() {
+		return WALK_ARMS_BLEND;
+	}
+
+	@Override
 	public RawAnimation getRunBlend() {
 		return RUN_BLEND;
 	}
@@ -101,6 +105,8 @@ public class SpearmanEntity extends Hunter {
 	private static final RawAnimation RUN_BLEND = RawAnimation.begin().thenLoop("blend_run");
 
 	private static final RawAnimation IDLE_BLEND = RawAnimation.begin().thenLoop("blend_idle");
+
+	private static final RawAnimation WALK_ARMS_BLEND = RawAnimation.begin().thenLoop("blend_walk_arms");
 
 	private static final RawAnimation ATTACK_BLEND = RawAnimation.begin().thenLoop("blend_attack");
 
