@@ -43,7 +43,7 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 		return entity.getData(DRAGON_HANDLER);
 	}
 
-	public static boolean isDragon(Entity entity){
+	public static boolean isDragon(@Nullable Entity entity){
 		if (!(entity instanceof Player)) {
 			return false;
 		}

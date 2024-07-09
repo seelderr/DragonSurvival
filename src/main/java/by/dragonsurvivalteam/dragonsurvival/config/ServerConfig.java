@@ -1,15 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class ServerConfig{
@@ -408,10 +412,6 @@ public class ServerConfig{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "dragonsAreScary", comment = "Whether dragons are scary or not." )
 	public static Boolean dragonsAreScary = true;
-
-	@ConfigType(EntityType.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "allowedVehicles", comment = "List of rideable entities. Format: modid:id" )
-	public static List<String> allowedVehicles = List.of("minecraft:boat", "littlelogistics:seater_barge", "minecraft:minecart", "create:seat", "create:contraption", "create:gantry_contraption", "create:stationary_contraption", "hexerei:broom", "botania:player_mover", "quark:quark_boat");
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
 	public static Boolean ridingBlacklist = true;
