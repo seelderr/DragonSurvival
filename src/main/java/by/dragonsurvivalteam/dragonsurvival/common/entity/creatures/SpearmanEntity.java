@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import by.dragonsurvivalteam.dragonsurvival.client.models.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import net.minecraft.world.entity.EntityType;
@@ -7,6 +8,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.level.Level;
+import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public class SpearmanEntity extends Hunter {
@@ -20,8 +23,7 @@ public class SpearmanEntity extends Hunter {
 	@Override
 	protected void registerGoals() {
 		super.registerGoals();
-		// FIXME: This attack goal results in the Spearman attacking instantly when the player gets near, then playing the attack animation and attacking correctly for subsequent attacks.
-		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 1.0, false));
+		this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1.0));
 		this.goalSelector.addGoal(8, new FollowMobGoal<>(KnightEntity.class, this, 15));
 	}
 
@@ -32,25 +34,17 @@ public class SpearmanEntity extends Hunter {
 
 	@Override
 	public double getWalkThreshold() {
-		return 0.05;
+		return 0.01;
 	}
 
 	@Override
 	public boolean isWithinMeleeAttackRange(LivingEntity pEntity) {
-		return this.getAttackBoundingBox().inflate(1, 0, 1).intersects(pEntity.getHitbox());
+		return this.getAttackBoundingBox().inflate(0.5, 0, 0.5).intersects(pEntity.getHitbox());
 	}
 
 	@Override
 	public int getCurrentSwingDuration() {
 		return 16;
-	}
-
-	@Override
-	public void tick() {
-		if(isNotIdle()) {
-			isIdleAnimSet = false;
-		}
-		super.tick();
 	}
 
 	@Override
@@ -70,6 +64,15 @@ public class SpearmanEntity extends Hunter {
 			isIdleAnimSet = true;
 		}
 		return currentIdleAnim;
+	}
+
+	@Override
+	public PlayState fullPredicate(final AnimationState<Hunter> state) {
+		if(isNotIdle()) {
+			isIdleAnimSet = false;
+		}
+
+		return super.fullPredicate(state);
 	}
 
 	@Override

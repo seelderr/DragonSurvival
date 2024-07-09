@@ -99,11 +99,11 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	}
 
 	public boolean isNotIdle() {
-		double movement = AnimationUtils.getMovementSpeed(this);
-		return swingTime > 0 || movement > 0.05 || isAggro();
+		double movement = getDeltaMovement().length();
+		return swingTime > 0 || movement > getWalkThreshold() || isAggro();
 	}
 
-	private PlayState fullPredicate(final AnimationState<Hunter> state) {
+	public PlayState fullPredicate(final AnimationState<Hunter> state) {
 		if (isNotIdle()) {
 			return PlayState.STOP;
 		}
@@ -111,7 +111,7 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 		return state.setAndContinue(getIdleAnim());
 	}
 
-	private PlayState armsPredicate(final AnimationState<Hunter> state) {
+	public PlayState armsPredicate(final AnimationState<Hunter> state) {
 		if (swingTime > 0) {
 			return state.setAndContinue(getAttackBlend());
 		} else if(isAggro()) {
@@ -121,8 +121,8 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 		return PlayState.STOP;
 	}
 
-	private PlayState legsPredicate(final AnimationState<Hunter> state) {
-		double movement = AnimationUtils.getMovementSpeed(this);
+	public PlayState legsPredicate(final AnimationState<Hunter> state) {
+		double movement = getDeltaMovement().length();
 
 		if (movement > getRunThreshold()) {
 			return state.setAndContinue(getRunBlend());
