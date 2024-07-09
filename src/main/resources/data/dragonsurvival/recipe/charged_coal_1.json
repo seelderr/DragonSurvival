@@ -7,7 +7,7 @@
   ],
   "key": {
     "C": {
-      "item": "minecraft:redstone"
+      "tag": "c:dusts/redstone"
     },
     "S": {
       "tag": "minecraft:coals"

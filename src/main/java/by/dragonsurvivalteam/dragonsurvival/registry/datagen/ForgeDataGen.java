@@ -39,7 +39,7 @@ public class ForgeDataGen {
 		BlockTagsProvider blockTagsProvider = new DataBlockTagProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
 		generator.addProvider(event.includeServer(), blockTagsProvider);
 
-		generator.addProvider(event.includeServer(), new DataItemTagProvider(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeServer(), new DSItemTags(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
 		generator.addProvider(event.includeServer(), new DataDamageTypeTagsProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DSEntityTypeTags(packOutput, lookupProvider, existingFileHelper));
 	}

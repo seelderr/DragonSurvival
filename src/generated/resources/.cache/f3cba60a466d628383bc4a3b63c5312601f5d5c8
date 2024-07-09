@@ -1,12 +1,5 @@
-// 1.21	2024-06-16T22:44:55.7831746	Dragon Survival Item tags
-9848e89ff245bbfdc2c682369771182a82878a8b data/c/tags/item/raw_fishes.json
-212df42b76dbfd28f47f99244d2ae386f6e543f8 data/c/tags/item/raw_meats.json
-f168782e4d6b0792e504ab2583c0d6c7065eecf2 data/dragonsurvival/tags/item/cave_dragon_survival_food.json
+// 1.21	2024-07-09T10:50:46.1096213	Dragon Survival Item tags
 98e47e9f5e29dfe7526d64d46c38d29fda2da305 data/dragonsurvival/tags/item/charred_food.json
-40cf4b0b34f62351fea3c798aea52ccfda868f41 data/dragonsurvival/tags/item/copper.json
 bcd9fc9215902ea5cae88a8bbf012021624d977e data/dragonsurvival/tags/item/dragon_altars.json
-91630c55bf5c37c87bcf5d7a7fdfa03beb7f9a55 data/dragonsurvival/tags/item/dragon_survival_food.json
 50d0e46d98181ed48f2323211041c958002f5e4c data/dragonsurvival/tags/item/dragon_treasures.json
-3cfaa18c0faff94b8d25baa5ac290f299edc8501 data/dragonsurvival/tags/item/forest_survival_food.json
-d336d4066b9cb0f54d4460e95101d18ea65b7b31 data/dragonsurvival/tags/item/sea_dragon_survival_food.json
 10d403f7ef80facaca35aec79c7fadf7cf066ad2 data/dragonsurvival/tags/item/wooden_dragon_doors.json
