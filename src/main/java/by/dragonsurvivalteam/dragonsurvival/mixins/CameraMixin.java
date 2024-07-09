@@ -12,6 +12,7 @@ public abstract class CameraMixin {
     @ModifyReturnValue(method = "getFluidInCamera", at = @At(value = "RETURN", ordinal = 2))
     private FogType dragonSurvival$enableLavaVision(final FogType type) {
         if (DragonUtils.hasLavaVision()) {
+            // Alternatively adjust the value in FogRenderer#setupColor (e.g. fogRed)
             return FogType.NONE;
         }
 
