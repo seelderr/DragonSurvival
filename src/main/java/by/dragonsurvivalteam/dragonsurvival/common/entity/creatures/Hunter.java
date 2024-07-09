@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -87,7 +88,8 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	}
 
 	public boolean isNotIdle() {
-		double movement = getDeltaMovement().length();
+		double movement = AnimationUtils.getMovementSpeed(this);
+		System.out.println(movement);
 		return swingTime > 0 || movement > getWalkThreshold() || isAggro();
 	}
 
