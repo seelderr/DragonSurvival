@@ -487,19 +487,6 @@ public class ClientFlightHandler {
     }
 
     ///region Spin
-    private static void spawnSpinParticle(Player player, ParticleOptions particleData) {
-        for (int i = 0; i < 20; i++) {
-            double d0 = (player.getRandom().nextFloat() - 0.5) * 2;
-            double d1 = (player.getRandom().nextFloat() - 0.5) * 2;
-            double d2 = (player.getRandom().nextFloat() - 0.5) * 2;
-
-            double posX = player.position().x + player.getDeltaMovement().x + d0;
-            double posY = player.position().y - 1.5 + player.getDeltaMovement().y + d1;
-            double posZ = player.position().z + player.getDeltaMovement().z + d2;
-            player.level().addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
-        }
-    }
-
     private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
         if (ServerFlightHandler.isSpin(player)) return;
         if (handler.getMovementData().spinCooldown > 0) return;
@@ -516,6 +503,19 @@ public class ClientFlightHandler {
                             handler.getMovementData().spinLearned
                     )
             );
+        }
+    }
+
+    private static void spawnSpinParticle(Player player, ParticleOptions particleData) {
+        for (int i = 0; i < 20; i++) {
+            double d0 = (player.getRandom().nextFloat() - 0.5) * 2;
+            double d1 = (player.getRandom().nextFloat() - 0.5) * 2;
+            double d2 = (player.getRandom().nextFloat() - 0.5) * 2;
+
+            double posX = player.position().x + player.getDeltaMovement().x + d0;
+            double posY = player.position().y - 1.5 + player.getDeltaMovement().y + d1;
+            double posZ = player.position().z + player.getDeltaMovement().z + d2;
+            player.level().addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
         }
     }
     ///endregion
