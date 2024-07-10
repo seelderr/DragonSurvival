@@ -74,13 +74,10 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	@Override
 	public boolean isPathfindable(BlockState pState, PathComputationType pPathComputationType){
-		switch(pPathComputationType){
-			case LAND:
-			case AIR:
-				return pState.getValue(OPEN);
-			default:
-				return false;
-		}
+        return switch (pPathComputationType) {
+            case LAND, AIR -> pState.getValue(OPEN);
+            default -> false;
+        };
 	}
 
 	@Override
@@ -198,17 +195,12 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock{
 		Direction direction = state.getValue(FACING);
 		boolean flag = !state.getValue(OPEN);
 		boolean flag1 = state.getValue(HINGE) == DoorHingeSide.RIGHT;
-		switch(direction){
-			case EAST:
-			default:
-				return flag ? EAST_AABB : flag1 ? NORTH_AABB : SOUTH_AABB;
-			case SOUTH:
-				return flag ? SOUTH_AABB : flag1 ? EAST_AABB : WEST_AABB;
-			case WEST:
-				return flag ? WEST_AABB : flag1 ? SOUTH_AABB : NORTH_AABB;
-			case NORTH:
-				return flag ? NORTH_AABB : flag1 ? WEST_AABB : EAST_AABB;
-		}
+        return switch (direction) {
+            default -> flag ? EAST_AABB : flag1 ? NORTH_AABB : SOUTH_AABB;
+            case SOUTH -> flag ? SOUTH_AABB : flag1 ? EAST_AABB : WEST_AABB;
+            case WEST -> flag ? WEST_AABB : flag1 ? SOUTH_AABB : NORTH_AABB;
+            case NORTH -> flag ? NORTH_AABB : flag1 ? WEST_AABB : EAST_AABB;
+        };
 	}
 
 	@Override

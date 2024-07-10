@@ -1,4 +1,4 @@
-// 1.21	2024-06-16T22:44:55.7811742	Dragon Survival Item models
+// 1.21	2024-07-08T11:13:26.5466622	Dragon Survival Item models
 35c9e7543317fe33adcaaa05ecc3e165dc93222e assets/dragonsurvival/models/item/beacon_fire_0.json
 03b3833651a317b7f94c129cacf283f6007ea7dc assets/dragonsurvival/models/item/beacon_fire_1.json
 33328b1687138c7d933d1e6e634bd5062c4b2d7d assets/dragonsurvival/models/item/beacon_magic_0.json
@@ -29,8 +29,6 @@ c4dac9f4dc5f0acad726c8b68a3e90cca730c8fc assets/dragonsurvival/models/item/hot_d
 45fa6a94ab69b361efb506c219d1064f6a1dde7a assets/dragonsurvival/models/item/luminous_ointment.json
 4f29a47f130a227a8bfaf6e3b15fbd4865dc3012 assets/dragonsurvival/models/item/meat_chorus_mix.json
 304ad00ee6263953b48814c4657fb84d40cea695 assets/dragonsurvival/models/item/meat_wild_berries.json
-1e14652da6014e8df3d136b3c793ba8594335f08 assets/dragonsurvival/models/item/princess_summon.json
-a70f78e45b3ebb1aa7ab5f97fddaa75b1b9ecb9e assets/dragonsurvival/models/item/prince_summon.json
 0fd90e288a0cd87dd344d7625555bbd4113b477c assets/dragonsurvival/models/item/quartz_explosive_copper.json
 53cbbe8ff961bc590db580ec1b7233ce5e644ae3 assets/dragonsurvival/models/item/seasoned_fish.json
 cc109024c84a1f4bafb24512b7b8b61502fef7b8 assets/dragonsurvival/models/item/sea_dragon_treat.json

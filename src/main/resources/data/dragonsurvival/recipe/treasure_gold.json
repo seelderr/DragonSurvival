@@ -2,7 +2,7 @@
   "type": "crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:gold_nugget"
+      "tag": "c:nuggets/gold"
     },
     {
       "item": "dragonsurvival:elder_dragon_dust"

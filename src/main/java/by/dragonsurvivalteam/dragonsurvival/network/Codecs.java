@@ -9,7 +9,7 @@ import net.minecraft.network.Utf8String;
 import net.minecraft.network.codec.StreamCodec;
 
 public class Codecs {
-    public static StreamCodec<ByteBuf, AbstractDragonType> ABSTRACT_DRAGON_TYPE = new StreamCodec<ByteBuf, AbstractDragonType>() {
+    public static StreamCodec<ByteBuf, AbstractDragonType> ABSTRACT_DRAGON_TYPE = new StreamCodec<>() {
         @Override
         public AbstractDragonType decode(ByteBuf pBuffer) {
             String typeS = Utf8String.read(pBuffer, 32);
@@ -22,7 +22,7 @@ public class Codecs {
         }
     };
 
-    public static StreamCodec<ByteBuf, AbstractDragonBody> ABSTRACT_DRAGON_BODY = new StreamCodec<ByteBuf, AbstractDragonBody>() {
+    public static StreamCodec<ByteBuf, AbstractDragonBody> ABSTRACT_DRAGON_BODY = new StreamCodec<>() {
         @Override
         public AbstractDragonBody decode(ByteBuf pBuffer) {
             String typeS = Utf8String.read(pBuffer, 32);

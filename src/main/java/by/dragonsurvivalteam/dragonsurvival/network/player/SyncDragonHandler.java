@@ -47,32 +47,32 @@ public class SyncDragonHandler implements IMessage<SyncDragonHandler.Data> {
 	{
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_cap"));
 
-		public static StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<ByteBuf, Data>() {
-			@Override
-			public void encode(ByteBuf pBuffer, Data pValue) {
-				pBuffer.writeInt(pValue.playerId);
-				Utf8String.write(pBuffer, pValue.dragonType != null ? pValue.dragonType.getSubtypeName() : "none", 32);
-				Utf8String.write(pBuffer, pValue.dragonBody != null ? pValue.dragonBody.getBodyName() : "none", 32);
-				pBuffer.writeBoolean(pValue.hiding);
-				pBuffer.writeDouble(pValue.size);
-				pBuffer.writeBoolean(pValue.hasWings);
-				pBuffer.writeInt(pValue.passengerId);
-			}
+		public static StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>() {
+            @Override
+            public void encode(ByteBuf pBuffer, Data pValue) {
+                pBuffer.writeInt(pValue.playerId);
+                Utf8String.write(pBuffer, pValue.dragonType != null ? pValue.dragonType.getSubtypeName() : "none", 32);
+                Utf8String.write(pBuffer, pValue.dragonBody != null ? pValue.dragonBody.getBodyName() : "none", 32);
+                pBuffer.writeBoolean(pValue.hiding);
+                pBuffer.writeDouble(pValue.size);
+                pBuffer.writeBoolean(pValue.hasWings);
+                pBuffer.writeInt(pValue.passengerId);
+            }
 
-			@Override
-			public Data decode(ByteBuf pBuffer) {
-				int id = pBuffer.readInt();
-				String typeS = Utf8String.read(pBuffer,32);
-				String typeB = Utf8String.read(pBuffer, 32);
-				AbstractDragonType type = typeS.equals("none") ? null : DragonTypes.getStaticSubtype(typeS);
-				AbstractDragonBody body = typeB.equals("none") ? null : DragonBodies.getStatic(typeB);
-				boolean hiding = pBuffer.readBoolean();
-				double size = pBuffer.readDouble();
-				boolean hasWings = pBuffer.readBoolean();
-				int passengerId = pBuffer.readInt();
-				return new Data(id, hiding, type, body, size, hasWings, passengerId);
-			}
-		};
+            @Override
+            public Data decode(ByteBuf pBuffer) {
+                int id = pBuffer.readInt();
+                String typeS = Utf8String.read(pBuffer, 32);
+                String typeB = Utf8String.read(pBuffer, 32);
+                AbstractDragonType type = typeS.equals("none") ? null : DragonTypes.getStaticSubtype(typeS);
+                AbstractDragonBody body = typeB.equals("none") ? null : DragonBodies.getStatic(typeB);
+                boolean hiding = pBuffer.readBoolean();
+                double size = pBuffer.readDouble();
+                boolean hasWings = pBuffer.readBoolean();
+                int passengerId = pBuffer.readInt();
+                return new Data(id, hiding, type, body, size, hasWings, passengerId);
+            }
+        };
 
 		@Override
 		public Type<? extends CustomPacketPayload> type() {

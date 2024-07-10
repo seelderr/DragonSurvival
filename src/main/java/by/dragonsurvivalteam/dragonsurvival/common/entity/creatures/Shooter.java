@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+/*import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.CrossbowAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityChec
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
@@ -53,14 +52,14 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	protected void registerGoals() {
 		super.registerGoals();
 		this.goalSelector.addGoal(0, new FloatGoal(this));
-		this.goalSelector.addGoal(3, new CrossbowAttackGoal(this, 1.0, 8.0F));
+		this.goalSelector.addGoal(3, new CrossbowAttackGoal<>(this, 1.0, 8.0F));
 		this.goalSelector.addGoal(7, new FollowMobGoal<>(KnightEntity.class, this, 15));
 		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
 		this.goalSelector.addGoal(9, new LookAtPlayerGoal(this, Player.class, 15.0F, 1.0F));
 		this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 15.0F));
 		this.targetSelector.addGoal(1, new HurtByTargetGoal(this, Shooter.class).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DSEffects.ROYAL_CHASE)));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal(this, Monster.class, false, false) {
+		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, false, false) {
 			@Override
 			public boolean canUse() {
 				Entity entity = Shooter.this;
@@ -185,4 +184,4 @@ public class Shooter extends Hunter implements CrossbowAttackMob{
 	public boolean removeWhenFarAway(double distance){
 		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
-}
+}*/

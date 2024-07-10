@@ -54,13 +54,16 @@ public class DragonOreLootModifier extends LootModifier {
                         if (breakPos != null) {
                             ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
                             int fortuneLevel = 0;
+                            boolean hasSilkTouch = false;
                             if (tool != null) {
                                 Holder<Enchantment> fortune = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.FORTUNE);
                                 fortuneLevel = EnchantmentHelper.getTagEnchantmentLevel(fortune, tool);
+                                Holder<Enchantment> silkTouch = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SILK_TOUCH);
+                                hasSilkTouch = EnchantmentHelper.getTagEnchantmentLevel(silkTouch, tool) != 0;
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
-                            if(expDrop > 0) {
+                            if(expDrop > 0 && !hasSilkTouch) {
                                 DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
                                 int fortuneRoll = 1;
                                 if (fortuneLevel >= 1)

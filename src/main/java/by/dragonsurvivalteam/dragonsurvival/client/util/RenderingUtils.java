@@ -3,9 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
-import java.awt.*;
-
 import com.mojang.blaze3d.vertex.*;
+import java.awt.*;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import org.jetbrains.annotations.NotNull;

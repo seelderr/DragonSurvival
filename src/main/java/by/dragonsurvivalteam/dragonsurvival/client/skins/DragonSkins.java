@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -21,9 +23,8 @@ import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 public class DragonSkins{
+	protected static boolean initialized = false;
 	public static NetSkinLoader skinLoader = new GithubSkinLoaderAPI();
 	private static final ArrayList<String> hasFailedFetch = new ArrayList<>();
 	public static HashMap<DragonLevel, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
@@ -197,6 +198,12 @@ public class DragonSkins{
 	}
 
 	public static void init() {
+		init(false);
+	}
+	public static void init(boolean force) {
+		if (initialized && !force)
+			return;
+		initialized = true;
 		Collection<SkinObject> skins;
 		invalidateSkins();
 		String currentLanguage = Minecraft.getInstance().getLanguageManager().getSelected();

@@ -34,7 +34,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
@@ -242,7 +241,7 @@ public class ClientDragonRenderer {
 					NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
 					// TODO: Test this, we might not need shouldShowName
-					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player)) {
+					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).dragonsurvival$callShouldShowName(player)) {
 						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
 					}
 				}
@@ -344,7 +343,7 @@ public class ClientDragonRenderer {
 
 				if (!player.isSpectator()) {
 					// Render the parrot on the players shoulder
-					((AccessorLivingRenderer) playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+					((AccessorLivingRenderer) playerRenderer).dragonsurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
 						poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
 						poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;
@@ -511,6 +510,20 @@ public class ClientDragonRenderer {
 				}
 			});
 		}
+	}
+
+	/** Don't render fire overlay for cave dragons */
+	@SubscribeEvent
+	public static void removeFireOverlay(RenderBlockScreenEffectEvent event) {
+		if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE) {
+			return;
+		}
+
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(handler -> {
+			if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+				event.setCanceled(true);
+			}
+		});
 	}
 
 	@SubscribeEvent

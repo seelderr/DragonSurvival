@@ -11,7 +11,6 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 
-//import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -24,11 +23,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootEx
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
 import com.mojang.serialization.MapCodec;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Supplier;
-
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -123,7 +120,7 @@ public class DragonSurvivalMod{
 	@SubscribeEvent
 	public static void addPackFinders(AddPackFindersEvent event) {
 		if (event.getPackType() == PackType.CLIENT_RESOURCES) {
-			HashMap<MutableComponent, String> resourcePacks = new HashMap<MutableComponent, String>();
+			HashMap<MutableComponent, String> resourcePacks = new HashMap<>();
 			//resourcePacks.put(Component.literal("- Dragon East"), "resourcepacks/ds_east");
 			//resourcePacks.put(Component.literal("- Dragon North"), "resourcepacks/ds_north");
 			//resourcePacks.put(Component.literal("- Dragon South"), "resourcepacks/ds_south");

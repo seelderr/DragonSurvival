@@ -11,7 +11,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -21,10 +20,8 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
-public class DragonRidingHandler{
-	/**
-	 * Mounting a dragon
-	 */
+public class DragonRidingHandler {
+	/** Mounting a dragon */
 	@SubscribeEvent
 	public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event){
 		Entity ent = event.getTarget();
@@ -102,19 +99,15 @@ public class DragonRidingHandler{
 	}
 
 	@SubscribeEvent
-	public static void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event){
-		ServerPlayer player = (ServerPlayer)event.getEntity();
-		if(player.getVehicle() == null || !(player.getVehicle() instanceof ServerPlayer vehicle)){
-			return;
-		}
-		DragonStateProvider.getCap(player).ifPresent(playerCap -> {
-			DragonStateProvider.getCap(vehicle).ifPresent(vehicleCap -> {
+	public static void onPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
+		if (event.getEntity() instanceof ServerPlayer player && player.getVehicle() instanceof ServerPlayer vehicle) {
+			DragonStateProvider.getCap(vehicle).ifPresent(handler -> {
 				player.stopRiding();
 				vehicle.connection.send(new ClientboundSetPassengersPacket(vehicle));
-				vehicleCap.setPassengerId(0);
+				handler.setPassengerId(0);
 				PacketDistributor.sendToPlayersTrackingEntityAndSelf(vehicle, new SyncDragonPassengerID.Data(vehicle.getId(), 0));
 			});
-		});
+		}
 	}
 
 	@SubscribeEvent

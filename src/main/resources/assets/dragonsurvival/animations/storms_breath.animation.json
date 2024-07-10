@@ -2,7 +2,7 @@
   "format_version": "1.8.0",
   "animations": {
     "animation.model.new": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 2.08,
       "bones": {
         "bone": {
@@ -250,7 +250,7 @@
       }
     },
     "idle": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 2.08,
       "bones": {
         "bone": {
@@ -570,7 +570,7 @@
       }
     },
     "idle_old": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 2.08,
       "bones": {
         "bone": {
