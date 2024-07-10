@@ -6,23 +6,19 @@ package by.dragonsurvivalteam.dragonsurvival.util;
  * {@link #tryRun()} can be invoked repeatedly, and it won't invoke
  * the action until the cooldown has passed.
  */
-public class ActionWithCooldown {
+public class ActionWithTimedCooldown {
 
-    private final long cooldownMs;
+    private final TimedCooldown timedCooldown;
+
     private final Runnable action;
 
-    /**
-     * The time at which the action can be run again
-     */
-    private long nextAllowedRunMs = 0;
-
-    public ActionWithCooldown(long cooldownMs, Runnable action) {
-        this.cooldownMs = cooldownMs;
+    public ActionWithTimedCooldown(long cooldownMs, Runnable action) {
+        this.timedCooldown = new TimedCooldown(cooldownMs);
         this.action = action;
     }
 
     public long getCooldownMs() {
-        return cooldownMs;
+        return timedCooldown.getCooldownMs();
     }
 
     public Runnable getAction() {
@@ -35,7 +31,7 @@ public class ActionWithCooldown {
      * @return True if the action was run, false if the cooldown hasn't passed yet.
      */
     public boolean tryRun() {
-        if (System.currentTimeMillis() < nextAllowedRunMs) return false;
+        if (timedCooldown.isOnCooldown()) return false;
 
         forceRun();
         return true;
@@ -46,13 +42,13 @@ public class ActionWithCooldown {
      */
     public void forceRun() {
         action.run();
-        nextAllowedRunMs = System.currentTimeMillis() + cooldownMs;
+        timedCooldown.forceSet();
     }
 
     /**
      * Resets the next allowed run time to 0, allowing the action to be run immediately next time.
      */
     public void resetCooldown() {
-        nextAllowedRunMs = 0;
+        timedCooldown.reset();
     }
 }

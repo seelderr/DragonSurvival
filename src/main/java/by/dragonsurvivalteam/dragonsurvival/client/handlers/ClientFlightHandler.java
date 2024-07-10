@@ -57,7 +57,7 @@ import org.lwjgl.glfw.GLFW;
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientFlightHandler {
     public static final ResourceLocation SPIN_COOLDOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/spin_cooldown.png");
-    private static final ActionWithCooldown hungerMessageWithCooldown = new ActionWithCooldown(30_000, () -> {
+    private static final ActionWithTimedCooldown hungerMessageWithCooldown = new ActionWithTimedCooldown(30_000, () -> {
         var localPlayer = Minecraft.getInstance().player;
         if (localPlayer == null) return;
         localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
