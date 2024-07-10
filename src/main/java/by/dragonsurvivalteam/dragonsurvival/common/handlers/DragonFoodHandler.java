@@ -10,8 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -38,12 +38,7 @@ import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
 import javax.annotation.Nullable;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
@@ -72,10 +67,6 @@ public class DragonFoodHandler {
 
 	@ConfigOption(side = ConfigSide.SERVER, key = "foodHungerEffect", category = "food", comment = "Should eating wrong food items give hunger effect?")
 	public static boolean foodHungerEffect = true;
-
-	@ConfigType(Item.class)
-	@ConfigOption(side = ConfigSide.SERVER, key = "keepEffects", category = "food", comment = "Food items which should keep their effects even if they're not a valid food for the dragon (foodHungerEffect will be disabled for these items as well)")
-	public static List<String> keepEffects = List.of("gothic:elixir_of_speed", "gothic:elixir_of_health", "gothic:elixir_of_mental_cleansing");
 
 	// Tooltip maps
 	public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD;
@@ -218,7 +209,7 @@ public class DragonFoodHandler {
 		}
 
 		FoodProperties.Builder builder = new FoodProperties.Builder();
-		boolean shouldKeepEffects = keepEffects.contains(ResourceHelper.getKey(item).toString());
+		boolean shouldKeepEffects = item.builtInRegistryHolder().is(DSItemTags.KEEP_EFFECTS);
 
 		// Copy the configurations and effects from the initial food properties
 		if (original != null) {
