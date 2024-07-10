@@ -48,7 +48,6 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Used in pair with {@link ServerFlightHandler}
@@ -481,6 +480,8 @@ public class ClientFlightHandler {
             toggleWingsManual(player, handler);
         }
 
+        tryJumpToFly(player, handler);
+
         while (Keybinds.SPIN_ABILITY.consumeClick()) {
             doSpin(player, handler);
         }
@@ -521,51 +522,155 @@ public class ClientFlightHandler {
     ///endregion
 
     ///region Toggle Wings
-    public static void toggleWings() {
-        // TODO
-//        if (jumpToFly && minecraft.options.keyJump.isDown() && keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
-//            tryJumpToFly(player, handler);
-//        }
+
+    /**
+     * Enables or disables wings. Sends error messages if unsuccessful.
+     *
+     * @param player  Target player.
+     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @return True if wings were toggled successfully
+     */
+    @SuppressWarnings({"DuplicateBranchesInSwitch", "UnusedReturnValue"})
+    private static boolean toggleWingsManual(LocalPlayer player, DragonStateHandler handler) {
+        WingsToggleResult result = !handler.isWingsSpread() ? disableWings(player, handler) : enableWings(player, handler);
+        switch (result) {
+            case SUCCESS_ENABLED, SUCCESS_DISABLED -> {
+                return true;
+            }
+            case ALREADY_ENABLED, ALREADY_DISABLED -> {
+                return false;
+            }
+            case NO_WINGS -> {
+                player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
+                return false;
+            }
+            case NO_HUNGER -> {
+                player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+                return false;
+            }
+            case TRAPPED -> {
+                return false;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + result);
+        }
     }
 
-    private static void toggleWingsManual(LocalPlayer player, DragonStateHandler handler) {
+    enum WingsToggleResult {
+        SUCCESS_ENABLED,
+        SUCCESS_DISABLED,
+        ALREADY_ENABLED,
+        ALREADY_DISABLED,
+        NO_WINGS,
+        NO_HUNGER,
+        TRAPPED
+    }
+
+    /**
+     * Tries to enable wings. Returns the result of the attempt.
+     * <br/>
+     * Requires the player to have flight, and either be in creative, or have enough food.
+     * Won't trigger if wings are already enabled.
+     * <br/>
+     * Does not send error messages - use the return value to handle that.
+     *
+     * @param player  Target player.
+     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @return Result of the attempt. One of:
+     * <ul>
+     *     <li>{@link WingsToggleResult#NO_WINGS NO_WINGS}</li>
+     *     <li>{@link WingsToggleResult#TRAPPED TRAPPED}</li>
+     *     <li>{@link WingsToggleResult#NO_HUNGER NO_HUNGER}</li>
+     *     <li>{@link WingsToggleResult#ALREADY_ENABLED ALREADY_ENABLED}</li>
+     *     <li>{@link WingsToggleResult#SUCCESS_ENABLED SUCCESS_ENABLED}</li>
+     * </ul>
+     */
+    private static WingsToggleResult enableWings(LocalPlayer player, DragonStateHandler handler) {
         if (!handler.hasFlight()) {
-            player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
-            return;
+            // Could technically trigger if the player somehow has wings spread but has no flight
+            return WingsToggleResult.NO_WINGS;
         }
 
-        if (isTrapped(player)) return;
+        if (handler.isWingsSpread()) return WingsToggleResult.ALREADY_ENABLED;
+        if (isTrapped(player)) return WingsToggleResult.TRAPPED;
 
-        //Allows toggling the wings if food level is above 0, player is creative, wings are already enabled (allows disabling even when hungry) or if config options is turned on
-        // NOTE: Folding wings is currently disallowed when trapped, but the Trapped status effect already folds wings
-        boolean isWingsSpread = handler.isWingsSpread();
-        if (isWingsSpread || player.isCreative() || hasEnoughFoodToStartFlight(player)) {
-            PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), !isWingsSpread));
-            return;
+        // Non-creative players need enough food to start flying
+        if (!player.isCreative() && !hasEnoughFoodToStartFlight(player)) {
+            return WingsToggleResult.NO_HUNGER;
         }
 
-        player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+        PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
+        return WingsToggleResult.SUCCESS_ENABLED;
     }
 
-    private static void tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
-        if (player.isCreative() || player.isSpectator()) return;
+    /**
+     * Disables wings. Works every time if the player has flight.
+     * <br/>
+     * Won't trigger if wings are already disabled.
+     * <br/>
+     * Does not send error messages - use the return value to handle that.
+     *
+     * @param player  Target player.
+     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @return Result of the attempt. One of:
+     * <ul>
+     *     <li>{@link WingsToggleResult#NO_WINGS NO_WINGS}</li>
+     *     <li>{@link WingsToggleResult#ALREADY_DISABLED ALREADY_DISABLED}</li>
+     *     <li>{@link WingsToggleResult#SUCCESS_DISABLED SUCCESS_DISABLED}</li>
+     * </ul>
+     */
+    private static WingsToggleResult disableWings(LocalPlayer player, DragonStateHandler handler) {
+        if (!handler.hasFlight()) {
+            // Could technically trigger if the player somehow has wings spread but has no flight
+            return WingsToggleResult.NO_WINGS;
+        }
 
-        if (!handler.hasFlight()) return;
-        if (handler.isWingsSpread()) return;
+        if (!handler.isWingsSpread()) return WingsToggleResult.ALREADY_DISABLED;
 
-        if (isTrapped(player)) return;
+        // Always allow disabling wings (if the player has flight)
+        PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), false));
+        return WingsToggleResult.SUCCESS_DISABLED;
+    }
+
+    /**
+     * Checks the conditions for jumping to start flight, and tries to enable wings if successful.
+     * <br/>
+     * Handles error messages.
+     *
+     * @param player  The player to check.
+     * @param handler The player's dragon handler. Redundant, used for caching. Expected to be the handler of the player.
+     * @return True if wings were enabled.
+     */
+    @SuppressWarnings("UnusedReturnValue")
+    private static boolean tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
+        // This only handles the requirements to trigger jump-to-fly. Other conditions are handled by enableWings()
+        if (player.isCreative() || player.isSpectator()) return false;
 
         Vec3 lookVec = player.getLookAngle();
-        if (lookAtSkyForFlight && lookVec.y <= 0.8) return;
+        if (lookAtSkyForFlight && lookVec.y <= 0.8) return false;
 
-        if (player.onGround() || player.isInLava() || player.isInWater()) return;
+        if (player.onGround() || player.isInLava() || player.isInWater()) return false;
 
-        if (hasEnoughFoodToStartFlight(player)) { // Creative players are already disallowed from using jump-to-fly
-            PacketDistributor.sendToServer(new SyncFlyingStatus.Data(player.getId(), true));
-            return;
+        switch (enableWings(player, handler)) {
+            case SUCCESS_ENABLED -> {
+                return true;
+            }
+            case ALREADY_ENABLED -> {
+                return false;
+            }
+            case NO_WINGS -> {
+                // Silent fail
+                return false;
+            }
+            case NO_HUNGER -> {
+                hungerMessageWithCooldown.tryRun();
+                return false;
+            }
+            case TRAPPED -> {
+                // Silent fail
+                return false;
+            }
+            default -> throw new IllegalStateException("Unexpected value: " + enableWings(player, handler));
         }
-
-        hungerMessageWithCooldown.tryRun();
     }
     ///endregion
 
