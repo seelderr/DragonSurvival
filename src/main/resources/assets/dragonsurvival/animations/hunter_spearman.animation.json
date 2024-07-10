@@ -825,16 +825,28 @@
 			"loop": true,
 			"bones": {
 				"left_arm": {
-					"rotation": [-68.26139, 12.26748, 10.02387],
-					"position": [-3, 0, -5]
+					"rotation": {
+						"vector": [-68.26139, 12.26748, 10.02387]
+					},
+					"position": {
+						"vector": [-3, 0, -5]
+					}
 				},
 				"right_arm": {
-					"rotation": [-64.37306, -9.6066, 4.50839],
-					"position": [2, 0, 2]
+					"rotation": {
+						"vector": [-64.37306, -9.6066, 4.50839]
+					},
+					"position": {
+						"vector": [2, 0, 2]
+					}
 				},
 				"sword": {
-					"rotation": [97.5, 0, 0],
-					"position": [0, 0, -1]
+					"rotation": {
+						"vector": [97.5, 0, 0]
+					},
+					"position": {
+						"vector": [0, 0, -1]
+					}
 				}
 			}
 		},
@@ -1402,6 +1414,16 @@
 					"position": {
 						"0.0": [0.6, 0, 0.5],
 						"1.3333": [0.6, 0, 0.5]
+					}
+				}
+			}
+		},
+		"blend_head": {
+			"loop": true,
+			"bones": {
+				"molang_head": {
+					"rotation": {
+						"vector": [0, "math.clamp(query.look_angle_y*57,-55,55)", 0]
 					}
 				}
 			}
