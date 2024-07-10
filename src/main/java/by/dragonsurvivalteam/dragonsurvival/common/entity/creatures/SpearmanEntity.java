@@ -4,13 +4,12 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.goals.WindupMeleeAttac
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.level.Level;
-import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.animation.PlayState;
-import software.bernie.geckolib.animation.RawAnimation;
+import software.bernie.geckolib.animation.*;
 
 public class SpearmanEntity extends Hunter {
 	public SpearmanEntity(EntityType<? extends PathfinderMob> entityType, Level world){
@@ -48,56 +47,63 @@ public class SpearmanEntity extends Hunter {
 	}
 
 	@Override
-	public RawAnimation getAttackBlend() {
-		return ATTACK_BLEND;
+	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+		controllers.add(new AnimationController<>(this, "everything", 3, this::fullPredicate));
+		controllers.add(new AnimationController<>(this, "head", 3, this::headPredicate));
+		controllers.add(new AnimationController<>(this, "arms", 3, this::armsPredicate));
+		controllers.add(new AnimationController<>(this, "legs", 3, this::legsPredicate));
 	}
 
-	@Override
-	public RawAnimation getAggroBlend() {
-		return AGGRO_BLEND;
+	public boolean isNotIdle() {
+		double movement = AnimationUtils.getMovementSpeed(this);
+		return swingTime > 0 || movement > getWalkThreshold() || isAggro();
 	}
 
-	@Override
+	public PlayState fullPredicate(final AnimationState<Hunter> state) {
+		if (isNotIdle()) {
+			isIdleAnimSet = false;
+			return PlayState.STOP;
+		}
+
+		return state.setAndContinue(getIdleAnim());
+	}
+
+	public PlayState headPredicate(final AnimationState<Hunter> state) {
+		return state.setAndContinue(HEAD_BLEND);
+	}
+
+	public PlayState armsPredicate(final AnimationState<Hunter> state) {
+		if (swingTime > 0) {
+			return state.setAndContinue(ATTACK_BLEND);
+		} else if(isAggro()) {
+			return state.setAndContinue(AGGRO_BLEND);
+		} else if(isNotIdle()) {
+			return state.setAndContinue(WALK_ARMS_BLEND);
+		}
+
+		return PlayState.STOP;
+	}
+
+	public PlayState legsPredicate(final AnimationState<Hunter> state) {
+		double movement = AnimationUtils.getMovementSpeed(this);
+
+		if (movement > getRunThreshold()) {
+			return state.setAndContinue(RUN_BLEND);
+		} else if (movement > getWalkThreshold()) {
+			return state.setAndContinue(WALK_BLEND);
+		} else if(isAggro()) {
+			return state.setAndContinue(IDLE_BLEND);
+		}
+
+		return PlayState.STOP;
+	}
+
 	public RawAnimation getIdleAnim() {
 		if (!isIdleAnimSet) {
 			currentIdleAnim = IDLE_ANIMS.pickRandomAnimation();
 			isIdleAnimSet = true;
 		}
 		return currentIdleAnim;
-	}
-
-	@Override
-	public PlayState fullPredicate(final AnimationState<Hunter> state) {
-		if(isNotIdle()) {
-			isIdleAnimSet = false;
-		}
-
-		return super.fullPredicate(state);
-	}
-
-	@Override
-	public RawAnimation getIdleBlend() {
-		return IDLE_BLEND;
-	}
-
-	@Override
-	public RawAnimation getWalkArmsBlend() {
-		return WALK_ARMS_BLEND;
-	}
-
-	@Override
-	public RawAnimation getRunBlend() {
-		return RUN_BLEND;
-	}
-
-	@Override
-	public RawAnimation getWalkBlend() {
-		return WALK_BLEND;
-	}
-
-	@Override
-	public RawAnimation getHeadBlend() {
-		return HEAD_BLEND;
 	}
 
 	private static final RandomAnimationPicker IDLE_ANIMS = new RandomAnimationPicker(

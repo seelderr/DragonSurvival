@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
+import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.AmbusherModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.SpearmanModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
@@ -55,6 +56,7 @@ public class ClientModSetup {
 		EntityRenderers.register(DSEntities.DRAGON_ARMOR.get(), manager -> new DragonRenderer(manager, ClientDragonRenderer.dragonArmorModel));
 		EntityRenderers.register(DSEntities.KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));
 		EntityRenderers.register(DSEntities.SPEARMAN_HUNTER.get(), manager -> new SpearmanRenderer(manager, new SpearmanModel()));
+		EntityRenderers.register(DSEntities.AMBUSHER.get(), manager -> new AmbusherRenderer(manager, new AmbusherModel()));
 	}
 
 	@SubscribeEvent

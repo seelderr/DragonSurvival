@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.AmbusherEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -767,6 +768,26 @@ public class ServerConfig{
 	@ConfigRange( min = 0.0d, max = 1d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightShieldChance", comment = "Chance of having shield" )
 	public static Double knightShieldChance = 0.1d;
+
+	@ConfigRange( min = 10d, max = 80d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHealth", comment = "Dragon Ambusher health" )
+	public static Double ambusherHealth = 40d;
+
+	@ConfigRange( min = 1d, max = 32d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherDamage", comment = "Dragon Ambusher base damage" )
+	public static Double ambusherDamage = 12d;
+
+	@ConfigRange( min = 0d, max = 30d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherArmor", comment = "Dragon Ambusher armor" )
+	public static Double ambusherArmor = 10d;
+
+	@ConfigRange( min = 0.1d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpeed", comment = "Dragon Ambusher speed" )
+	public static Double ambusherSpeed = 0.3d;
+
+	@ConfigRange( min = AmbusherEntity.CROSSBOW_SHOOT_AND_RELOAD_TIME + 5, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherAttackInterval", comment = "How often the ambusher attacks with their crossbow" )
+	public static Integer ambusherAttackInterval = 65;
 
 	@ConfigRange( min = 8d, max = 40d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndHealth", comment = "Knight Hound health" )
