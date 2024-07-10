@@ -2165,6 +2165,15 @@
 					}
 				}
 			}
+		},
+		"blend_head": {
+			"loop": true,
+			"animation_length": 0.5,
+			"bones": {
+				"molang_head": {
+					"rotation": ["math.clamp(-query.look_angle_x*57,-15,10)", "math.clamp(query.look_angle_y*57,-40,45)", 0]
+				}
+			}
 		}
 	},
 	"geckolib_format_version": 2

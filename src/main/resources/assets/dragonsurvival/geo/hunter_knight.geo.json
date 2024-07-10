@@ -248,8 +248,13 @@
 					]
 				},
 				{
-					"name": "head_knight",
+					"name": "molang_head",
 					"parent": "body_knight",
+					"pivot": [0, 35.5, 2.5]
+				},
+				{
+					"name": "head_knight",
+					"parent": "molang_head",
 					"pivot": [0, 35.5, 2.5],
 					"cubes": [
 						{"origin": [-4, 35.5, -1.5], "size": [8, 10, 8], "uv": [0, 64], "mirror": true},

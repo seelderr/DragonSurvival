@@ -28,7 +28,7 @@
 				{
 					"name": "molang_head",
 					"parent": "no_leg_no_arm",
-					"pivot": [0, 0, 0]
+					"pivot": [0, 24, 0]
 				},
 				{
 					"name": "head",
