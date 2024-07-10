@@ -44,6 +44,10 @@ public enum Keybinds {
         keyMapping = Lazy.of(() -> new KeyMapping(description, keyConflictContext, InputConstants.Type.KEYSYM, defaultKey, category));
     }
 
+    /**
+     * Runs when the mod is loaded, registers all key mappings.
+     * @param evt
+     */
     @SubscribeEvent
     @SuppressWarnings("unused")
     public static void registerAllKeys(RegisterKeyMappingsEvent evt) {
@@ -58,8 +62,9 @@ public enum Keybinds {
 
     /**
      * Mirror for {@link KeyMapping#consumeClick()}
+     * Tries to consume a click triggered by {@link KeyMapping#click(InputConstants.Key)}.
      *
-     * @return True if the key was clicked
+     * @return True if a click was consumed. False if the key has no clicks to consume.
      */
     public boolean consumeClick() {
         return keyMapping.get().consumeClick();
@@ -68,16 +73,16 @@ public enum Keybinds {
     /**
      * Mirror for {@link KeyMapping#isDown()}
      *
-     * @return True if the key is down
+     * @return True if the key is down (in the current KeyConflictContext).
      */
     public boolean isDown() {
         return keyMapping.get().isDown();
     }
 
     /**
-     * Mirror for {@link KeyMapping#consumeClick()}
+     * Mirror for {@link KeyMapping#getKey()}
      *
-     * @return Key for this KeyMapping
+     * @return Key for this KeyMapping.
      */
     public InputConstants.Key getKey() {
         return keyMapping.get().getKey();
