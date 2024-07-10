@@ -661,7 +661,7 @@ public class ClientFlightHandler {
         Vec3 lookVec = player.getLookAngle();
         if (lookAtSkyForFlight && lookVec.y <= 0.8) return false;
 
-        if (player.onGround() || player.isInLava() || player.isInWater()) return false;
+        if (player.isInLava() || player.isInWater()) return false;
 
         switch (enableWings(player, handler)) {
             case SUCCESS_ENABLED -> {
