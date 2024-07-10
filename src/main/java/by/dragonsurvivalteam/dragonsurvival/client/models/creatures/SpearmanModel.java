@@ -2,10 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.SpearmanEntity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.constant.DataTickets;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
+import software.bernie.geckolib.model.data.EntityModelData;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
@@ -29,9 +33,8 @@ public class SpearmanModel extends GeoModel<SpearmanEntity> {
     public void applyMolangQueries(final AnimationState<SpearmanEntity> animationState, double currentTick) {
         super.applyMolangQueries(animationState, currentTick);
 
-        Vec3 lookAngle = animationState.getAnimatable().getLookAngle();
-        MathParser.setVariable("query.look_angle_x", () -> lookAngle.x);
-        MathParser.setVariable("query.look_angle_y", () -> lookAngle.y);
-        MathParser.setVariable("query.look_angle_z", () -> lookAngle.z);
+        EntityModelData entityData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);
+        MathParser.setVariable("query.look_angle_x", () -> entityData.headPitch() * Mth.DEG_TO_RAD);
+        MathParser.setVariable("query.look_angle_y", () -> entityData.netHeadYaw() * Mth.DEG_TO_RAD);
     }
 }
