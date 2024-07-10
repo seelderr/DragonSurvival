@@ -132,7 +132,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         Vec3 eyePos = this.getEyePosition(1.0F);
         Vec3 lookAngle = this.getLookAngle();
         Vec3 projPos = lookAngle.scale(1.0F).add(eyePos);
-        Arrow arrow  = new Arrow(this.level(), this, new ItemStack(Items.ARROW, 0), null);
+        Arrow arrow  = new Arrow(this.level(), this, new ItemStack(Items.ARROW, 1), null);
         arrow.setPos(projPos.x, projPos.y, projPos.z);
         arrow.shoot(lookAngle.x, lookAngle.y, lookAngle.z, nextArrowVelocity, 1.0F);
         this.level().addFreshEntity(arrow);
