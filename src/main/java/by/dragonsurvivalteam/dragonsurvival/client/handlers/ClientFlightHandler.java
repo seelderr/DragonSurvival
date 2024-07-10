@@ -499,22 +499,6 @@ public class ClientFlightHandler {
             player.level().addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
         }
     }
-    // FIXME: spin and toggleWings are duplicates for handling mouse and keyboard inputs
-    // Handling should be done by checking KeyMappings while listening to ClientTickEvent.Post via #consumeClick()
-    // Spin is currently checked for both times, but toggleWings only for the keyboard
-    @SubscribeEvent
-    public static void spin(InputEvent.MouseButton.Pre keyInputEvent) {
-        Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player == null) return;
-
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-        if (!handler.isDragon()) return;
-
-        if (Keybinds.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
-            doSpin(player, handler);
-        }
-    }
 
     private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
         if (ServerFlightHandler.isSpin(player)) return;
