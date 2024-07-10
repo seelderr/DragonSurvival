@@ -468,6 +468,24 @@ public class ClientFlightHandler {
     }
     ///endregion
 
+    @SubscribeEvent
+    public void onClientTick(ClientTickEvent.Post event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null) return;
+
+        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        if (!handler.isDragon()) return; // handler should never be null
+
+        while (Keybinds.TOGGLE_WINGS.consumeClick()) {
+            toggleWingsManual(player, handler);
+        }
+
+        while (Keybinds.SPIN_ABILITY.consumeClick()) {
+            doSpin(player, handler);
+        }
+    }
+
     ///region Spin
     private static void spawnSpinParticle(Player player, ParticleOptions particleData) {
         for (int i = 0; i < 20; i++) {
@@ -481,7 +499,6 @@ public class ClientFlightHandler {
             player.level().addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
         }
     }
-
     // FIXME: spin and toggleWings are duplicates for handling mouse and keyboard inputs
     // Handling should be done by checking KeyMappings while listening to ClientTickEvent.Post via #consumeClick()
     // Spin is currently checked for both times, but toggleWings only for the keyboard
@@ -495,11 +512,11 @@ public class ClientFlightHandler {
         if (!handler.isDragon()) return;
 
         if (Keybinds.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getButton()) {
-            spinKeybind(player, handler);
+            doSpin(player, handler);
         }
     }
 
-    private static void spinKeybind(LocalPlayer player, DragonStateHandler handler) {
+    private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
         if (ServerFlightHandler.isSpin(player)) return;
         if (handler.getMovementData().spinCooldown > 0) return;
         if (!handler.getMovementData().spinLearned) return;
@@ -520,33 +537,14 @@ public class ClientFlightHandler {
     ///endregion
 
     ///region Toggle Wings
-    @SubscribeEvent
-    public static void toggleWings(InputEvent.Key keyInputEvent) {
-        Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player == null) {
-            return;
-        }
-
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-        if (handler == null || !handler.isDragon()) {
-            return;
-        }
-
-        if (Keybinds.SPIN_ABILITY.getKey().getValue() == keyInputEvent.getKey()) {
-            spinKeybind(player, handler);
-        }
-
-        if (jumpToFly && minecraft.options.keyJump.isDown() && keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
-            tryJumpToFly(player, handler);
-        }
-
-        if (Keybinds.TOGGLE_WINGS.consumeClick()) {
-            tryManualToggleWings(player, handler);
-        }
+    public static void toggleWings() {
+        // TODO
+//        if (jumpToFly && minecraft.options.keyJump.isDown() && keyInputEvent.getAction() == GLFW.GLFW_PRESS) {
+//            tryJumpToFly(player, handler);
+//        }
     }
 
-    private static void tryManualToggleWings(LocalPlayer player, DragonStateHandler handler) {
+    private static void toggleWingsManual(LocalPlayer player, DragonStateHandler handler) {
         if (!handler.hasFlight()) {
             player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
             return;
