@@ -26,8 +26,13 @@
 					"pivot": [0, 14, 0]
 				},
 				{
-					"name": "head",
+					"name": "molang_head",
 					"parent": "no_leg_no_arm",
+					"pivot": [0, 0, 0]
+				},
+				{
+					"name": "head",
+					"parent": "molang_head",
 					"pivot": [0, 24, 0],
 					"cubes": [
 						{"origin": [-4, 24, -4], "size": [8, 10, 8], "uv": [0, 0]},
@@ -62,8 +67,13 @@
 					]
 				},
 				{
-					"name": "left_arm",
+					"name": "molang_left_arm",
 					"parent": "no_leg",
+					"pivot": [5, 22, 0]
+				},
+				{
+					"name": "left_arm",
+					"parent": "molang_left_arm",
 					"pivot": [5, 22, 0],
 					"mirror": true,
 					"cubes": [
@@ -71,8 +81,13 @@
 					]
 				},
 				{
-					"name": "right_arm",
+					"name": "molang_right_arm",
 					"parent": "no_leg",
+					"pivot": [-5, 22, 0]
+				},
+				{
+					"name": "right_arm",
+					"parent": "molang_right_arm",
 					"pivot": [-5, 22, 0],
 					"cubes": [
 						{"origin": [-8, 12, -2], "size": [4, 12, 4], "uv": [40, 46]}
