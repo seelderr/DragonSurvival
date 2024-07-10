@@ -1,24 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 /**
- * Tracks a cooldown period.
+ * Tracks a cooldown period based on time.
  *
  * @see ActionWithTimedCooldown
  */
 public class TimedCooldown {
-    private final long cooldownMs;
+    private final long startValue;
 
     /**
      * The time when the cooldown expires
      */
     private long expirationMs = 0;
 
-    public TimedCooldown(long cooldownMs) {
-        this.cooldownMs = cooldownMs;
+    public TimedCooldown(long startValue) {
+        this.startValue = startValue;
     }
 
-    public long getCooldownMs() {
-        return cooldownMs;
+    public long getStartValue() {
+        return startValue;
     }
 
     /**
@@ -37,7 +37,7 @@ public class TimedCooldown {
      * Sets the cooldown immediately.
      */
     public void forceSet() {
-        expirationMs = System.currentTimeMillis() + cooldownMs;
+        expirationMs = System.currentTimeMillis() + startValue;
     }
 
     public boolean isOnCooldown() {

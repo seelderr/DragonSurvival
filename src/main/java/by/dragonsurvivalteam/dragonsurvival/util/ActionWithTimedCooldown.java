@@ -18,7 +18,7 @@ public class ActionWithTimedCooldown {
     }
 
     public long getCooldownMs() {
-        return timedCooldown.getCooldownMs();
+        return timedCooldown.getStartValue();
     }
 
     public Runnable getAction() {
