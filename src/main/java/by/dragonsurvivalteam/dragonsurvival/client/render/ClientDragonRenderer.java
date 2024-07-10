@@ -512,6 +512,20 @@ public class ClientDragonRenderer {
 		}
 	}
 
+	/** Don't render fire overlay for cave dragons */
+	@SubscribeEvent
+	public static void removeFireOverlay(RenderBlockScreenEffectEvent event) {
+		if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE) {
+			return;
+		}
+
+		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(handler -> {
+			if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+				event.setCanceled(true);
+			}
+		});
+	}
+
 	@SubscribeEvent
 	public static void calculateRealtimeDeltaTick(RenderFrameEvent.Pre event) {
 		deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();

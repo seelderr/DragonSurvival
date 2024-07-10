@@ -81,7 +81,7 @@ public abstract class PlayerMixin extends LivingEntity {
 		});
 	}
 
-	/** Adjust sinking speed in liquids for all dragons and provide a speed bonus for cave dragons in lava */
+	/** Enable cave dragons to properly swim in lava */
 	@Inject(method = "travel", at = @At("HEAD"))
 	public void travel(Vec3 travelVector, CallbackInfo callback) {
 		DragonStateProvider.getCap(this).ifPresent(handler -> {
@@ -103,6 +103,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 				// Mostly a copy from vanilla LivingEntity#travel (but adjusted for lava)
 				if (isEffectiveAi() || isControlledByLocalInstance()) {
+					// TODO :: Unsure what this slow falling / gravity code actually does - doesn't seem to affect much if anything
 					AttributeInstance gravity = getAttribute(Attributes.GRAVITY);
 					boolean isFalling = getDeltaMovement().y <= 0;
 

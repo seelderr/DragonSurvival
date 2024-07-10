@@ -1,10 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
-
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
-import java.util.Optional;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
@@ -12,6 +8,11 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Optional;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
 
 public class DragonStateProvider implements ICapabilityProvider<Entity, Void, DragonStateHandler> {
 	private static DragonStateHandler getFakePlayerHandler(Entity entity) {
@@ -26,11 +27,15 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 		return null;
 	}
 
-	public static Optional<DragonStateHandler> getCap(final Entity entity) {
+	public static Optional<DragonStateHandler> getCap(@Nullable final Entity entity) {
+		if (entity == null) {
+			return Optional.empty();
+		}
+
 		return Optional.ofNullable(entity.getCapability(DRAGON_CAPABILITY));
 	}
 
-	public static DragonStateHandler getOrGenerateHandler(final Entity entity) {
+	public static @NotNull DragonStateHandler getOrGenerateHandler(final Entity entity) {
 		if (entity == null) {
 			return new DragonStateHandler();
 		}
