@@ -238,12 +238,11 @@ public class DragonFoodHandler {
 		return builder.build();
 	}
 
-	public static FoodProperties getBadFoodProperties() {
+	private static FoodProperties getBadFoodProperties() {
 		FoodProperties.Builder builder = new FoodProperties.Builder();
 		builder.effect(() -> new MobEffectInstance(MobEffects.HUNGER, 600, 0), 1.0F);
 		builder.effect(() -> new MobEffectInstance(MobEffects.POISON, 600, 0), 0.5F);
 		builder.nutrition(1);
-		builder.saturationModifier(0.0F);
 		return builder.build();
 	}
 
