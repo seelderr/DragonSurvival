@@ -468,7 +468,7 @@ public class ClientFlightHandler {
     ///endregion
 
     @SubscribeEvent
-    public void onClientTick(ClientTickEvent.Post event) {
+    public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (player == null) return;
