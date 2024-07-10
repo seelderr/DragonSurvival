@@ -532,7 +532,7 @@ public class ClientFlightHandler {
      */
     @SuppressWarnings({"DuplicateBranchesInSwitch", "UnusedReturnValue"})
     private static boolean toggleWingsManual(LocalPlayer player, DragonStateHandler handler) {
-        WingsToggleResult result = !handler.isWingsSpread() ? disableWings(player, handler) : enableWings(player, handler);
+        WingsToggleResult result = handler.isWingsSpread() ? disableWings(player, handler) : enableWings(player, handler);
         switch (result) {
             case SUCCESS_ENABLED, SUCCESS_DISABLED -> {
                 return true;
