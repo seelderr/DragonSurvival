@@ -45,9 +45,11 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
+import org.lwjgl.glfw.GLFW;
 
 /**
  * Used in pair with {@link ServerFlightHandler}
@@ -480,11 +482,21 @@ public class ClientFlightHandler {
             toggleWingsManual(player, handler);
         }
 
-        tryJumpToFly(player, handler);
-
         while (Keybinds.SPIN_ABILITY.consumeClick()) {
             doSpin(player, handler);
         }
+    }
+
+    @SubscribeEvent
+    public static void onJump(LivingEvent.LivingJumpEvent event) {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = minecraft.player;
+        if (player == null) return;
+
+        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        if (!handler.isDragon()) return; // handler should never be null
+
+        tryJumpToFly(player, handler);
     }
 
     ///region Spin
@@ -642,6 +654,8 @@ public class ClientFlightHandler {
      */
     @SuppressWarnings("UnusedReturnValue")
     private static boolean tryJumpToFly(LocalPlayer player, DragonStateHandler handler) {
+        if (!jumpToFly) return false;
+
         // This only handles the requirements to trigger jump-to-fly. Other conditions are handled by enableWings()
         if (player.isCreative() || player.isSpectator()) return false;
 
