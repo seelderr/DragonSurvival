@@ -283,8 +283,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		int scissorX0 =  leftPos;
 		int scissorY0 = topPos;
 		int scissorX1 = 140 + leftPos;
-		double renderedSize = Math.min(handler.getSize(), ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 12;
-		int scissorY1 = 130 + topPos - (int)(renderedSize * 8);
+		int scissorY1 = 140 + topPos;
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, 100);
 		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, 20, 0, mouseX, mouseY, minecraft.player);
