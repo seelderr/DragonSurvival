@@ -46,6 +46,7 @@ public enum Keybinds {
 
     /**
      * Runs when the mod is loaded, registers all key mappings.
+     *
      * @param evt
      */
     @SubscribeEvent
