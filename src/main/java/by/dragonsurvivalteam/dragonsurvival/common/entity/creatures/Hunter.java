@@ -113,7 +113,7 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	}
 
 	public PlayState legsPredicate(final AnimationState<Hunter> state) {
-		double movement = getDeltaMovement().length();
+		double movement = AnimationUtils.getMovementSpeed(this);
 
 		if (movement > getRunThreshold()) {
 			return state.setAndContinue(getRunBlend());
