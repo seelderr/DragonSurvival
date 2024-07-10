@@ -89,7 +89,6 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 
 	public boolean isNotIdle() {
 		double movement = AnimationUtils.getMovementSpeed(this);
-		System.out.println(movement);
 		return swingTime > 0 || movement > getWalkThreshold() || isAggro();
 	}
 
