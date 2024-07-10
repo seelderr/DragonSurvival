@@ -94,6 +94,11 @@ public class SpearmanEntity extends Hunter {
 		return WALK_BLEND;
 	}
 
+	@Override
+	public RawAnimation getHeadBlend() {
+		return HEAD_BLEND;
+	}
+
 	private static final RandomAnimationPicker IDLE_ANIMS = new RandomAnimationPicker(
 		new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle1"), 90),
 		new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle2"), 9),
@@ -111,4 +116,6 @@ public class SpearmanEntity extends Hunter {
 	private static final RawAnimation ATTACK_BLEND = RawAnimation.begin().thenLoop("blend_attack");
 
 	private static final RawAnimation AGGRO_BLEND = RawAnimation.begin().thenLoop("blend_aggro");
+
+	private static final RawAnimation HEAD_BLEND = RawAnimation.begin().thenLoop("blend_head");
 }

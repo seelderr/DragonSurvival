@@ -83,6 +83,7 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	@Override
 	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 		controllers.add(new AnimationController<>(this, "everything", 3, this::fullPredicate));
+		controllers.add(new AnimationController<>(this, "head", 3, this::headPredicate));
 		controllers.add(new AnimationController<>(this, "arms", 3, this::armsPredicate));
 		controllers.add(new AnimationController<>(this, "legs", 3, this::legsPredicate));
 	}
@@ -98,6 +99,10 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 		}
 
 		return state.setAndContinue(getIdleAnim());
+	}
+
+	public PlayState headPredicate(final AnimationState<Hunter> state) {
+		return state.setAndContinue(getHeadBlend());
 	}
 
 	public PlayState armsPredicate(final AnimationState<Hunter> state) {
@@ -148,4 +153,6 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	public abstract RawAnimation getRunBlend();
 
 	public abstract RawAnimation getWalkBlend();
+
+	public abstract RawAnimation getHeadBlend();
 }
