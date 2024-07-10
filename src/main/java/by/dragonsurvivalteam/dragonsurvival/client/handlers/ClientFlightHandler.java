@@ -492,6 +492,7 @@ public class ClientFlightHandler {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
         if (player == null) return;
+        if (!event.getEntity().is(player)) return; // Trigger for local player only
 
         DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
         if (!handler.isDragon()) return; // handler should never be null
