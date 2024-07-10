@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.client.models.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
@@ -38,7 +39,7 @@ public class SpearmanEntity extends Hunter {
 
 	@Override
 	public boolean isWithinMeleeAttackRange(LivingEntity pEntity) {
-		return this.getAttackBoundingBox().inflate(0.5, 0, 0.5).intersects(pEntity.getHitbox());
+		return this.getAttackBoundingBox().inflate(ServerConfig.spearmanBonusHorizontalReach, ServerConfig.spearmanBonusVerticalReach, ServerConfig.spearmanBonusHorizontalReach).intersects(pEntity.getHitbox());
 	}
 
 	@Override
