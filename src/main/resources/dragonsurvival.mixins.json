@@ -7,8 +7,8 @@
   "mixins": [
     "AccessorAnimationController",
     "EntityMixin",
-    "MixinItem",
-    "MixinLivingEntity",
+    "IItemExtensionMixin",
+    "LivingEntityMixin",
     "MixinPlayerEnd",
     "MixinPlayerStart",
     "MixinServerPlayerGameMode",
@@ -27,10 +27,10 @@
     "MixinGameRenderer",
     "MixinInventoryScreen",
     "MixinItemInHandRenderer",
-    "client.LiquidBlockRendererMixin",
     "MixinWorldRenderer",
     "client.ItemBlockRenderTypesMixin",
     "client.LightTextureMixin",
+    "client.LiquidBlockRendererMixin",
     "client.LocalPlayerMixin",
     "tool_swap.MixinMultiPlayerGameModeEnd",
     "tool_swap.MixinMultiPlayerGameModeStart"

@@ -3,9 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
@@ -85,6 +87,16 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
                     passenger.setYHeadRot(passenger.getYRot());
                 }
             });
+        });
+    }
+
+    /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */
+    @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
+    private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
+        DragonStateProvider.getCap((Entity) (Object) this).ifPresent(handler -> {
+            if (handler.isDragon() && DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+                callback.setReturnValue(false);
+            }
         });
     }
 
