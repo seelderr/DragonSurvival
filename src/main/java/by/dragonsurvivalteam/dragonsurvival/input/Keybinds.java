@@ -34,7 +34,7 @@ public enum Keybinds {
     FREE_LOOK("ds.keybind.free_look", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
     ;
 
-    private Lazy<KeyMapping> keyMapping;
+    private final Lazy<KeyMapping> keyMapping;
 
     private Keybinds(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
         this(description, keyConflictContext, defaultKey, "ds.keybind.category");
