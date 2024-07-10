@@ -22,7 +22,7 @@ public class ClientEvents {
     public static void onRenderFog(ViewportEvent.RenderFog event) {
         if (ClientUtils.hasLavaVision() && event.getCamera().getFluidInCamera() == FogType.LAVA) {
             event.setNearPlaneDistance(0);
-            event.setFarPlaneDistance(event.getRenderer().getRenderDistance() * 0.15f);
+            event.setFarPlaneDistance(event.getRenderer().getRenderDistance() * 0.2f);
             event.setCanceled(true);
         }
     }
@@ -58,7 +58,7 @@ public class ClientEvents {
         float adjustment = 1;
 
         if (ClientUtils.hasLavaVision() && event.getCamera().getFluidInCamera() == FogType.LAVA) {
-            adjustment = 0.1f;
+            adjustment = 0.15f;
         } else if (ClientUtils.hasWaterVision() && event.getCamera().getFluidInCamera() == FogType.WATER) {
             adjustment = 0.25f;
         }

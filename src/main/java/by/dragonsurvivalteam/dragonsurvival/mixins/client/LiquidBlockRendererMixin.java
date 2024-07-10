@@ -9,14 +9,13 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
+/** Make the lava / water layer (more) see-through */
 @Mixin(LiquidBlockRenderer.class)
 public abstract class LiquidBlockRendererMixin {
     @ModifyVariable(method = "tesselate", at = @At(value = "STORE"), ordinal = 0)
     private float dragonSurvival$handleVision(float alpha, @Local(argsOnly = true) FluidState fluid, @Local(ordinal = 0) boolean isLava) {
-        if (isLava && ClientUtils.hasLavaVision()) {
-            return alpha * 0.25f;
-        } else if (ClientUtils.hasWaterVision() && fluid.is(FluidTags.WATER)) {
-            return alpha * 0.25f;
+        if (isLava && ClientUtils.hasLavaVision() || ClientUtils.hasWaterVision() && fluid.is(FluidTags.WATER)) {
+            return alpha * 0.35f;
         }
 
         return alpha;
