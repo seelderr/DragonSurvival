@@ -14,9 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.ActionWithCooldown;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.*;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -45,11 +43,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
-import org.lwjgl.glfw.GLFW;
 
 /**
  * Used in pair with {@link ServerFlightHandler}
@@ -91,6 +87,11 @@ public class ClientFlightHandler {
     static float lastIncrease;
     static float lastZoom = 1f;
     private static int levitationLeft;
+
+    // 7 ticks is the value used to trigger creative flight (in LocalPlayer#aiStep()).
+    // This ignores checking the ground, letting the dragon start flying even in tight spaces.
+    private static final TickedCooldown jumpFlyCooldown = new TickedCooldown(7);
+    private static boolean lastJumpInputState; // We need to track the rising edge manually
 
     ///region Flight Control
     @SubscribeEvent
@@ -482,22 +483,19 @@ public class ClientFlightHandler {
             toggleWingsManual(player, handler);
         }
 
+        jumpFlyCooldown.tick();
+        boolean isJumping = minecraft.options.keyJump.isDown();
+        if (isJumping && !lastJumpInputState) {
+            // Cooldown already running - was a double jump
+            if (!jumpFlyCooldown.trySet()) {
+                tryJumpToFly(player, handler);
+            }
+        }
+        lastJumpInputState = isJumping;
+
         while (Keybinds.SPIN_ABILITY.consumeClick()) {
             doSpin(player, handler);
         }
-    }
-
-    @SubscribeEvent
-    public static void onJump(LivingEvent.LivingJumpEvent event) {
-        Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        if (player == null) return;
-        if (!event.getEntity().is(player)) return; // Trigger for local player only
-
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-        if (!handler.isDragon()) return; // handler should never be null
-
-        tryJumpToFly(player, handler);
     }
 
     ///region Spin
