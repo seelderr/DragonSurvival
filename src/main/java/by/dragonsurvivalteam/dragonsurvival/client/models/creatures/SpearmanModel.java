@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.SpearmanEntity;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
@@ -28,6 +29,9 @@ public class SpearmanModel extends GeoModel<SpearmanEntity> {
     public void applyMolangQueries(final AnimationState<SpearmanEntity> animationState, double currentTick) {
         super.applyMolangQueries(animationState, currentTick);
 
-        MathParser.setVariable("query.y_head_rot", () -> animationState.getAnimatable().getYHeadRot());
+        Vec3 lookAngle = animationState.getAnimatable().getLookAngle();
+        MathParser.setVariable("query.look_angle_x", () -> lookAngle.x);
+        MathParser.setVariable("query.look_angle_y", () -> lookAngle.y);
+        MathParser.setVariable("query.look_angle_z", () -> lookAngle.z);
     }
 }
