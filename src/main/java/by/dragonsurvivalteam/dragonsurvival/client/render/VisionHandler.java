@@ -14,8 +14,8 @@ import net.neoforged.neoforge.client.event.ViewportEvent;
 /** Handles water and lava vision effects */
 @EventBusSubscriber(Dist.CLIENT)
 public class VisionHandler {
-    private static boolean hasUpdatedSinceChangingLavaVision = false;
-    private static boolean hasLavaVisionPrev = false;
+    private static boolean hadLavaVision;
+    private static boolean hadWaterVision;
 
     @SubscribeEvent
     public static void onRenderFog(ViewportEvent.RenderFog event) {
@@ -26,45 +26,25 @@ public class VisionHandler {
         }
     }
 
+    /** The alpha change in {@link by.dragonsurvivalteam.dragonsurvival.mixins.client.LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered */
     @SubscribeEvent
     public static void onRenderWorldLastEvent(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
             return;
         }
 
-        if (hasLavaVision()) {
-            if (!hasLavaVisionPrev) {
-                hasUpdatedSinceChangingLavaVision = false;
-            }
+        boolean hasLavaVision = hasLavaVision();
+        boolean hasWaterVision = hasWaterVision();
 
-            hasLavaVisionPrev = true;
-        } else {
-            if (hasLavaVisionPrev) {
-                hasUpdatedSinceChangingLavaVision = false;
-            }
+        boolean shouldUpdate = !hadLavaVision && hasLavaVision || hadLavaVision && !hasLavaVision;
+        shouldUpdate = shouldUpdate || (!hadWaterVision && hasWaterVision || hadWaterVision && !hasWaterVision);
 
-            hasLavaVisionPrev = false;
-        }
+        hadLavaVision = hasLavaVision;
+        hadWaterVision = hasWaterVision;
 
-        if (!hasUpdatedSinceChangingLavaVision) {
-            hasUpdatedSinceChangingLavaVision = true;
+        if (shouldUpdate) {
             event.getLevelRenderer().allChanged();
         }
-    }
-
-    @SubscribeEvent
-    public static void onRenderFog(ViewportEvent.ComputeFogColor event) {
-        float adjustment = 1;
-
-        if (hasLavaVision() && event.getCamera().getFluidInCamera() == FogType.LAVA) {
-            adjustment = 0.15f;
-        } else if (hasWaterVision() && event.getCamera().getFluidInCamera() == FogType.WATER) {
-            adjustment = 0.25f;
-        }
-
-        event.setBlue(event.getBlue() * adjustment);
-        event.setRed(event.getRed() * adjustment);
-        event.setGreen(event.getGreen() * adjustment);
     }
 
     public static boolean hasLavaVision() {
