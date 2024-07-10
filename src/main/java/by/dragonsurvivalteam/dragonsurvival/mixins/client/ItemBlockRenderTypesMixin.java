@@ -1,6 +1,6 @@
-package by.dragonsurvivalteam.dragonsurvival.mixins;
+package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.client.util.ClientUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
@@ -13,8 +13,8 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ItemBlockRenderTypes.class)
 public class ItemBlockRenderTypesMixin {
     @ModifyReturnValue(method = "getRenderLayer", at = @At(value = "RETURN"))
-    private static RenderType getRenderLayerReturnValue(RenderType renderType, @Local(argsOnly = true) FluidState fluidState) {
-        if (DragonUtils.hasLavaVision() && fluidState.is(FluidTags.LAVA)) {
+    private static RenderType dragonSurvival$handleLavaVision(RenderType renderType, @Local(argsOnly = true) FluidState fluidState) {
+        if (ClientUtils.hasLavaVision() && fluidState.is(FluidTags.LAVA)) {
             return RenderType.translucent();
         }
 
