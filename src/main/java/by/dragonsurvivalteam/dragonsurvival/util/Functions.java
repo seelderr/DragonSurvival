@@ -7,6 +7,8 @@ import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3f;
 
@@ -28,7 +30,7 @@ public class Functions{
 	}
 
 	public static double ticksToSeconds(int ticks){
-		return ticks / 20;
+		return ticks / 20d;
 	}
 
 	public static double angleDifference(double angle1, double angle2){
@@ -77,7 +79,9 @@ public class Functions{
 
 				float f4 = Mth.sin(f1);
 				float f5 = Mth.cos(f1);
-				lookVector.set((float)(f4 * (handler.getSize() / 40)), 0, (float)(f5 * (handler.getSize() / 40)));
+				AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
+				double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
+				lookVector.set((float)(f4 * (handler.getSize() * scale / 40)), 0, (float)(f5 * (handler.getSize() * scale / 40)));
 			}
 		}
 

@@ -21,7 +21,7 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -118,7 +118,7 @@ public class EmoteHandler {
     }
 
     @SubscribeEvent
-    public static void playerAttacked(final LivingDamageEvent.Post event) {
+    public static void playerAttacked(final LivingIncomingDamageEvent event) {
         EmoteMenuHandler.clearEmotes(event.getEntity());
     }
 

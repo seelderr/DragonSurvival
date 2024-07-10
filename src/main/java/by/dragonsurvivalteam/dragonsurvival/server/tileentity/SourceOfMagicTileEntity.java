@@ -27,6 +27,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
@@ -48,19 +49,15 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 		super(DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), pWorldPosition, pBlockState);
 	}
 
-	public static void serverTick(Level pLevel, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity){
-		BlockState state = pState;
-
-		if(!state.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()){
-			pBlockEntity.level.setBlockAndUpdate(pPos, state.setValue(SourceOfMagicBlock.FILLED, true));
-		}else if(state.getValue(SourceOfMagicBlock.FILLED) && pBlockEntity.isEmpty()){
-			pBlockEntity.level.setBlockAndUpdate(pPos, state.setValue(SourceOfMagicBlock.FILLED, false));
+	public static void serverTick(Level level, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity){
+        if (!pState.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()) {
+			level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, true));
+		} else if(pState.getValue(SourceOfMagicBlock.FILLED) && pBlockEntity.isEmpty()) {
+			level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, false));
 		}
 
-		if(!pBlockEntity.isEmpty()){
-			if(pBlockEntity.ticks % 120 == 0){
-				pBlockEntity.level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.value() ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
-			}
+		if (!pBlockEntity.isEmpty() && pBlockEntity.ticks % 120 == 0) {
+			level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.value() ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
 		}
 
 		pBlockEntity.ticks += 1;
@@ -72,40 +69,40 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public ItemStack getItem(int i){
+	public @NotNull ItemStack getItem(int i){
 		return stacks.get(i);
 	}
 
 	@Override
-	public ItemStack removeItem(int i, int i1){
-		return ContainerHelper.removeItem(stacks, i, i1);
+	public @NotNull ItemStack removeItem(int index, int amount){
+		return ContainerHelper.removeItem(stacks, index, amount);
 	}
 
 	@Override
-	public ItemStack removeItemNoUpdate(int i){
+	public @NotNull ItemStack removeItemNoUpdate(int i){
 		return ContainerHelper.takeItem(stacks, 0);
 	}
 
 	@Override
-	public void setItem(int i, ItemStack itemStack){
+	public void setItem(int i, @NotNull ItemStack itemStack){
 		if(i >= 0 && i < stacks.size()){
 			stacks.set(i, itemStack);
 		}
 	}
 
 	@Override
-	public boolean stillValid(Player playerEntity){
+	public boolean stillValid(@NotNull Player playerEntity){
 		return true;
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries){
+	public void loadAdditional(@NotNull CompoundTag pTag, @NotNull HolderLookup.Provider pRegistries){
 		stacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pTag, stacks, pRegistries);
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries){
+	public void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries){
 		ContainerHelper.saveAllItems(pTag, stacks, pRegistries);
 	}
 
@@ -115,15 +112,15 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public Component getDisplayName(){
+	public @NotNull Component getDisplayName(){
 		return Component.empty().append("Source Of Magic");
 	}
 
 	@Override
-	public AbstractContainerMenu createMenu(int p_createMenu_1_, Inventory p_createMenu_2_, Player p_createMenu_3_){
+	public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player player) {
 		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
 		buffer.writeBlockPos(worldPosition);
-		return new SourceOfMagicContainer(p_createMenu_1_, p_createMenu_2_, buffer);
+		return new SourceOfMagicContainer(containerId, inventory, buffer);
 	}
 
 	@Override

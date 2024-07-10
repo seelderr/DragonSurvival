@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
@@ -21,15 +23,11 @@ import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
-import software.bernie.geckolib.GeckoLibClient;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
 public class DragonEditorRegistry{
@@ -113,7 +111,7 @@ public class DragonEditorRegistry{
 				gson.toJson(savedCustomizations, writer);
 				writer.close();
 			}catch(IOException e){
-				e.printStackTrace();
+				DragonSurvivalMod.LOGGER.error(e);
 			}
 		} else {
 			try {

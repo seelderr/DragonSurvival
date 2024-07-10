@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

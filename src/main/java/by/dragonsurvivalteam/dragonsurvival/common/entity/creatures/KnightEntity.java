@@ -1,11 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
-import by.dragonsurvivalteam.dragonsurvival.client.render.util.CommonTraits;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
@@ -30,7 +29,7 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter, CommonTraits {
+public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 	private final AnimationTimer animationTimer = new AnimationTimer();
 
@@ -43,7 +42,7 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 		// TODO :: Similar to other entities - extract into method?
 		controllers.add(new AnimationController<>(this, "everything", 3, state -> {
 			AnimationController<KnightEntity> animationController = state.getController();
-			double movement = getMovementSpeed(this);
+			double movement = AnimationUtils.getMovementSpeed(this);
 
 			if (swingTime > 0) {
 				AnimationProcessor.QueuedAnimation currentAnimation = animationController.getCurrentAnimation();
@@ -149,8 +148,6 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 		});
 		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 2.0, false));
 		this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
-		this.goalSelector.addGoal(7, new FollowMobGoal<>(PrinceHorseEntity.class, this, 15));
-		this.goalSelector.addGoal(8, new FollowMobGoal<>(PrincessHorseEntity.class, this, 15));
 		this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.1d));
 		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
 	}

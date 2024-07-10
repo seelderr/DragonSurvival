@@ -309,7 +309,6 @@ public class ServerFlightHandler{
 	public static double distanceFromGround(Player player){
 		BlockPos blockHeight = player.level().getHeightmapPos(Types.MOTION_BLOCKING, player.blockPosition());
 		int height = blockHeight.getY();
-		double aboveGround = Math.max(0, player.position().y - height);
-		return aboveGround;
+        return Math.max(0, player.position().y - height);
 	}
 }

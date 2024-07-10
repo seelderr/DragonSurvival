@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.DRAGON_HANDLER;
+import static by.dragonsurvivalteam.dragonsurvival.common.capability.Capabilities.DRAGON_CAPABILITY;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import java.util.Optional;
@@ -43,7 +43,7 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 		return entity.getData(DRAGON_HANDLER);
 	}
 
-	public static boolean isDragon(Entity entity){
+	public static boolean isDragon(@Nullable Entity entity){
 		if (!(entity instanceof Player)) {
 			return false;
 		}

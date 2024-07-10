@@ -12,6 +12,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -33,6 +35,8 @@ public class DragonSizeHandler{
 		if (!DragonStateProvider.isDragon(player)) {
 			return;
 		}
+		AttributeInstance ai = player.getAttribute(Attributes.SCALE);
+		double scale = ai != null ? ai.getValue() : 1.0d;
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
@@ -51,11 +55,12 @@ public class DragonSizeHandler{
 		Pose overridePose = overridePose(player);
 		height = calculateModifiedHeight(height, overridePose, squish);
 		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);// Apply changes
-		// Rounding solves floating point issues that caused the dragon to get stuck inside a block at times.
-		event.setNewSize(calculateDimensions(width, height, eyeHeight));
+		event.setNewSize(new EntityDimensions((float)(height * scale), (float)(width * scale), (float)(eyeHeight * scale), event.getOldSize().attachments(), event.getOldSize().fixed()));
 	}
 	
 	public static double getDragonHeight(Player player) {
+		AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
+		double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		double height = calculateDragonHeight(handler.getSize());
 		boolean squish = false;
@@ -64,22 +69,19 @@ public class DragonSizeHandler{
 			squish = handler.getBody().isSquish();
 		}
 		Pose overridePose = overridePose(player);
-		return calculateModifiedHeight(height, overridePose, squish);
+		return calculateModifiedHeight(height * scale, overridePose, squish);
 	}
 
 	public static double calculateDragonHeight(double size){
 		return (size + 4.0D) / 20.0D;
-        //return 0.9D + 0.9D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateDragonWidth(double size){
 		return (3.0D * size + 62.0D) / 260.0D; // 0.4 -> Config Dragon Max;
-        //return 0.4D + 0.2D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateDragonEyeHeight(double size){
 		return (11.0D * size + 54.0D) / 260.0D; // 0.8 -> Config Dragon Max
-        //return 0.8D + 0.8D * (size - 14.0D) / (ServerConfig.maxGrowthSize - 14.0D);
 	}
 
 	public static double calculateModifiedEyeHeight(double eyeHeight, Pose pose, boolean squish){
@@ -143,7 +145,7 @@ public class DragonSizeHandler{
 	public static boolean canPoseFit(LivingEntity player, Pose pose){
 		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
 
-		if (!capability.isPresent()){
+		if (capability.isEmpty()){
 			return false;
 		}
 		

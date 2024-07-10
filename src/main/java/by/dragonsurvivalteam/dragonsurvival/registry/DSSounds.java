@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import java.util.function.Supplier;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -8,13 +9,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.neoforged.neoforge.common.util.DeferredSoundType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 public class DSSounds {
 	public static final DeferredRegister<SoundEvent> DS_SOUNDS = DeferredRegister.create(
 			BuiltInRegistries.SOUND_EVENT,
 			MODID
 	);
+	public static Supplier<SoundEvent> BONK = DS_SOUNDS.register("bonk", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "bonk")));
+
 	public static Supplier<SoundEvent> ACTIVATE_BEACON = DS_SOUNDS.register("activate_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "activate_beacon")));
 	public static Supplier<SoundEvent> DEACTIVATE_BEACON = DS_SOUNDS.register("deactivate_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "deactivate_beacon")));
 	public static Supplier<SoundEvent> UPGRADE_BEACON = DS_SOUNDS.register("upgrade_beacon", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "upgrade_beacon")));

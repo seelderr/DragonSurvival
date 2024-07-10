@@ -30,7 +30,7 @@ public class DragonTypes {
 		classMappings.put(lcName, (Supplier<AbstractDragonType>)constructor);
 		staticTypes.put(lcName, type);
 		staticSubtypes.put(lcName, type);
-		subtypeMap.computeIfAbsent(lcName, s -> new ArrayList<AbstractDragonType>());
+		subtypeMap.computeIfAbsent(lcName, s -> new ArrayList<>());
 		subtypeMap.get(lcName).add(type);
 		return type;
 	}
@@ -42,7 +42,7 @@ public class DragonTypes {
 		classMappings.put(lcSubName, (Supplier<AbstractDragonType>) constructor);
 		
 		staticSubtypes.put(lcSubName, subtype);
-		subtypeMap.computeIfAbsent(lcTypeName, s -> new ArrayList<AbstractDragonType>());
+		subtypeMap.computeIfAbsent(lcTypeName, s -> new ArrayList<>());
 		subtypeMap.get(lcTypeName).add(subtype);
 		return subtype;
 	}
@@ -60,7 +60,7 @@ public class DragonTypes {
 	}
 
 	public static List<String> getAllSubtypes(){
-		ArrayList<String> res = new ArrayList<String>();
+		ArrayList<String> res = new ArrayList<>();
 		for (String type : getTypes()) {
 			for (AbstractDragonType subtype : subtypeMap.get(type)) {
 				res.add(subtype.getSubtypeName());

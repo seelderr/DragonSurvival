@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -23,40 +25,36 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import org.jetbrains.annotations.NotNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation resetSettingsTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
 	private final ExtendedButton hueReset;
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;
 	private final ExtendedCheckbox glowing;
-	private final DragonEditorScreen screen;
-	private final int x;
+    private final int x;
 	private final int y;
 	private final int xSize;
 	private final int ySize;
 	private final Supplier<LayerSettings> settings;
 	public boolean visible;
-	private ExtendedSlider hueSlider;
-	private ExtendedSlider saturationSlider;
-	private ExtendedSlider brightnessSlider;
+	private final ExtendedSlider hueSlider;
+	private final ExtendedSlider saturationSlider;
+	private final ExtendedSlider brightnessSlider;
 
 	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer){
-		this.screen = screen;
-		this.x = x;
+        this.x = x;
 		this.y = y;
 		this.xSize = xSize;
 		this.ySize = ySize;
 
 		settings = () -> screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get();
 		LayerSettings set = settings.get();
-		DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, screen.handler), layer, set.selectedSkin, screen.handler.getType());
+		DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
 		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
 			settings.get().glowing = !settings.get().glowing;
 			box.selected = settings.get().glowing;
-			screen.handler.getSkinData().compileSkin();
+			DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 		});
 
 		float[] hsb = new float[]{set.hue, set.saturation, set.brightness};
@@ -85,7 +83,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
                 settings.get().modifiedColor = text != null && (Float.compare(Math.round(value * 360), Math.round(text.average_hue * 360)) != 0 || !(Math.abs(value1 - 0.5f) < 0.05) || !(Math.abs(value2 - 0.5f) < 0.05));
 
-				DragonEditorScreen.handler.getSkinData().compileSkin();
+				DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -125,7 +123,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 				settings.get().modifiedColor = text != null && (Float.compare(Math.round(value * 360), Math.round(text.average_hue * 360)) != 0 || !(Math.abs(value1 - 0.5f) < 0.05) || !(Math.abs(value2 - 0.5f) < 0.05));
 
-				DragonEditorScreen.handler.getSkinData().compileSkin();
+				DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -158,14 +156,6 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 		};
 
-		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 24, 20, 20, Component.empty(), button -> brightnessSlider.setValue(180)) {
-			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
-			}
-		};
-
 		brightnessSlider = new ExtendedSlider(x + 3, y + 44 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[2] * 360, true){
 			@Override
 			protected void applyValue(){
@@ -180,7 +170,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 				settings.get().brightness = value2;
 				settings.get().modifiedColor = text != null && (Float.compare(Math.round(value * 360), Math.round(text.average_hue * 360)) != 0 || !(Math.abs(value1 - 0.5f) < 0.05) || !(Math.abs(value2 - 0.5f) < 0.05));
 
-				DragonEditorScreen.handler.getSkinData().compileSkin();
+				DragonEditorScreen.HANDLER.getSkinData().compileSkin();
 				screen.update();
 			}
 
@@ -202,6 +192,14 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
 					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
 				}
+			}
+		};
+
+		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 24, 20, 20, Component.empty(), button -> brightnessSlider.setValue(180)) {
+			@Override
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
+				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 	}

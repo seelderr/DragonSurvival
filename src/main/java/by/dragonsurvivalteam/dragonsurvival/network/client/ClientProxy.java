@@ -288,7 +288,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
             Optional<Holder.Reference<MobEffect>> mobEffect = BuiltInRegistries.MOB_EFFECT.getHolder(message.effectId());
 
-            if (mobEffect != null) {
+            if (mobEffect.isPresent()) {
                 if (entity instanceof LivingEntity livingEntity) {
                     livingEntity.removeEffect(mobEffect.get());
                 }

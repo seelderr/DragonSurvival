@@ -1,15 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class ServerConfig{
@@ -409,10 +413,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "dragonsAreScary", comment = "Whether dragons are scary or not." )
 	public static Boolean dragonsAreScary = true;
 
-	@ConfigType(EntityType.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "allowedVehicles", comment = "List of rideable entities. Format: modid:id" )
-	public static List<String> allowedVehicles = List.of("minecraft:boat", "littlelogistics:seater_barge", "minecraft:minecart", "create:seat", "create:contraption", "create:gantry_contraption", "create:stationary_contraption", "hexerei:broom", "botania:player_mover", "quark:quark_boat");
-
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
 	public static Boolean ridingBlacklist = true;
 
@@ -721,16 +721,13 @@ public class ServerConfig{
 	public static Boolean spawnKnight = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowSquireSpawning", comment = "Dragon Squire spawning enabled?" )
-	public static Boolean spawnSquire = true;
+	public static Boolean spawnSpearman = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHunterSpawning", comment = "Dragon Hunter spawning enabled?" )
 	public static Boolean spawnHunter = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHoundSpawning", comment = "Dragon Knight hound spawning enabled?" )
 	public static Boolean spawnHound = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowPrinceAndPrincessSpawning", comment = "Princess and prince spawning enabled?" )
-	public static Boolean spawnPrinceAndPrincess = true;
 
 	@ConfigRange( min = 10, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "villagerKillxp", comment = "How many experience points are gained for killing a villager" )
@@ -814,48 +811,28 @@ public class ServerConfig{
 	public static Double hunterTrappedDebuffDuration = 5.0;
 
 	@ConfigRange( min = 10d, max = 60d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireHealth", comment = "Dragon Squire health" )
-	public static Double squireHealth = 24d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanHealth", comment = "Dragon Spearman health" )
+	public static Double spearmanHealth = 24d;
 
 	@ConfigRange( min = 2d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireDamage", comment = "Dragon Squire damage" )
-	public static Double squireDamage = 6d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanDamage", comment = "Dragon Spearman damage" )
+	public static Double spearmanDamage = 6d;
 
 	@ConfigRange( min = 0.1d, max = 0.6d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireSpeed", comment = "Dragon Squire speed" )
-	public static Double squireSpeed = 0.35d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanSpeed", comment = "Dragon Spearman speed" )
+	public static Double spearmanSpeed = 0.35d;
 
 	@ConfigRange( min = 0d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "squire"}, key = "squireArmor", comment = "Dragon Squire armor" )
-	public static Double squireArmor = 2d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanArmor", comment = "Dragon Spearman armor" )
+	public static Double spearmanArmor = 2d;
 
-	@ConfigRange( min = 1d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeDamage", comment = "Prince base damage" )
-	public static Double princeDamage = 1d;
+	@ConfigRange( min = 0d, max = 20d)
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusHorizontalReach", comment = "Additional horizontal reach that the spearman gets over normal mobs.")
+	public static Double spearmanBonusHorizontalReach = 0.5d;
 
-	@ConfigRange( min = 10d, max = 60d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeHealth", comment = "Prince health" )
-	public static Double princeHealth = 40d;
-
-	@ConfigRange( min = 0.2d, max = 0.6d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeSpeed", comment = "Prince speed" )
-	public static Double princeSpeed = 0.3d;
-
-	@ConfigRange( min = 0d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeArmor", comment = "Prince armor" )
-	public static Double princeArmor = 6d;
-
-	@ConfigRange( min = 10d, max = 60d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeHealth", comment = "Prince health" )
-	public static Double princessHealth = 10d;
-
-	@ConfigRange( min = 0.2d, max = 0.6d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeSpeed", comment = "Prince speed" )
-	public static Double princessSpeed = 0.3d;
-
-	@ConfigRange( min = 0d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "prince"}, key = "princeArmor", comment = "Prince armor" )
-	public static Double princessArmor = 0d;
+	@ConfigRange( min = 0d, max = 20d)
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusVerticalReach", comment = "Additional vertical reach that the spearman gets over normal mobs.")
+	public static Double spearmanBonusVerticalReach = 0.5d;
 
 	@ConfigRange( min = 1, max = 60 * 60 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "constantEffect", comment = "Duration of effect given by beacon constantly in seconds" )

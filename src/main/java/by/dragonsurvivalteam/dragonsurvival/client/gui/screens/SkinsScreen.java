@@ -1,9 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
@@ -48,8 +51,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SkinsScreen extends Screen{
 	private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_interface.png");
@@ -221,8 +222,10 @@ public class SkinsScreen extends Screen{
 		// Button to enable / disable rendering of the newborn dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			boolean newValue = !handler.getSkinData().renderNewborn;
 
-			handler.getSkinData().renderNewborn = !handler.getSkinData().renderNewborn;
+			handler.getSkinData().renderNewborn = newValue;
+			renderNewborn = newValue;
 			ConfigHandler.updateConfigValue("rendering/renderNewbornSkin", handler.getSkinData().renderNewborn);
 			PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
 			setTextures();
@@ -230,9 +233,7 @@ public class SkinsScreen extends Screen{
 			@Override
 			public void renderWidget(GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_){
 				super.renderWidget(guiGraphics, p_230431_2_, p_230431_3_, p_230431_4_);
-
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-				guiGraphics.blit(!handler.getSkinData().renderNewborn ? UNCHECKED : CHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
+				guiGraphics.blit(renderNewborn ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
 			}
 		});
 
@@ -289,11 +290,10 @@ public class SkinsScreen extends Screen{
 
 		Button discordURLButton = new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
 			try{
-				URI uri = new URI(DISCORD_URL);
-				clickedLink = uri;
+                clickedLink = new URI(DISCORD_URL);
 				minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, DISCORD_URL, false));
-			}catch(URISyntaxException urisyntaxexception){
-				urisyntaxexception.printStackTrace();
+			}catch(URISyntaxException exception){
+				DragonSurvivalMod.LOGGER.error(exception);
 			}
 		}, Supplier::get) {
 			@Override
@@ -309,8 +309,8 @@ public class SkinsScreen extends Screen{
 				URI uri = new URI(WIKI_URL);
 				clickedLink = uri;
 				minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, WIKI_URL, false));
-			}catch(URISyntaxException urisyntaxexception){
-				urisyntaxexception.printStackTrace();
+			}catch(URISyntaxException exception){
+				DragonSurvivalMod.LOGGER.error(exception);
 			}
 		}, Supplier::get) {
 			@Override

@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.*;
 
-import java.util.ArrayList;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -13,8 +13,6 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredRegister;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.*;
 
 public class DSCreativeTabs {
 

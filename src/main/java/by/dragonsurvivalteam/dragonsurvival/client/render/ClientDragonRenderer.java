@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonArmorModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -36,7 +35,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.LocalPlayer;
@@ -49,6 +47,8 @@ import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -242,7 +242,7 @@ public class ClientDragonRenderer {
 					NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
 					// TODO: Test this, we might not need shouldShowName
-					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).callShouldShowName(player)) {
+					if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).dragonsurvival$callShouldShowName(player)) {
 						((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
 					}
 				}
@@ -250,7 +250,8 @@ public class ClientDragonRenderer {
 				poseStack.mulPose(Axis.YN.rotationDegrees((float) handler.getMovementData().bodyYaw));
 
 				// This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
-				float scale = (float) Math.max(size / 40.0D, 0.4D);
+				AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
+				float scale = (float) (Math.max(size / 40.0D, 0.4D) * (attributeInstance != null ? attributeInstance.getValue() : 1.0D));
 				poseStack.scale(scale, scale, scale);
 
 				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
@@ -343,7 +344,7 @@ public class ClientDragonRenderer {
 
 				if (!player.isSpectator()) {
 					// Render the parrot on the players shoulder
-					((AccessorLivingRenderer) playerRenderer).getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+					((AccessorLivingRenderer) playerRenderer).dragonsurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
 						poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
 						poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
 						double height = 1.3 * scale;

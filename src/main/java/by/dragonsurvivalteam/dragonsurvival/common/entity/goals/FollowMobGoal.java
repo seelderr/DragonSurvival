@@ -9,13 +9,13 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.AABB;
 
 public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal{
-	Class classs;
+	Class type;
 	Mob follower;
 	LivingEntity target;
 	int distance;
 
-	public FollowMobGoal(Class classs, Mob follower, int distance){
-		this.classs = classs;
+	public FollowMobGoal(Class<? extends LivingEntity> type, Mob follower, int distance){
+		this.type = type;
 		this.follower = follower;
 		this.distance = distance;
 	}
@@ -23,7 +23,7 @@ public class FollowMobGoal<T extends Class<? extends LivingEntity>> extends Goal
 	@Override
 	public boolean canUse(){
 		if(target == null){
-			List<LivingEntity> list = follower.level().getEntitiesOfClass(classs, new AABB(follower.blockPosition()).inflate(follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
+			List<LivingEntity> list = follower.level().getEntitiesOfClass(type, new AABB(follower.blockPosition()).inflate(follower.getAttributeValue(Attributes.FOLLOW_RANGE)));
 			if(!list.isEmpty()){
 				target = list.get(follower.getRandom().nextInt(list.size()));
 			}

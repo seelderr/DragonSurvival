@@ -2,7 +2,7 @@
   "format_version": "1.8.0",
   "animations": {
     "idle": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 1.92,
       "bones": {
         "bone": {
@@ -133,7 +133,7 @@
       }
     },
     "explosion": {
-      "loop": true,
+      "loop": "loop",
       "animation_length": 0.6,
       "bones": {
         "bone": {
