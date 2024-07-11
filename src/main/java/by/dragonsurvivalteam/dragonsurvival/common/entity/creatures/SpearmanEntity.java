@@ -54,12 +54,12 @@ public class SpearmanEntity extends Hunter {
 		controllers.add(new AnimationController<>(this, "legs", 3, this::legsPredicate));
 	}
 
-	public boolean isNotIdle() {
+	private boolean isNotIdle() {
 		double movement = AnimationUtils.getMovementSpeed(this);
 		return swingTime > 0 || movement > getWalkThreshold() || isAggro();
 	}
 
-	public PlayState fullPredicate(final AnimationState<Hunter> state) {
+	public PlayState fullPredicate(final AnimationState<SpearmanEntity> state) {
 		if (isNotIdle()) {
 			isIdleAnimSet = false;
 			return PlayState.STOP;
@@ -68,11 +68,11 @@ public class SpearmanEntity extends Hunter {
 		return state.setAndContinue(getIdleAnim());
 	}
 
-	public PlayState headPredicate(final AnimationState<Hunter> state) {
+	public PlayState headPredicate(final AnimationState<SpearmanEntity> state) {
 		return state.setAndContinue(HEAD_BLEND);
 	}
 
-	public PlayState armsPredicate(final AnimationState<Hunter> state) {
+	public PlayState armsPredicate(final AnimationState<SpearmanEntity> state) {
 		if (swingTime > 0) {
 			return state.setAndContinue(ATTACK_BLEND);
 		} else if(isAggro()) {
@@ -84,7 +84,7 @@ public class SpearmanEntity extends Hunter {
 		return PlayState.STOP;
 	}
 
-	public PlayState legsPredicate(final AnimationState<Hunter> state) {
+	public PlayState legsPredicate(final AnimationState<SpearmanEntity> state) {
 		double movement = AnimationUtils.getMovementSpeed(this);
 
 		if (movement > getRunThreshold()) {

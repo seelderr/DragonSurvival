@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
+import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -24,138 +26,118 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunter {
-	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	private final AnimationTimer animationTimer = new AnimationTimer();
+import java.util.List;
 
+public class KnightEntity extends Hunter {
 	public KnightEntity(final EntityType<? extends PathfinderMob> type, final Level level) {
 		super(type, level);
 	}
 
+	private RawAnimation currentIdleAnim;
+	private boolean isIdleAnimSet = false;
+
+	private RawAnimation currentAttackAnim;
+	private boolean isAttackAnimSet = false;
+
 	@Override
 	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-		// TODO :: Similar to other entities - extract into method?
-		controllers.add(new AnimationController<>(this, "everything", 3, state -> {
-			AnimationController<KnightEntity> animationController = state.getController();
-			double movement = AnimationUtils.getMovementSpeed(this);
+		controllers.add(new AnimationController<>(this, "everything", 3, this::fullPredicate));
+		controllers.add(new AnimationController<>(this, "head", 3, this::headPredicate));
+	}
 
-			if (swingTime > 0) {
-				AnimationProcessor.QueuedAnimation currentAnimation = animationController.getCurrentAnimation();
+	private boolean isNotIdle() {
+		double movement = AnimationUtils.getMovementSpeed(this);
+		return swingTime > 0 || movement > getWalkThreshold() || isInWater();
+	}
 
-				if (currentAnimation != null) {
-					switch (currentAnimation.animation().name()) {
-						case "attack" -> {
-							if (animationTimer.getDuration("attack2") <= 0) {
-								if (random.nextBoolean()) {
-									animationTimer.putAnimation("attack", 17d);
-									return state.setAndContinue(ATTACK);
-								} else {
-									animationTimer.putAnimation("attack2", 17d);
-									return state.setAndContinue(ATTACK_2);
-								}
-							}
-						}
-						case "attack2" -> {
-							if (animationTimer.getDuration("attack") <= 0) {
-								if (random.nextBoolean()) {
-									animationTimer.putAnimation("attack", 17d);
-									return state.setAndContinue(ATTACK);
-								} else {
-									animationTimer.putAnimation("attack2", 17d);
-									return state.setAndContinue(ATTACK_2);
-								}
-							}
-						}
-						default -> {
-							if (random.nextBoolean()) {
-								animationTimer.putAnimation("attack", 17d);
-								return state.setAndContinue(ATTACK);
-							} else {
-								animationTimer.putAnimation("attack2", 17d);
-								return state.setAndContinue(ATTACK_2);
-							}
-						}
-					}
-				}
-			}
+	public PlayState fullPredicate(final AnimationState<KnightEntity> state) {
+		double movement = AnimationUtils.getMovementSpeed(this);
 
-			// TODO 1.20 :: AnimationUtils.createAnimation
-			if (movement > 0.5) {
-				return state.setAndContinue(WALK);
-			} else if (movement > 0.05) {
-				return state.setAndContinue(RUN);
-			} else {
-				AnimationProcessor.QueuedAnimation currentAnimation = animationController.getCurrentAnimation();
+		if(swingTime == 0) {
+			isAttackAnimSet = false;
+		}
 
-				if (currentAnimation == null) {
-					animationTimer.putAnimation("idle", 88d);
-					return state.setAndContinue(IDLE);
-				} else {
-					switch (currentAnimation.animation().name()) {
-						case "idle" -> {
-							if (animationTimer.getDuration("idle") <= 0) {
-								if (random.nextInt(2000) == 0) {
-									animationTimer.putAnimation("idle_2", 145d);
-									return state.setAndContinue(IDLE_2);
-								}
-							}
-						}
-						case "walk", "run" -> {
-							animationTimer.putAnimation("idle", 88d);
-							return state.setAndContinue(IDLE);
-						}
-						case "idle_2" -> {
-							if (animationTimer.getDuration("idle_2") <= 0) {
-								animationTimer.putAnimation("idle", 88d);
-								return state.setAndContinue(IDLE);
-							}
-						}
-					}
-				}
-			}
+		if(isIdleAnimSet) {
+			isIdleAnimSet = !isNotIdle();
+		}
 
-			return PlayState.CONTINUE;
-		}));
+		if (swingTime > 0) {
+			return state.setAndContinue(getAttackAnim());
+		} else if (isInWater()) {
+			return state.setAndContinue(SWIM);
+		} else if (movement > getRunThreshold()) {
+			return state.setAndContinue(RUN);
+		} else if (movement > getWalkThreshold()) {
+			return state.setAndContinue(WALK);
+		} else {
+			return state.setAndContinue(getIdleAnim());
+		}
+	}
+
+	public RawAnimation getIdleAnim() {
+		if (!isIdleAnimSet) {
+			currentIdleAnim = IDLE_ANIMS.pickRandomAnimation();
+			isIdleAnimSet = true;
+		}
+		return currentIdleAnim;
+	}
+
+	public RawAnimation getAttackAnim() {
+		if (!isAttackAnimSet) {
+			currentAttackAnim = ATTACK_ANIMS.pickRandomAnimation();
+			isAttackAnimSet = true;
+		}
+		return currentAttackAnim;
+	}
+
+	public PlayState headPredicate(final AnimationState<Hunter> state) {
+		return state.setAndContinue(HEAD_BLEND);
 	}
 
 	@Override
-	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return cache;
+	public int getCurrentSwingDuration() {
+		return 17;
+	}
+
+	@Override
+	public double getRunThreshold() {
+		return 0.15;
+	}
+
+	@Override
+	public double getWalkThreshold() {
+		return 0.01;
 	}
 
 	@Override
 	protected void registerGoals() {
 		super.registerGoals();
 
-		this.goalSelector.addGoal(1, new WaterAvoidingRandomStrollGoal(this, 1));
-		this.targetSelector.addGoal(2, new HurtByTargetGoal(this, Hunter.class).setAlertOthers());
-		this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 1, true, false, living -> living.hasEffect(MobEffects.BAD_OMEN) || living.hasEffect(DSEffects.ROYAL_CHASE)));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, false, false) {
-			@Override
-			public boolean canUse() {
-				return super.canUse() && HunterEntityCheckProcedure.execute(KnightEntity.this);
-			}
-
-			@Override
-			public boolean canContinueToUse() {
-				return super.canContinueToUse() && HunterEntityCheckProcedure.execute(KnightEntity.this);
-			}
-		});
-		this.goalSelector.addGoal(5, new MeleeAttackGoal(this, 2.0, false));
-		this.targetSelector.addGoal(6, new HurtByTargetGoal(this));
-		this.goalSelector.addGoal(9, new RandomStrollGoal(this, 0.1d));
-		this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+		this.goalSelector.addGoal(3, new MeleeAttackGoal(this, 2.0, true));
 	}
 
 	@Override
 	public void tick(){
-		updateSwingTime();
 		super.tick();
+		applyMagicDisabledDebuff();
+	}
+
+	private void applyMagicDisabledDebuff(){
+		double detectionRadius = 8.0;
+		List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(detectionRadius));
+
+		for (Player player : players) {
+			if (DragonStateProvider.isDragon(player)) {
+				// Apply the debuff
+			}
+		}
 	}
 
 	@Override
@@ -171,23 +153,32 @@ public class KnightEntity extends PathfinderMob implements GeoEntity, DragonHunt
 		return false;
 	}
 
-	@Nullable public SpawnGroupData finalizeSpawn(ServerLevelAccessor serverWorld, DifficultyInstance difficultyInstance, MobSpawnType spawnReason, @Nullable SpawnGroupData entityData){
+	@Nullable public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverWorld, @NotNull DifficultyInstance difficultyInstance, @NotNull MobSpawnType spawnReason, @Nullable SpawnGroupData entityData){
 		populateDefaultEquipmentSlots(random, difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData);
 	}
 
 	@Override
-	protected void populateDefaultEquipmentSlots(RandomSource randomSource, DifficultyInstance difficultyInstance){
+	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, @NotNull DifficultyInstance difficultyInstance){
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
 		if(random.nextDouble() < ServerConfig.knightShieldChance){
 			setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
 		}
 	}
 
-	private static final RawAnimation ATTACK = RawAnimation.begin().thenPlay("attack");
-	private static final RawAnimation ATTACK_2 = RawAnimation.begin().thenPlay("attack2");
-	private static final RawAnimation RUN = RawAnimation.begin().thenPlay("run");
-	private static final RawAnimation WALK = RawAnimation.begin().thenPlay("walk");
-	private static final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
-	private static final RawAnimation IDLE_2 = RawAnimation.begin().thenPlay("idle_2");
+	private static final RandomAnimationPicker ATTACK_ANIMS = new RandomAnimationPicker(
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("attack1"), 90),
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("attack2"), 10)
+	);
+
+	private static final RawAnimation RUN = RawAnimation.begin().thenLoop("run");
+	private static final RawAnimation WALK = RawAnimation.begin().thenLoop("walk");
+	private static final RawAnimation SWIM = RawAnimation.begin().thenLoop("swim");
+
+	private static final RandomAnimationPicker IDLE_ANIMS = new RandomAnimationPicker(
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle1"), 90),
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle2"), 10)
+	);
+
+	private static final RawAnimation HEAD_BLEND = RawAnimation.begin().thenLoop("blend_head");
 }
