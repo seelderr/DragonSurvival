@@ -81,57 +81,6 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	}
 
 	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "everything", 3, this::fullPredicate));
-		controllers.add(new AnimationController<>(this, "head", 3, this::headPredicate));
-		controllers.add(new AnimationController<>(this, "arms", 3, this::armsPredicate));
-		controllers.add(new AnimationController<>(this, "legs", 3, this::legsPredicate));
-	}
-
-	public boolean isNotIdle() {
-		double movement = AnimationUtils.getMovementSpeed(this);
-		return swingTime > 0 || movement > getWalkThreshold() || isAggro();
-	}
-
-	public PlayState fullPredicate(final AnimationState<Hunter> state) {
-		if (isNotIdle()) {
-			return PlayState.STOP;
-		}
-
-		return state.setAndContinue(getIdleAnim());
-	}
-
-	public PlayState headPredicate(final AnimationState<Hunter> state) {
-		return state.setAndContinue(getHeadBlend());
-	}
-
-	public PlayState armsPredicate(final AnimationState<Hunter> state) {
-		if (swingTime > 0) {
-			return state.setAndContinue(getAttackBlend());
-		} else if(isAggro()) {
-			return state.setAndContinue(getAggroBlend());
-		} else if(isNotIdle()) {
-			return state.setAndContinue(getWalkArmsBlend());
-		}
-
-		return PlayState.STOP;
-	}
-
-	public PlayState legsPredicate(final AnimationState<Hunter> state) {
-		double movement = AnimationUtils.getMovementSpeed(this);
-
-		if (movement > getRunThreshold()) {
-			return state.setAndContinue(getRunBlend());
-		} else if (movement > getWalkThreshold()) {
-			return state.setAndContinue(getWalkBlend());
-		} else if(isAggro()) {
-			return state.setAndContinue(getIdleBlend());
-		}
-
-		return PlayState.STOP;
-	}
-
-	@Override
 	public AnimatableInstanceCache getAnimatableInstanceCache() {
 		return cache;
 	}
@@ -139,20 +88,4 @@ public abstract class Hunter extends PathfinderMob implements DragonHunter, GeoE
 	public abstract double getRunThreshold();
 
 	public abstract double getWalkThreshold();
-
-	public abstract RawAnimation getAttackBlend();
-
-	public abstract RawAnimation getAggroBlend();
-
-	public abstract RawAnimation getIdleAnim();
-
-	public abstract RawAnimation getIdleBlend();
-
-	public abstract RawAnimation getWalkArmsBlend();
-
-	public abstract RawAnimation getRunBlend();
-
-	public abstract RawAnimation getWalkBlend();
-
-	public abstract RawAnimation getHeadBlend();
 }

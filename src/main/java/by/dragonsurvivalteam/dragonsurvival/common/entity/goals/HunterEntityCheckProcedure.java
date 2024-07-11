@@ -12,6 +12,6 @@ public class HunterEntityCheckProcedure {
     public static boolean execute(Entity entity) {
         if (entity == null)
             return false;
-        return !entity.getType().is(TYPE);
+        return entity.getType().is(TYPE);
     }
 }
