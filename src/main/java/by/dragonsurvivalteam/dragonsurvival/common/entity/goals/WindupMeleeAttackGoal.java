@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.models.goals;
+package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;

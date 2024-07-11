@@ -790,8 +790,12 @@ public class ServerConfig{
 	public static Integer ambusherAttackInterval = 65;
 
 	@ConfigRange(min = 0, max = 10)
-	@ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherReinforcementCount", comment = "How many spearman reinforce the ambusher when he is attacked")
-	public static Integer ambusherReinforcementCount = 4;
+	@ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpearmanReinforcementCount", comment = "How many spearman reinforce the ambusher when he is attacked")
+	public static Integer ambusherSpearmanReinforcementCount = 4;
+
+	@ConfigRange( min = 0, max = 10)
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHoundReinforcementCount", comment = "How many hounds reinforce the ambusher when he is attacked")
+	public static Integer ambusherHoundReinforcementCount = 2;
 
 	@ConfigRange( min = 8d, max = 40d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndHealth", comment = "Knight Hound health" )
@@ -807,6 +811,10 @@ public class ServerConfig{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndDoesSlowdown", comment = "Does Knight Hound apply speed slowdown?" )
 	public static Boolean houndDoesSlowdown = true;
+
+	@ConfigRange( min = 0.1d, max = 1.0d)
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndSlowdownChance", comment = "Probably of the hound applying slowdown with their attack")
+	public static Double houndSlowdownChance = 0.5d;
 
 	@ConfigRange( min = 10d, max = 60d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterHealth", comment = "Dragon Hunter health" )

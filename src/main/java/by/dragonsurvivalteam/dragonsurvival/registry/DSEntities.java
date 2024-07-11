@@ -77,9 +77,9 @@ public class DSEntities {
 					.build("fireball"));
 
 	// Entities
-	public static DeferredHolder<EntityType<?>, EntityType<HunterHoundEntity>> HUNTER_HOUND = DS_ENTITY_TYPES.register(
+	public static DeferredHolder<EntityType<?>, EntityType<HoundEntity>> HUNTER_HOUND = DS_ENTITY_TYPES.register(
 			"hunter_hound",
-			() -> EntityType.Builder.of(HunterHoundEntity::new, MobCategory.MONSTER)
+			() -> EntityType.Builder.of(HoundEntity::new, MobCategory.MONSTER)
 					.sized(0.6F, 0.85F)
 					.clientTrackingRange(64)
 					.updateInterval(1)
