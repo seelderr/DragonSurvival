@@ -85,27 +85,27 @@ public class DSEntities {
 					.updateInterval(1)
 					.build("hunter_hound"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<SpearmanEntity>> SPEARMAN_HUNTER = DS_ENTITY_TYPES.register(
-			"spearman",
+	public static DeferredHolder<EntityType<?>, EntityType<SpearmanEntity>> HUNTER_SPEARMAN = DS_ENTITY_TYPES.register(
+			"hunter_spearman",
 			() -> EntityType.Builder.of(SpearmanEntity::new, MobCategory.MONSTER)
 					.sized(0.6F, 1.95F)
 					.clientTrackingRange(64)
 					.updateInterval(1)
-					.build("spearman"));
+					.build("hunter_spearman"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<KnightEntity>> KNIGHT = DS_ENTITY_TYPES.register(
-			"knight", () -> EntityType.Builder.of(KnightEntity::new, MobCategory.MONSTER)
+	public static DeferredHolder<EntityType<?>, EntityType<KnightEntity>> HUNTER_KNIGHT = DS_ENTITY_TYPES.register(
+			"hunter_knight", () -> EntityType.Builder.of(KnightEntity::new, MobCategory.MONSTER)
 					.sized(0.8f, 2.5f)
 					.clientTrackingRange(64)
 					.updateInterval(1)
-					.build("knight"));
+					.build("hunter_knight"));
 
-	public static DeferredHolder<EntityType<?>, EntityType<AmbusherEntity>> AMBUSHER = DS_ENTITY_TYPES.register(
-			"ambusher", () -> EntityType.Builder.of(AmbusherEntity::new, MobCategory.MONSTER)
+	public static DeferredHolder<EntityType<?>, EntityType<AmbusherEntity>> HUNTER_AMBUSHER = DS_ENTITY_TYPES.register(
+			"hunter_ambusher", () -> EntityType.Builder.of(AmbusherEntity::new, MobCategory.MONSTER)
 					.sized(0.8f, 2.5f)
 					.clientTrackingRange(64)
 					.updateInterval(1)
-					.build("ambusher"));
+					.build("hunter_ambusher"));
 
 	// Professions
 	public static VillagerProfession CAPTAIN_PROFESSION = new VillagerProfession("captain", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
@@ -115,18 +115,18 @@ public class DSEntities {
 		event.put(DRAGON.get(), DragonEntity.createLivingAttributes().build());
 		event.put(DRAGON_ARMOR.get(), DragonEntity.createLivingAttributes().build());
 		event.put(HUNTER_HOUND.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
-		event.put(SPEARMAN_HUNTER.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.spearmanSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.spearmanDamage).add(Attributes.ARMOR, ServerConfig.spearmanArmor).add(Attributes.MAX_HEALTH, ServerConfig.spearmanHealth).build());
-		event.put(KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
-		event.put(AMBUSHER.get(), AmbusherEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.ambusherSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.ambusherDamage).add(Attributes.ARMOR, ServerConfig.ambusherArmor).add(Attributes.MAX_HEALTH, ServerConfig.ambusherHealth).build());
+		event.put(HUNTER_SPEARMAN.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.spearmanSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.spearmanDamage).add(Attributes.ARMOR, ServerConfig.spearmanArmor).add(Attributes.MAX_HEALTH, ServerConfig.spearmanHealth).build());
+		event.put(HUNTER_KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
+		event.put(HUNTER_AMBUSHER.get(), AmbusherEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.ambusherSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.ambusherDamage).add(Attributes.ARMOR, ServerConfig.ambusherArmor).add(Attributes.MAX_HEALTH, ServerConfig.ambusherHealth).build());
 	}
 
 	@SubscribeEvent
 	public static void registerSpawn(final SpawnPlacementRegisterEvent event) {
 		SpawnPlacements.SpawnPredicate predicate = (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.getBlockState(pPos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) && serverWorld.canSeeSky(pPos);
 
-		event.register(SPEARMAN_HUNTER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
-		event.register(KNIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
-		event.register(AMBUSHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
+		event.register(HUNTER_SPEARMAN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
+		event.register(HUNTER_KNIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
+		event.register(HUNTER_AMBUSHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 	}
 
 	static {
@@ -137,11 +137,11 @@ public class DSEntities {
 		}
 
 		if (ServerConfig.spawnSpearman) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(SPEARMAN_HUNTER));
+			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_SPEARMAN));
 		}
 
 		if (ServerConfig.spawnKnight) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(KNIGHT));
+			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_KNIGHT));
 		}
 	}
 
