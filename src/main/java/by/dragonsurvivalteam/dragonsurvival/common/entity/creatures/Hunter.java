@@ -42,7 +42,8 @@ public abstract class Hunter extends PathfinderMob implements GeoEntity {
 	protected void registerGoals() {
 		super.registerGoals();
 
-		this.targetSelector.addGoal(1, new HurtByTargetGoalExtended(this).setHeeders(Hunter.class).setAlertOthers());
+		// The Hunter.class in the constructor refers to the mobs that are ignored when the mob is hurt by them (we don't want hunters attacking each other!)
+		this.targetSelector.addGoal(1, new HurtByTargetGoalExtended(this, Hunter.class).setHeeders(Hunter.class).setAlertOthers());
 		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> living.hasEffect(DSEffects.ROYAL_CHASE)));
 		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 0,false, false, living -> living.getType().is(HUNTERS_GOAL)));
 		this.goalSelector.addGoal(0, new FloatGoal(this));

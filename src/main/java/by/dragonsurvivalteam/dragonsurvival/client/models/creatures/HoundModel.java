@@ -26,7 +26,7 @@ public class HoundModel extends GeoModel<HoundEntity> {
             case 7 -> "hound_8";
             default -> "hound_hector";
         };
-        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/"+houndName+".png");
+        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/"+houndName+".png");
     }
 
     @Override
