@@ -773,9 +773,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHealth", comment = "Dragon Ambusher health" )
 	public static Double ambusherHealth = 40d;
 
-	@ConfigRange( min = 1d, max = 32d )
+	@ConfigRange( min = 1, max = 32 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherDamage", comment = "Dragon Ambusher base damage" )
-	public static Double ambusherDamage = 12d;
+	public static Integer ambusherDamage = 12;
 
 	@ConfigRange( min = 0d, max = 30d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherArmor", comment = "Dragon Ambusher armor" )

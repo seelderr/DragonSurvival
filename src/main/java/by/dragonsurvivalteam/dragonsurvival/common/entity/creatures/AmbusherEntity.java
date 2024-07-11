@@ -16,6 +16,7 @@ import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -24,9 +25,8 @@ import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.ArrowItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.entity.projectile.ProjectileUtil;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
@@ -81,7 +81,6 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         if(!this.level().isClientSide()) {
             if(getRangedAttackTimer() == CROSSBOW_ATTACK_START_TIME) {
                 fireArrow();
-                this.playSound(SoundEvents.CROSSBOW_SHOOT, 1.0F, 1.0F);
             }
             if(getRangedAttackTimer() == CROSSBOW_RELOAD_CHARGE_SOUND_TIME) {
                 this.playSound(SoundEvents.CROSSBOW_LOADING_MIDDLE.value(), 1.0F, 1.0F);
@@ -133,14 +132,16 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     private void fireArrow() {
-        Vec3 eyePos = this.getEyePosition(1.0F);
-        Vec3 lookAngle = this.getLookAngle();
-        Vec3 projPos = lookAngle.scale(1.0F).add(eyePos);
-        Arrow arrow  = new Arrow(this.level(), this, new ItemStack(Items.ARROW, 1), null);
-        arrow.setBaseDamage(getAttributeBaseValue(Attributes.ATTACK_DAMAGE));
-        arrow.setPos(projPos.x, projPos.y, projPos.z);
-        arrow.shoot(lookAngle.x, lookAngle.y, lookAngle.z, nextArrowVelocity, 1.0F);
-        this.level().addFreshEntity(arrow);
+        CrossbowItem tempCrossbowitem = (CrossbowItem)Items.CROSSBOW;
+        ItemStack tempCrossbowItemStack = new ItemStack(tempCrossbowitem, 1);
+        tempCrossbowitem.tryLoadProjectiles(this, tempCrossbowItemStack);
+        tempCrossbowitem.setDamage(tempCrossbowItemStack, ServerConfig.ambusherDamage);
+        tempCrossbowitem.performShooting(this.level(), this, InteractionHand.MAIN_HAND, tempCrossbowItemStack, nextArrowVelocity, 1.0f, this.getTarget());
+    }
+
+    @Override
+    public @NotNull ItemStack getProjectile(@NotNull ItemStack pWeaponStack) {
+        return net.neoforged.neoforge.common.CommonHooks.getProjectile(this, pWeaponStack, new ItemStack(Items.ARROW, 1));
     }
 
     private void beginSummonReinforcements() {
