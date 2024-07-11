@@ -134,7 +134,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     private void fireArrow() {
         CrossbowItem tempCrossbowitem = (CrossbowItem)Items.CROSSBOW;
         ItemStack tempCrossbowItemStack = new ItemStack(tempCrossbowitem, 1);
-        tempCrossbowitem.tryLoadProjectiles(this, tempCrossbowItemStack);
+        CrossbowItem.tryLoadProjectiles(this, tempCrossbowItemStack);
         tempCrossbowitem.setDamage(tempCrossbowItemStack, ServerConfig.ambusherDamage);
         tempCrossbowitem.performShooting(this.level(), this, InteractionHand.MAIN_HAND, tempCrossbowItemStack, nextArrowVelocity, 1.0f, this.getTarget());
     }
