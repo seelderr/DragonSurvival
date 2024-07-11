@@ -12,35 +12,42 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.EventHooks;
 
 public class SpawningUtils
 {
-	// TODO: This used to have more conditions, and now it doesn't. Might lead to too many spawns?
-	@Nullable public static BlockPos findRandomSpawnPosition(Player player, int p_221298_1_, int timesToCheck, float distance){
-		int i = p_221298_1_ == 0 ? 2 : 2 - p_221298_1_;
-		BlockPos.MutableBlockPos blockpos$mutable = new BlockPos.MutableBlockPos();
-
-		for(int i1 = 0; i1 < timesToCheck; i1++){
-			float f = player.getRandom().nextFloat() * 6.2831855F;
-			double xRandom = player.getX() + Mth.floor(Mth.cos(f) * distance * i) + player.getRandom().nextInt(5);
-			double zRandom = player.getZ() + Mth.floor(Mth.sin(f) * distance * i) + player.getRandom().nextInt(5);
-			int y = player.level().getHeight(Heightmap.Types.WORLD_SURFACE, (int)xRandom, (int)zRandom);
-			blockpos$mutable.set(xRandom, y, zRandom);
-			if(player.level().hasChunksAt(blockpos$mutable.getX() - 10, blockpos$mutable.getY() - 10, blockpos$mutable.getZ() - 10, blockpos$mutable.getX() + 10, blockpos$mutable.getY() + 10, blockpos$mutable.getZ() + 10))
-				return blockpos$mutable;
+	private static BlockPos findRandomSpawnPosition(Level level, Vec3 worldPos, int spawnAttempts, float radius) {
+		BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+		for(int i = 0; i < spawnAttempts; i++) {
+			float f = level.random.nextFloat() * Mth.TWO_PI;
+			double x = worldPos.x + Mth.floor(Mth.cos(f) * radius);
+			double z = worldPos.z + Mth.floor(Mth.sin(f) * radius);
+			int y = level.getHeight(Heightmap.Types.WORLD_SURFACE, (int)x, (int)z);
+			blockPos.set(x, y, z);
+			if(level.hasChunksAt(blockPos.getX() - 10, blockPos.getY() - 10, blockPos.getZ() - 10, blockPos.getX() + 10, blockPos.getY() + 10, blockPos.getZ() + 10))
+				return blockPos;
 		}
+
 		return null;
 	}
-	
-	public static void spawn(Mob mob, BlockPos blockPos, ServerLevel serverWorld){
-		mob.setPos(blockPos.getX() + 0.5, blockPos.getY(), blockPos.getZ() + 0.5);
-		EventHooks.finalizeMobSpawn(mob, serverWorld, serverWorld.getCurrentDifficultyAt(blockPos), MobSpawnType.NATURAL, null);
-		serverWorld.addFreshEntity(mob);
-	}
-	
-	public static boolean isAirOrFluid(BlockPos blockPos, Level world, Player player, BlockHitResult blockHitResult){
-		return isAirOrFluid(blockPos, world, new BlockPlaceContext(player, InteractionHand.MAIN_HAND, player.getMainHandItem(), blockHitResult));
+
+	public static boolean spawn(Mob mob, Vec3 worldPos, Level level, MobSpawnType type, int spawnAttempts, float radius, boolean useSpawnParticles){
+		assert level instanceof ServerLevel;
+
+		BlockPos blockPos = findRandomSpawnPosition(level, worldPos, spawnAttempts, radius);
+		if(blockPos != null) {
+			mob.setPos(blockPos.getX(), blockPos.getY(), blockPos.getZ());
+			EventHooks.finalizeMobSpawn(mob, (ServerLevel)level, level.getCurrentDifficultyAt(blockPos), type, null);
+			level.addFreshEntity(mob);
+			if(useSpawnParticles) {
+				mob.spawnAnim();
+			}
+
+			return true;
+		}
+
+		return false;
 	}
 	
 	public static boolean isAirOrFluid(BlockPos blockPos, Level world, BlockPlaceContext context){

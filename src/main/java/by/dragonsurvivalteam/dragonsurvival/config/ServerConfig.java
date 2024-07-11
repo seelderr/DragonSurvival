@@ -789,6 +789,10 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherAttackInterval", comment = "How often the ambusher attacks with their crossbow" )
 	public static Integer ambusherAttackInterval = 65;
 
+	@ConfigRange(min = 0, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherReinforcementCount", comment = "How many spearman reinforce the ambusher when he is attacked")
+	public static Integer ambusherReinforcementCount = 4;
+
 	@ConfigRange( min = 8d, max = 40d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndHealth", comment = "Knight Hound health" )
 	public static Double houndHealth = 10d;

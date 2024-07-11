@@ -204,37 +204,6 @@ public class VillagerRelationsHandler{
 		}
 	}
 
-	@SubscribeEvent
-	public static void spawnHunters(PlayerTickEvent.Post playerTickEvent){
-		if(!dragonHunters.isEmpty()){
-			Player player = playerTickEvent.getEntity();
-			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DSEffects.ROYAL_CHASE) && DragonStateProvider.isDragon(player)){
-				if(serverLevel.dimension() == Level.OVERWORLD){
-					VillageRelationShips villageRelationShips = DragonStateProvider.getOrGenerateHandler(player).getVillageRelationShips();
-						if(villageRelationShips.hunterSpawnDelay == 0){
-							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
-							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_AQUATIC)) {
-									return;
-								}
-								int levelOfEvil = computeLevelOfEvil(player);
-								for(int i = 0; i < levelOfEvil; i++){
-									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverLevel.random.nextInt(dragonHunters.size())).get().create(serverLevel)), spawnPosition, serverLevel);
-								}
-								if(serverLevel.isCloseToVillage(player.blockPosition(), 3)){
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
-								}else{
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
-								}
-							}
-						}else{
-							villageRelationShips.hunterSpawnDelay--;
-						}
-				}
-			}
-		}
-	}
-
 	public static int computeLevelOfEvil(Player playerEntity){
 		if(DragonStateProvider.isDragon(playerEntity) && playerEntity.hasEffect(DSEffects.ROYAL_CHASE)){
 			MobEffectInstance effectInstance = playerEntity.getEffect(DSEffects.ROYAL_CHASE);
