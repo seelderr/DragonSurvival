@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -40,6 +41,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     private boolean isRandomIdleAnimSet = false;
     private boolean hasPlayedReleaseAnimation = false;
     private boolean hasPlayedReinforcementsAnimation = false;
+    private boolean isFirstClientTick = true;
     private float nextArrowVelocity = 0.0f;
     private RawAnimation currentIdleAnim;
     private final AnimationTimer ambusherTimer = new AnimationTimer();
@@ -66,8 +68,9 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
-        if(isAggro() && !hasReleasedGriffin()) {
-            if(!this.level().isClientSide()) {
+
+        if(!this.level().isClientSide()) {
+            if(isAggro() && !hasReleasedGriffin()) {
                 setHasReleasedGriffin(true);
                 summonGriffin();
                 if(this.getTarget().hasEffect(DSEffects.ROYAL_CHASE)) {
@@ -76,9 +79,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
                     beginGriffinReleaseReloadTimer();
                 }
             }
-        }
 
-        if(!this.level().isClientSide()) {
             if(getRangedAttackTimer() == CROSSBOW_ATTACK_START_TIME) {
                 fireArrow();
             }
@@ -120,6 +121,12 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             }
 
             setNearbyDragonPlayer(isNearbyDragonPlayer());
+        } else {
+            if(isFirstClientTick) {
+                // Sync up with the server's data to prevent animations from playing that shouldn't when the entity is loaded
+                hasPlayedReleaseAnimation = hasReleasedGriffin();
+                hasPlayedReinforcementsAnimation = hasCalledReinforcements();
+            }
         }
     }
 
@@ -193,6 +200,30 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         pBuilder.define(RANGED_ATTACK_TIMER, -1);
         pBuilder.define(AMBUSH_HORN_AND_RELOAD_TIMER, -1);
         pBuilder.define(GRIFFIN_RELEASE_RELOAD_TIMER, -1);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+        super.addAdditionalSaveData(compoundNBT);
+        compoundNBT.putBoolean("HasReleasedGriffin", hasReleasedGriffin());
+        compoundNBT.putBoolean("NearbyDragonPlayer", hasNearbyDragonPlayer());
+        compoundNBT.putBoolean("HasCalledReinforcements", hasCalledReinforcements());
+        compoundNBT.putBoolean("HasSummonedReinforcements", hasSummonedReinforcements());
+        compoundNBT.putInt("RangedAttackTimer", getRangedAttackTimer());
+        compoundNBT.putInt("AmbushHornAndReloadTimer", getAmbushHornTimer());
+        compoundNBT.putInt("GriffinReleaseReloadTimer", getGriffinReleaseReloadTimer());
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+        super.readAdditionalSaveData(compoundNBT);
+        setHasReleasedGriffin(compoundNBT.getBoolean("HasReleasedGriffin"));
+        setNearbyDragonPlayer(compoundNBT.getBoolean("NearbyDragonPlayer"));
+        setHasCalledReinforcements(compoundNBT.getBoolean("HasCalledReinforcements"));
+        setHasSummonedReinforcements(compoundNBT.getBoolean("HasSummonedReinforcements"));
+        setRangedAttackTimer(compoundNBT.getInt("RangedAttackTimer"));
+        setAmbushHornTimer(compoundNBT.getInt("AmbushHornAndReloadTimer"));
+        setGriffinReleaseReloadTimer(compoundNBT.getInt("GriffinReleaseReloadTimer"));
     }
 
     public boolean hasReleasedGriffin() {
