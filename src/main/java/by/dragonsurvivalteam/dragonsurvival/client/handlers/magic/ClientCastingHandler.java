@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
@@ -17,10 +16,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientCastingHandler {
-    public static final byte StatusIdle = 0;
-    public static final byte StatusInProgress = 1;
-    public static final byte StatusStop = 2;
-    public static byte status = StatusIdle;
+    public enum CastingStatus {
+        Idle,
+        InProgress,
+        Stop
+    }
+
+    public static CastingStatus status = CastingStatus.Idle;
     public static boolean hasCast = false;
     public static long castStartTime = -1;
     private static int castSlot = -1;
@@ -37,59 +39,83 @@ public class ClientCastingHandler {
 
         DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
 
+        // Key to use ability is down
+        // In alternate cast mode, the same key is held as the selected slot
+        int selectedAbilitySlot = dragonStateHandler.getMagicData().getSelectedAbilitySlot();
         boolean isKeyDown = Keybinds.USE_ABILITY.isDown() || ClientConfig.alternateCastMode && (
-                Keybinds.ABILITY1.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 0
-                        || Keybinds.ABILITY2.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 1
-                        || Keybinds.ABILITY3.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 2
-                        || Keybinds.ABILITY4.isDown() && dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 3);
+                Keybinds.ABILITY1.isDown() && selectedAbilitySlot == 0
+                        || Keybinds.ABILITY2.isDown() && selectedAbilitySlot == 1
+                        || Keybinds.ABILITY3.isDown() && selectedAbilitySlot == 2
+                        || Keybinds.ABILITY4.isDown() && selectedAbilitySlot == 3);
 
-        int slot = dragonStateHandler.getMagicData().getSelectedAbilitySlot();
+        // Get ability from currently cast slot
         ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(castSlot);
 
+        // No ability = switch to selected slot
         if (ability == null) {
-            castSlot = slot;
+            castSlot = selectedAbilitySlot;
             ability = dragonStateHandler.getMagicData().getAbilityFromSlot(castSlot);
         }
 
-        if (castSlot != slot) { // ability slot has been changed, cancel any casts and put skills on cooldown if needed
-            status = StatusIdle;
+        boolean canCast = ability.canCastSkill(player);
+
+        if (castSlot != selectedAbilitySlot) { // ability slot has been changed, cancel any casts and put skills on cooldown if needed
+            status = CastingStatus.Idle;
             //System.out.println(player + " ability changed from " + ability.getName() + " to " + dragonStateHandler.getMagicData().getAbilityFromSlot(slot).getName() + ".");
-            if (castStartTime != -1 && ability.canCastSkill(player)) {
+            if (castStartTime != -1 && canCast) {
                 PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
                 //System.out.println(ability.getName() + " finished casting due to swap.");
             }
             hasCast = false;
             ability.onKeyReleased(player);
             castStartTime = -1;
-            castSlot = slot;
+            castSlot = selectedAbilitySlot;
             return;
         }
 
-        if (status == StatusIdle && isKeyDown) {
-            castStartTime = -1;
-            status = StatusInProgress;
-        }
+        if (isKeyDown) {
+            switch (status) {
+                case Idle -> {
+                    castStartTime = -1;
+                    status = CastingStatus.InProgress;
 
-        if (status == StatusInProgress && !isKeyDown) {
-            castStartTime = -1;
-            status = StatusStop;
-        }
-
-        if (!isKeyDown) {
+                    if (canCast) {
+                        castStartTime = player.level().getGameTime();
+                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                    }
+                }
+                case InProgress -> {
+                    if (canCast && castStartTime == -1) {
+                        castStartTime = player.level().getGameTime();
+                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                    }
+                    if (canCast && castStartTime != -1) {
+                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                    }
+                    if (!canCast && castStartTime != -1) {
+                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                        ability.onKeyReleased(player);
+                        status = CastingStatus.Idle;
+                        castStartTime = -1;
+                    }
+                }
+                case Stop -> {
+                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                    ability.onKeyReleased(player);
+                    status = CastingStatus.Idle;
+                    castStartTime = -1;
+                }
+            }
+        } else {
+            if (status != CastingStatus.Idle) {
+                PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                ability.onKeyReleased(player);
+            }
+            status = CastingStatus.Idle;
             castStartTime = -1;
             hasCast = false;
         }
 
-        if (status == StatusInProgress && ability.canCastSkill(player)) {
-            if (castStartTime == -1)
-                castStartTime = player.level().getGameTime();
-            PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-        } else if (status == StatusStop || status == StatusInProgress && !ability.canCastSkill(player) && castStartTime != -1) {
-            PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, castSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-            ability.onKeyReleased(player);
-            status = StatusIdle;
-            castStartTime = -1;
-        }
-        castSlot = slot;
+        castSlot = selectedAbilitySlot;
     }
 }
