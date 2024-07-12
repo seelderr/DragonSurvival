@@ -18,7 +18,6 @@ public class WindupMeleeAttackGoal extends MeleeAttackGoal {
         // if the attacker loses sight of the target and then regains it while the windup is still going.
         // This is because this goal stops ticking when the target is not seen and causes the animation to desync from the attack logic.
         super(pMob, pSpeedModifier, true);
-        this.ticksUntilDamage = this.mob.getCurrentSwingDuration();
     }
 
     @Override

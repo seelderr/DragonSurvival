@@ -1,5 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
+import java.util.Iterator;
+import java.util.List;
+import javax.annotation.Nullable;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
@@ -7,13 +10,8 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.phys.AABB;
 
-import javax.annotation.Nullable;
-import java.util.Iterator;
-import java.util.List;
-
 public class HurtByTargetGoalExtended extends HurtByTargetGoal {
-    @Nullable
-    private Class<? extends Mob>[] toHeedAlert;
+    @Nullable private Class<? extends Mob>[] toHeedAlert;
 
     public HurtByTargetGoalExtended(PathfinderMob pMob, Class<?>... pToIgnoreDamage) {
         super(pMob, pToIgnoreDamage);

@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
@@ -19,8 +20,6 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
-
-import java.util.List;
 
 public class KnightEntity extends Hunter {
 	public KnightEntity(final EntityType<? extends PathfinderMob> type, final Level level) {
@@ -93,12 +92,10 @@ public class KnightEntity extends Hunter {
 		return 17;
 	}
 
-	@Override
 	public double getRunThreshold() {
 		return 0.15;
 	}
 
-	@Override
 	public double getWalkThreshold() {
 		return 0.01;
 	}
@@ -122,7 +119,7 @@ public class KnightEntity extends Hunter {
 
 		for (Player player : players) {
 			if (DragonStateProvider.isDragon(player)) {
-				// Apply the debuff
+				// FIXME: Apply the debuff
 			}
 		}
 	}

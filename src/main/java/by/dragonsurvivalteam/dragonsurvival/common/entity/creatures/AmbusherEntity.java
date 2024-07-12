@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
+import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -24,8 +25,6 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
-
-import java.util.List;
 
 public class AmbusherEntity extends Hunter implements RangedAttackMob {
 
@@ -173,7 +172,9 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     private void summonGriffin() {
-        // Summon a griffin
+        Mob mob = DSEntities.HUNTER_SPEARMAN.get().create(this.level());
+        SpawningUtils.spawn(mob, this.position().add(0, 2, 0), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
+        mob.setTarget(this.getTarget());
     }
 
     private boolean isNearbyDragonPlayer() {
@@ -272,12 +273,10 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         this.entityData.set(HAS_SUMMONED_REINFORCEMENTS, hasSummonedReinforcements);
     }
 
-    @Override
     public double getRunThreshold() {
         return 0.15;
     }
 
-    @Override
     public double getWalkThreshold() {
         return 0.01;
     }
