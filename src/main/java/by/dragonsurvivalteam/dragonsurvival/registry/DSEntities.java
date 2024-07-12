@@ -102,7 +102,7 @@ public class DSEntities {
 
 	public static DeferredHolder<EntityType<?>, EntityType<KnightEntity>> HUNTER_KNIGHT = DS_ENTITY_TYPES.register(
 			"hunter_knight", () -> EntityType.Builder.of(KnightEntity::new, MobCategory.MONSTER)
-					.sized(0.8f, 2.5f)
+					.sized(1.5f, 3f)
 					.clientTrackingRange(64)
 					.updateInterval(1)
 					.build("hunter_knight"));

@@ -96,10 +96,10 @@ public class GriffinEntity extends Hunter {
     @Override
     public int getCurrentSwingDuration() {
         return switch (getCurrentAttack()) {
-            case NORMAL -> 20; // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
-            case BLINDNESS -> 30; // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
-            case SLASH_WINGS -> 40; // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
-            default -> 20; // Need a placeholder value here since getCurrentSwingDuration gets called even when we aren't currently attacking
+            case NORMAL -> 10; // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
+            case BLINDNESS -> 10; // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
+            case SLASH_WINGS -> 10; // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
+            default -> 10; // Need a placeholder value here since getCurrentSwingDuration gets called even when we aren't currently attacking
         };
     }
 
