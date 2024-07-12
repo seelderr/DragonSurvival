@@ -2,13 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
@@ -73,11 +72,11 @@ public class HunterAbility extends ChargeCastAbility{
 	public ArrayList<Component> getInfo(){
 		ArrayList<Component> components = super.getInfo();
 
-		if(!Keybinds.ABILITY4.get().isUnbound()){
-			String key = Keybinds.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+		if (!Keybind.ABILITY4.get().isUnbound()) {
+			String key = Keybind.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty()){
-				key = Keybinds.ABILITY4.getKey().getDisplayName().getString();
+				key = Keybind.ABILITY4.getKey().getDisplayName().getString();
 			}
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}

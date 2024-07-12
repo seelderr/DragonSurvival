@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -479,7 +479,7 @@ public class ClientFlightHandler {
         DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
         if (!handler.isDragon()) return; // handler should never be null
 
-        while (Keybinds.TOGGLE_WINGS.consumeClick()) {
+        while (Keybind.TOGGLE_WINGS.consumeClick()) {
             toggleWingsManual(player, handler);
         }
 
@@ -493,7 +493,7 @@ public class ClientFlightHandler {
         }
         lastJumpInputState = isJumping;
 
-        while (Keybinds.SPIN_ABILITY.consumeClick()) {
+        while (Keybind.SPIN_ABILITY.consumeClick()) {
             doSpin(player, handler);
         }
     }

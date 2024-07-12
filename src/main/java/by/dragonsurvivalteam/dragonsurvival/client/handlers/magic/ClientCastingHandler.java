@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncAbilityCasting;
 import net.minecraft.client.Minecraft;
@@ -13,6 +13,8 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientCastingHandler {
@@ -28,7 +30,7 @@ public class ClientCastingHandler {
     private static int castSlot = -1;
 
     @SubscribeEvent
-    public static void abilityKeyBindingChecks(ClientTickEvent.Post clientTickEvent) {
+    public static void onTick(ClientTickEvent.Post clientTickEvent) {
         Minecraft instance = Minecraft.getInstance();
         if (instance.player == null || instance.level == null)
             return;
@@ -39,14 +41,15 @@ public class ClientCastingHandler {
 
         DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
 
+
         // Key to use ability is down
         // In alternate cast mode, the same key is held as the selected slot
         int selectedAbilitySlot = dragonStateHandler.getMagicData().getSelectedAbilitySlot();
-        boolean isKeyDown = Keybinds.USE_ABILITY.isDown() || ClientConfig.alternateCastMode && (
-                Keybinds.ABILITY1.isDown() && selectedAbilitySlot == 0
-                        || Keybinds.ABILITY2.isDown() && selectedAbilitySlot == 1
-                        || Keybinds.ABILITY3.isDown() && selectedAbilitySlot == 2
-                        || Keybinds.ABILITY4.isDown() && selectedAbilitySlot == 3);
+        boolean isKeyDown = Keybind.USE_ABILITY.isDown() || ClientConfig.alternateCastMode && (
+                Keybind.ABILITY1.isDown() && selectedAbilitySlot == 0
+                        || Keybind.ABILITY2.isDown() && selectedAbilitySlot == 1
+                        || Keybind.ABILITY3.isDown() && selectedAbilitySlot == 2
+                        || Keybind.ABILITY4.isDown() && selectedAbilitySlot == 3);
 
         // Get ability from currently cast slot
         ActiveDragonAbility ability = dragonStateHandler.getMagicData().getAbilityFromSlot(castSlot);

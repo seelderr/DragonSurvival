@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
-import by.dragonsurvivalteam.dragonsurvival.input.Keybinds;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.ArrayList;
@@ -59,11 +58,11 @@ public abstract class AoeBuffAbility extends ChargeCastAbility{
 		components.add(Component.translatable("ds.skill.duration.seconds", Functions.ticksToSeconds(getEffect().getDuration())));
 		components.add(Component.translatable("ds.skill.aoe", getRange() + "x" + getRange()));
 
-		if(!Keybinds.ABILITY3.get().isUnbound()){
-			String key = Keybinds.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+		if (!Keybind.ABILITY3.get().isUnbound()) {
+			String key = Keybind.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty())
-				key = Keybinds.ABILITY3.getKey().getDisplayName().getString();
+				key = Keybind.ABILITY3.getKey().getDisplayName().getString();
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 

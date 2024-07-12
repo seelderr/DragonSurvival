@@ -12,7 +12,7 @@ import net.neoforged.neoforge.common.util.Lazy;
 import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public enum Keybinds {
+public enum Keybind {
 
     // Implementation inspired by Create
 
@@ -36,11 +36,11 @@ public enum Keybinds {
 
     private final Lazy<KeyMapping> keyMapping;
 
-    private Keybinds(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
+    private Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
         this(description, keyConflictContext, defaultKey, "ds.keybind.category");
     }
 
-    private Keybinds(String description, IKeyConflictContext keyConflictContext, int defaultKey, String category) {
+    private Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey, String category) {
         keyMapping = Lazy.of(() -> new KeyMapping(description, keyConflictContext, InputConstants.Type.KEYSYM, defaultKey, category));
     }
 
@@ -52,7 +52,7 @@ public enum Keybinds {
     @SubscribeEvent
     @SuppressWarnings("unused")
     public static void registerAllKeys(RegisterKeyMappingsEvent evt) {
-        for (Keybinds keybind : values()) {
+        for (Keybind keybind : values()) {
             evt.register(keybind.get());
         }
     }
