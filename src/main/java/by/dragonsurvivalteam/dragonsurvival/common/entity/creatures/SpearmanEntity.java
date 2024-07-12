@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.client.models.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowSpecificMobGoal;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import net.minecraft.world.entity.EntityType;
@@ -23,15 +23,13 @@ public class SpearmanEntity extends Hunter {
 	protected void registerGoals() {
 		super.registerGoals();
 		this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1.0));
-		this.goalSelector.addGoal(8, new FollowMobGoal<>(KnightEntity.class, this, 15));
+		this.goalSelector.addGoal(8, new FollowSpecificMobGoal(this, 0.6, 10, 20, target -> target instanceof KnightEntity));
 	}
 
-	@Override
 	public double getRunThreshold() {
 		return 0.15;
 	}
 
-	@Override
 	public double getWalkThreshold() {
 		return 0.01;
 	}

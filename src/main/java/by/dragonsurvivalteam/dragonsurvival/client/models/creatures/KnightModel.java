@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.SpearmanEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationState;

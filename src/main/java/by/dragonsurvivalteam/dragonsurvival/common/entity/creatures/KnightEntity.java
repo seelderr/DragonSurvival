@@ -1,39 +1,25 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HunterEntityCheckProcedure;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
-import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
-import net.minecraft.world.entity.ai.goal.RandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
-import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
-import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.animatable.GeoEntity;
-import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
-import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.List;
 
 public class KnightEntity extends Hunter {
 	public KnightEntity(final EntityType<? extends PathfinderMob> type, final Level level) {
@@ -106,12 +92,10 @@ public class KnightEntity extends Hunter {
 		return 17;
 	}
 
-	@Override
 	public double getRunThreshold() {
 		return 0.15;
 	}
 
-	@Override
 	public double getWalkThreshold() {
 		return 0.01;
 	}
@@ -135,7 +119,7 @@ public class KnightEntity extends Hunter {
 
 		for (Player player : players) {
 			if (DragonStateProvider.isDragon(player)) {
-				// Apply the debuff
+				// FIXME: Apply the debuff
 			}
 		}
 	}

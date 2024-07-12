@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.client.models.goals;
+package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
@@ -18,7 +18,6 @@ public class WindupMeleeAttackGoal extends MeleeAttackGoal {
         // if the attacker loses sight of the target and then regains it while the windup is still going.
         // This is because this goal stops ticking when the target is not seen and causes the animation to desync from the attack logic.
         super(pMob, pSpeedModifier, true);
-        this.ticksUntilDamage = this.mob.getCurrentSwingDuration();
     }
 
     @Override

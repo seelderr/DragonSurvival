@@ -1,9 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
-import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.AmbusherModel;
-import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
-import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.SpearmanModel;
+import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
@@ -35,8 +33,6 @@ public class ClientModSetup {
 
 		EntityRenderers.register(DSEntities.BOLAS_ENTITY.get(), BolasEntityRenderer::new);
 
-		EntityRenderers.register(DSEntities.HUNTER_HOUND.get(), HunterHoundRenderer::new);
-
 		BlockEntityRenderers.register(DSTileEntities.HELMET_TILE.get(), HelmetEntityRenderer::new);
 		BlockEntityRenderers.register(DSTileEntities.DRAGON_BEACON.get(), DragonBeaconRenderer::new);
 
@@ -51,6 +47,8 @@ public class ClientModSetup {
 		EntityRenderers.register(DSEntities.HUNTER_KNIGHT.get(), manager -> new KnightRenderer(manager, new KnightModel()));
 		EntityRenderers.register(DSEntities.HUNTER_SPEARMAN.get(), manager -> new SpearmanRenderer(manager, new SpearmanModel()));
 		EntityRenderers.register(DSEntities.HUNTER_AMBUSHER.get(), manager -> new AmbusherRenderer(manager, new AmbusherModel()));
+		EntityRenderers.register(DSEntities.HUNTER_HOUND.get(), manager -> new HoundRenderer(manager, new HoundModel()));
+		EntityRenderers.register(DSEntities.HUNTER_GRIFFIN.get(), manager -> new GriffinRenderer(manager, new GriffinModel()));
 	}
 
 	@SubscribeEvent

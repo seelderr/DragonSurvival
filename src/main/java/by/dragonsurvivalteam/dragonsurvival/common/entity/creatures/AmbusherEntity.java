@@ -3,41 +3,35 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import net.minecraft.core.registries.BuiltInRegistries;
+import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
+import java.util.List;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.util.Mth;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.Arrow;
-import net.minecraft.world.item.ArrowItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
+import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
-
-import java.util.List;
+import software.bernie.geckolib.animation.AnimationState;
 
 public class AmbusherEntity extends Hunter implements RangedAttackMob {
 
     private boolean isRandomIdleAnimSet = false;
     private boolean hasPlayedReleaseAnimation = false;
     private boolean hasPlayedReinforcementsAnimation = false;
+    private boolean isFirstClientTick = true;
     private float nextArrowVelocity = 0.0f;
     private RawAnimation currentIdleAnim;
     private final AnimationTimer ambusherTimer = new AnimationTimer();
@@ -45,6 +39,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     private static final EntityDataAccessor<Boolean> HAS_RELEASED_GRIFFIN = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> NEARBY_DRAGON_PLAYER = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> HAS_CALLED_REINFORCEMENTS = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.BOOLEAN);
+    private static final EntityDataAccessor<Boolean> HAS_SUMMONED_REINFORCEMENTS = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Integer> RANGED_ATTACK_TIMER = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> AMBUSH_HORN_AND_RELOAD_TIMER = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Integer> GRIFFIN_RELEASE_RELOAD_TIMER = SynchedEntityData.defineId(AmbusherEntity.class, EntityDataSerializers.INT);
@@ -63,8 +58,9 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     @Override
     public void tick() {
         super.tick();
-        if(isAggro() && !hasReleasedGriffin()) {
-            if(!this.level().isClientSide()) {
+
+        if(!this.level().isClientSide()) {
+            if(isAggro() && !hasReleasedGriffin()) {
                 setHasReleasedGriffin(true);
                 summonGriffin();
                 if(this.getTarget().hasEffect(DSEffects.ROYAL_CHASE)) {
@@ -73,14 +69,10 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
                     beginGriffinReleaseReloadTimer();
                 }
             }
-        }
 
-        if(!this.level().isClientSide()) {
             if(getRangedAttackTimer() == CROSSBOW_ATTACK_START_TIME) {
                 fireArrow();
-                this.playSound(SoundEvents.CROSSBOW_SHOOT, 1.0F, 1.0F);
             }
-
             if(getRangedAttackTimer() == CROSSBOW_RELOAD_CHARGE_SOUND_TIME) {
                 this.playSound(SoundEvents.CROSSBOW_LOADING_MIDDLE.value(), 1.0F, 1.0F);
             }
@@ -106,7 +98,9 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             if(getAmbushHornTimer() < AMBUSH_ANIM_DURATION && getAmbushHornTimer() >= 0) {
                 setAmbushHornTimer(getAmbushHornTimer() + 1);
             } else {
-                summonReinforcements();
+                if(hasCalledReinforcements() && !hasSummonedReinforcements()) {
+                    summonReinforcements();
+                }
                 setAmbushHornTimer(-1);
             }
 
@@ -117,6 +111,13 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             }
 
             setNearbyDragonPlayer(isNearbyDragonPlayer());
+        } else {
+            if(isFirstClientTick) {
+                // Sync up with the server's data to prevent animations from playing that shouldn't when the entity is loaded
+                hasPlayedReleaseAnimation = hasReleasedGriffin();
+                hasPlayedReinforcementsAnimation = hasCalledReinforcements();
+                isFirstClientTick = false;
+            }
         }
     }
 
@@ -129,13 +130,16 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     private void fireArrow() {
-        Vec3 eyePos = this.getEyePosition(1.0F);
-        Vec3 lookAngle = this.getLookAngle();
-        Vec3 projPos = lookAngle.scale(1.0F).add(eyePos);
-        Arrow arrow  = new Arrow(this.level(), this, new ItemStack(Items.ARROW, 1), null);
-        arrow.setPos(projPos.x, projPos.y, projPos.z);
-        arrow.shoot(lookAngle.x, lookAngle.y, lookAngle.z, nextArrowVelocity, 1.0F);
-        this.level().addFreshEntity(arrow);
+        CrossbowItem tempCrossbowitem = (CrossbowItem)Items.CROSSBOW;
+        ItemStack tempCrossbowItemStack = new ItemStack(tempCrossbowitem, 1);
+        CrossbowItem.tryLoadProjectiles(this, tempCrossbowItemStack);
+        tempCrossbowitem.setDamage(tempCrossbowItemStack, ServerConfig.ambusherDamage);
+        tempCrossbowitem.performShooting(this.level(), this, InteractionHand.MAIN_HAND, tempCrossbowItemStack, nextArrowVelocity, 1.0f, this.getTarget());
+    }
+
+    @Override
+    public @NotNull ItemStack getProjectile(@NotNull ItemStack pWeaponStack) {
+        return net.neoforged.neoforge.common.CommonHooks.getProjectile(this, pWeaponStack, new ItemStack(Items.ARROW, 1));
     }
 
     private void beginSummonReinforcements() {
@@ -148,11 +152,29 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     private void summonReinforcements() {
-        // Summon reinforcements
+        for(int i = 0; i < ServerConfig.ambusherSpearmanReinforcementCount; i++) {
+            Mob mob = DSEntities.HUNTER_SPEARMAN.get().create(this.level());
+            SpawningUtils.spawn(mob, this.position(), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
+            mob.setTarget(this.getTarget());
+        }
+
+        for(int i = 0; i < ServerConfig.ambusherHoundReinforcementCount; i++) {
+            Mob mob = DSEntities.HUNTER_HOUND.get().create(this.level());
+            SpawningUtils.spawn(mob, this.position(), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
+            mob.setTarget(this.getTarget());
+        }
+
+        Mob mob = DSEntities.HUNTER_KNIGHT.get().create(this.level());
+        SpawningUtils.spawn(mob, this.position(), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
+        mob.setTarget(this.getTarget());
+
+        setHasSummonedReinforcements(true);
     }
 
     private void summonGriffin() {
-        // Summon a griffin
+        Mob mob = DSEntities.HUNTER_SPEARMAN.get().create(this.level());
+        SpawningUtils.spawn(mob, this.position().add(0, 2, 0), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
+        mob.setTarget(this.getTarget());
     }
 
     private boolean isNearbyDragonPlayer() {
@@ -173,9 +195,26 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         pBuilder.define(HAS_RELEASED_GRIFFIN, false);
         pBuilder.define(NEARBY_DRAGON_PLAYER, false);
         pBuilder.define(HAS_CALLED_REINFORCEMENTS, false);
+        pBuilder.define(HAS_SUMMONED_REINFORCEMENTS, false);
         pBuilder.define(RANGED_ATTACK_TIMER, -1);
         pBuilder.define(AMBUSH_HORN_AND_RELOAD_TIMER, -1);
         pBuilder.define(GRIFFIN_RELEASE_RELOAD_TIMER, -1);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+        super.addAdditionalSaveData(compoundNBT);
+        compoundNBT.putBoolean("HasReleasedGriffin", hasReleasedGriffin());
+        compoundNBT.putBoolean("HasCalledReinforcements", hasCalledReinforcements());
+        compoundNBT.putBoolean("HasSummonedReinforcements", hasSummonedReinforcements());
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+        super.readAdditionalSaveData(compoundNBT);
+        setHasReleasedGriffin(compoundNBT.getBoolean("HasReleasedGriffin"));
+        setHasCalledReinforcements(compoundNBT.getBoolean("HasCalledReinforcements"));
+        setHasSummonedReinforcements(compoundNBT.getBoolean("HasSummonedReinforcements"));
     }
 
     public boolean hasReleasedGriffin() {
@@ -226,12 +265,18 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         this.entityData.set(NEARBY_DRAGON_PLAYER, nearbyDragonPlayer);
     }
 
-    @Override
+    public boolean hasSummonedReinforcements() {
+        return this.entityData.get(HAS_SUMMONED_REINFORCEMENTS);
+    }
+
+    public void setHasSummonedReinforcements(boolean hasSummonedReinforcements) {
+        this.entityData.set(HAS_SUMMONED_REINFORCEMENTS, hasSummonedReinforcements);
+    }
+
     public double getRunThreshold() {
         return 0.15;
     }
 
-    @Override
     public double getWalkThreshold() {
         return 0.01;
     }
@@ -264,14 +309,19 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             // Let release animation conclude
             return PlayState.CONTINUE;
         } else {
-            if (movement > getRunThreshold()) {
+            if(isInWater()) {
+                if(hasReleasedGriffin()) {
+                    state.setAndContinue(SWIM_NO_GRIFFIN);
+                } else {
+                    state.setAndContinue(SWIM);
+                }
+            } else if (movement > getRunThreshold()) {
                 if (hasReleasedGriffin()) {
                     state.setAndContinue(RUN_NO_GRIFFIN);
                 } else {
                     state.setAndContinue(RUN);
                 }
-            }
-            else if (movement > getWalkThreshold()) {
+            } else if (movement > getWalkThreshold()) {
                 if(hasReleasedGriffin()) {
                     state.setAndContinue(WALK_NO_GRIFFIN);
                 } else {

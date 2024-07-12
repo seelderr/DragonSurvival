@@ -1,20 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.VillageRelationShips;
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Hunter;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -33,7 +28,6 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -191,7 +185,7 @@ public class VillagerRelationsHandler{
 			return;
 		}
 
-		if(attacked instanceof AbstractVillager || attacked instanceof DragonHunter){
+		if(attacked instanceof AbstractVillager || attacked instanceof Hunter){
 			{
 				if(attacker.hasEffect(DSEffects.ROYAL_CHASE)){
 					int duration = attacker.getEffect(DSEffects.ROYAL_CHASE).getDuration();
@@ -199,37 +193,6 @@ public class VillagerRelationsHandler{
 					attacker.addEffect(new MobEffectInstance(DSEffects.ROYAL_CHASE, duration + Functions.secondsToTicks(5), amplifier));
 				}else{
 					attacker.addEffect(new MobEffectInstance(DSEffects.ROYAL_CHASE, Functions.secondsToTicks(5)));
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void spawnHunters(PlayerTickEvent.Post playerTickEvent){
-		if(!dragonHunters.isEmpty()){
-			Player player = playerTickEvent.getEntity();
-			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DSEffects.ROYAL_CHASE) && DragonStateProvider.isDragon(player)){
-				if(serverLevel.dimension() == Level.OVERWORLD){
-					VillageRelationShips villageRelationShips = DragonStateProvider.getOrGenerateHandler(player).getVillageRelationShips();
-						if(villageRelationShips.hunterSpawnDelay == 0){
-							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
-							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_AQUATIC)) {
-									return;
-								}
-								int levelOfEvil = computeLevelOfEvil(player);
-								for(int i = 0; i < levelOfEvil; i++){
-									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverLevel.random.nextInt(dragonHunters.size())).get().create(serverLevel)), spawnPosition, serverLevel);
-								}
-								if(serverLevel.isCloseToVillage(player.blockPosition(), 3)){
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
-								}else{
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
-								}
-							}
-						}else{
-							villageRelationShips.hunterSpawnDelay--;
-						}
 				}
 			}
 		}

@@ -6,15 +6,14 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 
 public class ServerConfig{
@@ -773,9 +772,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHealth", comment = "Dragon Ambusher health" )
 	public static Double ambusherHealth = 40d;
 
-	@ConfigRange( min = 1d, max = 32d )
+	@ConfigRange( min = 1, max = 32 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherDamage", comment = "Dragon Ambusher base damage" )
-	public static Double ambusherDamage = 12d;
+	public static Integer ambusherDamage = 12;
 
 	@ConfigRange( min = 0d, max = 30d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherArmor", comment = "Dragon Ambusher armor" )
@@ -788,6 +787,14 @@ public class ServerConfig{
 	@ConfigRange( min = AmbusherEntity.CROSSBOW_SHOOT_AND_RELOAD_TIME + 5, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherAttackInterval", comment = "How often the ambusher attacks with their crossbow" )
 	public static Integer ambusherAttackInterval = 65;
+
+	@ConfigRange(min = 0, max = 10)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpearmanReinforcementCount", comment = "How many spearman reinforce the ambusher when he is attacked")
+	public static Integer ambusherSpearmanReinforcementCount = 4;
+
+	@ConfigRange( min = 0, max = 10)
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHoundReinforcementCount", comment = "How many hounds reinforce the ambusher when he is attacked")
+	public static Integer ambusherHoundReinforcementCount = 2;
 
 	@ConfigRange( min = 8d, max = 40d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndHealth", comment = "Knight Hound health" )
@@ -804,28 +811,21 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndDoesSlowdown", comment = "Does Knight Hound apply speed slowdown?" )
 	public static Boolean houndDoesSlowdown = true;
 
-	@ConfigRange( min = 10d, max = 60d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterHealth", comment = "Dragon Hunter health" )
-	public static Double hunterHealth = 24d;
+	@ConfigRange( min = 0.1d, max = 1.0d)
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndSlowdownChance", comment = "Probably of the hound applying slowdown with their attack")
+	public static Double houndSlowdownChance = 0.5d;
 
-	@ConfigRange( min = 2d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterDamage", comment = "Dragon Hunter damage" )
-	public static Double hunterDamage = 5d;
+	@ConfigRange( min = 8d, max = 40d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinHealth", comment = "Griffin health" )
+	public static Double griffinHealth = 10d;
 
-	@ConfigRange( min = 0.1d, max = 0.6d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterSpeed", comment = "Dragon Hunter speed" )
-	public static Double hunterSpeed = 0.35d;
+	@ConfigRange( min = 1d, max = 10d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "houndDamage", comment = "Griffin damage" )
+	public static Double griffinDamage = 2d;
 
-	@ConfigRange( min = 0d, max = 20d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterArmor", comment = "Dragon Hunter armor" )
-	public static Double hunterArmor = 0d;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterHasBolas", comment = "Is Dragon hunter able to throw a bolas?" )
-	public static Boolean hunterHasBolas = true;
-
-	@ConfigRange( min = 1.0, max = 60.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterBolasFrequency", comment = "How frequently does the dragon hunter throw the bolas?" )
-	public static Double hunterBolasFrequency = 10.0;
+	@ConfigRange( min = 0.1d, max = 1.0d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "houndSpeed", comment = "Griffin speed" )
+	public static Double griffinSpeed = 0.9d;
 
 	@ConfigRange( min = 1.0, max = 60.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterTrappedDebuffDuration", comment = "How long does the trapped debuff last?" )
