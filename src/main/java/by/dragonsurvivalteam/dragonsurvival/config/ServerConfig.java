@@ -820,12 +820,17 @@ public class ServerConfig{
 	public static Double griffinHealth = 10d;
 
 	@ConfigRange( min = 1d, max = 10d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "houndDamage", comment = "Griffin damage" )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinDamage", comment = "Griffin damage" )
 	public static Double griffinDamage = 2d;
 
 	@ConfigRange( min = 0.1d, max = 1.0d )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "houndSpeed", comment = "Griffin speed" )
-	public static Double griffinSpeed = 0.9d;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinSpeed", comment = "Griffin speed" )
+	public static Double griffinSpeed = 0.2d;
+
+	@ConfigRange( min = 0.1d, max = 2.0d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinRange", comment = "Griffin attack range (how much the attack hitbox is expanded in all directions)" )
+	public static Double griffinRange = 0.8d;
+
 
 	@ConfigRange( min = 1.0, max = 60.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "hunter"}, key = "hunterTrappedDebuffDuration", comment = "How long does the trapped debuff last?" )
