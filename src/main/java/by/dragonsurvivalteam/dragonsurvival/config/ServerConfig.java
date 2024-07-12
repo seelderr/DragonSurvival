@@ -829,7 +829,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0.1d, max = 2.0d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinRange", comment = "Griffin attack range (how much the attack hitbox is expanded in all directions)" )
-	public static Double griffinRange = 0.8d;
+	public static Double griffinRange = 0.9d;
 
 
 	@ConfigRange( min = 1.0, max = 60.0 )

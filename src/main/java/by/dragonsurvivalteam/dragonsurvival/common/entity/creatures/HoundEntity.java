@@ -42,10 +42,10 @@ public class HoundEntity extends Hunter {
     public int getCurrentSwingDuration() {
         if(entityData.get(DID_SLOWDOWN_ATTACK)) {
             // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
-            return 20;
+            return 8;
         } else {
             // FIXME: Aures, set this to however long the attack animation you author is (in ticks)
-            return 10;
+            return 8;
         }
     }
 

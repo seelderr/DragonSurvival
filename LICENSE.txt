@@ -40,4 +40,4 @@
       other commercial damages or losses), even if such Contributor
       has been advised of the possibility of such damages.
 
-   Copyright 2020-2023 BlackAures1 (Виктория Ершова)
+   Copyright 2020-2024 BlackAures1 (Виктория Ершова)
