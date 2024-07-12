@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.SpearmanEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.AmbusherEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import software.bernie.geckolib.animation.AnimationState;
@@ -11,24 +11,24 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
-public class SpearmanModel extends GeoModel<SpearmanEntity> {
+public class AmbusherModel extends GeoModel<AmbusherEntity> {
     @Override
-    public ResourceLocation getModelResource(SpearmanEntity object){
-        return ResourceLocation.fromNamespaceAndPath(MODID, "geo/hunter_spearman.geo.json");
+    public ResourceLocation getModelResource(AmbusherEntity animatable) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, "geo/hunter_ambusher.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(SpearmanEntity object){
-        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/spearman.png");
+    public ResourceLocation getTextureResource(AmbusherEntity animatable) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/ambusher_on_horse.png");
     }
 
     @Override
-    public ResourceLocation getAnimationResource(SpearmanEntity animatable){
-        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_spearman.animation.json");
+    public ResourceLocation getAnimationResource(AmbusherEntity animatable) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_ambusher.animation.json");
     }
 
     @Override
-    public void applyMolangQueries(final AnimationState<SpearmanEntity> animationState, double currentTick) {
+    public void applyMolangQueries(final AnimationState<AmbusherEntity> animationState, double currentTick) {
         super.applyMolangQueries(animationState, currentTick);
 
         EntityModelData entityData = animationState.getData(DataTickets.ENTITY_MODEL_DATA);

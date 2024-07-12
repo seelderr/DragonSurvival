@@ -55,7 +55,7 @@ public class DragonSizeHandler{
 		Pose overridePose = overridePose(player);
 		height = calculateModifiedHeight(height, overridePose, squish);
 		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);// Apply changes
-		event.setNewSize(new EntityDimensions((float)(height * scale), (float)(width * scale), (float)(eyeHeight * scale), event.getOldSize().attachments(), event.getOldSize().fixed()));
+		event.setNewSize(new EntityDimensions((float)(width * scale), (float)(height * scale), (float)(eyeHeight * scale), event.getOldSize().attachments(), event.getOldSize().fixed()));
 	}
 	
 	public static double getDragonHeight(Player player) {

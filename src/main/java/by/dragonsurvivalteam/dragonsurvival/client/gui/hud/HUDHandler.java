@@ -15,7 +15,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class HUDHandler {
     @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaFoodLevel", comment = "Re-enable the vanilla hud for the food level")
     public static Boolean vanillaFoodLevel = false;
@@ -36,7 +36,7 @@ public class HUDHandler {
         ResourceLocation id = event.getName();
 
         if (DragonFoodHandler.customDragonFoods && !vanillaFoodLevel && id == VanillaGuiLayers.FOOD_LEVEL) {
-            boolean wasRendered = DragonFoodHandler.renderFoodBar(Minecraft.getInstance().gui, event.getGuiGraphics(), screenWidth, screenHeight);
+            boolean wasRendered = FoodBar.render(Minecraft.getInstance().gui, event.getGuiGraphics(), screenWidth, screenHeight);
 
             if (wasRendered) {
                 event.setCanceled(true);
@@ -50,7 +50,7 @@ public class HUDHandler {
         } else if (id == VanillaGuiLayers.AIR_LEVEL) {
             DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(ClientProxy.getLocalPlayer());
 
-            if (handler == null || !handler.isDragon()) {
+            if (!handler.isDragon()) {
                 return;
             }
 
