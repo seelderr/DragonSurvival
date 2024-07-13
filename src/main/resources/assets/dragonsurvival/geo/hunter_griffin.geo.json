@@ -742,15 +742,6 @@
 							}
 						}
 					]
-				},
-				{
-					"name": "Griffin_perch",
-					"parent": "Items",
-					"pivot": [12, -16, -8],
-					"cubes": [
-						{"origin": [-2, -16, -2], "size": [4, 12, 4], "uv": [0, 112], "mirror": true},
-						{"origin": [-8, -4, -2], "size": [16, 4, 4], "uv": [0, 120], "mirror": true}
-					]
 				}
 			]
 		}
