@@ -858,7 +858,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0d, max = 20d)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusVerticalReach", comment = "Additional vertical reach that the spearman gets over normal mobs.")
-	public static Double spearmanBonusVerticalReach = 0.5d;
+	public static Double spearmanBonusVerticalReach = 2.5d;
 
 	@ConfigRange( min = 1, max = 60 * 60 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "constantEffect", comment = "Duration of effect given by beacon constantly in seconds" )
