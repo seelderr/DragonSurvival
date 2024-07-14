@@ -829,7 +829,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0.1d, max = 2.0d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinRange", comment = "Griffin attack range (how much the attack hitbox is expanded in all directions)" )
-	public static Double griffinRange = 0.8d;
+	public static Double griffinRange = 0.9d;
 
 
 	@ConfigRange( min = 1.0, max = 60.0 )
@@ -858,7 +858,7 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0d, max = 20d)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusVerticalReach", comment = "Additional vertical reach that the spearman gets over normal mobs.")
-	public static Double spearmanBonusVerticalReach = 0.5d;
+	public static Double spearmanBonusVerticalReach = 2.5d;
 
 	@ConfigRange( min = 1, max = 60 * 60 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "constantEffect", comment = "Duration of effect given by beacon constantly in seconds" )
