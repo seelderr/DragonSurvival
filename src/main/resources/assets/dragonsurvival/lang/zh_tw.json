@@ -204,7 +204,6 @@
   "ds.skill.nofly": "§f該技能§c在飛行時§r§f不能使用。§r",
   "ds.skill.required_level": "§6■所需經驗等級：§r%s",
   "ds.skill.level.up": "§a使用§r§f%s§a級經驗等級升級此技能§r",
-  "ds.skill.level.down": "§a降級此技能並回退§r§f%s§a級經驗等級§r",
   "ds.skill.claws.damage": "§d■空爪傷害：§r%s",
   "ds.skill.type.active": "主動技能",
   "ds.skill.type.passive": "被動技能",

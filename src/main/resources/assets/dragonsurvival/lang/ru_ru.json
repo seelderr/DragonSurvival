@@ -218,7 +218,7 @@
   "ds.skill.nofly": "§fЭтот навык нельзя использовать в §r§cполёте§r§f!§f",
   "ds.skill.required_level": "§6■ Требуемый уровень:§r %s",
   "ds.skill.level.up": "§aСтоимость усиления в уровнях:§r %s",
-  "ds.skill.level.down": "§dОслабить и вернуть:§r %s",
+  "ds.skill.level.down": "§dПонизить уровень навыка",
   "ds.skill.claws.damage": "§d■ Укус:§r %s",
   "ds.skill.type.active": "Активный навык",
   "ds.skill.type.passive": "Пассивный навык",
