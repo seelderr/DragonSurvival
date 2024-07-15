@@ -2,11 +2,11 @@
   "type": "minecraft:entity",
   "pools": [
     {
-      "rolls": 1,
+      "rolls": 9,
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:elder_dragon_dust"
+          "name": "minecraft:feather"
         }
       ],
       "conditions": [
@@ -14,9 +14,8 @@
           "condition": "minecraft:killed_by_player"
         },
         {
-          "condition": "minecraft:random_chance_with_looting",
-          "chance": 0.30,
-          "looting_multiplier": 0.10
+           "condition": "minecraft:random_chance",
+           "chance": 0.7
         }
       ]
     }
