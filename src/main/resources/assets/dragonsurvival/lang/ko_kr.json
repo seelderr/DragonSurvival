@@ -235,7 +235,6 @@
   "ds.skill.nofly": "§f이 스킬은 §r§c비행 중 사용할 수 없습니다!§r",
   "ds.skill.required_level": "§6■ 요구 레벨:§r %s",
   "ds.skill.level.up": "§a스킬 업그레이드에§r %s §a레벨 소모§r",
-  "ds.skill.level.down": "§a스킬 다운그레이드 후§r %s §a레벨 회수§r",
   "ds.skill.claws.damage": "§d■ 발톱 피해량:§r %s",
   "ds.skill.type.active": "액티브 스킬",
   "ds.skill.type.passive": "패시브 스킬",

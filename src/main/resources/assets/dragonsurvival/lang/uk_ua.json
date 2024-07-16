@@ -243,7 +243,6 @@
   "ds.skill.nofly": "§fЦе вміння не можна використовувати у §r§cпольоті§r§f!§f",
   "ds.skill.required_level": "§6■ Потребує рівень:§r %s",
   "ds.skill.level.up": "§aПокращіть уміння для:§r %s §aрівень(ів)§r",
-  "ds.skill.level.down": "§dПослабте вміння та поверніть:§r %s §aрівень(ів)§r",
   "ds.skill.claws.damage": "§d■ Шкода кігтів:§r %s",
   "ds.skill.type.active": "Активне вміння",
   "ds.skill.type.passive": "Пасивне вміння",
