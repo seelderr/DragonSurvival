@@ -47,53 +47,7 @@
         }
       ]
     },
-	{
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 1.0,
-                "max": 1.0,
-                "type": "minecraft:uniform"
-              }
-            }
-          ],
-          "name": "dragonsurvival:princess_summon"
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 50
-        }
-      ]
-    },
-	{
-      "rolls": 1,
-      "entries": [
-        {
-          "type": "minecraft:item",
-          "functions": [
-            {
-              "function": "minecraft:set_count",
-              "count": {
-                "min": 1.0,
-                "max": 1.0,
-                "type": "minecraft:uniform"
-              }
-            }
-          ],
-          "name": "dragonsurvival:prince_summon"
-        },
-        {
-          "type": "minecraft:empty",
-          "weight": 50
-        }
-      ]
-    },
-	{
+    {
       "rolls": 1,
       "entries": [
         {

@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -9,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
+import java.util.Arrays;
+import java.util.Objects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -30,11 +34,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Arrays;
-import java.util.Objects;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {

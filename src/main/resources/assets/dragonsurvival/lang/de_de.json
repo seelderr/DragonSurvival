@@ -204,7 +204,6 @@
   "ds.skill.nofly": "§fDiese Fähigkeit kann nicht beim Fliegen verwendet werden§r§f!§f",
   "ds.skill.required_level": "§6■ Erfordert Level:§r %s",
   "ds.skill.level.up": "§aVerbesserung der Fähigkeit für§r %s §alevel§r",
-  "ds.skill.level.down": "§aHerabstufung der Fähigkeit erstattet§r %s §alevel§r",
   "ds.skill.claws.damage": "§d■ Klauenschaden:§r %s",
   "ds.skill.type.active": "Aktive Fähigkeit",
   "ds.skill.type.passive": "Passive Fähigkeit",

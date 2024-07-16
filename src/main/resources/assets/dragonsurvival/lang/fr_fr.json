@@ -243,7 +243,6 @@
   "ds.skill.nofly": "§fCette compétence ne peut pas être utilisée§r §cen volant/sautant§r §f!§r",
   "ds.skill.required_level": "§6■ Requiert le niveau : %s",
   "ds.skill.level.up": "§aAméliore cette compétence pour§r %s §aniveau(x)§r",
-  "ds.skill.level.down": "§aAbaisse cette compétence et récupère§r %s §aniveau(x)§r",
   "ds.skill.claws.damage": "§d■ Dégats des Griffes:§r %s",
   "ds.skill.type.active": "Compétence Active",
   "ds.skill.type.passive": "Compétence Passive",
