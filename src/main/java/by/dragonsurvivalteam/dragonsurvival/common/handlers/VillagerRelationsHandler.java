@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Hunter;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -154,25 +155,9 @@ public class VillagerRelationsHandler{
 
 	@SubscribeEvent
 	public static void specialTasks(EntityJoinLevelEvent joinWorldEvent){
-		Level world = joinWorldEvent.getLevel();
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof IronGolem golemEntity){
 			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> livingEntity.hasEffect(DSEffects.ROYAL_CHASE)));
-		}
-
-		if(entity instanceof AbstractVillager abstractVillager){
-			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> livingEntity.hasEffect(DSEffects.ROYAL_CHASE), 16.0F, 1.0D, 1.0D, pMob -> true));
-		}
-	}
-
-	@SubscribeEvent
-	public static void interactions(PlayerInteractEvent.EntityInteract event){
-		Player playerEntity = event.getEntity();
-		Entity livingEntity = event.getTarget();
-		if(livingEntity instanceof AbstractVillager){
-			if(playerEntity.hasEffect(DSEffects.ROYAL_CHASE)){
-				event.setCanceled(true);
-			}
 		}
 	}
 
@@ -185,7 +170,7 @@ public class VillagerRelationsHandler{
 			return;
 		}
 
-		if(attacked instanceof AbstractVillager || attacked instanceof Hunter){
+		if(attacked instanceof AbstractVillager || attacked instanceof DragonHunter){
 			{
 				if(attacker.hasEffect(DSEffects.ROYAL_CHASE)){
 					int duration = attacker.getEffect(DSEffects.ROYAL_CHASE).getDuration();

@@ -21,7 +21,7 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-public abstract class Hunter extends PathfinderMob implements GeoEntity {
+public abstract class Hunter extends PathfinderMob implements GeoEntity, DragonHunter {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	private static final EntityDataAccessor<Boolean> IS_AGGRO = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);

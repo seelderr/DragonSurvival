@@ -860,6 +860,14 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusVerticalReach", comment = "Additional vertical reach that the spearman gets over normal mobs.")
 	public static Double spearmanBonusVerticalReach = 2.5d;
 
+	@ConfigRange( min = 0.1d, max = 0.6d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "leader"}, key = "leaderSpeed", comment = "Dragon Leader speed" )
+	public static Double leaderSpeed = 0.35d;
+
+	@ConfigRange( min = 10d, max = 60d )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "leader"}, key = "leaderHealth", comment = "Dragon Leader health" )
+	public static Double leaderHealth = 24d;
+
 	@ConfigRange( min = 1, max = 60 * 60 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "constantEffect", comment = "Duration of effect given by beacon constantly in seconds" )
 	public static Integer secondsOfBeaconEffect = 20;
