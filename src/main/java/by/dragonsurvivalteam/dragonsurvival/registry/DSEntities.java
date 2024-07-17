@@ -114,8 +114,13 @@ public class DSEntities {
 					.updateInterval(1)
 					.build("hunter_ambusher"));
 
-	// Professions
-	public static VillagerProfession CAPTAIN_PROFESSION = new VillagerProfession("captain", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
+	public static DeferredHolder<EntityType<?>, EntityType<LeaderEntity>> HUNTER_LEADER = DS_ENTITY_TYPES.register(
+			"hunter_leader",
+			() -> EntityType.Builder.of(LeaderEntity::new, MobCategory.MONSTER)
+					.sized(0.6F, 1.95F)
+					.clientTrackingRange(64)
+					.updateInterval(1)
+					.build("hunter_leader"));
 
 	@SubscribeEvent
 	public static void attributeCreationEvent(final EntityAttributeCreationEvent event) {
@@ -126,6 +131,7 @@ public class DSEntities {
 		event.put(HUNTER_KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
 		event.put(HUNTER_AMBUSHER.get(), AmbusherEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.ambusherSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.ambusherDamage).add(Attributes.ARMOR, ServerConfig.ambusherArmor).add(Attributes.MAX_HEALTH, ServerConfig.ambusherHealth).build());
 		event.put(HUNTER_GRIFFIN.get(), GriffinEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.griffinSpeed).add(Attributes.FLYING_SPEED, ServerConfig.griffinSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.griffinDamage).add(Attributes.MAX_HEALTH, ServerConfig.griffinHealth).build());
+		event.put(HUNTER_LEADER.get(), LeaderEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.leaderSpeed).add(Attributes.MAX_HEALTH, ServerConfig.leaderHealth).build());
 	}
 
 	@SubscribeEvent
