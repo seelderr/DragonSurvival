@@ -51,7 +51,13 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(3, new RangedAttackGoal(this, 1, ServerConfig.ambusherAttackInterval, 5.f));
+        this.goalSelector.addGoal(3, new RangedAttackGoal(this, 1, ServerConfig.ambusherAttackInterval, 5.f){
+            @Override
+            public boolean canUse() {
+                // Don't go after the player whilst calling reinforcements
+                return super.canUse() && !(hasCalledReinforcements() && !hasSummonedReinforcements());
+            }
+        });
         this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8, 1.0f));
     }
 
@@ -172,7 +178,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     private void summonGriffin() {
-        Mob mob = DSEntities.HUNTER_SPEARMAN.get().create(this.level());
+        Mob mob = DSEntities.HUNTER_GRIFFIN.get().create(this.level());
         SpawningUtils.spawn(mob, this.position().add(0, 2, 0), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
         mob.setTarget(this.getTarget());
     }
