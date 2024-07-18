@@ -1737,12 +1737,11 @@
 			}
 		},
 		"blend_head": {
-			"loop": true,
 			"animation_length": 0.5,
 			"bones": {
 				"molang_head": {
 					"rotation": {
-						"vector": ["math.clamp(-query.look_angle_x*57,-55,40)", "math.clamp(query.look_angle_y*57,-40,45)", 0]
+						"vector": ["math.clamp(-query.look_angle_x*57,-55,40)", "math.clamp(-query.look_angle_y*57,-40,45)", 0]
 					}
 				}
 			}
