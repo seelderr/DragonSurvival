@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class VillagerMixin {
     @Inject(method = "startTrading", at = @At("HEAD"), cancellable = true)
     private void preventTradingWithMarkedPlayers(Player pPlayer, CallbackInfo ci) {
-        if(pPlayer.hasEffect(DSEffects.ROYAL_CHASE)) {
+        if(pPlayer.hasEffect(DSEffects.HUNTER_OMEN)) {
             ci.cancel();
         }
     }

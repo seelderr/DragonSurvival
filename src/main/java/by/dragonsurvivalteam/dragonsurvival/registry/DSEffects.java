@@ -117,8 +117,8 @@ public class DSEffects {
 		}
 	}
 
-	public static Holder<MobEffect> ROYAL_CHASE = DS_MOB_EFFECTS.register(
-		"royal_chase",
+	public static Holder<MobEffect> HUNTER_OMEN = DS_MOB_EFFECTS.register(
+		"hunter_omen",
 		() -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true)
 	);
 

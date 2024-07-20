@@ -701,52 +701,16 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "endVoidTeleport", comment = "Should the player be teleported to the overworld when they fall in the end?" )
 	public static Boolean endVoidTeleport = true;
 
-	@ConfigRange( min = 1, max = 120 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterDespawnDelay", comment = "Any dragon hunter, princess and prince group may despawn after this many minutes" )
-	public static Integer hunterDespawnDelay = 20;
-
-	@ConfigRange( min = 10, max = 240 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessSpawnDelay", comment = "Minimum delay between prince or princess spawning around village, in minutes" )
-	public static Integer royalSpawnDelay = 240;
-
-	@ConfigRange( min = 1, max = 1000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "royalDisappearInMinutes", comment = "In how many minutes the Prince and Princess will disappear after the call with the summon scroll. Default is 15 minutes" )
-	public static Integer royalDisappearInMinutes = 15;
-
-	@ConfigRange( min = 12, max = 240 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterGroupSpawnDelay", comment = "Minimum delay between Dragon hunter group spawning, in minutes" )
-	public static Integer hunterSpawnDelay = 20;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowKnightSpawning", comment = "Dragon knight spawning enabled?" )
-	public static Boolean spawnKnight = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowSquireSpawning", comment = "Dragon Squire spawning enabled?" )
-	public static Boolean spawnSpearman = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHunterSpawning", comment = "Dragon Hunter spawning enabled?" )
-	public static Boolean spawnHunter = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHoundSpawning", comment = "Dragon Knight hound spawning enabled?" )
-	public static Boolean spawnHound = true;
-
 	@ConfigRange( min = 10, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "villagerKillxp", comment = "How many experience points are gained for killing a villager" )
 	public static Integer xpGain = 10;
 
 	@ConfigType(EntityType.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "royalChaseStatusGivers", comment = "Entities which give 'Evil dragon' status on death" )
-	public static List<String> royalChaseStatusGivers = List.of("minecraft:villager", "minecraft:iron_golem", "dragonsurvival:hunter_hound", "dragonsurvival:knight", "dragonsurvival:shooter", "dragonsurvival:squire", "dragonsurvival:prince", "dragonsurvival:princess", "dragonsurvival:princess_entity", "guardvillagers:guard");
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterOmenStatusGivers", comment = "Entities which give 'Hunter Omen' status on death in addition to villagers." )
+	public static List<String> hunterOmenStatusGivers = List.of("minecraft:iron_golem");
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveRoyalChaseAfterDeath", comment = "Preserve effect 'Evil dragon' after death?" )
-	public static Boolean preserveRoyalChaseEffectAfterDeath = false;
-
-	@ConfigRange( min = 6, max = 128 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessAndHuntersLowerSpawnBound", comment = "Lowest Y value allowed for princess and hunter spawning" )
-	public static Integer riderSpawnLowerBound = 32;
-
-	@ConfigRange( min = 64, max = 250 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessAndHuntersUpperSpawnBound", comment = "Highest Y value allowed for princess and hunter spawning" )
-	public static Integer riderSpawnUpperBound = 80;
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveRoyalChaseAfterDeath", comment = "Preserve effect 'Hunter Omen' after death?" )
+	public static Boolean preserveHunterOmenAfterDeath = true;
 
 	@ConfigRange( min = 10d, max = 80d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightHealth", comment = "Dragon Knight health" )

@@ -7,17 +7,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightn
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.VillagerRelationsHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.animal.Wolf;
 import net.minecraft.world.entity.monster.Vindicator;
-import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.flag.FeatureFlagSet;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.levelgen.Heightmap;
@@ -143,22 +139,6 @@ public class DSEntities {
 		event.register(HUNTER_AMBUSHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 		event.register(HUNTER_HOUND.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
 		event.register(HUNTER_GRIFFIN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, SpawnPlacementRegisterEvent.Operation.REPLACE);
-	}
-
-	static {
-		VillagerRelationsHandler.dragonHunters = new ArrayList<>(4);
-
-		if (ServerConfig.spawnHound) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_HOUND));
-		}
-
-		if (ServerConfig.spawnSpearman) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_SPEARMAN));
-		}
-
-		if (ServerConfig.spawnKnight) {
-			VillagerRelationsHandler.dragonHunters.add(castToPathFinder(HUNTER_KNIGHT));
-		}
 	}
 
 	public static <T extends DeferredHolder<EntityType<?>, EntityType<? extends PathfinderMob>>> T castToPathFinder(final DeferredHolder entityType) {
