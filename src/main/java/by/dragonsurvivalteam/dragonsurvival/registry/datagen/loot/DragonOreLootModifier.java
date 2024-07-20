@@ -56,6 +56,9 @@ public class DragonOreLootModifier extends LootModifier {
                             int fortuneLevel = 0;
                             boolean hasSilkTouch = false;
                             if (tool != null) {
+                                if (EnchantmentHelper.getTagEnchantmentLevel(context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SILK_TOUCH), tool) > 0) {
+                                    return generatedLoot;
+                                }
                                 Holder<Enchantment> fortune = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.FORTUNE);
                                 fortuneLevel = EnchantmentHelper.getTagEnchantmentLevel(fortune, tool);
                                 Holder<Enchantment> silkTouch = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SILK_TOUCH);
