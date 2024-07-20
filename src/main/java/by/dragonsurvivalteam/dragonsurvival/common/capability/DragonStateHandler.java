@@ -40,7 +40,7 @@ import org.jetbrains.annotations.UnknownNullability;
 
 public class DragonStateHandler extends EntityStateHandler {
 
-	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData, this::getVillageRelationShips};
+	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
     /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
@@ -76,7 +76,6 @@ public class DragonStateHandler extends EntityStateHandler {
 	private final EmoteCap emoteData = new EmoteCap(this);
 	private final MagicCap magicData = new MagicCap(this);
 	private final SkinCap skinData = new SkinCap(this);
-	private final VillageRelationShips villageRelationShips = new VillageRelationShips(this);
 	private final Map<String, Double> savedDragonSize = new ConcurrentHashMap<>();
 
 	private AbstractDragonType dragonType;
@@ -502,10 +501,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	public ClawInventory getClawToolData()  {
 		return clawToolData;
-	}
-
-	public VillageRelationShips getVillageRelationShips() {
-		return villageRelationShips;
 	}
 
 	@Override

@@ -251,17 +251,4 @@ public class VillagerRelationsHandler{
 		}
 		return 0;
 	}
-
-	/**
-	 * Save duration of 'evil dragon'
-	 */
-	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent){
-			Player playerEntity = playerTickEvent.getEntity();
-			if(!playerEntity.level().isClientSide()){
-				if(playerEntity.hasEffect(DSEffects.ROYAL_CHASE)){
-					DragonStateProvider.getOrGenerateHandler(playerEntity).getVillageRelationShips().evilStatusDuration = playerEntity.getEffect(DSEffects.ROYAL_CHASE).getDuration();
-				}
-			}
-	}
 }
