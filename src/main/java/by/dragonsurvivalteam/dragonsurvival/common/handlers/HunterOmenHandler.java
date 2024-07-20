@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.google.common.eventbus.Subscribe;
@@ -71,8 +72,7 @@ public class HunterOmenHandler {
 
 				ObjectArrayList<ItemStack> loot = new ObjectArrayList<>();
 				if(!nonEmeraldTrades.isEmpty()) {
-					Holder<Enchantment> looting = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.LOOTING);
-					int lootingLevel = EnchantmentHelper.getEnchantmentLevel(looting, player);
+					int lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
 					int numRolls = Math.min(lootingLevel + 1, nonEmeraldTrades.size());
 					for(int i = 0; i < numRolls; i++) {
 						int roll = player.level().getRandom().nextInt(nonEmeraldTrades.size());

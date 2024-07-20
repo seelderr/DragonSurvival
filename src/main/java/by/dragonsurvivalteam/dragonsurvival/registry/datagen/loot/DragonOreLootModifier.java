@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -56,10 +57,8 @@ public class DragonOreLootModifier extends LootModifier {
                             int fortuneLevel = 0;
                             boolean hasSilkTouch = false;
                             if (tool != null) {
-                                Holder<Enchantment> fortune = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.FORTUNE);
-                                fortuneLevel = EnchantmentHelper.getTagEnchantmentLevel(fortune, tool);
-                                Holder<Enchantment> silkTouch = context.getLevel().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SILK_TOUCH);
-                                hasSilkTouch = EnchantmentHelper.getTagEnchantmentLevel(silkTouch, tool) != 0;
+                                fortuneLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.FORTUNE, tool);
+                                hasSilkTouch = EnchantmentUtils.getLevel(player.level(), Enchantments.SILK_TOUCH, tool) != 0;
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
