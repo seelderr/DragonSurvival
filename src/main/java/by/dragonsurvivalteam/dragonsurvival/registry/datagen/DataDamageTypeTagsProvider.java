@@ -54,13 +54,14 @@ public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
                 .add(DSDamageTypes.RAIN_BURN);
 
         tag(DRAGON_MAGIC)
+                .add(DSDamageTypes.CAVE_DRAGON_BREATH)
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
+                .add(DSDamageTypes.FOREST_DRAGON_BREATH)
                 .add(DSDamageTypes.FOREST_DRAGON_DRAIN)
                 .add(DSDamageTypes.SEA_DRAGON_BREATH)
-                .add(DSDamageTypes.CAVE_DRAGON_BREATH)
+                .add(DSDamageTypes.SPECTRAL_IMPACT)
                 .add(DSDamageTypes.DRAGON_BALL_LIGHTNING)
                 .add(DSDamageTypes.DRAGON_BREATH)
-                .add(DSDamageTypes.FOREST_DRAGON_BREATH)
                 .add(DamageTypes.FIREBALL);
     }
 
