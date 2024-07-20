@@ -101,6 +101,70 @@
                     ]
                 }
             }
+        ],
+        "minecraft:tick": [
+            {
+                "effect": {
+                    "type": "minecraft:all_of",
+                    "effects": [
+                        {
+                            "type": "minecraft:damage_entity",
+                            "damage_type": "dragonsurvival:crushed",
+                            "min_damage": 0.5,
+                            "max_damage": 0.5
+                        },
+                        {
+                            "type": "minecraft:damage_item",
+                            "amount": 1
+                        },
+                        {
+                            "type": "minecraft:apply_mob_effect",
+                            "max_amplifier": 1.0,
+                            "max_duration": {
+                                "type": "minecraft:linear",
+                                "base": 1.5,
+                                "per_level_above_first": 0.5
+                            },
+                            "min_amplifier": 1.0,
+                            "min_duration": 1.5,
+                            "to_apply": "minecraft:slowness"
+                        },
+                        {
+                            "type": "minecraft:play_sound",
+                            "sound": "dragonsurvival:bonk",
+                            "volume": 1,
+                            "pitch": 1
+                        }
+                    ]
+                },
+                "requirements": {
+                    "condition": "minecraft:all_of",
+                    "terms": [
+                        {
+                            "condition": "minecraft:inverted",
+                            "term": {
+                                "condition": "minecraft:entity_properties",
+                                "entity": "this",
+                                "predicate": {
+                                    "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': none}}}"
+                                }
+                            }
+                        },
+                        {
+                            "condition": "minecraft:entity_properties",
+                            "entity": "this",
+                            "predicate": {
+                                "type": "minecraft:player"
+                            }
+                        },
+                        {
+                            "condition": "minecraft:time_check",
+                            "value": 0,
+                            "period": 100
+                        }
+                    ]
+                }
+            }
         ]
     },
 

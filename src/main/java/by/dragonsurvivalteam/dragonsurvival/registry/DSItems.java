@@ -6,6 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.*;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DragonHunterSword;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
@@ -13,6 +16,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.List;
+import java.util.function.Supplier;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -22,10 +27,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public class DSItems {
@@ -112,6 +115,38 @@ public class DSItems {
 
 	public static final Holder<Item> WING_GRANT_ITEM = DS_ITEMS.register("wing_grant", () -> new WingGrantItem(defaultProperties));
 	public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", () -> new SpinGrantItem(defaultProperties));
+
+	public static final Holder<Item> GOOD_DRAGON_PRESENT = DS_ITEMS.register("good_dragon_present", () -> new Item(defaultProperties.rarity(Rarity.RARE)));
+	public static final Supplier<ArmorItem> GOOD_DRAGON_HELMET = DS_ITEMS.register("good_dragon_helmet", () -> new GoodDragonArmorItem(
+			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+	public static final Supplier<ArmorItem> GOOD_DRAGON_CHESTPLATE = DS_ITEMS.register("good_dragon_chestplate", () -> new GoodDragonArmorItem(
+			ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+	public static final Supplier<ArmorItem> GOOD_DRAGON_LEGGINGS = DS_ITEMS.register("good_dragon_leggings", () -> new GoodDragonArmorItem(
+			ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+	public static final Supplier<ArmorItem> GOOD_DRAGON_BOOTS = DS_ITEMS.register("good_dragon_boots", () -> new GoodDragonArmorItem(
+			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+
+	public static final Holder<Item> EVIL_DRAGON_PRESENT = DS_ITEMS.register("evil_dragon_present", () -> new Item(defaultProperties.rarity(Rarity.RARE)));
+	public static final Supplier<ArmorItem> EVIL_DRAGON_HELMET = DS_ITEMS.register("evil_dragon_helmet", () -> new EvilDragonArmorItem(
+			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+	public static final Supplier<ArmorItem> EVIL_DRAGON_CHESTPLATE = DS_ITEMS.register("evil_dragon_chestplate", () -> new EvilDragonArmorItem(
+			ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+	public static final Supplier<ArmorItem> EVIL_DRAGON_LEGGINGS = DS_ITEMS.register("evil_dragon_leggings", () -> new EvilDragonArmorItem(
+			ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+	public static final Supplier<ArmorItem> EVIL_DRAGON_BOOTS = DS_ITEMS.register("evil_dragon_boots", () -> new EvilDragonArmorItem(
+			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
+	);
+
+	public static final Holder<Item> DRAGON_HUNTER_SWORD = DS_ITEMS.register("dragon_hunter_sword", () -> new DragonHunterSword(
+			new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
+	);
 
 	// Items that shouldn't show up in the creative tab
 	public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));

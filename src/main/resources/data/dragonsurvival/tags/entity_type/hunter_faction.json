@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:villager",
+    "dragonsurvival:hunter_hound",
+    "dragonsurvival:spearman",
+    "dragonsurvival:knight"
+  ]
+}

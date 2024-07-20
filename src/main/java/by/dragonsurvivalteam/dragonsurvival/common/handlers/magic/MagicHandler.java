@@ -17,12 +17,19 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import java.util.Objects;
+import java.util.Optional;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
@@ -32,6 +39,8 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -40,6 +49,7 @@ import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
@@ -224,8 +234,54 @@ public class MagicHandler{
 		});
 	}
 
+	public static void applyDebuffs(final MobEffectEvent.Added event) {
+		if (event.getEffectInstance() == null || Objects.equals(event.getEffectSource(), event.getEntity())) return;
+
+		if (event.getEffectSource() instanceof LivingEntity source && Minecraft.getInstance().level != null && Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
+			Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get();
+			Optional<Holder.Reference<Enchantment>> murderersCunning = enchantments.getHolder(DSEnchantments.MURDERERS_CUNNING);
+			Optional<Holder.Reference<Enchantment>> unbreakableSpirit = enchantments.getHolder(DSEnchantments.UNBREAKABLE_SPIRIT);
+			MobEffectInstance effect = event.getEffectInstance();
+			int amp = effect.getAmplifier();
+
+			if (unbreakableSpirit.isPresent())
+				amp -= EnchantmentHelper.getEnchantmentLevel(unbreakableSpirit.get(), source);
+			if (murderersCunning.isPresent())
+				amp += EnchantmentHelper.getEnchantmentLevel(murderersCunning.get(), source);
+			amp = Math.min(Math.max(amp, 0), 255);
+
+			if (amp != effect.getAmplifier()) {
+				MobEffectInstance newInstance = new MobEffectInstance(effect.getEffect(), effect.getDuration(), amp);
+				event.getEntity().removeEffect(effect.getEffect());
+				event.getEntity().addEffect(newInstance);
+			}
+		}
+	}
+
 	@SubscribeEvent
 	public static void livingHurt(final LivingIncomingDamageEvent event) {
+		if (event.getEntity() instanceof LivingEntity entity) {
+			if (event.getSource().getEntity() instanceof LivingEntity source) {
+				if (entity.hasEffect(DSEffects.BLOOD_SIPHON)) {
+					source.heal(event.getAmount() * 0.1f);
+				}
+				if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
+					Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get();
+					if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_MAGIC)) {
+						Optional<Holder.Reference<Enchantment>> draconicSuperiority = enchantments.getHolder(DSEnchantments.DRACONIC_SUPERIORITY);
+						if (draconicSuperiority.isPresent()) {
+							EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source);
+							event.setAmount(event.getAmount() * 1.2f + (0.08f * EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source)));
+						}
+					}
+					if (event.getEntity().getHealth() == event.getEntity().getMaxHealth()) {
+						Optional<Holder.Reference<Enchantment>> murderersCunning = enchantments.getHolder(DSEnchantments.MURDERERS_CUNNING);
+						murderersCunning.ifPresent(enchantmentReference -> event.setAmount(event.getAmount() * 1.4f + (0.2f * EnchantmentHelper.getEnchantmentLevel(enchantmentReference, source))));
+					}
+				}
+			}
+		}
+
 		if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_BREATH)) {
 			return;
 		}

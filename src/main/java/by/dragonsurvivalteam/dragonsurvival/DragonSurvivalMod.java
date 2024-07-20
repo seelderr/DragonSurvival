@@ -1,10 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment.DS_ARMOR_MATERIALS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
@@ -93,6 +95,8 @@ public class DragonSurvivalMod{
 		modEventBus.addListener(this::clientSetup);
 
 		// We need to register blocks before items, since otherwise the items will register before the item-blocks can be assigned
+		DS_ATTRIBUTES.register(modEventBus);
+		DS_ARMOR_MATERIALS.register(modEventBus);
 		DS_BLOCKS.register(modEventBus);
 		DS_ITEMS.register(modEventBus);
 		DS_ATTACHMENT_TYPES.register(modEventBus);
