@@ -34,17 +34,13 @@ public class HoundEntity extends Hunter {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1));
+        this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1, 8));
         this.goalSelector.addGoal(8, new FollowSpecificMobGoal(this, 0.6, 10, 20, target -> target instanceof KnightEntity));
     }
 
     @Override
     public int getCurrentSwingDuration() {
-        if(entityData.get(DID_SLOWDOWN_ATTACK)) {
-            return 8;
-        } else {
-            return 8;
-        }
+        return 8;
     }
 
     public double getRunThreshold() {

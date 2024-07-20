@@ -40,7 +40,7 @@ public class GriffinEntity extends Hunter {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1.0));
+        this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1.0, 10));
         this.goalSelector.addGoal(8, new FollowSpecificMobGoal(this, 0.6, 5, 20, target -> target instanceof AmbusherEntity));
     }
 

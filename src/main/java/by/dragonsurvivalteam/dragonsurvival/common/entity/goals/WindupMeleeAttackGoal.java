@@ -11,13 +11,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public class WindupMeleeAttackGoal extends MeleeAttackGoal {
     private int ticksUntilDamage;
-    private boolean hasSwung;
+    private final int attackTicks;
+    private boolean hasPerformedAttack;
 
-    public WindupMeleeAttackGoal(PathfinderMob pMob, double pSpeedModifier) {
+    public WindupMeleeAttackGoal(PathfinderMob pMob, double pSpeedModifier, int pAttackTicks) {
         // We set following target even if not seen to true here always, since this system breaks down
         // if the attacker loses sight of the target and then regains it while the windup is still going.
         // This is because this goal stops ticking when the target is not seen and causes the animation to desync from the attack logic.
         super(pMob, pSpeedModifier, true);
+        attackTicks = pAttackTicks;
     }
 
     @Override
@@ -31,19 +33,18 @@ public class WindupMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     protected void checkAndPerformWindupAttack(@NotNull LivingEntity pTarget) {
-        if (this.canPerformAttack(pTarget) || hasSwung) {
-            if (!hasSwung) {
+        if (this.canPerformAttack(pTarget) || this.mob.swinging) {
+            if (!this.mob.swinging) {
                 this.mob.swing(InteractionHand.MAIN_HAND);
-                this.ticksUntilDamage = this.mob.getCurrentSwingDuration();
-                hasSwung = true;
+                this.ticksUntilDamage = attackTicks;
+                hasPerformedAttack = false;
             }
 
-            if (this.ticksUntilDamage <= 0) {
+            if (this.ticksUntilDamage <= 0 && !hasPerformedAttack) {
                 if(this.canPerformAttack(pTarget)) {
                     this.mob.doHurtTarget(pTarget);
                 }
-                this.ticksUntilDamage = this.mob.getCurrentSwingDuration();
-                hasSwung = false;
+                hasPerformedAttack = true;
             }
         }
     }
