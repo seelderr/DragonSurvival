@@ -16,8 +16,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayList;
-
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientCastingHandler {
     public enum CastingStatus {

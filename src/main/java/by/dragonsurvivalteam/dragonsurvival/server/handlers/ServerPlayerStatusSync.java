@@ -23,7 +23,7 @@ public class ServerPlayerStatusSync {
 
 		Player player = event.getEntity();
 
-		if(player.isAddedToWorld() && player.isAlive()){
+		if(player.isAddedToLevel() && player.isAlive()){
 			if(DragonStateProvider.isDragon(player)){
 				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 				if(player.tickCount >= handler.lastSync + syncTicks){

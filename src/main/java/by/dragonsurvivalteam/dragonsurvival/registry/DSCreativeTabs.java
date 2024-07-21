@@ -3,11 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.*;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
-
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;

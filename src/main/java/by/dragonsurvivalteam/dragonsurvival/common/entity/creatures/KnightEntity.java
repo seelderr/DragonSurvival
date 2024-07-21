@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPi
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;

@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import java.util.Locale;
-
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
+import java.util.Locale;
 import net.minecraft.network.chat.Component;
 
 public abstract class DragonWingAbility extends InnateDragonAbility{

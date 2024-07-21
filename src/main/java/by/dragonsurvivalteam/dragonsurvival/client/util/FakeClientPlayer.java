@@ -95,5 +95,5 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	public @NotNull BlockPos blockPosition(){return BlockPos.ZERO;}
 
 	@Override
-	public void onAddedToWorld(){}
+	public void onAddedToLevel(){}
 }
