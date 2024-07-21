@@ -36,7 +36,7 @@ public class DragonCommand{
 		RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
 		LiteralCommandNode<CommandSourceStack> dragon = literal("dragon").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
-			return runCommand(type, "central", 1, false, context.getSource().getPlayerOrException());
+			return runCommand(type, "center", 1, false, context.getSource().getPlayerOrException());
 		}).build();
 
 		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
@@ -52,7 +52,7 @@ public class DragonCommand{
 		}).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-			return runCommand(type, "central", 1, false, serverPlayer);
+			return runCommand(type, "center", 1, false, serverPlayer);
 		}).build();
 		
 		ArgumentCommandNode<CommandSourceStack, String> dragonBody = argument("dragon_body", StringArgumentType.string()).suggests((context, builder) -> {

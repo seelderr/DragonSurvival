@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
@@ -236,11 +236,11 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		components.add(Component.translatable("ds.skill.damage", getDamage()));
 		components.add(Component.translatable("ds.skill.range.blocks", range));
 
-		if (!KeyInputHandler.ABILITY1.isUnbound()) {
-			String key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+		if (!Keybind.ABILITY1.get().isUnbound()) {
+			String key = Keybind.ABILITY1.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if (key.isEmpty()) {
-				key = KeyInputHandler.ABILITY1.getKey().getDisplayName().getString();
+				key = Keybind.ABILITY1.getKey().getDisplayName().getString();
 			}
 
 			components.add(Component.translatable("ds.skill.keybind", key));

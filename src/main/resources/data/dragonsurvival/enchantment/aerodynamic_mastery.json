@@ -1,0 +1,51 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "ds.enchantment.aerodynamic_mastery"
+  },
+  "effects": {
+    "minecraft:attributes":
+    [
+      {
+        "amount": {
+          "type": "minecraft:fraction",
+          "numerator": 1.0,
+          "denominator": {
+            "type": "minecraft:linear",
+            "base": 2,
+            "per_level_above_first": 0.5
+          }
+        },
+        "attribute": "dragonsurvival:flight_stamina",
+        "id": "dragonsurvival:enchantment.aerodynamic_mastery",
+        "operation": "add_multiplied_total"
+      },
+      {
+        "amount": {
+          "type": "minecraft:linear",
+          "base": 0.5,
+          "per_level_above_first": 0.2
+        },
+        "attribute": "minecraft:generic.flying_speed",
+        "id": "dragonsurvival:enchantment.aerodynamic_mastery",
+        "operation": "add_multiplied_base"
+      }
+    ]
+  },
+
+  "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
+  "max_cost": {
+    "base": 21,
+    "per_level_above_first": 11
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 11
+  },
+  "slots": [
+    "legs"
+  ],
+  "supported_items": "#minecraft:enchantable/leg_armor",
+  "weight": 10
+}

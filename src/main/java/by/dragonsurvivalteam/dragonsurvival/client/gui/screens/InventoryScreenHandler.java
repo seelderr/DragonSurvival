@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory;
 import net.minecraft.client.Minecraft;
@@ -23,6 +24,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -151,6 +153,23 @@ public class InventoryScreenHandler {
                 };
                 creativeModeDragonInventoryButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.dragon")));
                 initGuiEvent.addListener(creativeModeDragonInventoryButton);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onTick(ClientTickEvent.Post clientTickEvent) {
+        Minecraft minecraft = Minecraft.getInstance();
+        LocalPlayer player = Minecraft.getInstance().player;
+
+        if (player == null || !DragonStateProvider.isDragon(minecraft.player))
+            return;
+
+        if (Keybind.DRAGON_INVENTORY.consumeClick()) {
+            if (minecraft.screen == null) {
+                PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
+            } else {
+                player.closeContainer();
             }
         }
     }

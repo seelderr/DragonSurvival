@@ -227,7 +227,7 @@ public class ClientProxy {
                         ability.onKeyPressed(player, () -> {
                             if (player.getId() == localPlayer.getId()) {
                                 ClientCastingHandler.hasCast = true;
-                                ClientCastingHandler.status = ClientCastingHandler.StatusStop;
+                                ClientCastingHandler.status = ClientCastingHandler.CastingStatus.Stop;
                             }
                         }, message.castStartTime(), message.clientTime());
                     } else {

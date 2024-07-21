@@ -34,6 +34,7 @@ public class DSModifiers {
 
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 			AttributeInstance instance = player.getAttribute(attribute);
+			if (instance == null) { return; }
 			AttributeModifier oldMod = instance.getModifier(modifier);
 			if (oldMod != null) {
 				instance.removeModifier(oldMod);
@@ -61,6 +62,7 @@ public class DSModifiers {
 	public static final ResourceLocation DRAGON_SUBMERGED_MINING_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_submerged_mining_speed");
 
 	public static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
+	public static final ResourceLocation DRAGON_BODY_HEALTH_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_bonus");
 	public static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
 	public static final ResourceLocation DRAGON_BODY_STRENGTH = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength");
 	public static final ResourceLocation DRAGON_BODY_STRENGTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength_mult");
@@ -71,6 +73,7 @@ public class DSModifiers {
 	public static final ResourceLocation DRAGON_BODY_HEALTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_mult");
 	public static final ResourceLocation DRAGON_BODY_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_jump_bonus");
 	public static final ResourceLocation DRAGON_BODY_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_safe_fall_distance");
+	public static final ResourceLocation DRAGON_BODY_FLIGHT_STAMINA = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_flight_stamina");
 
 	// Used in MixinPlayerEntity to add the slow falling effect to dragons
 	public static final ResourceLocation SLOW_FALLING = ResourceLocation.fromNamespaceAndPath(MODID, "slow_falling");
@@ -109,12 +112,15 @@ public class DSModifiers {
 			new ModifierBuilder(DRAGON_BODY_SWIM_SPEED_BONUS, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, handler -> handler.getBody().getSwimSpeedBonus()),
 			new ModifierBuilder(DRAGON_BODY_STEP_HEIGHT_BONUS, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, handler -> handler.getBody().getStepBonus()),
 			new ModifierBuilder(DRAGON_BODY_GRAVITY_MULT, Attributes.GRAVITY, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getGravityMult() - 1),
+			new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, handler -> handler.getBody().getHealthBonus()),
 			new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getHealthMult() - 1),
 			new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, handler -> handler.getBody().getJumpBonus()),
-			new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, handler -> handler.getBody().getJumpBonus())
+			new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, handler -> handler.getBody().getJumpBonus()),
+			new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getFlightStaminaMult())
 	);
 
 	public static double buildHealthMod(DragonStateHandler handler){
+		if (!ServerConfig.healthAdjustments) return 0;
 		double healthModifier;
 		double size = handler.getSize();
 		if(ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
@@ -141,6 +147,7 @@ public class DSModifiers {
 	}
 
 	public static double buildDamageMod(DragonStateHandler handler) {
+		if (!ServerConfig.attackDamage) return 0;
 		double ageBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage;
 		if(ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 			double damageModPercentage = Math.min(1.0, (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / (ServerConfig.maxGrowthSize - ServerConfig.DEFAULT_MAX_GROWTH_SIZE));

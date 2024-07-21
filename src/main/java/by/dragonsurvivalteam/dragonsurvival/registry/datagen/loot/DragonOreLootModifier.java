@@ -59,6 +59,10 @@ public class DragonOreLootModifier extends LootModifier {
                             if (tool != null) {
                                 fortuneLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.FORTUNE, tool);
                                 hasSilkTouch = EnchantmentUtils.getLevel(player.level(), Enchantments.SILK_TOUCH, tool) != 0;
+                              
+                                if (hasSilkTouch) {
+                                    return generatedLoot;
+                                }
                             }
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
