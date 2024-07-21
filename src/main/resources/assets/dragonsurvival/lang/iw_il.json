@@ -243,7 +243,6 @@
   "ds.skill.nofly": "§fלא ניתן להשתמש במיומנות זו §r§בזמן תעופה§r§f!§f",
   "ds.skill.required_level": "§6■ דרושה דרגה:§r %s",
   "ds.skill.level.up": "§aשדרג את המיומנות תמורת§r %s §aדרגות§r",
-  "ds.skill.level.down": "§aבטל את שדרוג המיומנות וקבל בחזרה§r %s §aדרגות§r",
   "ds.skill.claws.damage": "§d■ נזק טופר:§r %s",
   "ds.skill.type.active": "מיומנות פעילה",
   "ds.skill.type.passive": "מיומנות פסיבית",

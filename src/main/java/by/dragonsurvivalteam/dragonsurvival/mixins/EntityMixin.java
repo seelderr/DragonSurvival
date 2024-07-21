@@ -90,7 +90,7 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         });
     }
 
-    /** Don't show fire animation (when burning) when being a cave dragon */
+    /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */
     @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
         DragonStateProvider.getCap((Entity) (Object) this).ifPresent(handler -> {

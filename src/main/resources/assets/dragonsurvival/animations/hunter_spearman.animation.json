@@ -818,6 +818,16 @@
 							"vector": [0, 0, -1]
 						}
 					}
+				},
+				"molang_left_arm": {
+					"rotation": {
+						"vector": ["math.clamp(-query.look_angle_x*57,-40,40)", "math.clamp(query.look_angle_y*57,-15,15)", 0]
+					}
+				},
+				"molang_right_arm": {
+					"rotation": {
+						"vector": ["math.clamp(-query.look_angle_x*57,-40,40)", "math.clamp(query.look_angle_y*57,-15,15)", 0]
+					}
 				}
 			}
 		},
@@ -846,6 +856,16 @@
 					},
 					"position": {
 						"vector": [0, 0, -1]
+					}
+				},
+				"molang_left_arm": {
+					"rotation": {
+						"vector": ["math.clamp(-query.look_angle_x*57,-35,35)", "math.clamp(query.look_angle_y*57,-15,15)", 0]
+					}
+				},
+				"molang_right_arm": {
+					"rotation": {
+						"vector": ["math.clamp(-query.look_angle_x*57,-40,40)", "math.clamp(query.look_angle_y*57,-15,15)", 0]
 					}
 				}
 			}
@@ -1420,10 +1440,11 @@
 		},
 		"blend_head": {
 			"loop": true,
+			"animation_length": 0.5,
 			"bones": {
 				"molang_head": {
 					"rotation": {
-						"vector": [0, "math.clamp(query.look_angle_y*57,-55,55)", 0]
+						"vector": ["math.clamp(-query.look_angle_x*57,-55,40)", "math.clamp(query.look_angle_y*57,-40,45)", 0]
 					}
 				}
 			}

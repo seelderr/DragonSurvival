@@ -33,6 +33,13 @@ public class AnimationTimer {
 		return animationTimes.getOrDefault(animation, 0.0);
 	}
 
+	/**
+	 * The RawAnimation must contain only one stage for this to work correctly
+	 */
+	public double getDuration(final RawAnimation animation) {
+		return getDuration(animation.getAnimationStages().getFirst().animationName());
+	}
+
 	public void putAnimation(final String animation, final Double ticks) {
 		putDuration(animation, ticks);
 
@@ -42,7 +49,7 @@ public class AnimationTimer {
 	}
 
 	/**
-	 * The RawAnimation must contain only one stage for this timer to work correctly
+	 * The RawAnimation must contain only one stage for this to work correctly
 	 */
 	public void putAnimation(final RawAnimation animation, final Double ticks) {
 		putDuration(animation.getAnimationStages().getFirst().animationName(), ticks);

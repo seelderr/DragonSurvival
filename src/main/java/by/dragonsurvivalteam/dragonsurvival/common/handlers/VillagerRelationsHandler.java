@@ -1,20 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.VillageRelationShips;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
+import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.Hunter;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Supplier;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -33,7 +29,6 @@ import net.minecraft.world.item.trading.MerchantOffers;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
@@ -160,25 +155,9 @@ public class VillagerRelationsHandler{
 
 	@SubscribeEvent
 	public static void specialTasks(EntityJoinLevelEvent joinWorldEvent){
-		Level world = joinWorldEvent.getLevel();
 		Entity entity = joinWorldEvent.getEntity();
 		if(entity instanceof IronGolem golemEntity){
 			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> livingEntity.hasEffect(DSEffects.ROYAL_CHASE)));
-		}
-
-		if(entity instanceof AbstractVillager abstractVillager){
-			abstractVillager.goalSelector.addGoal(10, new AvoidEntityGoal<>(abstractVillager, Player.class, livingEntity -> livingEntity.hasEffect(DSEffects.ROYAL_CHASE), 16.0F, 1.0D, 1.0D, pMob -> true));
-		}
-	}
-
-	@SubscribeEvent
-	public static void interactions(PlayerInteractEvent.EntityInteract event){
-		Player playerEntity = event.getEntity();
-		Entity livingEntity = event.getTarget();
-		if(livingEntity instanceof AbstractVillager){
-			if(playerEntity.hasEffect(DSEffects.ROYAL_CHASE)){
-				event.setCanceled(true);
-			}
 		}
 	}
 
@@ -199,37 +178,6 @@ public class VillagerRelationsHandler{
 					attacker.addEffect(new MobEffectInstance(DSEffects.ROYAL_CHASE, duration + Functions.secondsToTicks(5), amplifier));
 				}else{
 					attacker.addEffect(new MobEffectInstance(DSEffects.ROYAL_CHASE, Functions.secondsToTicks(5)));
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void spawnHunters(PlayerTickEvent.Post playerTickEvent){
-		if(!dragonHunters.isEmpty()){
-			Player player = playerTickEvent.getEntity();
-			if(player.level() instanceof ServerLevel serverLevel && !player.isCreative() && !player.isSpectator() && player.isAlive() && player.hasEffect(DSEffects.ROYAL_CHASE) && DragonStateProvider.isDragon(player)){
-				if(serverLevel.dimension() == Level.OVERWORLD){
-					VillageRelationShips villageRelationShips = DragonStateProvider.getOrGenerateHandler(player).getVillageRelationShips();
-						if(villageRelationShips.hunterSpawnDelay == 0){
-							BlockPos spawnPosition = SpawningUtils.findRandomSpawnPosition(player, 1, 4, 14.0F);
-							if(spawnPosition != null && spawnPosition.getY() >= ServerConfig.riderSpawnLowerBound && spawnPosition.getY() <= ServerConfig.riderSpawnUpperBound){
-								if (serverLevel.getBiome(spawnPosition).is(Tags.Biomes.IS_AQUATIC)) {
-									return;
-								}
-								int levelOfEvil = computeLevelOfEvil(player);
-								for(int i = 0; i < levelOfEvil; i++){
-									SpawningUtils.spawn(Objects.requireNonNull(dragonHunters.get(serverLevel.random.nextInt(dragonHunters.size())).get().create(serverLevel)), spawnPosition, serverLevel);
-								}
-								if(serverLevel.isCloseToVillage(player.blockPosition(), 3)){
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay / 3) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 6));
-								}else{
-									villageRelationShips.hunterSpawnDelay = Functions.minutesToTicks(ServerConfig.hunterSpawnDelay) + Functions.minutesToTicks(serverLevel.random.nextInt(ServerConfig.hunterSpawnDelay / 3));
-								}
-							}
-						}else{
-							villageRelationShips.hunterSpawnDelay--;
-						}
 				}
 			}
 		}

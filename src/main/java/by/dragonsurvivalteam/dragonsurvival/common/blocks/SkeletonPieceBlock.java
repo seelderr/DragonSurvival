@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +41,25 @@ public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock 
         return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
 
-    /*@Override
+    @Override
     protected @NotNull VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
-        return Block.box(4.0, 0.0, 4.0, 12.0, 8.0, 12.0);
-    }*/
+        switch (this.type) {
+            case Types.CHEST -> {
+                return Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+            }
+            case Types.FULL -> {
+                return Block.box(-12.0, 0.0, -12.0, 32.0, 16.0, 32.0);
+            }
+            case Types.PELVIS -> {
+                return Block.box(4.0, 0.0, 4.0, 12.0, 12.0, 12.0);
+            }
+            case Types.LEG_3 -> {
+                return Block.box(4.0, 0.0, 4.0, 12.0, 6.0, 12.0);
+            }
+            default -> Block.box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
+        }
+        return Block.box(0.0, 0.0, 0.0, 16.0, 6.0, 16.0);
+    }
 
     @Override
     protected @NotNull VoxelShape getOcclusionShape(@NotNull BlockState pState, @NotNull BlockGetter pLevel, @NotNull BlockPos pPos) {

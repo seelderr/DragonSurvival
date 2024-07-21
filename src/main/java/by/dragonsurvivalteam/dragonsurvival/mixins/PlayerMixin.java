@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -9,6 +11,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
+import java.util.Arrays;
+import java.util.Objects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -30,11 +34,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import java.util.Arrays;
-import java.util.Objects;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
@@ -81,7 +80,7 @@ public abstract class PlayerMixin extends LivingEntity {
 		});
 	}
 
-	/** Adjust sinking speed in liquids for all dragons and provide a speed bonus for cave dragons in lava */
+	/** Enable cave dragons to properly swim in lava */
 	@Inject(method = "travel", at = @At("HEAD"))
 	public void travel(Vec3 travelVector, CallbackInfo callback) {
 		DragonStateProvider.getCap(this).ifPresent(handler -> {
@@ -103,6 +102,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 				// Mostly a copy from vanilla LivingEntity#travel (but adjusted for lava)
 				if (isEffectiveAi() || isControlledByLocalInstance()) {
+					// TODO :: Unsure what this slow falling / gravity code actually does - doesn't seem to affect much if anything
 					AttributeInstance gravity = getAttribute(Attributes.GRAVITY);
 					boolean isFalling = getDeltaMovement().y <= 0;
 

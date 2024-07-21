@@ -1,4 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
-public interface DragonHunter{
+// Marker class to mark entities as Dragon Hunters
+public interface DragonHunter {
+
 }

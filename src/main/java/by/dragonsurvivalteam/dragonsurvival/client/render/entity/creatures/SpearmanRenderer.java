@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 
-import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.SpearmanEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;

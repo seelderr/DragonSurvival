@@ -26,11 +26,15 @@ public class DragonStateProvider implements ICapabilityProvider<Entity, Void, Dr
 		return null;
 	}
 
-	public static Optional<DragonStateHandler> getCap(final Entity entity) {
+	public static Optional<DragonStateHandler> getCap(@Nullable final Entity entity) {
+		if (entity == null) {
+			return Optional.empty();
+		}
+
 		return Optional.ofNullable(entity.getCapability(DRAGON_CAPABILITY));
 	}
 
-	public static DragonStateHandler getOrGenerateHandler(final Entity entity) {
+	public static @NotNull DragonStateHandler getOrGenerateHandler(final Entity entity) {
 		if (entity == null) {
 			return new DragonStateHandler();
 		}

@@ -55,21 +55,25 @@ public class DragonSizeHandler{
 		Pose overridePose = overridePose(player);
 		height = calculateModifiedHeight(height, overridePose, squish);
 		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);// Apply changes
-		event.setNewSize(new EntityDimensions((float)(height * scale), (float)(width * scale), (float)(eyeHeight * scale), event.getOldSize().attachments(), event.getOldSize().fixed()));
+		event.setNewSize(new EntityDimensions((float)(width * scale), (float)(height * scale), (float)(eyeHeight * scale), event.getOldSize().attachments(), event.getOldSize().fixed()));
 	}
 	
 	public static double getDragonHeight(Player player) {
+		return getDragonHeight(DragonStateProvider.getOrGenerateHandler(player), player);
+	}
+
+	public static double getDragonHeight(DragonStateHandler handler, Player player) {
 		AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
 		double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		double height = calculateDragonHeight(handler.getSize());
 		boolean squish = false;
+
 		if (handler.getBody() != null) {
 			height *= handler.getBody().getHeightMult();
 			squish = handler.getBody().isSquish();
 		}
-		Pose overridePose = overridePose(player);
-		return calculateModifiedHeight(height * scale, overridePose, squish);
+
+		return calculateModifiedHeight(height * scale, overridePose(player), squish);
 	}
 
 	public static double calculateDragonHeight(double size){

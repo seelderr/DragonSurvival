@@ -244,7 +244,6 @@
   "ds.skill.nofly": "§fEsta habilidad no se puede usar §r§cen pleno vuelo§r§f!§f",
   "ds.skill.required_level": "§6■ Requiere nivel:§r %s",
   "ds.skill.level.up": "§aMejora la habilidad para§r %s §aniveles§r",
-  "ds.skill.level.down": "§aDegradar la habilidad y reembolsar§r %s §aniveles§r",
   "ds.skill.claws.damage": "§d■ Daño de garra:§r %s",
   "ds.skill.type.active": "Habilidad activa",
   "ds.skill.type.passive": "Habilidad pasiva",
