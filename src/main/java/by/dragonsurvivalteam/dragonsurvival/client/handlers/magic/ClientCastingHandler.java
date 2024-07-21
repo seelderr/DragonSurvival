@@ -52,6 +52,11 @@ public class ClientCastingHandler {
 
         // TODO: all of this needs a rework, the current code just the original updated to fit the new Keybinds
 
+        // Toggle HUD visibility
+        if (Keybind.TOGGLE_ABILITIES.consumeClick()) {
+            magicData.setRenderAbilities(!magicData.shouldRenderAbilities());
+        }
+
         // Check ability key
         // TODO: This might incorrectly forget to stop casting if the selected slot gets changed externally
         int lastSelectedSlot = magicData.getSelectedAbilitySlot();

@@ -34,10 +34,6 @@ public class KeyInputHandler {
                 player.closeContainer();
             }
 
-        } else if (Keybind.TOGGLE_ABILITIES.consumeClick()) {
-            dragonStateHandler.getMagicData().setRenderAbilities(!dragonStateHandler.getMagicData().shouldRenderAbilities());
-            PacketDistributor.sendToServer(new SyncDragonAbilitySlot.Data(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
-
         }
     }
 }
