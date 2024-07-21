@@ -40,7 +40,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 			components.add(Component.translatable("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + harvestInfo.getFirst().name().toLowerCase())));
 		}
 
-		double damageBonus = handler.isDragon() ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
+		double damageBonus = handler.isDragon() && ServerConfig.attackDamage ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;
 
 		if (damageBonus > 0.0) {
 			components.add(Component.translatable("ds.skill.claws.damage", "+" + damageBonus));
