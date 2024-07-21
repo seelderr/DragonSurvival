@@ -128,39 +128,39 @@ public class ClientCastingHandler {
 
         // Proceed with casting
         ActiveDragonAbility ability = magicData.getAbilityFromSlot(selectedSlot);
-        if (ability != null) {
-            boolean canCast = ability.canCastSkill(player);
-            switch (status) {
-                case Idle -> {
-                    castStartTime = -1;
-                    status = CastingStatus.InProgress;
+        if (ability == null) return;
 
-                    if (canCast) {
-                        castStartTime = player.level().getGameTime();
-                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                    }
+        boolean canCast = ability.canCastSkill(player);
+        switch (status) {
+            case Idle -> {
+                castStartTime = -1;
+                status = CastingStatus.InProgress;
+
+                if (canCast) {
+                    castStartTime = player.level().getGameTime();
+                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
                 }
-                case InProgress -> {
-                    if (canCast && castStartTime == -1) {
-                        castStartTime = player.level().getGameTime();
-                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                    }
-                    if (canCast && castStartTime != -1) {
-                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                    }
-                    if (!canCast && castStartTime != -1) {
-                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                        ability.onKeyReleased(player);
-                        status = CastingStatus.Idle;
-                        castStartTime = -1;
-                    }
+            }
+            case InProgress -> {
+                if (canCast && castStartTime == -1) {
+                    castStartTime = player.level().getGameTime();
+                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
                 }
-                case Stop -> {
+                if (canCast && castStartTime != -1) {
+                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                }
+                if (!canCast && castStartTime != -1) {
                     PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
                     ability.onKeyReleased(player);
                     status = CastingStatus.Idle;
                     castStartTime = -1;
                 }
+            }
+            case Stop -> {
+                PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                ability.onKeyReleased(player);
+                status = CastingStatus.Idle;
+                castStartTime = -1;
             }
         }
     }
