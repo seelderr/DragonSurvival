@@ -51,6 +51,7 @@ public class ClientCastingHandler {
         MagicCap magicData = dragonStateHandler.getMagicData();
 
         // TODO: all of this needs a rework, the current code just the original updated to fit the new Keybinds
+        // onKeyReleased gets triggered twice, the code flow isn't fully clear, etc...
 
         // Toggle HUD visibility
         if (Keybind.TOGGLE_ABILITIES.consumeClick()) {
@@ -60,27 +61,6 @@ public class ClientCastingHandler {
         // Check ability key
         // TODO: This might incorrectly forget to stop casting if the selected slot gets changed externally
         int lastSelectedSlot = magicData.getSelectedAbilitySlot();
-        boolean isAbilityKeyDown;
-        if (!ClientConfig.alternateCastMode) {
-            isAbilityKeyDown = Keybind.USE_ABILITY.isDown();
-        } else {
-            isAbilityKeyDown = slotKeybinds.length > lastSelectedSlot && slotKeybinds[lastSelectedSlot].isDown();
-        }
-
-        // Not holding ability key - return early
-        if (!isAbilityKeyDown) {
-            if (status != CastingStatus.Idle) {
-                var ability = magicData.getAbilityFromSlot(lastSelectedSlot);
-                if (ability != null) {
-                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, lastSelectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                    ability.onKeyReleased(player);
-                }
-            }
-            status = CastingStatus.Idle;
-            castStartTime = -1;
-            hasCast = false;
-            return;
-        }
 
         // Check for slot selection
         int selectedSlot = lastSelectedSlot;
@@ -129,6 +109,27 @@ public class ClientCastingHandler {
                             magicData.shouldRenderAbilities()
                     )
             );
+        }
+
+        boolean isAbilityKeyDown;
+        if (!ClientConfig.alternateCastMode) {
+            isAbilityKeyDown = Keybind.USE_ABILITY.isDown();
+        } else {
+            isAbilityKeyDown = slotKeybinds.length > selectedSlot && slotKeybinds[selectedSlot].isDown();
+        }
+        // Not holding ability key - return early
+        if (!isAbilityKeyDown) {
+            if (status != CastingStatus.Idle) {
+                var ability = magicData.getAbilityFromSlot(selectedSlot);
+                if (ability != null) {
+                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                    ability.onKeyReleased(player);
+                }
+            }
+            status = CastingStatus.Idle;
+            castStartTime = -1;
+            hasCast = false;
+            return;
         }
 
         // Proceed with casting
