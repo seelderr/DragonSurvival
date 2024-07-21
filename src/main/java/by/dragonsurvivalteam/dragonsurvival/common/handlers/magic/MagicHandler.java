@@ -21,6 +21,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import java.util.Objects;
@@ -33,6 +34,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -54,6 +56,7 @@ import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class MagicHandler{
 	@SubscribeEvent
@@ -237,17 +240,15 @@ public class MagicHandler{
 	public static void applyDebuffs(final MobEffectEvent.Added event) {
 		if (event.getEffectInstance() == null || Objects.equals(event.getEffectSource(), event.getEntity())) return;
 
-		if (event.getEffectSource() instanceof LivingEntity source && Minecraft.getInstance().level != null && Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
-			Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get();
-			Optional<Holder.Reference<Enchantment>> murderersCunning = enchantments.getHolder(DSEnchantments.MURDERERS_CUNNING);
-			Optional<Holder.Reference<Enchantment>> unbreakableSpirit = enchantments.getHolder(DSEnchantments.UNBREAKABLE_SPIRIT);
-			MobEffectInstance effect = event.getEffectInstance();
-			int amp = effect.getAmplifier();
+		MobEffectInstance effect = event.getEffectInstance();
+		int amp = effect.getAmplifier();
 
-			if (unbreakableSpirit.isPresent())
-				amp -= EnchantmentHelper.getEnchantmentLevel(unbreakableSpirit.get(), source);
-			if (murderersCunning.isPresent())
-				amp += EnchantmentHelper.getEnchantmentLevel(murderersCunning.get(), source);
+		if (event.getEffectInstance().getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
+			if (event.getEffectSource() instanceof LivingEntity source) {
+				amp += EnchantmentHelper.getEnchantmentLevel(EnchantmentUtils.getHolder(DSEnchantments.MURDERERS_CUNNING), source);
+			}
+
+			amp -= EnchantmentHelper.getEnchantmentLevel(EnchantmentUtils.getHolder(DSEnchantments.UNBREAKABLE_SPIRIT), event.getEntity());
 			amp = Math.min(Math.max(amp, 0), 255);
 
 			if (amp != effect.getAmplifier()) {

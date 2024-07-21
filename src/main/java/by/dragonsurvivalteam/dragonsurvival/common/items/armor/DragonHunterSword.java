@@ -2,8 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.armor;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.Registries;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
@@ -16,10 +15,7 @@ public class DragonHunterSword extends SwordItem implements PermanentEnchantment
     @Override
     public ItemEnchantments getDefaultEnchantments() {
         ItemEnchantments.Mutable temp = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
-        if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
-            temp.set(Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get()
-                    .getHolderOrThrow(DSEnchantments.DRAGONSBANE), 3);
-        }
+        EnchantmentUtils.addEnchantment(DSEnchantments.DRAGONSBANE, temp, 3);
         return temp.toImmutable();
     }
 }

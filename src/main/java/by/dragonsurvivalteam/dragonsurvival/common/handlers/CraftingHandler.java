@@ -18,6 +18,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.GrindstoneEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class CraftingHandler {
     @SubscribeEvent
@@ -56,7 +57,7 @@ public class CraftingHandler {
     public static void showGrindstoneResult(GrindstoneEvent.OnPlaceItem grindstoneEvent) {
         ItemStack itemStack = grindstoneEvent.getTopItem().copy();
         if (itemStack.getItem() instanceof PermanentEnchantmentItem alignedItem) {
-            if (!grindstoneEvent.getBottomItem().getItem().isValidRepairItem(itemStack, grindstoneEvent.getBottomItem())) {
+            if (!grindstoneEvent.getBottomItem().getItem().isValidRepairItem(itemStack, grindstoneEvent.getBottomItem()) && getExperienceFromAlignedDragonArmor(itemStack, alignedItem.getDefaultEnchantments()) <= 0) {
                 grindstoneEvent.setCanceled(true);
             }
         }
@@ -73,14 +74,14 @@ public class CraftingHandler {
     }
 
     // Reimplementing a function that only exists in an anonymous class to change exp logic
-    private static int getExperienceFromAlignedDragonArmor(ItemStack pStack, ItemEnchantments enchantments) {
+    private static int getExperienceFromAlignedDragonArmor(ItemStack pStack, ItemEnchantments baseEnchantments) {
         int l = 0;
         ItemEnchantments itemenchantments = EnchantmentHelper.getEnchantmentsForCrafting(pStack);
 
         for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
             Holder<Enchantment> holder = entry.getKey();
             int i1 = entry.getIntValue();
-            if (!holder.is(EnchantmentTags.CURSE) && !enchantments.keySet().contains(holder)) {
+            if (!holder.is(EnchantmentTags.CURSE) && !baseEnchantments.keySet().contains(holder)) {
                 l += holder.value().getMinCost(i1);
             }
         }
