@@ -77,8 +77,20 @@ public class ClientCastingHandler {
             return;
         }
 
-        // Select the slot of the most recently pressed ability key, check for new keypresses
+        // Check for slot selection
         int selectedSlot = lastSelectedSlot;
+
+        // Check for prev/next keys first
+        if (Keybind.NEXT_ABILITY.consumeClick()) {
+            selectedSlot = (selectedSlot + 1) % slotKeybinds.length;
+        }
+        if (Keybind.PREV_ABILITY.consumeClick()) {
+            // Add length because % can return a negative remainder
+            selectedSlot = (selectedSlot - 1 + slotKeybinds.length) % slotKeybinds.length;
+        }
+
+        // Select the slot of the most recently pressed ability key, check for new keypresses
+        // (This overrides the prev/next keypress)
         for (int i = 0; i < slotKeybinds.length; i++) {
             if (slotKeybinds[i].consumeClick()) {
                 selectedSlot = i;
