@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.world.Container;
@@ -8,8 +9,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
+@SuppressWarnings("unused")
 @EventBusSubscriber
 public class CraftingHandler {
     @SubscribeEvent
@@ -41,6 +44,13 @@ public class CraftingHandler {
         int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_BONE, 1, true);
         if(rem == 0 && result.getItem() == DSItems.STAR_BONE){
             craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
+        }
+    }
+
+    @SubscribeEvent
+    public static void getAllEnchantmentLevels(GetEnchantmentLevelEvent event) {
+        if (event.getStack().getItem() instanceof PermanentEnchantmentItem item) {
+            item.getDefaultEnchantments().entrySet().forEach(entry -> event.getEnchantments().upgrade(entry.getKey(), entry.getIntValue()));
         }
     }
 }

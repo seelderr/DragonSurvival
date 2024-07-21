@@ -262,6 +262,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonHeartTime", comment = "How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting." )
 	public static Integer elderDragonHeartTime = 1010;
 
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "debuffsUnaffectedByEnchantments", comment = "Debuffs that should not be affected by Unbreakable Spirit or Overwhelming Might" )
+	public static List<String> debuffsUnaffectedByEnchantments = List.of();
+
 	@ConfigOption(side = ConfigSide.SERVER, category = "general", key = "disableDragonSuffocation", comment = "Should suffocation damage be disabled for dragon players?")
 	public static Boolean disableSuffocation = true;
 
@@ -709,10 +712,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "princessSpawnDelay", comment = "Minimum delay between prince or princess spawning around village, in minutes" )
 	public static Integer royalSpawnDelay = 240;
 
-	@ConfigRange( min = 1, max = 1000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "royalDisappearInMinutes", comment = "In how many minutes the Prince and Princess will disappear after the call with the summon scroll. Default is 15 minutes" )
-	public static Integer royalDisappearInMinutes = 15;
-
 	@ConfigRange( min = 12, max = 240 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterGroupSpawnDelay", comment = "Minimum delay between Dragon hunter group spawning, in minutes" )
 	public static Integer hunterSpawnDelay = 20;
@@ -722,9 +721,6 @@ public class ServerConfig{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowSquireSpawning", comment = "Dragon Squire spawning enabled?" )
 	public static Boolean spawnSpearman = true;
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHunterSpawning", comment = "Dragon Hunter spawning enabled?" )
-	public static Boolean spawnHunter = true;
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "allowHoundSpawning", comment = "Dragon Knight hound spawning enabled?" )
 	public static Boolean spawnHound = true;

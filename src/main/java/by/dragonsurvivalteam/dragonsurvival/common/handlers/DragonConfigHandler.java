@@ -10,6 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -23,11 +25,13 @@ public class DragonConfigHandler{
 	public static HashSet<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = new HashSet<>();
 	public static HashSet<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = new HashSet<>();
 	public static HashSet<Block> DRAGON_DESTRUCTIBLE_BLOCKS = new HashSet<>();
+	public static HashSet<MobEffect> EFFECT_IGNORES_ENCHANTMENT = new HashSet<>();
 
 	public static Map<String, HashSet<Block>> DRAGON_SPEEDUP_BLOCKS;
 	public static Map<String, HashSet<Block>> DRAGON_BREATH_BLOCKS;
 	public static Map<String, HashSet<Block>> DRAGON_MANA_BLOCKS;
 
+	@SuppressWarnings("unused")
 	@SubscribeEvent
 	public static void onConfigLoad(final ModConfigEvent event) {
 		if (event.getConfig().getSpec() == ConfigHandler.serverSpec) {
@@ -40,6 +44,7 @@ public class DragonConfigHandler{
 			rebuildForestDragonConfigs();
 			rebuildDestructibleBlocks();
 			rebuildBlacklistedItems();
+			rebuildEffectBlacklist();
 		}
 	}
 
@@ -82,5 +87,9 @@ public class DragonConfigHandler{
 
 	public static void rebuildBlacklistedItems(){
 		DRAGON_BLACKLISTED_ITEMS = ConfigHandler.getResourceElements(Item.class, ServerConfig.blacklistedItems);
+	}
+
+	public static void rebuildEffectBlacklist(){
+		EFFECT_IGNORES_ENCHANTMENT = ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.debuffsUnaffectedByEnchantments);
 	}
 }

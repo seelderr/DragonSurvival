@@ -16,7 +16,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class PotionSync{
 	@SubscribeEvent
 	public static void potionAdded(MobEffectEvent.Added event){
-		if(event.getEffectInstance().getEffect() != DSEffects.DRAIN && event.getEffectInstance().getEffect() != DSEffects.CHARGED && event.getEffectInstance().getEffect() != DSEffects.BURN){
+		if(event.getEffectInstance().getEffect() != DSEffects.DRAIN && event.getEffectInstance().getEffect() != DSEffects.CHARGED && event.getEffectInstance().getEffect() != DSEffects.BURN && event.getEffectInstance().getEffect() != DSEffects.BLOOD_SIPHON && event.getEffectInstance().getEffect() != DSEffects.REGEN_DELAY){
 			return;
 		}
 
@@ -29,7 +29,7 @@ public class PotionSync{
 
 	@SubscribeEvent
 	public static void potionRemoved(MobEffectEvent.Expired event){
-		if(event.getEffectInstance() != null && event.getEffectInstance().getEffect() != DSEffects.DRAIN && event.getEffectInstance().getEffect() != DSEffects.CHARGED && event.getEffectInstance().getEffect() != DSEffects.BURN){
+		if(event.getEffectInstance() != null && event.getEffectInstance().getEffect() != DSEffects.DRAIN && event.getEffectInstance().getEffect() != DSEffects.CHARGED && event.getEffectInstance().getEffect() != DSEffects.BURN && event.getEffectInstance().getEffect() != DSEffects.BLOOD_SIPHON && event.getEffectInstance().getEffect() != DSEffects.REGEN_DELAY){
 			return;
 		}
 

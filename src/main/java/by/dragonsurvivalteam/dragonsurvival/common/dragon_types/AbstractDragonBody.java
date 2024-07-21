@@ -57,6 +57,8 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public Double getDamageBonus() {
 		return 0.0;
 	}
+
+	public Double getHealthBonus() { return 0.0; }
 	
 	public Double getArmorBonus() {
 		return 0.0;

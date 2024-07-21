@@ -211,6 +211,16 @@ public class DSEffects {
 			.addAttributeModifier(Attributes.ARMOR, TOUGH_SKIN, ToughSkinAbility.toughSkinArmorValue, Operation.ADD_VALUE)
 	);
 
+	public static Holder<MobEffect> BLOOD_SIPHON = DS_MOB_EFFECTS.register(
+			"blood_siphon",
+			() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+	);
+
+	public static Holder<MobEffect> REGEN_DELAY = DS_MOB_EFFECTS.register(
+			"regen_delay",
+			() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, true)
+	);
+
 	public static Holder<MobEffect> cave_wings = DS_MOB_EFFECTS.register(
 		"wings_cave",
 		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)

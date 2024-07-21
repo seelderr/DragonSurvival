@@ -1,0 +1,58 @@
+{
+  "anvil_cost": 2,
+  "description": {
+    "translate": "ds.enchantment.curse_of_outlaw"
+  },
+  "effects": {
+    "minecraft:tick": [
+      {
+        "effect": {
+          "type": "minecraft:apply_mob_effect",
+          "to_apply": "dragonsurvival:royal_chase",
+          "min_duration": 5,
+          "max_duration": 10,
+          "min_amplifier": 0,
+          "max_amplifier": 0
+        },
+        "requirements": {
+          "condition": "minecraft:all_of",
+          "terms": [
+            {
+              "condition": "minecraft:inverted",
+              "term": {
+                "condition": "minecraft:entity_properties",
+                "entity": "this",
+                "predicate": {
+                  "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': none}}}"
+                }
+              }
+            },
+            {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "type": "minecraft:player"
+              }
+            }
+          ]
+        }
+      }
+    ]
+  },
+
+  "exclusive_set": "#dragonsurvival:exclusive_set/good_dragon",
+  "max_cost": {
+    "base": 21,
+    "per_level_above_first": 11
+  },
+  "max_level": 5,
+  "min_cost": {
+    "base": 1,
+    "per_level_above_first": 11
+  },
+  "slots": [
+    "any"
+  ],
+  "supported_items": "#dragonsurvival:enchantable/weapons_and_armor",
+  "weight": 10
+}
