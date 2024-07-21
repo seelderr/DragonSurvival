@@ -19,11 +19,11 @@ public enum Keybind {
     TOGGLE_WINGS("ds.keybind.wings", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_G),
     DRAGON_INVENTORY("ds.keybind.dragon_inv", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_UNKNOWN),
 
-    NEXT_ABILITY("ds.keybind.use_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_C),
-    PREV_ABILITY("ds.keybind.toggle_abilities", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_X),
+    USE_ABILITY("ds.keybind.use_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_C),
+    TOGGLE_ABILITIES("ds.keybind.toggle_abilities", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_X),
 
-    USE_ABILITY("ds.keybind.next_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_R),
-    TOGGLE_ABILITIES("ds.keybind.prev_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_F),
+    NEXT_ABILITY("ds.keybind.next_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_R),
+    PREV_ABILITY("ds.keybind.prev_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_F),
 
     ABILITY1("ds.keybind.ability1", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_1),
     ABILITY2("ds.keybind.ability2", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_2),
