@@ -11,12 +11,10 @@
     "ItemStackMixin",
     "LivingEntityMixin",
     "MixinAttributes",
-    "MixinGrindstoneMenu",
     "MixinPlayerEnd",
     "MixinPlayerStart",
     "MixinServerPlayerGameMode",
     "MixinSleepStatus",
-    "MixinSmithingMenu",
     "PlayerMixin",
     "tool_swap.MixinServerPlayerGameModeEnd",
     "tool_swap.MixinServerPlayerGameModeStart"

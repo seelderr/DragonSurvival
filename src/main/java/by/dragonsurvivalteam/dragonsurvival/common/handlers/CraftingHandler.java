@@ -3,19 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import net.minecraft.core.Holder;
-import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.GrindstoneEvent;
+import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @SuppressWarnings("unused")
@@ -54,38 +48,9 @@ public class CraftingHandler {
     }
 
     @SubscribeEvent
-    public static void showGrindstoneResult(GrindstoneEvent.OnPlaceItem grindstoneEvent) {
-        ItemStack itemStack = grindstoneEvent.getTopItem().copy();
-        if (itemStack.getItem() instanceof PermanentEnchantmentItem alignedItem) {
-            if (!grindstoneEvent.getBottomItem().getItem().isValidRepairItem(itemStack, grindstoneEvent.getBottomItem()) && getExperienceFromAlignedDragonArmor(itemStack, alignedItem.getDefaultEnchantments()) <= 0) {
-                grindstoneEvent.setCanceled(true);
-            }
+    public static void getAllEnchantmentLevels(GetEnchantmentLevelEvent event) {
+        if (event.getStack().getItem() instanceof PermanentEnchantmentItem item) {
+            item.getDefaultEnchantments().entrySet().forEach(entry -> event.getEnchantments().upgrade(entry.getKey(), entry.getIntValue()));
         }
-    }
-
-    @SubscribeEvent
-    public static void takeFromGrindstone(GrindstoneEvent.OnTakeItem grindstoneEvent) {
-        ItemStack itemStack = grindstoneEvent.getNewTopItem();
-        if (itemStack.getItem() instanceof PermanentEnchantmentItem item) {
-            grindstoneEvent.setXp(getExperienceFromAlignedDragonArmor(itemStack, item.getDefaultEnchantments()));
-            EnchantmentHelper.setEnchantments(itemStack, item.getDefaultEnchantments());
-            grindstoneEvent.setNewTopItem(itemStack);
-        }
-    }
-
-    // Reimplementing a function that only exists in an anonymous class to change exp logic
-    private static int getExperienceFromAlignedDragonArmor(ItemStack pStack, ItemEnchantments baseEnchantments) {
-        int l = 0;
-        ItemEnchantments itemenchantments = EnchantmentHelper.getEnchantmentsForCrafting(pStack);
-
-        for (Object2IntMap.Entry<Holder<Enchantment>> entry : itemenchantments.entrySet()) {
-            Holder<Enchantment> holder = entry.getKey();
-            int i1 = entry.getIntValue();
-            if (!holder.is(EnchantmentTags.CURSE) && !baseEnchantments.keySet().contains(holder)) {
-                l += holder.value().getMinCost(i1);
-            }
-        }
-
-        return l;
     }
 }
