@@ -1,13 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
 import java.util.List;
 import java.util.Optional;
-
+import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.VillagerTrades;
@@ -17,8 +15,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 
 public class DSTrades {
 	public static class ItemTrade implements VillagerTrades.ItemListing{
@@ -61,8 +57,7 @@ public class DSTrades {
 			this.xp = xp;
 		}
 
-		@Nullable
-		@Override
+		@Nullable @Override
 		public MerchantOffer getOffer(@NotNull Entity entity, @NotNull RandomSource random){
 			return new MerchantOffer(baseCostA, costB, result, maxUses, xp, priceMultiplier);
 		}
