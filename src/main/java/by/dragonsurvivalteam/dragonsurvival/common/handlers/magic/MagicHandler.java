@@ -245,10 +245,15 @@ public class MagicHandler{
 
 		if (event.getEffectInstance().getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
 			if (event.getEffectSource() instanceof LivingEntity source) {
-				amp += EnchantmentHelper.getEnchantmentLevel(EnchantmentUtils.getHolder(DSEnchantments.MURDERERS_CUNNING), source);
+				Holder<Enchantment> holder = EnchantmentUtils.getHolder(DSEnchantments.OVERWHELMING_MIGHT);
+				if (holder != null)
+					amp += EnchantmentHelper.getEnchantmentLevel(holder, source);
 			}
 
-			amp -= EnchantmentHelper.getEnchantmentLevel(EnchantmentUtils.getHolder(DSEnchantments.UNBREAKABLE_SPIRIT), event.getEntity());
+			Holder<Enchantment> holder = EnchantmentUtils.getHolder(DSEnchantments.UNBREAKABLE_SPIRIT);
+			if (holder != null)
+				amp -= EnchantmentHelper.getEnchantmentLevel(holder, event.getEntity());
+
 			amp = Math.min(Math.max(amp, 0), 255);
 
 			if (amp != effect.getAmplifier()) {

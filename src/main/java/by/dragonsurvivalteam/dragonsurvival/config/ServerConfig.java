@@ -262,7 +262,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonHeartTime", comment = "How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting." )
 	public static Integer elderDragonHeartTime = 1010;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "debuffsUnaffectedByEnchantments", comment = "Debuffs that should not be affected by Unbreakable Spirit or Murderers Cunning" )
+	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "debuffsUnaffectedByEnchantments", comment = "Debuffs that should not be affected by Unbreakable Spirit or Overwhelming Might" )
 	public static List<String> debuffsUnaffectedByEnchantments = List.of();
 
 	@ConfigOption(side = ConfigSide.SERVER, category = "general", key = "disableDragonSuffocation", comment = "Should suffocation damage be disabled for dragon players?")
