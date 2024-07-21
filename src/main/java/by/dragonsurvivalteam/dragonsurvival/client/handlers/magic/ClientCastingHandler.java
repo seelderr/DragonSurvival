@@ -148,16 +148,16 @@ public class ClientCastingHandler {
                 }
             }
             case InProgress -> {
-                if (canCast && castStartTime == -1) {
-                    castStartTime = player.level().getGameTime();
+                if (canCast) {
+                    if (castStartTime == -1) {
+                        castStartTime = player.level().getGameTime();
+                    }
                     PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                }
-                if (canCast && castStartTime != -1) {
-                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), true, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                }
-                if (!canCast && castStartTime != -1) {
-                    PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
-                    ability.onKeyReleased(player);
+                } else {
+                    if (castStartTime != -1) {
+                        PacketDistributor.sendToServer(new SyncAbilityCasting.Data(player.getId(), false, selectedSlot, ability.saveNBT(), castStartTime, player.level().getGameTime()));
+                        ability.onKeyReleased(player);
+                    }
                     status = CastingStatus.Idle;
                     castStartTime = -1;
                 }
