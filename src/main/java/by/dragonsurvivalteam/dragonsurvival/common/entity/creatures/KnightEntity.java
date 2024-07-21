@@ -125,11 +125,6 @@ public class KnightEntity extends Hunter {
 	}
 
 	@Override
-	public boolean removeWhenFarAway(double distance){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
-	}
-
-	@Override
 	public boolean isBlocking(){
 		if(getOffhandItem().getItem() == Items.SHIELD){
 			return random.nextBoolean();

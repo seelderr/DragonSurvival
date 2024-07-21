@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
@@ -64,8 +65,7 @@ public class DragonHeartLootModifier extends LootModifier {
                 (ServerConfig.elderDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.elderDragonHeartWhiteList && ServerConfig.elderDragonHeartUseList)
                 || health >= 50;
 
-        Holder<Enchantment> looting = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.LOOTING);
-        int lootingLevel = EnchantmentHelper.getEnchantmentLevel(looting, player);
+        int lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
 
         if(canDropDragonHeart){
             if(context.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + lootingLevel * (ServerConfig.dragonHeartShardChance * 100 / 4)){

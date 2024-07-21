@@ -69,7 +69,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             if(isAggro() && !hasReleasedGriffin()) {
                 setHasReleasedGriffin(true);
                 summonGriffin();
-                if(this.getTarget().hasEffect(DSEffects.ROYAL_CHASE)) {
+                if(this.getTarget().hasEffect(DSEffects.HUNTER_OMEN)) {
                     beginSummonReinforcements();
                 } else {
                     beginGriffinReleaseReloadTimer();
