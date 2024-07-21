@@ -38,15 +38,6 @@ public class KeyInputHandler {
             dragonStateHandler.getMagicData().setRenderAbilities(!dragonStateHandler.getMagicData().shouldRenderAbilities());
             PacketDistributor.sendToServer(new SyncDragonAbilitySlot.Data(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
 
-        } else if (Keybind.NEXT_ABILITY.consumeClick()) {
-            int nextSlot = dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 3 ? 0 : dragonStateHandler.getMagicData().getSelectedAbilitySlot() + 1;
-            dragonStateHandler.getMagicData().setSelectedAbilitySlot(nextSlot);
-            PacketDistributor.sendToServer(new SyncDragonAbilitySlot.Data(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
-
-        } else if (Keybind.PREV_ABILITY.consumeClick()) {
-            int nextSlot = dragonStateHandler.getMagicData().getSelectedAbilitySlot() == 0 ? 3 : dragonStateHandler.getMagicData().getSelectedAbilitySlot() - 1;
-            dragonStateHandler.getMagicData().setSelectedAbilitySlot(nextSlot);
-            PacketDistributor.sendToServer(new SyncDragonAbilitySlot.Data(player.getId(), dragonStateHandler.getMagicData().getSelectedAbilitySlot(), dragonStateHandler.getMagicData().shouldRenderAbilities()));
         }
     }
 }
