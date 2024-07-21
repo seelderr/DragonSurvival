@@ -114,7 +114,7 @@ public class ClientFlightHandler {
         LocalPlayer currentPlayer = minecraft.player;
         Camera info = setup.getCamera();
 
-        if (currentPlayer != null && currentPlayer.isAddedToWorld() && DragonStateProvider.isDragon(currentPlayer)) {
+        if (currentPlayer != null && currentPlayer.isAddedToLevel() && DragonStateProvider.isDragon(currentPlayer)) {
             DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(currentPlayer);
             GameRenderer gameRenderer = minecraft.gameRenderer;
 
