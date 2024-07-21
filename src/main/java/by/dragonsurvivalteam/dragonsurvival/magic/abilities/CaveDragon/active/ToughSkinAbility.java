@@ -3,13 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -63,18 +63,18 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	public ArrayList<Component> getInfo(){
 		ArrayList<Component> components = super.getInfo();
 
-		if(!KeyInputHandler.ABILITY3.isUnbound()){
+		if (!Keybind.ABILITY3.get().isUnbound()) {
 			components = new ArrayList<>(components.subList(0, components.size() - 1));
 		}
 
 		components.add(Component.translatable("ds.skill.duration.seconds", toughSkinDuration));
 
-		if(!KeyInputHandler.ABILITY3.isUnbound()){
+		if (!Keybind.ABILITY3.get().isUnbound()) {
 
-			String key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+			String key = Keybind.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty()){
-				key = KeyInputHandler.ABILITY3.getKey().getDisplayName().getString();
+				key = Keybind.ABILITY3.getKey().getDisplayName().getString();
 			}
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}

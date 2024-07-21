@@ -2,12 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
@@ -55,11 +55,11 @@ public class LavaVisionAbility extends ChargeCastAbility {
 		ArrayList<Component> components = super.getInfo();
 		components.add(Component.translatable("ds.skill.duration.seconds", Functions.ticksToSeconds(getDuration())));
 
-		if(!KeyInputHandler.ABILITY4.isUnbound()){
-			String key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+		if (!Keybind.ABILITY4.get().isUnbound()) {
+			String key = Keybind.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty()){
-				key = KeyInputHandler.ABILITY4.getKey().getDisplayName().getString();
+				key = Keybind.ABILITY4.getKey().getDisplayName().getString();
 			}
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}
