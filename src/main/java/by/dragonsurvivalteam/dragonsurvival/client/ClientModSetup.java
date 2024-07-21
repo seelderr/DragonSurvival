@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.KnightModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.SpearmanModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
