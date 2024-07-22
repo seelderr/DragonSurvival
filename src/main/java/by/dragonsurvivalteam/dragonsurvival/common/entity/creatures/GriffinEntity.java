@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowSpecificMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -125,7 +126,9 @@ public class GriffinEntity extends Hunter {
             if(getCurrentAttack() == GriffinAttackTypes.BLINDNESS) {
                 target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
             } else if(getCurrentAttack() == GriffinAttackTypes.SLASH_WINGS) {
-                target.addEffect(new MobEffectInstance(DSEffects.WINGS_BROKEN, 100, 0));
+                if(DragonStateProvider.isDragon(target)) {
+                    target.addEffect(new MobEffectInstance(DSEffects.WINGS_BROKEN, 100, 0));
+                }
             }
         }
         return super.doHurtTarget(entity);
