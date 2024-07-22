@@ -4,20 +4,30 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.TOUGH_SKIN;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import java.util.Set;
+
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
+import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.EffectCure;
+import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 
@@ -71,32 +81,39 @@ public class DSEffects {
 		() -> new Stress(0xf4a2e8)
 	);
 
-	private static class Trapped extends MobEffect{
-		protected Trapped(MobEffectCategory effectType, int color){
-			super(effectType, color);
-		}
-
-		// Make this uncurable
-		@Override
-		public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
-			cures.clear();
+	private static class WingDisablingEffect extends ModifiableMobEffect {
+		protected WingDisablingEffect(MobEffectCategory type, int color, boolean uncurable) {
+			super(type, color, uncurable);
 		}
 
 		@Override
-		public boolean applyEffectTick(LivingEntity living, int strength){
-			living.getAttribute(Attributes.MOVEMENT_SPEED).removeModifier(SLOW_MOVEMENT);
-			return true;
-		}
-
-		@Override
-		public boolean shouldApplyEffectTickThisTick(int timeLeft, int p_76397_2_){
-			return timeLeft == 1;
+		public void onEffectStarted(LivingEntity living, int strength){
+			if(!living.level().isClientSide()){
+					if(living instanceof Player player) {
+						DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+						if(handler.isDragon()){
+							handler.setWingsSpread(false);
+							PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
+						}
+					}
+			}
 		}
 	}
 
+	// There are some missing effects here, since they are handled elsewhere:
+	// -The player can't jump (DragonBonusHandler.java)
+	// -The player can't activate their wings (ClientFlightHandler.java)
 	public static Holder<MobEffect> TRAPPED = DS_MOB_EFFECTS.register(
 		"trapped",
-		() -> new Trapped(MobEffectCategory.HARMFUL, 0xdddddd)
+		() -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0xdddddd, true)
+				.addAttributeModifier(Attributes.MOVEMENT_SPEED, SLOW_MOVEMENT, -0.5, Operation.ADD_MULTIPLIED_TOTAL)
+	);
+
+	// There are some missing effects here, since they are handled elsewhere:
+	// -The player can't activate their wings (ClientFlightHandler.java)
+	public static Holder<MobEffect> WINGS_BROKEN = DS_MOB_EFFECTS.register(
+		"wings_broken",
+		() -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0x0, true)
 	);
 
 	private static class ModifiableMobEffect extends MobEffect{
@@ -116,6 +133,11 @@ public class DSEffects {
 			}
 		}
 	}
+
+	public static Holder<MobEffect> MAGIC_DISABLED = DS_MOB_EFFECTS.register(
+		"magic_disabled",
+		() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+	);
 
 	public static Holder<MobEffect> HUNTER_OMEN = DS_MOB_EFFECTS.register(
 		"hunter_omen",
