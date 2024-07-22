@@ -134,6 +134,11 @@ public class DSEffects {
 		}
 	}
 
+	public static Holder<MobEffect> MAGIC_DISABLED = DS_MOB_EFFECTS.register(
+		"magic_disabled",
+		() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+	);
+
 	public static Holder<MobEffect> HUNTER_OMEN = DS_MOB_EFFECTS.register(
 		"hunter_omen",
 		() -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true)

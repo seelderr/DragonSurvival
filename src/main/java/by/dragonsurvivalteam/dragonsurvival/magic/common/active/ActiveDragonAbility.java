@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.ArrayList;
@@ -80,6 +81,10 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
+		if(hasCastDisablingEffect(player)){
+			return false;
+		}
+
 		if(!canConsumeMana(player)){
 			MagicHUD.castingError(Component.translatable("ds.skill_mana_check_failure"));
 			return false;
@@ -98,6 +103,10 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 		}
 
 		return !player.isSpectator();
+	}
+
+	public boolean hasCastDisablingEffect(Player player) {
+		return player.hasEffect(DSEffects.MAGIC_DISABLED);
 	}
 
 	public boolean canConsumeMana(Player player){
