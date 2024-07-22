@@ -42,7 +42,7 @@ public class GriffinEntity extends Hunter {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1.0, 10));
+        this.goalSelector.addGoal(3, new WindupMeleeAttackGoal(this, 1.0, 15));
         this.goalSelector.addGoal(8, new FollowSpecificMobGoal(this, 0.6, 5, 20, target -> target instanceof AmbusherEntity));
     }
 
@@ -97,12 +97,7 @@ public class GriffinEntity extends Hunter {
 
     @Override
     public int getCurrentSwingDuration() {
-        return switch (getCurrentAttack()) {
-            case NORMAL -> 10;
-            case BLINDNESS -> 10;
-            case SLASH_WINGS -> 10;
-            default -> 10; // Need a placeholder value here since getCurrentSwingDuration gets called even when we aren't currently attacking
-        };
+        return 30;
     }
 
     @Override
@@ -146,10 +141,10 @@ public class GriffinEntity extends Hunter {
             return state.setAndContinue(getAttackAnim());
         } else {
             if(movement > 0.01) {
-                if(!onGround()) {
-                    return state.setAndContinue(FLY);
+                if(isAggro()) {
+                    return state.setAndContinue(FLY_AGGRESSIVE);
                 } else {
-                    return state.setAndContinue(WALK);
+                    return state.setAndContinue(FLY);
                 }
             } else {
                 if(!onGround()) {
@@ -178,12 +173,12 @@ public class GriffinEntity extends Hunter {
     }
 
 
-    private static final RawAnimation ATTACK = RawAnimation.begin().thenLoop("attack");
+    private static final RawAnimation ATTACK = RawAnimation.begin().thenLoop("fly_attack");
     private static final RawAnimation SPECIAL_ATTACK1 = RawAnimation.begin().thenLoop("special_attack1");
     private static final RawAnimation SPECIAL_ATTACK2 = RawAnimation.begin().thenLoop("special_attack2");
 
-    private static final RawAnimation WALK = RawAnimation.begin().thenLoop("walk");
     private static final RawAnimation FLY = RawAnimation.begin().thenLoop("fly");
+    private static final RawAnimation FLY_AGGRESSIVE = RawAnimation.begin().thenLoop("fly_agressive");
 
     private static final RawAnimation IDLE = RawAnimation.begin().thenLoop("idle");
     private static final RawAnimation IDLE_FLY = RawAnimation.begin().thenLoop("idle_fly");
