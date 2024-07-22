@@ -29,6 +29,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -43,6 +44,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.*;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
@@ -559,7 +561,7 @@ public class ClientFlightHandler {
                 player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
                 return false;
             }
-            case TRAPPED -> {
+            case WINGS_DISABLED -> {
                 return false;
             }
             default -> throw new IllegalStateException("Unexpected value: " + result);
@@ -573,7 +575,7 @@ public class ClientFlightHandler {
         ALREADY_DISABLED,
         NO_WINGS,
         NO_HUNGER,
-        TRAPPED
+        WINGS_DISABLED
     }
 
     /**
@@ -589,7 +591,7 @@ public class ClientFlightHandler {
      * @return Result of the attempt. One of:
      * <ul>
      *     <li>{@link WingsToggleResult#NO_WINGS NO_WINGS}</li>
-     *     <li>{@link WingsToggleResult#TRAPPED TRAPPED}</li>
+     *     <li>{@link WingsToggleResult#WINGS_DISABLED TRAPPED}</li>
      *     <li>{@link WingsToggleResult#NO_HUNGER NO_HUNGER}</li>
      *     <li>{@link WingsToggleResult#ALREADY_ENABLED ALREADY_ENABLED}</li>
      *     <li>{@link WingsToggleResult#SUCCESS_ENABLED SUCCESS_ENABLED}</li>
@@ -602,7 +604,7 @@ public class ClientFlightHandler {
         }
 
         if (handler.isWingsSpread()) return WingsToggleResult.ALREADY_ENABLED;
-        if (isTrapped(player)) return WingsToggleResult.TRAPPED;
+        if (hasWingDisablingEffect(player)) return WingsToggleResult.WINGS_DISABLED;
 
         // Non-creative players need enough food to start flying
         if (!player.isCreative() && !hasEnoughFoodToStartFlight(player)) {
@@ -678,7 +680,7 @@ public class ClientFlightHandler {
                 hungerMessageWithCooldown.tryRun();
                 return false;
             }
-            case TRAPPED -> {
+            case WINGS_DISABLED -> {
                 // Silent fail
                 return false;
             }
@@ -688,8 +690,8 @@ public class ClientFlightHandler {
     ///endregion
 
     ///region Helpers
-    private static boolean isTrapped(LivingEntity entity) {
-        return entity.hasEffect(DSEffects.TRAPPED);
+    private static boolean hasWingDisablingEffect(LivingEntity entity) {
+        return entity.hasEffect(DSEffects.TRAPPED) || entity.hasEffect(DSEffects.WINGS_BROKEN);
     }
 
     private static boolean hasEnoughFoodToStartFlight(Player player) {
