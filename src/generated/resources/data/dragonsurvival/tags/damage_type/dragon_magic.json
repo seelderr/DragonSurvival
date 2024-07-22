@@ -1,0 +1,13 @@
+{
+  "values": [
+    "dragonsurvival:cave_dragon_breath",
+    "dragonsurvival:cave_dragon_burn",
+    "dragonsurvival:forest_dragon_breath",
+    "dragonsurvival:forest_dragon_drain",
+    "dragonsurvival:sea_dragon_breath",
+    "dragonsurvival:spectral_impact",
+    "dragonsurvival:dragon_ball_lightning",
+    "dragonsurvival:dragon_breath",
+    "minecraft:fireball"
+  ]
+}

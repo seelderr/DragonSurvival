@@ -1,6 +1,6 @@
 {
   "values": [
-    "#c:foods/cooked_fishes",
+    "#c:foods/cooked_fish",
     {
       "id": "abnormals_delight:cooked_perch_slice",
       "required": false
