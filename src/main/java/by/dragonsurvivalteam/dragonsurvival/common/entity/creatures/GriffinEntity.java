@@ -131,7 +131,7 @@ public class GriffinEntity extends Hunter {
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "everything", 3, this::fullPredicate));
+        controllers.add(new AnimationController<>(this, "everything", 0, this::fullPredicate));
     }
 
     public PlayState fullPredicate(final AnimationState<GriffinEntity> state) {
