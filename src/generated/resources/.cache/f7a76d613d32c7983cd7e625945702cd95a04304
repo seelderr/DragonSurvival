@@ -1,5 +1,6 @@
-// 1.21	2024-06-26T22:24:27.8360927	Tags for minecraft:damage_type mod id dragonsurvival
+// 1.21	2024-07-22T09:08:17.4649186	Tags for minecraft:damage_type mod id dragonsurvival
 badbf40ff50fcb5881a56bc2def6bcc1424d7629 data/dragonsurvival/tags/damage_type/dragon_breath.json
+f2ae14ed7387e032e1fadfcad26ef772a06d47a3 data/dragonsurvival/tags/damage_type/dragon_magic.json
 c4fe32b0cab72ff2c96bde0bdb4c0a8289e2db08 data/minecraft/tags/damage_type/bypasses_armor.json
 b6e0ea460eba1e2dc63a1b6cbdbbc5439af9f0f9 data/minecraft/tags/damage_type/is_fire.json
 1649dc9733201c4c56ac2575ecc2b51e58e2d125 data/minecraft/tags/damage_type/is_lightning.json

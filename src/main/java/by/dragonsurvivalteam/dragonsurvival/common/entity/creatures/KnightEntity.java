@@ -3,13 +3,14 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
@@ -119,14 +120,9 @@ public class KnightEntity extends Hunter {
 
 		for (Player player : players) {
 			if (DragonStateProvider.isDragon(player)) {
-				// FIXME: Apply the debuff
+				player.addEffect(new MobEffectInstance(DSEffects.MAGIC_DISABLED, 100, 0));
 			}
 		}
-	}
-
-	@Override
-	public boolean removeWhenFarAway(double distance){
-		return !hasCustomName() && tickCount >= Functions.minutesToTicks(ServerConfig.hunterDespawnDelay);
 	}
 
 	@Override

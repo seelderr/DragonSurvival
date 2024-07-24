@@ -2,13 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.FireBallEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -71,11 +71,11 @@ public class FireBallAbility extends ChargeCastAbility{
 		ArrayList<Component> components = super.getInfo();
 		components.add(Component.translatable("ds.skill.damage", getDamage()));
 
-		if(!KeyInputHandler.ABILITY2.isUnbound()){
-			String key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+		if (!Keybind.ABILITY2.get().isUnbound()) {
+			String key = Keybind.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
 			if(key.isEmpty())
-				key = KeyInputHandler.ABILITY2.getKey().getDisplayName().getString();
+				key = Keybind.ABILITY2.getKey().getDisplayName().getString();
 			components.add(Component.translatable("ds.skill.keybind", key));
 		}
 

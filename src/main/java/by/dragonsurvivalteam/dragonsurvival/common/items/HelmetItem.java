@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
-import java.util.function.Consumer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import org.jetbrains.annotations.NotNull;
 
 public class HelmetItem extends BlockItem{
@@ -12,14 +12,12 @@ public class HelmetItem extends BlockItem{
 		super(pBlock, pProperties);
 	}
 
-	@Override
-	public void initializeClient(@NotNull Consumer<IClientItemExtensions> consumer){
-		super.initializeClient(consumer);
-		consumer.accept(new IClientItemExtensions(){
+	public static void registerClientExtensions(RegisterClientExtensionsEvent event){
+		event.registerItem(new IClientItemExtensions(){
 			private final HelmetStackTileEntityRenderer renderer = new HelmetStackTileEntityRenderer();
 
 			@Override
-			public HelmetStackTileEntityRenderer getCustomRenderer() {
+			public @NotNull HelmetStackTileEntityRenderer getCustomRenderer() {
 				return renderer;
 			}
 		});

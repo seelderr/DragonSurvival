@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client;
 
-import by.dragonsurvivalteam.dragonsurvival.client.handlers.KeyInputHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.models.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.FireballModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.projectiles.LightningBallModel;
@@ -21,7 +20,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
 @EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT )
 @SuppressWarnings( "unused" )
@@ -50,10 +48,5 @@ public class ClientModSetup {
 		EntityRenderers.register(DSEntities.HUNTER_HOUND.get(), manager -> new HoundRenderer(manager, new HoundModel()));
 		EntityRenderers.register(DSEntities.HUNTER_GRIFFIN.get(), manager -> new GriffinRenderer(manager, new GriffinModel()));
 		EntityRenderers.register(DSEntities.HUNTER_LEADER.get(), manager -> new LeaderRenderer(manager, new LeaderModel()));
-	}
-
-	@SubscribeEvent
-	public static void onKeyRegister(final RegisterKeyMappingsEvent event) {
-		KeyInputHandler.registerKeys(event);
 	}
 }

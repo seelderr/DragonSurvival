@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;

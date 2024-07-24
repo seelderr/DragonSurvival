@@ -1,6 +1,6 @@
 {
   "values": [
-    "#c:foods/cooked_meats",
+    "#c:foods/cooked_meat",
     "minecraft:rabbit_stew",
     {
       "id": "koopascritters:cooked_wild_bird",

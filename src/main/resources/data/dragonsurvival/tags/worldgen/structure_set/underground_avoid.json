@@ -1,0 +1,9 @@
+{
+  "replace": false,
+  "values": [
+    "minecraft:strongholds",
+    "minecraft:ancient_cities",
+    "minecraft:trial_chamber",
+	"#minecraft:on_trial_chambers_maps"
+  ]
+}

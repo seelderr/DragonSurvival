@@ -1,11 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
-
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
@@ -13,16 +8,11 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import net.neoforged.neoforge.network.PacketDistributor;
 
 public class Bolas extends ThrowableItemProjectile{
 
@@ -38,15 +28,14 @@ public class Bolas extends ThrowableItemProjectile{
 		super(DSEntities.BOLAS_ENTITY.get(), shooter, world);
 	}
 
-
 	@Override
 	protected Item getDefaultItem(){
 		return DSItems.HUNTING_NET.value();
 	}
 
 	@Override
-	protected void onHit(HitResult p_70227_1_){
-		super.onHit(p_70227_1_);
+	protected void onHit(HitResult result){
+		super.onHit(result);
 		if(!level().isClientSide()){
 			remove(RemovalReason.DISCARDED);
 		}
@@ -56,29 +45,11 @@ public class Bolas extends ThrowableItemProjectile{
 		Entity entity = entityHitResult.getEntity();
 		if(!entity.level().isClientSide()){
 			if(entity instanceof LivingEntity living){
-				AttributeInstance movementSpeed = living.getAttribute(Attributes.MOVEMENT_SPEED);
-				AttributeModifier bolasTrap = new AttributeModifier(SLOW_MOVEMENT, -movementSpeed.getValue() / 2.f, AttributeModifier.Operation.ADD_VALUE);
-				boolean addEffect = false;
-				if(!movementSpeed.hasModifier(SLOW_MOVEMENT)){
-					movementSpeed.addTransientModifier(bolasTrap);
-					addEffect = true;
+				if(living.hasEffect(DSEffects.TRAPPED)){
+					return;
 				}
 
-				if(entity instanceof Player player) {
-					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-					if(handler.isDragon()){
-						handler.setWingsSpread(false);
-						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
-					}
-				}
-
-				// There are some missing effects here, since they are handled elsewhere:
-				// -The player can't jump (EventHandler.java)
-				// -The player can't activate their wings (ClientFlightHandler.java)
-
-				if(addEffect){
-					living.addEffect(new MobEffectInstance(DSEffects.TRAPPED, Functions.secondsToTicks(ServerConfig.hunterTrappedDebuffDuration)));
-				}
+				living.addEffect(new MobEffectInstance(DSEffects.TRAPPED, Functions.secondsToTicks(ServerConfig.hunterTrappedDebuffDuration), 0, false, false));
 			}
 		}
 	}

@@ -3,8 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
@@ -74,6 +76,18 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 				RenderSystem.runAsFancy(runnable);
 			}
 		}, () -> RenderSystem.runAsFancy(runnable));
+	}
+
+	// We want to disable the scissor being used when rendering a dragon entity in the inventory. There are issues with effect tooltip text being clipped otherwise.
+	@WrapWithCondition(method ="renderEntityInInventoryFollowsAngle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;enableScissor(IIII)V"))
+	private static boolean skipEnableScissorCallForDragons(GuiGraphics instance, int pMinX, int pMinY, int pMaxX, int pMaxY, @Local(argsOnly = true) LivingEntity entity){
+		return !DragonStateProvider.isDragon(entity);
+	}
+
+	// Make sure to also catch the disableScissor call to prevent a stack underflow of the scissor stack
+	@WrapWithCondition(method ="renderEntityInInventoryFollowsAngle", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;disableScissor()V"))
+	private static boolean skipDisableScissorCallForDragons(GuiGraphics instance, @Local(argsOnly = true) LivingEntity entity){
+		return !DragonStateProvider.isDragon(entity);
 	}
 
 	// If we are a dragon, we don't want to angle the entire entity when rendering it with a follows mouse command (like vanilla does).
