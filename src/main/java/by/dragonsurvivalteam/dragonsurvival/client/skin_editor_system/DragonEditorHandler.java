@@ -204,7 +204,7 @@ public class DragonEditorHandler{
 			//	file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
 			//	image.writeToFile(file);
 			//}
-			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
+			if (Minecraft.getInstance().getTextureManager().getTexture(key) instanceof DynamicTexture texture) {
 				texture.setPixels(image);
 				texture.upload();
 			} else {
