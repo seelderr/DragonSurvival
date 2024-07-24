@@ -17,6 +17,7 @@ import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Holder;
@@ -36,7 +37,7 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;
-
+	private static final AbstractTexture missingno = Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.fromNamespaceAndPath("minecraft", "missingno"));
 	public DragonArmorRenderLayer(final GeoEntityRenderer<DragonEntity> renderer) {
 		super(renderer);
 		this.renderer = renderer;
@@ -160,7 +161,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 							}
 
 							try (image) {
-								if (Minecraft.getInstance().getTextureManager().getTexture(armorTrimKey) instanceof DynamicTexture texture && !texture.equals(Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.fromNamespaceAndPath("minecraft", "missingno")))) {
+								if (Minecraft.getInstance().getTextureManager().getTexture(armorTrimKey) instanceof DynamicTexture texture && !texture.equals(missingno)) {
 									texture.setPixels(image);
 									texture.upload();
 								} else {
