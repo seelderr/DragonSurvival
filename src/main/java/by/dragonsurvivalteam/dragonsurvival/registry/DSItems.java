@@ -31,6 +31,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+@SuppressWarnings("unused")
 public class DSItems {
 
 	private static class CustomHoverTextItem extends Item {
