@@ -1,9 +1,9 @@
 {
     "type": "minecraft:smithing_transform",
     "template": { "item": "dragonsurvival:good_dragon_present" },
-    "base": { "item":"minecraft:netherite_helmet" },
+    "base": { "item":"minecraft:netherite_boots" },
     "addition": { "item": "minecraft:gold_ingot" },
     "result": {
-        "id": "dragonsurvival:good_dragon_helmet"
+        "id": "dragonsurvival:good_dragon_boots"
     }
-}
+  }

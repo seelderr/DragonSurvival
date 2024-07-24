@@ -156,6 +156,9 @@ public class DSItems {
 	));
 
 	// Items that shouldn't show up in the creative tab
+	public static final Holder<Item> FAKE_DRAGON_KEY = DS_ITEMS.register("dragon_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON)
+	));
 	public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));
 	public static final Holder<Item> LIGHTNING_TEXTURE_ITEM = DS_ITEMS.register("lightning", () -> new Item(new Item.Properties()));
 
