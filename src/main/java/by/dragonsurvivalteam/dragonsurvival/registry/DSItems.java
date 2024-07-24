@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -23,6 +24,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -149,11 +151,15 @@ public class DSItems {
 	);
 
 	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON)
-	));
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(
+					DSDataComponents.VALID_VAULTS,
+					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
+	);
 	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON)
-	));
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(
+					DSDataComponents.VALID_VAULTS,
+					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
+	);
 
 	// Items that shouldn't show up in the creative tab
 	public static final Holder<Item> FAKE_DRAGON_KEY = DS_ITEMS.register("dragon_key", () -> new Item(

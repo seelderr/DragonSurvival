@@ -9,13 +9,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
 import com.mojang.datafixers.util.Pair;
 import java.util.HashMap;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
@@ -24,6 +24,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import software.bernie.geckolib.util.Color;
 
+@SuppressWarnings("unused")
 public class DSBlocks{
 	public static final DeferredRegister<Block> DS_BLOCKS = DeferredRegister.create(
 			BuiltInRegistries.BLOCK,
@@ -971,6 +972,25 @@ public class DSBlocks{
 	public static final DeferredHolder<Item, HelmetItem> HELMET_BLOCK_3_ITEM = DS_ITEMS.register(
 			"broken_knight_helmet_3",
 			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
+	);
+
+	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT = DS_BLOCKS.register(
+			"dragon_vault",
+			() -> new VaultBlock(VaultBlock.Properties.of())
+	);
+
+	private static final CompoundTag vaultTag = new CompoundTag();
+	private static final CompoundTag vaultTag2 = new CompoundTag();
+	static {
+		vaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault");
+		//vaultTag2.putString("key_item", "minecraft:trial_key");
+		vaultTag.put("config", vaultTag2);
+	}
+
+	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ITEM = DS_ITEMS.register(
+			"dragon_vault",
+			() -> new BlockItem(DRAGON_VAULT.get(), new Item.Properties()
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(vaultTag)))
 	);
 
 	static {
