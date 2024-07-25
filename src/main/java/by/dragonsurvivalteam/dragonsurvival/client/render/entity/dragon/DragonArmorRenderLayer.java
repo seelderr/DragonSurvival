@@ -152,7 +152,8 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 										Color.RGBtoHSB(trimColor.getRed(), trimColor.getGreen(), trimColor.getBlue(), trimHSB);
 
 										if (trimColor.getAlpha() != 0) {
-											image.setPixelRGBA(x, y, Color.HSBtoRGB(trimBaseHSB[0], trimBaseHSB[1], trimHSB[2]));
+											// Changes the hue and saturation to be the same as the trim's base color while keeping the design's brightness
+											image.setPixelRGBA(x, y, Color.HSBtoRGB(trimBaseHSB[0], trimHSB[1], trimHSB[2]));
 										} else if (armorColor.getAlpha() != 0) {
 											image.setPixelRGBA(x, y, armorColor.getRGB());
 										}
