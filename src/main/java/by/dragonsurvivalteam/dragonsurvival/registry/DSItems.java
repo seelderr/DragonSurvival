@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -23,6 +24,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -30,6 +32,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+@SuppressWarnings("unused")
 public class DSItems {
 
 	private static class CustomHoverTextItem extends Item {
@@ -147,7 +150,21 @@ public class DSItems {
 			new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
 	);
 
+	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(
+					DSDataComponents.VALID_VAULTS,
+					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
+	);
+	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(
+					DSDataComponents.VALID_VAULTS,
+					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
+	);
+
 	// Items that shouldn't show up in the creative tab
+	public static final Holder<Item> FAKE_DRAGON_KEY = DS_ITEMS.register("dragon_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON)
+	));
 	public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));
 	public static final Holder<Item> LIGHTNING_TEXTURE_ITEM = DS_ITEMS.register("lightning", () -> new Item(new Item.Properties()));
 

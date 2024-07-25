@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": {
+        "type": "minecraft:item",
+        "functions": [
+          {
+            "function" : "minecraft:exploration_map",
+            "destination": "#dragonsurvival:hunter_fortress",
+            "decoration": "minecraft:target_x"
+          }
+        ]
+      }
+    }
+  ]
+}
