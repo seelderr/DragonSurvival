@@ -95,6 +95,9 @@ dependencies {
 	compileOnly "mezz.jei:jei-1.21-neoforge-api:${jei_version}"
 
 	compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
+
+	// Test
+	implementation "curse.maven:embeddium-908741:5556146" // 1.0.7
 }
 
 tasks.withType(ProcessResources).configureEach {
