@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "value": "dragonsurvival:dragon_chest_loot"
+          "value": "dragonsurvival:chests/dragon_chest_loot"
         }
       ]
     }, {
@@ -24,14 +24,11 @@
       ]
     },
     {
-      "rolls": {
-        "min": 10,
-        "max": 15
-      },
+      "rolls": 1,
       "entries": [
         {
-          "type": "minecraft:item",
-          "name": "minecraft:coal"
+          "type": "minecraft:loot_table",
+          "value": "dragonsurvival:generic/hunter_fortress_map"
         }
       ]
     }
