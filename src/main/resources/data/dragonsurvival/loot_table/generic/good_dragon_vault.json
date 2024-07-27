@@ -8,7 +8,7 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "value": "dragonsurvival:dragon_chest_loot"
+          "value": "dragonsurvival:chests/dragon_chest_loot"
         }
       ]
     }, {

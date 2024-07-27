@@ -27,10 +27,10 @@ public class VaultBlockEntityServerMixin {
     }
 
     @Redirect(method="tryInsertKey", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/entity/vault/VaultBlockEntity$Server;isValidToInsert(Lnet/minecraft/world/level/block/entity/vault/VaultConfig;Lnet/minecraft/world/item/ItemStack;)Z"))
-    private static boolean isValidToInsert(VaultConfig pConfig, ItemStack pStack, ServerLevel pLevel,
+    private static boolean dragonSurvival$isValidToInsert(VaultConfig pConfig, ItemStack pStack, ServerLevel pLevel,
                                            BlockPos pPos, BlockState pState, VaultConfig pConfig2, VaultServerData pServerData, VaultSharedData pSharedData, Player pPlayer, ItemStack pStack2){
         if (pStack.getComponents().get(DSDataComponents.VALID_VAULTS) instanceof ExtraCodecs.TagOrElementLocation validVaults) {
-            return pState.getBlockHolder().is(validVaults.id());
+            return pState.getBlockHolder().is(validVaults.id()) && pStack.getCount() >= pConfig.keyItem().getCount();
         }
         return VaultBlockEntity.Server.isValidToInsert(pConfig2, pStack2);
     }

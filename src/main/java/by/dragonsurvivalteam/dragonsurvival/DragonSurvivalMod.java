@@ -8,6 +8,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFF
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment.DS_ARMOR_MATERIALS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes.DS_MAP_DECORATIONS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
@@ -55,6 +56,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLibClient;
 
+@SuppressWarnings("unused")
 @Mod( DragonSurvivalMod.MODID )
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DragonSurvivalMod{
@@ -108,6 +110,7 @@ public class DragonSurvivalMod{
 		DS_POTIONS.register(modEventBus);
 		DS_TILE_ENTITIES.register(modEventBus);
 		DS_ENTITY_TYPES.register(modEventBus);
+		DS_MAP_DECORATIONS.register(modEventBus);
 		GLM.register(modEventBus);
 	}
 
