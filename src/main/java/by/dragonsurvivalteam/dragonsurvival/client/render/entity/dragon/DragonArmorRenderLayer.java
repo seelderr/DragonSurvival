@@ -59,16 +59,10 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		if (neck != null) {
 			neck.setHidden(false);
 		}
-
-		//ResourceLocation helmetTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.HEAD));
-		//ResourceLocation chestPlateTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.CHEST));
-		//ResourceLocation legsTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.LEGS));
-		//ResourceLocation bootsTexture = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(player, EquipmentSlot.FEET));
-
-		ResourceLocation helmetTexture = constructArmorTrimTexture(player, EquipmentSlot.HEAD);
-		ResourceLocation chestPlateTexture = constructArmorTrimTexture(player, EquipmentSlot.CHEST);
-		ResourceLocation legsTexture = constructArmorTrimTexture(player, EquipmentSlot.LEGS);
-		ResourceLocation bootsTexture = constructArmorTrimTexture(player, EquipmentSlot.FEET);
+		ResourceLocation helmetTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.HEAD);
+		ResourceLocation chestPlateTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.CHEST);
+		ResourceLocation legsTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.LEGS);
+		ResourceLocation bootsTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.FEET);
 
 		((DragonRenderer) renderer).isRenderLayers = true;
 
@@ -103,7 +97,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
 	}
 
-	public static ResourceLocation constructArmorTrimTexture(final Player pPlayer, EquipmentSlot pSlot) {
+	public static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer, EquipmentSlot pSlot) {
 		ItemStack itemstack = pPlayer.getItemBySlot(pSlot);
 		ResourceLocation existingArmorLocation = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(pPlayer, pSlot));
 
@@ -139,7 +133,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 							// TODO: something better
 							if (tc != null) {
 								float[] trimBaseHSB = new float[3];
-								float[] armorHSB = new float[3];
 								float[] trimHSB = new float[3];
 								Color trimBaseColor = new Color(tc.getValue());
 								Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
@@ -148,13 +141,19 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 									for (int y = 0; y < armorImage.getHeight(); y++) {
 										Color armorColor = new Color(armorImage.getPixelRGBA(x, y), true);
 										Color trimColor = new Color(trimImage.getPixelRGBA(x, y), true);
-										Color.RGBtoHSB(armorColor.getRed(), armorColor.getGreen(), armorColor.getBlue(), armorHSB);
 										Color.RGBtoHSB(trimColor.getRed(), trimColor.getGreen(), trimColor.getBlue(), trimHSB);
 
 										if (trimColor.getAlpha() != 0) {
 											// Changes the hue and saturation to be the same as the trim's base color while keeping the design's brightness
-											image.setPixelRGBA(x, y, Color.HSBtoRGB(trimBaseHSB[0], trimHSB[1], trimHSB[2]));
+											if (trimHSB[1] == 0) {
+												// Replace any grayscale parts with the appropriate trim color
+												image.setPixelRGBA(x, y, Color.HSBtoRGB(trimBaseHSB[0], trimBaseHSB[1], trimHSB[2]));
+											} else {
+												// Otherwise, keep the same color (for parts that should not change color)
+												image.setPixelRGBA(x, y, trimColor.getRGB());
+											}
 										} else if (armorColor.getAlpha() != 0) {
+											// There is no trim on this pixel and we can ignore it safely
 											image.setPixelRGBA(x, y, armorColor.getRGB());
 										}
 									}
