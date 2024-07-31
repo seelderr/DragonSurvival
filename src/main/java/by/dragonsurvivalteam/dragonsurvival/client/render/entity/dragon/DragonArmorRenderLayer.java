@@ -57,7 +57,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 
 		GeoBone neck = ClientDragonRenderer.dragonArmorModel.getAnimationProcessor().getBone("Neck");
-
 		if (neck != null) {
 			neck.setHidden(false);
 		}
@@ -78,7 +77,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		Color armorColor = new Color(1f, 1f, 1f);
 
 		ClientDragonRenderer.dragonModel.setCurrentTexture(texture);
-		ClientDragonRenderer.dragonArmor.copyPosition(animatable);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		if (type != null) {
 			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
