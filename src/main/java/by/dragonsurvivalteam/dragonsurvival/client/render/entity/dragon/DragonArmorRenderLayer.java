@@ -80,8 +80,10 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		ClientDragonRenderer.dragonModel.setCurrentTexture(texture);
 		ClientDragonRenderer.dragonArmor.copyPosition(animatable);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
-		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
+		if (type != null) {
+			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+			renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
+		}
 	}
 
 	public static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer) {
@@ -291,13 +293,10 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		if (item == Items.AIR) return null;
 
 		ResourceLocation registryName = ResourceHelper.getKey(item);
-		if (registryName != null) {
-			String[] reg = registryName.toString().split(":");
-			String loc = reg[0] + "/" + reg[1] + ".png";
-			return stripInvalidPathChars(loc);
-		}
-		return null;
-	}
+        String[] reg = registryName.toString().split(":");
+        String loc = reg[0] + "/" + reg[1] + ".png";
+        return stripInvalidPathChars(loc);
+    }
 	public static String stripInvalidPathChars(String loc) {
 		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 		// this probably should never be relevant, but you can never be too safe
