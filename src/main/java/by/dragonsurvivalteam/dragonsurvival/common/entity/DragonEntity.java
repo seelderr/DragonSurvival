@@ -197,7 +197,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	}
 
 	private boolean doesAnimationExist(final String animation) {
-		return GeckoLibCache.getBakedAnimations().get(ClientDragonRenderer.dragonModel.getAnimationResource(ClientDragonRenderer.dragonArmor)).getAnimation(animation) != null;
+		return GeckoLibCache.getBakedAnimations().get(ClientDragonRenderer.dragonModel.getAnimationResource(ClientDragonRenderer.dummyDragon)).getAnimation(animation) != null;
 	}
 
 	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
