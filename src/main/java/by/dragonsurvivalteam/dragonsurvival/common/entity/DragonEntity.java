@@ -98,7 +98,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 		registrar.add(new AnimationController<>(this, "6", this::breathPredicate));
 	}
 
-	// For the breath weapon only, we want it to play on a seperate controller so it can play at the same time as other animations
+	// For the breath weapon only, we want it to play on a separate controller,
+	// so it can play at the same time as other animations
 	private PlayState breathPredicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
 
@@ -511,7 +512,9 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
 	@Override
 	public void setItemSlot(@NotNull EquipmentSlot slotIn, @NotNull ItemStack stack){
-		if(playerId != null){
+		if (playerId != null) {
+			getPlayer().setItemSlot(slotIn, stack);
+		} else if (getPlayer() != null) {
 			getPlayer().setItemSlot(slotIn, stack);
 		}
 	}

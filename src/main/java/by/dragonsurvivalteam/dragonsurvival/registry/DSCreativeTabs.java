@@ -37,8 +37,7 @@ public class DSCreativeTabs {
             DSItems.PASSIVE_FIRE_BEACON,
             DSItems.INACTIVE_MAGIC_DRAGON_BEACON,
             DSItems.INACTIVE_PEACE_DRAGON_BEACON,
-            DSItems.INACTIVE_FIRE_DRAGON_BEACON,
-            DSItems.FAKE_DRAGON_KEY
+            DSItems.INACTIVE_FIRE_DRAGON_BEACON
     );
 
     static CreativeModeTab.DisplayItemsGenerator displayItemsGenerator = (parameters, output) -> Stream.of(DSItems.DS_ITEMS).forEach(

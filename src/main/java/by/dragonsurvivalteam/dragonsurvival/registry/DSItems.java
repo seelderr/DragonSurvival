@@ -150,21 +150,18 @@ public class DSItems {
 			new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
 	);
 
-	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new Item(
+	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("commendation", () -> new Item(
 			new Item.Properties().rarity(Rarity.UNCOMMON).component(
 					DSDataComponents.VALID_VAULTS,
 					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
 	);
-	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new Item(
+	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("wanted_notice", () -> new Item(
 			new Item.Properties().rarity(Rarity.UNCOMMON).component(
 					DSDataComponents.VALID_VAULTS,
 					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
 	);
 
 	// Items that shouldn't show up in the creative tab
-	public static final Holder<Item> FAKE_DRAGON_KEY = DS_ITEMS.register("dragon_key", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON)
-	));
 	public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));
 	public static final Holder<Item> LIGHTNING_TEXTURE_ITEM = DS_ITEMS.register("lightning", () -> new Item(new Item.Properties()));
 

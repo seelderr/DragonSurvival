@@ -974,18 +974,17 @@ public class DSBlocks{
 			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
 	);
 
-	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT = DS_BLOCKS.register(
-			"dragon_vault",
-			() -> new VaultBlock(VaultBlock.Properties.of())
-	);
-
 	private static final CompoundTag vaultTag = new CompoundTag();
 	private static final CompoundTag vaultTag2 = new CompoundTag();
 	static {
 		vaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault");
-		//vaultTag2.putString("key_item", "minecraft:trial_key");
 		vaultTag.put("config", vaultTag2);
 	}
+
+	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT = DS_BLOCKS.register(
+			"dragon_vault",
+			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
+	);
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ITEM = DS_ITEMS.register(
 			"dragon_vault",

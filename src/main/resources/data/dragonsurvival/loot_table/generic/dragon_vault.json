@@ -11,7 +11,7 @@
             {
               "condition": "minecraft:match_tool",
               "predicate": {
-                "items": "dragonsurvival:good_dragon_key"
+                "items": "dragonsurvival:commendation"
               }
             }
           ]
@@ -28,7 +28,7 @@
             {
               "condition": "minecraft:match_tool",
               "predicate": {
-                "items": "dragonsurvival:evil_dragon_key"
+                "items": "dragonsurvival:wanted_notice"
               }
             }
           ]

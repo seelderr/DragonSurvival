@@ -33,6 +33,7 @@
     "MixinInventoryScreen",
     "MixinItemInHandRenderer",
     "MixinWorldRenderer",
+    "SmithingScreenMixin",
     "client.ItemBlockRenderTypesMixin",
     "client.LightTextureMixin",
     "client.LiquidBlockRendererMixin",
