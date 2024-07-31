@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.models.DragonArmorModel;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -64,11 +63,9 @@ import software.bernie.geckolib.util.RenderUtil;
 @EventBusSubscriber( Dist.CLIENT )
 public class ClientDragonRenderer {
 	public static DragonModel dragonModel = new DragonModel();
-	public static DragonArmorModel dragonArmorModel = new DragonArmorModel(dragonModel);
 	/**
 	 * First-person armor instance
 	 */
-	public static DragonEntity dragonArmor;
 	public static DragonEntity dummyDragon;
 	public static float deltaPartialTick;
 
@@ -177,7 +174,7 @@ public class ClientDragonRenderer {
 	@SubscribeEvent(receiveCanceled = true)
 	public static void cancelNameplatesFromDummyEntities(RenderNameTagEvent renderNameplateEvent){
 		Entity entity = renderNameplateEvent.getEntity();
-		if(entity.getType() == DSEntities.DRAGON.get() || entity.getType() == DSEntities.DRAGON_ARMOR.get()) {
+		if(entity.getType() == DSEntities.DRAGON.get()) {
 			renderNameplateEvent.setCanRender(TriState.FALSE);
 		}
 	}
@@ -196,12 +193,6 @@ public class ClientDragonRenderer {
 			DragonEntity dummyDragon = DSEntities.DRAGON.get().create(player.level());
 			dummyDragon.playerId = player.getId();
 			playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
-		}
-
-		if (dragonArmor == null) {
-			dragonArmor = DSEntities.DRAGON_ARMOR.get().create(player.level());
-			assert dragonArmor != null;
-			dragonArmor.playerId = player.getId();
 		}
 
 		if (dummyDragon == null) {

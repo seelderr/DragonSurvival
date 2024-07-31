@@ -361,10 +361,6 @@ public class ClientProxy {
 
         // TODO :: use string uuid?
         if (localPlayer != null) {
-            if (ClientDragonRenderer.dragonArmor != null) {
-                ClientDragonRenderer.dragonArmor.playerId = localPlayer.getId();
-            }
-
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
@@ -418,13 +414,6 @@ public class ClientProxy {
 
     public static void handleRefreshDragons(final RefreshDragon.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
-
-        ClientDragonRenderer.dragonArmor = DSEntities.DRAGON_ARMOR.get().create(localPlayer.level());
-
-        if (ClientDragonRenderer.dragonArmor != null) {
-            ClientDragonRenderer.dragonArmor.playerId = localPlayer.getId();
-        }
-
         Entity entity = localPlayer.level().getEntity(message.playerId());
 
         if (entity instanceof Player player) {

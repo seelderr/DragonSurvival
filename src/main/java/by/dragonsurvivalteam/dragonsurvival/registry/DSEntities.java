@@ -36,9 +36,6 @@ public class DSEntities {
 	public static DeferredHolder<EntityType<?>, EntityType<DragonEntity>> DRAGON = DS_ENTITY_TYPES.register(
 			"dummy_dragon",
 			() -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 1.0f, 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
-	public static DeferredHolder<EntityType<?>, EntityType<DragonEntity>> DRAGON_ARMOR = DS_ENTITY_TYPES.register(
-			"dragon_armor",
-			() -> new EntityType<>(DragonEntity::new, MobCategory.MISC, true, false, false, false, ImmutableSet.of(), EntityDimensions.fixed(0.9f, 1.9f), 1.0f, 0, 0, FeatureFlagSet.of(FeatureFlags.VANILLA)));
 
 	// Fake entities
 	public static DeferredHolder<EntityType<?>, EntityType<Bolas>> BOLAS_ENTITY = DS_ENTITY_TYPES.register(
@@ -121,7 +118,6 @@ public class DSEntities {
 	@SubscribeEvent
 	public static void attributeCreationEvent(final EntityAttributeCreationEvent event) {
 		event.put(DRAGON.get(), DragonEntity.createLivingAttributes().build());
-		event.put(DRAGON_ARMOR.get(), DragonEntity.createLivingAttributes().build());
 		event.put(HUNTER_HOUND.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
 		event.put(HUNTER_SPEARMAN.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.spearmanSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.spearmanDamage).add(Attributes.ARMOR, ServerConfig.spearmanArmor).add(Attributes.MAX_HEALTH, ServerConfig.spearmanHealth).build());
 		event.put(HUNTER_KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
