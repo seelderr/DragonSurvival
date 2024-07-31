@@ -33,7 +33,6 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
 import net.minecraft.world.item.component.DyedItemColor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -56,16 +55,9 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		GeoBone neck = ClientDragonRenderer.dragonArmorModel.getAnimationProcessor().getBone("Neck");
-		if (neck != null) {
-			neck.setHidden(false);
-		}
 		ResourceLocation armorTexture = constructTrimmedDragonArmorTexture(player);
-
 		((DragonRenderer) renderer).isRenderLayers = true;
-
 		renderArmor(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, armorTexture);
-
 		((DragonRenderer) renderer).isRenderLayers = false;
 	}
 
