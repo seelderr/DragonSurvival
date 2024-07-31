@@ -31,6 +31,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.item.component.DyedItemColor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
@@ -85,15 +86,8 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 	public static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer) {
 		NativeImage image = new NativeImage(512, 512, true);
-		StringBuilder armorTotal = new StringBuilder();
-		for (EquipmentSlot slot : EquipmentSlot.values()) {
-			if (!slot.isArmor())
-				continue;
-			ItemStack itemstack = pPlayer.getItemBySlot(slot);
-			armorTotal.append(itemstack).append(itemstack.getComponents().get(DataComponents.TRIM));
-		}
-		String uniqueArmorLoc = UUID.nameUUIDFromBytes(armorTotal.toString().getBytes()).toString();
-		ResourceLocation imageLoc = ResourceLocation.fromNamespaceAndPath(MODID, "armor_" + uniqueArmorLoc);
+		String armorUUID = buildUniqueArmorUUID(pPlayer);
+		ResourceLocation imageLoc = ResourceLocation.fromNamespaceAndPath(MODID, "armor_" + armorUUID);
 
 		if (Minecraft.getInstance().getTextureManager().getTexture(imageLoc) instanceof DynamicTexture texture && !texture.equals(missingno)) {
 			return imageLoc;
@@ -137,9 +131,15 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 							trimBaseColor = new Color(tc.getValue());
 							Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
 						}
-
 					}
+					float[] armorHSB = new float[3];
 					float[] trimHSB = new float[3];
+					float[] dyeHSB = new float[3];
+					DyedItemColor dyeColor = itemstack.get(DataComponents.DYED_COLOR);
+					if (dyeColor != null) {
+						Color armorDye = new Color(dyeColor.rgb());
+						Color.RGBtoHSB(armorDye.getBlue(), armorDye.getGreen(), armorDye.getRed(), dyeHSB);
+					}
 
 					for (int x = 0; x < armorImage.getWidth(); x++) {
 						for (int y = 0; y < armorImage.getHeight(); y++) {
@@ -158,11 +158,22 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 									}
 								} else if (armorColor.getAlpha() != 0) {
 									// There is no trim on this pixel and we can ignore it safely
-									image.setPixelRGBA(x, y, armorColor.getRGB());
+									if (dyeHSB[0] != 0 && dyeHSB[1] != 0) {
+										// Get the armor's brightness, and the dye's hue and saturation
+										image.setPixelRGBA(x, y, Color.HSBtoRGB(dyeHSB[0], dyeHSB[1], Color.RGBtoHSB(armorColor.getRed(), armorColor.getGreen(), armorColor.getBlue(), null)[1]));
+									} else {
+										image.setPixelRGBA(x, y, armorColor.getRGB());
+									}
 								}
 							} else if (armorColor.getAlpha() != 0){
 								// No armor trim, just the armor
-								image.setPixelRGBA(x, y, armorColor.getRGB());
+								Color.RGBtoHSB(armorColor.getRed(), armorColor.getGreen(), armorColor.getBlue(), armorHSB);
+								if ((dyeHSB[0] != 0 || dyeHSB[1] != 0) && armorHSB[1] == 0) {
+									// Get the armor's brightness, and the dye's hue and saturation
+									image.setPixelRGBA(x, y, Color.HSBtoRGB(dyeHSB[0], dyeHSB[1], armorHSB[2]));
+								} else {
+									image.setPixelRGBA(x, y, armorColor.getRGB());
+								}
 							}
 						}
 					}
@@ -173,6 +184,27 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 		uploadTexture(image, imageLoc);
 		return imageLoc;
+	}
+
+	public static String buildUniqueArmorUUID(Player pPlayer) {
+		StringBuilder armorTotal = new StringBuilder();
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			if (!slot.isArmor())
+				continue;
+			ItemStack itemstack = pPlayer.getItemBySlot(slot);
+			armorTotal.append(itemstack);
+
+			ArmorTrim armorTrim = itemstack.getComponents().get(DataComponents.TRIM);
+			if (armorTrim != null) {
+				armorTotal.append("_").append(armorTrim.material().value().assetName()).append("_").append(armorTrim.pattern().value().assetId());
+			}
+
+			DyedItemColor dyeColor = itemstack.get(DataComponents.DYED_COLOR);
+			if (dyeColor != null) {
+				armorTotal.append(dyeColor);
+			}
+		}
+		return UUID.nameUUIDFromBytes(armorTotal.toString().getBytes()).toString();
 	}
 
 	public static void uploadTexture(NativeImage image, ResourceLocation location) {
