@@ -80,8 +80,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		NativeImage image = new NativeImage(512, 512, true);
 		String armorUUID = buildUniqueArmorUUID(pPlayer);
 		ResourceLocation imageLoc = ResourceLocation.fromNamespaceAndPath(MODID, "armor_" + armorUUID);
-
-		if (Minecraft.getInstance().getTextureManager().getTexture(imageLoc) instanceof DynamicTexture texture && !texture.equals(missingno)) {
+		if (Minecraft.getInstance().getTextureManager().getTexture(imageLoc, missingno) instanceof DynamicTexture texture && !texture.equals(missingno)) {
 			return imageLoc;
 		}
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
@@ -201,9 +200,10 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 	public static void uploadTexture(NativeImage image, ResourceLocation location) {
 		try (image) {
-			if (Minecraft.getInstance().getTextureManager().getTexture(location) instanceof DynamicTexture texture && !texture.equals(missingno)) {
+			if (Minecraft.getInstance().getTextureManager().getTexture(location, missingno) instanceof DynamicTexture texture && !texture.equals(missingno)) {
 				texture.setPixels(image);
 				texture.upload();
+				texture.close();
             } else {
 				DynamicTexture layer = new DynamicTexture(image);
 				Minecraft.getInstance().getTextureManager().register(location, layer);
