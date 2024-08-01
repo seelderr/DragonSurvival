@@ -13,6 +13,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -30,8 +31,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.armortrim.ArmorTrim;
+import net.minecraft.world.item.component.DyedItemColor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
-import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
@@ -54,134 +55,167 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		ResourceLocation helmetTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.HEAD);
-		ResourceLocation chestPlateTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.CHEST);
-		ResourceLocation legsTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.LEGS);
-		ResourceLocation bootsTexture = constructTrimmedDragonArmorTexture(player, EquipmentSlot.FEET);
-
+		ResourceLocation armorTexture = constructTrimmedDragonArmorTexture(player);
 		((DragonRenderer) renderer).isRenderLayers = true;
-
-		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.HEAD), helmetTexture);
-		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.CHEST), chestPlateTexture);
-		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.LEGS), legsTexture);
-		renderArmorPiece(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, player.getItemBySlot(EquipmentSlot.FEET), bootsTexture);
-
+		renderArmor(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, armorTexture);
 		((DragonRenderer) renderer).isRenderLayers = false;
 	}
 
-	private void renderArmorPiece(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, float partialTick, int packedLight, final ItemStack stack, final ResourceLocation texture) {
+	private void renderArmor(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, float partialTick, int packedLight, final ResourceLocation texture) {
 		if (animatable == null) {
-			return;
-		}
-
-		if (stack == null || stack.isEmpty()) {
 			return;
 		}
 
 		Color armorColor = new Color(1f, 1f, 1f);
 
-		if (stack.getItem() instanceof DyeItem dyeItem) {
-			DyeColor dyeColor = dyeItem.getDyeColor();
-			armorColor = new Color(dyeColor.getTextureDiffuseColor());
-		}
-
 		ClientDragonRenderer.dragonModel.setCurrentTexture(texture);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
-		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
+		if (type != null) {
+			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+			renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
+		}
 	}
 
-	public static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer, EquipmentSlot pSlot) {
-		ItemStack itemstack = pPlayer.getItemBySlot(pSlot);
-		ResourceLocation existingArmorLocation = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(pPlayer, pSlot));
+	public static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer) {
+		NativeImage image = new NativeImage(512, 512, true);
+		String armorUUID = buildUniqueArmorUUID(pPlayer);
+		ResourceLocation imageLoc = ResourceLocation.fromNamespaceAndPath(MODID, "armor_" + armorUUID);
 
-		if (itemstack.getItem() instanceof ArmorItem item) {
-			ArmorTrim trim = itemstack.get(DataComponents.TRIM);
-			if (trim != null) {
-				Optional<Resource> armorFile = Minecraft.getInstance().getResourceManager().getResource(existingArmorLocation);
+		if (Minecraft.getInstance().getTextureManager().getTexture(imageLoc) instanceof DynamicTexture texture && !texture.equals(missingno)) {
+			return imageLoc;
+		}
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			ItemStack itemstack = pPlayer.getItemBySlot(slot);
+			ResourceLocation existingArmorLocation = ResourceLocation.fromNamespaceAndPath(MODID, constructArmorTexture(pPlayer, slot));
+			if (itemstack.getItem() instanceof ArmorItem item) {
+				try {
+					ArmorTrim trim = itemstack.get(DataComponents.TRIM);
+					Optional<Resource> armorFile = Minecraft.getInstance().getResourceManager().getResource(existingArmorLocation);
+					NativeImage armorImage, trimImage = null;
+					boolean trimOk = false;
 
-				String patternPath = trim.pattern().value().assetId().getPath();
-				String colorPath = trim.material().value().assetName();
-				ResourceLocation armorTrimKey = ResourceLocation.fromNamespaceAndPath(MODID, existingArmorLocation.getPath().split("\\.")[0] + "_" + patternPath + "_" + colorPath);
+					Color trimBaseColor;
+					float[] trimBaseHSB = new float[3];
 
-				if (armorFile.isPresent()) {
-					try {
-						Optional<Resource> trimFile = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath(MODID, "textures/armor/trims/" + patternPath + "_" + item.getType().getName() + ".png"));
+					if (armorFile.isPresent()) {
+						InputStream textureStream = armorFile.get().open();
+						armorImage = NativeImage.read(textureStream);
+						textureStream.close();
+					} else {
+						continue;
+					}
+
+					if (trim != null) {
+						String patternPath = trim.pattern().value().assetId().getPath();
+						Optional<Resource> trimFile = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.fromNamespaceAndPath(MODID, "textures/trims/" + patternPath + "_" + item.getType().getName() + ".png"));
 
 						if (trimFile.isPresent()) {
-							if ((Minecraft.getInstance().getTextureManager().getTexture(armorTrimKey) instanceof DynamicTexture)) {
-								return armorTrimKey;
-							}
-							NativeImage image = new NativeImage(512, 512, true);
-
-							InputStream textureStream = armorFile.get().open();
-							NativeImage armorImage = NativeImage.read(textureStream);
+							InputStream textureStream = trimFile.get().open();
+							trimImage = NativeImage.read(textureStream);
 							textureStream.close();
-
-							textureStream = trimFile.get().open();
-							NativeImage trimImage = NativeImage.read(textureStream);
-							textureStream.close();
-
-							TextColor tc = trim.material().value().description().getStyle().getColor();
-							// Not the most elegant solution, but the best way I could find to get a single color reliably...
+							trimOk = true;
+						}
+						TextColor tc = trim.material().value().description().getStyle().getColor();
+						if (tc != null) {
+							// Not the most elegant solution,
+							// but the best way I could find to get a single color reliably...
 							// TODO: something better
-							if (tc != null) {
-								float[] trimBaseHSB = new float[3];
-								float[] trimHSB = new float[3];
-								Color trimBaseColor = new Color(tc.getValue());
-								Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
+							trimBaseColor = new Color(tc.getValue());
+							Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
+						}
+					}
+					float[] armorHSB = new float[3];
+					float[] trimHSB = new float[3];
+					float[] dyeHSB = new float[3];
+					DyedItemColor dyeColor = itemstack.get(DataComponents.DYED_COLOR);
+					if (dyeColor != null) {
+						Color armorDye = new Color(dyeColor.rgb());
+						Color.RGBtoHSB(armorDye.getBlue(), armorDye.getGreen(), armorDye.getRed(), dyeHSB);
+					}
 
-								for (int x = 0; x < armorImage.getWidth(); x++) {
-									for (int y = 0; y < armorImage.getHeight(); y++) {
-										Color armorColor = new Color(armorImage.getPixelRGBA(x, y), true);
-										Color trimColor = new Color(trimImage.getPixelRGBA(x, y), true);
-										Color.RGBtoHSB(trimColor.getRed(), trimColor.getGreen(), trimColor.getBlue(), trimHSB);
-
-										if (trimColor.getAlpha() != 0) {
-											// Changes the hue and saturation to be the same as the trim's base color while keeping the design's brightness
-											if (trimHSB[1] == 0) {
-												// Replace any grayscale parts with the appropriate trim color
-												image.setPixelRGBA(x, y, Color.HSBtoRGB(trimBaseHSB[0], trimBaseHSB[1], trimHSB[2]));
-											} else {
-												// Otherwise, keep the same color (for parts that should not change color)
-												image.setPixelRGBA(x, y, trimColor.getRGB());
-											}
-										} else if (armorColor.getAlpha() != 0) {
-											// There is no trim on this pixel and we can ignore it safely
-											image.setPixelRGBA(x, y, armorColor.getRGB());
-										}
+					for (int x = 0; x < armorImage.getWidth(); x++) {
+						for (int y = 0; y < armorImage.getHeight(); y++) {
+							Color armorColor = new Color(armorImage.getPixelRGBA(x, y), true);
+							if (trimOk) {
+								Color trimColor = new Color(trimImage.getPixelRGBA(x, y), true);
+								Color.RGBtoHSB(trimColor.getRed(), trimColor.getGreen(), trimColor.getBlue(), trimHSB);
+								if (trimColor.getAlpha() != 0) {
+									// Changes the hue and saturation to be the same as the trim's base color while keeping the design's brightness
+									if (trimHSB[1] == 0) {
+										// Replace any grayscale parts with the appropriate trim color
+										image.setPixelRGBA(x, y, Color.HSBtoRGB(trimBaseHSB[0], trimBaseHSB[1], trimHSB[2]));
+									} else {
+										// Otherwise, keep the same color (for parts that should not change color)
+										image.setPixelRGBA(x, y, trimColor.getRGB());
+									}
+								} else if (armorColor.getAlpha() != 0) {
+									// There is no trim on this pixel and we can ignore it safely
+									if (dyeHSB[0] != 0 && dyeHSB[1] != 0) {
+										// Get the armor's brightness, and the dye's hue and saturation
+										image.setPixelRGBA(x, y, Color.HSBtoRGB(dyeHSB[0], dyeHSB[1], Color.RGBtoHSB(armorColor.getRed(), armorColor.getGreen(), armorColor.getBlue(), null)[1]));
+									} else {
+										image.setPixelRGBA(x, y, armorColor.getRGB());
 									}
 								}
-							}
-
-							try (image) {
-								if (Minecraft.getInstance().getTextureManager().getTexture(armorTrimKey) instanceof DynamicTexture texture && !texture.equals(missingno)) {
-									texture.setPixels(image);
-									texture.upload();
+							} else if (armorColor.getAlpha() != 0){
+								// No armor trim, just the armor
+								Color.RGBtoHSB(armorColor.getRed(), armorColor.getGreen(), armorColor.getBlue(), armorHSB);
+								if ((dyeHSB[0] != 0 || dyeHSB[1] != 0) && armorHSB[1] == 0) {
+									// Get the armor's brightness, and the dye's hue and saturation
+									image.setPixelRGBA(x, y, Color.HSBtoRGB(dyeHSB[0], dyeHSB[1], armorHSB[2]));
 								} else {
-									DynamicTexture layer = new DynamicTexture(image);
-									Minecraft.getInstance().getTextureManager().register(armorTrimKey, layer);
+									image.setPixelRGBA(x, y, armorColor.getRGB());
 								}
-								/*File file = new File(Minecraft.getInstance().gameDirectory, "texture");
-								file.mkdirs();
-								file = new File(file.getPath(), armorTrimKey.toString().replace(":", "_") + ".png");
-								file.getParentFile().mkdirs();
-								image.writeToFile(file);*/
-
-								return armorTrimKey;
-							} catch (Exception e) {
-								DragonSurvivalMod.LOGGER.error(e);
 							}
-						} else {
-							return existingArmorLocation;
 						}
-					} catch (IOException e) {
-						DragonSurvivalMod.LOGGER.error("An error occurred while compiling the dragon armor trim texture", e);
 					}
+				} catch (IOException e) {
+					DragonSurvivalMod.LOGGER.error("An error occurred while compiling the dragon armor trim texture", e);
 				}
 			}
 		}
-		return existingArmorLocation;
+		uploadTexture(image, imageLoc);
+		return imageLoc;
+	}
+
+	public static String buildUniqueArmorUUID(Player pPlayer) {
+		StringBuilder armorTotal = new StringBuilder();
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			if (!slot.isArmor())
+				continue;
+			ItemStack itemstack = pPlayer.getItemBySlot(slot);
+			armorTotal.append(itemstack);
+
+			ArmorTrim armorTrim = itemstack.getComponents().get(DataComponents.TRIM);
+			if (armorTrim != null) {
+				armorTotal.append("_").append(armorTrim.material().value().assetName()).append("_").append(armorTrim.pattern().value().assetId());
+			}
+
+			DyedItemColor dyeColor = itemstack.get(DataComponents.DYED_COLOR);
+			if (dyeColor != null) {
+				armorTotal.append(dyeColor);
+			}
+		}
+		return UUID.nameUUIDFromBytes(armorTotal.toString().getBytes()).toString();
+	}
+
+	public static void uploadTexture(NativeImage image, ResourceLocation location) {
+		try (image) {
+			if (Minecraft.getInstance().getTextureManager().getTexture(location) instanceof DynamicTexture texture && !texture.equals(missingno)) {
+				texture.setPixels(image);
+				texture.upload();
+            } else {
+				DynamicTexture layer = new DynamicTexture(image);
+				Minecraft.getInstance().getTextureManager().register(location, layer);
+            }
+            /*File file = new File(Minecraft.getInstance().gameDirectory, "texture");
+			file.mkdirs();
+			file = new File(file.getPath(), armorTrimKey.toString().replace(":", "_") + ".png");
+			file.getParentFile().mkdirs();
+			image.writeToFile(file);*/
+		} catch (Exception e) {
+			DragonSurvivalMod.LOGGER.error(e);
+		}
 	}
 
 	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
@@ -247,15 +281,8 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	
 	public static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
-
-		ResourceLocation registryName = ResourceHelper.getKey(item);
-		if (registryName != null) {
-			String[] reg = registryName.toString().split(":");
-			String loc = reg[0] + "/" + reg[1] + ".png";
-			return stripInvalidPathChars(loc);
-		}
-		return null;
-	}
+		return ResourceHelper.getKey(item).getPath();
+    }
 	public static String stripInvalidPathChars(String loc) {
 		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 		// this probably should never be relevant, but you can never be too safe
