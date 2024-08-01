@@ -174,6 +174,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			}
 		}
 		uploadTexture(image, imageLoc);
+		image.close();
 		return imageLoc;
 	}
 
@@ -203,7 +204,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			if (Minecraft.getInstance().getTextureManager().getTexture(location, missingno) instanceof DynamicTexture texture && !texture.equals(missingno)) {
 				texture.setPixels(image);
 				texture.upload();
-				texture.close();
             } else {
 				DynamicTexture layer = new DynamicTexture(image);
 				Minecraft.getInstance().getTextureManager().register(location, layer);
