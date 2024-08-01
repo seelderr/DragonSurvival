@@ -281,11 +281,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	
 	public static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
-
-		ResourceLocation registryName = ResourceHelper.getKey(item);
-        String[] reg = registryName.toString().split(":");
-        String loc = reg[0] + "/" + reg[1] + ".png";
-        return stripInvalidPathChars(loc);
+		return ResourceHelper.getKey(item).getPath();
     }
 	public static String stripInvalidPathChars(String loc) {
 		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
