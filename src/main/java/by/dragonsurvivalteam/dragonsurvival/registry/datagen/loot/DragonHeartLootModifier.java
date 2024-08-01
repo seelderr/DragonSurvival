@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
@@ -9,6 +10,8 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -20,6 +23,7 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonHeartLootModifier extends LootModifier {
@@ -28,6 +32,12 @@ public class DragonHeartLootModifier extends LootModifier {
 
     public DragonHeartLootModifier(LootItemCondition[] conditionsIn) {
         super(conditionsIn);
+    }
+
+    private static boolean canDropHeart(float health, float min, float max, List<String> entityList, Entity entity, boolean whiteList, boolean useList) {
+        boolean meetsHealthRequirements = health >= min && health < max;
+        boolean meetsListRequirements = !useList || entityList.contains(ResourceHelper.getKey(entity).toString()) == whiteList;
+        return meetsHealthRequirements && meetsListRequirements;
     }
 
     @Override
@@ -51,27 +61,21 @@ public class DragonHeartLootModifier extends LootModifier {
 
         float health = ((LivingEntity)entity).getMaxHealth();
 
-        boolean canDropDragonHeart =
-                (ServerConfig.dragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.dragonHeartWhiteList && ServerConfig.dragonHeartUseList)
-                || health >= 14 && health < 20;
-        boolean canDropWeakDragonHeart =
-                (ServerConfig.weakDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.weakDragonHeartWhiteList && ServerConfig.weakDragonHeartUseList)
-                || health >= 20 && health < 50;
-        boolean canDropElderDragonHeart =
-                (ServerConfig.elderDragonHeartEntityList.contains(ResourceHelper.getKey(entity).toString()) == ServerConfig.elderDragonHeartWhiteList && ServerConfig.elderDragonHeartUseList)
-                || health >= 50;
+        boolean canDropWeakDragonHeart = canDropHeart(health, 14, 20, ServerConfig.weakDragonHeartEntityList, entity, ServerConfig.weakDragonHeartWhiteList, ServerConfig.weakDragonHeartUseList);
+        boolean canDropNormalDragonHeart = canDropHeart(health, 20, 50, ServerConfig.dragonHeartEntityList, entity, ServerConfig.dragonHeartWhiteList, ServerConfig.dragonHeartUseList);
+        boolean canDropElderDragonHeart = canDropHeart(health, 50, Float.MAX_VALUE, ServerConfig.elderDragonHeartEntityList, entity, ServerConfig.elderDragonHeartWhiteList, ServerConfig.elderDragonHeartUseList);
 
         int lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
-
-        if(canDropDragonHeart){
-            if(context.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + lootingLevel * (ServerConfig.dragonHeartShardChance * 100 / 4)){
-                generatedLoot.add(new ItemStack(DSItems.DRAGON_HEART_SHARD));
-            }
-        }
 
         if(canDropWeakDragonHeart){
             if(context.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + lootingLevel * (ServerConfig.weakDragonHeartChance * 100 / 4)){
                 generatedLoot.add(new ItemStack(DSItems.WEAK_DRAGON_HEART));
+            }
+        }
+
+        if(canDropNormalDragonHeart){
+            if(context.getRandom().nextInt(100) <= ServerConfig.dragonHeartShardChance * 100 + lootingLevel * (ServerConfig.dragonHeartShardChance * 100 / 4)){
+                generatedLoot.add(new ItemStack(DSItems.DRAGON_HEART_SHARD));
             }
         }
 
