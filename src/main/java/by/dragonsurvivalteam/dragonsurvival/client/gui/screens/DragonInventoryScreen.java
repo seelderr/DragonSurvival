@@ -7,8 +7,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.H
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -283,10 +285,12 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		int scissorX0 =  leftPos;
 		int scissorY0 = topPos;
 		int scissorX1 = 140 + leftPos;
+		// 0.55 is the smallest height mult we have (for the north body type) so we use that as the base
+		float bodyHeightAddition = (float) ((((handler.getBody().getHeightMult() - 0.55) / 0.45) * -0.6) - 0.5);
 		int scissorY1 = 140 + topPos;
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, 100);
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, 20, 0, mouseX, mouseY, minecraft.player);
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, 20, bodyHeightAddition, mouseX, mouseY, minecraft.player);
 		guiGraphics.pose().popPose();
 
 		renderTooltip(guiGraphics, mouseX, mouseY);
