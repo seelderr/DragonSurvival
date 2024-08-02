@@ -22,6 +22,19 @@
           "name": "dragonsurvival:good_dragon_present"
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 19
+        },
+        {
+          "type": "minecraft:item",
+          "name": "additionaldragons:ancient_catalyst"
+        }
+      ]
     }
   ]
 }

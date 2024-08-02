@@ -974,22 +974,49 @@ public class DSBlocks{
 			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
 	);
 
-	private static final CompoundTag vaultTag = new CompoundTag();
-	private static final CompoundTag vaultTag2 = new CompoundTag();
+	private static final CompoundTag goodVaultTag = new CompoundTag(), goodVaultTag2 = new CompoundTag();
+	private static final CompoundTag evilVaultTag = new CompoundTag(), evilVaultTag2 = new CompoundTag();
+	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag();
 	static {
-		vaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault");
-		vaultTag.put("config", vaultTag2);
+		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/good_dragon_vault");
+		goodVaultTag.put("config", goodVaultTag2);
+		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/evil_dragon_vault");
+		evilVaultTag.put("config", evilVaultTag2);
+		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/hunter_dragon_vault");
+		hunterVaultTag.put("config", hunterVaultTag2);
 	}
 
-	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT = DS_BLOCKS.register(
-			"dragon_vault",
+	public static final DeferredHolder<Block, VaultBlock> GOOD_DRAGON_VAULT = DS_BLOCKS.register(
+			"good_dragon_vault",
 			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
 	);
 
-	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ITEM = DS_ITEMS.register(
-			"dragon_vault",
-			() -> new BlockItem(DRAGON_VAULT.get(), new Item.Properties()
-					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(vaultTag)))
+	public static final DeferredHolder<Item, BlockItem> GOOD_DRAGON_VAULT_ITEM = DS_ITEMS.register(
+			"good_dragon_vault",
+			() -> new BlockItem(GOOD_DRAGON_VAULT.get(), new Item.Properties()
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(goodVaultTag)))
+	);
+
+	public static final DeferredHolder<Block, VaultBlock> EVIL_DRAGON_VAULT = DS_BLOCKS.register(
+			"evil_dragon_vault",
+			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
+	);
+
+	public static final DeferredHolder<Item, BlockItem> EVIL_DRAGON_VAULT_ITEM = DS_ITEMS.register(
+			"evil_dragon_vault",
+			() -> new BlockItem(GOOD_DRAGON_VAULT.get(), new Item.Properties()
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(evilVaultTag)))
+	);
+
+	public static final DeferredHolder<Block, VaultBlock> HUNTER_DRAGON_VAULT = DS_BLOCKS.register(
+			"good_dragon_vault",
+			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
+	);
+
+	public static final DeferredHolder<Item, BlockItem> HUNTER_DRAGON_VAULT_ITEM = DS_ITEMS.register(
+			"good_dragon_vault",
+			() -> new BlockItem(GOOD_DRAGON_VAULT.get(), new Item.Properties()
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(hunterVaultTag)))
 	);
 
 	static {
