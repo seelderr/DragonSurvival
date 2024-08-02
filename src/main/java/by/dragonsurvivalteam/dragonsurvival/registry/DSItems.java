@@ -24,7 +24,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.util.ExtraCodecs;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -150,15 +149,14 @@ public class DSItems {
 			new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
 	);
 
-	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("commendation", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON).component(
-					DSDataComponents.VALID_VAULTS,
-					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
+	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON))
 	);
-	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("wanted_notice", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON).component(
-					DSDataComponents.VALID_VAULTS,
-					new ExtraCodecs.TagOrElementLocation(res("dragon_vault"), false)))
+	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON))
+	);
+	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new Item(
+			new Item.Properties().rarity(Rarity.UNCOMMON))
 	);
 
 	// Items that shouldn't show up in the creative tab

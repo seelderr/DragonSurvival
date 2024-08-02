@@ -979,10 +979,13 @@ public class DSBlocks{
 	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag();
 	static {
 		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/good_dragon_vault");
+		goodVaultTag2.putString("key_item", "dragonsurvival:good_key");
 		goodVaultTag.put("config", goodVaultTag2);
 		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/evil_dragon_vault");
+		goodVaultTag2.putString("key_item", "dragonsurvival:evil_key");
 		evilVaultTag.put("config", evilVaultTag2);
 		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/hunter_dragon_vault");
+		goodVaultTag2.putString("key_item", "dragonsurvival:hunter_key");
 		hunterVaultTag.put("config", hunterVaultTag2);
 	}
 
@@ -1009,12 +1012,12 @@ public class DSBlocks{
 	);
 
 	public static final DeferredHolder<Block, VaultBlock> HUNTER_DRAGON_VAULT = DS_BLOCKS.register(
-			"good_dragon_vault",
+			"hunter_dragon_vault",
 			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
 	);
 
 	public static final DeferredHolder<Item, BlockItem> HUNTER_DRAGON_VAULT_ITEM = DS_ITEMS.register(
-			"good_dragon_vault",
+			"hunter_dragon_vault",
 			() -> new BlockItem(GOOD_DRAGON_VAULT.get(), new Item.Properties()
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(hunterVaultTag)))
 	);
