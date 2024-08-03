@@ -1007,7 +1007,7 @@ public class DSBlocks{
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ANGRY_ITEM = DS_ITEMS.register(
 			"dragon_vault_angry",
-			() -> new BlockItem(DRAGON_VAULT_FRIENDLY.get(), new Item.Properties()
+			() -> new BlockItem(DRAGON_VAULT_ANGRY.get(), new Item.Properties()
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(evilVaultTag)))
 	);
 
@@ -1018,7 +1018,7 @@ public class DSBlocks{
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_HUNTER_ITEM = DS_ITEMS.register(
 			"dragon_vault_hunter",
-			() -> new BlockItem(DRAGON_VAULT_FRIENDLY.get(), new Item.Properties()
+			() -> new BlockItem(DRAGON_VAULT_HUNTER.get(), new Item.Properties()
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(hunterVaultTag)))
 	);
 

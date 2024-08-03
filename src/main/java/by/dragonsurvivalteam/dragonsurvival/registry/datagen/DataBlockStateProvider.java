@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.VaultBlock;
+import net.minecraft.world.level.block.entity.vault.VaultState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DoorHingeSide;
 import net.neoforged.neoforge.client.model.generators.BlockModelBuilder;
@@ -113,6 +115,30 @@ public class DataBlockStateProvider extends BlockStateProvider {
 									: /* 8 layers */ models().cubeAll(name, modLoc(BLOCK_FOLDER + "/" + name));
 							return ConfiguredModel.builder().modelFile(builder).build();
 						}, TreasureBlock.WATERLOGGED);
+			} else if (holder.get() instanceof VaultBlock vaultBlock) {
+				String name = holder.getId().getPath();
+
+				getVariantBuilder(vaultBlock)
+						.forAllStates(state -> {
+									int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot();
+									// Map model file based off of the current state
+									VaultState vaultState = state.getValue(VaultBlock.STATE);
+									String suffix = vaultState.name().toLowerCase();
+									// For some reason, vanilla named this state "ejecting_reward" instead of just "ejecting", so I'm maintaining that convention here
+									if(vaultState == VaultState.EJECTING) {
+										suffix = "ejecting_reward";
+									}
+									BlockModelBuilder builder = models().withExistingParent(name + "_" + suffix, "template_vault")
+											.texture("bottom", modLoc(BLOCK_FOLDER + "/" + name + "_bottom"))
+											.texture("front", modLoc(BLOCK_FOLDER + "/" + name + "_front" + (vaultState == VaultState.ACTIVE ? "_on" : vaultState == VaultState.INACTIVE ? "_off" : "_ejecting")))
+											.texture("side", modLoc(BLOCK_FOLDER + "/" + name + "_side" + (vaultState == VaultState.ACTIVE || vaultState == VaultState.EJECTING ? "_on" : "_off")))
+											.texture("top", modLoc(BLOCK_FOLDER + "/" + name + "_top" + (vaultState == VaultState.EJECTING ? "_ejecting" : "")));
+									return ConfiguredModel.builder()
+											.modelFile(builder)
+											.rotationY(yRot)
+											.build();
+								}
+						);
 			}
 		});
 	}
