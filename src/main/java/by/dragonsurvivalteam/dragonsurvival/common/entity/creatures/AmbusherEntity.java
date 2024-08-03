@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import java.util.List;
 import net.minecraft.nbt.CompoundTag;
@@ -116,7 +117,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
                 setGriffinReleaseReloadTimer(-1);
             }
 
-            setNearbyDragonPlayer(isNearbyDragonPlayer());
+            setNearbyDragonPlayer(DragonUtils.isNearbyDragonPlayerToEntity(8.0, this.level(), this));
         } else {
             if(isFirstClientTick) {
                 // Sync up with the server's data to prevent animations from playing that shouldn't when the entity is loaded
@@ -181,18 +182,6 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
         Mob mob = DSEntities.HUNTER_GRIFFIN.get().create(this.level());
         SpawningUtils.spawn(mob, this.position().add(0, 2, 0), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
         mob.setTarget(this.getTarget());
-    }
-
-    private boolean isNearbyDragonPlayer() {
-        double detectionRadius = 8.0;
-        List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(detectionRadius));
-
-        for (Player player : players) {
-            if (DragonStateProvider.isDragon(player)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override

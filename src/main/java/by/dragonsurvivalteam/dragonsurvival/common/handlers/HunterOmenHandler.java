@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -19,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantments;
+import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -26,6 +28,8 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+
+import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class HunterOmenHandler {
@@ -49,6 +53,42 @@ public class HunterOmenHandler {
 		}
 	}
 
+	public static boolean isNearbyPlayerWithHunterOmen(double detectionRadius, Level level, Entity entity) {
+		List<Player> players = level.getEntitiesOfClass(Player.class, entity.getBoundingBox().inflate(detectionRadius));
+
+		for (Player player : players) {
+			if (player.hasEffect(DSEffects.HUNTER_OMEN)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static ObjectArrayList<ItemStack> getVillagerLoot(AbstractVillager villager, Level level, @Nullable Player player){
+		List<ItemStack> nonEmeraldTrades = new ArrayList<>();
+		villager.getOffers().stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).forEach(merchantOffer -> {
+			// Be careful to copy the stack, since otherwise if we use this function when the villager is alive (when we steal from them)
+			// we will modify the villager's trades and crash the game due to empty stacks.
+			nonEmeraldTrades.add(merchantOffer.getResult().copy());
+		});
+
+		ObjectArrayList<ItemStack> loot = new ObjectArrayList<>();
+		if(!nonEmeraldTrades.isEmpty()) {
+			int lootingLevel = 0;
+			if(player != null) {
+				lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
+			}
+			int numRolls = Math.min(lootingLevel + 1, nonEmeraldTrades.size());
+			for(int i = 0; i < numRolls; i++) {
+				int roll = level.getRandom().nextInt(nonEmeraldTrades.size());
+				loot.add(nonEmeraldTrades.get(roll));
+				nonEmeraldTrades.remove(roll);
+			}
+		}
+
+		return loot;
+	}
+
 	// I want to use a loot modifier here, but it isn't possible since the villagers don't have an initial loot table to begin with.
 	@SubscribeEvent
 	public static void modifyDropsForVillagers(LivingDeathEvent deathEvent){
@@ -56,23 +96,7 @@ public class HunterOmenHandler {
 		Entity killer = deathEvent.getSource().getEntity();
 		if(killer instanceof Player player) {
 			if(entity instanceof AbstractVillager abstractVillager) {
-				// Roll on the villager's trades as if they were loot tables
-				List<ItemStack> nonEmeraldTrades = new ArrayList<>();
-				abstractVillager.getOffers().stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).forEach(merchantOffer -> {
-					nonEmeraldTrades.add(merchantOffer.getResult());
-				});
-
-				ObjectArrayList<ItemStack> loot = new ObjectArrayList<>();
-				if(!nonEmeraldTrades.isEmpty()) {
-					int lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
-					int numRolls = Math.min(lootingLevel + 1, nonEmeraldTrades.size());
-					for(int i = 0; i < numRolls; i++) {
-						int roll = player.level().getRandom().nextInt(nonEmeraldTrades.size());
-						loot.add(nonEmeraldTrades.get(roll));
-						nonEmeraldTrades.remove(roll);
-					}
-				}
-
+				ObjectArrayList<ItemStack> loot = getVillagerLoot(abstractVillager, player.level(), player);
 				for(ItemStack stack : loot){
 					entity.spawnAtLocation(stack);
 				}
