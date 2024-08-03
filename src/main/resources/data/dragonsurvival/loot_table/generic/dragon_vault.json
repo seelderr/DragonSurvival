@@ -6,7 +6,7 @@
       "entries": [
         {
           "type": "minecraft:loot_table",
-          "value": "dragonsurvival:generic/good_dragon_vault",
+          "value": "dragonsurvival:generic/dragon_vault_friendly",
           "conditions": [
             {
               "condition": "minecraft:match_tool",
