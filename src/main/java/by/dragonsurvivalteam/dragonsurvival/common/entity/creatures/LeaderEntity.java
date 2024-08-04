@@ -3,12 +3,17 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -16,7 +21,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.entity.player.Player;
@@ -36,6 +40,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class LeaderEntity extends Villager implements DragonHunter, GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private static final EntityDataAccessor<Integer> RESTOCK_TIMER = SynchedEntityData.defineId(LeaderEntity.class, EntityDataSerializers.INT);
+    private static final int TOTAL_RESTOCK_TIME = Functions.minutesToTicks(10);
 
     public static VillagerProfession LEADER_PROFESSION = new VillagerProfession("hunter_leader", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
 
@@ -106,6 +112,45 @@ public class LeaderEntity extends Villager implements DragonHunter, GeoEntity {
             isIdleAnimSet = true;
         }
         return currentIdleAnim;
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(RESTOCK_TIMER, TOTAL_RESTOCK_TIME);
+    }
+
+    private void setRestockTimer(int time){
+        this.entityData.set(RESTOCK_TIMER, time);
+    }
+
+    private int getRestockTimer(){
+        return this.entityData.get(RESTOCK_TIMER);
+    }
+
+    @Override
+    public void addAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+        super.addAdditionalSaveData(compoundNBT);
+        compoundNBT.putInt("RestockTimer", getRestockTimer());
+    }
+
+    @Override
+    public void readAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+        super.readAdditionalSaveData(compoundNBT);
+        setRestockTimer(compoundNBT.getInt("RestockTimer"));
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (level() instanceof ServerLevel) {
+            if (getRestockTimer() > 0) {
+                setRestockTimer(getRestockTimer() - 1);
+            } else {
+                restock();
+                setRestockTimer(TOTAL_RESTOCK_TIME);
+            }
+        }
     }
 
     @Override
