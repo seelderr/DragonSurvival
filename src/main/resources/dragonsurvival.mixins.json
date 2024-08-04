@@ -7,6 +7,7 @@
   "mixins": [
     "AccessorAnimationController",
     "EntityMixin",
+    "FireworkRocketItemMixin",
     "IItemExtensionMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
