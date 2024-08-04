@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
+import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;

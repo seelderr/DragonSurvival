@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.HelmetBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +26,9 @@ public class DataBlockModelProvider extends BlockModelProvider {
                         .texture("south", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_south"))
                         .texture("up", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_top"))
                         .texture("west", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_west"));
+            } else if(holder.get() instanceof HelmetBlock) {
+                withExistingParent(holder.getId().getPath(), BLOCK_FOLDER + "/" + "skull")
+                        .texture("all", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "block/" + holder.getId().getPath()));
             }
         });
     }
