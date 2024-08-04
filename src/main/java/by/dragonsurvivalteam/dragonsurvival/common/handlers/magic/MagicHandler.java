@@ -214,56 +214,6 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void fireCrossbow(ArrowLooseEvent event) {
-		Holder<Enchantment> bolas = EnchantmentUtils.getHolder(DSEnchantments.BOLAS);
-		if (bolas != null && !event.isCanceled() && event.getBow().getEnchantmentLevel(bolas) > 0) {
-			if (event.getBow().getItem() instanceof CrossbowItem) {
-				ChargedProjectiles p = event.getBow().get(DataComponents.CHARGED_PROJECTILES);
-				if (p != null) {
-					List<ItemStack> ammo = p.getItems();
-					List<ItemStack> projectiles = new ArrayList<>(List.of());
-					for (ItemStack itemStack : ammo) {
-						projectiles.add(itemStack.getItem() instanceof ArrowItem ? new ItemStack(DSItems.BOLAS.value()) : itemStack);
-					}
-					event.getBow().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public static void dragonDies(LivingDeathEvent event) {
-		if (DragonStateProvider.isDragon(event.getEntity()) && event.getEntity().hasEffect(DSEffects.HUNTER_OMEN)) {
-			// If they are currently considered evil...
-			if (event.getSource().getEntity() instanceof Player killer && event.getSource().getWeaponItem() != null) {
-				int dragonsbaneLevel = EnchantmentUtils.getLevel(killer.level(), DSEnchantments.DRAGONSBANE, event.getSource().getWeaponItem());
-				if (event.getEntity() instanceof Player dyingPlayer && dragonsbaneLevel > 0) {
-					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(event.getEntity());
-					double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
-					double d = switch (handler.getLevel()) {
-						case NEWBORN ->
-								(YOUNG.size - NEWBORN.size) / (newbornToYoung * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
-						case YOUNG ->
-								(ADULT.size - YOUNG.size) / (youngToAdult * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
-						case ADULT -> {
-							if (handler.getSize() > ADULT.maxSize)
-								yield (60 - 40) / (ancient * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
-							yield (40 - ADULT.size) / (adultToAncient * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
-						}
-					};
-
-					handler.setSize(handler.getSize() - d * dragonsbaneLevel, dyingPlayer);
-					if (DragonStateProvider.isDragon(killer)) {
-						DragonStateHandler killerHandler = DragonStateProvider.getOrGenerateHandler(killer);
-						killerHandler.setSize(killerHandler.getSize() + d);
-					}
-					killer.level().playLocalSound(killer.blockPosition(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.PLAYERS, 2.0f, 1.0f, false);
-				}
-			}
-		}
-	}
-
-	@SubscribeEvent
 	public static void playerDamaged(LivingIncomingDamageEvent event){
 		if(event.getEntity() instanceof Player player){
 			DragonStateProvider.getCap(player).ifPresent(cap -> {

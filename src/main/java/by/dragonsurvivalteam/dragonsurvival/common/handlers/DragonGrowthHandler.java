@@ -23,6 +23,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+@SuppressWarnings("unused")
 @EventBusSubscriber( modid = DragonSurvivalMod.MODID )
 public class DragonGrowthHandler{
 	public static long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
@@ -187,7 +188,7 @@ public class DragonGrowthHandler{
                     4. After maximum growth. = 30 days for max growth
                  */
 
-				double d = 0;
+				double d;
 				double timeIncrement = 60 * 20;
 
 				if(handler.getSize() < YOUNG.size){
