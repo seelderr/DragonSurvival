@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "dragonsurvival:block/dragon_vault_friendly",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "dragonsurvival:block/dragon_vault_friendly",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "dragonsurvival:block/dragon_vault_friendly"
+    },
+    "facing=west": {
+      "model": "dragonsurvival:block/dragon_vault_friendly",
+      "y": 90
+    },
+    "render_type": "cutout"
+  }
+}

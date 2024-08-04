@@ -978,47 +978,47 @@ public class DSBlocks{
 	private static final CompoundTag evilVaultTag = new CompoundTag(), evilVaultTag2 = new CompoundTag();
 	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag();
 	static {
-		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/good_dragon_vault");
-		goodVaultTag2.putString("key_item", "dragonsurvival:good_key");
+		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_friendly");
+		goodVaultTag2.putString("key_item", "dragonsurvival:friendly_key");
 		goodVaultTag.put("config", goodVaultTag2);
-		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/evil_dragon_vault");
-		goodVaultTag2.putString("key_item", "dragonsurvival:evil_key");
+		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_angry");
+		goodVaultTag2.putString("key_item", "dragonsurvival:angry_key");
 		evilVaultTag.put("config", evilVaultTag2);
-		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/hunter_dragon_vault");
+		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_hunter");
 		goodVaultTag2.putString("key_item", "dragonsurvival:hunter_key");
 		hunterVaultTag.put("config", hunterVaultTag2);
 	}
 
-	public static final DeferredHolder<Block, VaultBlock> GOOD_DRAGON_VAULT = DS_BLOCKS.register(
-			"good_dragon_vault",
-			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
+	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_FRIENDLY = DS_BLOCKS.register(
+			"dragon_vault_friendly",
+			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion())
 	);
 
-	public static final DeferredHolder<Item, BlockItem> GOOD_DRAGON_VAULT_ITEM = DS_ITEMS.register(
-			"good_dragon_vault",
-			() -> new BlockItem(GOOD_DRAGON_VAULT.get(), new Item.Properties()
+	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_FRIENDLY_ITEM = DS_ITEMS.register(
+			"dragon_vault_friendly",
+			() -> new BlockItem(DRAGON_VAULT_FRIENDLY.get(), new Item.Properties()
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(goodVaultTag)))
 	);
 
-	public static final DeferredHolder<Block, VaultBlock> EVIL_DRAGON_VAULT = DS_BLOCKS.register(
-			"evil_dragon_vault",
-			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
+	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_ANGRY = DS_BLOCKS.register(
+			"dragon_vault_angry",
+			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion())
 	);
 
-	public static final DeferredHolder<Item, BlockItem> EVIL_DRAGON_VAULT_ITEM = DS_ITEMS.register(
-			"evil_dragon_vault",
-			() -> new BlockItem(EVIL_DRAGON_VAULT.get(), new Item.Properties()
+	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ANGRY_ITEM = DS_ITEMS.register(
+			"dragon_vault_angry",
+			() -> new BlockItem(DRAGON_VAULT_ANGRY.get(), new Item.Properties()
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(evilVaultTag)))
 	);
 
-	public static final DeferredHolder<Block, VaultBlock> HUNTER_DRAGON_VAULT = DS_BLOCKS.register(
-			"hunter_dragon_vault",
-			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion().lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel()))
+	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_HUNTER = DS_BLOCKS.register(
+			"dragon_vault_hunter",
+			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion())
 	);
 
-	public static final DeferredHolder<Item, BlockItem> HUNTER_DRAGON_VAULT_ITEM = DS_ITEMS.register(
-			"hunter_dragon_vault",
-			() -> new BlockItem(HUNTER_DRAGON_VAULT.get(), new Item.Properties()
+	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_HUNTER_ITEM = DS_ITEMS.register(
+			"dragon_vault_hunter",
+			() -> new BlockItem(DRAGON_VAULT_HUNTER.get(), new Item.Properties()
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(hunterVaultTag)))
 	);
 
