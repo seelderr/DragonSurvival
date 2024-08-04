@@ -155,24 +155,14 @@ public class DSItems {
 			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 
-	private static final ItemEnchantments specialPartisanEnchantments;
-	static {
-		ItemEnchantments.Mutable e = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
-		Holder<Enchantment> dragonsbane = EnchantmentUtils.getHolder(DSEnchantments.DRAGONSBANE);
-		if (dragonsbane != null) {
-			e.set(dragonsbane, 3);
-		}
-		specialPartisanEnchantments = e.toImmutable();
-	}
-
 	public static final Holder<Item> DRAGON_HUNTER_SWORD = DS_ITEMS.register("dragon_hunter_sword", () -> new DragonHunterWeapon(
-			DSEquipment.DRAGON_HUNTER, specialPartisanEnchantments, new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
+			DSEquipment.DRAGON_HUNTER, new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
 	);
 	public static final Holder<Item> PARTISAN = DS_ITEMS.register("hunter_partisan", () -> new SwordItem(
 			Tiers.IRON, new Item.Properties().component(
 					DataComponents.ATTRIBUTE_MODIFIERS,
 					ItemAttributeModifiers.builder()
-							.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -1.5f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -2.8f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.withDefaultNamespace("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.withDefaultNamespace("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.build()
@@ -180,20 +170,20 @@ public class DSItems {
 	);
 
 	public static final Holder<Item> DRAGON_HUNTER_PARTISAN = DS_ITEMS.register("dragon_hunter_partisan", () -> new DragonHunterWeapon(
-			Tiers.DIAMOND, specialPartisanEnchantments, new Item.Properties().component(
+			Tiers.DIAMOND, new Item.Properties().component(
 				DataComponents.ATTRIBUTE_MODIFIERS,
 				ItemAttributeModifiers.builder()
-						.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -1.5f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+						.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -2.8f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 						.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.withDefaultNamespace("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 						.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(ResourceLocation.withDefaultNamespace("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 						.build()
 			))
 	);
 
-	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_key", () -> new Item(
+	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new Item(
 			new Item.Properties().rarity(Rarity.UNCOMMON))
 	);
-	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_key", () -> new Item(
+	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new Item(
 			new Item.Properties().rarity(Rarity.UNCOMMON))
 	);
 	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new Item(

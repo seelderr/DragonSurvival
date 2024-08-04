@@ -24,9 +24,9 @@
             "base": 0.5,
             "per_level_above_first": 0.25
         },
-        "attribute": "dragonsurvival:flight_stamina",
+        "attribute": "dragonsurvival:flight_stamina_cost",
         "id": "dragonsurvival:enchantment.aerodynamic_mastery",
-        "operation": "add_total"
+        "operation": "add_value"
       }
     ]
   },

@@ -1,12 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
@@ -23,22 +25,16 @@ import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
@@ -50,7 +46,6 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.component.Fireworks;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
@@ -63,6 +58,10 @@ import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+
+import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler.*;
+import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.*;
+import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.ADULT;
 
 @SuppressWarnings("unused")
 @EventBusSubscriber
@@ -222,11 +221,43 @@ public class MagicHandler{
 				ChargedProjectiles p = event.getBow().get(DataComponents.CHARGED_PROJECTILES);
 				if (p != null) {
 					List<ItemStack> ammo = p.getItems();
-					List<ItemStack> projectiles = new java.util.ArrayList<>(List.of());
+					List<ItemStack> projectiles = new ArrayList<>(List.of());
 					for (ItemStack itemStack : ammo) {
 						projectiles.add(itemStack.getItem() instanceof ArrowItem ? new ItemStack(DSItems.BOLAS.value()) : itemStack);
 					}
 					event.getBow().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
+				}
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public static void dragonDies(LivingDeathEvent event) {
+		if (DragonStateProvider.isDragon(event.getEntity()) && event.getEntity().hasEffect(DSEffects.HUNTER_OMEN)) {
+			// If they are currently considered evil...
+			if (event.getSource().getEntity() instanceof Player killer && event.getSource().getWeaponItem() != null) {
+				int dragonsbaneLevel = EnchantmentUtils.getLevel(killer.level(), DSEnchantments.DRAGONSBANE, event.getSource().getWeaponItem());
+				if (event.getEntity() instanceof Player dyingPlayer && dragonsbaneLevel > 0) {
+					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(event.getEntity());
+					double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
+					double d = switch (handler.getLevel()) {
+						case NEWBORN ->
+								(YOUNG.size - NEWBORN.size) / (newbornToYoung * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
+						case YOUNG ->
+								(ADULT.size - YOUNG.size) / (youngToAdult * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
+						case ADULT -> {
+							if (handler.getSize() > ADULT.maxSize)
+								yield (60 - 40) / (ancient * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
+							yield (40 - ADULT.size) / (adultToAncient * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
+						}
+					};
+
+					handler.setSize(handler.getSize() - d * dragonsbaneLevel, dyingPlayer);
+					if (DragonStateProvider.isDragon(killer)) {
+						DragonStateHandler killerHandler = DragonStateProvider.getOrGenerateHandler(killer);
+						killerHandler.setSize(killerHandler.getSize() + d);
+					}
+					killer.level().playLocalSound(killer.blockPosition(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.PLAYERS, 2.0f, 1.0f, false);
 				}
 			}
 		}

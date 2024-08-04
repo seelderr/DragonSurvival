@@ -17,6 +17,6 @@
     "mainhand",
     "offhand"
   ],
-  "supported_items": ["#minecraft:enchantable/crossbow"],
+  "supported_items": "#minecraft:enchantable/crossbow",
   "weight": 1
 }
