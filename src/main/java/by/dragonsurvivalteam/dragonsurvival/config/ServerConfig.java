@@ -732,6 +732,14 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightShieldChance", comment = "Chance of having shield" )
 	public static Double knightShieldChance = 0.1d;
 
+	@ConfigRange( min = 60, max = 1200000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpawnAttemptFrequency", comment = "How often the ambusher attempts to spawn." )
+	public static int ambusherSpawnAttemptFrequency = 12000;
+
+	@ConfigRange( min = 0.0, max = 1.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpawnChance", comment = "Chance of the ambusher spawning when the spawn attempt is made.")
+	public static double ambusherSpawnChance = 0.2;
+
 	@ConfigRange( min = 10d, max = 80d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHealth", comment = "Dragon Ambusher health" )
 	public static Double ambusherHealth = 40d;
