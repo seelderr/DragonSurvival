@@ -704,7 +704,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "endVoidTeleport", comment = "Should the player be teleported to the overworld when they fall in the end?" )
 	public static Boolean endVoidTeleport = true;
 
-	@ConfigRange( min = 10, max = 1000 )
+	@ConfigRange( min = 1, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "pillageXPGain", comment = "How many experience points does the villager gain each time you steal from him?" )
 	public static Integer pillageXPGain = 4;
 
