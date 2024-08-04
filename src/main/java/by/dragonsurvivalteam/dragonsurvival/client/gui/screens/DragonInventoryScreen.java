@@ -7,10 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.H
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;

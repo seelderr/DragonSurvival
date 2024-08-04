@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:dragon_vault_friendly"
+          "name": "dragonsurvival:dragon_rider_workbench"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "dragonsurvival:blocks/dragon_vault_friendly"
+  "random_sequence": "dragonsurvival:blocks/dragon_rider_workbench"
 }

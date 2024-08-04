@@ -2,14 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPicker;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
-import java.util.List;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;

@@ -1022,6 +1022,19 @@ public class DSBlocks{
 					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(hunterVaultTag)))
 	);
 
+	public static final DeferredHolder<Block, Block> DRAGON_RIDER_WORKBENCH = DS_BLOCKS.register(
+			"dragon_rider_workbench",
+			() -> new DragonRiderWorkbenchBlock(BlockBehaviour.Properties.of()
+					.sound(SoundType.WOOD)
+					.mapColor(MapColor.WOOD)
+			)
+	);
+
+	public static final DeferredHolder<Item, BlockItem> DRAGON_RIDER_WORKBENCH_ITEM = DS_ITEMS.register(
+			"dragon_rider_workbench",
+			() -> new BlockItem(DRAGON_RIDER_WORKBENCH.get(), new Item.Properties())
+	);
+
 	static {
 		for (int i = 1; i < 9; i++) {
 			for (SkeletonPieceBlock.Type type : SkeletonPieceBlock.Types.values()) {

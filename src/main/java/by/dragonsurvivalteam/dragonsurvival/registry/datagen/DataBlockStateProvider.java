@@ -2,10 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK_FOLDER;
 
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonDoor;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -139,6 +136,22 @@ public class DataBlockStateProvider extends BlockStateProvider {
 											.build();
 								}
 						);
+			} else if (holder.get() instanceof DragonRiderWorkbenchBlock) {
+				String name = holder.getId().getPath();
+
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							String modelName = BLOCK_FOLDER + "/" + name;
+							BlockModelBuilder builder = models().cube(modelName,
+									modLoc(modelName + "_down"),
+									modLoc(modelName + "_up"),
+									modLoc(modelName + "_north"),
+									modLoc(modelName + "_south"),
+									modLoc(modelName + "_east"),
+									modLoc(modelName + "_west")
+							);
+							return ConfiguredModel.builder().modelFile(builder).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
+						});
 			}
 		});
 	}

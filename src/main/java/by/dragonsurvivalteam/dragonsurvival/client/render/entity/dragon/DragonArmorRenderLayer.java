@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
 import java.util.UUID;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;

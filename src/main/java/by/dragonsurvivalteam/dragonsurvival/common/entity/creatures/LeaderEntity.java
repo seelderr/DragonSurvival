@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPi
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import com.google.common.collect.ImmutableSet;
 import com.mojang.serialization.Dynamic;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import javax.annotation.Nullable;
@@ -21,7 +20,6 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.Brain;
-import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.minecraft.world.entity.npc.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -42,8 +40,6 @@ public class LeaderEntity extends Villager implements DragonHunter, GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private static final EntityDataAccessor<Integer> RESTOCK_TIMER = SynchedEntityData.defineId(LeaderEntity.class, EntityDataSerializers.INT);
     private static final int TOTAL_RESTOCK_TIME = Functions.minutesToTicks(10);
-
-    public static VillagerProfession LEADER_PROFESSION = new VillagerProfession("hunter_leader", PoiType.NONE, PoiType.NONE, ImmutableSet.of(), ImmutableSet.of(), null);
 
     private RawAnimation currentIdleAnim;
     private boolean isIdleAnimSet = false;
@@ -215,7 +211,7 @@ public class LeaderEntity extends Villager implements DragonHunter, GeoEntity {
 
     @Override
     public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor pLevel, @NotNull DifficultyInstance pDifficulty, @NotNull MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData) {
-        setVillagerData(getVillagerData().setProfession(LEADER_PROFESSION));
+        setVillagerData(getVillagerData().setProfession(VillagerProfession.NITWIT));
         return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
     }
 

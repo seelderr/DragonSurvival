@@ -19,8 +19,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(SmithingScreen.class)
 public class SmithingScreenMixin {
-    @Unique
-    private static DragonEntity dragonSurvival$dragon;
+    @Unique private static DragonEntity dragonSurvival$dragon;
     private Player player;
 
     @Inject(method="subInit", at=@At("HEAD"))
