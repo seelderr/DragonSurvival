@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
-import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -22,7 +20,8 @@ public class DataItemModelProvider extends ItemModelProvider {
 
 	private static final List<String> blockItemsThatShouldBeBasicInstead = List.of(
 			"door",
-			"source"
+			"source",
+			"helmet"
 	);
 
 	private static final List<String> blockItemsThatAreManuallyAuthored = List.of(
@@ -47,6 +46,8 @@ public class DataItemModelProvider extends ItemModelProvider {
 					getBuilder(blockItem.toString())
 							.parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + split[0])))
 							.texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin));
+				} else if (blockItem.toString().contains("vault")){
+					getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath()) + "_inactive"));
 				} else {
 					getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath())));
 				}

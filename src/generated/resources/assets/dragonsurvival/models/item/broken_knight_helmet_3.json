@@ -1,3 +1,6 @@
 {
-  "parent": "dragonsurvival:block/broken_knight_helmet_3"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "dragonsurvival:item/broken_knight_helmet_3"
+  }
 }

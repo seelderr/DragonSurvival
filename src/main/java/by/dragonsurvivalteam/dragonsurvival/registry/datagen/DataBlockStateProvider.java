@@ -2,10 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK_FOLDER;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.minecraft.world.level.block.VaultBlock;
 import net.minecraft.world.level.block.entity.vault.VaultState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -40,29 +42,29 @@ public class DataBlockStateProvider extends BlockStateProvider {
 							ResourceLocation top = modLoc(BLOCK_FOLDER + "/" + name + "_top");
 							ResourceLocation selected = partTop ? top : partMiddle ? center : bottom;
 							ModelFile door;
-							if(hingeRight) {
-								if(partTop) {
-									if(open) {
+							if (hingeRight) {
+								if (partTop) {
+									if (open) {
 										door = models().doorTopRightOpen(modelName, selected, selected).renderType("cutout");
 									} else {
 										door = models().doorTopRight(modelName, selected, selected).renderType("cutout");
 									}
 								} else {
-									if(open) {
+									if (open) {
 										door = models().doorBottomRightOpen(modelName, selected, selected).renderType("cutout");
 									} else {
 										door = models().doorBottomRight(modelName, selected, selected).renderType("cutout");
 									}
 								}
 							} else {
-								if(partTop) {
-									if(open) {
+								if (partTop) {
+									if (open) {
 										door = models().doorTopLeftOpen(modelName, selected, selected).renderType("cutout");
 									} else {
 										door = models().doorTopLeft(modelName, selected, selected).renderType("cutout");
 									}
 								} else {
-									if(open) {
+									if (open) {
 										door = models().doorBottomLeftOpen(modelName, selected, selected).renderType("cutout");
 									} else {
 										door = models().doorBottomLeft(modelName, selected, selected).renderType("cutout");
@@ -75,6 +77,33 @@ public class DataBlockStateProvider extends BlockStateProvider {
 							yRot = yRot < 0 ? 360 + yRot : yRot;
 							yRot = yRot % 360;
 							return ConfiguredModel.builder().modelFile(door).rotationY(yRot).build();
+						});
+			} else if (holder.get() instanceof SmallDragonDoor) {
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							boolean hingeRight = state.getValue(SmallDragonDoor.HINGE) == DoorHingeSide.RIGHT;
+							boolean open = state.getValue(SmallDragonDoor.OPEN);
+							String name = holder.getId().getPath();
+							String suffix = (hingeRight && !open || !hingeRight && open ? "_hinge" : "");
+							ResourceLocation texture = modLoc(BLOCK_FOLDER + "/" + name);
+							ModelFile door = models()
+									.withExistingParent(name + suffix, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "small_dragon_door" + (suffix.equals("_hinge") ? "_rh" : "")))
+									.texture("bottom", texture)
+									.texture("top", texture);
+							int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 90;
+							yRot = open && hingeRight ? yRot - 90 : yRot;
+							yRot = open && !hingeRight ? yRot + 90 : yRot;
+							yRot = yRot < 0 ? 360 + yRot : yRot;
+							yRot = yRot % 360;
+							return ConfiguredModel.builder().modelFile(door).rotationY(yRot).build();
+						});
+			} else if (holder.get() instanceof HelmetBlock) {
+				String name = holder.getId().getPath();
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							BlockModelBuilder builder = models().withExistingParent(name, "block/skull")
+									.texture("all", modLoc(BLOCK_FOLDER + "/" + name));
+							return ConfiguredModel.builder().modelFile(builder).build();
 						});
 			} else if (holder.get() instanceof DragonPressurePlates plate) {
 				String name = holder.getId().getPath();
@@ -151,6 +180,43 @@ public class DataBlockStateProvider extends BlockStateProvider {
 									modLoc(modelName + "_east"),
 									modLoc(modelName + "_west")
 							);
+							return ConfiguredModel.builder().modelFile(builder).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
+						});
+			} else if (holder.get() instanceof SourceOfMagicBlock) {
+				String name = holder.getId().getPath();
+
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							boolean isEmpty = !state.getValue(SourceOfMagicBlock.FILLED);
+							ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + name + (isEmpty ? "_empty" : "")));
+							return ConfiguredModel.builder().modelFile(modelFile).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
+						});
+			} else if(holder.get() instanceof RotatedPillarBlock) {
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							BlockModelBuilder builder = models().withExistingParent(holder.getId().getPath(), BLOCK_FOLDER + "/cube_column")
+									.texture("side", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "dragons_memory_side"))
+									.texture("end", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "dragons_memory_top"));
+							return ConfiguredModel.builder().modelFile(builder).build();
+						});
+			} else if(holder.get() instanceof DragonBeacon) {
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "empty"));
+							return ConfiguredModel.builder().modelFile(modelFile).build();
+				});
+			} else if(holder.get() instanceof SkeletonPieceBlock) {
+				// Parse the string up to "_skin"
+				String[] split = holder.getId().getPath().split("_skin");
+
+				// The last character has the number for the skin to select, so parse it
+				String skin = split[1].substring(split[1].length() - 1);
+
+				getVariantBuilder(holder.get())
+						.forAllStates(state -> {
+							BlockModelBuilder builder = models().withExistingParent(holder.getId().getPath(), ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + split[0]))
+									.texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin))
+									.texture("particle", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "placeholder_" + skin));
 							return ConfiguredModel.builder().modelFile(builder).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
 						});
 			}

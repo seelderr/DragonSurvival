@@ -1,7 +1,0 @@
-{
-	"parent": "dragonsurvival:block/skeleton_dragon_chest",
-	"textures": {
-		"skeleton_texture": "dragonsurvival:block/skeleton_dragon_3",
-		"particle": "dragonsurvival:block/placeholder_3"
-	}
-}
