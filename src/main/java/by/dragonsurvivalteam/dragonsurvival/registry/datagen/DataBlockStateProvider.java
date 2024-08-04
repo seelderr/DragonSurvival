@@ -129,7 +129,8 @@ public class DataBlockStateProvider extends BlockStateProvider {
 											.texture("bottom", modLoc(BLOCK_FOLDER + "/" + name + "_bottom"))
 											.texture("front", modLoc(BLOCK_FOLDER + "/" + name + "_front" + (vaultState == VaultState.ACTIVE ? "_on" : vaultState == VaultState.INACTIVE ? "_off" : "_ejecting")))
 											.texture("side", modLoc(BLOCK_FOLDER + "/" + name + "_side" + (vaultState == VaultState.ACTIVE || vaultState == VaultState.EJECTING ? "_on" : "_off")))
-											.texture("top", modLoc(BLOCK_FOLDER + "/" + name + "_top" + (vaultState == VaultState.EJECTING ? "_ejecting" : "")));
+											.texture("top", modLoc(BLOCK_FOLDER + "/" + name + "_top" + (vaultState == VaultState.EJECTING ? "_ejecting" : "")))
+											.renderType("cutout");
 									return ConfiguredModel.builder()
 											.modelFile(builder)
 											.rotationY(yRot)
