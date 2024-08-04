@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
@@ -10,7 +9,6 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-
 import java.util.List;
 import java.util.function.Supplier;
 import net.minecraft.world.entity.Entity;
@@ -23,7 +21,6 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
-import org.apache.logging.log4j.core.jmx.Server;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonHeartLootModifier extends LootModifier {

@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;

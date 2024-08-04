@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:dragon_vault_hunter"
+          "name": "dragonsurvival:dragon_vault_friendly"
         }
       ],
       "rolls": 1.0

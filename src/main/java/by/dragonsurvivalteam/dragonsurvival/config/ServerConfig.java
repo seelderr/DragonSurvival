@@ -703,17 +703,14 @@ public class ServerConfig{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "endVoidTeleport", comment = "Should the player be teleported to the overworld when they fall in the end?" )
 	public static Boolean endVoidTeleport = true;
-  
-	@ConfigRange( min = 10, max = 1000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "villagerKillxp", comment = "How many experience points are gained for killing a villager" )
-	public static Integer xpGain = 10;
+
+	@ConfigRange( min = 1, max = 1000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "pillageXPGain", comment = "How many experience points does the villager gain each time you steal from him?" )
+	public static Integer pillageXPGain = 4;
 
 	@ConfigType(EntityType.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterOmenStatusGivers", comment = "Entities which give 'Hunter Omen' status on death in addition to villagers." )
 	public static List<String> hunterOmenStatusGivers = List.of("minecraft:iron_golem");
-
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_hunters", key = "preserveRoyalChaseAfterDeath", comment = "Preserve effect 'Hunter Omen' after death?" )
-	public static Boolean preserveHunterOmenAfterDeath = true;
 
 	@ConfigRange( min = 10d, max = 80d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightHealth", comment = "Dragon Knight health" )
@@ -734,6 +731,14 @@ public class ServerConfig{
 	@ConfigRange( min = 0.0d, max = 1d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightShieldChance", comment = "Chance of having shield" )
 	public static Double knightShieldChance = 0.1d;
+
+	@ConfigRange( min = 60, max = 1200000 )
+	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpawnAttemptFrequency", comment = "How often the ambusher attempts to spawn." )
+	public static int ambusherSpawnAttemptFrequency = 12000;
+
+	@ConfigRange( min = 0.0, max = 1.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpawnChance", comment = "Chance of the ambusher spawning when the spawn attempt is made.")
+	public static double ambusherSpawnChance = 0.2;
 
 	@ConfigRange( min = 10d, max = 80d )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHealth", comment = "Dragon Ambusher health" )

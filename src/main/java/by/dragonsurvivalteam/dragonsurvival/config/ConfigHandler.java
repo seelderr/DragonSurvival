@@ -429,7 +429,12 @@ public class ConfigHandler{
 	}
 
 	@SubscribeEvent
-	public static void onModConfig(final ModConfigEvent event) {
+	public static void onModConfig(final ModConfigEvent.Loading event) {
+		onModConfig(event.getConfig().getType());
+	}
+
+	@SubscribeEvent
+	public static void onModConfig(final ModConfigEvent.Reloading event) {
 		onModConfig(event.getConfig().getType());
 	}
 

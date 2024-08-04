@@ -1,0 +1,52 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=1": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=10": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=11": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=12": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=13": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=14": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=15": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=2": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=3": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=4": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=5": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=6": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=7": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=8": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    },
+    "rotation=9": {
+      "model": "dragonsurvival:block/broken_knight_helmet_1"
+    }
+  }
+}
