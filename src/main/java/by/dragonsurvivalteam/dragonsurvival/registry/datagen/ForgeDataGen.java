@@ -43,5 +43,6 @@ public class ForgeDataGen {
 		generator.addProvider(event.includeServer(), new DataDamageTypeTagsProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DSEntityTypeTags(packOutput, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DataPoiTypeTagsProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeServer(), new DataBlockModelProvider(packOutput, DragonSurvivalMod.MODID, existingFileHelper));
 	}
 }
