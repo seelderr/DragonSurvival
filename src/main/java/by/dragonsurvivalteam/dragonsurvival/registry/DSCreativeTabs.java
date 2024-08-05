@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.*;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import java.util.Arrays;
 import java.util.List;
@@ -43,7 +44,7 @@ public class DSCreativeTabs {
     static CreativeModeTab.DisplayItemsGenerator displayItemsGenerator = (parameters, output) -> Stream.of(DSItems.DS_ITEMS).forEach(
             holder -> holder.getEntries().forEach(
                     entry -> {
-                        if(entry.get() instanceof PermanentEnchantmentItem || !hiddenCreativeModeItems.contains(entry)) {
+                        if(entry.get() instanceof PermanentEnchantmentItem || !(hiddenCreativeModeItems.contains(entry) || entry.get().toString().contains("skeleton"))) {
                             output.accept(entry.get());
                         }
                     }

@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/template_vault",
+  "render_type": "minecraft:cutout",
   "textures": {
     "bottom": "dragonsurvival:block/dragon_vault_hunter_bottom",
     "front": "dragonsurvival:block/dragon_vault_hunter_front_off",

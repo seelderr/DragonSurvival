@@ -13,6 +13,8 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTI
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
 
 import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -111,6 +113,8 @@ public class DragonSurvivalMod{
 		DS_TILE_ENTITIES.register(modEventBus);
 		DS_ENTITY_TYPES.register(modEventBus);
 		DS_MAP_DECORATIONS.register(modEventBus);
+		DS_POI_TYPES.register(modEventBus);
+		DS_VILLAGER_PROFESSIONS.register(modEventBus);
 		GLM.register(modEventBus);
 	}
 

@@ -5,11 +5,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import com.google.common.base.Objects;
+import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.level.Level;
 
 public class DragonUtils {
 
@@ -55,6 +57,17 @@ public class DragonUtils {
 
 	public static DragonLevel getDragonLevel(Entity entity){
 		return DragonStateProvider.getOrGenerateHandler(entity).getLevel();
+	}
+
+	public static boolean isNearbyDragonPlayerToEntity(double detectionRadius, Level level, Entity entity) {
+		List<Player> players = level.getEntitiesOfClass(Player.class, entity.getBoundingBox().inflate(detectionRadius));
+
+		for (Player player : players) {
+			if (DragonStateProvider.isDragon(player)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/** Converts the supplied harvest level to a corresponding vanilla tier */

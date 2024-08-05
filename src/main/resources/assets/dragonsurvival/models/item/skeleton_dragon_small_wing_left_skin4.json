@@ -1,6 +1,0 @@
-{
-	"parent": "dragonsurvival:block/skeleton_dragon_small_wing_left",
-	"textures": {
-		"skeleton_texture": "dragonsurvival:block/skeleton_dragon_4"
-	}
-}
