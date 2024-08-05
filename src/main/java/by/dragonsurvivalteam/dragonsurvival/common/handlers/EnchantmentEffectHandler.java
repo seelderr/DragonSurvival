@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -25,14 +26,9 @@ import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler.*;
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler.adultToAncient;
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.*;
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.ADULT;
-
 @SuppressWarnings("unused")
 @EventBusSubscriber
-public class EnchantmentHandler {
+public class EnchantmentEffectHandler {
     @SubscribeEvent
     public static void fireCrossbow(ArrowLooseEvent event) {
         Holder<Enchantment> bolas = EnchantmentUtils.getHolder(DSEnchantments.BOLAS);
@@ -57,29 +53,31 @@ public class EnchantmentHandler {
             // If they are currently considered evil...
             if (event.getSource().getEntity() instanceof Player killer && event.getSource().getWeaponItem() != null) {
                 int dragonsbaneLevel = EnchantmentUtils.getLevel(killer.level(), DSEnchantments.DRAGONSBANE, event.getSource().getWeaponItem());
-                if (event.getEntity() instanceof Player dyingPlayer && dragonsbaneLevel > 0) {
+                if (dragonsbaneLevel > 0 && event.getEntity() instanceof Player dyingPlayer) {
                     DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(event.getEntity());
-                    double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
-                    double d = switch (handler.getLevel()) {
-                        case NEWBORN ->
-                                (YOUNG.size - NEWBORN.size) / (newbornToYoung * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
-                        case YOUNG ->
-                                (ADULT.size - YOUNG.size) / (youngToAdult * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
-                        case ADULT -> {
-                            if (handler.getSize() > ADULT.maxSize)
-                                yield (60 - 40) / (ancient * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
-                            yield (40 - ADULT.size) / (adultToAncient * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
-                        }
-                    };
-
-                    handler.setSize(handler.getSize() - d * dragonsbaneLevel, dyingPlayer);
+                    handler.setSize(handler.getSize() - getStolenTime(handler) * dragonsbaneLevel, dyingPlayer);
                     if (DragonStateProvider.isDragon(killer)) {
                         DragonStateHandler killerHandler = DragonStateProvider.getOrGenerateHandler(killer);
-                        killerHandler.setSize(killerHandler.getSize() + d);
+                        killerHandler.setSize(killerHandler.getSize() + getStolenTime(killerHandler));
                     }
-                    killer.level().playLocalSound(killer.blockPosition(), SoundEvents.BOTTLE_FILL_DRAGONBREATH, SoundSource.PLAYERS, 2.0f, 1.0f, false);
+                    killer.level().playLocalSound(killer.blockPosition(), SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, SoundSource.PLAYERS, 2.0f, 1.0f, false);
                 }
             }
         }
+    }
+
+    private static double getStolenTime(DragonStateHandler handler) {
+        double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
+        return switch (handler.getLevel()) {
+            case NEWBORN ->
+                    (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
+            case YOUNG ->
+                    (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
+            case ADULT -> {
+                if (handler.getSize() > DragonLevel.ADULT.maxSize)
+                    yield (60 - 40) / (DragonGrowthHandler.ancient * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
+                yield (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToAncient * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
+            }
+        };
     }
 }
