@@ -97,7 +97,7 @@ dependencies {
 	compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
 
 	// Test
-	implementation "curse.maven:embeddium-908741:5556146" // 1.0.7
+//	implementation "curse.maven:embeddium-908741:5556146" // 1.0.7
 }
 
 tasks.withType(ProcessResources).configureEach {
