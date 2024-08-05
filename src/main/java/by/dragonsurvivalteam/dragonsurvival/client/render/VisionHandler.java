@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.LiquidBlockRendererMixin;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -21,12 +22,12 @@ public class VisionHandler {
     public static void onRenderFog(ViewportEvent.RenderFog event) {
         if (hasLavaVision() && event.getCamera().getFluidInCamera() == FogType.LAVA) {
             event.setNearPlaneDistance(0);
-            event.setFarPlaneDistance(event.getRenderer().getRenderDistance() * 0.2f);
+            event.setFarPlaneDistance(event.getRenderer().getRenderDistance() * 0.5f);
             event.setCanceled(true);
         }
     }
 
-    /** The alpha change in {@link by.dragonsurvivalteam.dragonsurvival.mixins.client.LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered */
+    /** The alpha change in {@link LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered */
     @SubscribeEvent
     public static void onRenderWorldLastEvent(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
@@ -73,5 +74,17 @@ public class VisionHandler {
         }
 
         return false;
+    }
+
+    public static boolean hasVision(final VisionType type) {
+        return switch (type) {
+            case WATER -> hasWaterVision();
+            case LAVA -> hasLavaVision();
+        };
+    }
+
+    public enum VisionType {
+        WATER,
+        LAVA
     }
 }
