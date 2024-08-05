@@ -9,11 +9,11 @@ import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import org.jetbrains.annotations.NotNull;
 
-public class ClientFluidTypeExtensionsProxy implements IClientFluidTypeExtensions {
+public class ClientFluidTypeExtensionsWrapper implements IClientFluidTypeExtensions {
     private final IClientFluidTypeExtensions original;
     private final VisionHandler.VisionType type;
 
-    public ClientFluidTypeExtensionsProxy(final IClientFluidTypeExtensions original, final VisionHandler.VisionType type) {
+    public ClientFluidTypeExtensionsWrapper(final IClientFluidTypeExtensions original, final VisionHandler.VisionType type) {
         this.original = original;
         this.type = type;
     }
