@@ -37,10 +37,10 @@ public class DragonEditorHandler{
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-			return getSkinTexture(player, layer, type.getTypeName().toLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
+			return getSkinTexture(player, layer, type.getSubtypeNameLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
 
-		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layer, new Texture[0]);
+		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layer, new Texture[0]);
 
 		for(Texture texture : texts){
 			if(Objects.equals(texture.key, key)){
@@ -57,10 +57,10 @@ public class DragonEditorHandler{
 		}
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
-			return getSkin(player, layer, type.getTypeName().toLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
+			return getSkin(player, layer, type.getTypeNameLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
 		}
 
-		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layer, new Texture[0]);
+		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layer, new Texture[0]);
 
 		for(Texture texture : texts){
 			if(Objects.equals(texture.key, key)){
@@ -78,7 +78,7 @@ public class DragonEditorHandler{
 
 		ArrayList<String> list = new ArrayList<>();
 
-		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(layers, new Texture[0]);
+		Texture[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layers, new Texture[0]);
 		for(Texture texture : texts){
 			if (texture.bodies == null || Arrays.asList(texture.bodies).contains(body.toString())) {
 				list.add(texture.key);
@@ -204,7 +204,9 @@ public class DragonEditorHandler{
 			//	file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
 			//	image.writeToFile(file);
 			//}
-			if (Minecraft.getInstance().getTextureManager().getTexture(key) instanceof DynamicTexture texture) {
+
+			// the other 'getTexture' call tries to register the texture immediately
+			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
 				texture.setPixels(image);
 				texture.upload();
 			} else {

@@ -6,9 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -20,6 +17,10 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 
 public class DropDownButton extends ExtendedButton {
 	public static final int maxItems = 4;
@@ -47,19 +48,19 @@ public class DropDownButton extends ExtendedButton {
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		// TODO :: Is this safe?
-		if(toggled && (!visible || !isHoveredOrFocused() && !list.isMouseOver(mouseX, mouseY))){
-			toggled = false;
-			Screen screen = Minecraft.getInstance().screen;
-			screen.children().removeIf(s -> s == list);
-			screen.children().removeIf(s -> s == renderButton);
-			screen.renderables.removeIf(s -> s == list);
-			screen.renderables.removeIf(s -> s == renderButton);
+		Screen screen = Minecraft.getInstance().screen;
+
+		if (screen == null) {
+			return;
 		}
 
+		if(toggled && (!visible || !isHoveredOrFocused() && !list.isMouseOver(mouseX, mouseY))){
+			toggled = false;
+			screen.children.removeIf(s -> s == list || s == renderButton);
+			screen.renderables.removeIf(s -> s == list || s == renderButton);
+		}
 
 		if(toggled && list != null){
-			Screen screen = Minecraft.getInstance().screen;
 			int offset = screen.height - (getY() + height + 80);
 			list.reposition(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
@@ -96,6 +97,10 @@ public class DropDownButton extends ExtendedButton {
 	@Override
 	public void onPress(){
 		Screen screen = Minecraft.getInstance().screen;
+
+		if (screen == null) {
+			return;
+		}
 
 		if(!toggled){
 			int offset = screen.height - (getY() + height + 80);
@@ -153,10 +158,8 @@ public class DropDownButton extends ExtendedButton {
 			((AccessorScreen)screen).children().add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
-			screen.children().removeIf(s -> s == list);
-			screen.children().removeIf(s -> s == renderButton);
-			screen.renderables.removeIf(s -> s == list);
-			screen.renderables.removeIf(s -> s == renderButton);
+			screen.children().removeIf(s -> s == list || s == renderButton);
+			screen.renderables.removeIf(s -> s == list || s == renderButton);
 		}
 
 		toggled = !toggled;

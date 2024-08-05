@@ -3,18 +3,18 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractSelectionList;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import org.jetbrains.annotations.NotNull;
 
 public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
+	private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("widget/scroller");
+	private static final ResourceLocation SCROLLER_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("widget/scroller_background");
 	public int listWidth;
 	public boolean visible;
 
@@ -53,8 +53,9 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	}
 
 	@Override
-	public int getScrollbarPosition(){
-		return getWidth() - getX() - 6 - 3;
+	public int getScrollbarPosition() {
+		// Either move the scroll bar within the item list box or extend the check for 'isMouseOver' (regarding width)
+		return super.getScrollbarPosition() - 18;
 	}
 
 	@Override
@@ -84,49 +85,44 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 			return;
 		}
 
-		int zTranslation = 150;
-
 		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, zTranslation);
+		guiGraphics.pose().translate(0, 0, 150);
 		// Background square which contains all dragon editor part buttons
 		renderListBackground(guiGraphics);
-		int i = getScrollbarPosition();
-		int j = i + 6;
-		Tesselator tesselator = Tesselator.getInstance();
 		renderListItems(guiGraphics, mouseX, mouseY, partialTicks);
 
 		if (!children().isEmpty()) {
 			RenderSystem.disableScissor();
 		}
 
-		int k1 = getMaxScroll();
+		// Render the scroll bar (see AbstractSelectionList#renderWidget)
+		if (scrollbarVisible()) {
+			int position = this.getScrollbarPosition();
+			int scrollBarHeight = Mth.clamp((int) ((float)(this.height * this.height) / (float) this.getMaxPosition()), 32, this.height - 8);
+			scrollBarHeight = Mth.clamp(scrollBarHeight, 32, this.height - 8);
+			int scrollAmount = (int) this.getScrollAmount() * (this.height - scrollBarHeight) / this.getMaxScroll() + this.getY();
 
-		// Render the scroll bar
-		if (k1 > 0) {
-			RenderSystem.setShader(GameRenderer::getPositionColorShader);
-			int l1 = (int) ((float) ((getWidth()) * (getHeight())) / (float) getMaxPosition());
-			l1 = Mth.clamp(l1, itemHeight, getHeight() - 8);
-			int i2 = Math.max(getY(), (int) getScrollAmount() * (getHeight()- l1) / k1 + getX());
-			float z = zTranslation + 10;
+			if (scrollAmount < this.getY()) {
+				scrollAmount = this.getY();
+			}
 
-			BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR);
-			bufferbuilder.addVertex(i, getHeight() - getY(), z).setColor(0, 0, 0, 255);
-			bufferbuilder.addVertex(j, getHeight() - getY(), z).setColor(0, 0, 0, 255);
-			bufferbuilder.addVertex(j, getY(), z).setColor(0, 0, 0, 255);
-			bufferbuilder.addVertex(i, getY(), z).setColor(0, 0, 0, 255);
-			bufferbuilder.addVertex(i, i2 + l1, z).setColor(128, 128, 128, 255);
-			bufferbuilder.addVertex(j, i2 + l1, 0.0F).setColor(128, 128, 128, 255);
-			bufferbuilder.addVertex(j, i2, z).setColor(128, 128, 128, 255);
-			bufferbuilder.addVertex(i, i2, z).setColor(128, 128, 128, 255);
-			bufferbuilder.addVertex(i, i2 + l1 - 1, z).setColor(192, 192, 192, 255);
-			bufferbuilder.addVertex(j - 1, i2 + l1 - 1, z).setColor(192, 192, 192, 255);
-			bufferbuilder.addVertex(j - 1, i2, z).setColor(192, 192, 192, 255);
-			bufferbuilder.addVertex(i, i2, z).setColor(192, 192, 192, 255);
-			BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
+			RenderSystem.enableBlend();
+			guiGraphics.blitSprite(SCROLLER_BACKGROUND_SPRITE, position, this.getY(), 6, this.getHeight());
+			guiGraphics.blitSprite(SCROLLER_SPRITE, position, scrollAmount, 6, scrollBarHeight);
+			RenderSystem.disableBlend();
 		}
 
 		renderDecorations(guiGraphics, mouseX, mouseY);
+//		guiGraphics.fill(getX(), getY(), getRight(), getBottom(), 0xFFA5A5A5);
 		RenderSystem.disableBlend();
 		guiGraphics.pose().popPose();
 	}
+
+//	@Override
+//	public boolean isMouseOver(double pMouseX, double pMouseY) {
+//		return pMouseY >= (double)this.getY()
+//				&& pMouseY <= (double)this.getBottom()
+//				&& pMouseX >= (double)this.getX()
+//				&& pMouseX <= (double) this.getX();
+//	}
 }

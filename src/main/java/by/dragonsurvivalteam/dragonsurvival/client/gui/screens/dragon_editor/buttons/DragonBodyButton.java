@@ -25,7 +25,7 @@ public class DragonBodyButton extends Button {
 				dragonEditorScreen.update();
 			}
 		}, DEFAULT_NARRATION);
-		location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeName().toLowerCase() + ".png");
+		location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeNameLowerCase() + ".png");
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.dragonBody = dragonBody;
 		this.pos = pos;

@@ -3,9 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Supplier;
 
 public class DragonTypes {
@@ -26,7 +29,7 @@ public class DragonTypes {
 
 	public static <T extends AbstractDragonType> T registerType(Supplier<T> constructor){
 		T type = constructor.get();
-		String lcName = type.getTypeName().toLowerCase();
+		String lcName = type.getTypeNameLowerCase();
 		classMappings.put(lcName, (Supplier<AbstractDragonType>)constructor);
 		staticTypes.put(lcName, type);
 		staticSubtypes.put(lcName, type);
@@ -37,8 +40,8 @@ public class DragonTypes {
 	
 	public static <T extends AbstractDragonType> T registerSubtype(Supplier<T> constructor) {
 		T subtype = constructor.get();
-		String lcSubName = subtype.getSubtypeName().toLowerCase();
-		String lcTypeName = subtype.getTypeName().toLowerCase();
+		String lcSubName = subtype.getSubtypeNameLowerCase();
+		String lcTypeName = subtype.getTypeNameLowerCase();
 		classMappings.put(lcSubName, (Supplier<AbstractDragonType>) constructor);
 		
 		staticSubtypes.put(lcSubName, subtype);
@@ -48,11 +51,11 @@ public class DragonTypes {
 	}
 
 	public static AbstractDragonType getStatic(String name){
-		return staticTypes.get(name.toLowerCase());
+		return staticTypes.get(name.toLowerCase(Locale.ENGLISH));
 	}
 	
 	public static AbstractDragonType getStaticSubtype(String name) {
-		return staticSubtypes.get(name.toLowerCase());
+		return staticSubtypes.get(name.toLowerCase(Locale.ENGLISH));
 	}
 
 	public static List<String> getTypes(){
@@ -74,10 +77,10 @@ public class DragonTypes {
 	}
 	
 	public static List<AbstractDragonType> getSubtypesOfType(String name) {
-		return subtypeMap.getOrDefault(staticTypes.getOrDefault(name, null).getTypeName(), new ArrayList<AbstractDragonType>());
+		return subtypeMap.getOrDefault(staticTypes.getOrDefault(name, null).getTypeName(), new ArrayList<>());
 	}
 
-	public static AbstractDragonType newDragonTypeInstance(String name){
-		return classMappings.containsKey(name.toLowerCase()) ? classMappings.get(name.toLowerCase()).get() : null;
+	public static @Nullable AbstractDragonType newDragonTypeInstance(String name){
+		return classMappings.getOrDefault(name.toLowerCase(Locale.ENGLISH), () -> null).get();
 	}
 }

@@ -3,6 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+
+import java.util.Locale;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -102,5 +104,9 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 
 	public Double getGravityMult() {
 		return 1.0;
+	}
+
+	public String getBodyNameLowerCase() {
+		return getBodyName().toLowerCase(Locale.ENGLISH);
 	}
 }
