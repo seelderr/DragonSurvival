@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.datafixers.util.Pair;
 import java.util.ArrayList;
+import java.util.Locale;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
@@ -37,7 +38,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 		Pair<Tiers, Integer> harvestInfo = getHarvestInfo();
 
 		if (harvestInfo != null) {
-			components.add(Component.translatable("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + harvestInfo.getFirst().name().toLowerCase())));
+			components.add(Component.translatable("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + harvestInfo.getFirst().name().toLowerCase(Locale.ENGLISH))));
 		}
 
 		double damageBonus = handler.isDragon() && ServerConfig.attackDamage ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage : 0;

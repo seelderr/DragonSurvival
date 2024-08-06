@@ -112,8 +112,8 @@ public class ClientProxy {
             if(DragonEditorRegistry.getSavedCustomizations() != null){
                 AbstractDragonType type = cap.getType();
                 if(type != null) {
-                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(cap.getLevel(), 0);
-                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(cap.getLevel(), 0);
+                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
                     PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
                 }
             } else {
@@ -133,8 +133,8 @@ public class ClientProxy {
             if(DragonEditorRegistry.getSavedCustomizations() != null){
                 AbstractDragonType type = cap.getType();
                 if(type != null) {
-                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(cap.getLevel(), 0);
-                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeName().toUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
+                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(cap.getLevel(), 0);
+                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
                     context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), preset.serializeNBT(sender.registryAccess())));
                 }
             } else {
