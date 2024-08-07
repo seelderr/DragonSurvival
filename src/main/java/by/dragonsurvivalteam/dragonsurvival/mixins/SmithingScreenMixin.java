@@ -32,7 +32,7 @@ public class SmithingScreenMixin {
         dragonSurvival$dragon = FakeClientPlayerUtils.getFakeDragon(1, handler);
         dragonSurvival$dragon.yBodyRot = 210.0F;
         dragonSurvival$dragon.setXRot(25.0F);
-        FakeClientPlayerUtils.getFakePlayer(1, handler).animationSupplier = () -> "idle";
+        FakeClientPlayerUtils.getFakePlayer(1, handler).animationSupplier = () -> "sit_head_locked";
     }
 
     @Inject(method="updateArmorStandPreview", at=@At("HEAD"))
