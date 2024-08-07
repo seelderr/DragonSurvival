@@ -234,7 +234,7 @@ public class DragonContainer extends AbstractContainerMenu {
 			}
 
 			if (slotItemStack.isEmpty()) {
-				slot.set(ItemStack.EMPTY);
+				slot.setByPlayer(ItemStack.EMPTY, itemStack);
 			} else {
 				slot.setChanged();
 			}

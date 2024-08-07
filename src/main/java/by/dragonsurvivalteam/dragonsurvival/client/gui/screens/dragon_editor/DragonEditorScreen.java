@@ -163,7 +163,7 @@ public class DragonEditorScreen extends Screen {
 			int i = 0;
 			for(EnumSkinLayer layers : EnumSkinLayer.values()){
 				String name = layers.name;
-				SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.translatable("ds.gui.dragon_editor.part." + name.toLowerCase()), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
+				SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.translatable("ds.gui.dragon_editor.part." + name.toLowerCase(Locale.ENGLISH)), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
 				i++;
 			}
 		}
@@ -209,7 +209,7 @@ public class DragonEditorScreen extends Screen {
 	public SkinPreset save(){
 		SkinPreset newPreset = new SkinPreset();
 		newPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
-		String type = dragonType != null ? dragonType.getTypeName().toUpperCase() : null;
+		String type = dragonType != null ? dragonType.getTypeNameUpperCase() : null;
 
 		DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(type, key -> new HashMap<>());
 		DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).put(currentSelected, newPreset);
@@ -255,7 +255,7 @@ public class DragonEditorScreen extends Screen {
 			level = DragonLevel.NEWBORN;
 		}
 
-		String type = dragonType.getTypeName().toUpperCase();
+		String type = dragonType.getTypeNameUpperCase();
 
 		DragonEditorRegistry.getSavedCustomizations().current.computeIfAbsent(type, key -> new HashMap<>());
 		DragonEditorRegistry.getSavedCustomizations().current.get(type).putIfAbsent(level, 0);
@@ -317,8 +317,8 @@ public class DragonEditorScreen extends Screen {
 
 		int maxWidth = -1;
 
-		for(EnumSkinLayer layers : EnumSkinLayer.values()){
-			String name = layers.name().substring(0, 1).toUpperCase(Locale.ROOT) + layers.name().toLowerCase().substring(1).replace("_", " ");
+		for (EnumSkinLayer layer : EnumSkinLayer.values()) {
+			String name = layer.getNameUpperCase().charAt(0) + layer.getNameLowerCase().substring(1).replace("_", " ");
 			maxWidth = (int)Math.max(maxWidth, font.width(name) * 1.45F);
 		}
 
@@ -520,11 +520,6 @@ public class DragonEditorScreen extends Screen {
 				return !text.random;
 			});
 
-			//if (!isEditor) {
-			//	int bodytype = minecraft.player.getRandom().nextInt(DragonBodies.ORDER.length);
-			//	dragonBody = DragonBodies.bodyMappings.get(DragonBodies.ORDER[bodytype].toLowerCase()).get();
-			//}
-
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer);
 
@@ -609,8 +604,8 @@ public class DragonEditorScreen extends Screen {
 		if (currentSelected != lastSelected) {
 			preset = new SkinPreset();
 
-			if (DragonEditorRegistry.getSavedCustomizations().skinPresets.containsKey(dragonType.getTypeName().toUpperCase())) {
-				preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonEditorRegistry.getSavedCustomizations().skinPresets.get(dragonType.getTypeName().toUpperCase()).get(currentSelected).serializeNBT(Minecraft.getInstance().player.registryAccess()));
+			if (DragonEditorRegistry.getSavedCustomizations().skinPresets.containsKey(dragonType.getTypeNameUpperCase())) {
+				preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonEditorRegistry.getSavedCustomizations().skinPresets.get(dragonType.getTypeNameUpperCase()).get(currentSelected).serializeNBT(Minecraft.getInstance().player.registryAccess()));
 			}
 			HANDLER.getSkinData().skinPreset = preset;
 		}
@@ -648,7 +643,7 @@ public class DragonEditorScreen extends Screen {
 			minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(!cap.isDragon() || dragonWouldChange(cap)){
-				minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeName().toLowerCase() + "_dragon_choice"));
+				minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeNameLowerCase() + "_dragon_choice"));
 
 				if(dragonType == null && cap.getType() != null){
 					DragonCommand.reInsertClawTools(minecraft.player, cap);
@@ -685,17 +680,15 @@ public class DragonEditorScreen extends Screen {
 
 	@Override
 	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY){
-		if(!super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY)){
-			if(dragonRender != null && dragonRender.isMouseOver(pMouseX, pMouseY)){
-				return dragonRender.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
-			}
+		if(dragonRender != null && dragonRender.isMouseOver(pMouseX, pMouseY)){
+			return dragonRender.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
 		}
 
-		return false;
+		return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
 	}
 
 	public static String partToTranslation(final String part) {
-		String text = "ds.skin_part." + DragonEditorScreen.HANDLER.getTypeName().toLowerCase(Locale.ROOT) + "." + part.toLowerCase(Locale.ROOT);
+		String text = "ds.skin_part." + DragonEditorScreen.HANDLER.getTypeNameLowerCase() + "." + part.toLowerCase(Locale.ENGLISH);
 
 		if (I18n.exists(text)) {
 			return text;
@@ -705,6 +698,6 @@ public class DragonEditorScreen extends Screen {
 	}
 
 	public static String partToTechnical(final String part) {
-		return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.HANDLER.getTypeName().toLowerCase(Locale.ROOT) + ".", "");
+		return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + ".", "");
 	}
 }

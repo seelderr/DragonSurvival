@@ -82,7 +82,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 	}
 
 	private static String createTextureKey(final AbstractDragonType type, final String textureType, final String addition) {
-		return textureType + "_" + type.getTypeName().toLowerCase() + addition;
+		return textureType + "_" + type.getTypeNameLowerCase() + addition;
 	}
 
 	public DragonInventoryScreen(DragonContainer screenContainer, Inventory inv, Component titleIn){

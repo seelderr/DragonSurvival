@@ -26,7 +26,6 @@ import org.jetbrains.annotations.NotNull;
 public class DragonEditorDropdownButton extends DropDownButton{
 	private final DragonEditorScreen dragonEditorScreen;
 	private final EnumSkinLayer layers;
-	private final String dragonType;
 
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
 		super(x, y, xSize, ySize, current, values, selected -> {
@@ -36,7 +35,6 @@ public class DragonEditorDropdownButton extends DropDownButton{
 		});
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.layers = layers;
-		this.dragonType = DragonEditorScreen.HANDLER.getTypeName().toLowerCase();
 	}
 
 	@Override
@@ -65,6 +63,10 @@ public class DragonEditorDropdownButton extends DropDownButton{
     @Override
 	public void onPress(){
 		Screen screen = Minecraft.getInstance().screen;
+
+		if (screen == null) {
+			return;
+		}
 
 		if(!toggled){
 			int offset = screen.height - (getY() + height + 80);
@@ -129,10 +131,8 @@ public class DragonEditorDropdownButton extends DropDownButton{
 				settings.hue = text.average_hue;
 			}
 
-			screen.children().removeIf(s -> s == list);
-			screen.children().removeIf(s -> s == renderButton);
-			screen.renderables.removeIf(s -> s == list);
-			screen.renderables.removeIf(s -> s == renderButton);
+			screen.children().removeIf(s -> s == list || s == renderButton);
+			screen.renderables.removeIf(s -> s == list || s == renderButton);
 		}
 
 		toggled = !toggled;
