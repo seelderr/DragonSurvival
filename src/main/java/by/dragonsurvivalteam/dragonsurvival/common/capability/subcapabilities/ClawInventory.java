@@ -7,6 +7,8 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Optional;
+
 public class ClawInventory extends SubCap {
 	public enum Slot {
 		SWORD,
@@ -35,7 +37,10 @@ public class ClawInventory extends SubCap {
 		CompoundTag tag = new CompoundTag();
 
 		tag.putBoolean("clawsMenu", isMenuOpen);
-		tag.put("clawsInventory", clawsInventory.createTag(provider));
+		for(Slot slot : Slot.values()) {
+			if (clawsInventory.getItem(slot.ordinal()).isEmpty()) continue;
+			tag.put(slot.name(), clawsInventory.getItem(slot.ordinal()).save(provider));
+		}
 		tag.putBoolean("renderClaws", shouldRenderClaws);
 
 		return tag;
@@ -46,8 +51,11 @@ public class ClawInventory extends SubCap {
 		setMenuOpen(tag.getBoolean("clawsMenu"));
 		shouldRenderClaws = tag.getBoolean("renderClaws");
 
-		ListTag listTag = tag.getList("clawsInventory", 10);
-		clawsInventory.fromTag(listTag, provider);
+		for(Slot slot : Slot.values()) {
+			Optional<ItemStack> stack = ItemStack.parse(provider, tag.getCompound(slot.name()));
+			if (stack.isEmpty()) continue;
+			clawsInventory.setItem(slot.ordinal(), stack.get());
+		}
 	}
 
 	public ItemStack get(final Slot slot) {
