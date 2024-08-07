@@ -291,7 +291,7 @@ public class ServerFlightHandler{
 							float minFoodReq = l / 10f;
 							float drain = Math.max(minFoodReq, (float)(Math.min(1.0, Math.max(0, Math.max(moveSpeedReq - moveSpeed, 0) / moveSpeedReq)) * l));
 							AttributeInstance flightStamina;
-							if ((flightStamina = player.getAttribute(DSAttributes.FLIGHT_STAMINA_COST)) != null) {
+							if ((flightStamina = player.getAttribute(DSAttributes.FLIGHT_STAMINA_COST)) != null && flightStamina.getValue() != 0) {
 								drain /= (float) flightStamina.getValue();
 							}
 
