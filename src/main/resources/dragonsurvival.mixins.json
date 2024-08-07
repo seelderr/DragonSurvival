@@ -3,6 +3,7 @@
   "package": "by.dragonsurvivalteam.dragonsurvival.mixins",
   "compatibilityLevel": "JAVA_21",
   "minVersion": "0.8",
+  "plugin": "by.dragonsurvivalteam.dragonsurvival.mixins.ApplyMixinPlugin",
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
     "AccessorAnimationController",
@@ -39,6 +40,7 @@
     "client.LightTextureMixin",
     "client.LiquidBlockRendererMixin",
     "client.LocalPlayerMixin",
+    "embeddium.ClientNeoForgeModMixin",
     "tool_swap.MixinMultiPlayerGameModeEnd",
     "tool_swap.MixinMultiPlayerGameModeStart"
   ]

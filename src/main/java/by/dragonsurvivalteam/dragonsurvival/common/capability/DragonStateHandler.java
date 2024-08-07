@@ -12,6 +12,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -174,6 +176,14 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		return dragonType.getTypeName();
+	}
+
+	public String getTypeNameLowerCase() {
+		if (dragonType == null) {
+			return "human";
+		}
+
+		return dragonType.getTypeNameLowerCase();
 	}
 
 	public String getSubtypeName() {
@@ -347,7 +357,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			return ItemStack.EMPTY;
 		}
 
-		String tierPath = tiers.name().toLowerCase() + "_";
+		String tierPath = tiers.name().toLowerCase(Locale.ENGLISH) + "_";
 		tierPath = tierPath.replace("wood", "wooden");
 
 		Item item = switch (toolSlot) {

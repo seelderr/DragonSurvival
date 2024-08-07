@@ -111,7 +111,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			}
 
 			if (handler.getSkinData().blankSkin) {
-				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeName().toLowerCase(Locale.ROOT) + ".png");
+				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
 			}
 
 			if (ageGroup.defaultSkin) {
@@ -119,7 +119,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 					return currentTexture;
 				}
 
-				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeName().toLowerCase(Locale.ROOT) + "_" + handler.getLevel().name.toLowerCase(Locale.ROOT) + ".png");
+				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
 			}
 
 			if (handler.getSkinData().isCompiled && currentTexture == null) {
@@ -148,7 +148,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragon.getPlayer());
 			AbstractDragonBody body = handler.getBody();
 			if (body != null) {
-				return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyName().toLowerCase()));
+				return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));
 			}
 		}
 		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");

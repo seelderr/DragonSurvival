@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
-public enum EnumSkinLayer{
+import java.util.Locale;
+
+public enum EnumSkinLayer {
 	BASE("Base", true),
 	BOTTOM("Bottom", true),
 	EYES("Eyes", true),
@@ -21,8 +23,16 @@ public enum EnumSkinLayer{
 	public final String name;
 	public final boolean base;
 
-	EnumSkinLayer(String name, boolean base){
+	EnumSkinLayer(final String name, boolean base) {
 		this.name = name;
 		this.base = base;
+	}
+
+	public String getNameUpperCase() {
+		return name.toUpperCase(Locale.ENGLISH);
+	}
+
+	public String getNameLowerCase() {
+		return name.toLowerCase(Locale.ENGLISH);
 	}
 }

@@ -7,6 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.HashMap;
+import java.util.Locale;
+
 import net.neoforged.neoforge.common.util.Lazy;
 
 public class SkinPortingSystem {
@@ -26,8 +28,8 @@ public class SkinPortingSystem {
                         LayerSettings settings = sag.layerSettings.get(layer).get();
 
                         String part = DragonEditorRegistry.getDefaultPart(DragonTypes.getStatic(type), level, layer);
-                        EnumSkinLayer trueLayer = EnumSkinLayer.valueOf(layer.name.toUpperCase());
-                        HashMap<EnumSkinLayer, DragonEditorObject.Texture[]> hm = DragonEditorRegistry.CUSTOMIZATIONS.get(type.toUpperCase());
+                        EnumSkinLayer trueLayer = EnumSkinLayer.valueOf(layer.getNameUpperCase());
+                        HashMap<EnumSkinLayer, DragonEditorObject.Texture[]> hm = DragonEditorRegistry.CUSTOMIZATIONS.get(type.toUpperCase(Locale.ENGLISH));
                         if (hm != null) {
                             DragonEditorObject.Texture[] texts = hm.get(trueLayer);
                             if (texts != null) {

@@ -19,6 +19,8 @@ import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
+
 public class DataBlockStateProvider extends BlockStateProvider {
 	public DataBlockStateProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
 		super(output, modId, existingFileHelper);
@@ -149,7 +151,7 @@ public class DataBlockStateProvider extends BlockStateProvider {
 									int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot();
 									// Map model file based off of the current state
 									VaultState vaultState = state.getValue(VaultBlock.STATE);
-									String suffix = vaultState.name().toLowerCase();
+									String suffix = vaultState.name().toLowerCase(Locale.ENGLISH);
 									// For some reason, vanilla named this state "ejecting_reward" instead of just "ejecting", so I'm maintaining that convention here
 									if(vaultState == VaultState.EJECTING) {
 										suffix = "ejecting_reward";
