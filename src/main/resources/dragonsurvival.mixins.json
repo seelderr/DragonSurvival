@@ -17,7 +17,6 @@
     "MixinServerPlayerGameMode",
     "MixinSleepStatus",
     "PlayerMixin",
-    "VaultBlockEntityServerMixin",
     "VillagerHostilesSensorMixin",
     "VillagerMixin",
     "tool_swap.MixinServerPlayerGameModeEnd",
