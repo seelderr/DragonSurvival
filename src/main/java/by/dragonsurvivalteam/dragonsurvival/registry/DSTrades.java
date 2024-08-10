@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -14,6 +15,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -154,47 +156,38 @@ public class DSTrades {
 	// Copied from VillagerTrades.java
 	static class EnchantBookForEmeralds implements VillagerTrades.ItemListing {
 		private final int villagerXp;
-		private final TagKey<Enchantment> tradeableEnchantments;
+		private final ResourceKey<Enchantment> tradeableEnchantment;
 		private final int minLevel;
 		private final int maxLevel;
 
-		public EnchantBookForEmeralds(int pVillagerXp, TagKey<Enchantment> pTradeableEnchantments) {
-			this(pVillagerXp, 0, Integer.MAX_VALUE, pTradeableEnchantments);
+		public EnchantBookForEmeralds(int pVillagerXp, ResourceKey<Enchantment> enchant) {
+			this(pVillagerXp, 0, Integer.MAX_VALUE, enchant);
 		}
 
-		public EnchantBookForEmeralds(int pVillagerXp, int pMinLevel, int pMaxLevel, TagKey<Enchantment> pTradeableEnchantments) {
+		public EnchantBookForEmeralds(int pVillagerXp, int pMinLevel, int pMaxLevel, ResourceKey<Enchantment> enchant) {
 			this.minLevel = pMinLevel;
 			this.maxLevel = pMaxLevel;
 			this.villagerXp = pVillagerXp;
-			this.tradeableEnchantments = pTradeableEnchantments;
+			this.tradeableEnchantment = enchant;
 		}
 
 		@Override
 		public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
-			Optional<Holder<Enchantment>> optional = pTrader.level()
-					.registryAccess()
-					.registryOrThrow(Registries.ENCHANTMENT)
-					.getRandomElementOf(this.tradeableEnchantments, pRandom);
+			Holder<Enchantment> enchant = EnchantmentUtils.getHolder(this.tradeableEnchantment);
 			int i;
 			ItemStack itemstack;
-			if (!optional.isEmpty()) {
-				Holder<Enchantment> holder = optional.get();
-				Enchantment enchantment = holder.value();
-				int j = Math.max(enchantment.getMinLevel(), this.minLevel);
-				int k = Math.min(enchantment.getMaxLevel(), this.maxLevel);
-				int l = Mth.nextInt(pRandom, j, k);
-				itemstack = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(holder, l));
-				i = 2 + pRandom.nextInt(5 + l * 10) + 3 * l;
-				if (holder.is(EnchantmentTags.DOUBLE_TRADE_PRICE)) {
-					i *= 2;
-				}
+			Enchantment enchantment = enchant.value();
+			int j = Math.max(enchantment.getMinLevel(), this.minLevel);
+			int k = Math.min(enchantment.getMaxLevel(), this.maxLevel);
+			int l = Mth.nextInt(pRandom, j, k);
+			itemstack = EnchantedBookItem.createForEnchantment(new EnchantmentInstance(enchant, l));
+			i = 2 + pRandom.nextInt(5 + l * 10) + 3 * l;
+			if (enchant.is(EnchantmentTags.DOUBLE_TRADE_PRICE)) {
+				i *= 2;
+			}
 
-				if (i > 64) {
-					i = 64;
-				}
-			} else {
-				i = 1;
-				itemstack = new ItemStack(Items.BOOK);
+			if (i > 64) {
+				i = 64;
 			}
 
 			return new MerchantOffer(new ItemCost(Items.EMERALD, i), Optional.of(new ItemCost(Items.BOOK)), itemstack, 12, this.villagerXp, 0.2F);
@@ -210,22 +203,26 @@ public class DSTrades {
 			Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
 			trades.get(1).add(
-					new EnchantBookForEmeralds(15, TagKey.create(DSEnchantments.COMBAT_RECOVERY.registryKey(), DSEnchantments.COMBAT_RECOVERY.location()))
+					new ItemTrade(new ItemStack(DSItems.ELDER_DRAGON_DUST, 5), new ItemStack(Items.EMERALD, 1), 16, 1, 10)
 			);
 
 			trades.get(1).add(
-					new EnchantBookForEmeralds(15, TagKey.create(DSEnchantments.UNBREAKABLE_SPIRIT.registryKey(), DSEnchantments.UNBREAKABLE_SPIRIT.location()))
-			);
-
-			trades.get(1).add(
-					new EnchantBookForEmeralds(15, TagKey.create(DSEnchantments.AERODYNAMIC_MASTERY.registryKey(), DSEnchantments.AERODYNAMIC_MASTERY.location()))
-			);
-
-			trades.get(1).add(
-					new EnchantBookForEmeralds(15, TagKey.create(DSEnchantments.SACRED_SCALES.registryKey(), DSEnchantments.SACRED_SCALES.location()))
+					new EnchantBookForEmeralds(15, DSEnchantments.COMBAT_RECOVERY)
 			);
 
 			trades.get(2).add(
+					new EnchantBookForEmeralds(15, DSEnchantments.UNBREAKABLE_SPIRIT)
+			);
+
+			trades.get(3).add(
+					new EnchantBookForEmeralds(15, DSEnchantments.AERODYNAMIC_MASTERY)
+			);
+
+			trades.get(4).add(
+					new EnchantBookForEmeralds(15, DSEnchantments.SACRED_SCALES)
+			);
+
+			trades.get(5).add(
 					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.GOOD_DRAGON_KEY, 1), 12, 150)
 			);
 
@@ -239,12 +236,11 @@ public class DSTrades {
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_2 = Lists.newArrayList(
 					new ItemTrade(new ItemStack(Items.EMERALD, 5), new ItemStack(DSItems.WEAK_DRAGON_HEART, 1), 16, 1, 10)
-					//new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 1) // FIXME: Make the bolas crossbow enchantment and add its trade here
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_3 = Lists.newArrayList(
 					new ItemTrade(new ItemStack(Items.EMERALD, 8), new ItemStack(DSItems.ELDER_DRAGON_HEART, 1), 16, 1, 10),
-					new EnchantBookForEmeralds(15, TagKey.create(DSEnchantments.DRAGONSBANE.registryKey(), DSEnchantments.DRAGONSBANE.location()))
+					new EnchantBookForEmeralds(15, DSEnchantments.DRAGONSBANE)
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_4 = Lists.newArrayList(
@@ -252,8 +248,8 @@ public class DSTrades {
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_5 = Lists.newArrayList(
-					new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 1)
-					// FIXME: Make enchantment to steal growth stages from dragons and add its trade here
+					new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 1), // FIXME: Make enchantment to steal growth stages from dragons and add its trade here
+					new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 1) // FIXME: Make the bolas crossbow enchantment and add its trade here
 			);
 
 			LEADER_TRADES.put(1, LEADER_TRADES_LEVEL_1.toArray(new VillagerTrades.ItemListing[0]));
