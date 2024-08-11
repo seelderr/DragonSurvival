@@ -148,7 +148,8 @@ public class DataBlockStateProvider extends BlockStateProvider {
 
 				getVariantBuilder(vaultBlock)
 						.forAllStates(state -> {
-									int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot();
+									// I don't know why there is a 180 offset for just this block, but vanilla does it so we do it
+									int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() - 180;
 									// Map model file based off of the current state
 									VaultState vaultState = state.getValue(VaultBlock.STATE);
 									String suffix = vaultState.name().toLowerCase(Locale.ENGLISH);

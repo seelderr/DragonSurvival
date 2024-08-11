@@ -28,6 +28,12 @@ public class DataItemModelProvider extends ItemModelProvider {
 			"beacon"
 	);
 
+	private static final List<String> itemsThatAreManuallyAuthored = List.of(
+			"good_dragon_key",
+			"evil_dragon_key",
+			"hunter_dragon_key"
+	);
+
 	@Override
 	protected void registerModels(){
 		DSItems.DS_ITEMS.getEntries().forEach((holder) -> {
@@ -52,6 +58,10 @@ public class DataItemModelProvider extends ItemModelProvider {
 					getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath())));
 				}
 			} else {
+				if(itemsThatAreManuallyAuthored.stream().anyMatch(holder.getId().getPath()::contains)) {
+					return;
+				}
+
 				basicItem(holder.get());
 			}
 		});
