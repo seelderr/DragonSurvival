@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -108,15 +109,10 @@ public class RotatingKeyItem extends Item implements GeoItem {
             double pitch = Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(vectorTo.x, 2) + Math.pow(vectorTo.z, 2)), vectorTo.y)) + 180;
             double yaw = Math.toDegrees(Math.atan2(vectorTo.x, vectorTo.z)) - pEntity.getYRot();
             double bank = 0;
-            MathParser.setVariable("query.x_rotation", () ->
-                    !Double.isNaN(pitch) ? Mth.rotLerp(0.1, prevRotation.x, pitch) : 0
-            );
-            MathParser.setVariable("query.y_rotation", () ->
-                    !Double.isNaN(yaw) ? Mth.rotLerp(0.1, prevRotation.y, yaw) : 0
-            );
-            MathParser.setVariable("query.z_rotation", () ->
-                    !Double.isNaN(bank) ? Math.toDegrees(bank) : 0
-            );
+
+            MathParser.setVariable("query.x_rotation", () -> !Double.isNaN(pitch) ? Mth.rotLerp(0.1, prevRotation.x, pitch) : prevRotation.x);
+            MathParser.setVariable("query.y_rotation", () -> !Double.isNaN(yaw) ? Mth.rotLerp(0.1, prevRotation.y, yaw) : prevRotation.y);
+            MathParser.setVariable("query.z_rotation", () -> 0);
             prevRotation = new Vector3d(pitch, yaw, bank);
         }
     }
