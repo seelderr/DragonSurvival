@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.models;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
@@ -55,39 +56,50 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		MathParser.setVariable("query.head_yaw", () -> md.headYaw);
 		MathParser.setVariable("query.head_pitch", () -> md.headPitch);
 
-		double bodyYawChange = Functions.angleDifference(md.bodyYawLastFrame, md.bodyYaw) * md.getTickFactor();
-		double headYawChange = Functions.angleDifference(md.headYawLastFrame, md.headYaw) * md.getTickFactor();
-		double headPitchChange = Functions.angleDifference(md.headPitchLastFrame, md.headPitch) * md.getTickFactor();
-
 		double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
 		MathParser.setVariable("query.gravity", () -> gravity);
 
         double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
 
-		dragon.bodyYawHistory.add(bodyYawChange);
-		while (dragon.bodyYawHistory.size() > 10 * md.getTickFactor()) {
-			dragon.bodyYawHistory.removeFirst();
-		}
+		double bodyYawAvg;
+		double headYawAvg;
+		double headPitchAvg;
+		double yAccelAvg;
+		if(!ClientDragonRenderer.isOverridingMovementData) {
+			double bodyYawChange = Functions.angleDifference(md.bodyYawLastFrame, md.bodyYaw) * md.getTickFactor();
+			double headYawChange = Functions.angleDifference(md.headYawLastFrame, md.headYaw) * md.getTickFactor();
+			double headPitchChange = Functions.angleDifference(md.headPitchLastFrame, md.headPitch) * md.getTickFactor();
 
-		dragon.headYawHistory.add(headYawChange);
-		while (dragon.headYawHistory.size() > 10 * md.getTickFactor()) {
-			dragon.headYawHistory.removeFirst();
-		}
+			dragon.bodyYawHistory.add(bodyYawChange);
+			while (dragon.bodyYawHistory.size() > 10 * md.getTickFactor()) {
+				dragon.bodyYawHistory.removeFirst();
+			}
 
-		dragon.headPitchHistory.add(headPitchChange);
-		while (dragon.headPitchHistory.size() > 10 * md.getTickFactor()) {
-			dragon.headPitchHistory.removeFirst();
-		}
+			dragon.headYawHistory.add(headYawChange);
+			while (dragon.headYawHistory.size() > 10 * md.getTickFactor()) {
+				dragon.headYawHistory.removeFirst();
+			}
 
-		dragon.yAccelHistory.add(yAccel);
-		while (dragon.yAccelHistory.size() > 10 * md.getTickFactor()) {
-			dragon.yAccelHistory.removeFirst();
-		}
+			dragon.headPitchHistory.add(headPitchChange);
+			while (dragon.headPitchHistory.size() > 10 * md.getTickFactor()) {
+				dragon.headPitchHistory.removeFirst();
+			}
 
-		double bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(a -> a).sum() / dragon.bodyYawHistory.size();
-		double headYawAvg = dragon.headYawHistory.stream().mapToDouble(a -> a).sum() / dragon.headYawHistory.size();
-		double headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(a -> a).sum() / dragon.headPitchHistory.size();
-		double yAccelAvg = dragon.yAccelHistory.stream().mapToDouble(a -> a).sum() / dragon.yAccelHistory.size();
+			dragon.yAccelHistory.add(yAccel);
+			while (dragon.yAccelHistory.size() > 10 * md.getTickFactor()) {
+				dragon.yAccelHistory.removeFirst();
+			}
+
+			bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(a -> a).sum() / dragon.bodyYawHistory.size();
+			headYawAvg = dragon.headYawHistory.stream().mapToDouble(a -> a).sum() / dragon.headYawHistory.size();
+			headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(a -> a).sum() / dragon.headPitchHistory.size();
+			yAccelAvg = dragon.yAccelHistory.stream().mapToDouble(a -> a).sum() / dragon.yAccelHistory.size();
+		} else {
+			bodyYawAvg = 0;
+			headYawAvg = 0;
+			headPitchAvg = 0;
+			yAccelAvg = 0;
+		}
 
 		MathParser.setVariable("query.body_yaw_change", () -> bodyYawAvg);
 		MathParser.setVariable("query.head_yaw_change", () -> headYawAvg);

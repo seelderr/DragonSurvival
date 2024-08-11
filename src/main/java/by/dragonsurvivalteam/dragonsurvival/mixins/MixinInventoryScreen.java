@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -14,6 +16,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.phys.Vec3;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -33,8 +36,6 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 	// This is to angle the dragon entity (including its head) to correctly follow the angle specified when rendering.
 	@Redirect(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"))
 	private static void dragonScreenEntityRender(final Runnable runnable, @Local(argsOnly = true) LivingEntity entity){
-		if (entity == null)
-			return;
 
 		LivingEntity newEntity;
 		if (entity instanceof DragonEntity de) {
@@ -42,25 +43,24 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 		} else {
             newEntity = entity;
         }
+
         DragonStateProvider.getCap(newEntity).ifPresentOrElse(cap -> {
 			if (cap.isDragon()) {
 				double bodyYaw = cap.getMovementData().bodyYaw;
 				double headYaw = cap.getMovementData().headYaw;
 				double headPitch = cap.getMovementData().headPitch;
-
-				double lastBodyYaw = cap.getMovementData().bodyYawLastFrame;
-				double lastHeadYaw = cap.getMovementData().headYawLastFrame;
-				double lastHeadPitch = cap.getMovementData().headPitchLastFrame;
+				Vec3 deltaMovement = cap.getMovementData().deltaMovement;
+				Vec3 deltaMovementLastFrame = cap.getMovementData().deltaMovementLastFrame;
 
 				cap.getMovementData().bodyYaw = newEntity.yBodyRot;
 				cap.getMovementData().headYaw = -Math.toDegrees(dragon_Survival$storedXAngle);
 				cap.getMovementData().headPitch = -Math.toDegrees(dragon_Survival$storedYAngle);
+				cap.getMovementData().deltaMovement = Vec3.ZERO;
+				cap.getMovementData().deltaMovementLastFrame = Vec3.ZERO;
 
-				cap.getMovementData().bodyYawLastFrame = newEntity.yBodyRot;
-				cap.getMovementData().headYawLastFrame = -Math.toDegrees(dragon_Survival$storedXAngle);
-				cap.getMovementData().headPitchLastFrame = -Math.toDegrees(dragon_Survival$storedYAngle);
-
+				ClientDragonRenderer.isOverridingMovementData = true;
 				RenderSystem.runAsFancy(runnable);
+				ClientDragonRenderer.isOverridingMovementData = false;
 
 				dragon_Survival$storedXAngle = 0;
 				dragon_Survival$storedYAngle = 0;
@@ -68,10 +68,8 @@ public abstract class MixinInventoryScreen extends EffectRenderingInventoryScree
 				cap.getMovementData().bodyYaw = bodyYaw;
 				cap.getMovementData().headYaw = headYaw;
 				cap.getMovementData().headPitch = headPitch;
-
-				cap.getMovementData().bodyYawLastFrame = lastBodyYaw;
-				cap.getMovementData().headYawLastFrame = lastHeadYaw;
-				cap.getMovementData().headPitchLastFrame = lastHeadPitch;
+				cap.getMovementData().deltaMovement = deltaMovement;
+				cap.getMovementData().deltaMovementLastFrame = deltaMovementLastFrame;
 			} else {
 				RenderSystem.runAsFancy(runnable);
 			}

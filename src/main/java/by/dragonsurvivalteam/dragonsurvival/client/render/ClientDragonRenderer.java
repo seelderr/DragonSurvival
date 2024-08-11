@@ -69,6 +69,12 @@ public class ClientDragonRenderer {
 	public static DragonEntity dummyDragon;
 	public static float deltaPartialTick;
 
+	// This used to ignore the pitch/yaw history and not update the movement data
+	// if we are overriding it for a specific render.
+	//
+	// Currently this is only used for showing the dragon in the inventory screen.
+	public static boolean isOverridingMovementData = false;
+
 	/**
 	 * Instances used for rendering third-person dragon models
 	 */
@@ -208,7 +214,9 @@ public class ClientDragonRenderer {
 			}
 
 			renderPlayerEvent.setCanceled(true);
-			setDragonMovementData(player, deltaPartialTick);
+			if(!isOverridingMovementData) {
+				setDragonMovementData(player, deltaPartialTick);
+			}
 			float partialRenderTick = renderPlayerEvent.getPartialTick();
 			float yaw = player.getViewYRot(partialRenderTick);
 
