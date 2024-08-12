@@ -3,13 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
-import org.jetbrains.annotations.Nullable;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Nullable;
 
 public class DragonTypes {
 	private static final HashMap<String, Supplier<AbstractDragonType>> classMappings = new HashMap<>();

@@ -1,23 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.registry.DSDataComponents;
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
-import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.core.BlockPos;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.vault.VaultBlockEntity;
-import net.minecraft.world.level.block.entity.vault.VaultConfig;
-import net.minecraft.world.level.block.entity.vault.VaultServerData;
-import net.minecraft.world.level.block.entity.vault.VaultSharedData;
-import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.loot.LootParams;
-import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(VaultBlockEntity.Server.class)
 public class VaultBlockEntityServerMixin {

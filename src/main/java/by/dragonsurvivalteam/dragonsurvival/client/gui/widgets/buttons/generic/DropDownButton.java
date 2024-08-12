@@ -6,6 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Consumer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -17,10 +20,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.FormattedCharSequence;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Consumer;
 
 public class DropDownButton extends ExtendedButton {
 	public static final int maxItems = 4;
