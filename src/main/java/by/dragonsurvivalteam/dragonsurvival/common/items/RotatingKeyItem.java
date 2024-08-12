@@ -74,7 +74,8 @@ public class RotatingKeyItem extends Item implements GeoItem {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "rotating_key_controller", 10, state -> PlayState.CONTINUE)
-                .triggerableAnim("idle", IDLE));
+                .triggerableAnim("idle", IDLE)
+                .triggerableAnim("no_target", NO_TARGET));
     }
 
     @Override
@@ -96,13 +97,14 @@ public class RotatingKeyItem extends Item implements GeoItem {
                     }
                 }
                 pStack.set(DSDataComponents.TARGET_POSITION, null);
+                triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
             }
         } else {
             Vector3f src = pStack.get(DSDataComponents.TARGET_POSITION);
             if (src == null || src.length() < 0.1) {
-                MathParser.setVariable("query.x_rotation", () -> 0);
-                MathParser.setVariable("query.y_rotation", () -> 0);
-                MathParser.setVariable("query.z_rotation", () -> 0);
+                //MathParser.setVariable("query.x_rotation", () -> 0);
+                //MathParser.setVariable("query.y_rotation", () -> 0);
+                //MathParser.setVariable("query.z_rotation", () -> 0);
                 triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
                 return;
             }
