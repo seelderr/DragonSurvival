@@ -100,14 +100,17 @@ public class RotatingKeyItem extends Item implements GeoItem {
         } else {
             Vector3f src = pStack.get(DSDataComponents.TARGET_POSITION);
             if (src == null || src.length() < 0.1) {
+                MathParser.setVariable("query.x_rotation", () -> 0);
+                MathParser.setVariable("query.y_rotation", () -> 0);
+                MathParser.setVariable("query.z_rotation", () -> 0);
                 triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
                 return;
             }
             src = new Vector3f(src);
             Vector3f vectorTo = src.sub(pEntity.getPosition(0.0f).toVector3f()).normalize();
             triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "idle");
-            double pitch = Mth.wrapDegrees(Math.toDegrees(Math.atan2(vectorTo.y, Math.sqrt(Math.pow(vectorTo.x, 2) + Math.pow(vectorTo.z, 2)))));
-            double yaw = Mth.wrapDegrees(Math.toDegrees(Math.atan2(vectorTo.z, vectorTo.x)) - pEntity.getYRot());
+            double pitch = Mth.wrapDegrees(Math.toDegrees(Math.atan2(vectorTo.y, Math.sqrt(Math.pow(-vectorTo.x, 2) + Math.pow(vectorTo.z, 2)))));
+            double yaw = Mth.wrapDegrees(Math.toDegrees(-Math.atan2(vectorTo.z, -vectorTo.x)) - pEntity.getYRot());
             double bank = 0;
 
             MathParser.setVariable("query.x_rotation", () -> !Double.isNaN(pitch) ? Mth.rotLerp(0.1, prevRotation.x, pitch) : prevRotation.x);
