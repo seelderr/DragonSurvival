@@ -23,7 +23,7 @@
 			"loop": true,
 			"bones": {
 				"root": {
-					"rotation": ["math.sin(query.anim_time * 100) * 150", "math.cos(query.anim_time * 100) * 150", "math.sin(query.anim_time * 100) * 150"]
+					"rotation": ["math.sin(query.anim_time * 2.5) * 150", "math.cos(query.anim_time * 2) * 150", "math.sin(query.anim_time * 1.5) * 150"]
 				}
 			}
 		}
