@@ -52,7 +52,9 @@ public class ClawInventory extends SubCap {
 		shouldRenderClaws = tag.getBoolean("renderClaws");
 
 		for(Slot slot : Slot.values()) {
-			Optional<ItemStack> stack = ItemStack.parse(provider, tag.getCompound(slot.name()));
+			CompoundTag slotTag = tag.getCompound(slot.name());
+			if (slotTag.isEmpty()) continue;
+			Optional<ItemStack> stack = ItemStack.parse(provider, slotTag);
 			if (stack.isEmpty()) continue;
 			clawsInventory.setItem(slot.ordinal(), stack.get());
 		}

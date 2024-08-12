@@ -240,7 +240,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 	}
 
-	public DragonLevel getLevel() {
+	public static DragonLevel getLevel(double size) {
 		if (size < 20F) {
 			return DragonLevel.NEWBORN;
 		} else if (size < 30F) {
@@ -248,6 +248,10 @@ public class DragonStateHandler extends EntityStateHandler {
 		} else {
 			return DragonLevel.ADULT;
 		}
+	}
+
+	public DragonLevel getLevel() {
+		return getLevel(size);
 	}
 
 	/** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
@@ -513,8 +517,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		return clawToolData;
 	}
 
-	@Override
-	public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+	public CompoundTag serializeNBT(HolderLookup.Provider provider, boolean isSavingForSoul) {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
 		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
@@ -551,11 +554,32 @@ public class DragonStateHandler extends EntityStateHandler {
 			tag.putBoolean("hasWings", hasFlight());
 		}
 
-		tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
-		tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
-		tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
+		// Only store the size of the dragon the player is currently in if we are saving for the soul
+		if(isSavingForSoul) {
+			switch(getTypeName()) {
+				case "sea" -> tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
+				case "cave" -> tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
+				case "forest" -> tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
+			}
+		} else {
+			tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
+			tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
+			tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
+		}
 
 		for (int i = 0; i < caps.length; i++) {
+			if(isSavingForSoul) {
+				if(i == 0) {
+					continue;
+				}
+			}
+
+			if(isSavingForSoul) {
+				if(i == 2) {
+					continue;
+				}
+			}
+
 			tag.put("cap_" + i, caps[i].get().serializeNBT(provider));
 		}
 
@@ -572,7 +596,11 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+	public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+		return serializeNBT(provider, false);
+	}
+
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag, boolean isLoadingForSoul) {
 		if (tag.getAllKeys().contains("subtype"))
 			dragonType = DragonTypes.newDragonTypeInstance(tag.getString("subtype"));
 		else
@@ -620,11 +648,32 @@ public class DragonStateHandler extends EntityStateHandler {
 			setHasFlight(tag.getBoolean("hasWings"));
 		}
 
-		setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
-		setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
-		setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
+		// Only load the size of the dragon the player is currently in if we are loading for the soul
+		if(isLoadingForSoul) {
+			switch(getTypeName()) {
+				case "sea" -> setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
+				case "cave" -> setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
+				case "forest" -> setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
+			}
+		} else {
+			setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
+			setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
+			setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
+		}
 
 		for (int i = 0; i < caps.length; i++) {
+			if(isLoadingForSoul) {
+				if(i == 0) {
+					continue;
+				}
+			}
+
+			if(isLoadingForSoul) {
+				if(i == 2) {
+					continue;
+				}
+			}
+
 			if (tag.contains("cap_" + i)) {
 				caps[i].get().deserializeNBT(provider, (CompoundTag) tag.get("cap_" + i));
 			}
@@ -640,6 +689,33 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		lastAfflicted = tag.getInt("lastAfflicted");
 
-		getSkinData().compileSkin();
+		if(!isLoadingForSoul) {
+			getSkinData().compileSkin();
+		}
+	}
+
+	@Override
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+		deserializeNBT(provider, tag, false);
+	}
+
+	public void revertToHumanForm(Player player, boolean isRevertingFromSoul) {
+		// Don't set the saved dragon size if we are reverting from a soul, as we already are storing the size of the dragon in the soul
+		if (ServerConfig.saveGrowthStage && !isRevertingFromSoul) {
+			this.setSavedDragonSize(this.getTypeName(), this.getSize());
+		}
+
+		this.setType(null);
+		this.setBody(null, player);
+		this.setSize(20F, player);
+		this.setIsHiding(false);
+
+		if (!ServerConfig.saveAllAbilities) {
+			this.getMovementData().spinLearned = false;
+			this.setHasFlight(false);
+		}
+
+		this.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+		this.hasUsedAltar = true;
 	}
 }
