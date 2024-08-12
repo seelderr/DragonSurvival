@@ -28,9 +28,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DyeColor;
-import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
-import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -154,7 +152,6 @@ public class DragonAltarScreen extends Screen{
 	public void renderBackground(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
 		// From super.renderBackground(guiGraphics);
 		guiGraphics.fillGradient(0, 0, this.width, this.height, -300, -1072689136, -804253680);
-		NeoForge.EVENT_BUS.post(new ScreenEvent.BackgroundRendered(this, guiGraphics));
 
 		renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
 	}

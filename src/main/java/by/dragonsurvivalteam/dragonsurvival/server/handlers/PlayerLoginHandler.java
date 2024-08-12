@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class PlayerLoginHandler {
 
-    public static void syncComplete(Entity tracker, Entity tracked) {
+    public static void syncCompleteSingle(Entity tracker, Entity tracked) {
         if(tracker instanceof ServerPlayer){
             if(tracked instanceof ServerPlayer){
                 DragonStateProvider.getCap(tracked).ifPresent(dragonStateHandler -> {
@@ -25,7 +25,7 @@ public class PlayerLoginHandler {
         }
     }
 
-    public static void syncComplete(Entity entity) {
+    public static void syncCompleteSingle(Entity entity) {
         if(entity instanceof ServerPlayer player) {
             DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
                 SyncComplete.handleDragonSync(player);
@@ -34,26 +34,36 @@ public class PlayerLoginHandler {
         }
     }
 
+    public static void syncCompleteAll(Entity entity) {
+        if(entity instanceof ServerPlayer player) {
+            DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+                SyncComplete.handleDragonSync(player);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
+            });
+        }
+    }
+
+
     @SubscribeEvent
     public static void onTrackingStart(PlayerEvent.StartTracking startTracking){
         Entity tracker = startTracking.getEntity();
         Entity tracked = startTracking.getTarget();
-        syncComplete(tracker, tracked);
+        syncCompleteSingle(tracker, tracked);
     }
 
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event){
-        syncComplete(event.getEntity());
+        syncCompleteSingle(event.getEntity());
     }
 
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event){
-        syncComplete(event.getEntity());
+        syncCompleteSingle(event.getEntity());
     }
 
     @SubscribeEvent
     public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event){
-        syncComplete(event.getEntity());
+        syncCompleteSingle(event.getEntity());
     }
 
     @SubscribeEvent

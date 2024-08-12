@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-
 import java.util.Locale;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;

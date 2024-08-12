@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.HashMap;
 import java.util.Locale;
-
 import net.neoforged.neoforge.common.util.Lazy;
 
 public class SkinPortingSystem {

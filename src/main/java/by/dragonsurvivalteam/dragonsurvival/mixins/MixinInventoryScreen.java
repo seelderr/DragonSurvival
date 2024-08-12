@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;

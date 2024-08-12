@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import java.util.function.UnaryOperator;
-
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;

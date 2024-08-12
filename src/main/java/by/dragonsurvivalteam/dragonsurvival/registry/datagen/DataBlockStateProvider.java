@@ -5,6 +5,7 @@ import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import java.util.Locale;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -18,8 +19,6 @@ import net.neoforged.neoforge.client.model.generators.ConfiguredModel;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Locale;
 
 public class DataBlockStateProvider extends BlockStateProvider {
 	public DataBlockStateProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {

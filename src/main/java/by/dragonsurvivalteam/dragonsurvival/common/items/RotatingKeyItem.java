@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.item.RotatingKeyRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDataComponents;
+import java.util.Optional;
+import java.util.function.Consumer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderSet;
@@ -25,9 +27,6 @@ import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public class RotatingKeyItem extends Item implements GeoItem {
     public final ResourceLocation texture, model;

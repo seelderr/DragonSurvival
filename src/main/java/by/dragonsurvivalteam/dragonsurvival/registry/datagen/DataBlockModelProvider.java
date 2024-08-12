@@ -3,13 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.HelmetBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.RotatedPillarBlock;
 import net.neoforged.neoforge.client.model.generators.BlockModelProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class DataBlockModelProvider extends BlockModelProvider {

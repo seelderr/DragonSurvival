@@ -8,10 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.awt.*;
 import java.util.ArrayList;
@@ -116,24 +114,7 @@ public class AltarTypeButton extends Button {
 
 			DragonStateProvider.getCap(player).ifPresent(cap -> {
 				player.level().playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
-
-				if (ServerConfig.saveGrowthStage) {
-					cap.setSavedDragonSize(cap.getTypeName(), cap.getSize());
-				}
-
-				cap.setType(null);
-				cap.setBody(null, player);
-				cap.setSize(20F, player);
-				cap.setIsHiding(false);
-
-				if (!ServerConfig.saveAllAbilities) {
-					cap.getMovementData().spinLearned = false;
-					cap.setHasFlight(false);
-				}
-
-				cap.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
-				cap.hasUsedAltar = true;
-
+				cap.revertToHumanForm(player, false);
 				PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
 			});
 			player.closeContainer();

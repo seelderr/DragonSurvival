@@ -1239,5 +1239,14 @@
   "ds.gui.body_types.jumpbonus": "■ Jump Bonus: %s",
   "ds.keybind.category": "Dragon Survival",
   "entity.dragonsurvival.dummy_dragon": "",
-  "ds.gui.altar.can_still_use": "You didn't make your initial choice in the Dragon Altar.\nYou may still open the altar in your inventory."
+  "ds.gui.altar.can_still_use": "You didn't make your initial choice in the Dragon Altar.\nYou may still open the altar in your inventory.",
+  "item.dragonsurvival.empty_dragon_soul": "Empty Dragon Soul",
+  "item.dragonsurvival.cave_dragon_soul": "Cave Dragon Soul",
+  "item.dragonsurvival.forest_dragon_soul": "Forest Dragon Soul",
+  "item.dragonsurvival.sea_dragon_soul": "Sea Dragon Soul",
+  "ds.description.dragon_soul": "A dragon's soul. Use it to transform into the dragon whose soul is stored inside.\n",
+  "ds.description.dragon_soul_empty": "An empty dragon's soul. Use it to store a dragon's soul.",
+  "ds.description.dragon_soul_info": "§6■ Type:§r %s\n§6■ Growth Stage:§r %s\n§6■ Size:§r %s\n",
+  "ds.description.dragon_soul_has_fly": "§6■ Can Fly§r",
+  "ds.description.dragon_soul_has_spin": "§6■ Can Spin§r"
 }

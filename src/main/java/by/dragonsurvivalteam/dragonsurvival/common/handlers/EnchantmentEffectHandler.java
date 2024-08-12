@@ -8,6 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
@@ -22,9 +24,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("unused")
 @EventBusSubscriber

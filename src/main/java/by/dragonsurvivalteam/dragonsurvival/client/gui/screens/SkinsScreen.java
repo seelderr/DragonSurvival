@@ -176,7 +176,6 @@ public class SkinsScreen extends Screen{
 	@Override
 	public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
 		this.renderMenuBackground(pGuiGraphics);
-		net.neoforged.neoforge.common.NeoForge.EVENT_BUS.post(new net.neoforged.neoforge.client.event.ScreenEvent.BackgroundRendered(this, pGuiGraphics));
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {

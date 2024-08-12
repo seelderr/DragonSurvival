@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.*;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import java.util.Arrays;
 import java.util.List;

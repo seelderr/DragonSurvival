@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
+import javax.annotation.Nullable;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Position;
 import net.minecraft.world.entity.LivingEntity;
@@ -11,8 +12,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
-
-import javax.annotation.Nullable;
 
 public class BolasArrowItem extends ArrowItem {
     public BolasArrowItem(Properties pProperties) {

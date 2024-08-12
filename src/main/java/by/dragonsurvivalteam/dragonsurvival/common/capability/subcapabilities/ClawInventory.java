@@ -1,13 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import java.util.Optional;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.item.ItemStack;
-
-import java.util.Optional;
 
 public class ClawInventory extends SubCap {
 	public enum Slot {
@@ -52,7 +50,9 @@ public class ClawInventory extends SubCap {
 		shouldRenderClaws = tag.getBoolean("renderClaws");
 
 		for(Slot slot : Slot.values()) {
-			Optional<ItemStack> stack = ItemStack.parse(provider, tag.getCompound(slot.name()));
+			CompoundTag slotTag = tag.getCompound(slot.name());
+			if (slotTag.isEmpty()) continue;
+			Optional<ItemStack> stack = ItemStack.parse(provider, slotTag);
 			if (stack.isEmpty()) continue;
 			clawsInventory.setItem(slot.ordinal(), stack.get());
 		}
