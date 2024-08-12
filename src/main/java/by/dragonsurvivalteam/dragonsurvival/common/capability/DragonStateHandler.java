@@ -688,9 +688,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		lastAfflicted = tag.getInt("lastAfflicted");
 
-		if(!isLoadingForSoul) {
-			getSkinData().compileSkin();
-		}
+		getSkinData().compileSkin();
 	}
 
 	@Override

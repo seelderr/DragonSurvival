@@ -93,7 +93,7 @@ public class DragonSoulItem extends Item{
 
             // Add a bunch of random poof particles
             for(int i = 0; i < 10; i++) {
-                pLevel.addParticle(ParticleTypes.POOF, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
+                pLevel.addParticle(ParticleTypes.POOF, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLivingEntity.getY() + (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
             }
 
             // If we transformed into a dragon, spawn particles based off of the dragon's type
@@ -101,17 +101,17 @@ public class DragonSoulItem extends Item{
                 switch(handler.getType().toString()) {
                     case "forest" -> {
                         for(int i = 0; i < 30; i++) {
-                            pLevel.addParticle(ParticleTypes.HAPPY_VILLAGER, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
+                            pLevel.addParticle(ParticleTypes.HAPPY_VILLAGER, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 2D, pLivingEntity.getY() + pLevel.random.nextDouble() * 2D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 2D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
                         }
                     }
                     case "cave" -> {
                         for(int i = 0; i < 30; i++) {
-                            pLevel.addParticle(ParticleTypes.SMOKE, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
+                            pLevel.addParticle(ParticleTypes.SMOKE, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 2D, pLivingEntity.getY() + pLevel.random.nextDouble() * 2D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 2D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
                         }
                     }
                     case "sea" -> {
                         for(int i = 0; i < 30; i++) {
-                            pLevel.addParticle(ParticleTypes.BUBBLE, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
+                            pLevel.addParticle(ParticleTypes.FALLING_WATER, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 2D, pLivingEntity.getY() + pLevel.random.nextDouble() * 2D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 2D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
                         }
                     }
                 }
