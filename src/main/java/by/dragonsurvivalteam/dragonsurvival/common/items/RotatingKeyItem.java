@@ -29,7 +29,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class RotatingKeyItem extends Item implements GeoItem {
-    public ResourceLocation texture, model;
+    public final ResourceLocation texture, model;
     private final ResourceLocation target;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private Vector3d prevRotation = new Vector3d();
@@ -73,7 +73,8 @@ public class RotatingKeyItem extends Item implements GeoItem {
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "rotating_key_controller", 10, state -> PlayState.CONTINUE)
-                .triggerableAnim("idle", IDLE));
+                .triggerableAnim("idle", IDLE)
+                .triggerableAnim("no_target", NO_TARGET));
     }
 
     @Override
@@ -95,17 +96,22 @@ public class RotatingKeyItem extends Item implements GeoItem {
                     }
                 }
                 pStack.set(DSDataComponents.TARGET_POSITION, null);
+                triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
             }
         } else {
             Vector3f src = pStack.get(DSDataComponents.TARGET_POSITION);
             if (src == null || src.length() < 0.1) {
+                //MathParser.setVariable("query.x_rotation", () -> 0);
+                //MathParser.setVariable("query.y_rotation", () -> 0);
+                //MathParser.setVariable("query.z_rotation", () -> 0);
                 triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
                 return;
             }
-            Vector3f vectorTo = pEntity.getPosition(0.0f).toVector3f().sub(src);
+            src = new Vector3f(src);
+            Vector3f vectorTo = src.sub(pEntity.getPosition(0.0f).toVector3f()).normalize();
             triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "idle");
-            double pitch = Math.toDegrees(Math.atan2(Math.sqrt(Math.pow(vectorTo.x, 2) + Math.pow(vectorTo.z, 2)), vectorTo.y)) + 180;
-            double yaw = Math.toDegrees(Math.atan2(vectorTo.x, vectorTo.z)) - pEntity.getYRot();
+            double pitch = Mth.wrapDegrees(Math.toDegrees(Math.atan2(vectorTo.y, Math.sqrt(Math.pow(-vectorTo.x, 2) + Math.pow(vectorTo.z, 2)))));
+            double yaw = Mth.wrapDegrees(Math.toDegrees(-Math.atan2(vectorTo.z, -vectorTo.x)) - pEntity.getYRot());
             double bank = 0;
 
             MathParser.setVariable("query.x_rotation", () -> !Double.isNaN(pitch) ? Mth.rotLerp(0.1, prevRotation.x, pitch) : prevRotation.x);

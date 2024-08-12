@@ -18,6 +18,14 @@
 					}
 				}
 			}
+		},
+		"no_target": {
+			"loop": true,
+			"bones": {
+				"root": {
+					"rotation": ["math.sin(query.anim_time * 100) * 150", "math.cos(query.anim_time * 100) * 150", "math.sin(query.anim_time * 100) * 150"]
+				}
+			}
 		}
 	},
 	"geometry.animations": {
