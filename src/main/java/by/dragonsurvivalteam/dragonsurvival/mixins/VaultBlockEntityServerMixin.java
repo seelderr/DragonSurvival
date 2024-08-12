@@ -21,7 +21,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(VaultBlockEntity.Server.class)
 public class VaultBlockEntityServerMixin {
-    @ModifyExpressionValue(method="resolveItemsToEject", at= @At(value = "NEW", target = "(Lnet/minecraft/server/level/ServerLevel;)Lnet/minecraft/world/level/storage/loot/LootParams$Builder;"))
+    /*@ModifyExpressionValue(method="resolveItemsToEject", at= @At(value = "NEW", target = "(Lnet/minecraft/server/level/ServerLevel;)Lnet/minecraft/world/level/storage/loot/LootParams$Builder;"))
     private static LootParams.Builder addToolParam(LootParams.Builder value, @Local(argsOnly = true) Player pPlayer) {
         return value.withParameter(LootContextParams.TOOL, pPlayer.getItemInHand(pPlayer.getUsedItemHand()));
     }
@@ -33,5 +33,5 @@ public class VaultBlockEntityServerMixin {
             return pState.getBlockHolder().is(validVaults.id()) && pStack.getCount() >= pConfig.keyItem().getCount();
         }
         return VaultBlockEntity.Server.isValidToInsert(pConfig2, pStack2);
-    }
+    }*/
 }

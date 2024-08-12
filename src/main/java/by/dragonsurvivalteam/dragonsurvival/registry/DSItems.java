@@ -22,10 +22,13 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -37,6 +40,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.joml.Vector3f;
 
 @SuppressWarnings("unused")
 public class DSItems {
@@ -183,14 +187,23 @@ public class DSItems {
 			))
 	);
 
-	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON))
+	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new RotatingKeyItem(
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
+			res("geo/good_dragon_key.geo.json"),
+			res("textures/item/good_dragon_key.png"),
+			res("treasure_friendly"))
 	);
-	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON))
+	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new RotatingKeyItem(
+			new Item.Properties().rarity(Rarity.UNCOMMON),
+			res("geo/evil_dragon_key.geo.json"),
+			res("textures/item/evil_dragon_key.png"),
+			res("treasure_angry"))
 	);
-	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new Item(
-			new Item.Properties().rarity(Rarity.UNCOMMON))
+	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new RotatingKeyItem(
+			new Item.Properties().rarity(Rarity.UNCOMMON),
+			res("geo/hunter_key.geo.json"),
+			res("textures/item/hunter_key.png"),
+			res("treasure_hunter"))
 	);
 
 	// Items that shouldn't show up in the creative tab
