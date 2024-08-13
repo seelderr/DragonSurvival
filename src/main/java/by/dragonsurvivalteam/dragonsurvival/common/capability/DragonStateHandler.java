@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability;
 
+import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -579,6 +580,12 @@ public class DragonStateHandler extends EntityStateHandler {
 				}
 			}
 
+			if(isSavingForSoul) {
+				if(i == 3) {
+					continue;
+				}
+			}
+
 			tag.put("cap_" + i, caps[i].get().serializeNBT(provider));
 		}
 
@@ -673,6 +680,12 @@ public class DragonStateHandler extends EntityStateHandler {
 				}
 			}
 
+			if(isLoadingForSoul) {
+				if(i == 3) {
+					continue;
+				}
+			}
+
 			if (tag.contains("cap_" + i)) {
 				caps[i].get().deserializeNBT(provider, (CompoundTag) tag.get("cap_" + i));
 			}
@@ -701,6 +714,9 @@ public class DragonStateHandler extends EntityStateHandler {
 		if (ServerConfig.saveGrowthStage && !isRevertingFromSoul) {
 			this.setSavedDragonSize(this.getTypeName(), this.getSize());
 		}
+
+		// Drop everything in your claw slots
+		DragonCommand.reInsertClawTools(player, this);
 
 		this.setType(null);
 		this.setBody(null, player);

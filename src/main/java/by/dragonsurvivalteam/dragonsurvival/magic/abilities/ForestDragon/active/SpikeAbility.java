@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.phys.Vec3;
@@ -160,10 +161,12 @@ public class SpikeAbility extends InstantCastAbility{
 		for (int i = 0; i < getLevel(); i++) {
 			DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE.get(), player.level());
 			entity.setPos(projPos);
+			entity.setOwner(player);
 			entity.setArrow_level(getLevel());
 			entity.setBaseDamage(getDamage());
 			entity.pickup = AbstractArrow.Pickup.DISALLOWED;
 			entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, i * spikeSpread);
+			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, entity.getSoundSource(), 1.0F, 2.0F);
 			player.level().addFreshEntity(entity);
 			if (!spikeMultishot)
 				break;

@@ -28,6 +28,7 @@ import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.*;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.animation.PlayState;
 import software.bernie.geckolib.animation.RawAnimation;
@@ -65,12 +66,9 @@ public class BallLightningEntity extends DragonBallEntity{
 		return new DamageSource(DSDamageTypes.get(pIndirectEntity.level(), DSDamageTypes.DRAGON_BALL_LIGHTNING));
 	}
 
-	protected void onHitCommon(){
-		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-			if (!this.level().isClientSide) {
-				level().playSound(null, getX(), getY(), getZ(), SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.HOSTILE, 3.0F, 0.5f);
-			}
-
+	@Override
+	public void onHitCommon(){
+		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition()) && !hasHit) {
 			if(!isLingering) {
 				isLingering = true;
 				// These power variables drive the movement of the entity in the parent tick() function, so we need to zero them out as well.
@@ -78,18 +76,7 @@ public class BallLightningEntity extends DragonBallEntity{
 				setDeltaMovement(Vec3.ZERO);
 			}
 		}
-	}
-
-	@Override
-	protected void onHitEntity(EntityHitResult hitResult){
-		super.onHitEntity(hitResult);
-		onHitCommon();
-	}
-
-	@Override
-	protected void onHitBlock(BlockHitResult hitResult){
-		super.onHitBlock(hitResult);
-		onHitCommon();
+		super.onHitCommon();
 	}
 
 	@Override
@@ -100,6 +87,17 @@ public class BallLightningEntity extends DragonBallEntity{
 		if(isLingering) {
 			lingerTicks--;
 			if(lingerTicks <= 0) {
+				if(!this.level().isClientSide) {
+					float explosivePower = getExplosivePower();
+					DamageSource damagesource;
+					if(getOwner() == null){
+						damagesource = getDamageSource(this, this);
+					} else {
+						damagesource = getDamageSource(this, getOwner());
+					}
+					Entity attacker = canSelfDamage() ? this : getOwner();
+					level().explode(attacker, damagesource, null, getX(), getY(), getZ(), explosivePower, false, Level.ExplosionInteraction.BLOCK);
+				}
 				this.discard();
 			}
 		}
