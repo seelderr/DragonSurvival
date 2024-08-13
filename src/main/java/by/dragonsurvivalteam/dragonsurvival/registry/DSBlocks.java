@@ -1,20 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
-
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
+import by.dragonsurvivalteam.dragonsurvival.util.CompoundTagBuilder;
 import com.mojang.datafixers.util.Pair;
-import java.util.HashMap;
-import java.util.List;
-
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +25,12 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.Color;
+
+import java.util.HashMap;
+import java.util.List;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
 
 @SuppressWarnings("unused")
 public class DSBlocks{
@@ -980,25 +982,32 @@ public class DSBlocks{
 			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
 	);
 
-	private static final CompoundTag goodVaultTag = new CompoundTag(), goodVaultTag2 = new CompoundTag(), goodVaultTag3 = new CompoundTag();
-	private static final CompoundTag evilVaultTag = new CompoundTag(), evilVaultTag2 = new CompoundTag(), evilVaultTag3 = new CompoundTag();
-	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag(), hunterVaultTag3 = new CompoundTag();
-	static {
-		goodVaultTag3.putInt("count", 1);
-		goodVaultTag3.putString("id", "dragonsurvival:good_dragon_key");
-		goodVaultTag2.put("key_item", goodVaultTag3);
-		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_friendly");
-		goodVaultTag.put("config", goodVaultTag2);
-		evilVaultTag3.putInt("count", 1);
-		evilVaultTag3.putString("id", "dragonsurvival:evil_dragon_key");
-		evilVaultTag2.put("key_item", evilVaultTag3);
-		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_angry");
-		evilVaultTag.put("config", evilVaultTag2);
-		hunterVaultTag3.putInt("count", 1);
-		hunterVaultTag3.putString("id", "dragonsurvival:hunter_key");
-		hunterVaultTag2.put("key_item", hunterVaultTag3);
-		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_hunter");
-		hunterVaultTag.put("config", hunterVaultTag2);
+	private static final CompoundTag GOOD_VAULT_TAG = CompoundTagBuilder.tag()
+			.putTag("config", CompoundTagBuilder.tag()
+					.putTag("key_item", CompoundTagBuilder.tag()
+							.putInt("count", 1)
+							.putString("id", location(DSItems.GOOD_DRAGON_KEY_ID)).build()
+					).putString("loot_table", location("generic/dragon_vault_friendly")).build()
+			).build();
+
+	private static final CompoundTag EVIL_VAULT_TAG = CompoundTagBuilder.tag()
+			.putTag("config", CompoundTagBuilder.tag()
+					.putTag("key_item", CompoundTagBuilder.tag()
+							.putInt("count", 1)
+							.putString("id", location(DSItems.EVIL_DRAGON_KEY_ID)).build()
+					).putString("loot_table", location("generic/dragon_vault_angry")).build()
+			).build();
+
+	private static final CompoundTag HUNTER_VAULT_TAG = CompoundTagBuilder.tag()
+			.putTag("config", CompoundTagBuilder.tag()
+					.putTag("key_item", CompoundTagBuilder.tag()
+							.putInt("count", 1)
+							.putString("id", location(DSItems.HUNTER_KEY_ID)).build()
+					).putString("loot_table", location("generic/dragon_vault_hunter")).build()
+			).build();
+
+	public static String location(final String path) {
+		return ResourceLocation.fromNamespaceAndPath(MODID, path).toString();
 	}
 
 	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_FRIENDLY = DS_BLOCKS.register(
@@ -1009,7 +1018,7 @@ public class DSBlocks{
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_FRIENDLY_ITEM = DS_ITEMS.register(
 			"dragon_vault_friendly",
 			() -> new BlockItem(DRAGON_VAULT_FRIENDLY.get(), new Item.Properties()
-					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(goodVaultTag)))
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(GOOD_VAULT_TAG)))
 	);
 
 	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_ANGRY = DS_BLOCKS.register(
@@ -1020,7 +1029,7 @@ public class DSBlocks{
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ANGRY_ITEM = DS_ITEMS.register(
 			"dragon_vault_angry",
 			() -> new BlockItem(DRAGON_VAULT_ANGRY.get(), new Item.Properties()
-					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(evilVaultTag)))
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(EVIL_VAULT_TAG)))
 	);
 
 	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_HUNTER = DS_BLOCKS.register(
@@ -1031,7 +1040,7 @@ public class DSBlocks{
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_HUNTER_ITEM = DS_ITEMS.register(
 			"dragon_vault_hunter",
 			() -> new BlockItem(DRAGON_VAULT_HUNTER.get(), new Item.Properties()
-					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(hunterVaultTag)))
+					.component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(HUNTER_VAULT_TAG)))
 	);
 
 	public static final DeferredHolder<Block, Block> DRAGON_RIDER_WORKBENCH = DS_BLOCKS.register(
