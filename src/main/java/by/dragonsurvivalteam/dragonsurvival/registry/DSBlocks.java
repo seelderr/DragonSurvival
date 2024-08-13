@@ -8,12 +8,17 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.P
 import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
 import com.mojang.datafixers.util.Pair;
 import java.util.HashMap;
+import java.util.List;
+
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -22,6 +27,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.Color;
 
 @SuppressWarnings("unused")
@@ -1032,7 +1038,13 @@ public class DSBlocks{
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_RIDER_WORKBENCH_ITEM = DS_ITEMS.register(
 			"dragon_rider_workbench",
-			() -> new BlockItem(DRAGON_RIDER_WORKBENCH.get(), new Item.Properties())
+			() -> new BlockItem(DRAGON_RIDER_WORKBENCH.get(), new Item.Properties()){
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.dragon_rider_workbench"));
+				}
+			}
 	);
 
 	static {
