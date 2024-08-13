@@ -4,15 +4,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.PlayerLoginHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
@@ -26,6 +27,8 @@ import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class DragonSoulItem extends Item{
     public DragonSoulItem(Properties properties) {
@@ -172,6 +175,39 @@ public class DragonSoulItem extends Item{
             }
         } else {
             pTooltipComponents.add(Component.translatable("ds.description.dragon_soul_empty"));
+        }
+    }
+
+    public static String getType(final ItemStack soul) {
+        CustomData data = soul.get(DataComponents.CUSTOM_DATA);
+
+        if (data != null) {
+            // No need to copy the tag for this (since it's not being modified)
+            return data.getUnsafe().getString("type");
+        }
+
+        return "";
+    }
+
+    @Override
+    public void onUseTick(@NotNull final Level level, @NotNull final LivingEntity livingEntity, @NotNull final ItemStack soul, int remainingUseDuration) {
+        super.onUseTick(level, livingEntity, soul, remainingUseDuration);
+        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(livingEntity);
+        String type = getType(soul);
+
+        if (type.isBlank() && handler.isDragon()) {
+            type = handler.getType().getTypeNameLowerCase();
+        }
+
+        SoundEvent sound = switch (type) {
+            case "forest" -> DSSounds.FOREST_BREATH_END.get();
+            case "cave" -> DSSounds.FIRE_BREATH_END.get();
+            case "sea" -> DSSounds.STORM_BREATH_END.get();
+            default -> null;
+        };
+
+        if (sound != null) {
+            livingEntity.playSound(sound, (float) (0.3 + 0.3F * livingEntity.getRandom().nextInt(2)), livingEntity.getRandom().nextFloat() - livingEntity.getRandom().nextFloat() * 0.2F + 1.0F);
         }
     }
 
