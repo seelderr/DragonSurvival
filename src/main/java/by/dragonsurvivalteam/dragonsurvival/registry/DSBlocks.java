@@ -979,10 +979,10 @@ public class DSBlocks{
 	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag();
 	static {
 		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_friendly");
-		goodVaultTag2.putString("key_item", "dragonsurvival:friendly_key");
+		goodVaultTag2.putString("key_item", "dragonsurvival:good_dragon_key");
 		goodVaultTag.put("config", goodVaultTag2);
 		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_angry");
-		goodVaultTag2.putString("key_item", "dragonsurvival:angry_key");
+		goodVaultTag2.putString("key_item", "dragonsurvival:evil_key");
 		evilVaultTag.put("config", evilVaultTag2);
 		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_hunter");
 		goodVaultTag2.putString("key_item", "dragonsurvival:hunter_key");

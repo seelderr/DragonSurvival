@@ -1,6 +1,6 @@
 {
     "type": "minecraft:smithing_transform",
-    "template": { "item": "dragonsurvival:evil_dragon_present" },
+    "template": { "item": "dragonsurvival:evil_dragon_upgrade" },
     "base": { "item":"minecraft:netherite_leggings" },
     "addition": { "item": "minecraft:arrow" },
     "result": {
