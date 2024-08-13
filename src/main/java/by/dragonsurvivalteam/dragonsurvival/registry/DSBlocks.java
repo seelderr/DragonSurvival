@@ -987,15 +987,17 @@ public class DSBlocks{
 		goodVaultTag3.putInt("count", 1);
 		goodVaultTag3.putString("id", "dragonsurvival:good_dragon_key");
 		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_friendly");
+		evilVaultTag3.putInt("count", 1);
 		goodVaultTag2.put("key_item", goodVaultTag3);
 		goodVaultTag.put("config", goodVaultTag2);
-		evilVaultTag3.putInt("count", 1);
 		evilVaultTag3.putString("id", "dragonsurvival:evil_dragon_key");
+		evilVaultTag2.put("key_item", evilVaultTag3);
 		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_angry");
 		evilVaultTag2.putString("key_item", "dragonsurvival:evil_dragon_key");
 		evilVaultTag.put("config", evilVaultTag2);
 		hunterVaultTag3.putInt("count", 1);
 		hunterVaultTag3.putString("id", "dragonsurvival:hunter_dragon_key");
+		hunterVaultTag2.put("key_item", hunterVaultTag3);
 		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_hunter");
 		hunterVaultTag2.putString("key_item", "dragonsurvival:hunter_key");
 		hunterVaultTag.put("config", hunterVaultTag2);
