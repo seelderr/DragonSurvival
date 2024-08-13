@@ -1,15 +1,5 @@
 {
   "itemGroup.dragon.survival.blocks": "Dragon Survival",
-  "ds.enchantment.aerodynamic_mastery": "Aerodynamic Mastery",
-  "ds.enchantment.blood_siphon": "Blood Siphon",
-  "ds.enchantment.combat_recovery": "Combat Recovery",
-  "ds.enchantment.draconic_superiority": "Draconic Superiority",
-  "ds.enchantment.murderers_cunning": "Murderer's Cunning",
-  "ds.enchantment.overwhelming_might": "Overwhelming Might",
-  "ds.enchantment.sacred_scales": "Sacred Scales",
-  "ds.enchantment.unbreakable_spirit": "Unbreakable Spirit",
-  "ds.enchantment.dragonsbane": "Dragonsbane",
-  "ds.enchantment.bolas": "Bolas",
   "entity.dragonsurvival.hunter_hound": "Knight Hound",
   "entity.dragonsurvival.shooter": "Hunter",
   "entity.dragonsurvival.knight": "Armored Knight",
@@ -1258,5 +1248,15 @@
   "ds.description.dragon_soul_empty": "An empty dragon's soul. Use it to store a dragon's soul.",
   "ds.description.dragon_soul_info": "§6■ Type:§r %s\n§6■ Growth Stage:§r %s\n§6■ Size:§r %s\n",
   "ds.description.dragon_soul_has_fly": "§6■ Can Fly§r",
-  "ds.description.dragon_soul_has_spin": "§6■ Can Spin§r"
+  "ds.description.dragon_soul_has_spin": "§6■ Can Spin§r",
+  "ds.enchantment.aerodynamic_mastery": "Aerodynamic Mastery",
+  "ds.enchantment.blood_siphon": "Blood Siphon",
+  "ds.enchantment.combat_recovery": "Combat Recovery",
+  "ds.enchantment.draconic_superiority": "Draconic Superiority",
+  "ds.enchantment.murderers_cunning": "Murderer's Cunning",
+  "ds.enchantment.overwhelming_might": "Overwhelming Might",
+  "ds.enchantment.sacred_scales": "Sacred Scales",
+  "ds.enchantment.unbreakable_spirit": "Unbreakable Spirit",
+  "ds.enchantment.dragonsbane": "Dragonsbane",
+  "ds.enchantment.bolas": "Bolas"
 }
