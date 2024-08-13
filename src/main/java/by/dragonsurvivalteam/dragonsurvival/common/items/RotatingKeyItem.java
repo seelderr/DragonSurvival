@@ -2,11 +2,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.item.RotatingKeyRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDataComponents;
-import java.util.Optional;
-import java.util.function.Consumer;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.SectionPos;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -16,7 +17,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3d;
 import org.joml.Vector3f;
@@ -28,9 +31,12 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import java.util.Optional;
+import java.util.function.Consumer;
+
 public class RotatingKeyItem extends Item implements GeoItem {
     public final ResourceLocation texture, model;
-    private final ResourceLocation target;
+    private final TagKey<Structure> target;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private Vector3d prevRotation = new Vector3d();
     private final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
@@ -38,7 +44,7 @@ public class RotatingKeyItem extends Item implements GeoItem {
 
     public RotatingKeyItem(Properties pProperties, ResourceLocation model, ResourceLocation texture, ResourceLocation target) {
         super(pProperties);
-        this.target = target;
+        this.target = TagKey.create(Registries.STRUCTURE, target);
         this.model = model;
         this.texture = texture;
         SingletonGeoAnimatable.registerSyncedAnimatable(this);
@@ -82,17 +88,18 @@ public class RotatingKeyItem extends Item implements GeoItem {
         super.inventoryTick(pStack, pLevel, pEntity, pSlotId, pIsSelected);
         if (pLevel instanceof ServerLevel serverLevel) {
             if (serverLevel.getGameTime() % 20 == 0) {
-                Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(TagKey.create(Registries.STRUCTURE, this.target));
+                Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
                 if (structure.isPresent()) {
-                    BlockPos nearest = serverLevel.findNearestMapStructure(
-                            TagKey.create(Registries.STRUCTURE, this.target),
-                            BlockPos.containing(pEntity.getPosition(0.0f)),
-                            25,
-                            false
-                    );
+                    Pair<BlockPos, Holder<Structure>> nearest = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(
+                            serverLevel, structure.get(), pEntity.blockPosition(), 25, false);
                     if (nearest != null) {
-                        pStack.set(DSDataComponents.TARGET_POSITION, nearest.getCenter().toVector3f().sub(0, 40, 0));
-                        return;
+                        SectionPos section = SectionPos.of(nearest.getFirst());
+                        StructureStart start = serverLevel.structureManager().getStartForStructure(section, nearest.getSecond().value(),
+                                serverLevel.getChunk(section.x(), section.z(), ChunkStatus.STRUCTURE_STARTS));
+                        if (start != null) {
+                            pStack.set(DSDataComponents.TARGET_POSITION, start.getBoundingBox().getCenter().getCenter().toVector3f());
+                            return;
+                        }
                     }
                 }
                 pStack.set(DSDataComponents.TARGET_POSITION, null);

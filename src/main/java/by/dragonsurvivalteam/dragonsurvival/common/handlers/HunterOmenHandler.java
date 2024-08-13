@@ -3,12 +3,15 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.*;
 import javax.annotation.Nullable;
+
+import net.minecraft.core.Holder;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -19,6 +22,8 @@ import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -175,7 +180,12 @@ public class HunterOmenHandler {
 				duration = attacker.getEffect(DSEffects.HUNTER_OMEN).getDuration();
 			}
 
-			attacker.addEffect(new MobEffectInstance(DSEffects.HUNTER_OMEN, duration + Functions.secondsToTicks(5), 0, false, false));
+			Holder<Enchantment> kindness = EnchantmentUtils.getHolder(DSEnchantments.CURSE_OF_KINDNESS);
+			if (kindness != null && EnchantmentHelper.getEnchantmentLevel(kindness, attacker) > 0) {
+				attackEntityEvent.setAmount(attackEntityEvent.getAmount() * ((float) Math.pow(EnchantmentHelper.getEnchantmentLevel(kindness, attacker), 0.7f)));
+			} else {
+				attacker.addEffect(new MobEffectInstance(DSEffects.HUNTER_OMEN, duration + Functions.secondsToTicks(5), 0, false, false));
+			}
 		}
 	}
 }
