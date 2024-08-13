@@ -1291,5 +1291,19 @@
   "ds.enchantment.sacred_scales": "Sacred Scales",
   "ds.enchantment.curse_of_outlaw": "Outlaw's Mark",
   "ds.enchantment.curse_of_kindness": "Mark of Compassion",
-  "ds.enchantment.bolas": "Bolas"
+  "ds.enchantment.bolas": "Bolas",
+  "ds.description.dragonsbane": "",
+  "ds.description.dragonsboon": "",
+  "ds.description.dragonsbonk": "",
+  "ds.description.shink": "",
+  "ds.description.blood_siphon": "",
+  "ds.description.murderers_cunning": "",
+  "ds.description.overwhelming_might": "",
+  "ds.description.draconic_superiority": "",
+  "ds.description.combat_recovery": "",
+  "ds.description.aerodynamic_mastery": "",
+  "ds.description.sacred_scales": "",
+  "ds.description.curse_of_outlaw": "",
+  "ds.description.curse_of_kindness": "",
+  "ds.description.bolas": ""
 }

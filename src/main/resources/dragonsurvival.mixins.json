@@ -10,6 +10,7 @@
     "EntityMixin",
     "FireworkRocketItemMixin",
     "IItemExtensionMixin",
+    "ItemMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
     "MixinAttributes",
