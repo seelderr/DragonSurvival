@@ -229,7 +229,7 @@ public class DSItems {
 			}
 	);
 	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON),
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
 			res("geo/evil_dragon_key.geo.json"),
 			res("textures/item/evil_dragon_key.png"),
 			res("treasure_angry"))
@@ -242,7 +242,7 @@ public class DSItems {
 			}
 	);
 	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON),
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
 			res("geo/hunter_key.geo.json"),
 			res("textures/item/hunter_key.png"),
 			res("treasure_hunter"))

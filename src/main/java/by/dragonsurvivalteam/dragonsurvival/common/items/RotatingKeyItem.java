@@ -41,6 +41,7 @@ public class RotatingKeyItem extends Item implements GeoItem {
     private Vector3d prevRotation = new Vector3d();
     private final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
     private final RawAnimation NO_TARGET = RawAnimation.begin().thenPlay("no_target");
+    private final Vector3f fake_target = new Vector3f();
 
     public RotatingKeyItem(Properties pProperties, ResourceLocation model, ResourceLocation texture, ResourceLocation target) {
         super(pProperties);
@@ -102,12 +103,12 @@ public class RotatingKeyItem extends Item implements GeoItem {
                         }
                     }
                 }
-                pStack.set(DSDataComponents.TARGET_POSITION, null);
+                pStack.set(DSDataComponents.TARGET_POSITION, fake_target);
                 triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
             }
         } else {
             Vector3f src = pStack.get(DSDataComponents.TARGET_POSITION);
-            if (src == null || src.length() < 0.1) {
+            if (src == fake_target || src == null || src.length() < 0.1) {
                 //MathParser.setVariable("query.x_rotation", () -> 0);
                 //MathParser.setVariable("query.y_rotation", () -> 0);
                 //MathParser.setVariable("query.z_rotation", () -> 0);
