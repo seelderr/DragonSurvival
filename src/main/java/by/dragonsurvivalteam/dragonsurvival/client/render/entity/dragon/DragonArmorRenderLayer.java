@@ -5,6 +5,8 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -254,8 +256,14 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 				texture += "turtle_";
 			}
 
-			if(isVanillaArmor) {
-				texture += "dragon_";
+			if(isVanillaArmor || item instanceof EvilDragonArmorItem || item instanceof GoodDragonArmorItem) {
+				if(isVanillaArmor) {
+					texture += "dragon_";
+				} else if(item instanceof EvilDragonArmorItem) {
+					texture += "dragon_dark_";
+				} else if(item instanceof GoodDragonArmorItem) {
+					texture += "dragon_light_";
+				}
 				switch(equipmentSlot){
 					case HEAD -> texture += "helmet";
 					case CHEST -> texture += "chestplate";
