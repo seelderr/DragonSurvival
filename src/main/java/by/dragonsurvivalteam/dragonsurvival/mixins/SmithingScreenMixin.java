@@ -54,7 +54,7 @@ public class SmithingScreenMixin {
     }
 
     @ModifyArg(method="renderBg", index = 7, at=@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
-    private LivingEntity d(LivingEntity pEntity){
+    private LivingEntity dragonSurvival$renderBg(LivingEntity pEntity){
         if (DragonStateProvider.isDragon(((SmithingScreen)(Object)this).getMinecraft().player)) {
             return dragonSurvival$dragon;
         }
