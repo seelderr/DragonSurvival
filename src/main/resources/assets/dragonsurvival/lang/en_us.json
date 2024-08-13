@@ -1253,6 +1253,8 @@
   "item.dragonsurvival.evil_dragon_leggings": "Autarch Leggings",
   "item.dragonsurvival.evil_dragon_boots": "Despot's Claws",
   "item.dragonsurvival.dragonsbane": "Dragonsbane",
+  "item.dragonsurvival.hunter_partisan": "Partisan",
+  "item.dragonsurvival.dragon_hunter_partisan": "Anti-Dragon Partisan",
   "ds.description.dragon_soul": "A dragon's soul. Use it to transform into the dragon whose soul is stored inside.\n",
   "ds.description.dragon_soul_empty": "An empty dragon's soul. Use it to store a dragon's soul.",
   "ds.description.dragon_soul_info": "§6■ Type:§r %s\n§6■ Growth Stage:§r %s\n§6■ Size:§r %s\n",
