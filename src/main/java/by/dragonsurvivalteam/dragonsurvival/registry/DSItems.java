@@ -39,6 +39,7 @@ import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
 @SuppressWarnings("unused")
@@ -127,7 +128,14 @@ public class DSItems {
 	public static final Holder<Item> WING_GRANT_ITEM = DS_ITEMS.register("wing_grant", () -> new WingGrantItem(defaultProperties));
 	public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", () -> new SpinGrantItem(defaultProperties));
 
-	public static final Holder<Item> GOOD_DRAGON_UPGRADE = DS_ITEMS.register("good_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)));
+	public static final Holder<Item> GOOD_DRAGON_UPGRADE = DS_ITEMS.register("good_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)){
+			@Override
+			public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+				super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+				pTooltipComponents.add(Component.translatable("ds.description.good_dragon_upgrade"));
+			}
+		}
+	);
 	public static final Supplier<ArmorItem> GOOD_DRAGON_HELMET = DS_ITEMS.register("good_dragon_helmet", () -> new GoodDragonArmorItem(
 			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
@@ -141,7 +149,13 @@ public class DSItems {
 			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 
-	public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)));
+	public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)){
+		@Override
+		public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+			super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+			pTooltipComponents.add(Component.translatable("ds.description.evil_dragon_upgrade"));
+		}
+	});
 	public static final Supplier<ArmorItem> EVIL_DRAGON_HELMET = DS_ITEMS.register("evil_dragon_helmet", () -> new EvilDragonArmorItem(
 			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
@@ -167,6 +181,13 @@ public class DSItems {
 							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.build()
 			))
+			{
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.hunter_partisan"));
+				}
+			}
 	);
 
 	public static final Holder<Item> DRAGON_HUNTER_PARTISAN = DS_ITEMS.register("dragon_hunter_partisan", () -> new DragonHunterWeapon(
@@ -178,6 +199,13 @@ public class DSItems {
 						.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 						.build()
 			))
+			{
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.hunter_partisan"));
+				}
+			}
 	);
 
 	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new RotatingKeyItem(
@@ -185,18 +213,39 @@ public class DSItems {
 			res("geo/good_dragon_key.geo.json"),
 			res("textures/item/good_dragon_key.png"),
 			res("treasure_friendly"))
+			{
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.good_dragon_key"));
+				}
+			}
 	);
 	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new RotatingKeyItem(
 			new Item.Properties().rarity(Rarity.UNCOMMON),
 			res("geo/evil_dragon_key.geo.json"),
 			res("textures/item/evil_dragon_key.png"),
 			res("treasure_angry"))
+			{
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.evil_dragon_key"));
+				}
+			}
 	);
 	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new RotatingKeyItem(
 			new Item.Properties().rarity(Rarity.UNCOMMON),
 			res("geo/hunter_key.geo.json"),
 			res("textures/item/hunter_key.png"),
 			res("treasure_hunter"))
+			{
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.hunter_key"));
+				}
+			}
 	);
 
 	// Items that shouldn't show up in the creative tab
