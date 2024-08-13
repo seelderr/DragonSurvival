@@ -25,8 +25,8 @@ public class DSEnchantments {
     public static ResourceKey<Enchantment> DRACONIC_SUPERIORITY = register("draconic_superiority");
 
     public static ResourceKey<Enchantment> COMBAT_RECOVERY = register("combat_recovery");
-    public static ResourceKey<Enchantment> UNBREAKABLE_SPIRIT = register("unbreakable_spirit");
     public static ResourceKey<Enchantment> AERODYNAMIC_MASTERY = register("aerodynamic_mastery");
+    public static ResourceKey<Enchantment> UNBREAKABLE_SPIRIT = register("unbreakable_spirit");
     public static ResourceKey<Enchantment> SACRED_SCALES = register("sacred_scales");
 
     public static ResourceKey<Enchantment> CURSE_OF_OUTLAW = register("curse_of_outlaw");
