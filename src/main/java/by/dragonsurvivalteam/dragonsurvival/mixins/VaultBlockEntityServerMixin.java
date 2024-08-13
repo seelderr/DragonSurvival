@@ -14,7 +14,7 @@ public class VaultBlockEntityServerMixin {
     private static boolean dragonSurvival$isValidToInsert(boolean original, VaultConfig pConfig, ItemStack pStack){
         if (pStack.getComponents().get(DSDataComponents.TARGET_POSITION) != null) {
             // Skip the components check if it is our vaults and keys
-            return pStack.getCount() >= pConfig.keyItem().getCount();
+            return ItemStack.isSameItem(pStack, pConfig.keyItem()) && pStack.getCount() >= pConfig.keyItem().getCount();
         }
         return original;
     }

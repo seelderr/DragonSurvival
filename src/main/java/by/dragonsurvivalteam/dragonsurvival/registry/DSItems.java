@@ -229,7 +229,7 @@ public class DSItems {
 
 	public static final String EVIL_DRAGON_KEY_ID = "evil_dragon_key";
 	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(EVIL_DRAGON_KEY_ID, () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON),
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
 			res("geo/" + EVIL_DRAGON_KEY_ID + ".geo.json"),
 			res("textures/item/" + EVIL_DRAGON_KEY_ID + ".png"),
 			res("treasure_angry"))
@@ -244,7 +244,7 @@ public class DSItems {
 
 	public static final String HUNTER_KEY_ID = "hunter_key";
 	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register(HUNTER_KEY_ID, () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON),
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
 			res("geo/" + HUNTER_KEY_ID + ".geo.json"),
 			res("textures/item/" + HUNTER_KEY_ID + ".png"),
 			res("treasure_hunter"))
