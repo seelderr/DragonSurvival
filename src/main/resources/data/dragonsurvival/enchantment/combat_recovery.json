@@ -5,7 +5,7 @@
   "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
   "supported_items": "#minecraft:enchantable/head_armor",
   "weight": 5,
-  "max_level": 4,
+  "max_level": 1,
   "min_cost": {
     "base": 3,
     "per_level_above_first": 6
