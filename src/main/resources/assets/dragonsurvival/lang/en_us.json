@@ -1267,8 +1267,8 @@
   "item.dragonsurvival.evil_dragon_upgrade": "Stygian Upgrade",
   "item.dragonsurvival.dragon_hunter_partisan": "Dragonslayer's Partisan",
   "item.dragonsurvival.hunter_partisan": "Partisan",
-  "block.dragonsurvival.dragon_vault_friendly": "Friendly Dragon Vault",
-  "block.dragonsurvival.dragon_vault_angry": "Angry Dragon Vault",
+  "block.dragonsurvival.dragon_vault_friendly": "Dark Dragon Vault",
+  "block.dragonsurvival.dragon_vault_angry": "Light Dragon Vault",
   "block.dragonsurvival.dragon_vault_hunter": "Hunter Dragon Vault",
   "block.dragonsurvival.dragon_rider_workbench": "Dragon Rider Workbench",
   "entity.minecraft.villager.dragonsurvival.dragon_rider": "Dragon Rider",
@@ -1289,6 +1289,7 @@
   "ds.enchantment.unbreakable_spirit": "Unbreakable Spirit",
   "ds.enchantment.aerodynamic_mastery": "Aerodynamic Mastery",
   "ds.enchantment.sacred_scales": "Sacred Scales",
-  "ds.enchantment.curse_of_outlaw": "Curse of Outlaws",
-  "ds.enchantment.curse_of_kindness": "Curse of Kindness"
+  "ds.enchantment.curse_of_outlaw": "Outlaw's Mark",
+  "ds.enchantment.curse_of_kindness": "Mark of Compassion",
+  "ds.enchantment.bolas": "Bolas"
 }
