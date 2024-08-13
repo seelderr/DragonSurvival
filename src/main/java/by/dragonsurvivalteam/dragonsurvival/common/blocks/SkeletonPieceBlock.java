@@ -14,10 +14,13 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
 
 public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
@@ -26,6 +29,7 @@ public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock 
     public static final MapCodec<SkeletonPieceBlock> CODEC = RecordCodecBuilder.mapCodec(
             instance -> instance.group(SkeletonPieceBlock.Type.CODEC.fieldOf("type").forGetter(SkeletonPieceBlock::type), propertiesCodec())
                     .apply(instance, SkeletonPieceBlock::new));
+
     public SkeletonPieceBlock(SkeletonPieceBlock.Type type, Properties p_56319_) {
         super(p_56319_);
         this.type = type;
@@ -34,11 +38,6 @@ public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock 
 
     public SkeletonPieceBlock.Type type() {
         return this.type;
-    }
-
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -69,7 +68,23 @@ public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock 
     @Override
     protected void createBlockStateDefinition(StateDefinition.@NotNull Builder<Block, BlockState> pBuilder) {
         super.createBlockStateDefinition(pBuilder);
-        pBuilder.add(FACING, WATERLOGGED);
+        pBuilder.add(FACING);
+        pBuilder.add(WATERLOGGED);
+    }
+
+    @Override
+    public @Nullable BlockState getStateForPlacement(@NotNull final BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
+
+        if (state == null) {
+            return null;
+        }
+
+        if (state.hasProperty(FACING)) {
+            state = state.setValue(FACING, context.getHorizontalDirection());
+        }
+
+        return state.setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
     }
 
     @Override
