@@ -12,6 +12,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -27,8 +28,8 @@ import net.minecraft.world.phys.EntityHitResult;
 public class DragonSpikeEntity extends AbstractArrow{
 	public static final EntityDataAccessor<Integer> ARROW_LEVEL = SynchedEntityData.defineId(DragonSpikeEntity.class, EntityDataSerializers.INT);
 
-	public DragonSpikeEntity(Level p_i50172_2_){
-		super(DSEntities.DRAGON_SPIKE.get(), p_i50172_2_);
+	public DragonSpikeEntity(Level level){
+		super(DSEntities.DRAGON_SPIKE.get(), level);
 	}
 
 	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level worldIn){
@@ -43,8 +44,8 @@ public class DragonSpikeEntity extends AbstractArrow{
 
 
 	@Override
-	protected void onHitEntity(EntityHitResult p_213868_1_){
-		Entity entity = p_213868_1_.getEntity();
+	protected void onHitEntity(EntityHitResult entityHitResult){
+		Entity entity = entityHitResult.getEntity();
 		Entity entity1 = getOwner();
 		DamageSource damagesource;
 		if(entity1 == null){
@@ -57,6 +58,7 @@ public class DragonSpikeEntity extends AbstractArrow{
 		}
 		float damage = (float)getBaseDamage();
 
+		boolean targetIsInImmunityFrames = (entity.invulnerableTime > 10.0F && !damagesource.is(DamageTypeTags.BYPASSES_COOLDOWN));
 		if(TargetingFunctions.attackTargets(getOwner(), ent -> ent.hurt(damagesource, damage), entity)){
 			if(entity instanceof LivingEntity livingentity){
 				if(!level().isClientSide()){
@@ -77,12 +79,12 @@ public class DragonSpikeEntity extends AbstractArrow{
 			if(getPierceLevel() <= 0){
 				remove(RemovalReason.DISCARDED);
 			}
-		}else{
+		} else if(getPierceLevel() == 0 && !targetIsInImmunityFrames) {
 			setDeltaMovement(getDeltaMovement().scale(-0.1D));
 			setYRot(getYRot() + 180.0F);
 			yRotO += 180.0F;
 
-			if(!level().isClientSide() && getDeltaMovement().lengthSqr() < 1.0E-7D){
+			if(getDeltaMovement().lengthSqr() < 1.0E-7D){
 				remove(RemovalReason.DISCARDED);
 			}
 		}
@@ -107,8 +109,8 @@ public class DragonSpikeEntity extends AbstractArrow{
 	}
 
 	@Override
-	protected void onHitBlock(BlockHitResult p_230299_1_){
-		super.onHitBlock(p_230299_1_);
+	protected void onHitBlock(BlockHitResult blockHitResult){
+		super.onHitBlock(blockHitResult);
 	}
 
 	@Override

@@ -6,13 +6,17 @@ import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.projectile.Fireball;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.*;
@@ -25,6 +29,7 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	public static final EntityDataAccessor<Float> MOVE_DISTANCE = SynchedEntityData.defineId(DragonBallEntity.class, EntityDataSerializers.FLOAT);
 	public static final float DRAGON_BALL_DISTANCE = 32.f;
 	public static final int MAX_LIFESPAN = Functions.secondsToTicks(5);
+	public boolean hasHit = false;
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
 	public DragonBallEntity(EntityType<? extends Fireball> entityType, double x, double y, double z, Vec3 velocity, Level level){
@@ -76,6 +81,22 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 			// vanilla will result in HitResult.Miss from 1.20.6 onwards, causing nothing to happen
 			this.onHitBlock(new BlockHitResult(this.position(), this.getDirection(), this.blockPosition(), false));
 		}
+	}
+
+	@Override
+	protected void onHitEntity(@NotNull EntityHitResult hitResult){
+		super.onHitEntity(hitResult);
+		onHitCommon();
+	}
+
+	@Override
+	protected void onHitBlock(@NotNull BlockHitResult hitResult){
+		super.onHitBlock(hitResult);
+		onHitCommon();
+	}
+
+	public void onHitCommon(){
+		hasHit = true;
 	}
 
 	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){

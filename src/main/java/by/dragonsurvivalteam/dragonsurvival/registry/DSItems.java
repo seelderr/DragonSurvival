@@ -35,6 +35,7 @@ import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.Item.Properties;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
@@ -66,6 +67,12 @@ public class DSItems {
 	);
 
 	private static final Properties defaultProperties = new Item.Properties();
+	private static final Properties defaultNonFoodProperties = new Item.Properties(){
+		@Override
+		public Item.Properties food(FoodProperties pFood) {
+			return null;
+		}
+	};
 
 	public static final Holder<Item> STAR_BONE = DS_ITEMS.register("star_bone", () -> new StarBoneItem(defaultProperties));
 	public static final Holder<Item> STAR_HEART = DS_ITEMS.register("star_heart", () -> new StarHeartItem(defaultProperties));
@@ -247,6 +254,8 @@ public class DSItems {
 				}
 			}
 	);
+
+	public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(defaultNonFoodProperties.rarity(Rarity.EPIC)));
 
 	// Items that shouldn't show up in the creative tab
 	public static final Holder<Item> BOLAS = DS_ITEMS.register("bolas", () -> new BolasArrowItem(new Item.Properties()));

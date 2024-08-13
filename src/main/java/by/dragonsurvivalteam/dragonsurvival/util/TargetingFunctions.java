@@ -27,6 +27,7 @@ public class TargetingFunctions
 		if(target == null || attacker == null){
 			return false;
 		}
+
 		if(target == attacker){
 			return false;
 		}
@@ -49,11 +50,16 @@ public class TargetingFunctions
 			}
 		}
 
-		if(target instanceof TamableAnimal && ((TamableAnimal)target).getOwner() == attacker){
+		Entity owner = null;
+		if(target instanceof TamableAnimal){
+			owner = ((TamableAnimal)target).getOwner();
+		}
+
+		if(owner == attacker){
 			return false;
 		}
 
-		return !(attacker instanceof TamableAnimal) || isValidTarget(((TamableAnimal)attacker).getOwner(), target);
+		return owner == null || isValidTarget(attacker, owner);
 	}
 	
 	public static AABB boxForRange(Vec3 v, double range) {
