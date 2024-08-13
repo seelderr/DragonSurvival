@@ -2,7 +2,7 @@
     "type": "minecraft:smithing_transform",
     "template": { "item": "dragonsurvival:good_dragon_upgrade" },
     "base": { "item":"minecraft:netherite_helmet" },
-    "addition": { "item": "minecraft:gold_ingot" },
+    "addition": { "item": "dragonsurvival:elder_dragon_heart" },
     "result": {
         "id": "dragonsurvival:good_dragon_helmet"
     }
