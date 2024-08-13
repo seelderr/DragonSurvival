@@ -980,16 +980,22 @@ public class DSBlocks{
 			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
 	);
 
-	private static final CompoundTag goodVaultTag = new CompoundTag(), goodVaultTag2 = new CompoundTag();
-	private static final CompoundTag evilVaultTag = new CompoundTag(), evilVaultTag2 = new CompoundTag();
-	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag();
+	private static final CompoundTag goodVaultTag = new CompoundTag(), goodVaultTag2 = new CompoundTag(), goodVaultTag3 = new CompoundTag();
+	private static final CompoundTag evilVaultTag = new CompoundTag(), evilVaultTag2 = new CompoundTag(), evilVaultTag3 = new CompoundTag();
+	private static final CompoundTag hunterVaultTag = new CompoundTag(), hunterVaultTag2 = new CompoundTag(), hunterVaultTag3 = new CompoundTag();
 	static {
+		goodVaultTag3.putInt("count", 1);
+		goodVaultTag3.putString("id", "dragonsurvival:good_dragon_key");
 		goodVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_friendly");
-		goodVaultTag2.putString("key_item", "dragonsurvival:good_dragon_key");
+		goodVaultTag2.put("key_item", goodVaultTag3);
 		goodVaultTag.put("config", goodVaultTag2);
+		evilVaultTag3.putInt("count", 1);
+		evilVaultTag3.putString("id", "dragonsurvival:evil_dragon_key");
 		evilVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_angry");
 		evilVaultTag2.putString("key_item", "dragonsurvival:evil_dragon_key");
 		evilVaultTag.put("config", evilVaultTag2);
+		hunterVaultTag3.putInt("count", 1);
+		hunterVaultTag3.putString("id", "dragonsurvival:hunter_dragon_key");
 		hunterVaultTag2.putString("loot_table", "dragonsurvival:generic/dragon_vault_hunter");
 		hunterVaultTag2.putString("key_item", "dragonsurvival:hunter_key");
 		hunterVaultTag.put("config", hunterVaultTag2);
