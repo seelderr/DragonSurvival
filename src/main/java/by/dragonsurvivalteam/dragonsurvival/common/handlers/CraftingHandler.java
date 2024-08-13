@@ -50,7 +50,12 @@ public class CraftingHandler {
     @SubscribeEvent
     public static void getAllEnchantmentLevels(GetEnchantmentLevelEvent event) {
         if (event.getStack().getItem() instanceof PermanentEnchantmentItem item) {
-            item.getDefaultEnchantments().entrySet().forEach(entry -> event.getEnchantments().upgrade(entry.getKey(), entry.getIntValue()));
+            item.getDefaultEnchantments().keySet().forEach(
+                    enchantmentHolder -> {
+                        int itemLevel = item.getDefaultEnchantments().getLevel(enchantmentHolder);
+                        event.getEnchantments().upgrade(enchantmentHolder, itemLevel + (event.getEnchantments().getLevel(enchantmentHolder) == itemLevel ? 1 : 0));
+                    }
+            );
         }
     }
 }
