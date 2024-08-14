@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler.*;
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.*;
-
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -10,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
@@ -40,7 +38,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
@@ -235,7 +232,7 @@ public class MagicHandler{
 	}
 
 	public static void applyDebuffs(final MobEffectEvent.Added event) {
-		if (event.getEffectInstance() == null || Objects.equals(event.getEffectSource(), event.getEntity())) return;
+		if (event.getEffectInstance() == null || DragonConfigHandler.EFFECT_IGNORES_ENCHANTMENT.contains(event.getEffectInstance().getEffect().value()) || Objects.equals(event.getEffectSource(), event.getEntity())) return;
 
 		MobEffectInstance effect = event.getEffectInstance();
 		int amp = effect.getAmplifier();
