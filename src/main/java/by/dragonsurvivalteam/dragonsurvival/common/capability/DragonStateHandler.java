@@ -569,12 +569,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		for (int i = 0; i < caps.length; i++) {
 			if(isSavingForSoul) {
-				if(i == 0) {
-					continue;
-				}
-			}
-
-			if(isSavingForSoul) {
 				if(i == 2) {
 					continue;
 				}
@@ -668,12 +662,6 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		for (int i = 0; i < caps.length; i++) {
-			if(isLoadingForSoul) {
-				if(i == 0) {
-					continue;
-				}
-			}
-
 			if(isLoadingForSoul) {
 				if(i == 2) {
 					continue;
