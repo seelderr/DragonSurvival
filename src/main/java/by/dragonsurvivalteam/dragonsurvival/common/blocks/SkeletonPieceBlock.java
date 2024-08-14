@@ -14,6 +14,7 @@ import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.*;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -70,6 +71,11 @@ public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock 
         super.createBlockStateDefinition(pBuilder);
         pBuilder.add(FACING);
         pBuilder.add(WATERLOGGED);
+    }
+
+    @Override
+    public FluidState getFluidState(BlockState state){
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
     }
 
     @Override
