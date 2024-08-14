@@ -1,0 +1,22 @@
+{
+  "structures": [
+    {
+      "structure": "dragonsurvival:dragon_skeleton_cave",
+      "weight": 1
+    },
+	{
+      "structure": "dragonsurvival:dragon_skeleton_forest",
+      "weight": 1
+    },
+	{
+      "structure": "dragonsurvival:dragon_skeleton_sea",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 814525156,
+    "spacing": 6,
+    "separation": 5
+  }
+}

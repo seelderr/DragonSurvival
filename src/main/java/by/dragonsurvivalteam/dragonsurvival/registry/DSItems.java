@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -16,19 +13,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.List;
-import java.util.function.Supplier;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -42,6 +33,12 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+
+import java.util.List;
+import java.util.function.Supplier;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 @SuppressWarnings("unused")
 public class DSItems {
@@ -215,42 +212,47 @@ public class DSItems {
 			}
 	);
 
-	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register("good_dragon_key", () -> new RotatingKeyItem(
+	public static final String GOOD_DRAGON_KEY_ID = "good_dragon_key";
+	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register(GOOD_DRAGON_KEY_ID, () -> new RotatingKeyItem(
 			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-			res("geo/good_dragon_key.geo.json"),
-			res("textures/item/good_dragon_key.png"),
+			res("geo/" + GOOD_DRAGON_KEY_ID + ".geo.json"),
+			res("textures/item/" + GOOD_DRAGON_KEY_ID + ".png"),
 			res("treasure_friendly"))
 			{
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-					pTooltipComponents.add(Component.translatable("ds.description.good_dragon_key"));
+					pTooltipComponents.add(Component.translatable("ds.description." + GOOD_DRAGON_KEY_ID));
 				}
 			}
 	);
-	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register("evil_dragon_key", () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON),
-			res("geo/evil_dragon_key.geo.json"),
-			res("textures/item/evil_dragon_key.png"),
+
+	public static final String EVIL_DRAGON_KEY_ID = "evil_dragon_key";
+	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(EVIL_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
+			res("geo/" + EVIL_DRAGON_KEY_ID + ".geo.json"),
+			res("textures/item/" + EVIL_DRAGON_KEY_ID + ".png"),
 			res("treasure_angry"))
 			{
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-					pTooltipComponents.add(Component.translatable("ds.description.evil_dragon_key"));
+					pTooltipComponents.add(Component.translatable("ds.description." + EVIL_DRAGON_KEY_ID));
 				}
 			}
 	);
-	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register("hunter_key", () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON),
-			res("geo/hunter_key.geo.json"),
-			res("textures/item/hunter_key.png"),
+
+	public static final String HUNTER_KEY_ID = "hunter_key";
+	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register(HUNTER_KEY_ID, () -> new RotatingKeyItem(
+			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
+			res("geo/" + HUNTER_KEY_ID + ".geo.json"),
+			res("textures/item/" + HUNTER_KEY_ID + ".png"),
 			res("treasure_hunter"))
 			{
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-					pTooltipComponents.add(Component.translatable("ds.description.hunter_key"));
+					pTooltipComponents.add(Component.translatable("ds.description." + HUNTER_KEY_ID));
 				}
 			}
 	);
