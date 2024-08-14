@@ -12,6 +12,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes.DS_STRUCTURE_PLACEMENT_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
@@ -115,6 +116,7 @@ public class DragonSurvivalMod{
 		DS_MAP_DECORATIONS.register(modEventBus);
 		DS_POI_TYPES.register(modEventBus);
 		DS_VILLAGER_PROFESSIONS.register(modEventBus);
+		DS_STRUCTURE_PLACEMENT_TYPES.register(modEventBus);
 		GLM.register(modEventBus);
 	}
 
