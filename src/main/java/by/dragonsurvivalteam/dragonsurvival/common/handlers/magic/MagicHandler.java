@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler.*;
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.*;
-
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -18,14 +15,16 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.*;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSEffectTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import java.util.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -40,7 +39,6 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.block.state.BlockState;
@@ -48,10 +46,16 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
-import net.neoforged.neoforge.event.entity.living.*;
+import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
+import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 @EventBusSubscriber
@@ -238,24 +242,26 @@ public class MagicHandler{
 		if (event.getEffectInstance() == null || Objects.equals(event.getEffectSource(), event.getEntity())) return;
 
 		MobEffectInstance effect = event.getEffectInstance();
-		int amp = effect.getAmplifier();
+		int amplifier = effect.getAmplifier();
 
-		if (event.getEffectInstance().getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
-			if (event.getEffectSource() instanceof LivingEntity source) {
-				Holder<Enchantment> holder = EnchantmentUtils.getHolder(DSEnchantments.OVERWHELMING_MIGHT);
-				if (holder != null)
-					amp += EnchantmentHelper.getEnchantmentLevel(holder, source);
+		if (effect.getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
+			if (event.getEffectSource() instanceof LivingEntity source && !effect.getEffect().is(DSEffectTags.OVERWHELMING_MIGHT_BLACKLIST)) {
+				amplifier += EnchantmentUtils.getLevel(source, DSEnchantments.OVERWHELMING_MIGHT);
 			}
 
-			Holder<Enchantment> holder = EnchantmentUtils.getHolder(DSEnchantments.UNBREAKABLE_SPIRIT);
-			if (holder != null)
-				amp -= EnchantmentHelper.getEnchantmentLevel(holder, event.getEntity());
+			if (!effect.getEffect().is(DSEffectTags.UNBREAKABLE_SPIRIT_BLACKLIST)) {
+				amplifier -= EnchantmentUtils.getLevel(event.getEntity(), DSEnchantments.UNBREAKABLE_SPIRIT);
+			}
 
-			amp = Math.min(Math.max(amp, 0), 255);
+			amplifier = Mth.clamp(amplifier, 0, 255);
 
-			if (amp != effect.getAmplifier()) {
-				MobEffectInstance newInstance = new MobEffectInstance(effect.getEffect(), effect.getDuration(), amp);
-				event.getEntity().removeEffect(effect.getEffect());
+			if (amplifier != effect.getAmplifier()) {
+				MobEffectInstance newInstance = new MobEffectInstance(effect.getEffect(), effect.getDuration(), amplifier);
+
+				if (event.getEntity().hasEffect(effect.getEffect())) {
+					event.getEntity().removeEffect(effect.getEffect());
+				}
+
 				event.getEntity().addEffect(newInstance);
 			}
 		}

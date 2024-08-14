@@ -123,7 +123,7 @@ public abstract class PlayerMixin extends LivingEntity {
 						float speedModifier = isSprinting() ? 0.9f : getWaterSlowDown();
 						float swimSpeed = 0.05f;
 						// FIXME :: Use Attributes#WATER_MOVEMENT_EFFICIENCY instead
-						float swimSpeedModifier = Math.min(3, EnchantmentUtils.getLevel(level(), Enchantments.DEPTH_STRIDER, this));
+						float swimSpeedModifier = Math.min(3, EnchantmentUtils.getLevel(this, Enchantments.DEPTH_STRIDER));
 
 						if (!onGround()) {
 							swimSpeedModifier *= 0.5f;
