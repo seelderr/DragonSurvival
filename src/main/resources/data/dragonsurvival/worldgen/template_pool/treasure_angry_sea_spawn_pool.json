@@ -6,7 +6,7 @@
       "weight": 1,
       "element": {
         "location": "dragonsurvival:treasure_angry/treasure_angry_center_sea",
-        "processors": "dragonsurvival:obsidian_replace_sea",
+        "processors": "dragonsurvival:obsidian_replace_sea_nether",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
@@ -15,7 +15,7 @@
       "weight": 1,
       "element": {
         "location": "dragonsurvival:treasure_angry/treasure_angry_western_sea",
-        "processors": "dragonsurvival:obsidian_replace_sea",
+        "processors": "dragonsurvival:obsidian_replace_sea_nether",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
@@ -24,7 +24,7 @@
       "weight": 1,
       "element": {
         "location": "dragonsurvival:treasure_angry/treasure_angry_eastern_sea",
-        "processors": "dragonsurvival:obsidian_replace_sea",
+        "processors": "dragonsurvival:obsidian_replace_sea_nether",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
@@ -33,7 +33,7 @@
       "weight": 1,
       "element": {
         "location": "dragonsurvival:treasure_angry/treasure_angry_northern_sea",
-        "processors": "dragonsurvival:obsidian_replace_sea",
+        "processors": "dragonsurvival:obsidian_replace_sea_nether",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
@@ -42,7 +42,7 @@
       "weight": 1,
       "element": {
         "location": "dragonsurvival:treasure_angry/treasure_angry_southern_sea",
-        "processors": "dragonsurvival:obsidian_replace_sea",
+        "processors": "dragonsurvival:obsidian_replace_sea_nether",
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
