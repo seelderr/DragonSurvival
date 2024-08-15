@@ -62,7 +62,7 @@ public class DragonHeartLootModifier extends LootModifier {
         boolean canDropNormalDragonHeart = canDropHeart(health, 20, 50, ServerConfig.dragonHeartEntityList, entity, ServerConfig.dragonHeartWhiteList, ServerConfig.dragonHeartUseList);
         boolean canDropElderDragonHeart = canDropHeart(health, 50, Float.MAX_VALUE, ServerConfig.elderDragonHeartEntityList, entity, ServerConfig.elderDragonHeartWhiteList, ServerConfig.elderDragonHeartUseList);
 
-        int lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
+        int lootingLevel = EnchantmentUtils.getLevel(player, Enchantments.LOOTING);
 
         if(canDropWeakDragonHeart){
             if(context.getRandom().nextInt(100) <= ServerConfig.weakDragonHeartChance * 100 + lootingLevel * (ServerConfig.weakDragonHeartChance * 100 / 4)){

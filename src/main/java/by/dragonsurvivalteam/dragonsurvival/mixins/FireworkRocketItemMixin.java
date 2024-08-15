@@ -16,7 +16,7 @@ public class FireworkRocketItemMixin {
     @Redirect(method="use", at= @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;consume(ILnet/minecraft/world/entity/LivingEntity;)V"))
     private void x(ItemStack instance, int pAmount, LivingEntity pEntity, @Local FireworkRocketEntity fireworkRocket) {
         if (fireworkRocket.isAttachedToEntity()) {
-            int lvl = EnchantmentUtils.getLevel(pEntity.level(), DSEnchantments.AERODYNAMIC_MASTERY, pEntity);
+            int lvl = EnchantmentUtils.getLevel(pEntity, DSEnchantments.AERODYNAMIC_MASTERY);
             if (lvl == 0 || pEntity.getRandom().nextInt(0, lvl) == 0)
                 instance.consume(pAmount, pEntity);
         }

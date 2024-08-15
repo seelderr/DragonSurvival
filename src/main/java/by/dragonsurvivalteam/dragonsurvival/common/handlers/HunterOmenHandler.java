@@ -79,7 +79,7 @@ public class HunterOmenHandler {
 		if(!nonEmeraldTrades.isEmpty()) {
 			int lootingLevel = 0;
 			if(player != null) {
-				lootingLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.LOOTING, player);
+				lootingLevel = EnchantmentUtils.getLevel(player, Enchantments.LOOTING);
 			}
 			int numRolls = Math.min(lootingLevel + 1, nonEmeraldTrades.size());
 			for(int i = 0; i < numRolls; i++) {

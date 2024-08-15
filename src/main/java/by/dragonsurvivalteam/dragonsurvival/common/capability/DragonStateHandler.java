@@ -568,14 +568,8 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		for (int i = 0; i < caps.length; i++) {
-			if(isSavingForSoul) {
-				if(i == 2) {
-					continue;
-				}
-			}
-
-			if(isSavingForSoul) {
-				if(i == 3) {
+			if (isSavingForSoul) {
+				if (/* Emote Data */ i == 2 || /* Claw Tool Data */ i == 3) {
 					continue;
 				}
 			}
