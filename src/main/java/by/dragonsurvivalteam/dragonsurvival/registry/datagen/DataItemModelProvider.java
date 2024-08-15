@@ -28,6 +28,10 @@ public class DataItemModelProvider extends ItemModelProvider {
 	);
 
 	private static final List<String> itemsThatAreManuallyAuthored = List.of(
+			"bolas",
+			"hunter_partisan",
+			"dragon_hunter_partisan",
+			"hunter_key",
 			"good_dragon_key",
 			"evil_dragon_key",
 			"hunter_dragon_key",

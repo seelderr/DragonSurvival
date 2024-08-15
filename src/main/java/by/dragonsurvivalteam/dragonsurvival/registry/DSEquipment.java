@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 import java.util.EnumMap;
 import java.util.List;
 import net.minecraft.Util;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.ArmorItem;
@@ -36,7 +36,7 @@ public class DSEquipment {
                     () -> Ingredient.of(Tags.Items.BARRELS),
                     List.of(
                             new ArmorMaterial.Layer(
-                                    ResourceLocation.fromNamespaceAndPath(MODID, "good_dragon")
+                                    res("dragon_light")
                             )
                     ),
                     3.0F,
@@ -57,7 +57,7 @@ public class DSEquipment {
                     () -> Ingredient.of(Tags.Items.BARRELS),
                     List.of(
                             new ArmorMaterial.Layer(
-                                    ResourceLocation.fromNamespaceAndPath(MODID, "evil_dragon")
+                                    res("dragon_dark")
                             )
                     ),
                     3.0F,

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
@@ -239,7 +240,7 @@ public class MagicHandler{
 	}
 
 	public static void applyDebuffs(final MobEffectEvent.Added event) {
-		if (event.getEffectInstance() == null || Objects.equals(event.getEffectSource(), event.getEntity())) return;
+		if (event.getEffectInstance() == null || DragonConfigHandler.EFFECT_IGNORES_ENCHANTMENT.contains(event.getEffectInstance().getEffect().value()) || Objects.equals(event.getEffectSource(), event.getEntity())) return;
 
 		MobEffectInstance effect = event.getEffectInstance();
 		int amplifier = effect.getAmplifier();
