@@ -203,27 +203,27 @@ public class DSTrades {
 			Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
 			trades.get(1).add(
-					new ItemTrade(new ItemStack(DSItems.ELDER_DRAGON_DUST, 5), new ItemStack(Items.EMERALD, 1), 16, 1, 10)
-			);
-
-			trades.get(1).add(
-					new EnchantBookForEmeralds(15, DSEnchantments.COMBAT_RECOVERY)
+					new EnchantBookForEmeralds(10, DSEnchantments.COMBAT_RECOVERY)
 			);
 
 			trades.get(2).add(
-					new EnchantBookForEmeralds(15, DSEnchantments.UNBREAKABLE_SPIRIT)
+					new EnchantBookForEmeralds(35, DSEnchantments.UNBREAKABLE_SPIRIT)
+			);
+
+			trades.get(2).add(
+					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.PARTISAN, 1), 12, 35)
 			);
 
 			trades.get(3).add(
-					new EnchantBookForEmeralds(15, DSEnchantments.AERODYNAMIC_MASTERY)
+					new EnchantBookForEmeralds(35, DSEnchantments.AERODYNAMIC_MASTERY)
 			);
 
 			trades.get(4).add(
-					new EnchantBookForEmeralds(15, DSEnchantments.SACRED_SCALES)
+					new EnchantBookForEmeralds(35, DSEnchantments.SACRED_SCALES)
 			);
 
 			trades.get(5).add(
-					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.GOOD_DRAGON_KEY, 1), 12, 150)
+					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.GOOD_DRAGON_KEY, 1), 12, 35)
 			);
 
 			// Declare the leader trades in here, since this event only fires once and if we do it statically it might try to initialize in cases where we don't actually have a minecraft instance yet.
@@ -231,20 +231,20 @@ public class DSTrades {
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_1 = Lists.newArrayList(
 					new TreasureMapForEmeralds(1, ON_DRAGON_HUNTERS_CASTLE_MAPS, "filled_map.dragon_hunters_castle", DSMapDecorationTypes.DRAGON_HUNTER, 1, 10),
-					new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(DSItems.DRAGON_HEART_SHARD, 1), 16, 1, 1)
+					new ItemTrade(new ItemStack(DSItems.DRAGON_HEART_SHARD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 5)
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_2 = Lists.newArrayList(
-					new ItemTrade(new ItemStack(Items.EMERALD, 5), new ItemStack(DSItems.WEAK_DRAGON_HEART, 1), 16, 1, 10)
+					new ItemTrade(new ItemStack(DSItems.WEAK_DRAGON_HEART, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 10)
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_3 = Lists.newArrayList(
-					new ItemTrade(new ItemStack(Items.EMERALD, 8), new ItemStack(DSItems.ELDER_DRAGON_HEART, 1), 16, 1, 10),
+					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.HUNTER_DRAGON_KEY, 1), 16, 1, 35),
 					new EnchantBookForEmeralds(15, DSEnchantments.DRAGONSBANE)
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_4 = Lists.newArrayList(
-					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.HUNTER_DRAGON_KEY, 1), 12, 1, 15)
+					new ItemTrade(new ItemStack(DSItems.ELDER_DRAGON_HEART, 1), new ItemStack(Items.EMERALD, 12), 12, 1, 25)
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_5 = Lists.newArrayList(

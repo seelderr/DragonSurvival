@@ -1046,7 +1046,7 @@ public class DSBlocks{
 	public static final DeferredHolder<Block, Block> DRAGON_RIDER_WORKBENCH = DS_BLOCKS.register(
 			"dragon_rider_workbench",
 			() -> new DragonRiderWorkbenchBlock(BlockBehaviour.Properties.of()
-					.sound(SoundType.WOOD)
+					.sound(SoundType.TRIAL_SPAWNER)
 					.mapColor(MapColor.WOOD)
 			)
 	);
@@ -1067,9 +1067,9 @@ public class DSBlocks{
 			for (SkeletonPieceBlock.Type type : SkeletonPieceBlock.Types.values()) {
 				DeferredHolder<Block, SkeletonPieceBlock> holder1 = DS_BLOCKS.register(type.getSerializedName() + "_skin" + i,
 						() -> new SkeletonPieceBlock(type, BlockBehaviour.Properties.of()
-								.mapColor(MapColor.WOOL)
-								.strength(2.0F)
-								.sound(SoundType.METAL)));
+								.mapColor(MapColor.CLAY)
+								.strength(1.0F)
+								.sound(SoundType.BONE_BLOCK)));
 				DeferredHolder<Item, BlockItem> holder2 = DS_ITEMS.register(type.getSerializedName() + "_skin" + i,
 						() -> new BlockItem(holder1.get(), new Item.Properties()));
 				SKELETON_PIECES.put(type.getSerializedName(), new Pair<>(holder1, holder2));

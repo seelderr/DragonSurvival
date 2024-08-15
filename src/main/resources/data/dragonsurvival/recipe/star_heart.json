@@ -2,7 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "ingredients": [
     {
-      "item": "minecraft:nether_star"
+      "item": "dragonsurvival:star_bone"
     },
     {
       "item": "dragonsurvival:elder_dragon_heart"

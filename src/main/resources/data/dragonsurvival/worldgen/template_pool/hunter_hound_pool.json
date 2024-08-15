@@ -109,6 +109,24 @@
 		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
+    },
+	{	
+      "weight": 1,
+      "element": {
+        "location": "dragonsurvival:entity/hunter_hound_13",
+        "processors": "minecraft:empty",
+		"projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    },
+	{	
+      "weight": 1,
+      "element": {
+        "location": "dragonsurvival:entity/hunter_hound_14",
+        "processors": "minecraft:empty",
+		"projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
     }
   ]
 }
