@@ -56,10 +56,12 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		ResourceLocation armorTexture = constructTrimmedDragonArmorTexture(player);
-		((DragonRenderer) renderer).isRenderLayers = true;
-		renderArmor(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, armorTexture);
-		((DragonRenderer) renderer).isRenderLayers = false;
+		if(hasAnyArmorEquipped(player)) {
+			ResourceLocation armorTexture = constructTrimmedDragonArmorTexture(player);
+			((DragonRenderer) renderer).isRenderLayers = true;
+			renderArmor(poseStack, animatable, bakedModel, bufferSource, partialTick, packedLight, armorTexture);
+			((DragonRenderer) renderer).isRenderLayers = false;
+		}
 	}
 
 	private void renderArmor(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, float partialTick, int packedLight, final ResourceLocation texture) {
@@ -77,7 +79,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 	}
 
-	public static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer) {
+	private static ResourceLocation constructTrimmedDragonArmorTexture(final Player pPlayer) {
 		try (NativeImage image = new NativeImage(512, 512, true)) {
 			String armorUUID = buildUniqueArmorUUID(pPlayer);
 			ResourceLocation imageLoc = ResourceLocation.fromNamespaceAndPath(MODID, "armor_" + armorUUID);
@@ -180,7 +182,21 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 	}
 
-	public static String buildUniqueArmorUUID(Player pPlayer) {
+	private static boolean hasAnyArmorEquipped(Player pPlayer) {
+		for (EquipmentSlot slot : EquipmentSlot.values()) {
+			if (!slot.isArmor())
+				continue;
+
+			ItemStack itemstack = pPlayer.getItemBySlot(slot);
+			if(!itemstack.is(Items.AIR)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private static String buildUniqueArmorUUID(Player pPlayer) {
 		StringBuilder armorTotal = new StringBuilder();
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			if (!slot.isArmor())
@@ -201,7 +217,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		return UUID.nameUUIDFromBytes(armorTotal.toString().getBytes()).toString();
 	}
 
-	public static void uploadTexture(NativeImage image, ResourceLocation location) {
+	private static void uploadTexture(NativeImage image, ResourceLocation location) {
 		try (image) {
 			if (Minecraft.getInstance().getTextureManager().getTexture(location, missingno) instanceof DynamicTexture texture && !texture.equals(missingno)) {
 				texture.setPixels(image);
@@ -220,7 +236,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		}
 	}
 
-	public static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
+	private static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
 		String texture = "textures/armor/";
 		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
 		String texture2 = itemToResLoc(item);
@@ -287,11 +303,11 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		return texture + "empty_armor.png";
 	}
 	
-	public static String itemToResLoc(Item item) {
+	private static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
 		return ResourceHelper.getKey(item).getPath();
     }
-	public static String stripInvalidPathChars(String loc) {
+	private static String stripInvalidPathChars(String loc) {
 		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 		// this probably should never be relevant, but you can never be too safe
 		loc = loc.chars()
