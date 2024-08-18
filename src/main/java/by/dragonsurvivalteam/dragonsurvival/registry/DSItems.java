@@ -180,13 +180,14 @@ public class DSItems {
 	);
 
 	public static final Holder<Item> DRAGON_HUNTER_SWORD = DS_ITEMS.register("dragon_hunter_sword", () -> new DragonHunterWeapon(
-			DSEquipment.DRAGON_HUNTER, new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.4F)))
+			DSEquipment.DRAGON_HUNTER, new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.8F)))
+
 	);
 	public static final Holder<Item> PARTISAN = DS_ITEMS.register("hunter_partisan", () -> new SwordItem(
 			Tiers.IRON, new Item.Properties().component(
 					DataComponents.ATTRIBUTE_MODIFIERS,
 					ItemAttributeModifiers.builder()
-							.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -2.8f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.build()
@@ -200,14 +201,32 @@ public class DSItems {
 			}
 	);
 
-	public static final Holder<Item> DRAGON_HUNTER_PARTISAN = DS_ITEMS.register("dragon_hunter_partisan", () -> new DragonHunterWeapon(
+	public static final Holder<Item> HUNTER_PARTISAN_DIAMOND = DS_ITEMS.register("hunter_partisan_diamond", () -> new DragonHunterWeapon(
 			Tiers.DIAMOND, new Item.Properties().component(
 				DataComponents.ATTRIBUTE_MODIFIERS,
 				ItemAttributeModifiers.builder()
-						.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -2.8f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+						.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+						.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1.5f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+						.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1.5f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 						.build()
+			))
+			{
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.hunter_partisan"));
+				}
+			}
+	);
+
+	public static final Holder<Item> HUNTER_PARTISAN_NETHERITE = DS_ITEMS.register("hunter_partisan_netherite", () -> new DragonHunterWeapon(
+					Tiers.NETHERITE, new Item.Properties().component(
+					DataComponents.ATTRIBUTE_MODIFIERS,
+					ItemAttributeModifiers.builder()
+							.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.build()
 			))
 			{
 				@Override
@@ -264,6 +283,8 @@ public class DSItems {
 	);
 
 	public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(defaultNonFoodProperties.rarity(Rarity.EPIC)));
+
+	public static final Holder<Item> SPEARMAN_PROMOTION = DS_ITEMS.register("spearman_promotion", () -> new Item(defaultNonFoodProperties));
 
 	// Items that shouldn't show up in the creative tab
 	public static final Holder<Item> BOLAS = DS_ITEMS.register("bolas", () -> new BolasArrowItem(new Item.Properties()));

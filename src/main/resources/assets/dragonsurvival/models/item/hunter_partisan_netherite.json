@@ -1,8 +1,8 @@
 {
 	"credit": "Made with Blockbench",
 	"textures": {
-		"0": "dragonsurvival:item/hunter_partisan_diamond",
-		"particle": "dragonsurvival:item/hunter_partisan_diamond"
+		"0": "dragonsurvival:item/hunter_partisan_netherite",
+		"particle": "dragonsurvival:item/hunter_partisan_netherite"
 	},
 	"elements": [
 		{
