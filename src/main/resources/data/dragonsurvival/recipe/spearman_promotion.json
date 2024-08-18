@@ -1,0 +1,15 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {
+            "item": "minecraft:paper"
+        },
+        {
+            "item": "dragonsurvival:weak_dragon_heart"
+        }
+    ],
+    "result": {
+        "id": "dragonsurvival:spearman_promotion",
+        "count": 1
+    }
+}
