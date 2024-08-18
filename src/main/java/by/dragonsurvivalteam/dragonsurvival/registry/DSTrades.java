@@ -196,6 +196,9 @@ public class DSTrades {
 
 	public static final Int2ObjectMap<VillagerTrades.ItemListing[]> LEADER_TRADES = new Int2ObjectOpenHashMap<>();
 
+	// Needed for map trade
+	public static final TagKey<Structure> ON_DRAGON_HUNTERS_CASTLE_MAPS = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID,"on_dragon_hunter_maps"));
+
 	// This is for adding trades to villagers that are within the vanilla framework. We only do this for the dragon rider, as the leader is a completely custom entity that extends Villager and does some special things.
 	@SubscribeEvent
 	public static void addCustomTrades(final VillagerTradesEvent event) {
@@ -227,10 +230,7 @@ public class DSTrades {
 			);
 
 			// Declare the leader trades in here, since this event only fires once and if we do it statically it might try to initialize in cases where we don't actually have a minecraft instance yet.
-			final TagKey<Structure> ON_DRAGON_HUNTERS_CASTLE_MAPS = TagKey.create(Registries.STRUCTURE, ResourceLocation.withDefaultNamespace("dragon_hunters_castle"));
-
 			final List<ItemListing> LEADER_TRADES_LEVEL_1 = Lists.newArrayList(
-					new TreasureMapForEmeralds(1, ON_DRAGON_HUNTERS_CASTLE_MAPS, "filled_map.dragon_hunters_castle", DSMapDecorationTypes.DRAGON_HUNTER, 1, 10),
 					new ItemTrade(new ItemStack(DSItems.DRAGON_HEART_SHARD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 5)
 			);
 
@@ -239,8 +239,7 @@ public class DSTrades {
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_3 = Lists.newArrayList(
-					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.HUNTER_DRAGON_KEY, 1), 16, 1, 35),
-					new EnchantBookForEmeralds(15, DSEnchantments.DRAGONSBANE)
+					new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.HUNTER_DRAGON_KEY, 1), 16, 1, 35)
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_4 = Lists.newArrayList(
@@ -248,8 +247,8 @@ public class DSTrades {
 			);
 
 			final List<ItemListing> LEADER_TRADES_LEVEL_5 = Lists.newArrayList(
-					new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 1), // FIXME: Make enchantment to steal growth stages from dragons and add its trade here
-					new ItemTrade(new ItemStack(Items.EMERALD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 1) // FIXME: Make the bolas crossbow enchantment and add its trade here
+					new EnchantBookForEmeralds(15, DSEnchantments.DRAGONSBANE),
+					new EnchantBookForEmeralds(15, DSEnchantments.BOLAS)
 			);
 
 			LEADER_TRADES.put(1, LEADER_TRADES_LEVEL_1.toArray(new VillagerTrades.ItemListing[0]));
@@ -257,6 +256,12 @@ public class DSTrades {
 			LEADER_TRADES.put(3, LEADER_TRADES_LEVEL_3.toArray(new VillagerTrades.ItemListing[0]));
 			LEADER_TRADES.put(4, LEADER_TRADES_LEVEL_4.toArray(new VillagerTrades.ItemListing[0]));
 			LEADER_TRADES.put(5, LEADER_TRADES_LEVEL_5.toArray(new VillagerTrades.ItemListing[0]));
+		}
+
+		if(event.getType() == VillagerProfession.CARTOGRAPHER)
+		{
+			Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
+			trades.get(2).add(new TreasureMapForEmeralds(15, ON_DRAGON_HUNTERS_CASTLE_MAPS, "ds.mapstructures.hunters_castle", DSMapDecorationTypes.DRAGON_HUNTER, 16, 30));
 		}
 	}
 }

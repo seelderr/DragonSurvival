@@ -1297,5 +1297,6 @@
   "ds.description.sacred_scales": "§6Sacred Scales §8(Boots)§r: Has a chance to reduce incoming damage.",
   "ds.description.curse_of_outlaw": "§4Outlaw's Mark §8(Armor)§r: Causes you to be a permanent target for dragon hunters.",
   "ds.description.curse_of_kindness": "§6Mark of Compassion §8(Armor)§r: You deal reduced damage to dragon hunters and villagers.",
-  "ds.description.bolas": "Bolas (Crossbow): Transforms your arrows into bolas that slow enemies down."
+  "ds.description.bolas": "Bolas (Crossbow): Transforms your arrows into bolas that slow enemies down.",
+  "ds.mapstructures.hunters_castle": "Kingdom Explorer Map"
 }

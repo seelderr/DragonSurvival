@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.DragonHunter
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -11,7 +13,12 @@ import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.*;
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentType;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
@@ -19,13 +26,17 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.animal.IronGolem;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.MapItem;
+import net.minecraft.world.item.component.MapDecorations;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
@@ -67,7 +78,7 @@ public class HunterOmenHandler {
 		return false;
 	}
 
-	public static ObjectArrayList<ItemStack> getVillagerLoot(AbstractVillager villager, Level level, @Nullable Player player){
+	public static ObjectArrayList<ItemStack> getVillagerLoot(AbstractVillager villager, Level level, @Nullable Player player, boolean wasKilled){
 		List<ItemStack> nonEmeraldTrades = new ArrayList<>();
 		villager.getOffers().stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).forEach(merchantOffer -> {
 			// Be careful to copy the stack, since otherwise if we use this function when the villager is alive (when we steal from them)
@@ -89,6 +100,35 @@ public class HunterOmenHandler {
 			}
 		}
 
+		// Have the cartographer drop a hunter's castle map if the player kills them (but not from stealing)
+		if(wasKilled && villager instanceof Villager realVillager) {
+			if(realVillager.getVillagerData().getProfession() == VillagerProfession.CARTOGRAPHER) {
+				ServerLevel serverlevel = (ServerLevel)level;
+				BlockPos blockpos = serverlevel.findNearestMapStructure(DSTrades.ON_DRAGON_HUNTERS_CASTLE_MAPS, realVillager.blockPosition(), 100, true);
+				if (blockpos != null) {
+					ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte)2, true, true);
+					MapItem.renderBiomePreviewMap(serverlevel, itemstack);
+					MapItemSavedData.addTargetDecoration(itemstack, blockpos, "+", DSMapDecorationTypes.DRAGON_HUNTER);
+					itemstack.set(DataComponents.ITEM_NAME, Component.translatable("ds.mapstructures.hunters_castle"));
+					boolean lootHasMapOfSameType = loot.stream().anyMatch(stack -> {
+						if(stack.getItem() == itemstack.getItem()) {
+							MapDecorations mapDecorations = stack.get(DataComponents.MAP_DECORATIONS);
+							if(mapDecorations != null) {
+                                return mapDecorations.decorations().values().stream().anyMatch(
+										mapDecoration -> mapDecoration.type() == DSMapDecorationTypes.DRAGON_HUNTER
+								);
+							}
+						}
+						return false;
+					});
+
+					if(!lootHasMapOfSameType){
+						loot.add(itemstack);
+					}
+				}
+			}
+		}
+
 		return loot;
 	}
 
@@ -99,7 +139,7 @@ public class HunterOmenHandler {
 		Entity killer = deathEvent.getSource().getEntity();
 		if(killer instanceof Player player) {
 			if(entity instanceof AbstractVillager abstractVillager) {
-				ObjectArrayList<ItemStack> loot = getVillagerLoot(abstractVillager, player.level(), player);
+				ObjectArrayList<ItemStack> loot = getVillagerLoot(abstractVillager, player.level(), player, true);
 				for(ItemStack stack : loot){
 					entity.spawnAtLocation(stack);
 				}
