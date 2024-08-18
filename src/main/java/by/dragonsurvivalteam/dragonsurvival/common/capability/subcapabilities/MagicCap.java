@@ -239,6 +239,7 @@ public class MagicCap extends SubCap{
 
 		if(tag.contains("abilityData"))
 			loadAbilities(tag.getCompound("abilityData"));
+		// TODO: New trigger goes here
 	}
 
 	public void setRenderAbilities(boolean renderAbilities) {
