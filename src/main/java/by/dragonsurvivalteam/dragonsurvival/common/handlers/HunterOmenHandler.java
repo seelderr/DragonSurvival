@@ -145,7 +145,7 @@ public class HunterOmenHandler {
 		}
 
 		// Double the duration unless it would add more than 30 minutes to the timer, but add a minimum of 1 minute
-		playerEntity.addEffect(new MobEffectInstance(DSEffects.HUNTER_OMEN, Math.max(Functions.minutesToTicks(1), Math.min(duration * 2, Functions.minutesToTicks(30))), 0, false, false));
+		playerEntity.addEffect(new MobEffectInstance(DSEffects.HUNTER_OMEN, Math.max(Functions.minutesToTicks(1), Math.min(duration * 2, Functions.minutesToTicks(30))), 0, false, false, true));
 	}
 
 	@SubscribeEvent
@@ -184,7 +184,7 @@ public class HunterOmenHandler {
 			if (kindness != null && EnchantmentHelper.getEnchantmentLevel(kindness, attacker) > 0) {
 				attackEntityEvent.setAmount(attackEntityEvent.getAmount() * ((float) Math.pow(EnchantmentHelper.getEnchantmentLevel(kindness, attacker), 0.7f)));
 			} else {
-				attacker.addEffect(new MobEffectInstance(DSEffects.HUNTER_OMEN, duration + Functions.secondsToTicks(5), 0, false, false));
+				attacker.addEffect(new MobEffectInstance(DSEffects.HUNTER_OMEN, duration + Functions.secondsToTicks(5), 0, false, false, true));
 			}
 		}
 	}

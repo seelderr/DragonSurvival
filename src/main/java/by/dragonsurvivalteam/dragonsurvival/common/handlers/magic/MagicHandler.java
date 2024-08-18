@@ -36,6 +36,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -50,10 +51,10 @@ import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -239,33 +240,36 @@ public class MagicHandler{
 		});
 	}
 
-	public static void applyDebuffs(final MobEffectEvent.Added event) {
-		if (event.getEffectInstance() == null || DragonConfigHandler.EFFECT_IGNORES_ENCHANTMENT.contains(event.getEffectInstance().getEffect().value()) || Objects.equals(event.getEffectSource(), event.getEntity())) return;
+	public static MobEffectInstance modifyEffect(final Player affected, final MobEffectInstance instance, @Nullable final Entity applier) {
+		if (instance == null || Objects.equals(affected, applier)) {
+			return instance;
+		}
 
-		MobEffectInstance effect = event.getEffectInstance();
-		int amplifier = effect.getAmplifier();
+		int amplifier = instance.getAmplifier();
 
-		if (effect.getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
-			if (event.getEffectSource() instanceof LivingEntity source && !effect.getEffect().is(DSEffectTags.OVERWHELMING_MIGHT_BLACKLIST)) {
-				amplifier += EnchantmentUtils.getLevel(source, DSEnchantments.OVERWHELMING_MIGHT);
+		if (instance.getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
+			if (applier instanceof LivingEntity livingApplier && !instance.getEffect().is(DSEffectTags.OVERWHELMING_MIGHT_BLACKLIST)) {
+				amplifier += EnchantmentUtils.getLevel(livingApplier, DSEnchantments.OVERWHELMING_MIGHT);
 			}
 
-			if (!effect.getEffect().is(DSEffectTags.UNBREAKABLE_SPIRIT_BLACKLIST)) {
-				amplifier -= EnchantmentUtils.getLevel(event.getEntity(), DSEnchantments.UNBREAKABLE_SPIRIT);
+			if (!instance.getEffect().is(DSEffectTags.UNBREAKABLE_SPIRIT_BLACKLIST)) {
+				amplifier -= EnchantmentUtils.getLevel(affected, DSEnchantments.UNBREAKABLE_SPIRIT);
 			}
 
 			amplifier = Mth.clamp(amplifier, 0, 255);
 
-			if (amplifier != effect.getAmplifier()) {
-				MobEffectInstance newInstance = new MobEffectInstance(effect.getEffect(), effect.getDuration(), amplifier);
+			if (amplifier != instance.getAmplifier()) {
+				MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier);
 
-				if (event.getEntity().hasEffect(effect.getEffect())) {
-					event.getEntity().removeEffect(effect.getEffect());
+				if (affected.hasEffect(instance.getEffect())) {
+					affected.removeEffect(instance.getEffect());
 				}
 
-				event.getEntity().addEffect(newInstance);
+				return modifiedInstance;
 			}
 		}
+
+		return instance;
 	}
 
 	@SubscribeEvent

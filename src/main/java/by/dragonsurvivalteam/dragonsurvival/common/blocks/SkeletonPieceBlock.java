@@ -140,4 +140,9 @@ public class SkeletonPieceBlock extends Block implements SimpleWaterloggedBlock 
             return this.name;
         }
     }
+
+    @Override
+    public @NotNull String getDescriptionId() {
+        return "item.dragonsurvival.dragon_bone";
+    }
 }

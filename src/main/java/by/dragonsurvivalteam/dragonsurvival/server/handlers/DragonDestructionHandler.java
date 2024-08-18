@@ -29,6 +29,7 @@ public class DragonDestructionHandler {
 
     private static int crushTickCounter = 0;
     private static boolean isBreakingMultipleBlocks = false;
+    public static float boundingBoxSizeRatioForCrushing = 4.0f;
 
     private static void checkAndDestroyCollidingBlocks(DragonStateHandler dragonStateHandler, PlayerTickEvent event, AABB boundingBox) {
         if(!ServerConfig.allowLargeBlockDestruction) {
@@ -100,7 +101,7 @@ public class DragonDestructionHandler {
 
         for(var entity : player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, player, feetBoundingBox)){
             // If the entity being crushed is too big, don't damage it.
-            if(entity.getBoundingBox().getSize() > boundingBox.getSize() / 2.0f) {
+            if(entity.getBoundingBox().getSize() > boundingBox.getSize() / boundingBoxSizeRatioForCrushing) {
                 continue;
             }
 
@@ -190,9 +191,10 @@ public class DragonDestructionHandler {
                 double width = DragonSizeHandler.calculateDragonWidth(size) / 2.0D;
                 boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
                 AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.15f);
+                AABB crushingBoundingBox = blockCollisionBoundingBox;
 
                 checkAndDestroyCollidingBlocks(dragonStateHandler, event, blockCollisionBoundingBox);
-                checkAndDamageCrushedEntities(dragonStateHandler, player, boundingBox);
+                checkAndDamageCrushedEntities(dragonStateHandler, player, crushingBoundingBox);
             }
         });
     }

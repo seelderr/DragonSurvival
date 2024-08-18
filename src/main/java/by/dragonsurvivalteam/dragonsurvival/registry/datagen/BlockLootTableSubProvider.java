@@ -3,12 +3,15 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonDoor;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
@@ -60,6 +63,8 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                                     .when(LootItemEntityPropertyCondition.entityPresent(LootContext.EntityTarget.THIS))
                                     .add(AlternativesEntry.alternatives(AlternativesEntry.alternatives(arr))
                                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block))));
+                } else if (block instanceof SkeletonPieceBlock) {
+                    return createSingleItemTable(DSItems.ELDER_DRAGON_BONE.value());
                 }
 
                 return createSingleItemTable(key.get().asItem());
