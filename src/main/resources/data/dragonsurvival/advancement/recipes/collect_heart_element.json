@@ -6,7 +6,7 @@
                 "items": [
                     {
                         "items": [
-                            "minecraft:nether_star"
+                            "dragonsurvival:heart_element"
                         ],
                         "count": {
                             "min": 1,
@@ -19,9 +19,14 @@
     },
     "rewards": {
         "recipes": [
-            "dragonsurvival:star_bone",
-            "dragonsurvival:star_heart"
+            "dragonsurvival:weak_dragon_heart",
+            "dragonsurvival:elder_dragon_bone_from_heart_element",
+            "dragonsurvival:star_heart",
+            "dragonsurvival:source_of_magic_cave",
+            "dragonsurvival:source_of_magic_forest",
+            "dragonsurvival:source_of_magic_sea",
+            "dragonsurvival:dragon_memory_block"
         ]
     },
-    "parent": "dragonsurvival:dragon_survival_root"
+    "parent": "minecraft:recipes"
 }

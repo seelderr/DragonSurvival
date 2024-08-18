@@ -1,0 +1,21 @@
+{
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_soul"
+    },
+    "background": "dragonsurvival:textures/dragon/cave_adult.png",
+    "title": "Always be Yourself",
+    "description": "Unless you can be a dragon.  Then always be a dragon.",
+    "show_toast": false,
+    "announce_to_chat": false
+  },
+  "criteria": {
+    "be_dragon": {
+      "trigger": "dragonsurvival:become_dragon"
+    }
+  },
+  "rewards": {
+    "experience": 10,
+    "loot": ["dragonsurvival:generic/be_dragon_loot"]
+  }
+}

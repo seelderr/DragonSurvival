@@ -32,5 +32,5 @@
             "dragonsurvival:dragon_altar_stone"
         ]
     },
-    "parent": "dragonsurvival:dragon_survival_root"
+    "parent": "minecraft:recipes"
 }

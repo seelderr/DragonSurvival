@@ -1,0 +1,31 @@
+{
+  "parent": "dragonsurvival:be_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_soul",
+      "components": { "minecraft:custom_model_data": 1 }
+    },
+    "title": "Spirit of Nature",
+    "description": "Show your hunting instincts.",
+    "show_toast": false
+  },
+  "criteria": {
+    "be_forest_dragon": {
+      "trigger": "dragonsurvival:become_dragon",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'forest'}}}"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "loot": ["dragonsurvival:generic/be_forest_dragon_loot"]
+  }
+}
