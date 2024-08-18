@@ -30,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class DragonSoulItem extends Item{
+public class DragonSoulItem extends Item {
     public DragonSoulItem(Properties properties) {
         super(properties);
     }
@@ -128,7 +128,8 @@ public class DragonSoulItem extends Item{
 
     @Override
     public @NotNull UseAnim getUseAnimation(@NotNull ItemStack pStack) {
-        return UseAnim.NONE;
+        // See registerItemExtensions to understand how this UseAnim is animated
+        return UseAnim.CUSTOM;
     }
 
     @Override
