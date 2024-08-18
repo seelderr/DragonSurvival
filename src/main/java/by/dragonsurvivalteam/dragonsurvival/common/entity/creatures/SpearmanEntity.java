@@ -4,12 +4,24 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.util.RandomAnimationPi
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowSpecificMobGoal;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
+import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.stats.Stats;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimationState;
 
 public class SpearmanEntity extends Hunter {
 	public SpearmanEntity(EntityType<? extends PathfinderMob> entityType, Level world){
@@ -50,6 +62,42 @@ public class SpearmanEntity extends Hunter {
 		controllers.add(new AnimationController<>(this, "head", 3, this::headPredicate));
 		controllers.add(new AnimationController<>(this, "arms", 3, this::armsPredicate));
 		controllers.add(new AnimationController<>(this, "legs", 3, this::legsPredicate));
+	}
+
+	@Override
+	public @NotNull InteractionResult mobInteract(Player pPlayer, @NotNull InteractionHand pHand) {
+		ItemStack itemstack = pPlayer.getItemInHand(pHand);
+		if (!this.isAlive()) {
+			return super.mobInteract(pPlayer, pHand);
+		} else {
+			if (itemstack.getItem() == DSItems.SPEARMAN_PROMOTION.value()) {
+				if (!this.level().isClientSide) {
+					// Copied from witch conversion code
+					Mob leader = DSEntities.HUNTER_LEADER.get().create(this.level());
+					leader.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
+					leader.finalizeSpawn((ServerLevel)this.level(), this.level().getCurrentDifficultyAt(leader.blockPosition()), MobSpawnType.CONVERSION, null);
+					leader.setNoAi(this.isNoAi());
+					if (this.hasCustomName()) {
+						leader.setCustomName(this.getCustomName());
+						leader.setCustomNameVisible(this.isCustomNameVisible());
+					}
+
+					leader.setPersistenceRequired();
+					net.neoforged.neoforge.event.EventHooks.onLivingConvert(this, leader);
+					this.level().addFreshEntity(leader);
+					this.level().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, this.getSoundSource(), 2.0F, 1.0F);
+					this.discard();
+				}
+
+				for(int i = 0; i < 20; i++) {
+					this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getX() + (this.random.nextDouble() - 0.5D) * 2D, this.getY() + this.random.nextDouble() * 2D, this.getZ() + (this.random.nextDouble() - 0.5D) * 2D, (this.random.nextDouble() - 0.5D) * 0.5D, this.random.nextDouble() * 0.5D, (this.random.nextDouble() - 0.5D) * 0.5D);
+				}
+
+				return InteractionResult.SUCCESS;
+			}
+		}
+
+		return super.mobInteract(pPlayer, pHand);
 	}
 
 	private boolean isNotIdle() {
