@@ -283,6 +283,8 @@ public class DSItems {
 
 	public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(defaultNonFoodProperties.rarity(Rarity.EPIC)));
 
+	public static final Holder<Item> SPEARMAN_PROMOTION = DS_ITEMS.register("spearman_promotion", () -> new Item(defaultNonFoodProperties));
+
 	// Items that shouldn't show up in the creative tab
 	public static final Holder<Item> BOLAS = DS_ITEMS.register("bolas", () -> new BolasArrowItem(new Item.Properties()));
 	public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));
