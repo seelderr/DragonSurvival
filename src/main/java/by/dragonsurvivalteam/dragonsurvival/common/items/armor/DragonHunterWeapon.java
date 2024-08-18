@@ -26,6 +26,6 @@ public class DragonHunterWeapon extends SwordItem implements PermanentEnchantmen
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
         super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-        pTooltipComponents.add(Component.translatable("ds.description.dragon_hunter_weapon"));
+        pTooltipComponents.add(Component.translatable("ds.description.dragon_hunter_sword"));
     }
 }
