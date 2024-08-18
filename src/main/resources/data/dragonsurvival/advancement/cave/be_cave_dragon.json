@@ -5,9 +5,8 @@
       "id": "dragonsurvival:dragon_soul",
       "components": { "minecraft:custom_model_data": 2 }
     },
-    "title": "Fire Inside",
-    "description": "Embrace your inner flame.",
-    "show_toast": false
+    "title": { "translate": "ds.advancements.be_cave_dragon.title" },
+    "description": { "translate": "ds.advancements.be_cave_dragon.description" }
   },
   "criteria": {
     "be_sea_dragon": {

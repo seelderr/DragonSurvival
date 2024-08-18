@@ -28,5 +28,5 @@
             "dragonsurvival:dragon_memory_block"
         ]
     },
-    "parent": "minecraft:recipes"
+    "parent": "minecraft:recipes/root"
 }

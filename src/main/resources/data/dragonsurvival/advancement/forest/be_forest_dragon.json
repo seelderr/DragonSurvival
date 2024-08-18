@@ -5,9 +5,8 @@
       "id": "dragonsurvival:dragon_soul",
       "components": { "minecraft:custom_model_data": 1 }
     },
-    "title": "Spirit of Nature",
-    "description": "Show your hunting instincts.",
-    "show_toast": false
+    "title": { "translate": "ds.advancements.be_forest_dragon.title" },
+    "description": { "translate": "ds.advancements.be_forest_dragon.description" }
   },
   "criteria": {
     "be_forest_dragon": {

@@ -1,18 +1,19 @@
 {
-  "parent": "dragonsurvival:cave/be_cave_dragon",
   "display": {
     "icon": {
-      "id": "minecraft:lava_bucket"
+      "id": "minecraft:water_bucket"
     },
     "title": {
-      "translate": "ds.advancements.swim_in_lava.title"
+      "translate": "ds.advancements.enter_water_safely.title"
     },
     "description": {
-      "translate": "ds.advancements.swim_in_lava.description"
-    }
+      "translate": "ds.advancements.enter_water_safely.description"
+    },
+    "frame": "challenge",
+    "hidden": true
   },
   "criteria": {
-    "be_under_lava": {
+    "go_swimming_in_water": {
       "trigger": "minecraft:location",
       "conditions": {
         "player": [
@@ -23,17 +24,11 @@
               "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'cave'}}}",
               "location": {
                 "fluid": {
-                  "fluids": "#minecraft:lava"
+                  "fluids": "#minecraft:water"
                 }
-              }
-            }
-          },
-          {
-            "condition": "minecraft:location_check",
-            "offsetY": 1,
-            "predicate": {
-              "fluid": {
-                "fluids": "#minecraft:lava"
+              },
+              "effects": {
+                "dragonsurvival:fire": {}
               }
             }
           }

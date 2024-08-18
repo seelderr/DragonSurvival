@@ -24,5 +24,5 @@
             "dragonsurvival:weak_dragon_heart_from_elder_dragon_heart"
         ]
     },
-    "parent": "minecraft:recipes"
+    "parent": "minecraft:recipes/root"
 }

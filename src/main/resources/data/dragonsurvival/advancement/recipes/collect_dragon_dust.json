@@ -40,5 +40,5 @@
             "dragonsurvival:treasure_to_dust"
         ]
     },
-    "parent": "minecraft:recipes"
+    "parent": "minecraft:recipes/root"
 }

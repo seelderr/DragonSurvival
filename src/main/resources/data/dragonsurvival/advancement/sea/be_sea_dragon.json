@@ -5,9 +5,8 @@
       "id": "dragonsurvival:dragon_soul",
       "components": { "minecraft:custom_model_data": 3 }
     },
-    "title": "Pelagic Soul",
-    "description": "Be one with the sea.",
-    "show_toast": false
+    "title": { "translate": "ds.advancements.be_sea_dragon.title" },
+    "description": { "translate": "ds.advancements.be_sea_dragon.description" }
   },
   "criteria": {
     "be_sea_dragon": {

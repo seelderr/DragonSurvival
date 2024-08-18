@@ -23,5 +23,5 @@
             "dragonsurvival:weak_dragon_heart_to_dragon_heart_shard"
         ]
     },
-    "parent": "minecraft:recipes"
+    "parent": "minecraft:recipes/root"
 }

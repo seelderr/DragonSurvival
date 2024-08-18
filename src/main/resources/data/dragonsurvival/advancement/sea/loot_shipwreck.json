@@ -1,0 +1,61 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:chest"
+    },
+    "title": {
+      "translate": "ds.advancements.loot_shipwreck.title"
+    },
+    "description": {
+      "translate": "ds.advancements.loot_shipwreck.description"
+    }
+  },
+  "parent": "dragonsurvival:sea/be_sea_dragon",
+  "criteria": {
+    "open_shipwreck_treasure": {
+      "trigger": "minecraft:player_generates_container_loot",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
+            }
+          }
+        ],
+        "loot_table": "minecraft:chests/shipwreck_treasure"
+      }
+    },
+    "open_shipwreck_map": {
+      "trigger": "minecraft:player_generates_container_loot",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
+            }
+          }
+        ],
+        "loot_table": "minecraft:chests/shipwreck_map"
+      }
+    },
+    "open_shipwreck_supply": {
+      "trigger": "minecraft:player_generates_container_loot",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
+            }
+          }
+        ],
+        "loot_table": "minecraft:chests/shipwreck_supply"
+      }
+    }
+  }
+}

@@ -23,5 +23,5 @@
             "dragonsurvival:star_heart"
         ]
     },
-    "parent": "minecraft:recipes"
+    "parent": "minecraft:recipes/root"
 }

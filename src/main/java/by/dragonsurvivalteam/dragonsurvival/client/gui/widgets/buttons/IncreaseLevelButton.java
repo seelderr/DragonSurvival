@@ -41,6 +41,7 @@ public class IncreaseLevelButton extends ArrowButton {
 					}
 				}
 			}
+			// New trigger goes here
 		});
 	}
 

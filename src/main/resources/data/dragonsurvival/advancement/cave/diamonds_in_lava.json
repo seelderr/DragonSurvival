@@ -1,19 +1,20 @@
 {
-  "parent": "dragonsurvival:cave/be_cave_dragon",
   "display": {
     "icon": {
-      "id": "minecraft:lava_bucket"
+      "id": "minecraft:diamond_ore"
     },
     "title": {
-      "translate": "ds.advancements.swim_in_lava.title"
+      "translate": "ds.advancements.diamonds_in_lava.title"
     },
     "description": {
-      "translate": "ds.advancements.swim_in_lava.description"
-    }
+      "translate": "ds.advancements.diamonds_in_lava.description"
+    },
+    "frame": "goal"
   },
+  "parent": "dragonsurvival:cave/swim_in_lava",
   "criteria": {
-    "be_under_lava": {
-      "trigger": "minecraft:location",
+    "silk_touch_nest": {
+      "trigger": "minecraft:bee_nest_destroyed",
       "conditions": {
         "player": [
           {
@@ -37,8 +38,11 @@
               }
             }
           }
-        ]
+        ],
+        "block": "minecraft:deepslate_diamond_ore",
+        "item": {}
       }
     }
+  }
   }
 }
