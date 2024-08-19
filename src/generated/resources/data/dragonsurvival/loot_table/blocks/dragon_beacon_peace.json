@@ -11,7 +11,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:dragon_beacon_peace"
+          "name": "dragonsurvival:empty_dragon_beacon"
         }
       ],
       "rolls": 1.0

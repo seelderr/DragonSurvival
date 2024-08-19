@@ -2,15 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonDoor;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
-import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
@@ -65,6 +64,9 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block))));
                 } else if (block instanceof SkeletonPieceBlock) {
                     return createSingleItemTable(DSItems.ELDER_DRAGON_BONE.value());
+                } else if (block instanceof DragonBeacon) {
+                    // We want all dragon beacons to drop empty dragon beacons instead
+                    return createSingleItemTable(DSBlocks.DRAGON_BEACON_ITEM.value());
                 }
 
                 return createSingleItemTable(key.get().asItem());
