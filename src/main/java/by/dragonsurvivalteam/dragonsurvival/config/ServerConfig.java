@@ -22,6 +22,9 @@ public class ServerConfig{
 		ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
 	}
 
+	@ConfigOption(side = ConfigSide.SERVER, category = "general", key = "forceStateUpdatingOnVaults", comment = "Debug only config. Forces the state updating to resume on vaults always.")
+	public static Boolean forceStateUpdatingOnVaults = false;
+
 	@ConfigRange( min = 0, max = 1000 )
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use." )
 	public static Integer altarUsageCooldown = 0;
