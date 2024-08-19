@@ -32,6 +32,7 @@ public enum Keybind {
 
     SPIN_ABILITY("ds.keybind.spin", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_V),
     FREE_LOOK("ds.keybind.free_look", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
+    DISABLE_DESTRUCTION("ds.keybind.toggle_destruction", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_RIGHT_ALT),
     ;
 
     private final Lazy<KeyMapping> keyMapping;

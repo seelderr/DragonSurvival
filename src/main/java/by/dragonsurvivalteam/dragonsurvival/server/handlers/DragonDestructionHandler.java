@@ -4,10 +4,18 @@ import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigH
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
+import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -21,8 +29,10 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class DragonDestructionHandler {
@@ -160,6 +170,26 @@ public class DragonDestructionHandler {
         });
     }
 
+    @SubscribeEvent
+    public static void toggleDestructionEnabled(ClientTickEvent.Pre event) {
+        if(!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
+            return;
+        }
+
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+                if (playerStateHandler.isDragon()) {
+                    if(Keybind.DISABLE_DESTRUCTION.consumeClick()) {
+                        playerStateHandler.setDestructionEnabled(!playerStateHandler.getDestructionEnabled());
+                        PacketDistributor.sendToServer(new SyncDestructionEnabled.Data(player.getId(), playerStateHandler.getDestructionEnabled()));
+
+                        player.displayClientMessage(Component.translatable(playerStateHandler.getDestructionEnabled() ? "ds.destruction.toggled_on" : "ds.destruction.toggled_off"), true);
+                    }
+                }
+            });
+        }
+    }
 
 
     @SubscribeEvent
@@ -174,6 +204,10 @@ public class DragonDestructionHandler {
 
         DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
+
+                if(!dragonStateHandler.getDestructionEnabled()) {
+                    return;
+                }
 
                 if(player.isCrouching()) {
                     return;
