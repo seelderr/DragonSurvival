@@ -1,0 +1,46 @@
+{
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:sea_dragon_treat"
+    },
+    "title": {
+      "translate": "ds.advancements.taste_the_lightning.title"
+    },
+    "description": {
+      "translate": "ds.advancements.taste_the_lightning.description"
+    }
+  },
+  "parent": "dragonsurvival:sea/be_sea_dragon",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:lightning_strike",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
+            }
+          }
+        ],
+        "lightning": [],
+        "bystander": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}",
+              "distance": {
+                "absolute": {
+                  "min": 0,
+                  "max": 1
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

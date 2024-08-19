@@ -13,28 +13,6 @@
           "max_duration": 10,
           "min_amplifier": 0,
           "max_amplifier": 0
-        },
-        "requirements": {
-          "condition": "minecraft:all_of",
-          "terms": [
-            {
-              "condition": "minecraft:inverted",
-              "term": {
-                "condition": "minecraft:entity_properties",
-                "entity": "this",
-                "predicate": {
-                  "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': none}}}"
-                }
-              }
-            },
-            {
-              "condition": "minecraft:entity_properties",
-              "entity": "this",
-              "predicate": {
-                "type": "minecraft:player"
-              }
-            }
-          ]
         }
       }
     ]
@@ -51,7 +29,7 @@
     "per_level_above_first": 11
   },
   "slots": [
-    "any"
+    "armor"
   ],
   "supported_items": "#dragonsurvival:enchantable/weapons_and_armor",
   "weight": 10

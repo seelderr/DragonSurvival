@@ -6,7 +6,7 @@
                 "items": [
                     {
                         "items": [
-                            "dragonsurvival:elder_dragon_heart"
+                            "dragonsurvival:weak_dragon_heart"
                         ],
                         "count": {
                             "min": 1,
@@ -19,10 +19,9 @@
     },
     "rewards": {
         "recipes": [
-            "dragonsurvival:weak_dragon_heart",
-            "dragonsurvival:elder_dragon_bone_from_heart_element",
-            "dragonsurvival:weak_dragon_heart_from_elder_dragon_heart"
+            "dragonsurvival:ancient_dragon_heart",
+            "dragonsurvival:weak_dragon_heart_to_dragon_heart_shard"
         ]
     },
-    "parent": "dragonsurvival:dragon_survival_root"
+    "parent": "minecraft:recipes/root"
 }

@@ -1,0 +1,44 @@
+{
+  "parent": "dragonsurvival:cave/be_cave_dragon",
+  "display": {
+    "icon": {
+      "id": "minecraft:lava_bucket"
+    },
+    "title": {
+      "translate": "ds.advancements.swim_in_lava.title"
+    },
+    "description": {
+      "translate": "ds.advancements.swim_in_lava.description"
+    }
+  },
+  "criteria": {
+    "be_under_lava": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'cave'}}}",
+              "location": {
+                "fluid": {
+                  "fluids": "#minecraft:lava"
+                }
+              }
+            }
+          },
+          {
+            "condition": "minecraft:location_check",
+            "offsetY": 1,
+            "predicate": {
+              "fluid": {
+                "fluids": "#minecraft:lava"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

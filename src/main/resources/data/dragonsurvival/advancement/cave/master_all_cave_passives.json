@@ -1,0 +1,80 @@
+{
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:elder_dragon_heart"
+    },
+    "title": {
+      "translate": "ds.advancements.master_all_cave_passives.title"
+    },
+    "description": {
+      "translate": "ds.advancements.master_all_cave_passives.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "parent": "dragonsurvival:cave/master_one_cave_passive",
+  "criteria": {
+    "burn": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'burn': {'level': 4}}}}}"
+            }
+          }
+        ]
+      }
+    },
+    "cave_athletics": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'cave_athletics': {'level': 5}}}}}"
+            }
+          }
+        ]
+      }
+    },
+    "contrast_shower": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'contrast_shower': {'level': 5}}}}}"
+            }
+          }
+        ]
+      }
+    },
+    "cave_magic": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'cave_magic': {'level': 10}}}}}"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["burn"],
+    ["cave_athletics"],
+    ["contrast_shower"],
+    ["cave_magic"]
+  ]
+}
