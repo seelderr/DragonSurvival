@@ -45,7 +45,7 @@ public abstract class VillagerMixin {
                 }
                 // Set last hurt by so that looting the villager will hurt trade prices the same way attacking it does
                 this.setLastHurtByMob(pPlayer);
-                HunterOmenHandler.getVillagerLoot(villager, pPlayer.level(), null).forEach(pPlayer.getInventory()::add);
+                HunterOmenHandler.getVillagerLoot(villager, pPlayer.level(), null, false).forEach(pPlayer.getInventory()::add);
                 villager.makeSound(this.getHurtSound(null));
                 // Event 13 is the "villager has been hurt" event so it will make angry particles
                 pPlayer.level().broadcastEntityEvent(villager, (byte)13);

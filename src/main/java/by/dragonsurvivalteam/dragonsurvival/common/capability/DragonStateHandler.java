@@ -88,6 +88,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	private boolean hasFlight;
 	private boolean areWingsSpread;
 	private double size;
+	private boolean destructionEnabled;
 
 	/** Sets the size, health and base damage */
 	public void setSize(double size, Player player) {
@@ -165,7 +166,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	public AbstractDragonType getType(){
 		return dragonType;
 	}
-	
+
 	public AbstractDragonBody getBody() {
 		return dragonBody;
 	}
@@ -463,6 +464,10 @@ public class DragonStateHandler extends EntityStateHandler {
 		this.areWingsSpread = areWingsSpread;
 	}
 
+	public void setDestructionEnabled(boolean destructionEnabled) {
+		this.destructionEnabled = destructionEnabled;
+	}
+
 	public void setHasFlight(boolean hasFlight) {
 		if (hasFlight != this.hasFlight) { // TODO :: Why this check?
 			this.hasFlight = hasFlight;
@@ -483,6 +488,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
 	public double getSize(){
 		return size;
+	}
+
+	public boolean getDestructionEnabled() {
+		return destructionEnabled;
 	}
 
 	public boolean isDragon() {
@@ -541,6 +550,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			tag.putInt("spinAttack", movementData.spinAttack);
 
 			tag.putDouble("size", getSize());
+			tag.putBoolean("destructionEnabled", getDestructionEnabled());
 			tag.putBoolean("growing", growing);
 
 			tag.putBoolean("isFlying", isWingsSpread());
@@ -627,6 +637,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			getMovementData().spinAttack = tag.getInt("spinAttack");
 
 			setSize(tag.getDouble("size"));
+			setDestructionEnabled(tag.getBoolean("destructionEnabled"));
 			growing = !tag.contains("growing") || tag.getBoolean("growing");
 
 			treasureResting = tag.getBoolean("resting");

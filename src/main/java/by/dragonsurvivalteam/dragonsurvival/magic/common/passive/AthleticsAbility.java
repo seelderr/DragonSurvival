@@ -19,7 +19,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 public abstract class AthleticsAbility extends TickablePassiveAbility {
 	@Override
 	public Component getDescription(){
-		return Component.translatable("ds.skill.description." + getName(), getDuration(), getLevel() == getMaxLevel() ? "III" : "II");
+		return Component.translatable("ds.skill.description." + getName(), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
 	}
 
 	public int getDuration(){
@@ -38,8 +38,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 
 	@Override
 	public void onTick(Player player){
-//		BlockState feetBlock = player.getFeetBlockState();
-		BlockState blockUnder = player.level().getBlockState(player.blockPosition().below());
+		BlockState blockUnder = player.getBlockStateOn();
 		Block block = blockUnder.getBlock();
 
 		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
