@@ -1,0 +1,80 @@
+{
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:weak_dragon_heart"
+    },
+    "title": {
+      "translate": "ds.advancements.master_all_forest_passives.title"
+    },
+    "description": {
+      "translate": "ds.advancements.master_all_forest_passives.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "parent": "dragonsurvival:forest/master_one_forest_passive",
+  "criteria": {
+    "cliffhanger": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'cliffhanger': {'level': 6}}}}}"
+            }
+          }
+        ]
+      }
+    },
+    "forest_athletics": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'forest_athletics': {'level': 5}}}}}"
+            }
+          }
+        ]
+      }
+    },
+    "light_in_darkness": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'light_in_darkness': {'level': 8}}}}}"
+            }
+          }
+        ]
+      }
+    },
+    "forest_magic": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'abilityData': {'forest_magic': {'level': 10}}}}}"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "requirements": [
+    ["cliffhanger"],
+    ["forest_athletics"],
+    ["light_in_darkness"],
+    ["forest_magic"]
+  ]
+}

@@ -1,0 +1,40 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:chorus_fruit"
+    },
+    "title": {
+      "translate": "ds.advancements.transplate_chorus_fruit.title"
+    },
+    "description": {
+      "translate": "ds.advancements.transplate_chorus_fruit.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'forest'}}}",
+              "location": {
+                "dimension": "minecraft:overworld"
+              }
+            }
+          }
+        ],
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "minecraft:chorus_flower",
+            "properties": {}
+          }
+        ]
+      }
+    }
+  }
+}

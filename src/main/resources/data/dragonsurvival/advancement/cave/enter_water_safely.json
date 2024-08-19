@@ -1,0 +1,39 @@
+{
+  "display": {
+    "icon": {
+      "id": "minecraft:water_bucket"
+    },
+    "title": {
+      "translate": "ds.advancements.enter_water_safely.title"
+    },
+    "description": {
+      "translate": "ds.advancements.enter_water_safely.description"
+    },
+    "frame": "challenge",
+    "hidden": true
+  },
+  "criteria": {
+    "go_swimming_in_water": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'cave'}}}",
+              "location": {
+                "fluid": {
+                  "fluids": "#minecraft:water"
+                }
+              },
+              "effects": {
+                "dragonsurvival:fire": {}
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

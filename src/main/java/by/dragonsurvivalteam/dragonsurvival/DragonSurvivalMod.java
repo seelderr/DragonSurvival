@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.DS_TRIGGERS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
@@ -117,6 +118,7 @@ public class DragonSurvivalMod{
 		DS_POI_TYPES.register(modEventBus);
 		DS_VILLAGER_PROFESSIONS.register(modEventBus);
 		DS_STRUCTURE_PLACEMENT_TYPES.register(modEventBus);
+		DS_TRIGGERS.register(modEventBus);
 		GLM.register(modEventBus);
 	}
 
