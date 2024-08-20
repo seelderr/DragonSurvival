@@ -10,7 +10,7 @@
       "translate": "ds.advancements.taste_the_lightning.description"
     }
   },
-  "parent": "dragonsurvival:sea/be_sea_dragon",
+  "parent": "dragonsurvival:sea/rain_dancing",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:lightning_strike",
