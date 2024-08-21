@@ -46,6 +46,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
@@ -464,6 +465,14 @@ public class DSItems {
 			pTooltipComponents.add(Component.translatable("ds.description.spearman_promotion"));
 		}
 	});
+
+	// Spawn eggs
+	public static final Holder<Item> HOUND_SPAWN_EGG = DS_ITEMS.register("hound_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_HOUND, 0, 0, defaultNonFoodProperties.rarity(Rarity.COMMON)));
+	public static final Holder<Item> SPEARMAN_SPAWN_EGG = DS_ITEMS.register("spearman_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_SPEARMAN, 0, 0, defaultNonFoodProperties.rarity(Rarity.COMMON)));
+	public static final Holder<Item> KNIGHT_SPAWN_EGG = DS_ITEMS.register("knight_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_KNIGHT, 0, 0, defaultNonFoodProperties.rarity(Rarity.COMMON)));
+	public static final Holder<Item> AMBUSHER_SPAWN_EGG = DS_ITEMS.register("ambusher_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_AMBUSHER, 0, 0, defaultNonFoodProperties.rarity(Rarity.COMMON)));
+	public static final Holder<Item> GRIFFIN_SPAWN_EGG = DS_ITEMS.register("griffin_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_GRIFFIN, 0, 0, defaultNonFoodProperties.rarity(Rarity.COMMON)));
+	public static final Holder<Item> LEADER_SPAWN_EGG = DS_ITEMS.register("leader_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_LEADER, 0, 0, defaultNonFoodProperties.rarity(Rarity.COMMON)));
 
 	// Items that shouldn't show up in the creative tab
 	public static final Holder<Item> BOLAS = DS_ITEMS.register("bolas", () -> new BolasArrowItem(new Item.Properties()));

@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.SpawnEggItem;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -67,7 +68,11 @@ public class DataItemModelProvider extends ItemModelProvider {
 					return;
 				}
 
-				basicItem(holder.get());
+				if(holder.get() instanceof SpawnEggItem item) {
+					getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")));
+				} else {
+					basicItem(holder.get());
+				}
 			}
 		});
 	}
