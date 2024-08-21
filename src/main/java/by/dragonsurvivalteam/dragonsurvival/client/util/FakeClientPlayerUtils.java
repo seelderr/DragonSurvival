@@ -35,7 +35,6 @@ public class FakeClientPlayerUtils {
 						fakePlayer.animationController.forceAnimationReset();
 						fakePlayer.handler.refreshBody = false;
                         FORCE_REFRESH = false;
-						return PlayState.STOP;
 					}
 
 					if (fakePlayer.animationSupplier != null) {

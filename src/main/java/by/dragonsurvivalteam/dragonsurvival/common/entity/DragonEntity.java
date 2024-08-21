@@ -257,9 +257,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 		double bigSizeFactor = ClientConfig.largeSizeAnimationSpeedFactor;
 		double baseSize = ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 		double distanceFromGround = ServerFlightHandler.distanceFromGround(player);
-		double height = DragonSizeHandler.calculateDragonHeight(handler.getSize());
 
-		if (player == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(emote -> emote != null && !emote.blend && emote.animation != null && !emote.animation.isBlank())) {
+		if (Stream.of(handler.getEmoteData().currentEmotes).anyMatch(emote -> emote != null && !emote.blend && emote.animation != null && !emote.animation.isBlank())) {
 			state.getController().stop();
 			return PlayState.STOP;
 		}

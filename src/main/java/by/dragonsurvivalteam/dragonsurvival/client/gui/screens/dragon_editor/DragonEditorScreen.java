@@ -612,8 +612,6 @@ public class DragonEditorScreen extends Screen {
 		presetSelections.put(level, currentSelected);
 
 		lastSelected = currentSelected;
-
-		initDragonRender();
 	}
 
 	private void initDragonRender(){
