@@ -266,7 +266,7 @@
   "ds.skill.harvest_level.sea_claws_and_teeth": "§d■ Level:§r %s",
   "ds.skill.description.storm_breath": "■ Elemental breath: a stream of sparks. Targets become §c«Electrified»§r and deal electric damage to everything nearby.\n\n■ Charges creepers, and may summon thunderbolts during a storm. \n\n■ Range depends on the age of the dragon.",
   "ds.skill.description.ball_lightning": "■ Ranged attack: shoots out a condensed ball of electrical energy. Deals damage and §celectrifies§r nearby enemies as it travels.\n\n■ During a thunderstorm, lightning may strike the ball.",
-  "ds.skill.description.revealing_the_soul": "■ AOE Buff: doubles the amount of §2experience§r gained from monsters up to a limit. \n\n■ Effect does not stack. Cannot be used in flight.",
+  "ds.skill.description.revealing_the_soul": "■ AOE Buff: multiplies the amount of §2experience§r gained from monsters up to a limit. \n\n■ Effect does not stack. Cannot be used in flight.",
   "ds.skill.description.sea_eyes": "■ Personal Buff: provides §2Sea Vision§r for a short time.\n\n■ Effect does not stack. Cannot be used in flight.",
   "ds.skill.description.sea_magic": "■ Magic points (Mana) are used for dragon magic. Restores on wet blocks.\n\n■ Current amount of §2%s§r mana:\n - §2%s§r from «Sea Magic»\n - §2%s§r from level of dragon\n - §2%s§r body type",
   "ds.skill.description.sea_athletics": "■ Standing on some blocks will give you §2Speed %s§r\n\n■ Duration: §2%s§rs",
