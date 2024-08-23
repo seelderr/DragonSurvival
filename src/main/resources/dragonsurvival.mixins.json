@@ -41,7 +41,7 @@
     "client.LightTextureMixin",
     "client.LiquidBlockRendererMixin",
     "client.LocalPlayerMixin",
-    "embeddium.ClientNeoForgeModMixin",
+    "sodium.ClientNeoForgeModMixin",
     "tool_swap.MixinMultiPlayerGameModeEnd",
     "tool_swap.MixinMultiPlayerGameModeStart"
   ]

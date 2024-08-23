@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.mixins.embeddium;
+package by.dragonsurvivalteam.dragonsurvival.mixins.sodium;
 
 import by.dragonsurvivalteam.dragonsurvival.client.render.VisionHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.util.ClientFluidTypeExtensionsWrapper;
