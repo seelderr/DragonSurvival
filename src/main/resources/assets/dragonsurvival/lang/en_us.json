@@ -1349,5 +1349,11 @@
   "ds.mapstructures.hunters_castle": "Kingdom Explorer Map",
   "ds.keybind.toggle_destruction": "Toggle Large Dragon Destruction",
   "ds.destruction.toggled_on": "Destruction mode toggled on",
-  "ds.destruction.toggled_off": "Destruction mode toggled off"
+  "ds.destruction.toggled_off": "Destruction mode toggled off",
+  "item.dragonsurvival.hound_spawn_egg": "Hunter Hound Spawn Egg",
+  "item.dragonsurvival.spearman_spawn_egg": "Hunter Spearman Spawn Egg",
+  "item.dragonsurvival.knight_spawn_egg": "Hunter Knight Spawn Egg",
+  "item.dragonsurvival.ambusher_spawn_egg": "Hunter Ambusher Spawn Egg",
+  "item.dragonsurvival.griffin_spawn_egg": "Hunter Griffin Spawn Egg",
+  "item.dragonsurvival.leader_spawn_egg": "Hunter Leader Spawn Egg"
 }

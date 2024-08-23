@@ -14,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -38,10 +39,14 @@ public class RotatingKeyItem extends Item implements GeoItem {
     public final ResourceLocation texture, model;
     private final TagKey<Structure> target;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-    private Vector3d prevRotation = new Vector3d();
-    private final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
-    private final RawAnimation NO_TARGET = RawAnimation.begin().thenPlay("no_target");
-    private final Vector3f fake_target = new Vector3f();
+    public final RawAnimation IDLE = RawAnimation.begin().thenPlay("idle");
+    public final RawAnimation NO_TARGET = RawAnimation.begin().thenPlay("no_target");
+
+    // Client data used for rendering
+    public final Vector3f fake_target = new Vector3f();
+    public Vector3f currentTarget = new Vector3f();
+    public Vector3f prevRotation = new Vector3f();
+    public Player playerHoldingItem;
 
     public RotatingKeyItem(Properties pProperties, ResourceLocation model, ResourceLocation texture, ResourceLocation target) {
         super(pProperties);
@@ -87,45 +92,39 @@ public class RotatingKeyItem extends Item implements GeoItem {
     @Override
     public void inventoryTick(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull Entity pEntity, int pSlotId, boolean pIsSelected) {
         super.inventoryTick(pStack, pLevel, pEntity, pSlotId, pIsSelected);
-        if (pLevel instanceof ServerLevel serverLevel) {
-            if (serverLevel.getGameTime() % 20 == 0) {
-                Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
-                if (structure.isPresent()) {
-                    Pair<BlockPos, Holder<Structure>> nearest = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(
-                            serverLevel, structure.get(), pEntity.blockPosition(), 25, false);
-                    if (nearest != null) {
-                        SectionPos section = SectionPos.of(nearest.getFirst());
-                        StructureStart start = serverLevel.structureManager().getStartForStructure(section, nearest.getSecond().value(),
-                                serverLevel.getChunk(section.x(), section.z(), ChunkStatus.STRUCTURE_STARTS));
-                        if (start != null) {
-                            pStack.set(DSDataComponents.TARGET_POSITION, start.getBoundingBox().getCenter().getCenter().toVector3f());
+        if(pEntity instanceof Player player) {
+            if(player.getMainHandItem() == pStack || player.getOffhandItem() == pStack) {
+                if (pLevel instanceof ServerLevel serverLevel) {
+                    if (serverLevel.getGameTime() % 20 == 0) {
+                        Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
+                        if (structure.isPresent()) {
+                            Pair<BlockPos, Holder<Structure>> nearest = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(
+                                    serverLevel, structure.get(), pEntity.blockPosition(), 25, false);
+                            if (nearest != null) {
+                                SectionPos section = SectionPos.of(nearest.getFirst());
+                                StructureStart start = serverLevel.structureManager().getStartForStructure(section, nearest.getSecond().value(),
+                                        serverLevel.getChunk(section.x(), section.z(), ChunkStatus.STRUCTURE_STARTS));
+                                if (start != null) {
+                                    pStack.set(DSDataComponents.TARGET_POSITION, start.getBoundingBox().getCenter().getCenter().toVector3f());
+                                    return;
+                                }
+                            }
+                        }
+                        pStack.set(DSDataComponents.TARGET_POSITION, fake_target);
+                        triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
+                    }
+                    else
+                    {
+                        playerHoldingItem = player;
+                        currentTarget = pStack.get(DSDataComponents.TARGET_POSITION);
+                        if (currentTarget == fake_target || currentTarget == null || currentTarget.length() < 0.1) {
+                            triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
                             return;
                         }
+                        triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "idle");
                     }
                 }
-                pStack.set(DSDataComponents.TARGET_POSITION, fake_target);
-                triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
             }
-        } else {
-            Vector3f src = pStack.get(DSDataComponents.TARGET_POSITION);
-            if (src == fake_target || src == null || src.length() < 0.1) {
-                //MathParser.setVariable("query.x_rotation", () -> 0);
-                //MathParser.setVariable("query.y_rotation", () -> 0);
-                //MathParser.setVariable("query.z_rotation", () -> 0);
-                triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
-                return;
-            }
-            src = new Vector3f(src);
-            Vector3f vectorTo = src.sub(pEntity.getPosition(0.0f).toVector3f()).normalize();
-            triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "idle");
-            double pitch = Mth.wrapDegrees(Math.toDegrees(Math.atan2(vectorTo.y, Math.sqrt(Math.pow(-vectorTo.x, 2) + Math.pow(vectorTo.z, 2)))));
-            double yaw = Mth.wrapDegrees(Math.toDegrees(-Math.atan2(vectorTo.z, -vectorTo.x)) - pEntity.getYRot());
-            double bank = 0;
-
-            MathParser.setVariable("query.x_rotation", () -> !Double.isNaN(pitch) ? Mth.rotLerp(0.1, prevRotation.x, pitch) : prevRotation.x);
-            MathParser.setVariable("query.y_rotation", () -> !Double.isNaN(yaw) ? Mth.rotLerp(0.1, prevRotation.y, yaw) : prevRotation.y);
-            MathParser.setVariable("query.z_rotation", () -> 0);
-            prevRotation = new Vector3d(pitch, yaw, bank);
         }
     }
 }

@@ -63,7 +63,7 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                                     .add(AlternativesEntry.alternatives(AlternativesEntry.alternatives(arr))
                                             .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block))));
                 } else if (block instanceof SkeletonPieceBlock) {
-                    return createSingleItemTable(DSItems.ELDER_DRAGON_BONE.value());
+                    return createSingleItemTable(DSItems.STAR_BONE.value());
                 } else if (block instanceof DragonBeacon) {
                     // We want all dragon beacons to drop empty dragon beacons instead
                     return createSingleItemTable(DSBlocks.DRAGON_BEACON_ITEM.value());

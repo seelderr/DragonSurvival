@@ -8,13 +8,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Locale;
+import java.util.*;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
@@ -30,6 +29,8 @@ public class DragonSkins{
 	public static HashMap<DragonLevel, HashMap<String, SkinObject>> SKIN_USERS = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerSkinCache = new HashMap<>();
 	public static HashMap<String, ResourceLocation> playerGlowCache = new HashMap<>();
+	private static double lastSkinFetchAttemptTime = 0;
+	private static int numSkinFetchAttempts = 0;
 
 	public static ResourceLocation getPlayerSkin(String playerName, DragonLevel level){
 		String skinKey = playerName + "_" + level.name;
@@ -99,9 +100,13 @@ public class DragonSkins{
 
 		HashMap<String, SkinObject> playerSkinMap = SKIN_USERS.getOrDefault(level, null);
 
-		if (playerSkinMap == null) {
+		// Wait an increasing amount of time depending on the number of failed attempts
+		if (playerSkinMap == null && lastSkinFetchAttemptTime + numSkinFetchAttempts < Blaze3D.getTime() && numSkinFetchAttempts < 10) {
 			DragonSurvivalMod.LOGGER.warn("Customs skins are not yet fetched, re-fetching...");
 			init();
+
+			numSkinFetchAttempts++;
+			lastSkinFetchAttemptTime = Blaze3D.getTime();
 
 			playerSkinMap = SKIN_USERS.getOrDefault(level, null);
 
