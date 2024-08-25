@@ -693,6 +693,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		lastAfflicted = tag.getInt("lastAfflicted");
+		refreshBody = true;
 
 		getSkinData().compileSkin();
 	}
