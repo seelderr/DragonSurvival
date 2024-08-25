@@ -34,11 +34,11 @@ public class BolasOnPlayerRenderer {
             PoseStack matrixStack = event.getPoseStack();
             float scale = entity.getEyeHeight();
 
-            if (entity instanceof Player) {
+            if (entity instanceof Player player) {
                 DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
 
                 if (handler.isDragon()) {
-                    scale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize());
+                    scale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler, player);
                 }
             }
 

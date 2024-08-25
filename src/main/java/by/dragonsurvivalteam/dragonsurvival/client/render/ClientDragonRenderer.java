@@ -359,7 +359,7 @@ public class ClientDragonRenderer {
 					if(player.hasEffect(DSEffects.TRAPPED)){
 						float bolasScale = player.getEyeHeight();
 						if(handler.isDragon()) {
-							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler.getSize());
+							bolasScale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler, player);
 						}
 						BolasOnPlayerRenderer.renderBolas(eventLight, combinedOverlayIn, renderTypeBuffer, poseStack, bolasScale);
 					}

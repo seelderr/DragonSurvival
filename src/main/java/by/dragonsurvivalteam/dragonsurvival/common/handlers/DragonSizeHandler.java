@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.entity.EntityAttachments;
 import net.minecraft.world.entity.EntityDimensions;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
@@ -35,37 +36,17 @@ public class DragonSizeHandler{
 		if (!DragonStateProvider.isDragon(player)) {
 			return;
 		}
-		AttributeInstance ai = player.getAttribute(Attributes.SCALE);
-		double scale = ai != null ? ai.getValue() : 1.0d;
 
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-
-		double size = handler.getSize();
-		// Calculate base values
-		double height = calculateDragonHeight(size);
-		double width = calculateDragonWidth(size);
-		double eyeHeight = calculateDragonEyeHeight(size);
-		boolean squish = false;
-		if (handler.getBody() != null) {
-			squish = handler.getBody().isSquish();
-			height *= handler.getBody().getHeightMult();
-			eyeHeight *= handler.getBody().getEyeHeightMult();
-		}
-		// Handle Pose stuff
 		Pose overridePose = overridePose(player);
-		height = calculateModifiedHeight(height, overridePose, squish);
-		eyeHeight = calculateModifiedEyeHeight(eyeHeight, overridePose, squish);// Apply changes
-		event.setNewSize(new EntityDimensions((float)(width * scale), (float)(height * scale), (float)(eyeHeight * scale), event.getOldSize().attachments(), event.getOldSize().fixed()));
-	}
-	
-	public static double getDragonHeight(Player player) {
-		return getDragonHeight(DragonStateProvider.getOrGenerateHandler(player), player);
+		EntityDimensions newDimensions = calculateDimensions(handler, player, overridePose);
+		event.setNewSize(new EntityDimensions(newDimensions.width(), newDimensions.height(), newDimensions.eyeHeight(), event.getOldSize().attachments(), event.getOldSize().fixed()));
 	}
 
-	public static double getDragonHeight(DragonStateHandler handler, Player player) {
+	public static double calculateDragonHeight(DragonStateHandler handler, Player player) {
 		AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
 		double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
-		double height = calculateDragonHeight(handler.getSize());
+		double height = calculateRawDragonHeight(handler.getSize());
 		boolean squish = false;
 
 		if (handler.getBody() != null) {
@@ -73,22 +54,57 @@ public class DragonSizeHandler{
 			squish = handler.getBody().isSquish();
 		}
 
-		return calculateModifiedHeight(height * scale, overridePose(player), squish);
+		return applyPoseToHeight(height * scale, overridePose(player), squish);
 	}
 
-	public static double calculateDragonHeight(double size){
+	public static double calculateDragonEyeHeight(DragonStateHandler handler, Player player) {
+		AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
+		double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
+		double eyeHeight = calculateRawDragonEyeHeight(handler.getSize());
+		boolean squish = false;
+
+		if (handler.getBody() != null) {
+			eyeHeight *= handler.getBody().getEyeHeightMult();
+			squish = handler.getBody().isSquish();
+		}
+
+		return applyPoseToEyeHeight(eyeHeight * scale, overridePose(player), squish);
+	}
+
+	public static EntityDimensions calculateDimensions(DragonStateHandler handler, Player player, Pose overridePose) {
+		AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
+		double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
+		double size = handler.getSize();
+		double height = calculateRawDragonHeight(size);
+		double width = calculateRawDragonWidth(size);
+		double eyeHeight = calculateRawDragonEyeHeight(size);
+		boolean squish = false;
+
+		if (handler.getBody() != null) {
+			height *= handler.getBody().getHeightMult();
+			eyeHeight *= handler.getBody().getEyeHeightMult();
+			squish = handler.getBody().isSquish();
+		}
+
+		height = applyPoseToHeight(height, overridePose, squish);
+		eyeHeight = applyPoseToEyeHeight(eyeHeight, overridePose, squish);
+
+		return EntityDimensions.scalable((float)(width * scale), (float)(height * scale)).withEyeHeight((float)(eyeHeight * scale));
+	}
+
+	public static double calculateRawDragonHeight(double size){
 		return (size + 4.0D) / 20.0D;
 	}
 
-	public static double calculateDragonWidth(double size){
+	public static double calculateRawDragonWidth(double size){
 		return (3.0D * size + 62.0D) / 260.0D; // 0.4 -> Config Dragon Max;
 	}
 
-	public static double calculateDragonEyeHeight(double size){
+	public static double calculateRawDragonEyeHeight(double size){
 		return (11.0D * size + 54.0D) / 260.0D; // 0.8 -> Config Dragon Max
 	}
 
-	public static double calculateModifiedEyeHeight(double eyeHeight, Pose pose, boolean squish){
+	public static double applyPoseToEyeHeight(double eyeHeight, Pose pose, boolean squish){
 		if(pose == Pose.CROUCHING && !squish){
 			eyeHeight *= 5.0D / 6.0D;
 		}else if(pose == Pose.CROUCHING) {
@@ -97,16 +113,6 @@ public class DragonSizeHandler{
 			eyeHeight *= 7.0D / 12.0D;
 		}
 		return eyeHeight;
-	}
-
-	public static EntityDimensions calculateDimensions(double width, double height, double eyeHeight)
-	{
-		return EntityDimensions.scalable((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D)).withEyeHeight((float)eyeHeight);
-	}
-
-	public static EntityDimensions calculateDimensions(double width, double height)
-	{
-		return EntityDimensions.scalable((float)(Math.round(width * 100.0D) / 100.0D), (float)(Math.round(height * 100.0D) / 100.0D));
 	}
 
 	public static Pose overridePose(final Player player) {
@@ -146,21 +152,21 @@ public class DragonSizeHandler{
 		return Pose.STANDING;
 	}
 
-	public static boolean canPoseFit(LivingEntity player, Pose pose){
-		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(player);
+	public static boolean canPoseFit(LivingEntity entity, Pose pose){
+		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(entity);
 
 		if (capability.isEmpty()){
 			return false;
 		}
-		
-		double size = capability.orElseThrow(() -> new IllegalStateException("Dragon State was not valid")).getSize();
-		boolean squish = DragonUtils.getDragonBody(player) != null ? DragonUtils.getDragonBody(player).isSquish() : false;
-		double height = calculateModifiedHeight(calculateDragonHeight(size), pose, squish);
-		double width = calculateDragonWidth(size);
-		return player.level().noCollision(calculateDimensions(width,height).makeBoundingBox(player.position()));
+
+		if(entity instanceof Player player) {
+			return player.level().noCollision(calculateDimensions(capability.get(), player, pose).makeBoundingBox(player.position()));
+		}
+
+		return false;
 	}
 
-	public static double calculateModifiedHeight(double height, Pose pose, boolean squish){
+	public static double applyPoseToHeight(double height, Pose pose, boolean squish){
 		if(pose == Pose.CROUCHING){
 			if(squish){
 				height *= 3.0D / 6.0D;
