@@ -12,10 +12,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import java.util.*;
 import javax.annotation.Nullable;
-
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;

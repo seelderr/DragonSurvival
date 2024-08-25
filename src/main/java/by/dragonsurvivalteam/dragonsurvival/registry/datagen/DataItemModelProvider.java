@@ -29,7 +29,7 @@ public class DataItemModelProvider extends ItemModelProvider {
 	);
 
 	private static final List<String> itemsThatAreManuallyAuthored = List.of(
-			"bolas",
+			"dragon_hunting_mesh",
 			"hunter_partisan",
 			"hunter_partisan_diamond",
 			"hunter_partisan_netherite",

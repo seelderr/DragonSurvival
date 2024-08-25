@@ -4,13 +4,9 @@ import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigH
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
-import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
@@ -218,12 +214,7 @@ public class DragonDestructionHandler {
                     return;
                 }
 
-                AABB boundingBox;
-                boolean squish = dragonStateHandler.getBody() != null ? dragonStateHandler.getBody().isSquish() : false;
-                double size = dragonStateHandler.getSize();
-                double height = DragonSizeHandler.calculateModifiedHeight(DragonSizeHandler.calculateDragonHeight(size), event.getEntity().getPose(), squish);
-                double width = DragonSizeHandler.calculateDragonWidth(size) / 2.0D;
-                boundingBox = DragonSizeHandler.calculateDimensions(width, height).makeBoundingBox(player.position());
+                AABB boundingBox = player.getBoundingBox();
                 AABB blockCollisionBoundingBox = boundingBox.inflate(1.25 + (dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE * 0.15f);
                 AABB crushingBoundingBox = blockCollisionBoundingBox;
 

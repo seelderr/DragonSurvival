@@ -15,14 +15,17 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.platform.NativeImage;
-import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Supplier;
+import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.util.Mth;
@@ -92,23 +95,30 @@ public class DragonEditorHandler{
 		return getKeys(DragonUtils.getDragonType(player), DragonUtils.getDragonBody(player), layers);
 	}
 
-	public static void generateSkinTextures(final DragonEntity dragon) {
+	public static CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> generateSkinTextures(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-
-		if (!RenderSystem.isOnRenderThreadOrInit()) {
-			RenderSystem.recordRenderCall(() -> genTextures(player, handler));
-		} else {
-			genTextures(player, handler);
+		Set<DragonLevel> dragonLevels = handler.getSkinData().skinPreset.skinAges.keySet();
+		List<Pair<SkinAgeGroup, String>> skinAgeGroupsAndDragonLevels = new ArrayList<>();
+		for (DragonLevel dragonLevel : dragonLevels) {
+			skinAgeGroupsAndDragonLevels.add(new Pair<>(handler.getSkinData().skinPreset.skinAges.get(dragonLevel).get(), dragonLevel.name));
 		}
+
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				return genTextures(player, handler, skinAgeGroupsAndDragonLevels);
+			} catch (Throwable e) {
+				DragonSurvivalMod.LOGGER.error("An error occurred while compiling the dragon skin texture", e);
+			}
+
+			return new ArrayList<>();
+		}, Util.backgroundExecutor());
 	}
 
-	private static void genTextures(final Player player, final DragonStateHandler handler) {
-		Set<DragonLevel> dragonLevels = handler.getSkinData().skinPreset.skinAges.keySet();
-
-		for (DragonLevel dragonLevel : dragonLevels) {
-			SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(dragonLevel).get();
-
+	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final Player player, final DragonStateHandler handler, final List<Pair<SkinAgeGroup, String>> skinAgeGroupAndDragonLevels) throws IOException {
+		List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
+		for (Pair<SkinAgeGroup, String> skinAgeGroupAndDragonLevel : skinAgeGroupAndDragonLevels) {
+			SkinAgeGroup skinAgeGroup = skinAgeGroupAndDragonLevel.getFirst();
 			NativeImage normal = new NativeImage(512, 512, true);
 			NativeImage glow = new NativeImage(512, 512, true);
 
@@ -124,55 +134,52 @@ public class DragonEditorHandler{
 						float satVal = settings.saturation;
 						float brightVal = settings.brightness;
 
-						try {
-							ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
-							Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(textureLocation);
+						ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
+						Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(textureLocation);
 
-							if (resource.isEmpty()) {
-								throw new IOException(String.format("Resource %s not found!", textureLocation.getPath()));
-							}
+						if (resource.isEmpty()) {
+							throw new UncheckedIOException(new IOException(String.format("Resource %s not found!", textureLocation.getPath())));
+						}
 
-							InputStream textureStream = resource.get().open();
-							NativeImage tempColorPicker = NativeImage.read(textureStream);
-							textureStream.close();
+						InputStream textureStream = resource.get().open();
+						NativeImage tempColorPicker = NativeImage.read(textureStream);
 
-							for (int x = 0; x < tempColorPicker.getWidth(); x++) {
-								for (int y = 0; y < tempColorPicker.getHeight(); y++) {
-									Color color = getColor(settings, skinTexture, hueVal, satVal, brightVal, tempColorPicker, x, y);
+						textureStream.close();
 
-									if (color == null) {
-										continue;
-									}
+						for (int x = 0; x < tempColorPicker.getWidth(); x++) {
+							for (int y = 0; y < tempColorPicker.getHeight(); y++) {
+								Color color = getColor(settings, skinTexture, hueVal, satVal, brightVal, tempColorPicker, x, y);
 
-									if (color.getAlpha() != 0) {
-										Supplier<NativeImage> g2 = settings.glowing ? () -> glow : () -> normal;
-										g2.get().setPixelRGBA(x, y, color.getRGB());
+								if (color == null) {
+									continue;
+								}
 
-										if (settings.glowing && layer == EnumSkinLayer.BASE) {
-											normal.setPixelRGBA(x, y, color.getRGB());
-										}
+								if (color.getAlpha() != 0) {
+									Supplier<NativeImage> g2 = settings.glowing ? () -> glow : () -> normal;
+									g2.get().setPixelRGBA(x, y, color.getRGB());
+
+									if (settings.glowing && layer == EnumSkinLayer.BASE) {
+										normal.setPixelRGBA(x, y, color.getRGB());
 									}
 								}
 							}
-
-							tempColorPicker.close();
-						} catch (IOException e) {
-							DragonSurvivalMod.LOGGER.error("An error occured while compiling the dragon skin texture", e);
 						}
+
+						tempColorPicker.close();
 					}
 				}
 			}
 
 			String uuid = player.getStringUUID();
-			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
-			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
+			String dragonLevel = skinAgeGroupAndDragonLevel.getSecond();
+			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel);
+			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel);
 
-			registerCompiledTexture(normal, dynamicNormalKey);
-			registerCompiledTexture(glow, dynamicGlowKey);
+			texturesToRegister.add(new Pair<>(normal, dynamicNormalKey));
+			texturesToRegister.add(new Pair<>(glow, dynamicGlowKey));
 		}
 
-		handler.getSkinData().recompileSkin = false;
-		handler.getSkinData().isCompiled = true;
+		return texturesToRegister;
 	}
 
 	@Nullable private static Color getColor(LayerSettings settings, Texture text, float hueVal, float satVal, float brightVal, NativeImage img, int x, int y){
@@ -193,28 +200,5 @@ public class DragonEditorHandler{
 
 		Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), color.getAlpha());
-	}
-
-	private static void registerCompiledTexture(NativeImage image, ResourceLocation key){
-		try (image) {
-			// DEBUG :: Export the texture
-			//if (key.toString().contains("dynamic_normal")) {
-			//	File file = new File(Minecraft.getInstance().gameDirectory, "texture");
-			//	file.mkdirs();
-			//	file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
-			//	image.writeToFile(file);
-			//}
-
-			// the other 'getTexture' call tries to register the texture immediately
-			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
-				texture.setPixels(image);
-				texture.upload();
-			} else {
-				DynamicTexture layer = new DynamicTexture(image);
-				Minecraft.getInstance().getTextureManager().register(key, layer);
-			}
-		} catch (Exception e) {
-			DragonSurvivalMod.LOGGER.error(e);
-		}
 	}
 }

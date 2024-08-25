@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -20,8 +21,6 @@ import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadType;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement;
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
 
 /** <a href="https://github.com/TelepathicGrunt/RepurposedStructures/blob/1.21-Arch/common/src/main/java/com/telepathicgrunt/repurposedstructures/world/structures/placements/AdvancedRandomSpread.java">Source</a> */
 public class AdvancedRandomSpread extends RandomSpreadStructurePlacement {
