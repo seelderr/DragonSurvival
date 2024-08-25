@@ -173,7 +173,6 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 								if (tc != null) {
 									// Not the most elegant solution,
 									// but the best way I could find to get a single color reliably...
-									// TODO: something better
 									trimBaseColor = new Color(tc.getValue());
 									Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
 								}
