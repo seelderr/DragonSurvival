@@ -1,0 +1,25 @@
+{
+  "parent": "dragonsurvival:dragon_survival_root",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:treasure_gold",
+      "components": {
+        "minecraft:block_state": {
+          "layers": 1
+        }
+      }
+    },
+    "title": { "translate": "ds.advancements.sleep_on_treasure.title" },
+    "description": { "translate": "ds.advancements.sleep_on_treasure.description" },
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "sleep": {
+      "trigger": "dragonsurvival:sleep_on_treasure",
+      "conditions": {
+        "count": 10
+      }
+    }
+  }
+}
