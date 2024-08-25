@@ -119,47 +119,42 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	}
 
 	public ResourceLocation getTextureResource(final DragonEntity dragon) {
-		if (dragon.playerId != null || dragon.getPlayer() != null) {
-			if(overrideTexture != null) {
-				return overrideTexture;
-			}
-
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragon.getPlayer());
-			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
-
-			if (handler.getSkinData().blankSkin) {
-				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
-			}
-
-			if (ageGroup.defaultSkin) {
-				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
-			}
-
-			if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
-				CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
-				textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
-					handler.getSkinData().isCompiled = true;
-					handler.getSkinData().recompileSkin = false;
-					for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
-						RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
-					}
-				}, Minecraft.getInstance());
-			}
-
-			if (handler.getSkinData().isCompiled) {
-				return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
-			}
+		if(overrideTexture != null) {
+			return overrideTexture;
 		}
 
-		if (dragon.getPlayer() instanceof FakeClientPlayer) {
-			LocalPlayer localPlayer = Minecraft.getInstance().player;
-
-			if (localPlayer != null) { // TODO :: Check if skin is compiled?
-				return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + localPlayer.getStringUUID() + "_" + DragonStateProvider.getOrGenerateHandler(dragon.getPlayer()).getLevel().name);
-			}
+		Player player;
+		if (dragon.getPlayer() != null || dragon.playerId != null){
+			player = dragon.getPlayer();
+		} else if (dragon.getPlayer() instanceof FakeClientPlayer) {
+			player = Minecraft.getInstance().player;
+		} else {
+			return defaultTexture;
 		}
 
-		return defaultTexture;
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
+
+		if (handler.getSkinData().blankSkin) {
+			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
+		}
+
+		if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
+			CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
+			textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
+				handler.getSkinData().isCompiled = true;
+				handler.getSkinData().recompileSkin = false;
+				for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
+					RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
+				}}, Minecraft.getInstance());
+		}
+
+		// Show the default skin while we are compiling if we haven't already compiled the skin
+		if (ageGroup.defaultSkin || !handler.getSkinData().isCompiled) {
+			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
+		}
+
+		return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + player.getStringUUID() + "_" + handler.getLevel().name);
 	}
 
 	public void setOverrideTexture(final ResourceLocation overrideTexture) {
