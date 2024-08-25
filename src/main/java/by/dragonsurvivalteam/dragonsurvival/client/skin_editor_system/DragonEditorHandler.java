@@ -114,7 +114,7 @@ public class DragonEditorHandler{
 			try {
 				return genTextures(player, handler, skinAgeGroupsAndDragonLevels);
 			} catch (Throwable e) {
-				DragonSurvivalMod.LOGGER.error("An error occured while compiling the dragon skin texture", e);
+				DragonSurvivalMod.LOGGER.error("An error occurred while compiling the dragon skin texture", e);
 			}
 
 			return new ArrayList<>();
@@ -206,28 +206,5 @@ public class DragonEditorHandler{
 
 		Color c = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
 		return new Color(c.getRed(), c.getGreen(), c.getBlue(), color.getAlpha());
-	}
-
-	public static void registerCompiledTexture(NativeImage image, ResourceLocation key){
-		try (image) {
-			// DEBUG :: Export the texture
-			//if (key.toString().contains("dynamic_normal")) {
-			//	File file = new File(Minecraft.getInstance().gameDirectory, "texture");
-			//	file.mkdirs();
-			//	file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
-			//	image.writeToFile(file);
-			//}
-
-			// the other 'getTexture' call tries to register the texture immediately
-			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
-				texture.setPixels(image);
-				texture.upload();
-			} else {
-				DynamicTexture layer = new DynamicTexture(image);
-				Minecraft.getInstance().getTextureManager().register(key, layer);
-			}
-		} catch (Exception e) {
-			DragonSurvivalMod.LOGGER.error(e);
-		}
 	}
 }

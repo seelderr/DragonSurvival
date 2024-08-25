@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
+import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -141,7 +142,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 					handler.getSkinData().isCompiled = true;
 					handler.getSkinData().recompileSkin = false;
 					for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
-						DragonEditorHandler.registerCompiledTexture(pair.getFirst(), pair.getSecond());
+						RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
 					}
 				}, Minecraft.getInstance());
 			}
