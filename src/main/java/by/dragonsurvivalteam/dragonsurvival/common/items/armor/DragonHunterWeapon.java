@@ -3,13 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.armor;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import net.minecraft.core.Holder;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.List;
 
 public class DragonHunterWeapon extends SwordItem implements PermanentEnchantmentItem {
     public ItemEnchantments getDefaultEnchantments() {

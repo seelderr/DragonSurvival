@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.criteria;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.*;
-
 import java.util.Optional;
+import net.minecraft.advancements.critereon.*;
 
 public record BecomeDragonInstance(Optional<ContextAwarePredicate> player) implements SimpleCriterionTrigger.SimpleInstance {
     public static final Codec<BecomeDragonInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(

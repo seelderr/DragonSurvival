@@ -3,14 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
-
+import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
