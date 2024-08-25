@@ -121,10 +121,10 @@ public class SkinsScreen extends Screen{
 		EntityRenderer<? super DragonEntity> dragonRenderer = Minecraft.getInstance().getEntityRenderDispatcher().getRenderer(dragon);
 
 		if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-			ClientDragonRenderer.dragonModel.setCurrentTexture(null);
+			ClientDragonRenderer.dragonModel.setOverrideTexture(null);
 			((DragonRenderer)dragonRenderer).glowTexture = null;
 		}else{
-			ClientDragonRenderer.dragonModel.setCurrentTexture(skinTexture);
+			ClientDragonRenderer.dragonModel.setOverrideTexture(skinTexture);
 			((DragonRenderer)dragonRenderer).glowTexture = glowTexture;
 		}
 

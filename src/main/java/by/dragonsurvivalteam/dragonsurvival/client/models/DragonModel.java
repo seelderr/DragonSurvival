@@ -12,6 +12,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMove
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import com.mojang.blaze3d.platform.NativeImage;
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.RenderType;
@@ -22,10 +24,14 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/cave_newborn.png");
 	private final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(MODID, "geo/dragon_model.geo.json");
-	private ResourceLocation currentTexture;
+	private ResourceLocation overrideTexture;
+	private CompletableFuture<Void> textureRegisterFuture = CompletableFuture.completedFuture(null);
 
 	/**TODO Body Types Update
 	Required:
@@ -114,31 +120,38 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 	public ResourceLocation getTextureResource(final DragonEntity dragon) {
 		if (dragon.playerId != null || dragon.getPlayer() != null) {
+			if(overrideTexture != null) {
+				return overrideTexture;
+			}
+
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragon.getPlayer());
 			SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
-
-			if (handler.getSkinData().recompileSkin) {
-				DragonEditorHandler.generateSkinTextures(dragon);
-			}
 
 			if (handler.getSkinData().blankSkin) {
 				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
 			}
 
 			if (ageGroup.defaultSkin) {
-				if (currentTexture != null) {
-					return currentTexture;
-				}
-
 				return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
 			}
 
-			if (handler.getSkinData().isCompiled && currentTexture == null) {
+			if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
+				CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
+				textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
+					handler.getSkinData().isCompiled = true;
+					handler.getSkinData().recompileSkin = false;
+					for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
+						DragonEditorHandler.registerCompiledTexture(pair.getFirst(), pair.getSecond());
+					}
+				}, Minecraft.getInstance());
+			}
+
+			if (handler.getSkinData().isCompiled) {
 				return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + dragon.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 			}
 		}
 
-		if (currentTexture == null && dragon.getPlayer() instanceof FakeClientPlayer) {
+		if (dragon.getPlayer() instanceof FakeClientPlayer) {
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
 
 			if (localPlayer != null) { // TODO :: Check if skin is compiled?
@@ -146,11 +159,11 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			}
 		}
 
-		return currentTexture == null ? defaultTexture : currentTexture;
+		return defaultTexture;
 	}
 
-	public void setCurrentTexture(final ResourceLocation currentTexture) {
-		this.currentTexture = currentTexture;
+	public void setOverrideTexture(final ResourceLocation overrideTexture) {
+		this.overrideTexture = overrideTexture;
 	}
 
 	@Override

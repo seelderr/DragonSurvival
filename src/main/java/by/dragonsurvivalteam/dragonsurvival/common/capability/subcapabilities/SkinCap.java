@@ -19,7 +19,6 @@ public class SkinCap extends SubCap{
 
 	public void compileSkin() {
 		recompileSkin = true;
-		isCompiled = false;
 	}
 
 	public SkinCap(DragonStateHandler handler){

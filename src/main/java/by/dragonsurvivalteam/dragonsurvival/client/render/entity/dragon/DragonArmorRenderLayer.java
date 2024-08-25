@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.LOGGER;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
@@ -94,7 +93,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 
 		Color armorColor = new Color(1f, 1f, 1f);
 
-		ClientDragonRenderer.dragonModel.setCurrentTexture(texture);
+		ClientDragonRenderer.dragonModel.setOverrideTexture(texture);
 		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 		if (type != null) {
 			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
