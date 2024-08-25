@@ -1,15 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
+import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import java.awt.*;
+
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.LOGGER;
 
 public class RenderingUtils{
 	static final double PI_TWO = Math.PI * 2.0;
@@ -255,5 +263,29 @@ public class RenderingUtils{
 		BufferUploader.drawWithShader(buffer.buildOrThrow());
 		GL11.glDisable(GL11.GL_LINE_SMOOTH);
 		RenderSystem.disableBlend();
+	}
+
+	public static void uploadTexture(NativeImage image, ResourceLocation key){
+		try (image) {
+			// DEBUG :: Export the texture
+			//if (key.toString().contains("dynamic_normal")) {
+			//	File file = new File(Minecraft.getInstance().gameDirectory, "texture");
+			//	file.mkdirs();
+			//	file = new File(file.getPath(), key.toString().replace(":", "_") + ".png");
+			//	image.writeToFile(file);
+			//}
+
+			// the other 'getTexture' call tries to register the texture immediately
+			if (Minecraft.getInstance().getTextureManager().getTexture(key, null) instanceof DynamicTexture texture) {
+				texture.setPixels(image);
+				texture.upload();
+            } else {
+				DynamicTexture layer = new DynamicTexture(image);
+				Minecraft.getInstance().getTextureManager().register(key, layer);
+				image.close();
+			}
+		} catch (Exception e) {
+			DragonSurvivalMod.LOGGER.error(e);
+		}
 	}
 }

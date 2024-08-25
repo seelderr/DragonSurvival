@@ -593,9 +593,6 @@ public class DragonEditorScreen extends Screen {
 			HANDLER.setType(dragonType);
 		}
 
-		// Do this so the body type actually refreshes when the dragon type changes
-		FakeClientPlayerUtils.forceRefreshFirstFakePlayer();
-
 		HANDLER.setBody(dragonBody);
 		HANDLER.getSkinData().skinPreset = preset;
 		HANDLER.setSize(level.size);

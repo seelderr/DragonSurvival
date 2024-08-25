@@ -255,7 +255,7 @@ public class ClientDragonRenderer {
 				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
 				DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
 				EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
-				dragonModel.setCurrentTexture(texture);
+				dragonModel.setOverrideTexture(texture);
 
 				if(player.isCrouching() && handler.isWingsSpread() && !player.onGround()){
 					poseStack.translate(0, -0.15, 0);
@@ -377,7 +377,7 @@ public class ClientDragonRenderer {
 				((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
 			}
 		}
-		dragonModel.setCurrentTexture(null);
+		dragonModel.setOverrideTexture(null);
 	}
 
 	@SubscribeEvent
