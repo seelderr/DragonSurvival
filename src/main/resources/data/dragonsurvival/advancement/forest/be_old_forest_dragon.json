@@ -1,0 +1,22 @@
+{
+  "parent": "dragonsurvival:forest/be_forest_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_beacon_magic"
+    },
+    "title": { "translate": "ds.advancements.be_old_forest_dragon.title" },
+    "description": { "translate": "ds.advancements.be_old_forest_dragon.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "challenge"
+  },
+  "criteria": {
+    "be_old": {
+      "trigger": "dragonsurvival:be_dragon",
+      "conditions": {
+        "type": "forest",
+        "size": 60
+      }
+    }
+  }
+}

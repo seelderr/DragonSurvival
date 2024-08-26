@@ -10,17 +10,9 @@
   },
   "criteria": {
     "be_sea_dragon": {
-      "trigger": "dragonsurvival:become_dragon",
+      "trigger": "dragonsurvival:be_dragon",
       "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
-            }
-          }
-        ]
+        "type": "sea"
       }
     }
   },

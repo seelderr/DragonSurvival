@@ -1,0 +1,28 @@
+package by.dragonsurvivalteam.dragonsurvival.common.criteria;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.advancements.critereon.ContextAwarePredicate;
+import net.minecraft.advancements.critereon.EntityPredicate;
+import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
+import net.minecraft.server.level.ServerPlayer;
+
+import java.util.Optional;
+
+public class SleepOnTreasureTrigger extends SimpleCriterionTrigger<SleepOnTreasureTrigger.SleepOnTreasureInstance> {
+    public void trigger(ServerPlayer player, int count) {
+        this.trigger(player, triggerInstance -> triggerInstance.count.map(integer -> integer < count).orElse(true));
+    }
+
+    @Override
+    public Codec<SleepOnTreasureInstance> codec() {
+        return SleepOnTreasureInstance.CODEC;
+    }
+
+    public record SleepOnTreasureInstance(Optional<ContextAwarePredicate> player, Optional<Integer> count) implements SimpleCriterionTrigger.SimpleInstance {
+        public static final Codec<SleepOnTreasureInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SleepOnTreasureInstance::player),
+                Codec.INT.optionalFieldOf("count").forGetter(SleepOnTreasureInstance::count)
+        ).apply(instance, SleepOnTreasureInstance::new));
+    }
+}

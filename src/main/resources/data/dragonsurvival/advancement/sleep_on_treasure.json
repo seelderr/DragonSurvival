@@ -1,0 +1,20 @@
+{
+  "parent": "dragonsurvival:dragon_survival_root",
+  "display": {
+    "icon": {
+      "id": "minecraft:gold_nugget"
+    },
+    "title": { "translate": "ds.advancements.sleep_on_treasure.title" },
+    "description": { "translate": "ds.advancements.sleep_on_treasure.description" },
+    "show_toast": false,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "sleep": {
+      "trigger": "dragonsurvival:sleep_on_treasure",
+      "conditions": {
+        "count": 10
+      }
+    }
+  }
+}
