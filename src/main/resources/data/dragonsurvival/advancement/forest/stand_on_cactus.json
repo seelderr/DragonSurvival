@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival:forest/be_forest_dragon",
   "display": {
     "icon": {
       "id": "minecraft:cactus"
@@ -10,7 +11,6 @@
       "translate": "ds.advancements.stand_on_cactus.description"
     }
   },
-  "parent": "dragonsurvival:forest/be_forest_dragon",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:location",

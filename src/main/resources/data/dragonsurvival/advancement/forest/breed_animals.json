@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival:forest/be_forest_dragon",
   "display": {
     "icon": {
       "id": "dragonsurvival:pork_chop"
@@ -10,7 +11,6 @@
       "translate": "ds.advancements.breed_animals.description"
     }
   },
-  "parent": "dragonsurvival:forest/be_forest_dragon",
   "criteria": {
     "fall": {
       "trigger": "minecraft:bred_animals",
