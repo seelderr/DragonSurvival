@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:get_hunter_omen",
+  "parent": "dragonsurvival:evil/get_hunter_omen",
   "display": {
     "icon": {
       "id": "dragonsurvival:evil_dragon_key"

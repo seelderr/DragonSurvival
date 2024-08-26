@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:collect_evil_key",
+  "parent": "dragonsurvival:evil/collect_evil_key",
   "display": {
     "icon": {
       "id": "dragonsurvival:evil_dragon_vault"
