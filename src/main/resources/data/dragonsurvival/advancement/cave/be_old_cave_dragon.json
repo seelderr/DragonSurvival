@@ -8,6 +8,7 @@
     "description": { "translate": "ds.advancements.be_old_cave_dragon.description" },
     "show_toast": true,
     "announce_to_chat": true,
+    "hidden": true,
     "frame": "challenge"
   },
   "criteria": {
