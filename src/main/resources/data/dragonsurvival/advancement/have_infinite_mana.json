@@ -16,13 +16,11 @@
       "conditions": {
         "player": [
           {
-            "term": {
-              "condition": "minecraft:entity_properties",
-              "entity": "this",
-              "predicate": {
-                "effects": {
-                  "dragonsurvival:source_of_magic": {}
-                }
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "effects": {
+                "dragonsurvival:source_of_magic": {}
               }
             }
           }
