@@ -1,0 +1,38 @@
+{
+  "parent": "dragonsurvival:hunter/open_hunter_vault",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:bolas"
+    },
+    "title": {
+      "translate": "ds.advancements.hit_entity_with_bolas.title"
+    },
+    "description": {
+      "translate": "ds.advancements.hit_entity_with_bolas.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "murderer": {
+      "trigger": "minecraft:player_hurt_entity",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "equipment": {
+                "items": "minecraft:crossbow",
+                "components": {
+                  "minecraft:enchantments": {
+                    "dragonsurvival:bolas": 0
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

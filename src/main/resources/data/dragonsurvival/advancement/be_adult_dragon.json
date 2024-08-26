@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:be_dragon",
+  "parent": "dragonsurvival:be_young_dragon",
   "display": {
     "icon": {
-      "id": "dragonsurvival:dragon_soul"
+      "id": "dragonsurvival:weak_dragon_heart"
     },
     "title": { "translate": "ds.advancements.be_adult_dragon.title" },
     "description": { "translate": "ds.advancements.be_adult_dragon.description" },
@@ -14,7 +14,7 @@
     "be_dragon": {
       "trigger": "dragonsurvival:be_dragon",
       "conditions": {
-        "age": 40
+        "age": 30
       }
     }
   }

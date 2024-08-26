@@ -1,0 +1,23 @@
+{
+  "parent": "dragonsurvival:be_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_soul"
+    },
+    "title": { "translate": "ds.advancements.use_dragon_soul.title" },
+    "description": { "translate": "ds.advancements.use_dragon_soul.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "use_star_heart": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:dragon_soul"
+        }
+      }
+    }
+  }
+}
