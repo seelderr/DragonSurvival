@@ -1,0 +1,38 @@
+{
+  "parent": "dragonsurvival:hunter/collect_hunter_key",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:hunter_dragon_vault"
+    },
+    "title": { "translate": "ds.advancements.open_hunter_vault.title" },
+    "description": { "translate": "ds.advancements.open_hunter_vault.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "use_on_vault": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "dragonsurvival:hunter_dragon_key"
+            }
+          }
+        ],
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "dragonsurvival:dragon_vault_hunter"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

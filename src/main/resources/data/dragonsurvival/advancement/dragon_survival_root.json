@@ -8,7 +8,7 @@
     "icon": {
       "id": "dragonsurvival:elder_dragon_bone"
     },
-    "background": "dragonsurvival:textures/dragon/cave_adult.png",
+    "background": "dragonsurvival:textures/block/dragons_memory_side.png",
     "title": "Dragon Survival",
     "description": "",
     "show_toast": false,
