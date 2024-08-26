@@ -13,13 +13,13 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class dragon_leg<T extends Entity> extends EntityModel<T> {
+public class DragonLeggings<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("dragonsurvival", "dragon_leggings"), "main");
 	public final ModelPart left_leg;
 	public final ModelPart right_leg;
 
-	public dragon_leg(ModelPart root) {
+	public DragonLeggings(ModelPart root) {
 		this.left_leg = root.getChild("left_leg");
 		this.right_leg = root.getChild("right_leg");
 	}
