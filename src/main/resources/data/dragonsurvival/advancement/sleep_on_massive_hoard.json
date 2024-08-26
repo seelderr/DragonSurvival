@@ -1,0 +1,21 @@
+{
+  "parent": "dragonsurvival:sleep_on_hoard",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:treasure_gold"
+    },
+    "title": { "translate": "ds.advancements.sleep_on_massive_hoard.title" },
+    "description": { "translate": "ds.advancements.sleep_on_massive_hoard.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "challenge"
+  },
+  "criteria": {
+    "sleep": {
+      "trigger": "dragonsurvival:sleep_on_treasure",
+      "conditions": {
+        "count": 400
+      }
+    }
+  }
+}

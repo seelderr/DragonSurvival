@@ -9,22 +9,14 @@
     "description": { "translate": "ds.advancements.be_cave_dragon.description" }
   },
   "criteria": {
-    "be_sea_dragon": {
-      "trigger": "dragonsurvival:become_dragon",
+    "be_cave_dragon": {
+      "trigger": "dragonsurvival:be_dragon",
       "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'cave'}}}"
-            }
-          }
-        ]
+        "type": "cave"
       }
     }
   },
   "rewards": {
-    "loot": [ "dragonsurvival:generic/be_cave_dragon_loot" ]
+    "loot": ["dragonsurvival:generic/be_cave_dragon_loot"]
   }
 }

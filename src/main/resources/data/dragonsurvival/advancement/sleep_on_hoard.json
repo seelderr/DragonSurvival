@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:dragon_survival_root",
+  "parent": "dragonsurvival:sleep_on_treasure",
   "display": {
     "icon": {
-      "id": "dragonsurvival:treasure_gold"
+      "id": "minecraft:gold_ingot"
     },
     "title": { "translate": "ds.advancements.sleep_on_hoard.title" },
     "description": { "translate": "ds.advancements.sleep_on_hoard.description" },

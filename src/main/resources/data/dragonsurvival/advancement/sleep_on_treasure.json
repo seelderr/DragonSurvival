@@ -2,12 +2,7 @@
   "parent": "dragonsurvival:dragon_survival_root",
   "display": {
     "icon": {
-      "id": "dragonsurvival:treasure_gold",
-      "components": {
-        "minecraft:block_state": {
-          "layers": 1
-        }
-      }
+      "id": "minecraft:gold_nugget"
     },
     "title": { "translate": "ds.advancements.sleep_on_treasure.title" },
     "description": { "translate": "ds.advancements.sleep_on_treasure.description" },
