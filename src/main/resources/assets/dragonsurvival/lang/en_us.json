@@ -1380,7 +1380,7 @@
   "ds.advancements.fear_me.description": "Coerce loot from a terrified villager, on pain of death.",
   "ds.advancements.collect_hunter_key.title": "I am the Hunter",
   "ds.advancements.collect_hunter_key.description": "Earn a Hunter Key by cooperating with the Dragon Hunters.",
-  "ds.advancements.open_hunter_vault.title": "I am the Hunter",
+  "ds.advancements.open_hunter_vault.title": "Hunter's Bounty",
   "ds.advancements.open_hunter_vault.description": "Follow a Hunter Key to the secret stash and liberate a Dragon Hunter Vault of its contents.",
   "ds.mapstructures.hunters_castle": "Kingdom Explorer Map",
   "ds.keybind.toggle_destruction": "Toggle Large Dragon Destruction",
