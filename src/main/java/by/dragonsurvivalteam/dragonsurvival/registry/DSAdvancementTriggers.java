@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import by.dragonsurvivalteam.dragonsurvival.common.criteria.BecomeDragonTrigger;
 import java.util.function.Supplier;
 import by.dragonsurvivalteam.dragonsurvival.common.criteria.BeDragonTrigger;
 import by.dragonsurvivalteam.dragonsurvival.common.criteria.SleepOnTreasureTrigger;
