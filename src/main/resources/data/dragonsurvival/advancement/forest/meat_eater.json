@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival:forest/transplant_chorus_fruit",
   "display": {
     "icon": {
       "id": "dragonsurvival:smelly_meat_porridge"
@@ -10,7 +11,6 @@
       "translate": "ds.advancements.meat_eater.description"
     }
   },
-  "parent": "dragonsurvival:forest/transplant_chorus_fruit",
   "criteria": {
     "sweet_sour_rabbit": {
       "trigger": "minecraft:consume_item",

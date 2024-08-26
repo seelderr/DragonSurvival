@@ -1,0 +1,35 @@
+{
+  "parent": "dragonsurvival:be_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:star_heart"
+    },
+    "title": { "translate": "ds.advancements.use_star_heart.title" },
+    "description": { "translate": "ds.advancements.use_star_heart.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "use_star_heart": {
+      "trigger": "minecraft:using_item",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'none'}}}"
+              }
+            }
+          }
+        ],
+        "item": {
+          "items": "dragonsurvival:star_heart"
+        }
+      }
+    }
+  }
+}

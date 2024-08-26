@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival:sea/loot_shipwreck",
   "display": {
     "icon": {
       "id": "dragonsurvival:seasoned_fish"
@@ -10,7 +11,6 @@
       "translate": "ds.advancements.fish_eater.description"
     }
   },
-  "parent": "dragonsurvival:sea/loot_shipwreck",
   "criteria": {
     "seasoned_fish": {
       "trigger": "minecraft:consume_item",

@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival/forest/be_forest_dragon",
   "display": {
     "icon": {
       "id": "minecraft:chorus_fruit"
