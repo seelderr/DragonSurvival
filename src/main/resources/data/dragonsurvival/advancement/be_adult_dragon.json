@@ -17,9 +17,5 @@
         "age": 40
       }
     }
-  },
-  "rewards": {
-    "experience": 10,
-    "loot": ["dragonsurvival:generic/be_dragon_loot"]
   }
 }
