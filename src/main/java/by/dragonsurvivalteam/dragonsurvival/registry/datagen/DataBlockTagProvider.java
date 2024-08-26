@@ -25,6 +25,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 	public static final TagKey<Block> DRAGON_ALTARS = createKey("dragon_altars");
 	public static final TagKey<Block> DRAGON_TREASURES = createKey("dragon_treasures");
 	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = createKey("hunter_ability_blocks");
+	public static final TagKey<Block> WOODEN_DRAGON_DOORS_SMALL = createKey("wooden_dragon_doors_small");
 
 	public DataBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
 		super(output, lookupProvider, modId, existingFileHelper);
@@ -41,9 +42,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.map(entry -> BuiltInRegistries.BLOCK.getResourceKey(entry.getDelegate().value()).get()).toList());
 
 
-		TagKey<Block> woodenDragonDoorsSmall = createKey("wooden_dragon_doors_small");
-
-		tag(woodenDragonDoorsSmall)
+		tag(WOODEN_DRAGON_DOORS_SMALL)
 				.add(DSBlocks.OAK_SMALL_DOOR.get())
 				.add(DSBlocks.SPRUCE_SMALL_DOOR.get())
 				.add(DSBlocks.ACACIA_SMALL_DOOR.get())
@@ -66,7 +65,7 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 				.add(DSBlocks.CRIMSON_DRAGON_DOOR.get())
 				.add(DSBlocks.FOREST_DRAGON_DOOR.get())
 				.add(DSBlocks.LEGACY_DRAGON_DOOR.get())
-				.addOptionalTag(woodenDragonDoorsSmall.location()); // TODO :: Has problems finding the tag?
+				.addOptionalTag(WOODEN_DRAGON_DOORS_SMALL.location()); // TODO :: Has problems finding the tag?
 
 		tag(BlockTags.MINEABLE_WITH_AXE)
 				.addTag(WOODEN_DRAGON_DOORS)

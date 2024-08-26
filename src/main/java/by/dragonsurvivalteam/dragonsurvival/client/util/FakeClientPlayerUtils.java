@@ -22,7 +22,6 @@ import software.bernie.geckolib.animation.RawAnimation;
 public class FakeClientPlayerUtils {
 	private static final ConcurrentHashMap<Integer, FakeClientPlayer> FAKE_PLAYERS = new ConcurrentHashMap<>();
 	private static final ConcurrentHashMap<Integer, DragonEntity> FAKE_DRAGONS = new ConcurrentHashMap<>();
-	private static boolean FORCE_REFRESH = false;
 
 	public static DragonEntity getFakeDragon(int index, final DragonStateHandler handler) {
 		FakeClientPlayer fakePlayer = getFakePlayer(index, handler);
@@ -31,10 +30,9 @@ public class FakeClientPlayerUtils {
 			@Override
 			public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
 				AnimationController<DragonEntity> controller = new AnimationController<>(this, "fake_player_controller", 2, state -> {
-					if (fakePlayer.handler.refreshBody || FORCE_REFRESH) {
+					if (fakePlayer.handler.refreshBody) {
 						fakePlayer.animationController.forceAnimationReset();
 						fakePlayer.handler.refreshBody = false;
-                        FORCE_REFRESH = false;
 					}
 
 					if (fakePlayer.animationSupplier != null) {
@@ -77,9 +75,5 @@ public class FakeClientPlayerUtils {
 				FAKE_PLAYERS.remove(index);
 			}
 		});
-	}
-
-	public static void forceRefreshFirstFakePlayer(){
-		FORCE_REFRESH = true;
 	}
 }

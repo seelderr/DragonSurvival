@@ -232,7 +232,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	// Only call this version of setBody if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
 	public void setBody(final AbstractDragonBody body) {
 		if (body != null) {
-			if (!body.equals(dragonBody)) {
+			if (dragonBody == null || !body.getBodyName().equals(dragonBody.getBodyName())) {
 				dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
 				refreshBody = true;
 			}
@@ -693,6 +693,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		lastAfflicted = tag.getInt("lastAfflicted");
+		refreshBody = true;
 
 		getSkinData().compileSkin();
 	}

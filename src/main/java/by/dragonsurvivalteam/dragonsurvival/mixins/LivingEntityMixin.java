@@ -65,7 +65,7 @@ public abstract class LivingEntityMixin extends Entity {
 			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			if (handler.isDragon()) {
-				double height = DragonSizeHandler.getDragonHeight(handler, player);
+				double height = DragonSizeHandler.calculateDragonHeight(handler, player);
 
 				if (!DragonStateProvider.getOrGenerateHandler(getPassengers().getFirst()).isDragon()) {
 					// Human passenger

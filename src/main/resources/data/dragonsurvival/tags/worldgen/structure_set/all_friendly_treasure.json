@@ -1,8 +1,6 @@
 {
   "replace": false,
   "values": [
-    "dragonsurvival:treasure_friendly_cave",
-    "dragonsurvival:treasure_friendly_forest",
-    "dragonsurvival:treasure_friendly_sea"
+    "dragonsurvival:treasure_friendly_with_all"
   ]
 }
