@@ -14,15 +14,14 @@
     "use_on_vault": {
       "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "player": [
+        "player": [],
+        "location": [
           {
             "condition": "minecraft:match_tool",
             "predicate": {
-              "items": "dragonsurvival:hunter_dragon_key"
+              "items": "dragonsurvival:hunter_key"
             }
-          }
-        ],
-        "location": [
+          },
           {
             "condition": "minecraft:location_check",
             "predicate": {
