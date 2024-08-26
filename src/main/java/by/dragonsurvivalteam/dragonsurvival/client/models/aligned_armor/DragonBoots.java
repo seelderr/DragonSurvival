@@ -13,13 +13,13 @@ import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.Entity;
 
-public class dragon_shoe<T extends Entity> extends EntityModel<T> {
+public class DragonBoots<T extends Entity> extends EntityModel<T> {
 	// This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
 	public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath("dragonsurvival", "dragon_shoe"), "main");
 	public final ModelPart left_shoe;
 	public final ModelPart right_shoe;
 
-	public dragon_shoe(ModelPart root) {
+	public DragonBoots(ModelPart root) {
 		this.left_shoe = root.getChild("left_shoe");
 		this.right_shoe = root.getChild("right_shoe");
 	}
