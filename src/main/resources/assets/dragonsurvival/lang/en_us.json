@@ -391,7 +391,7 @@
   "ds.description.forest_dragon_pressure_plate": "■§7 Produces a redstone signal while a forest dragon stands on it. Can open a forest dragon door, if adjacent to it.",
   "ds.description.sea_dragon_pressure_plate": "■§7 Produces a redstone signal while a sea dragon stands on it. Can open a sea dragon door, if adjacent to it.",
   "ds.description.human_pressure_plate": "■§7 Produces a redstone signal only while a human stands on it. Will not activate for dragons.",
-  "ds.emote.toggle": " ■ §6Dragon Emotion§r ■",
+  "ds.emote.toggle": " ■ §6Emotes§r ■",
   "ds.emote.keybinds": "Keybinds",
   "ds.emote.angry": "§l§b•§r§cAngry",
   "ds.emote.sad": "§l§b•§r§1Sad",
@@ -1282,6 +1282,8 @@
   "ds.enchantment.curse_of_outlaw": "Outlaw's Mark",
   "ds.enchantment.curse_of_kindness": "Mark of Compassion",
   "ds.enchantment.bolas": "Bolas Arrows",
+  "ds.enchantment.dragonsbonk": "Dragonsbonk",
+  "ds.enchantment.dragonsboon": "Dragonsboon",
   "ds.description.dragonsbane": "§5Dragonsbane §8(Weapon)§r: Inflict increased damage to dragons.  If you kill a dragon who has the Hunter's Omen effect, they will lose some growth progress.  Damages dragons who hold it.",
   "ds.description.blood_siphon": "§4Blood Siphon §8(Head)§r: Has a chance to apply Blood Siphon to the enemy when you get hit, allowing you to recover a portion of the damage done.",
   "ds.description.murderers_cunning": "§4Murderer's Cunning §8(Chest)§r: You inflict increased damage to targets with full health.",
@@ -1407,5 +1409,6 @@
   "item.dragonsurvival.knight_spawn_egg": "Hunter Knight Spawn Egg",
   "item.dragonsurvival.ambusher_spawn_egg": "Hunter Ambusher Spawn Egg",
   "item.dragonsurvival.griffin_spawn_egg": "Hunter Griffin Spawn Egg",
-  "item.dragonsurvival.leader_spawn_egg": "Hunter Leader Spawn Egg"
+  "item.dragonsurvival.leader_spawn_egg": "Hunter Leader Spawn Egg",
+  "ds.attribute.flight_stamina": "Flight Stamina"
 }
