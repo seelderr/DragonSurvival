@@ -27,7 +27,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import java.util.Objects;
 import java.util.Optional;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -277,8 +276,8 @@ public class MagicHandler{
 				if (entity.hasEffect(DSEffects.BLOOD_SIPHON)) {
 					source.heal(event.getAmount() * 0.1f);
 				}
-				if (Minecraft.getInstance().level != null && Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
-					Registry<Enchantment> enchantments = Minecraft.getInstance().level.registryAccess().registry(Registries.ENCHANTMENT).get();
+				if (event.getEntity().level() != null && event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
+					Registry<Enchantment> enchantments = event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).get();
 					if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_MAGIC)) {
 						Optional<Holder.Reference<Enchantment>> draconicSuperiority = enchantments.getHolder(DSEnchantments.DRACONIC_SUPERIORITY);
 						if (draconicSuperiority.isPresent()) {

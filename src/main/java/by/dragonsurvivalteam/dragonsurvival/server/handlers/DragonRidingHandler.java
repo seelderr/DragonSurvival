@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonPassengerID;
 import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragon;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -35,8 +36,9 @@ public class DragonRidingHandler {
 			Player self = event.getEntity();
 
 			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
-				if(targetCap.isDragon() /*&& target.getPose() == Pose.CROUCHING*/ && targetCap.getSize() >= 40 && !target.isVehicle()){
-					DragonStateProvider.getCap(self).ifPresent(selfCap -> {
+				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
+					boolean dragonIsTooSmallToRide = targetCap.getSize() < 40;
+					if(targetCap.isDragon() /*&& target.getPose() == Pose.CROUCHING*/ && !dragonIsTooSmallToRide && !target.isVehicle()) {
 						if(!selfCap.isDragon() || selfCap.getLevel() == DragonLevel.NEWBORN){
 							self.startRiding(target);
 							target.connection.send(new ClientboundSetPassengersPacket(target));
@@ -44,9 +46,13 @@ public class DragonRidingHandler {
 							PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonPassengerID.Data(target.getId(), self.getId()));
 							event.setCancellationResult(InteractionResult.SUCCESS);
 							event.setCanceled(true);
+						} else if(selfCap.getLevel() != DragonLevel.NEWBORN) {
+							self.sendSystemMessage(Component.translatable("ds.riding.self_too_big"));
 						}
-					});
-				}
+					} else if(dragonIsTooSmallToRide){
+						self.sendSystemMessage(Component.translatable("ds.riding.target_too_small"));
+					}
+				});
 			});
 		}
 	}

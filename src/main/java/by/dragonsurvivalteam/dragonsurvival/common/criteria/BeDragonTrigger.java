@@ -3,12 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.criteria;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
-
-import java.util.Optional;
 
 public class BeDragonTrigger extends SimpleCriterionTrigger<BeDragonTrigger.BeDragonInstance> {
     public void trigger(ServerPlayer player, double size, String type) {

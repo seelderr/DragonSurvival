@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-import java.util.function.Supplier;
 import by.dragonsurvivalteam.dragonsurvival.common.criteria.BeDragonTrigger;
 import by.dragonsurvivalteam.dragonsurvival.common.criteria.SleepOnTreasureTrigger;
+import java.util.function.Supplier;
 import net.minecraft.advancements.CriterionTrigger;
 import net.minecraft.core.registries.Registries;
 import net.neoforged.neoforge.registries.DeferredRegister;

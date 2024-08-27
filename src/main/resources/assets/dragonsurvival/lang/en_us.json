@@ -1410,5 +1410,7 @@
   "item.dragonsurvival.ambusher_spawn_egg": "Hunter Ambusher Spawn Egg",
   "item.dragonsurvival.griffin_spawn_egg": "Hunter Griffin Spawn Egg",
   "item.dragonsurvival.leader_spawn_egg": "Hunter Leader Spawn Egg",
-  "ds.attribute.flight_stamina": "Flight Stamina"
+  "ds.attribute.flight_stamina": "Flight Stamina",
+  "ds.riding.self_too_big": "You are too big to mount on this dragon.",
+  "ds.riding.target_too_small": "The dragon you are trying to mount is too small for you."
 }

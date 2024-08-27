@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBoots;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
 import java.util.EnumMap;
 import java.util.List;
 import net.minecraft.Util;

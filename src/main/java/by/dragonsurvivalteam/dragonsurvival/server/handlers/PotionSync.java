@@ -3,18 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionAddedEffect;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncPotionRemovedEffect;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.LivingEntity;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 @EventBusSubscriber
