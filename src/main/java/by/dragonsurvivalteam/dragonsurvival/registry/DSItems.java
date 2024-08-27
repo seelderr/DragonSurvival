@@ -4,10 +4,10 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 import by.dragonsurvivalteam.dragonsurvival.client.extensions.ShakeWhenUsedExtension;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_body;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_helmet;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_leg;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_shoe;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBoots;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -24,7 +24,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -58,7 +57,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
 
-@SuppressWarnings({"unused", "removal"})
+@SuppressWarnings("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSItems {
 
@@ -160,90 +159,16 @@ public class DSItems {
 		}
 	);
 	public static final Supplier<ArmorItem> GOOD_DRAGON_HELMET = DS_ITEMS.register("good_dragon_helmet", () -> new GoodDragonArmorItem(
-			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel<>(new ModelPart(Collections.emptyList(),
-									Map.of("head", new dragon_helmet<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_helmet.LAYER_LOCATION)).head, "hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "body",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "left_arm",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "left_leg",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 	public static final Supplier<ArmorItem> GOOD_DRAGON_CHESTPLATE = DS_ITEMS.register("good_dragon_chestplate", () -> new GoodDragonArmorItem(
-			ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						@OnlyIn(Dist.CLIENT)
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel<>(new ModelPart(Collections.emptyList(), Map.of("body", new dragon_body(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_body.LAYER_LOCATION)).body, "left_arm",
-									new dragon_body<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_body.LAYER_LOCATION)).body, "right_arm",
-									new dragon_body<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_body.LAYER_LOCATION)).body, "head", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "hat",
-									new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 	public static final Supplier<ArmorItem> GOOD_DRAGON_LEGGINGS = DS_ITEMS.register("good_dragon_leggings", () -> new GoodDragonArmorItem(
-			ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						@OnlyIn(Dist.CLIENT)
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
-									Map.of("left_leg", new dragon_leg<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_leg.LAYER_LOCATION)).left_leg, "right_leg",
-											new dragon_leg<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_leg.LAYER_LOCATION)).right_leg, "head", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "hat",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "body", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-											"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 	public static final Supplier<ArmorItem> GOOD_DRAGON_BOOTS = DS_ITEMS.register("good_dragon_boots", () -> new GoodDragonArmorItem(
-			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						@OnlyIn(Dist.CLIENT)
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel<>(new ModelPart(Collections.emptyList(),
-									Map.of("left_leg", new dragon_shoe<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_shoe.LAYER_LOCATION)).left_shoe, "right_leg",
-											new dragon_shoe<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_shoe.LAYER_LOCATION)).right_shoe, "head", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "hat",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "body", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-											"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 
 	public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)){
@@ -254,90 +179,16 @@ public class DSItems {
 		}
 	});
 	public static final Supplier<ArmorItem> EVIL_DRAGON_HELMET = DS_ITEMS.register("evil_dragon_helmet", () -> new EvilDragonArmorItem(
-			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel<>(new ModelPart(Collections.emptyList(),
-									Map.of("head", new dragon_helmet<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_helmet.LAYER_LOCATION)).head, "hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "body",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "left_arm",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "left_leg",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 	public static final Supplier<ArmorItem> EVIL_DRAGON_CHESTPLATE = DS_ITEMS.register("evil_dragon_chestplate", () -> new EvilDragonArmorItem(
-			ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						@OnlyIn(Dist.CLIENT)
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel<>(new ModelPart(Collections.emptyList(), Map.of("body", new dragon_body(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_body.LAYER_LOCATION)).body, "left_arm",
-									new dragon_body<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_body.LAYER_LOCATION)).body, "right_arm",
-									new dragon_body<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_body.LAYER_LOCATION)).body, "head", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "hat",
-									new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 	public static final Supplier<ArmorItem> EVIL_DRAGON_LEGGINGS = DS_ITEMS.register("evil_dragon_leggings", () -> new EvilDragonArmorItem(
-			ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						@OnlyIn(Dist.CLIENT)
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
-									Map.of("left_leg", new dragon_leg<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_leg.LAYER_LOCATION)).left_leg, "right_leg",
-											new dragon_leg<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_leg.LAYER_LOCATION)).right_leg, "head", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "hat",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "body", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-											"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 	public static final Supplier<ArmorItem> EVIL_DRAGON_BOOTS = DS_ITEMS.register("evil_dragon_boots", () -> new EvilDragonArmorItem(
-			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant()) {
-				@Override
-				public void initializeClient(Consumer<IClientItemExtensions> consumer) {
-					consumer.accept(new IClientItemExtensions() {
-						@Override
-						@OnlyIn(Dist.CLIENT)
-						public HumanoidModel<LivingEntity> getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
-							HumanoidModel<LivingEntity> armorModel = new HumanoidModel<>(new ModelPart(Collections.emptyList(),
-									Map.of("left_leg", new dragon_shoe<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_shoe.LAYER_LOCATION)).left_shoe, "right_leg",
-											new dragon_shoe<>(Minecraft.getInstance().getEntityModels().bakeLayer(dragon_shoe.LAYER_LOCATION)).right_shoe, "head", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "hat",
-											new ModelPart(Collections.emptyList(), Collections.emptyMap()), "body", new ModelPart(Collections.emptyList(), Collections.emptyMap()), "right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
-											"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
-							armorModel.crouching = living.isShiftKeyDown();
-							armorModel.riding = defaultModel.riding;
-							armorModel.young = living.isBaby();
-							return armorModel;
-						}
-					});
-				}
-			}
+			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 
 	public static final Holder<Item> DRAGON_HUNTER_SWORD = DS_ITEMS.register("dragon_hunter_sword", () -> new DragonHunterWeapon(
@@ -487,11 +338,147 @@ public class DSItems {
 	@SubscribeEvent
 	public static void registerItemExtensions(RegisterClientExtensionsEvent event){
 		event.registerItem(new ShakeWhenUsedExtension(), DRAGON_SOUL.value());
-		/*event.registerItem(new IClientItemExtensions() {
+		event.registerItem(new IClientItemExtensions() {
 			@Override
-			public HumanoidModel<?> getHumanoidArmorModel(LivingEntity livingEntity, ItemStack itemStack, EquipmentSlot equipmentSlot, HumanoidModel<?> original) {
-				return new dragon_helmet<>(original.head);
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
+						Map.of("head", new DragonHelmet(Minecraft.getInstance().getEntityModels().bakeLayer(DragonHelmet.LAYER_LOCATION)).head,
+								"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
 			}
-		}, GOOD_DRAGON_HELMET.get(), EVIL_DRAGON_HELMET.get());*/
+		}, DSItems.GOOD_DRAGON_HELMET.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			@OnlyIn(Dist.CLIENT)
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
+						"body", new DragonChestplate(Minecraft.getInstance().getEntityModels().bakeLayer(DragonChestplate.LAYER_LOCATION)).body,
+						"left_arm", new DragonChestplate(Minecraft.getInstance().getEntityModels().bakeLayer(DragonChestplate.LAYER_LOCATION)).left_arm,
+						"right_arm", new DragonChestplate(Minecraft.getInstance().getEntityModels().bakeLayer(DragonChestplate.LAYER_LOCATION)).right_arm,
+						"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+						"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+						"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+						"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.GOOD_DRAGON_CHESTPLATE.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			@OnlyIn(Dist.CLIENT)
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
+						Map.of("left_leg", new DragonLeggings(Minecraft.getInstance().getEntityModels().bakeLayer(DragonLeggings.LAYER_LOCATION)).left_leg,
+								"right_leg", new DragonLeggings(Minecraft.getInstance().getEntityModels().bakeLayer(DragonLeggings.LAYER_LOCATION)).right_leg,
+								"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.GOOD_DRAGON_LEGGINGS.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			@OnlyIn(Dist.CLIENT)
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
+						Map.of("left_leg", new DragonBoots(Minecraft.getInstance().getEntityModels().bakeLayer(DragonBoots.LAYER_LOCATION)).left_shoe,
+								"right_leg", new DragonBoots(Minecraft.getInstance().getEntityModels().bakeLayer(DragonBoots.LAYER_LOCATION)).right_shoe,
+								"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.GOOD_DRAGON_BOOTS.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
+						Map.of("head", new DragonHelmet(Minecraft.getInstance().getEntityModels().bakeLayer(DragonHelmet.LAYER_LOCATION)).head,
+								"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.EVIL_DRAGON_HELMET.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			@OnlyIn(Dist.CLIENT)
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(), Map.of(
+						"body", new DragonChestplate(Minecraft.getInstance().getEntityModels().bakeLayer(DragonChestplate.LAYER_LOCATION)).body,
+						"left_arm", new DragonChestplate(Minecraft.getInstance().getEntityModels().bakeLayer(DragonChestplate.LAYER_LOCATION)).left_arm,
+						"right_arm", new DragonChestplate(Minecraft.getInstance().getEntityModels().bakeLayer(DragonChestplate.LAYER_LOCATION)).right_arm,
+						"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+						"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+						"right_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+						"left_leg", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.EVIL_DRAGON_CHESTPLATE.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			@OnlyIn(Dist.CLIENT)
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
+						Map.of("left_leg", new DragonLeggings(Minecraft.getInstance().getEntityModels().bakeLayer(DragonLeggings.LAYER_LOCATION)).left_leg,
+								"right_leg", new DragonLeggings(Minecraft.getInstance().getEntityModels().bakeLayer(DragonLeggings.LAYER_LOCATION)).right_leg,
+								"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.EVIL_DRAGON_LEGGINGS.get());
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			@OnlyIn(Dist.CLIENT)
+			public HumanoidModel getHumanoidArmorModel(LivingEntity living, ItemStack stack, EquipmentSlot slot, HumanoidModel defaultModel) {
+				HumanoidModel armorModel = new HumanoidModel(new ModelPart(Collections.emptyList(),
+						Map.of("left_leg", new DragonBoots(Minecraft.getInstance().getEntityModels().bakeLayer(DragonBoots.LAYER_LOCATION)).left_shoe,
+								"right_leg", new DragonBoots(Minecraft.getInstance().getEntityModels().bakeLayer(DragonBoots.LAYER_LOCATION)).right_shoe,
+								"head", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"hat", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"body", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"right_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()),
+								"left_arm", new ModelPart(Collections.emptyList(), Collections.emptyMap()))));
+				armorModel.crouching = living.isShiftKeyDown();
+				armorModel.riding = defaultModel.riding;
+				armorModel.young = living.isBaby();
+				return armorModel;
+			}
+		}, DSItems.EVIL_DRAGON_BOOTS.get());
 	}
 }

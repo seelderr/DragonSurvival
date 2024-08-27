@@ -1,0 +1,73 @@
+{
+  "parent": "dragonsurvival:forest/transplant_chorus_fruit",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:smelly_meat_porridge"
+    },
+    "title": {
+      "translate": "ds.advancements.meat_eater.title"
+    },
+    "description": {
+      "translate": "ds.advancements.meat_eater.description"
+    }
+  },
+  "criteria": {
+    "sweet_sour_rabbit": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "player": [],
+        "item": {
+          "items": "dragonsurvival:sweet_sour_rabbit"
+        }
+      }
+    },
+    "luminous_ointment": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:luminous_ointment"
+        }
+      }
+    },
+    "diamond_chorus": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:diamond_chorus"
+        }
+      }
+    },
+    "smelly_meat_porridge": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:smelly_meat_porridge"
+        }
+      }
+    },
+    "meat_wild_berries": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:meat_wild_berries"
+        }
+      }
+    },
+    "meat_chorus_mix": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:meat_chorus_mix"
+        }
+      }
+    },
+    "forest_dragon_treat": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:forest_dragon_treat"
+        }
+      }
+    }
+  }
+}

@@ -4,7 +4,6 @@
     "icon": {
       "id": "dragonsurvival:dragon_soul"
     },
-    "background": "dragonsurvival:textures/dragon/cave_adult.png",
     "title": { "translate": "ds.advancements.be_dragon.title" },
     "description": { "translate": "ds.advancements.be_dragon.description" },
     "show_toast": false,
@@ -12,7 +11,7 @@
   },
   "criteria": {
     "be_dragon": {
-      "trigger": "dragonsurvival:become_dragon"
+      "trigger": "dragonsurvival:be_dragon"
     }
   },
   "rewards": {

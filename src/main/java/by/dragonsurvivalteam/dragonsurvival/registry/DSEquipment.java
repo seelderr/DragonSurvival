@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_body;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_helmet;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_leg;
-import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.dragon_shoe;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBoots;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
+import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
 import java.util.EnumMap;
 import java.util.List;
 import net.minecraft.Util;
@@ -81,10 +81,10 @@ public class DSEquipment {
 
     @SubscribeEvent
     public static void registerLayerDefinitions(EntityRenderersEvent.RegisterLayerDefinitions event) {
-        event.registerLayerDefinition(dragon_body.LAYER_LOCATION, dragon_body::createBodyLayer);
-        event.registerLayerDefinition(dragon_leg.LAYER_LOCATION, dragon_leg::createBodyLayer);
-        event.registerLayerDefinition(dragon_helmet.LAYER_LOCATION, dragon_helmet::createBodyLayer);
-        event.registerLayerDefinition(dragon_shoe.LAYER_LOCATION, dragon_shoe::createBodyLayer);
+        event.registerLayerDefinition(DragonChestplate.LAYER_LOCATION, DragonChestplate::createBodyLayer);
+        event.registerLayerDefinition(DragonLeggings.LAYER_LOCATION, DragonLeggings::createBodyLayer);
+        event.registerLayerDefinition(DragonHelmet.LAYER_LOCATION, DragonHelmet::createBodyLayer);
+        event.registerLayerDefinition(DragonBoots.LAYER_LOCATION, DragonBoots::createBodyLayer);
     }
 
 }

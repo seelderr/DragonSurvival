@@ -1,0 +1,31 @@
+{
+  "parent": "dragonsurvival:be_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_memory_block"
+    },
+    "title": { "translate": "ds.advancements.have_infinite_mana.title" },
+    "description": { "translate": "ds.advancements.have_infinite_mana.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "have_infinite_mana": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "effects": {
+                "dragonsurvival:source_of_magic": {}
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

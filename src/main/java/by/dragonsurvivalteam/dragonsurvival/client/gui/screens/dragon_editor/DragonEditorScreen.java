@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.E
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonEditorConfirmComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.DragonUIRenderComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
@@ -660,6 +661,9 @@ public class DragonEditorScreen extends Screen {
 				cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 
 				HANDLER.getSkinData().skinPreset = save();
+				cap.getSkinData().renderAdult = ClientDragonRenderer.renderAdultSkin;
+				cap.getSkinData().renderYoung = ClientDragonRenderer.renderYoungSkin;
+				cap.getSkinData().renderNewborn = ClientDragonRenderer.renderNewbornSkin;
 
 				cap.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
 				cap.hasUsedAltar = true;

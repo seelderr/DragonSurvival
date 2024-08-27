@@ -7,12 +7,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -115,6 +117,7 @@ public class DragonGrowthHandler{
 			}
 
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
+			DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer)player, handler.getSize(), handler.getTypeName());
 		});
 	}
 
@@ -208,6 +211,8 @@ public class DragonGrowthHandler{
 					handler.setSize(size, player);
 
 					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
+					DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer)player, handler.getSize(), handler.getTypeName());
+
 					player.refreshDimensions();
 				}
 			}

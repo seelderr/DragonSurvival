@@ -1,7 +1,8 @@
 {
+  "parent": "dragonsurvival:forest/master_one_forest_passive",
   "display": {
     "icon": {
-      "id": "dragonsurvival:weak_dragon_heart"
+      "id": "dragonsurvival:elder_dragon_heart"
     },
     "title": {
       "translate": "ds.advancements.master_all_forest_passives.title"
@@ -12,7 +13,6 @@
     "frame": "challenge",
     "hidden": true
   },
-  "parent": "dragonsurvival:forest/master_one_forest_passive",
   "criteria": {
     "cliffhanger": {
       "trigger": "minecraft:tick",

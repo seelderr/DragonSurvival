@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival:sea/be_sea_dragon",
   "display": {
     "icon": {
       "id": "dragonsurvival:beacon_magic_1"
@@ -12,7 +13,6 @@
     "frame": "challenge",
     "hidden": true
   },
-  "parent": "dragonsurvival:sea/be_sea_dragon",
   "criteria": {
     "requirement": {
       "trigger": "minecraft:location",

@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,6 +22,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.XoroshiroRandomSource;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec2;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -166,13 +167,14 @@ public class DragonDestructionHandler {
         });
     }
 
+    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void toggleDestructionEnabled(ClientTickEvent.Pre event) {
         if(!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
 
-        LocalPlayer player = Minecraft.getInstance().player;
+        Player player = Minecraft.getInstance().player;
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 if (playerStateHandler.isDragon()) {

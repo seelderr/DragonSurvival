@@ -1,0 +1,21 @@
+{
+  "parent": "dragonsurvival:be_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:heart_element"
+    },
+    "title": { "translate": "ds.advancements.be_young_dragon.title" },
+    "description": { "translate": "ds.advancements.be_young_dragon.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "be_dragon": {
+      "trigger": "dragonsurvival:be_dragon",
+      "conditions": {
+        "age": 20
+      }
+    }
+  }
+}

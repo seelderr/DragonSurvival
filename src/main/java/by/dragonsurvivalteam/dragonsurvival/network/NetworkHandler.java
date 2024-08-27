@@ -43,6 +43,7 @@ public class NetworkHandler {
 		registrar.playToServer(RequestOpenDragonInventory.Data.TYPE, RequestOpenDragonInventory.Data.STREAM_CODEC, RequestOpenDragonInventory::handleServer);
 		registrar.playToServer(RequestOpenInventory.Data.TYPE, RequestOpenInventory.Data.STREAM_CODEC, RequestOpenInventory::handleServer);
 		registrar.playBidirectional(SyncDestructionEnabled.Data.TYPE, SyncDestructionEnabled.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDestructionEnabled::handleClient, SyncDestructionEnabled::handleServer));
+		registrar.playBidirectional(SyncDragonPassengerID.Data.TYPE, SyncDragonPassengerID.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonPassengerID::handleClient, SyncDragonPassengerID::handleServer));
 
 		// Status
 		registrar.playToClient(SyncGrowthState.Data.TYPE, SyncGrowthState.Data.STREAM_CODEC, SyncGrowthState::handleClient);

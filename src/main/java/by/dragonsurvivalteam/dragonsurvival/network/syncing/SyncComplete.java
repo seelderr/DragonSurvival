@@ -60,8 +60,9 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 				player.getInventory().removeItem(mainHandItem);
 				player.drop(mainHandItem, false);
 			}
-			if (player instanceof ServerPlayer serverPlayer)
-				DSAdvancementTriggers.BECOME_DRAGON.get().trigger(serverPlayer);
+			if (player instanceof ServerPlayer serverPlayer) {
+				DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, handler.getSize(), handler.getTypeName());
+			}
 		}
 	}
 

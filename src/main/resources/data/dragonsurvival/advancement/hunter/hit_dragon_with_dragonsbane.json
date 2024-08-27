@@ -1,0 +1,62 @@
+{
+  "parent": "dragonsurvival:hunter/open_hunter_vault",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_hunter_sword"
+    },
+    "title": {
+      "translate": "ds.advancements.hit_dragon_with_dragonsbane.title"
+    },
+    "description": {
+      "translate": "ds.advancements.hit_dragon_with_dragonsbane.description"
+    },
+    "frame": "goal"
+  },
+  "criteria": {
+    "murderer": {
+      "trigger": "minecraft:player_hurt_entity",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:inverted",
+            "term": {
+              "condition": "minecraft:entity_properties",
+              "entity": "this",
+              "predicate": {
+                "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'none'}}}"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "equipment": {
+                "mainhand": {
+                  "items": "dragonsurvival:dragonsbane"
+                }
+              }
+            }
+          }
+        ],
+        "damage": {
+          "type": {
+            "tags": [
+              {
+                "id": "dragonsurvival:anti_dragon",
+                "expected": true
+              }
+            ]
+          }
+        },
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {}
+          }
+        ]
+      }
+    }
+  }
+}

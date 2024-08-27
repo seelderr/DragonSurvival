@@ -1,0 +1,21 @@
+{
+  "parent": "dragonsurvival:be_adult_dragon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:elder_dragon_heart"
+    },
+    "title": { "translate": "ds.advancements.be_ancient_dragon.title" },
+    "description": { "translate": "ds.advancements.be_ancient_dragon.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "challenge"
+  },
+  "criteria": {
+    "be_dragon": {
+      "trigger": "dragonsurvival:be_dragon",
+      "conditions": {
+        "size": 59.9
+      }
+    }
+  }
+}

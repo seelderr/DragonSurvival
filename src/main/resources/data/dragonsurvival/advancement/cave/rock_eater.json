@@ -1,0 +1,104 @@
+{
+  "parent": "dragonsurvival:cave/go_home",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:charged_coal"
+    },
+    "title": {
+      "translate": "ds.advancements.rock_eater.title"
+    },
+    "description": {
+      "translate": "ds.advancements.rock_eater.description"
+    }
+  },
+  "criteria": {
+    "charged_coal": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:charged_coal"
+        }
+      }
+    },
+    "charged_soup": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:charged_soup"
+        }
+      }
+    },
+    "charred_meat": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:charred_meat"
+        }
+      }
+    },
+    "charred_vegetable": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:charred_seafood"
+        }
+      }
+    },
+    "charred_mushroom": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:charred_mushroom"
+        }
+      }
+    },
+    "charred_seafood": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:charred_seafood"
+        }
+      }
+    },
+    "hot_dragon_rod": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:hot_dragon_rod"
+        }
+      }
+    },
+    "explosive_copper": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:explosive_copper"
+        }
+      }
+    },
+    "quartz_explosive_copper": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:quartz_explosive_copper"
+        }
+      }
+    },
+    "double_quartz": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:double_quartz"
+        }
+      }
+    },
+    "cave_dragon_treat": {
+      "trigger": "minecraft:consume_item",
+      "conditions": {
+        "item": {
+          "items": "dragonsurvival:cave_dragon_treat"
+        }
+      }
+    }
+  }
+}

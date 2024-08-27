@@ -1,0 +1,37 @@
+{
+  "parent": "dragonsurvival:good/collect_good_key",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:good_dragon_vault"
+    },
+    "title": { "translate": "ds.advancements.open_good_vault.title" },
+    "description": { "translate": "ds.advancements.open_good_vault.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "frame": "goal"
+  },
+  "criteria": {
+    "use_on_vault": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "player": [],
+        "location": [
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "dragonsurvival:good_dragon_key"
+            }
+          },
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "dragonsurvival:dragon_vault_friendly"
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

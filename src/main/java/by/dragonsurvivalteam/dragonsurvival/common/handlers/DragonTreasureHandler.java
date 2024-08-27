@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.SLEEP_ON_TREASURE;
+
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -9,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -69,6 +72,7 @@ public class DragonTreasureHandler{
 						}
 					}
 					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
+					SLEEP_ON_TREASURE.get().trigger((ServerPlayer) event.getEntity(), treasureNearby);
 
 					int totalTime = Functions.secondsToTicks(ServerConfig.treasureRegenTicks);
 					int restTimer = totalTime - Functions.secondsToTicks(ServerConfig.treasureRegenTicksReduce * treasureNearby);

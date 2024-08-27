@@ -98,15 +98,9 @@ public class DragonEditorHandler{
 	public static CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> generateSkinTextures(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
 		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		Set<DragonLevel> dragonLevels = handler.getSkinData().skinPreset.skinAges.keySet();
-		List<Pair<SkinAgeGroup, String>> skinAgeGroupsAndDragonLevels = new ArrayList<>();
-		for (DragonLevel dragonLevel : dragonLevels) {
-			skinAgeGroupsAndDragonLevels.add(new Pair<>(handler.getSkinData().skinPreset.skinAges.get(dragonLevel).get(), dragonLevel.name));
-		}
-
 		return CompletableFuture.supplyAsync(() -> {
 			try {
-				return genTextures(player, handler, skinAgeGroupsAndDragonLevels);
+				return genTextures(player, handler);
 			} catch (Throwable e) {
 				DragonSurvivalMod.LOGGER.error("An error occurred while compiling the dragon skin texture", e);
 			}
@@ -115,10 +109,10 @@ public class DragonEditorHandler{
 		}, Util.backgroundExecutor());
 	}
 
-	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final Player player, final DragonStateHandler handler, final List<Pair<SkinAgeGroup, String>> skinAgeGroupAndDragonLevels) throws IOException {
+	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final Player player, final DragonStateHandler handler) throws IOException {
 		List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
-		for (Pair<SkinAgeGroup, String> skinAgeGroupAndDragonLevel : skinAgeGroupAndDragonLevels) {
-			SkinAgeGroup skinAgeGroup = skinAgeGroupAndDragonLevel.getFirst();
+		for (DragonLevel dragonLevel : handler.getSkinData().skinPreset.skinAges.keySet()) {
+			SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(dragonLevel).get();
 			NativeImage normal = new NativeImage(512, 512, true);
 			NativeImage glow = new NativeImage(512, 512, true);
 
@@ -171,9 +165,8 @@ public class DragonEditorHandler{
 			}
 
 			String uuid = player.getStringUUID();
-			String dragonLevel = skinAgeGroupAndDragonLevel.getSecond();
-			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel);
-			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel);
+			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
+			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
 
 			texturesToRegister.add(new Pair<>(normal, dynamicNormalKey));
 			texturesToRegister.add(new Pair<>(glow, dynamicGlowKey));

@@ -1,4 +1,5 @@
 {
+  "parent": "dragonsurvival:sea/master_one_sea_passive",
   "display": {
     "icon": {
       "id": "dragonsurvival:elder_dragon_heart"
@@ -12,7 +13,6 @@
     "frame": "challenge",
     "hidden": true
   },
-  "parent": "dragonsurvival:sea/master_one_sea_passive",
   "criteria": {
     "spectral_impact": {
       "trigger": "minecraft:tick",

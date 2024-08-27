@@ -170,14 +170,42 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 						textureStream.close();
 						trimOk = true;
 					}
-					TextColor tc = trim.material().value().description().getStyle().getColor();
-					if (tc != null) {
-						// Not the most elegant solution,
-						// but the best way I could find to get a single color reliably...
-						// TODO: something better
-						trimBaseColor = new Color(tc.getValue());
-						Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
-					}
+
+                    Optional<Resource> colorPalette = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.withDefaultNamespace("textures/trims/color_palettes/" + trim.material().value().assetName() + ".png"));
+                    if (colorPalette.isPresent()) {
+                        try (NativeImage p = NativeImage.read(colorPalette.get().open())) {
+                            int[] baseRed = new int[p.getWidth() * p.getHeight()], baseGreen = new int[p.getWidth() * p.getHeight()], baseBlue = new int[p.getWidth() * p.getHeight()];
+                            int red = 0, green = 0, blue = 0;
+                            int z = 0;
+                            for (int x = 0; x < p.getWidth(); x++) {
+                                for (int y = 0; y < p.getHeight(); y++) {
+                                    int rgba = p.getPixelRGBA(x, y);
+                                    if (rgba != 0) {
+                                        Color c = new Color(rgba);
+                                        baseRed[z] = c.getRed();
+                                        baseGreen[z] = c.getGreen();
+                                        baseBlue[z] = c.getBlue();
+                                        z++;
+                                    }
+                                }
+                            }
+                            for (int i = 0; i < z; i++) {
+                                red += baseRed[i];
+                                green += baseGreen[i];
+                                blue += baseBlue[i];
+                            }
+                            trimBaseColor = new Color(blue / z, green / z, red / z, 255);
+                            Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
+                        }
+                    } else {
+                        TextColor tc = trim.material().value().description().getStyle().getColor();
+                        if (tc != null) {
+                            // Not the most elegant solution,
+                            // but the best way I could find to get a single color reliably...
+                            trimBaseColor = new Color(tc.getValue());
+                            Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
+                        }
+                    }
 				}
 				float[] armorHSB = new float[3];
 				float[] trimHSB = new float[3];

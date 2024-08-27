@@ -18,18 +18,18 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 
 @Mixin(ItemStack.class)
 public abstract class ItemStackMixin {
-    @Redirect(method="getTooltipLines", at= @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/world/item/ItemStack;addToTooltip(Lnet/minecraft/core/component/DataComponentType;Lnet/minecraft/world/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"))
-    public void dragonSurvival$getTooltipLines(ItemStack instance, DataComponentType pComponent, Item.TooltipContext pContext, Consumer<Component> pTooltipAdder, TooltipFlag pTooltipFlag, @Local Item.TooltipContext pTooltipContext, @Local Consumer<Component> pConsumer) {
-        if (((ItemStack)(Object)this).getItem() instanceof PermanentEnchantmentItem item) {
-            //for (Object2IntMap.Entry<Holder<Enchantment>> enchantment : item.getDefaultEnchantments().entrySet()) {
-                ItemEnchantments old = ((ItemStack)(Object)this).get(DataComponents.ENCHANTMENTS);
-                try {
-                    ((ItemStack) (Object) this).set(DataComponents.ENCHANTMENTS, ((ItemStack) (Object) this).getAllEnchantments(pTooltipContext.registries().lookup(Registries.ENCHANTMENT).orElseThrow()));
-                    ((ItemStack) (Object) this).addToTooltip(DataComponents.ENCHANTMENTS, pTooltipContext, pConsumer, pTooltipFlag);
-                } catch (NullPointerException | NoSuchElementException ignored) {}
-                ((ItemStack)(Object)this).set(DataComponents.ENCHANTMENTS, old);
-            //}
-            //((ItemStack)(Object)this).getItem().appendHoverText(((ItemStack)(Object)this), pTooltipContext, list, pTooltipFlag);
+    @Redirect(method = "getTooltipLines", at = @At(value = "INVOKE", ordinal = 3, target = "Lnet/minecraft/world/item/ItemStack;addToTooltip(Lnet/minecraft/core/component/DataComponentType;Lnet/minecraft/world/item/Item$TooltipContext;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V"))
+    public void dragonSurvival$getTooltipLines(ItemStack instance, DataComponentType pComponent, Item.TooltipContext pContext, Consumer<Component> pTooltipAdder, TooltipFlag pTooltipFlag, @Local(argsOnly = true) Item.TooltipContext pTooltipContext, @Local Consumer<Component> pConsumer) {
+        if (((ItemStack)(Object)this).getItem() instanceof PermanentEnchantmentItem) {
+            ItemEnchantments old = instance.get(DataComponents.ENCHANTMENTS);
+            try {
+                // Set the enchantment's to the built in item enchantments for the purposes of adding it to the tooltip, then restore the old enchantments
+                instance.set(DataComponents.ENCHANTMENTS, ((ItemStack) (Object) this).getAllEnchantments(pTooltipContext.registries().lookup(Registries.ENCHANTMENT).orElseThrow()));
+                instance.addToTooltip(DataComponents.ENCHANTMENTS, pTooltipContext, pConsumer, pTooltipFlag);
+            } catch (NullPointerException | NoSuchElementException ignored) {}
+            instance.set(DataComponents.ENCHANTMENTS, old);
+        } else {
+            instance.addToTooltip(pComponent, pContext, pTooltipAdder, pTooltipFlag);
         }
     }
 }
