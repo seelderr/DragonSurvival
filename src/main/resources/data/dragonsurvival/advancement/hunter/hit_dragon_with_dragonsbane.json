@@ -2,7 +2,7 @@
   "parent": "dragonsurvival:hunter/open_hunter_vault",
   "display": {
     "icon": {
-      "id": "dragonsurvival:dragonsbane"
+      "id": "dragonsurvival:dragon_hunter_sword"
     },
     "title": {
       "translate": "ds.advancements.hit_dragon_with_dragonsbane.title"

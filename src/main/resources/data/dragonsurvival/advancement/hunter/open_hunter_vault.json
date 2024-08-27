@@ -2,7 +2,7 @@
   "parent": "dragonsurvival:hunter/collect_hunter_key",
   "display": {
     "icon": {
-      "id": "dragonsurvival:hunter_dragon_vault"
+      "id": "dragonsurvival:dragon_vault_hunter"
     },
     "title": { "translate": "ds.advancements.open_hunter_vault.title" },
     "description": { "translate": "ds.advancements.open_hunter_vault.description" },

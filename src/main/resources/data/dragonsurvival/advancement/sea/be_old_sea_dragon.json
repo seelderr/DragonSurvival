@@ -16,7 +16,7 @@
       "trigger": "dragonsurvival:be_dragon",
       "conditions": {
         "type": "sea",
-        "size": 60
+        "size": 59.9
       }
     }
   }
