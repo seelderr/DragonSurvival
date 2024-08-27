@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 import com.google.gson.annotations.SerializedName;
 import java.util.Locale;
-import net.minecraft.client.resources.language.I18n;
 
 public enum DragonLevel{
 	@SerializedName(value = "NEWBORN", alternate = "BABY")
@@ -23,7 +22,7 @@ public enum DragonLevel{
 	}
 
 	public String getName(){
-		return I18n.get("ds.level." + name);
+		return "ds.level." + name;
 	}
 
 	public String getNameLowerCase() {
