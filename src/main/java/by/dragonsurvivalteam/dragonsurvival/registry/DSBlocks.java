@@ -5,7 +5,6 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
-import by.dragonsurvivalteam.dragonsurvival.common.items.HelmetItem;
 import by.dragonsurvivalteam.dragonsurvival.util.CompoundTagBuilder;
 import com.mojang.datafixers.util.Pair;
 import java.util.HashMap;
@@ -948,9 +947,9 @@ public class DSBlocks{
 					.sound(SoundType.METAL))
 	);
 
-	public static final DeferredHolder<Item, HelmetItem> HELMET_BLOCK_1_ITEM = DS_ITEMS.register(
+	public static final DeferredHolder<Item, BlockItem> HELMET_BLOCK_1_ITEM = DS_ITEMS.register(
 			"broken_knight_helmet_1",
-			() -> new HelmetItem(HELMET_BLOCK_1.get(), new Item.Properties())
+			() -> new BlockItem(HELMET_BLOCK_1.get(), new Item.Properties())
 	);
 
 	public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_2 = DS_BLOCKS.register(
@@ -962,9 +961,9 @@ public class DSBlocks{
 					.noOcclusion())
 	);
 
-	public static final DeferredHolder<Item, HelmetItem> HELMET_BLOCK_2_ITEM = DS_ITEMS.register(
+	public static final DeferredHolder<Item, BlockItem> HELMET_BLOCK_2_ITEM = DS_ITEMS.register(
 			"broken_knight_helmet_2",
-			() -> new HelmetItem(HELMET_BLOCK_2.get(), new Item.Properties())
+			() -> new BlockItem(HELMET_BLOCK_2.get(), new Item.Properties())
 	);
 
 	public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_3 = DS_BLOCKS.register(
@@ -976,9 +975,9 @@ public class DSBlocks{
 					.noOcclusion())
 	);
 
-	public static final DeferredHolder<Item, HelmetItem> HELMET_BLOCK_3_ITEM = DS_ITEMS.register(
+	public static final DeferredHolder<Item, BlockItem> HELMET_BLOCK_3_ITEM = DS_ITEMS.register(
 			"broken_knight_helmet_3",
-			() -> new HelmetItem(HELMET_BLOCK_3.get(), new Item.Properties())
+			() -> new BlockItem(HELMET_BLOCK_3.get(), new Item.Properties())
 	);
 
 	private static final CompoundTag GOOD_VAULT_TAG = CompoundTagBuilder.tag()

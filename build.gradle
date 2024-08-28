@@ -89,11 +89,11 @@ dependencies {
 	implementation "net.neoforged:neoforge:${neo_version}"
 
 	// Dependencies
-	implementation "software.bernie.geckolib:geckolib-neoforge-${geckolib_minecraft_version}:${geckolib_version}"
+	implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
 
 	// Compatibility
-	compileOnly "mezz.jei:jei-1.21-common-api:${jei_version}"
-	compileOnly "mezz.jei:jei-1.21-neoforge-api:${jei_version}"
+	compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
+	compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
 
 	compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
 
