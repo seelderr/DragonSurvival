@@ -14,7 +14,7 @@
     "be_dragon": {
       "trigger": "dragonsurvival:be_dragon",
       "conditions": {
-        "age": 20
+        "size": 19.9
       }
     }
   }
