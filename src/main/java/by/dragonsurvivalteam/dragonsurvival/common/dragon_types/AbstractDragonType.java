@@ -46,7 +46,7 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
 	}
 
 	public String getSubtypeNameLowerCase() {
-		return getTypeName().toLowerCase(Locale.ENGLISH);
+		return getSubtypeName().toLowerCase(Locale.ENGLISH);
 	}
 
 	public String getTypeNameUpperCase() {
