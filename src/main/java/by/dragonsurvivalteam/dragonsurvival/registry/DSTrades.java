@@ -63,7 +63,7 @@ public class DSTrades {
 					poiTypeHolder -> poiTypeHolder.value() == DRAGON_RIDER_POI.value(),
 					ImmutableSet.of(),
 					ImmutableSet.of(),
-					SoundEvents.ENDER_DRAGON_GROWL));
+					SoundEvents.VILLAGER_WORK_ARMORER));
 
 	public static class ItemTrade implements VillagerTrades.ItemListing{
 		private ItemCost baseCostA = new ItemCost(ItemStack.EMPTY.getItem(), 0);

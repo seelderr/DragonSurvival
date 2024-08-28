@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBo
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
+import by.dragonsurvivalteam.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -480,5 +481,14 @@ public class DSItems {
 				return armorModel;
 			}
 		}, DSItems.EVIL_DRAGON_BOOTS.get());
+		// TODO: This is part of the way to get the helmet block to render in hand correctly, not sure how to fix some of the other issues though
+		/*event.registerItem(new IClientItemExtensions(){
+			private final HelmetStackTileEntityRenderer renderer = new HelmetStackTileEntityRenderer();
+
+			@Override
+			public @NotNull HelmetStackTileEntityRenderer getCustomRenderer() {
+				return renderer;
+			}
+		}, DSBlocks.HELMET_BLOCK_1_ITEM.get(), DSBlocks.HELMET_BLOCK_2_ITEM.get(), DSBlocks.HELMET_BLOCK_3_ITEM.get());*/
 	}
 }
