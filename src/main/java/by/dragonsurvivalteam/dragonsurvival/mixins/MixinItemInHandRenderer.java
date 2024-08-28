@@ -57,6 +57,6 @@ public class MixinItemInHandRenderer{
 
 	@ModifyExpressionValue (method = "renderTwoHandedMap", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isInvisible()Z"))
 	private boolean hideArmsForDragonTwoHandedMap(boolean original){
-		return !DragonStateProvider.isDragon(minecraft.player) && original;
+		return DragonStateProvider.isDragon(minecraft.player) || original;
 	}
 }
