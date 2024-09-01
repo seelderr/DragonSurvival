@@ -3,8 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SkinCap extends SubCap{
 	public static final String defaultSkinValue = "None";
@@ -14,17 +18,24 @@ public class SkinCap extends SubCap{
 	public SkinPreset skinPreset = new SkinPreset();
 	public boolean blankSkin = false;
 
-	public boolean recompileSkin = false;
-	public boolean isCompiled = false;
+	public Map<DragonLevel, Boolean> recompileSkin = new HashMap<>();
+	public Map<DragonLevel, Boolean> isCompiled = new HashMap<>();
 
 	public void compileSkin() {
-		recompileSkin = true;
+		for(DragonLevel level : DragonLevel.values()){
+			recompileSkin.put(level, true);
+		}
 	}
 
 	public SkinCap(DragonStateHandler handler){
 		super(handler);
 		for(String value : DragonTypes.getTypes()){
 			skinPreset.initDefaults(DragonTypes.getStatic(value));
+		}
+
+		for(DragonLevel level : DragonLevel.values()){
+			recompileSkin.put(level, true);
+			isCompiled.put(level, false);
 		}
 	}
 

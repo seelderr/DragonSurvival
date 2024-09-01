@@ -12,10 +12,10 @@ public class DragonEditorObject{
 	public Dragon cave_dragon;
 
 	public static class Dragon{
-		public HashMap<EnumSkinLayer, Texture[]> layers;
+		public HashMap<EnumSkinLayer, DragonTextureMetadata[]> layers;
 	}
 
-	public static class Texture{
+	public static class DragonTextureMetadata {
 		public String key;
 		public String texture;
 		public String[] bodies;

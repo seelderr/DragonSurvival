@@ -69,11 +69,11 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				String part = DragonEditorRegistry.getDefaultPart(type, level, layer);
 				EnumSkinLayer trueLayer = EnumSkinLayer.valueOf(layer.getNameUpperCase());
-				HashMap<EnumSkinLayer, DragonEditorObject.Texture[]> hm = DragonEditorRegistry.CUSTOMIZATIONS.get(type.getTypeNameUpperCase());
+				HashMap<EnumSkinLayer, DragonEditorObject.DragonTextureMetadata[]> hm = DragonEditorRegistry.CUSTOMIZATIONS.get(type.getTypeNameUpperCase());
 				if (hm != null) {
-					DragonEditorObject.Texture[] texts = hm.get(trueLayer);
+					DragonEditorObject.DragonTextureMetadata[] texts = hm.get(trueLayer);
 					if (texts != null) {
-						for (DragonEditorObject.Texture text : texts) {
+						for (DragonEditorObject.DragonTextureMetadata text : texts) {
 							if (text.key.equals(part)) {
 								layerSettings.put(layer, Lazy.of(()->new LayerSettings(part, text.average_hue)));
 								break;

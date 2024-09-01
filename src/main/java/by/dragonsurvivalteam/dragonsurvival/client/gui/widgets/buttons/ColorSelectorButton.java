@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.ColorS
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.HueSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
@@ -56,7 +56,7 @@ public class ColorSelectorButton extends ExtendedButton {
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+		DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
 
 		visible = text != null && text.colorable;
 	}
@@ -68,7 +68,7 @@ public class ColorSelectorButton extends ExtendedButton {
 
 	@Override
 	public void onPress(){
-		Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+		DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
 		if(!toggled){
 			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {}){
 				@Override

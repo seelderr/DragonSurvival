@@ -2,12 +2,18 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.GlConst;
+import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
@@ -16,6 +22,9 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL43;
+
+import javax.annotation.Nullable;
 
 public class RenderingUtils{
 	static final double PI_TWO = Math.PI * 2.0;
@@ -285,5 +294,23 @@ public class RenderingUtils{
 		} catch (Exception e) {
 			DragonSurvivalMod.LOGGER.error(e);
 		}
+	}
+
+	public static void copyTextureFromRenderTarget(RenderTarget target, ResourceLocation key){
+		DynamicTexture texture = new DynamicTexture(target.width, target.height, true);
+		GL43.glCopyImageSubData(target.getColorTextureId(), GlConst.GL_TEXTURE_2D, 0, 0, 0, 0, texture.getId(), GlConst.GL_TEXTURE_2D, 0, 0, 0, 0, target.width, target.height, 1);
+		Minecraft.getInstance().getTextureManager().register(key, texture);
+	}
+
+	@Nullable
+	public static NativeImage getImageFromResource(ResourceLocation location) {
+		NativeImage image = null;
+		try {
+			image = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(location).get().open());
+		} catch (Exception e) {
+			DragonSurvivalMod.LOGGER.error(String.format("Texture resource %s not found!", location.getPath()), e);
+		}
+
+		return image;
 	}
 }

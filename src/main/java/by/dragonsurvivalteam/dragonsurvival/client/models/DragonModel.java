@@ -12,9 +12,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
+
+import java.nio.IntBuffer;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
@@ -22,6 +25,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.opengl.GL32;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
@@ -123,10 +127,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player;
-		if (dragon.getPlayer() != null || dragon.playerId != null){
-			player = dragon.getPlayer();
-		} else if (dragon.getPlayer() instanceof FakeClientPlayer) {
+		if(dragon.overrideUUIDWithLocalPlayerForTextureFetch) {
 			player = Minecraft.getInstance().player;
+		} else if (dragon.getPlayer() != null){
+			player = dragon.getPlayer();
 		} else {
 			return defaultTexture;
 		}
@@ -138,22 +142,36 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
 		}
 
-		if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
-			CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
-			textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
-				handler.getSkinData().isCompiled = true;
-				handler.getSkinData().recompileSkin = false;
-				for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
-					RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
-				}}, Minecraft.getInstance());
+		if (handler.getSkinData().recompileSkin.get(handler.getLevel())) {
+			int[] majorGLVerArray = new int[1];
+			GL32.glGetIntegerv(GL32.GL_MAJOR_VERSION, majorGLVerArray);
+			int[] minorGLVerArray = new int[1];
+			GL32.glGetIntegerv(GL32.GL_MINOR_VERSION, minorGLVerArray);
+			// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
+			if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3) || ClientConfig.forceCPUSkinGeneration) {
+				if (textureRegisterFuture.isDone()) {
+					CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
+					textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
+						handler.getSkinData().isCompiled.put(handler.getLevel(), true);
+						handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
+						for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
+							RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
+						}}, Minecraft.getInstance());
+				}
+			} else {
+				DragonEditorHandler.generateSkinTexturesGPU(dragon);
+				handler.getSkinData().isCompiled.put(handler.getLevel(), true);
+				handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
+			}
 		}
 
 		// Show the default skin while we are compiling if we haven't already compiled the skin
-		if (ageGroup.defaultSkin || !handler.getSkinData().isCompiled) {
+		if (ageGroup.defaultSkin || !handler.getSkinData().isCompiled.get(handler.getLevel())) {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
 		}
 
-		return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + player.getStringUUID() + "_" + handler.getLevel().name);
+		String uuid = player.getStringUUID();
+		return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
 	}
 
 	public void setOverrideTexture(final ResourceLocation overrideTexture) {

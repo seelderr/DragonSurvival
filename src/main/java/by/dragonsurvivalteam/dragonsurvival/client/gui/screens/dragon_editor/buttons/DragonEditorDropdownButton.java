@@ -126,7 +126,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			screen.renderables.add(renderButton);
 		}else{
 			LayerSettings settings = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get();
-			DragonEditorObject.Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
+			DragonEditorObject.DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
 			if (text != null && !settings.modifiedColor) {
 				settings.hue = text.average_hue;
 			}

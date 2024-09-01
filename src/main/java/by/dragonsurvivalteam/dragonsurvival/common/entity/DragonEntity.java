@@ -55,6 +55,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	public boolean tailLocked = false;
 	public float prevZRot = 0;
 	public float prevXRot = 0;
+	// In certain circumstances, we need to override the UUID with the local player's UUID when gathering textures for the dragon entity
+	// At the moment, this only happens on the smithing screen, as the player in the inventory panels is actually referring the real player and therefore has the correct UUID for textures
+	// The dragon displayed in the editor doesn't want to mirror the local player's UUID, so this isn't used there either
+	public boolean overrideUUIDWithLocalPlayerForTextureFetch = false;
 
 
 	public double body_yaw_change = 0;

@@ -18,7 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
@@ -197,7 +197,7 @@ public class DragonEditorScreen extends Screen {
 			}
 
 			for(ColorSelectorButton colorSelectorButton : colorButtons){
-				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
+				DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
 
 				colorSelectorButton.visible = (text != null && text.colorable) && !defaultSkinCheckbox.selected;
 			}
@@ -352,7 +352,7 @@ public class DragonEditorScreen extends Screen {
 				btn.updateMessage();
 
 				LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
-				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
+				DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
 				if (text != null && !settings.modifiedColor) {
 					settings.hue = text.average_hue;
 				}
@@ -374,7 +374,7 @@ public class DragonEditorScreen extends Screen {
 				btn.updateMessage();
 
 				LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
-				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
+				DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
 				if (text != null && !settings.modifiedColor) {
 					settings.hue = text.average_hue;
 				}
@@ -516,7 +516,7 @@ public class DragonEditorScreen extends Screen {
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA);
 
 			extraKeys.removeIf(s -> {
-				Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA, s, dragonType);
+				DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA, s, dragonType);
 				if (text == null) { DragonSurvivalMod.LOGGER.error("Key " + s + " not found!"); return true; }
 				return !text.random;
 			});
@@ -540,7 +540,7 @@ public class DragonEditorScreen extends Screen {
 
 					LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layer).get();
 					settings.selectedSkin = key;
-					Texture text = DragonEditorHandler.getSkin(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer, key, dragonType);
+					DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer, key, dragonType);
 
 					if(text != null && text.randomHue){
 						settings.hue = minecraft.player.getRandom().nextFloat();

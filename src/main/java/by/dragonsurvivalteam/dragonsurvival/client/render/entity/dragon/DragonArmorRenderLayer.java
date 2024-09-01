@@ -39,13 +39,14 @@ import net.minecraft.world.item.component.DyedItemColor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
+import squeek.appleskin.api.event.TooltipOverlayEvent;
 
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;
-	private static final AbstractTexture missingno = Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.withDefaultNamespace("missingno"));
 	private static final HashMap<ResourceLocation, CompletableFuture<Void>> armorTextures = new HashMap<>();
 	private static final HashMap<EquipmentSlot, NativeImage> armorMasks = new HashMap<>();
 	private static final String armorTrimDir = "textures/armor/armor_trims/";
+	private static final String colorPaletteDir = "textures/trims/color_palettes/";
 
 	public DragonArmorRenderLayer(final GeoEntityRenderer<DragonEntity> renderer) {
 		super(renderer);
@@ -146,57 +147,44 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		for (EquipmentSlot slot : EquipmentSlot.values()) {
 			if (!armorMasks.containsKey(slot)) continue;
 			ItemStack itemstack = pPlayer.getItemBySlot(slot);
-			ResourceLocation existingArmorLocation = res(constructArmorTexture(pPlayer, slot));
+			ResourceLocation existingArmorLocation = generateArmorTextureResourceLocation(pPlayer, slot);
 			if (itemstack.getItem() instanceof ArmorItem) {
-				ArmorTrim trim = itemstack.get(DataComponents.TRIM);
-				Optional<Resource> armorFile = Minecraft.getInstance().getResourceManager().getResource(existingArmorLocation);
-				NativeImage armorImage, trimImage = null;
-				boolean trimOk = false;
-				Color trimBaseColor;
-				float[] trimBaseHSB = new float[3];
-				if (armorFile.isPresent()) {
-					InputStream textureStream = armorFile.get().open();
-					armorImage = NativeImage.read(textureStream);
-					textureStream.close();
-				} else {
+				NativeImage armorImage = RenderingUtils.getImageFromResource(existingArmorLocation);
+				if(armorImage == null) {
 					continue;
 				}
-				if (trim != null) {
-					String patternPath = trim.pattern().value().assetId().getPath();
-					Optional<Resource> trimFile = Minecraft.getInstance().getResourceManager().getResource(res("textures/armor/armor_trims/" + patternPath + ".png"));
-					if (trimFile.isPresent()) {
-						InputStream textureStream = trimFile.get().open();
-						trimImage = NativeImage.read(textureStream);
-						textureStream.close();
-						trimOk = true;
-					}
 
-                    Optional<Resource> colorPalette = Minecraft.getInstance().getResourceManager().getResource(ResourceLocation.withDefaultNamespace("textures/trims/color_palettes/" + trim.material().value().assetName() + ".png"));
-                    if (colorPalette.isPresent()) {
-                        try (NativeImage p = NativeImage.read(colorPalette.get().open())) {
-                            int[] baseRed = new int[p.getWidth() * p.getHeight()], baseGreen = new int[p.getWidth() * p.getHeight()], baseBlue = new int[p.getWidth() * p.getHeight()];
-                            int red = 0, green = 0, blue = 0;
-                            int z = 0;
-                            for (int x = 0; x < p.getWidth(); x++) {
-                                for (int y = 0; y < p.getHeight(); y++) {
-                                    int rgba = p.getPixelRGBA(x, y);
-                                    if (rgba != 0) {
-                                        Color c = new Color(rgba);
-                                        baseRed[z] = c.getRed();
-                                        baseGreen[z] = c.getGreen();
-                                        baseBlue[z] = c.getBlue();
-                                        z++;
-                                    }
-                                }
-                            }
-                            for (int i = 0; i < z; i++) {
-                                red += baseRed[i];
-                                green += baseGreen[i];
-                                blue += baseBlue[i];
-                            }
-                            trimBaseColor = new Color(blue / z, green / z, red / z, 255);
-                            Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
-                        }
+				ArmorTrim trim = itemstack.get(DataComponents.TRIM);
+				boolean hasTrim = false;
+				float[] trimBaseHSB = new float[3];
+				if (trim != null) {
+					Color trimBaseColor;
+					hasTrim = true;
+					String materialAssetName = trim.material().value().assetName();
+					NativeImage colorPalette = RenderingUtils.getImageFromResource(ResourceLocation.withDefaultNamespace(colorPaletteDir + materialAssetName + ".png"));
+					if(colorPalette != null) {
+						int[] baseRed = new int[colorPalette.getWidth() * colorPalette.getHeight()], baseGreen = new int[colorPalette.getWidth() * colorPalette.getHeight()], baseBlue = new int[colorPalette.getWidth() * colorPalette.getHeight()];
+						int red = 0, green = 0, blue = 0;
+						int z = 0;
+						for (int x = 0; x < colorPalette.getWidth(); x++) {
+							for (int y = 0; y < colorPalette.getHeight(); y++) {
+								int rgba = colorPalette.getPixelRGBA(x, y);
+								if (rgba != 0) {
+									Color c = new Color(rgba);
+									baseRed[z] = c.getRed();
+									baseGreen[z] = c.getGreen();
+									baseBlue[z] = c.getBlue();
+									z++;
+								}
+							}
+						}
+						for (int i = 0; i < z; i++) {
+							red += baseRed[i];
+							green += baseGreen[i];
+							blue += baseBlue[i];
+						}
+						trimBaseColor = new Color(blue / z, green / z, red / z, 255);
+						Color.RGBtoHSB(trimBaseColor.getBlue(), trimBaseColor.getGreen(), trimBaseColor.getRed(), trimBaseHSB);
                     } else {
                         TextColor tc = trim.material().value().description().getStyle().getColor();
                         if (tc != null) {
@@ -215,11 +203,23 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 					Color armorDye = new Color(dyeColor.rgb());
 					Color.RGBtoHSB(armorDye.getBlue(), armorDye.getGreen(), armorDye.getRed(), dyeHSB);
 				}
+
+				NativeImage trimImage = null;
+				if(hasTrim) {
+					String patternPath = trim.pattern().value().assetId().getPath();
+					trimImage = RenderingUtils.getImageFromResource(res(armorTrimDir + patternPath + ".png"));
+				}
+
 				for (int x = 0; x < armorImage.getWidth(); x++) {
 					for (int y = 0; y < armorImage.getHeight(); y++) {
 						if (armorMasks.get(slot).getPixelRGBA(x, y) == 0) continue;
 						Color armorColor = new Color(armorImage.getPixelRGBA(x, y), true);
-						if (trimOk) {
+
+						if (hasTrim) {
+							if(trimImage == null) {
+								continue;
+							}
+
 							Color trimColor = new Color(trimImage.getPixelRGBA(x, y), true);
 							Color.RGBtoHSB(trimColor.getRed(), trimColor.getGreen(), trimColor.getBlue(), trimHSB);
 							if (trimColor.getAlpha() != 0) {
@@ -292,14 +292,14 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 		return UUID.nameUUIDFromBytes(armorTotal.toString().getBytes()).toString();
 	}
 
-	private static String constructArmorTexture(Player playerEntity, EquipmentSlot equipmentSlot){
+	private static ResourceLocation generateArmorTextureResourceLocation(Player playerEntity, EquipmentSlot equipmentSlot){
 		String texture = "textures/armor/";
 		Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
 		String texture2 = itemToResLoc(item);
 		if (texture2 != null) {
 			texture2 = texture + texture2;
 			if (Minecraft.getInstance().getResourceManager().getResource(res(texture2)).isPresent()) {
-				return texture2;
+				return res(texture2);
 			}
 		}
 		if(item instanceof ArmorItem armorItem) {
@@ -343,7 +343,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 					case FEET -> texture += "boots";
 				}
 				texture += ".png";
-				return stripInvalidPathChars(texture);
+				return res(stripInvalidPathChars(texture));
 			}
 
 			int defense = armorItem.getDefense();
@@ -354,15 +354,16 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 				case LEGS -> texture += Mth.clamp((int)(defense / 1.5), 1, 4) + "_dragon_leggings";
 			}
 			texture += ".png";
-			return stripInvalidPathChars(texture);
+			return res(stripInvalidPathChars(texture));
 		}
-		return texture + "empty_armor.png";
+		return res(texture + "empty_armor.png");
 	}
 	
 	private static String itemToResLoc(Item item) {
 		if (item == Items.AIR) return null;
 		return ResourceHelper.getKey(item).getPath();
     }
+
 	private static String stripInvalidPathChars(String loc) {
 		// filters certain characters (non [a-z0-9/._-]) to prevent crashes
 		// this probably should never be relevant, but you can never be too safe
