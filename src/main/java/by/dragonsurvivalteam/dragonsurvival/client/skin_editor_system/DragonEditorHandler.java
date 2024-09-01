@@ -195,7 +195,6 @@ public class DragonEditorHandler{
 						skinGenerationShader.getUniform("Glowing").set(settings.glowing ? 1.0f : 0.0f);
 						skinGenerationShader.apply();
 
-						// Draw a full screen quad
 						BufferBuilder bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
 						bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
 						bufferbuilder.addVertex(1.0F, 0.0F, 0.0F);
@@ -205,6 +204,11 @@ public class DragonEditorHandler{
 
 						if(settings.glowing && layer == EnumSkinLayer.BASE) {
 							normalTarget.bindWrite(true);
+							bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
+							bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
+							bufferbuilder.addVertex(1.0F, 0.0F, 0.0F);
+							bufferbuilder.addVertex(1.0F, 1.0F, 0.0F);
+							bufferbuilder.addVertex(0.0F, 1.0F, 0.0F);
 							BufferUploader.draw(bufferbuilder.buildOrThrow());
 							normalTarget.unbindWrite();
 						}
