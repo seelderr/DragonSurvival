@@ -107,9 +107,7 @@ public class DragonEditorHandler{
 	}
 
 	public static CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> generateSkinTextures(final DragonEntity dragon) {
-		Player player = dragon.getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		return CompletableFuture.supplyAsync(() -> genTextures(player, handler), Util.backgroundExecutor());
+		return CompletableFuture.supplyAsync(() -> genTextures(dragon), Util.backgroundExecutor());
 	}
 
 	public static void generateSkinTexturesGPU(final DragonEntity dragon) {
@@ -213,7 +211,9 @@ public class DragonEditorHandler{
 		GlStateManager._viewport(currentViewportX, currentViewportY, currentViewportWidth, currentViewportHeight);
 	}
 
-	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final Player player, final DragonStateHandler handler) {
+	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final DragonEntity dragon) {
+		Player player = dragon.getPlayer();
+		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 		List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
 		SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 		NativeImage normal = new NativeImage(512, 512, true);

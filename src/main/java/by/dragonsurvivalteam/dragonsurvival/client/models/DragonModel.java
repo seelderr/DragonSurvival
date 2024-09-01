@@ -127,10 +127,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player;
-		if (dragon.getPlayer() != null || dragon.playerId != null){
-			player = dragon.getPlayer();
-		} else if (dragon.getPlayer() instanceof FakeClientPlayer) {
+		if(dragon.overrideUUIDWithLocalPlayerForTextureFetch) {
 			player = Minecraft.getInstance().player;
+		} else if (dragon.getPlayer() != null){
+			player = dragon.getPlayer();
 		} else {
 			return defaultTexture;
 		}
@@ -170,7 +170,8 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
 		}
 
-		return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + player.getStringUUID() + "_" + handler.getLevel().name);
+		String uuid = player.getStringUUID();
+		return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
 	}
 
 	public void setOverrideTexture(final ResourceLocation overrideTexture) {

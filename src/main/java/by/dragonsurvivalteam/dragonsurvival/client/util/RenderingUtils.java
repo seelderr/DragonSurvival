@@ -24,6 +24,8 @@ import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL43;
 
+import javax.annotation.Nullable;
+
 public class RenderingUtils{
 	static final double PI_TWO = Math.PI * 2.0;
 
@@ -300,6 +302,7 @@ public class RenderingUtils{
 		Minecraft.getInstance().getTextureManager().register(key, texture);
 	}
 
+	@Nullable
 	public static NativeImage getImageFromResource(ResourceLocation location) {
 		NativeImage image = null;
 		try {
