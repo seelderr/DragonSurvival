@@ -43,7 +43,6 @@ import squeek.appleskin.api.event.TooltipOverlayEvent;
 
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;
-	private static final AbstractTexture missingno = Minecraft.getInstance().getTextureManager().getTexture(ResourceLocation.withDefaultNamespace("missingno"));
 	private static final HashMap<ResourceLocation, CompletableFuture<Void>> armorTextures = new HashMap<>();
 	private static final HashMap<EquipmentSlot, NativeImage> armorMasks = new HashMap<>();
 	private static final String armorTrimDir = "textures/armor/armor_trims/";
