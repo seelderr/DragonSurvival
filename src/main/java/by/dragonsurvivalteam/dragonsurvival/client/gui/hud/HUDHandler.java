@@ -35,7 +35,7 @@ public class HUDHandler {
         int screenHeight = event.getGuiGraphics().guiHeight();
         ResourceLocation id = event.getName();
 
-        if (DragonFoodHandler.customDragonFoods && !vanillaFoodLevel && id == VanillaGuiLayers.FOOD_LEVEL) {
+        if (DragonFoodHandler.requireDragonFood && !vanillaFoodLevel && id == VanillaGuiLayers.FOOD_LEVEL) {
             boolean wasRendered = FoodBar.render(Minecraft.getInstance().gui, event.getGuiGraphics(), screenWidth, screenHeight);
 
             if (wasRendered) {
