@@ -141,23 +141,23 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
 		}
 
-		int[] majorGLVerArray = new int[1];
-		GL32.glGetIntegerv(GL32.GL_MAJOR_VERSION, majorGLVerArray);
-		int[] minorGLVerArray = new int[1];
-		GL32.glGetIntegerv(GL32.GL_MINOR_VERSION, minorGLVerArray);
-		// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
-		if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3)) {
-			if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
-				CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
-				textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
-					handler.getSkinData().isCompiled = true;
-					handler.getSkinData().recompileSkin = false;
-					for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
-						RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
-					}}, Minecraft.getInstance());
-			}
-		} else {
-			if(handler.getSkinData().recompileSkin) {
+		if (handler.getSkinData().recompileSkin) {
+			int[] majorGLVerArray = new int[1];
+			GL32.glGetIntegerv(GL32.GL_MAJOR_VERSION, majorGLVerArray);
+			int[] minorGLVerArray = new int[1];
+			GL32.glGetIntegerv(GL32.GL_MINOR_VERSION, minorGLVerArray);
+			// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
+			if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3)) {
+				if (textureRegisterFuture.isDone()) {
+					CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
+					textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
+						handler.getSkinData().isCompiled = true;
+						handler.getSkinData().recompileSkin = false;
+						for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
+							RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
+						}}, Minecraft.getInstance());
+				}
+			} else {
 				DragonEditorHandler.generateSkinTexturesGPU(dragon);
 				handler.getSkinData().isCompiled = true;
 				handler.getSkinData().recompileSkin = false;
