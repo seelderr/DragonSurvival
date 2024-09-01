@@ -12,16 +12,23 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
+
+import java.nio.IntBuffer;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.KeyboardInput;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL30C;
+import org.lwjgl.opengl.GL32;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
@@ -138,14 +145,27 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
 		}
 
-		if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
-			CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
-			textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
+		IntBuffer majorGLVer = IntBuffer.allocate(1);
+		GL32.glGetIntegerv(GL30C.GL_MAJOR_VERSION, majorGLVer);
+		IntBuffer minorGLVer = IntBuffer.allocate(1);
+		GL32.glGetIntegerv(GL30C.GL_MINOR_VERSION, minorGLVer);
+		// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
+		if(majorGLVer.get() < 4 || minorGLVer.get() < 3) {
+			if (handler.getSkinData().recompileSkin && textureRegisterFuture.isDone()) {
+				CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
+				textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
+					handler.getSkinData().isCompiled = true;
+					handler.getSkinData().recompileSkin = false;
+					for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
+						RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
+					}}, Minecraft.getInstance());
+			}
+		} else {
+			if(handler.getSkinData().recompileSkin) {
+				DragonEditorHandler.generateSkinTexturesGPU(dragon);
 				handler.getSkinData().isCompiled = true;
 				handler.getSkinData().recompileSkin = false;
-				for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
-					RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
-				}}, Minecraft.getInstance());
+			}
 		}
 
 		// Show the default skin while we are compiling if we haven't already compiled the skin
