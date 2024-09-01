@@ -25,7 +25,7 @@ public enum DragonLevel{
 		return "ds.level." + name;
 	}
 
-	public String getNameLowerCase() {
-		return getName().toLowerCase(Locale.ENGLISH);
+	public String getRawName() {
+		return name;
 	}
 }
