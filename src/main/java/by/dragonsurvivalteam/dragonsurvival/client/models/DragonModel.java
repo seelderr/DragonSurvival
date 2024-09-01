@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
@@ -141,31 +142,31 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
 		}
 
-		if (handler.getSkinData().recompileSkin) {
+		if (handler.getSkinData().recompileSkin.get(handler.getLevel())) {
 			int[] majorGLVerArray = new int[1];
 			GL32.glGetIntegerv(GL32.GL_MAJOR_VERSION, majorGLVerArray);
 			int[] minorGLVerArray = new int[1];
 			GL32.glGetIntegerv(GL32.GL_MINOR_VERSION, minorGLVerArray);
 			// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
-			if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3)) {
+			if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3) || ClientConfig.forceCPUSkinGeneration) {
 				if (textureRegisterFuture.isDone()) {
 					CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
 					textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
-						handler.getSkinData().isCompiled = true;
-						handler.getSkinData().recompileSkin = false;
+						handler.getSkinData().isCompiled.put(handler.getLevel(), true);
+						handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
 						for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
 							RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
 						}}, Minecraft.getInstance());
 				}
 			} else {
 				DragonEditorHandler.generateSkinTexturesGPU(dragon);
-				handler.getSkinData().isCompiled = true;
-				handler.getSkinData().recompileSkin = false;
+				handler.getSkinData().isCompiled.put(handler.getLevel(), true);
+				handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
 			}
 		}
 
 		// Show the default skin while we are compiling if we haven't already compiled the skin
-		if (ageGroup.defaultSkin || !handler.getSkinData().isCompiled) {
+		if (ageGroup.defaultSkin || !handler.getSkinData().isCompiled.get(handler.getLevel())) {
 			return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getNameLowerCase() + ".png");
 		}
 

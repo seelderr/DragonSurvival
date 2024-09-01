@@ -154,80 +154,76 @@ public class DragonEditorHandler{
 		normalTarget.clear(true);
 		glowTarget.clear(true);
 
-		for (DragonLevel dragonLevel : handler.getSkinData().skinPreset.skinAges.keySet()) {
-			SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(dragonLevel).get();
+		SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 
-			String uuid = player.getStringUUID();
-			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
-			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
+		String uuid = player.getStringUUID();
+		ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
+		ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + handler.getLevel().name);
 
-			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-				LayerSettings settings = skinAgeGroup.layerSettings.get(layer).get();
-				String selectedSkin = settings.selectedSkin;
+		for (EnumSkinLayer layer : EnumSkinLayer.values()) {
+			LayerSettings settings = skinAgeGroup.layerSettings.get(layer).get();
+			String selectedSkin = settings.selectedSkin;
 
-				if (selectedSkin != null) {
-					Texture skinTexture = getSkin(player, layer, selectedSkin, handler.getType());
+			if (selectedSkin != null) {
+				Texture skinTexture = getSkin(player, layer, selectedSkin, handler.getType());
 
-					if (skinTexture != null) {
-						float hueVal = settings.hue - skinTexture.average_hue;
-						float satVal = settings.saturation;
-						float brightVal = settings.brightness;
+				if (skinTexture != null) {
+					float hueVal = settings.hue - skinTexture.average_hue;
+					float satVal = settings.saturation;
+					float brightVal = settings.brightness;
 
-						ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
-						AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureLocation);
+					ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
+					AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureLocation);
 
-						if(settings.glowing) {
-							glowTarget.bindWrite(true);
-						} else {
-							normalTarget.bindWrite(true);
-						}
-						RenderSystem.enableBlend();
-						RenderSystem.colorMask(true, true, true, true);
-						RenderSystem.blendEquation(GlConst.GL_FUNC_ADD);
-						RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
-						RenderSystem.disableDepthTest();
-						RenderSystem.depthMask(false);
-						skinGenerationShader.setSampler("SkinTexture", texture);
-						skinGenerationShader.getUniform("HueVal").set(hueVal);
-						skinGenerationShader.getUniform("SatVal").set(satVal);
-						skinGenerationShader.getUniform("BrightVal").set(brightVal);
-						skinGenerationShader.getUniform("Colorable").set(skinTexture.colorable ? 1.0f : 0.0f);
-						skinGenerationShader.getUniform("Glowing").set(settings.glowing ? 1.0f : 0.0f);
-						skinGenerationShader.apply();
+					if(settings.glowing) {
+						glowTarget.bindWrite(true);
+					} else {
+						normalTarget.bindWrite(true);
+					}
+					RenderSystem.enableBlend();
+					RenderSystem.colorMask(true, true, true, true);
+					RenderSystem.blendEquation(GlConst.GL_FUNC_ADD);
+					RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE);
+					RenderSystem.disableDepthTest();
+					RenderSystem.depthMask(false);
+					skinGenerationShader.setSampler("SkinTexture", texture);
+					skinGenerationShader.getUniform("HueVal").set(hueVal);
+					skinGenerationShader.getUniform("SatVal").set(satVal);
+					skinGenerationShader.getUniform("BrightVal").set(brightVal);
+					skinGenerationShader.getUniform("Colorable").set(skinTexture.colorable ? 1.0f : 0.0f);
+					skinGenerationShader.getUniform("Glowing").set(settings.glowing ? 1.0f : 0.0f);
+					skinGenerationShader.apply();
 
-						BufferBuilder bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
+					BufferBuilder bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
+					bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
+					bufferbuilder.addVertex(1.0F, 0.0F, 0.0F);
+					bufferbuilder.addVertex(1.0F, 1.0F, 0.0F);
+					bufferbuilder.addVertex(0.0F, 1.0F, 0.0F);
+					BufferUploader.draw(bufferbuilder.buildOrThrow());
+
+					if(settings.glowing && layer == EnumSkinLayer.BASE) {
+						normalTarget.bindWrite(true);
+						bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
 						bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
 						bufferbuilder.addVertex(1.0F, 0.0F, 0.0F);
 						bufferbuilder.addVertex(1.0F, 1.0F, 0.0F);
 						bufferbuilder.addVertex(0.0F, 1.0F, 0.0F);
 						BufferUploader.draw(bufferbuilder.buildOrThrow());
+						normalTarget.unbindWrite();
+					}
 
-						if(settings.glowing && layer == EnumSkinLayer.BASE) {
-							normalTarget.bindWrite(true);
-							bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
-							bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
-							bufferbuilder.addVertex(1.0F, 0.0F, 0.0F);
-							bufferbuilder.addVertex(1.0F, 1.0F, 0.0F);
-							bufferbuilder.addVertex(0.0F, 1.0F, 0.0F);
-							BufferUploader.draw(bufferbuilder.buildOrThrow());
-							normalTarget.unbindWrite();
-						}
-
-						skinGenerationShader.clear();
-						if(settings.glowing) {
-							glowTarget.unbindWrite();
-						} else {
-							normalTarget.unbindWrite();
-						}
+					skinGenerationShader.clear();
+					if(settings.glowing) {
+						glowTarget.unbindWrite();
+					} else {
+						normalTarget.unbindWrite();
 					}
 				}
 			}
-			RenderingUtils.copyTextureFromRenderTarget(glowTarget, dynamicGlowKey);
-			RenderingUtils.copyTextureFromRenderTarget(normalTarget, dynamicNormalKey);
-			glowTarget.clear(true);
-			normalTarget.clear(true);
 		}
 
+		RenderingUtils.copyTextureFromRenderTarget(glowTarget, dynamicGlowKey);
+		RenderingUtils.copyTextureFromRenderTarget(normalTarget, dynamicNormalKey);
 		glowTarget.destroyBuffers();
 		normalTarget.destroyBuffers();
 		RenderSystem.restoreGlState(state);
@@ -238,66 +234,64 @@ public class DragonEditorHandler{
 
 	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final Player player, final DragonStateHandler handler) throws IOException {
 		List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
-		for (DragonLevel dragonLevel : handler.getSkinData().skinPreset.skinAges.keySet()) {
-			SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(dragonLevel).get();
-			NativeImage normal = new NativeImage(512, 512, true);
-			NativeImage glow = new NativeImage(512, 512, true);
+		SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
+		NativeImage normal = new NativeImage(512, 512, true);
+		NativeImage glow = new NativeImage(512, 512, true);
 
-			for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-				LayerSettings settings = skinAgeGroup.layerSettings.get(layer).get();
-				String selectedSkin = settings.selectedSkin;
+		for (EnumSkinLayer layer : EnumSkinLayer.values()) {
+			LayerSettings settings = skinAgeGroup.layerSettings.get(layer).get();
+			String selectedSkin = settings.selectedSkin;
 
-				if (selectedSkin != null) {
-					Texture skinTexture = getSkin(player, layer, selectedSkin, handler.getType());
+			if (selectedSkin != null) {
+				Texture skinTexture = getSkin(player, layer, selectedSkin, handler.getType());
 
-					if (skinTexture != null) {
-						float hueVal = settings.hue - skinTexture.average_hue;
-						float satVal = settings.saturation;
-						float brightVal = settings.brightness;
+				if (skinTexture != null) {
+					float hueVal = settings.hue - skinTexture.average_hue;
+					float satVal = settings.saturation;
+					float brightVal = settings.brightness;
 
-						ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
-						Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(textureLocation);
+					ResourceLocation textureLocation = getSkinTexture(player, layer, selectedSkin, handler.getType());
+					Optional<Resource> resource = Minecraft.getInstance().getResourceManager().getResource(textureLocation);
 
-						if (resource.isEmpty()) {
-							throw new UncheckedIOException(new IOException(String.format("Resource %s not found!", textureLocation.getPath())));
-						}
+					if (resource.isEmpty()) {
+						throw new UncheckedIOException(new IOException(String.format("Resource %s not found!", textureLocation.getPath())));
+					}
 
-						InputStream textureStream = resource.get().open();
-						NativeImage tempColorPicker = NativeImage.read(textureStream);
+					InputStream textureStream = resource.get().open();
+					NativeImage tempColorPicker = NativeImage.read(textureStream);
 
-						textureStream.close();
+					textureStream.close();
 
-						for (int x = 0; x < tempColorPicker.getWidth(); x++) {
-							for (int y = 0; y < tempColorPicker.getHeight(); y++) {
-								Color color = getColor(settings, skinTexture, hueVal, satVal, brightVal, tempColorPicker, x, y);
+					for (int x = 0; x < tempColorPicker.getWidth(); x++) {
+						for (int y = 0; y < tempColorPicker.getHeight(); y++) {
+							Color color = getColor(settings, skinTexture, hueVal, satVal, brightVal, tempColorPicker, x, y);
 
-								if (color == null) {
-									continue;
-								}
+							if (color == null) {
+								continue;
+							}
 
-								if (color.getAlpha() != 0) {
-									Supplier<NativeImage> g2 = settings.glowing ? () -> glow : () -> normal;
-									g2.get().setPixelRGBA(x, y, color.getRGB());
+							if (color.getAlpha() != 0) {
+								Supplier<NativeImage> g2 = settings.glowing ? () -> glow : () -> normal;
+								g2.get().setPixelRGBA(x, y, color.getRGB());
 
-									if (settings.glowing && layer == EnumSkinLayer.BASE) {
-										normal.setPixelRGBA(x, y, color.getRGB());
-									}
+								if (settings.glowing && layer == EnumSkinLayer.BASE) {
+									normal.setPixelRGBA(x, y, color.getRGB());
 								}
 							}
 						}
-
-						tempColorPicker.close();
 					}
+
+					tempColorPicker.close();
 				}
 			}
-
-			String uuid = player.getStringUUID();
-			ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + dragonLevel.name);
-			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + dragonLevel.name);
-
-			texturesToRegister.add(new Pair<>(normal, dynamicNormalKey));
-			texturesToRegister.add(new Pair<>(glow, dynamicGlowKey));
 		}
+
+		String uuid = player.getStringUUID();
+		ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
+		ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + handler.getLevel().name);
+
+		texturesToRegister.add(new Pair<>(normal, dynamicNormalKey));
+		texturesToRegister.add(new Pair<>(glow, dynamicGlowKey));
 
 		return texturesToRegister;
 	}
