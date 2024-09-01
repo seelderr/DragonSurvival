@@ -4,7 +4,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.Texture;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
@@ -34,7 +34,7 @@ import net.neoforged.fml.loading.FMLPaths;
 public class DragonEditorRegistry{
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
 	public static final ResourceLocation CUSTOMIZATION = ResourceLocation.fromNamespaceAndPath(MODID, "customization.json");
-	public static final HashMap<String, HashMap<EnumSkinLayer, Texture[]>> CUSTOMIZATIONS = new HashMap<>();
+	public static final HashMap<String, HashMap<EnumSkinLayer, DragonTextureMetadata[]>> CUSTOMIZATIONS = new HashMap<>();
 	private static boolean init = false;
 	private static SavedSkinPresets savedCustomizations = null;
 	public static HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
@@ -164,7 +164,7 @@ public class DragonEditorRegistry{
 		if(je != null){
 			if(je.layers != null){
 				je.layers.forEach((layer, keys) -> {
-					for(Texture key : keys){
+					for(DragonTextureMetadata key : keys){
 						if(key.key == null){
 							key.key = key.texture.substring(key.texture.lastIndexOf("/") + 1);
 							key.key = key.key.substring(0, key.key.lastIndexOf("."));

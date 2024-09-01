@@ -11,6 +11,8 @@ import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
 import java.awt.*;
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -298,12 +300,14 @@ public class RenderingUtils{
 		Minecraft.getInstance().getTextureManager().register(key, texture);
 	}
 
-	public static NativeImage downloadRenderTarget(RenderTarget target){
-		NativeImage image = new NativeImage(target.width, target.height, true);
-		RenderSystem.bindTexture(target.getColorTextureId());
-		GlStateManager._glCopyTexSubImage2D(target.getColorTextureId(), 0, 0, 0, 0, 0, target.width, target.height);
+	public static NativeImage getImageFromResource(ResourceLocation location) {
+		NativeImage image = null;
+		try {
+			image = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(location).get().open());
+		} catch (Exception e) {
+			DragonSurvivalMod.LOGGER.error(String.format("Texture resource %s not found!", location.getPath()), e);
+		}
 
-		image.downloadTexture(0, false);
 		return image;
 	}
 }

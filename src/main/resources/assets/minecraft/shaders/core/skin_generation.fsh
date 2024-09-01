@@ -94,7 +94,7 @@ vec3 getRGB(vec3 hsb) {
     return vec3(r, g, b);
 }
 
-vec3 getColor(vec4 texColor) {
+vec3 getHueAdjustedColor(vec4 texColor) {
     if(texColor.a == 0.0 || Colorable < 0.5) {
         return texColor.rgb;
     }
@@ -114,5 +114,5 @@ vec3 getColor(vec4 texColor) {
 
 void main() {
     vec4 texColor = texture(SkinTexture, texCoord);
-    fragColor = vec4(getColor(texColor), texColor.a);
+    fragColor = vec4(getHueAdjustedColor(texColor), texColor.a);
 }
