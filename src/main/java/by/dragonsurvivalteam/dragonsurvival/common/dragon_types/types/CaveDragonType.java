@@ -63,9 +63,9 @@ public class CaveDragonType extends AbstractDragonType{
 		boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
 
 		ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(player, ContrastShowerAbility.class);
-		int maxRainTime = 0;
+		int maxRainTime = 1;
 		if(contrastShower != null){
-			maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
+			maxRainTime = Functions.secondsToTicks(contrastShower.getDuration());
 		}
 		double oldRainTime = timeInRain;
 		int oldLavaTicks = lavaAirSupply;
@@ -84,7 +84,7 @@ public class CaveDragonType extends AbstractDragonType{
 					
 					if (timeInRain >= maxRainTime) {
 						if (player.tickCount % 40 == 0) {
-							player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveRainDamage.floatValue());
+							player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.RAIN_BURN)), ServerConfig.caveRainDamage.floatValue());
 						}
 					}
 					
