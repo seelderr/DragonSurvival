@@ -33,6 +33,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDropsEvent;
@@ -75,7 +76,8 @@ public class ClawToolHandler{
 		});
 	}
 
-	@SubscribeEvent
+	// This needs to happen as early as possible to make sure drops are added before other mods interact with them
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public static void playerDieEvent(LivingDropsEvent event){
 		Entity ent = event.getEntity();
 
