@@ -123,8 +123,7 @@ public class DSModifiers {
 		double healthModifier;
 		double size = handler.getSize();
 		if(ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
-			double healthModifierPercentage = Math.min(1.0, (size - ServerConfig.maxHealthSize) / (ServerConfig.maxGrowthSize - DragonLevel.ADULT.size));
-			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.maxHealth, ServerConfig.largeMaxHealth) - 20;
+			healthModifier = ServerConfig.maxHealth + ServerConfig.largeMaxHealthScalar * ((size - ServerConfig.maxHealthSize) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE) - 20;
 		}
 		else {
 			double healthModifierPercentage = Math.min(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));

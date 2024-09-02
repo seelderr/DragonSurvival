@@ -93,8 +93,8 @@ public class ServerConfig{
 	public static Boolean allowLargeScaling = false;
 
 	@ConfigRange( min = 1, max = 1000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMaxHealth", comment = "The maximum health when the dragon is at maximum growth size if large scaling is enabled.")
-	public static Integer largeMaxHealth = 80;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMaxHealthScalar", comment = "The bonus max health given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+	public static Integer largeMaxHealthScalar = 40;
 	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMovementSpeedScalar", comment = "The bonus movement speed multiplier per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
 	public static Double largeMovementSpeedScalar = 0.0;
@@ -113,11 +113,11 @@ public class ServerConfig{
 
 	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeStepHeightScalar", comment = "The bonus jump height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
-	public static Double largeJumpHeightScalar = 0.15;
+	public static Double largeJumpHeightScalar = 0.05;
 
 	@ConfigRange( min = 0.0, max = 10.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled. A block radius of 0 disables this feature. Crouching allows you to mine one block at a time.")
-	public static Double largeBlockBreakRadiusScalar = 0.7;
+	public static Double largeBlockBreakRadiusScalar = 0.0;
 
 	@ConfigType(Item.class)
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth"}, key = "growNewborn", comment = "List of items to grow newborn dragon. Format: item/modid:id" )
