@@ -500,6 +500,7 @@ public class DragonEditorScreen extends Screen {
 		ExtendedButton resetButton = new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
 			preset.skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, dragonType)));
 			HANDLER.getSkinData().compileSkin();
+			wingsCheckBox.selected = true;
 			update();
 		}){
 			@Override
