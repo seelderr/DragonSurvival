@@ -2334,5 +2334,10 @@
   "dragonsurvival.configuration.maxAnimationSpeed": "Max Animation Speed",
   "dragonsurvival.configuration.maxAnimationSpeed.tooltip": "The maximum animation speed allowed for dragons.",
   "dragonsurvival.configuration.minAnimationSpeed": "Min Animation Speed",
-  "dragonsurvival.configuration.minAnimationSpeed.tooltip": "The minimum animation speed allowed for dragons."
+  "dragonsurvival.configuration.minAnimationSpeed.tooltip": "The minimum animation speed allowed for dragons.",
+  "dragonsurvival.configuration.chargedSoupBuffDuration": "Charged Soup Buff Duration",
+  "dragonsurvival.configuration.chargedSoupBuffDuration.tooltip": "The duration in seconds of the 'Cave Fire' effect given by charged soup.",
+  "dragonsurvival.configuration.hurtfulToCaveDragon": "Harmful Foods",
+  "dragonsurvival.configuration.hurtfulToCaveDragon.tooltip": "Items that harm cave dragosn when consumed. Formatting: modid:itemid:damage.",
+
 }
