@@ -32,13 +32,13 @@ public class FearOfDarkAbility extends InnateDragonAbility{
 
 	@Override
 	public int getLevel(){
-		return ServerConfig.penalties && ServerConfig.forestStressTicks != 0.0 ? 1 : 0;
+		return ServerConfig.penaltiesEnabled && ServerConfig.forestStressTicks != 0.0 ? 1 : 0;
 	}
 
 	@Override
 	@OnlyIn( Dist.CLIENT )
 	public boolean isDisabled(){
-		return super.isDisabled() || !ServerConfig.penalties || ServerConfig.forestStressTicks == 0.0;
+		return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.forestStressTicks == 0.0;
 	}
 
 	@Override

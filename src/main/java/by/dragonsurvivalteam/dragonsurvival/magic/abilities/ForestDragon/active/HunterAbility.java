@@ -26,8 +26,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
 public class HunterAbility extends ChargeCastAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunter", comment = "Whether the hunter ability should be enabled" )
-	public static Boolean hunter = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterEnabled", comment = "Whether the hunter ability should be enabled" )
+	public static Boolean hunterEnabled = true;
 
 	@ConfigRange( min = 1.0, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the hunter effect given when the ability is used" )
@@ -167,6 +167,6 @@ public class HunterAbility extends ChargeCastAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !hunter;
+		return super.isDisabled() || !hunterEnabled;
 	}
 }

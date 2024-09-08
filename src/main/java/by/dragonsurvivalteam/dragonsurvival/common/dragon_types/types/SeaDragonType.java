@@ -81,7 +81,7 @@ public class SeaDragonType extends AbstractDragonType {
 			}
 		}
 		
-		if(ServerConfig.penalties && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
+		if(ServerConfig.penaltiesEnabled && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
 			if (!world.isClientSide()) {
 				if (player.hasEffect(DSEffects.PEACE)) {
 					timeWithoutWater = 0;

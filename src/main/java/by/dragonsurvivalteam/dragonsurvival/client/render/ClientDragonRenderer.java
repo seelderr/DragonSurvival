@@ -80,13 +80,13 @@ public class ClientDragonRenderer {
 	 */
 	public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "renderFirstPerson", comment = "Render dragon model in first person. If your own tail scares you, write false" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderFirstPerson", comment = "Render dragon model in first person. If your own tail scares you, write false" )
 	public static Boolean renderInFirstPerson = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "firstperson", key = "renderFirstPersonFlight", comment = "Render dragon model in first person while gliding. We don't advise you to turn it on." )
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderFirstPersonFlight", comment = "Render dragon model in first person while gliding. We don't advise you to turn it on." )
 	public static Boolean renderFirstPersonFlight = false;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "alternateHeldItem", comment = "Should held items be rendered as if you are in third-person even in first person as a dragon?" )
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "alternateHeldItem", comment = "Should held items be rendered as if you are in third-person even in first person as a dragon?" )
 	public static Boolean alternateHeldItem = false;
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderItemsInMouth", comment = "Should items be rendered near the mouth of dragons rather then hovering by their side?" )
@@ -107,7 +107,7 @@ public class ClientDragonRenderer {
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderOtherPlayerSkins", comment = "Should other player skins be rendered?" )
 	public static Boolean renderOtherPlayerSkins = true;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "nametag", key = "dragonNameTags", comment = "Show name tags for dragons." )
+	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "dragonNameTags", comment = "Show name tags for dragons." )
 	public static Boolean dragonNameTags = false;
 
 	@SubscribeEvent

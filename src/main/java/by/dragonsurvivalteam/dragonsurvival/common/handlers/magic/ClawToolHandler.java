@@ -103,7 +103,7 @@ public class ClawToolHandler{
 
 	@SubscribeEvent
 	public static void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck){
-		if(!ServerConfig.bonuses || !ServerConfig.clawsAreTools){
+		if(!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools){
 			return;
 		}
 		Player playerEntity = harvestCheck.getEntity();
@@ -251,7 +251,7 @@ public class ClawToolHandler{
 	public static class Event_busHandler {
 		@SubscribeEvent
 		public static void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {
-			if (!ServerConfig.bonuses || !ServerConfig.clawsAreTools) {
+			if (!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools) {
 				return;
 			}
 

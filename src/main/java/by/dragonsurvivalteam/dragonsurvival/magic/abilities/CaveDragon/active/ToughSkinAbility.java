@@ -26,8 +26,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility{
 
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkin", comment = "Whether the tough skin ability should be enabled" )
-	public static Boolean toughSkin = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinEnabled", comment = "Whether the tough skin ability should be enabled" )
+	public static Boolean toughSkinEnabled = true;
 
 	@ConfigRange( min = 1.0, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used" )
@@ -160,6 +160,6 @@ public class ToughSkinAbility extends AoeBuffAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !toughSkin;
+		return super.isDisabled() || !toughSkinEnabled;
 	}
 }

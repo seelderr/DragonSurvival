@@ -25,8 +25,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 @RegisterDragonAbility
 public class FireBallAbility extends ChargeCastAbility{
 
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireball", comment = "Whether the fireball ability should be enabled" )
-	public static Boolean fireball = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballEnabled", comment = "Whether the fireball ability should be enabled" )
+	public static Boolean fireballEnabled = true;
 
 	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in seconds of the fireball ability" )
@@ -131,7 +131,7 @@ public class FireBallAbility extends ChargeCastAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !fireball;
+		return super.isDisabled() || !fireballEnabled;
 	}
 
 	@Override

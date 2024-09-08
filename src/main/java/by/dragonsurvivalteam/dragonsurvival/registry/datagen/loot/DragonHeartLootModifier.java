@@ -31,9 +31,9 @@ public class DragonHeartLootModifier extends LootModifier {
         super(conditionsIn);
     }
 
-    private static boolean canDropHeart(float health, float min, float max, List<String> entityList, Entity entity, boolean whiteList, boolean useList) {
+    private static boolean canDropHeart(float health, float min, float max, List<String> entityList, Entity entity, boolean whiteList) {
         boolean meetsHealthRequirements = health >= min && health < max;
-        boolean meetsListRequirements = !useList || entityList.contains(ResourceHelper.getKey(entity).toString()) == whiteList;
+        boolean meetsListRequirements = entityList.isEmpty() || entityList.contains(ResourceHelper.getKey(entity).toString()) == whiteList;
         return meetsHealthRequirements && meetsListRequirements;
     }
 
@@ -58,9 +58,9 @@ public class DragonHeartLootModifier extends LootModifier {
 
         float health = ((LivingEntity)entity).getMaxHealth();
 
-        boolean canDropWeakDragonHeart = canDropHeart(health, 14, 20, ServerConfig.weakDragonHeartEntityList, entity, ServerConfig.weakDragonHeartWhiteList, ServerConfig.weakDragonHeartUseList);
-        boolean canDropNormalDragonHeart = canDropHeart(health, 20, 50, ServerConfig.dragonHeartEntityList, entity, ServerConfig.dragonHeartWhiteList, ServerConfig.dragonHeartUseList);
-        boolean canDropElderDragonHeart = canDropHeart(health, 50, Float.MAX_VALUE, ServerConfig.elderDragonHeartEntityList, entity, ServerConfig.elderDragonHeartWhiteList, ServerConfig.elderDragonHeartUseList);
+        boolean canDropWeakDragonHeart = canDropHeart(health, 14, 20, ServerConfig.weakDragonHeartEntityList, entity, ServerConfig.weakDragonHeartWhiteList);
+        boolean canDropNormalDragonHeart = canDropHeart(health, 20, 50, ServerConfig.dragonHeartEntityList, entity, ServerConfig.dragonHeartWhiteList);
+        boolean canDropElderDragonHeart = canDropHeart(health, 50, Float.MAX_VALUE, ServerConfig.elderDragonHeartEntityList, entity, ServerConfig.elderDragonHeartWhiteList);
 
         int lootingLevel = EnchantmentUtils.getLevel(player, Enchantments.LOOTING);
 

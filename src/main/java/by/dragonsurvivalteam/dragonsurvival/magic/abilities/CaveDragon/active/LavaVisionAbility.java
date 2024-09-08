@@ -26,8 +26,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
 public class LavaVisionAbility extends ChargeCastAbility {
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVision", comment = "Whether the lava vision ability should be enabled" )
-	public static Boolean lavaVision = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionEnabled", comment = "Whether the lava vision ability should be enabled" )
+	public static Boolean lavaVisionEnabled = true;
 
 	@ConfigRange( min = 1.0, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionDuration", comment = "The duration in seconds of the lava vision effect given when the ability is used" )
@@ -138,7 +138,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !lavaVision;
+		return super.isDisabled() || !lavaVisionEnabled;
 	}
 
 	@Override
