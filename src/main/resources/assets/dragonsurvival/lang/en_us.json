@@ -2338,6 +2338,6 @@
   "dragonsurvival.configuration.chargedSoupBuffDuration": "Charged Soup Buff Duration",
   "dragonsurvival.configuration.chargedSoupBuffDuration.tooltip": "The duration in seconds of the 'Cave Fire' effect given by charged soup.",
   "dragonsurvival.configuration.hurtfulToCaveDragon": "Harmful Foods",
-  "dragonsurvival.configuration.hurtfulToCaveDragon.tooltip": "Items that harm cave dragosn when consumed. Formatting: modid:itemid:damage.",
+  "dragonsurvival.configuration.hurtfulToCaveDragon.tooltip": "Items that harm cave dragosn when consumed. Formatting: modid:itemid:damage."
 
 }
