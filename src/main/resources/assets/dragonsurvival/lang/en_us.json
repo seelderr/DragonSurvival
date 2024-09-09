@@ -2283,8 +2283,6 @@
   "dragonsurvival.configuration.alternateHeldItem.tooltip": "Whether to render items in third person mode always (even when in first person).",
   "dragonsurvival.configuration.tooltips": "Tooltips",
   "dragonsurvival.configuration.tooltips.tooltip": "Tooltip settings.",
-  "dragonsurvival.configuration.hideAppleskinTooltip": "Hide AppleSkin Tooltip",
-  "dragonsurvival.configuration.hideAppleskinTooltip.tooltip": "Hide the Appleskin tooltip if you are a dragon. The tooltip will only show correct food values for humans.",
   "dragonsurvival.configuration.dragonFoodTooltips": "Change Tooltip Color for Dragon Foods",
   "dragonsurvival.configuration.dragonFoodTooltips.tooltip": "Change the color of the tooltip for dragon foods depending on the type that can consume it.",
   "dragonsurvival.configuration.hideUnsafeFood": "Hide Tooltip for Unsafe Foods",
