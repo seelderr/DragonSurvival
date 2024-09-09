@@ -1639,6 +1639,8 @@
   "dragonsurvival.configuration.baseBreakSpeedAdult.tooltip": "Bonus break speed against all blocks (break speed * bonus). Only applied if the dragon is an adult.",
   "dragonsurvival.configuration.bonusBreakSpeedAdult": "Bonus Break Speed (Adult)",
   "dragonsurvival.configuration.bonusBreakSpeedAdult.tooltip": "Bonus break speed against blocks depending on the dragon type (break speed * bonus). Only applied if the dragon is an adult.",
+  "dragonsurvival.configuration.bonusBreakSpeed": "Base Bonus Break Speed",
+  "dragonsurvival.configuration.bonusBreakSpeed.tooltip": "Bonus break speed against certain blocks depending on the dragon type (break speed * bonus).",
   "dragonsurvival.configuration.bonusHarvestLevel": "Bonus Harvest Level",
   "dragonsurvival.configuration.bonusHarvestLevel.tooltip": "The additional harvest levels added when the harvest bonus is unlocked.",
   "dragonsurvival.configuration.baseHarvestLevel": "Base Harvest Level",
