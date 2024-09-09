@@ -18,7 +18,6 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TI
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
 
-import by.dragonsurvivalteam.dragonsurvival.api.appleskin.AppleSkinEventHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -131,9 +130,6 @@ public class DragonSurvivalMod{
 	}
 
 	private void clientSetup(final FMLClientSetupEvent event) {
-		if (ModList.get().isLoaded("appleskin")) {
-			NeoForge.EVENT_BUS.register(new AppleSkinEventHandler());
-		}
 		WingObtainmentController.loadDragonPhrases();
 	}
 	

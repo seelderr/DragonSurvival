@@ -75,7 +75,6 @@ repositories {
 	}
 	maven { /* JEI */ url "https://maven.blamejared.com" }
 	maven { /* Curios */ url "https://maven.theillusivec4.top/" }
-	maven { /* AppleSkin */ url "https://maven.ryanliptak.com/" }
 	maven {
 		url "https://cursemaven.com"
 		content {
@@ -94,8 +93,6 @@ dependencies {
 	// Compatibility
 	compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
 	compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
-
-	compileOnly "squeek.appleskin:appleskin-neoforge:${appleskin_version}:api"
 
 	// Test
 	// implementation "curse.maven:embeddium-908741:5556146" // 1.0.7
