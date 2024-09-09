@@ -18,8 +18,8 @@ import net.minecraft.world.effect.MobEffects;
 
 @RegisterDragonAbility
 public class InspirationAbility extends AoeBuffAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspiration", comment = "Whether the inspiration ability should be enabled" )
-	public static Boolean inspiration = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationEnabled", comment = "Whether the inspiration ability should be enabled" )
+	public static Boolean inspirationEnabled = true;
 
 	@ConfigRange( min = 0.05, max = 10000.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in seconds of the inspiration ability" )
@@ -105,5 +105,10 @@ public class InspirationAbility extends AoeBuffAbility{
 	@Override
 	public int getSkillCastingTime(){
 		return Functions.secondsToTicks(inspirationCasttime);
+	}
+
+	@Override
+	public boolean isDisabled(){
+		return super.isDisabled() || !inspirationEnabled;
 	}
 }

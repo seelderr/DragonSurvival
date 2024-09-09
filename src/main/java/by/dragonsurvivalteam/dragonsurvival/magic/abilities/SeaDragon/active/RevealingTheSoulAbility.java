@@ -123,4 +123,9 @@ public class RevealingTheSoulAbility extends AoeBuffAbility{
 		components.add(Component.translatable("ds.skill.bonus_exp.max_gain", Integer.toString(revealingTheSoulMaxEXP)));
 		return components;
 	}
+
+	@Override
+	public boolean isDisabled(){
+		return super.isDisabled() || !revealingTheSoul;
+	}
 }

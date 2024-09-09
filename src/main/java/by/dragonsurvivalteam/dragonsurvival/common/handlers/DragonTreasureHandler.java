@@ -74,8 +74,8 @@ public class DragonTreasureHandler{
 					treasureNearby = Mth.clamp(treasureNearby, 0, ServerConfig.maxTreasures);
 					SLEEP_ON_TREASURE.get().trigger((ServerPlayer) event.getEntity(), treasureNearby);
 
-					int totalTime = Functions.secondsToTicks(ServerConfig.treasureRegenTicks);
-					int restTimer = totalTime - Functions.secondsToTicks(ServerConfig.treasureRegenTicksReduce * treasureNearby);
+					int totalTime = ServerConfig.treasureRegenTicks;
+					int restTimer = totalTime - ServerConfig.treasureRegenTicksReduce * treasureNearby;
 
 					if(handler.treasureRestTimer >= restTimer){
 						handler.treasureRestTimer = 0;

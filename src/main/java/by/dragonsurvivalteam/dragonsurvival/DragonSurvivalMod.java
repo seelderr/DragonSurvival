@@ -50,6 +50,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.attachment.AttachmentType;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
@@ -120,6 +122,9 @@ public class DragonSurvivalMod{
 		DS_STRUCTURE_PLACEMENT_TYPES.register(modEventBus);
 		DS_TRIGGERS.register(modEventBus);
 		GLM.register(modEventBus);
+
+		// Register the configuration screen
+		modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event){

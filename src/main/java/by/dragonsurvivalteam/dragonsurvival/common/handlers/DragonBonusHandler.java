@@ -36,7 +36,7 @@ public class DragonBonusHandler {
 
 		DragonStateProvider.getCap(living).ifPresent(handler -> {
 			if (handler.isDragon()) {
-				if (ServerConfig.bonuses) {
+				if (ServerConfig.bonusesEnabled) {
 					if (ServerConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
 						event.setCanceled(true);
 					} else if (ServerConfig.forestBushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
@@ -66,7 +66,7 @@ public class DragonBonusHandler {
 		if (event.getSound() != null) {
 			boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
 
-			if (isRelevant && ServerConfig.bonuses && ServerConfig.caveLavaSwimming) {
+			if (isRelevant && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming) {
 				if (DragonUtils.isDragonType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
 					event.setCanceled(true);
 				}
@@ -84,7 +84,7 @@ public class DragonBonusHandler {
 
 				if(Objects.equals(dragonStateHandler.getType(),DragonTypes.FOREST)){
 
-					if(ServerConfig.bonuses){
+					if(ServerConfig.bonusesEnabled){
 						distance -= ServerConfig.forestFallReduction.floatValue();
 					}
 

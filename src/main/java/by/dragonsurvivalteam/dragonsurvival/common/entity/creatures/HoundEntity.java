@@ -92,7 +92,7 @@ public class HoundEntity extends Hunter {
 
     @Override
     public boolean doHurtTarget(@NotNull Entity entity){
-        if(ServerConfig.houndDoesSlowdown && entity instanceof LivingEntity){
+        if(ServerConfig.houndSlowdownChance != 0 && entity instanceof LivingEntity){
             if(random.nextDouble() > ServerConfig.houndSlowdownChance) {
                 ((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200));
                 entityData.set(DID_SLOWDOWN_ATTACK, true);

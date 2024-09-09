@@ -70,7 +70,7 @@ public class CaveDragonType extends AbstractDragonType{
 		double oldRainTime = timeInRain;
 		int oldLavaTicks = lavaAirSupply;
 
-		if(ServerConfig.penalties
+		if(ServerConfig.penaltiesEnabled
 		   && !player.hasEffect(DSEffects.FIRE)
 		   && !player.isCreative()
 		   && !player.isSpectator()) {
@@ -108,13 +108,13 @@ public class CaveDragonType extends AbstractDragonType{
 			}
 		}
 
-		if(player.isOnFire() && ServerConfig.bonuses && ServerConfig.caveFireImmunity){
+		if(player.isOnFire() && ServerConfig.bonusesEnabled && ServerConfig.caveFireImmunity){
 			player.clearFire();
 		}
 
 		if(!player.level().isClientSide()){
 			if(player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())
-			   && ServerConfig.bonuses
+			   && ServerConfig.bonusesEnabled
 			   && ServerConfig.caveLavaSwimming
 			   && ServerConfig.caveLavaSwimmingTicks != 0){
 				if(!player.canBreatheUnderwater() && !player.getAbilities().invulnerable){

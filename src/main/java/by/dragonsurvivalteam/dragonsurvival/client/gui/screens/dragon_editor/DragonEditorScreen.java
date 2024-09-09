@@ -73,7 +73,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class DragonEditorScreen extends Screen {
 	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
-	private static final ResourceLocation RESET_POSITION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_position_button.png");
 	private static final ResourceLocation SAVE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
 	private static final ResourceLocation RANDOM = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/random_icon.png");
 	private static final ResourceLocation RESET = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_button.png");
@@ -85,10 +84,6 @@ public class DragonEditorScreen extends Screen {
 	                                     "swim_fast_head_locked",
 	                                     "run_head_locked",
 	                                     "spinning_on_back"};
-	@ConfigRange( min = 1, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = "misc", key = "editorHistory", comment = "The amount of undos and redos that are saved in the dragon editor." )
-	public static Integer editorHistory = 10;
-	public int HISTORY_SIZE = editorHistory;
 	public int guiLeft;
 	public int guiTop;
 	public boolean confirmation;

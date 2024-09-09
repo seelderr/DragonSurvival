@@ -45,7 +45,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 
 		boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getTypeName()).contains(block);
 
-		if(!player.level().isClientSide() && ServerConfig.bonuses && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock){
+		if(!player.level().isClientSide() && ServerConfig.bonusesEnabled && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock){
 			if(getDuration() > 0){
 				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), ServerConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
 			}

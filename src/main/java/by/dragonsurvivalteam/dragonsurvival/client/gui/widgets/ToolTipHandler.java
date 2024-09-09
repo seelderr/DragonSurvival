@@ -33,8 +33,8 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler{
-	private static final ResourceLocation tooltip_1 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
-	private static final ResourceLocation tooltip_2 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
+	//private static final ResourceLocation tooltip_1 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
+	//private static final ResourceLocation tooltip_2 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
 
 	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?")
 	public static Boolean tooltipChanges = true;
@@ -45,13 +45,10 @@ public class ToolTipHandler{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
 	public static Boolean dragonFoodTooltips = true;
 
-	@ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideAppleskinTooltip", comment = "Hide the AppleSkin tooltip if you're a dragon. The tooltip will only show correct food values for humans.")
-	public static Boolean hideAppleskinTooltip = true;
-
 	private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
 
-	private static final boolean blink = false;
-	private static final int tick = 0;
+	//private static final boolean blink = false;
+	//private static final int tick = 0;
 
 	@SubscribeEvent
 	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent){

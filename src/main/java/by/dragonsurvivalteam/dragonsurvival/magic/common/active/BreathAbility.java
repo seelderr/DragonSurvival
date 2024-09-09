@@ -35,7 +35,7 @@ import net.minecraft.world.phys.Vec3;
 
 public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation {
 	@ConfigRange(min = 0, max = 10)
-	@ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "baseBreathRange", comment = "The base range of the breath attack (breath range increases with dragon growth)")
+	@ConfigOption(side = ConfigSide.SERVER, category = { "magic", "abilities" }, key = "baseBreathRange", comment = "The base range of the breath attack (breath range increases with dragon growth)")
 	public static Integer baseBreathRange = 3;
 
 	public int currentBreathRange;

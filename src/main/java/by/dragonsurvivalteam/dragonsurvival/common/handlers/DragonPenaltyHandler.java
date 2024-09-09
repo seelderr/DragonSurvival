@@ -33,7 +33,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class DragonPenaltyHandler{
 	@SubscribeEvent
 	public static void hitByWaterPotion(ProjectileImpactEvent potionEvent){
-		if(!ServerConfig.penalties || ServerConfig.caveSplashDamage == 0.0){
+		if(!ServerConfig.penaltiesEnabled || ServerConfig.caveSplashDamage == 0.0){
 			return;
 		}
 
@@ -68,7 +68,7 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void consumeHurtfulItem(LivingEntityUseItemEvent.Finish destroyItemEvent){
-		if(!ServerConfig.penalties || !(destroyItemEvent.getEntity() instanceof Player player)){
+		if(!ServerConfig.penaltiesEnabled || !(destroyItemEvent.getEntity() instanceof Player player)){
 			return;
 		}
 
@@ -92,7 +92,7 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void onWaterConsumed(LivingEntityUseItemEvent.Finish destroyItemEvent){
-		if(!ServerConfig.penalties || ServerConfig.seaTicksWithoutWater == 0){
+		if(!ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0){
 			return;
 		}
 		ItemStack itemStack = destroyItemEvent.getItem();
@@ -119,7 +119,7 @@ public class DragonPenaltyHandler{
 
 	@SubscribeEvent
 	public static void preventBlackListedItemsFromBeingEquipped(PlayerTickEvent.Pre event){
-		if(!ServerConfig.penalties){
+		if(!ServerConfig.penaltiesEnabled){
 			return;
 		}
 

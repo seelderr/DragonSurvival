@@ -27,8 +27,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
 public class SpikeAbility extends InstantCastAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spike", comment = "Whether the spike ability should be enabled" )
-	public static Boolean spike = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeEnabled", comment = "Whether the spike ability should be enabled" )
+	public static Boolean spikeEnabled = true;
 
 	@ConfigRange( min = 0.0, max = 100.0)
 	@ConfigOption (side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeSpread", comment = "The amount each additional spike fired will add to its inaccuracy")
@@ -103,7 +103,7 @@ public class SpikeAbility extends InstantCastAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !spike;
+		return super.isDisabled() || !spikeEnabled;
 	}
 
 	@Override

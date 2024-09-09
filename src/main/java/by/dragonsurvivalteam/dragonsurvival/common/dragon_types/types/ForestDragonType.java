@@ -63,7 +63,7 @@ public class ForestDragonType extends AbstractDragonType{
 		
 		double oldDarknessTime = timeInDarkness;
 		
-		if(ServerConfig.penalties && !player.hasEffect(DSEffects.MAGIC)
+		if(ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.MAGIC)
 		   && ServerConfig.forestStressTicks > 0
 		   && !player.isCreative() &&
 		   !player.isSpectator()) {

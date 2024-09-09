@@ -50,8 +50,8 @@ import net.neoforged.fml.loading.FMLEnvironment;
 
 @RegisterDragonAbility
 public class NetherBreathAbility extends BreathAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreath", comment = "Whether the firebreath ability should be enabled" )
-	public static Boolean fireBreath = true;
+	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathEnabled", comment = "Whether the firebreath ability should be enabled" )
+	public static Boolean fireBreathEnabled = true;
 
 	@ConfigRange( min = 0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathDamage", comment = "The amount of damage the firebreath ability deals. This value is multiplied by the skill level." )
@@ -123,7 +123,7 @@ public class NetherBreathAbility extends BreathAbility{
 
 	@Override
 	public boolean isDisabled(){
-		return super.isDisabled() || !fireBreath;
+		return super.isDisabled() || !fireBreathEnabled;
 	}
 
 	@Override

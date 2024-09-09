@@ -34,7 +34,7 @@ public class DragonPenaltyHUD {
         int rightHeight;
 
         if (handler.getType() instanceof SeaDragonType seaDragonType) {
-            if (seaDragonType.timeWithoutWater > 0 && ServerConfig.penalties && ServerConfig.seaTicksWithoutWater != 0) {
+            if (seaDragonType.timeWithoutWater > 0 && ServerConfig.penaltiesEnabled && ServerConfig.seaTicksWithoutWater != 0) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
@@ -67,7 +67,7 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
         } else if (handler.getType() instanceof CaveDragonType caveDragonType) {
-            if (caveDragonType.timeInRain > 0 && ServerConfig.penalties && ServerConfig.caveRainDamage != 0.0) {
+            if (caveDragonType.timeInRain > 0 && ServerConfig.penaltiesEnabled && ServerConfig.caveRainDamage != 0.0) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
@@ -94,7 +94,7 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
 
-            if (caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && ServerConfig.bonuses && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming) {
+            if (caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
@@ -112,7 +112,7 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
         } else if (handler.getType() instanceof ForestDragonType forestDragonType) {
-            if (forestDragonType.timeInDarkness > 0 && ServerConfig.penalties && ServerConfig.forestStressTicks != 0 && !localPlayer.hasEffect(DSEffects.STRESS)) {
+            if (forestDragonType.timeInDarkness > 0 && ServerConfig.penaltiesEnabled && ServerConfig.forestStressTicks != 0 && !localPlayer.hasEffect(DSEffects.STRESS)) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;

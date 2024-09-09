@@ -134,7 +134,7 @@ public class DragonSizeHandler{
 
 	public static Pose getOverridePose(LivingEntity player){
 		if(player != null){
-			boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(player, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
+			boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(player, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
 			boolean flying = ServerFlightHandler.isFlying(player);
 			boolean spinning = player.isAutoSpinAttack();
 			boolean crouching = player.isShiftKeyDown();

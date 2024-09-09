@@ -88,7 +88,7 @@ public abstract class PlayerMixin extends LivingEntity {
 				return;
 			}
 
-			boolean handleLavaSwimming = ServerConfig.bonuses && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(handler, DragonTypes.CAVE);
+			boolean handleLavaSwimming = ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(handler, DragonTypes.CAVE);
 
 			if (handleLavaSwimming && /* Only triggers when sprinting when in lava */ DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()) {
 				// Mostly a copy from vanilla Player#travel

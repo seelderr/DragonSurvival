@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.core.Holder;
@@ -189,7 +190,9 @@ public class ConfigHandler{
 					ModConfigSpec.EnumValue<?> value = builder.defineEnum(configOption.key(), (Enum) defaultValues, ((Enum<?>) defaultValues).getClass().getEnumConstants());
 					configValues.put(key, value);
 				} else if(tt instanceof List<?> list) { // TODO :: Numeric lists?
-					ModConfigSpec.ConfigValue<List<?>> value = builder.defineList(configOption.key(), list, configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue));
+					// By default, lists are not allowed to be empty, so we define the range manually here.
+					ModConfigSpec.Range<Integer> sizeRange = ModConfigSpec.Range.of(0, Integer.MAX_VALUE);
+					ModConfigSpec.ConfigValue<List<?>> value = builder.defineList(List.of(configOption.key()), () -> list, () -> getDefaultListValueForConfig(configOption.key()), configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue), sizeRange);
 					configValues.put(key, value);
 				} else {
 					ModConfigSpec.ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
@@ -214,75 +217,83 @@ public class ConfigHandler{
 		return checkSpecific(key, configValue);
 	}
 
+	public static String getDefaultListValueForConfig(final String key) {
+		return switch (key) {
+			// Food options
+            case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> "minecraft:empty:0:0";
+			// Hurtful items
+            case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> "minecraft:empty:0";
+
+
+            // Blacklisted Slots
+            case "blacklistedSlots" -> "0";
+
+            // Dirt transformations (forest dragon breath)
+            case "dirtTransformationBlocks" -> "minecraft:empty:0";
+            default -> "minecraft:empty";
+        };
+	}
+
 	/** More specific checks depending on the config type */
 	public static boolean checkSpecific(final String key, final Object configValue) {
 		// TODO :: Maybe specifiy the full path?
 		// Food options
-		if (key.equals("caveDragon") || key.equals("forestDragon") || key.equals("seaDragon")) {
-			if (configValue instanceof String string) {
-				// namespace:item_id:hunger:saturation
-				String[] split = string.split(":");
+        switch (key) {
+            case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> {
+                if (configValue instanceof String string) {
+                    // namespace:item_id:hunger:saturation
+                    String[] split = string.split(":");
 
-				if (split.length == 2) {
-					return ResourceLocation.tryParse(string) != null;
-				} else if (split.length == 4) {
-					return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
-				}
-			}
+                    if (split.length == 2) {
+                        return ResourceLocation.tryParse(string) != null;
+                    } else if (split.length == 4) {
+                        return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
+                    }
+                }
 
-			return false;
-		}
+                return false;
+            }
+            case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> {
+                if (configValue instanceof String string) {
+                    // namespace:item_id:damage
+                    String[] split = string.split(":");
 
-		if (key.equals("hurtfulToCaveDragon") || key.equals("hurtfulToForestDragon") || key.equals("hurtfulToSeaDragon")) {
-			if (configValue instanceof String string) {
-				// namespace:item_id:damage
-				String[] split = string.split(":");
+                    if (split.length == 3) {
+                        return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
+                    }
+                }
 
-				if (split.length == 3) {
-					return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
-				}
-			}
+                return false;
+            }
 
-			return false;
-		}
 
-		// Blacklist Item Regex
-		if (key.equals("blacklistedItemsRegex")) {
-			if (configValue instanceof String string) {
-				// namespace:regex
-				// TODO :: Handle `:` or `"` in some way for regex purposes?
-				int length = string.split(":").length;
-				return length == 2;
-			}
+            // Blacklisted Slots
+            case "blacklistedSlots" -> {
+                try {
+                    Integer.parseInt(String.valueOf(configValue));
+                } catch (NumberFormatException e) {
+                    return false;
+                }
 
-			return false;
-		}
+                return true;
+            }
 
-		// Blacklisted Slots
-		if (key.equals("blacklistedSlots")) {
-			try {
-				Integer.parseInt(String.valueOf(configValue));
-			} catch (NumberFormatException e) {
-				return false;
-			}
 
-			return true;
-		}
+            // Dirt transformations (forest dragon breath)
+            case "dirtTransformationBlocks" -> {
+                if (configValue instanceof String string) {
+                    String[] data = string.split(":");
 
-		// Dirt transformations (forest dragon breath)
-		if (key.equals("dirtTransformationBlocks")) {
-			if (configValue instanceof String string) {
-				String[] data = string.split(":");
+                    if (data.length == 3) {
+                        return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
+                    }
 
-				if (data.length == 3) {
-					return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
-				}
+                    return false;
+                }
+            }
+        }
 
-				return false;
-			}
-		}
-
-		String string = String.valueOf(configValue);
+        String string = String.valueOf(configValue);
 
 		if (string.split(":").length == 2) {
 			// Simply checking for this at the start is unsafe since `awtaj` is a valid resource location but can cause problems if it's just some gibberish
