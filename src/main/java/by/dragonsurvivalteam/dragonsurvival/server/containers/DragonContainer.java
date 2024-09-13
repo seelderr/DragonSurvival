@@ -37,8 +37,10 @@ public class DragonContainer extends AbstractContainerMenu {
 	public final ResultContainer craftResult = new ResultContainer();
 	public final Player player;
 
+	// Used for JEI integration
 	public List<Slot> craftingSlots = new ArrayList<>();
 	public List<Slot> inventorySlots = new ArrayList<>();
+
 	public Inventory playerInventory;
 	public int menuStatus;
 
@@ -105,7 +107,6 @@ public class DragonContainer extends AbstractContainerMenu {
 				}
 			};
 			addSlot(s);
-			inventorySlots.add(s);
 		}
 
 		// Inventory slots
@@ -129,7 +130,6 @@ public class DragonContainer extends AbstractContainerMenu {
 			for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 				ClawToolSlot clawToolSlot = new ClawToolSlot(this, handler.getClawToolData().getClawsInventory(), i, -50, 35 + i * 18, i);
 				addSlot(clawToolSlot);
-				inventorySlots.add(clawToolSlot);
 			}
 		});
 
