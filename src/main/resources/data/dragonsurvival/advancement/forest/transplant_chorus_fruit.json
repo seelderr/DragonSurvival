@@ -5,10 +5,10 @@
       "id": "minecraft:chorus_fruit"
     },
     "title": {
-      "translate": "ds.advancements.transplate_chorus_fruit.title"
+      "translate": "ds.advancements.transplant_chorus_fruit.title"
     },
     "description": {
-      "translate": "ds.advancements.transplate_chorus_fruit.description"
+      "translate": "ds.advancements.transplant_chorus_fruit.description"
     },
     "frame": "goal"
   },
