@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.List;
@@ -74,7 +75,7 @@ public class DragonAltarBlock extends Block{
 				return InteractionResult.FAIL;
 			} else {
 				PacketDistributor.sendToPlayer((ServerPlayer)pPlayer, new AllowOpenDragonAltar.Data());
-				handler.altarCooldown = Functions.minutesToTicks(5);
+				handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
 				handler.hasUsedAltar = true;
 				handler.isInAltar = true;
 				return InteractionResult.CONSUME;
