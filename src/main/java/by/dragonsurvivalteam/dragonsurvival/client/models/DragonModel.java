@@ -15,7 +15,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
-
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
@@ -23,7 +22,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import org.lwjgl.opengl.GL32;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
@@ -141,12 +139,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		if (handler.getSkinData().recompileSkin.get(handler.getLevel())) {
-			int[] majorGLVerArray = new int[1];
-			GL32.glGetIntegerv(GL32.GL_MAJOR_VERSION, majorGLVerArray);
-			int[] minorGLVerArray = new int[1];
-			GL32.glGetIntegerv(GL32.GL_MINOR_VERSION, minorGLVerArray);
-			// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
-			if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3) || ClientConfig.forceCPUSkinGeneration) {
+			if(ClientConfig.forceCPUSkinGeneration) {
 				if (textureRegisterFuture.isDone()) {
 					CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
 					textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {

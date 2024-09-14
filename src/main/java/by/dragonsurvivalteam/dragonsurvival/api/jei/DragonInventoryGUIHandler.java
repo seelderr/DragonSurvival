@@ -45,6 +45,6 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonCont
 
 	@Override
 	public @NotNull List<Slot> getInventorySlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
-		return container.inventorySlots;
+        return container.inventorySlots;
 	}
 }

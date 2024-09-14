@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBo
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonLeggings;
-import by.dragonsurvivalteam.dragonsurvival.client.render.item.HelmetStackTileEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
