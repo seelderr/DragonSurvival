@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 
 import com.google.gson.annotations.SerializedName;
-import java.util.Locale;
 
 public enum DragonLevel{
 	@SerializedName(value = "NEWBORN", alternate = "BABY")
