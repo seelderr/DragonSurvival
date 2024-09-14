@@ -141,12 +141,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		if (handler.getSkinData().recompileSkin.get(handler.getLevel())) {
-			int[] majorGLVerArray = new int[1];
-			GL32.glGetIntegerv(GL32.GL_MAJOR_VERSION, majorGLVerArray);
-			int[] minorGLVerArray = new int[1];
-			GL32.glGetIntegerv(GL32.GL_MINOR_VERSION, minorGLVerArray);
-			// The GPU method of generating textures uses glCopyImageSubData, which is only available in OpenGL 4.3 and above. Minecraft only requires OpenGL 3.2, so we need to check the version.
-			if(majorGLVerArray[0] < 4 || (majorGLVerArray[0] == 4 && minorGLVerArray[0] < 3) || ClientConfig.forceCPUSkinGeneration) {
+			if(ClientConfig.forceCPUSkinGeneration) {
 				if (textureRegisterFuture.isDone()) {
 					CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
 					textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {

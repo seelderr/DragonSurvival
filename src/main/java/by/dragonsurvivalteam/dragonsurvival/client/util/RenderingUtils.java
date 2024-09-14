@@ -297,9 +297,10 @@ public class RenderingUtils{
 	}
 
 	public static void copyTextureFromRenderTarget(RenderTarget target, ResourceLocation key){
-		DynamicTexture texture = new DynamicTexture(target.width, target.height, true);
-		GL43.glCopyImageSubData(target.getColorTextureId(), GlConst.GL_TEXTURE_2D, 0, 0, 0, 0, texture.getId(), GlConst.GL_TEXTURE_2D, 0, 0, 0, 0, target.width, target.height, 1);
-		Minecraft.getInstance().getTextureManager().register(key, texture);
+		NativeImage image = new NativeImage(target.width, target.height, true);
+		RenderSystem.bindTexture(target.getColorTextureId());
+		image.downloadTexture(0, false);
+		uploadTexture(image, key);
 	}
 
 	@Nullable
