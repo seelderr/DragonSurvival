@@ -86,9 +86,6 @@ public class ClientDragonRenderer {
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderFirstPersonFlight", comment = "Render dragon model in first person while gliding. We don't advise you to turn it on." )
 	public static Boolean renderFirstPersonFlight = false;
 
-	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "alternateHeldItem", comment = "Should held items be rendered as if you are in third-person even in first person as a dragon?" )
-	public static Boolean alternateHeldItem = false;
-
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "renderItemsInMouth", comment = "Should items be rendered near the mouth of dragons rather then hovering by their side?" )
 	public static Boolean renderItemsInMouth = false;
 
@@ -109,20 +106,6 @@ public class ClientDragonRenderer {
 
 	@ConfigOption( side = ConfigSide.CLIENT, category = "rendering", key = "dragonNameTags", comment = "Show name tags for dragons." )
 	public static Boolean dragonNameTags = false;
-
-	@SubscribeEvent
-	public static void renderFirstPerson(RenderHandEvent renderHandEvent){
-		if(renderInFirstPerson){
-			LocalPlayer player = Minecraft.getInstance().player;
-			DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-				if(playerStateHandler.isDragon()){
-					if(alternateHeldItem){
-						renderHandEvent.setCanceled(true);
-					}
-				}
-			});
-		}
-	}
 
 	/** Show breath hit range when hitboxes are being rendered */
 	@SubscribeEvent

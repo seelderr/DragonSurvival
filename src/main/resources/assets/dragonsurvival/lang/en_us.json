@@ -2163,8 +2163,8 @@
   "dragonsurvival.configuration.adultGrowthModifier.tooltip": "The growth speed modifier for dragons between 30-40 size. 1.0 is 24 hours to grow to 40 size.",
   "dragonsurvival.configuration.youngGrowthModifier": "Growth Speed (Young to Adult size)",
   "dragonsurvival.configuration.youngGrowthModifier.tooltip": "The growth speed modifier for dragons between 20-30 size. 1.0 is 15 hours to grow to 30 size.",
-  "dragonsurvival.configuration.hatchlingGrowthModifier": "Growth Speed (Newborn to Young)",
-  "dragonsurvival.configuration.hatchlingGrowthModifier.tooltip": "The growth speed modifier for dragons between 14-20 size. 1.0 is 3 hours to grow to 20 size.",
+  "dragonsurvival.configuration.newbornGrowthModifier": "Growth Speed (Newborn to Young)",
+  "dragonsurvival.configuration.newbornGrowthModifier.tooltip": "The growth speed modifier for dragons between 14-20 size. 1.0 is 3 hours to grow to 20 size.",
   "dragonsurvival.configuration.maxHealthSize": "Size to Reach Maximum Health",
   "dragonsurvival.configuration.maxHealthSize.tooltip": "The size at which the dragon reaches maximum health.",
   "dragonsurvival.configuration.maxHealth": "Maximum Health",
@@ -2281,8 +2281,6 @@
   "dragonsurvival.configuration.inventoryToggle.tooltip": "Whether to show the dragon inventory toggle button.",
   "dragonsurvival.configuration.dragonTabs": "Show Dragon Tabs in Normal Inventory",
   "dragonsurvival.configuration.dragonTabs.tooltip": "Whether to show the dragon tabs in the normal inventory.",
-  "dragonsurvival.configuration.alternateHeldItem": "Render Items in Third Person Always",
-  "dragonsurvival.configuration.alternateHeldItem.tooltip": "Whether to render items in third person mode always (even when in first person).",
   "dragonsurvival.configuration.tooltips": "Tooltips",
   "dragonsurvival.configuration.tooltips.tooltip": "Tooltip settings.",
   "dragonsurvival.configuration.dragonFoodTooltips": "Change Tooltip Color for Dragon Foods",
@@ -2338,5 +2336,9 @@
   "dragonsurvival.configuration.chargedSoupBuffDuration": "Charged Soup Buff Duration",
   "dragonsurvival.configuration.chargedSoupBuffDuration.tooltip": "The duration in seconds of the 'Cave Fire' effect given by charged soup.",
   "dragonsurvival.configuration.hurtfulToCaveDragon": "Harmful Foods",
-  "dragonsurvival.configuration.hurtfulToCaveDragon.tooltip": "Items that harm cave dragons when consumed. Formatting: modid:itemid:damage."
+  "dragonsurvival.configuration.hurtfulToCaveDragon.tooltip": "Items that harm cave dragons when consumed. Formatting: modid:itemid:damage.",
+  "dragonsurvival.configuration.particles_on_dragons": "Render Burn/Drain/Charged Particles on Dragons",
+  "dragonsurvival.configuration.particles_on_dragons.tooltip": "Whether to render particles from the Burn, Drain, and Charged particle effects on dragons.",
+  "dragonsurvival.configuration.renderHeldItem": "Render Held Items in Third Person",
+  "dragonsurvival.configuration.renderHeldItem.tooltip": "Whether to render held items in third person if you are a dragon."
 }
