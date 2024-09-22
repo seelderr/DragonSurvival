@@ -25,6 +25,7 @@ public class DragonRidingHandler {
 	private enum DragonRideAttemptResult {
 		SELF_TOO_BIG,
 		MOUNT_TOO_SMALL_HUMAN,
+		NOT_CROUCHING,
 		OTHER,
 		SUCCESS
 	}
@@ -42,6 +43,8 @@ public class DragonRidingHandler {
 			return DragonRideAttemptResult.SELF_TOO_BIG;
 		} else if(!riderCap.isDragon() && mountCap.getLevel() == DragonLevel.ADULT) {
 			return DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN;
+		} else if(mount.getPose() != Pose.CROUCHING) {
+			return DragonRideAttemptResult.NOT_CROUCHING;
 		}
 
 		return DragonRideAttemptResult.SUCCESS;
@@ -64,21 +67,19 @@ public class DragonRidingHandler {
 				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
 					DragonRideAttemptResult result = playerCanRideDragon(self, target);
 					if(result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
-						if(target.getPose() == Pose.CROUCHING) {
-							self.startRiding(target);
-							target.connection.send(new ClientboundSetPassengersPacket(target));
-							targetCap.setPassengerId(self.getId());
-							PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonPassengerID.Data(target.getId(), self.getId()));
-							event.setCancellationResult(InteractionResult.SUCCESS);
-							event.setCanceled(true);
-						} else {
-							self.sendSystemMessage(Component.translatable("ds.riding.target_not_crouching"));
-						}
+						self.startRiding(target);
+						target.connection.send(new ClientboundSetPassengersPacket(target));
+						targetCap.setPassengerId(self.getId());
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonPassengerID.Data(target.getId(), self.getId()));
+						event.setCancellationResult(InteractionResult.SUCCESS);
+						event.setCanceled(true);
 					} else {
 						if (result == DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN) {
 							self.sendSystemMessage(Component.translatable("ds.riding.target_too_small_as_human"));
 						} else if (result == DragonRideAttemptResult.SELF_TOO_BIG) {
 							self.sendSystemMessage(Component.translatable("ds.riding.self_too_big", String.format("%.0f", selfCap.getSize()), String.format("%.0f", targetCap.getSize())));
+						} else if (result == DragonRideAttemptResult.NOT_CROUCHING) {
+							self.sendSystemMessage(Component.translatable("ds.riding.target_not_crouching"));
 						}
 					}
 				});
@@ -105,7 +106,8 @@ public class DragonRidingHandler {
 
 				if(passenger instanceof Player playerPassenger){
 					// In addition, if any of the conditions to allow a player to ride a dragon are no longer met, dismount the player
-					if(playerCanRideDragon(playerPassenger, player) == DragonRideAttemptResult.SUCCESS) {
+					DragonRideAttemptResult result = playerCanRideDragon(playerPassenger, player);
+					if(result == DragonRideAttemptResult.SUCCESS || result == DragonRideAttemptResult.NOT_CROUCHING) {
 						return;
 					}
 
