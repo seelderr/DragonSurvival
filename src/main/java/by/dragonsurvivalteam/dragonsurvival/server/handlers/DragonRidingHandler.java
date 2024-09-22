@@ -2,22 +2,16 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonPassengerID;
-import by.dragonsurvivalteam.dragonsurvival.network.status.RefreshDragon;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
@@ -28,15 +22,29 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber
 public class DragonRidingHandler {
 
-	private static boolean playerCanRideDragon(Player rider, Player mount) {
+	private enum DragonRideAttemptResult {
+		SELF_TOO_BIG,
+		MOUNT_TOO_SMALL_HUMAN,
+		OTHER,
+		SUCCESS
+	}
+
+	private static DragonRideAttemptResult playerCanRideDragon(Player rider, Player mount) {
 		DragonStateHandler riderCap = DragonStateProvider.getOrGenerateHandler(rider);
 		DragonStateHandler mountCap = DragonStateProvider.getOrGenerateHandler(mount);
+		if(!mountCap.isDragon() || rider.isSpectator() || mount.isSpectator() || rider.isSleeping() || mount.isSleeping()) {
+			return DragonRideAttemptResult.OTHER;
+		}
+
 		double sizeRatio = riderCap.getSize() / mountCap.getSize();
 		boolean dragonIsTooSmallToRide = sizeRatio >= 0.5;
-		return mountCap.isDragon()
-				&& (!dragonIsTooSmallToRide || !riderCap.isDragon())
-				&& (!rider.isSpectator() || !mount.isSpectator())
-				&& (!rider.isSleeping() || !mount.isSleeping());
+		if(dragonIsTooSmallToRide) {
+			return DragonRideAttemptResult.SELF_TOO_BIG;
+		} else if(!riderCap.isDragon() && mountCap.getLevel() == DragonLevel.ADULT) {
+			return DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN;
+		}
+
+		return DragonRideAttemptResult.SUCCESS;
 	}
 
 	/** Mounting a dragon */
@@ -54,7 +62,8 @@ public class DragonRidingHandler {
 
 			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
 				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
-					if(playerCanRideDragon(self, target) && !target.isVehicle()) {
+					DragonRideAttemptResult result = playerCanRideDragon(self, target);
+					if(result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
 						if(target.getPose() == Pose.CROUCHING) {
 							self.startRiding(target);
 							target.connection.send(new ClientboundSetPassengersPacket(target));
@@ -66,7 +75,11 @@ public class DragonRidingHandler {
 							self.sendSystemMessage(Component.translatable("ds.riding.target_not_crouching"));
 						}
 					} else {
-						self.sendSystemMessage(Component.translatable("ds.riding.self_too_big", String.format("%.0f", selfCap.getSize()), String.format("%.0f", targetCap.getSize())));
+						if (result == DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN) {
+							self.sendSystemMessage(Component.translatable("ds.riding.target_too_small_as_human"));
+						} else if (result == DragonRideAttemptResult.SELF_TOO_BIG) {
+							self.sendSystemMessage(Component.translatable("ds.riding.self_too_big", String.format("%.0f", selfCap.getSize()), String.format("%.0f", targetCap.getSize())));
+						}
 					}
 				});
 			});
@@ -92,7 +105,7 @@ public class DragonRidingHandler {
 
 				if(passenger instanceof Player playerPassenger){
 					// In addition, if any of the conditions to allow a player to ride a dragon are no longer met, dismount the player
-					if(playerCanRideDragon(playerPassenger, player)) {
+					if(playerCanRideDragon(playerPassenger, player) == DragonRideAttemptResult.SUCCESS) {
 						return;
 					}
 
