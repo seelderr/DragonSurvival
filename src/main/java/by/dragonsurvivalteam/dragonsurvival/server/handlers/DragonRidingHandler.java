@@ -52,7 +52,7 @@ public class DragonRidingHandler {
 
 	/** Mounting a dragon */
 	@SubscribeEvent
-	public static void onEntityInteract(PlayerInteractEvent.EntityInteractSpecific event){
+	public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event){
 		Entity ent = event.getTarget();
 
 		if(event.getHand() != InteractionHand.MAIN_HAND){
@@ -88,7 +88,7 @@ public class DragonRidingHandler {
 	}
 
 	@SubscribeEvent
-	public static void onServerPlayerTick(PlayerTickEvent.Post event){
+	public static void updateRidingState(PlayerTickEvent.Post event){
 		if(event.getEntity() instanceof ServerPlayer player){
 			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
 				int passengerId = dragonStateHandler.getPassengerId();
