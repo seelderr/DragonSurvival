@@ -45,14 +45,6 @@ public class StarBoneItem extends Item{
 				if (!worldIn.isClientSide) {
 					PacketDistributor.sendToPlayersTrackingEntityAndSelf(playerIn, new SyncSize.Data(playerIn.getId(), size));
 					DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer)playerIn, handler.getSize(), handler.getTypeName());
-					if (handler.getPassengerId() != 0) {
-						Entity mount = worldIn.getEntity(handler.getPassengerId());
-						if (mount != null) {
-							mount.stopRiding();
-							((ServerPlayer) playerIn).connection.send(new ClientboundSetPassengersPacket(playerIn));
-							PacketDistributor.sendToPlayer((ServerPlayer) playerIn, new SyncDragonHandler.Data(playerIn.getId(), handler.isHiding(), handler.getType(), handler.getBody(), handler.getSize(), handler.hasFlight(), 0));
-						}
-					}
 				}
 
 				playerIn.refreshDimensions();
