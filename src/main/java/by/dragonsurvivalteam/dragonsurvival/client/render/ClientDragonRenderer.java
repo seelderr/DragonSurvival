@@ -487,7 +487,12 @@ public class ClientDragonRenderer {
 					DragonMovementData md = playerStateHandler.getMovementData();
 					playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
 					playerStateHandler.setFreeLook(Keybind.FREE_LOOK.isDown());
-					PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+					if(player.isPassenger()) {
+						// Prevent animation jank while we are riding an entity
+						PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
+					} else {
+						PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+					}
 					PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite, md.isFreeLook));
 				}
 			});

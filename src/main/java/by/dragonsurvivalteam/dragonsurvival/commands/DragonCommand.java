@@ -123,7 +123,7 @@ public class DragonCommand{
 		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
 		float size = stage == 4 ? 40f : dragonLevel.size;
 		cap.setSize(size, player);
-		cap.setPassengerId(0);
+		cap.setPassengerId(-1);
 		cap.growing = true;
 
 		PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
