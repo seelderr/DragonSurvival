@@ -89,7 +89,11 @@ public class DragonSurvivalMod{
 	public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer){
 		if(FMLEnvironment.dist  == Dist.CLIENT){
 			GeckoLibClient.init();
+
+			// Register the configuration screen
+			modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 		}
+
 		DragonTypes.registerTypes();
 		DragonBodies.registerBodies();
 
@@ -119,9 +123,6 @@ public class DragonSurvivalMod{
 		DS_STRUCTURE_PLACEMENT_TYPES.register(modEventBus);
 		DS_TRIGGERS.register(modEventBus);
 		GLM.register(modEventBus);
-
-		// Register the configuration screen
-		modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
 	}
 
 	private void commonSetup(final FMLCommonSetupEvent event){
