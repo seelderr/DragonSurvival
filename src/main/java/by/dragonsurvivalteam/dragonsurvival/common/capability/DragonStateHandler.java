@@ -83,7 +83,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	private AbstractDragonType dragonType;
 	private AbstractDragonBody dragonBody;
 
-	private int passengerId;
+	private int passengerId = -1;
 	private boolean isHiding;
 	private boolean hasFlight;
 	private boolean areWingsSpread;
