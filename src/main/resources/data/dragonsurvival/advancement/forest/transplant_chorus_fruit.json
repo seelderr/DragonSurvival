@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:forest/be_forest_dragon",
+  "parent": "dragonsurvival:forest/meat_eater",
   "display": {
     "icon": {
-      "id": "minecraft:chorus_fruit"
+      "id": "dragonsurvival:diamond_chorus"
     },
     "title": {
       "translate": "ds.advancements.transplant_chorus_fruit.title"
@@ -10,7 +10,8 @@
     "description": {
       "translate": "ds.advancements.transplant_chorus_fruit.description"
     },
-    "frame": "goal"
+    "frame": "goal",
+    "hidden": false
   },
   "criteria": {
     "requirement": {
@@ -37,5 +38,8 @@
         ]
       }
     }
+  },
+  "rewards": {
+    "experience": 90
   }
 }

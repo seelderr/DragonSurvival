@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:cave/be_cave_dragon",
+  "parent": "dragonsurvival:cave/diamonds_in_lava",
   "display": {
     "icon": {
       "id": "minecraft:nether_brick_stairs"
@@ -9,7 +9,8 @@
     },
     "description": {
       "translate": "ds.advancements.go_home.description"
-    }
+    },
+    "hidden": false
   },
   "criteria": {
     "fall": {
@@ -27,5 +28,8 @@
         "to": "minecraft:the_nether"
       }
     }
+  },
+  "rewards": {
+    "experience": 20
   }
 }

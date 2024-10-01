@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:sea/master_one_sea_passive",
+  "parent": "dragonsurvival:sea/be_old_sea_dragon",
   "display": {
     "icon": {
-      "id": "dragonsurvival:elder_dragon_heart"
+      "id": "dragonsurvival:sea_source_of_magic"
     },
     "title": {
       "translate": "ds.advancements.master_all_sea_passives.title"
@@ -11,7 +11,7 @@
       "translate": "ds.advancements.master_all_sea_passives.description"
     },
     "frame": "challenge",
-    "hidden": true
+    "hidden": false
   },
   "criteria": {
     "spectral_impact": {
@@ -76,5 +76,8 @@
     ["sea_athletics"],
     ["water"],
     ["sea_magic"]
-  ]
+  ],
+  "rewards": {
+    "experience": 150
+  }
 }

@@ -1,0 +1,28 @@
+{
+  "parent": "dragonsurvival:dragon_survival_root",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:elder_dragon_dust"
+    },
+    "title": { "translate": "ds.advancements.be_root.title" },
+    "description": { "translate": "ds.advancements.be_root.description" },
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": "dragonsurvival:elder_dragon_dust"
+          }
+        ]
+      }
+  },
+  "rewards": {
+    "experience": 6
+  }
+}
+}

@@ -8,7 +8,8 @@
     "description": { "translate": "ds.advancements.sleep_on_massive_hoard.description" },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "challenge"
+    "frame": "challenge",
+    "hidden": false
   },
   "criteria": {
     "sleep": {
@@ -17,5 +18,8 @@
         "count": 400
       }
     }
+  },
+  "rewards": {
+    "experience": 120
   }
 }

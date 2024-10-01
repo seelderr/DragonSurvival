@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:evil/collect_evil_key",
+  "parent": "dragonsurvival:evil/get_hunter_omen",
   "display": {
     "icon": {
       "id": "dragonsurvival:evil_dragon_vault"
@@ -8,7 +8,8 @@
     "description": { "translate": "ds.advancements.open_evil_vault.description" },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal"
+    "frame": "goal",
+    "hidden": false
   },
   "criteria": {
     "use_on_vault": {

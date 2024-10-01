@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:dragon_survival_root",
+  "parent": "dragonsurvival:collect_key",
   "display": {
     "icon": {
       "id": "dragonsurvival:hunter_key"
