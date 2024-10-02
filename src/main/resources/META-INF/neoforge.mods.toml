@@ -42,5 +42,12 @@ side="BOTH"
     ordering = "NONE"
     side = "CLIENT"
 
+[[dependencies.${mod_id}]]
+    modId = "owo"
+    mandatory = true
+    versionRange = "${owolib_version_range}"
+    ordering = "NONE"
+    side = "BOTH"
+
 [[mixins]]
     config = "${mod_id}.mixins.json"

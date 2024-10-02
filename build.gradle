@@ -73,6 +73,8 @@ repositories {
 			includeGroup("software.bernie.geckolib")
 		}
 	}
+	maven { /* owolib */ url 'https://maven.wispforest.io' }
+	maven { /* owolib */ url 'https://maven.su5ed.dev/releases' }
 	maven { /* JEI */ url "https://maven.blamejared.com" }
 	maven { /* Curios */ url "https://maven.theillusivec4.top/" }
 	maven {
@@ -89,6 +91,7 @@ dependencies {
 
 	// Dependencies
 	implementation "software.bernie.geckolib:geckolib-neoforge-${minecraft_version}:${geckolib_version}"
+	implementation "io.wispforest:owo-lib-neoforge:${owolib_version}+1.21"
 
 	// Compatibility
 	compileOnly "mezz.jei:jei-${minecraft_version}-neoforge-api:${jei_version}"
@@ -107,6 +110,7 @@ tasks.withType(ProcessResources).configureEach {
 			neo_version_range           : neo_version_range,
 			loader_version_range        : loader_version_range,
 			geckolib_version_range      : geckolib_version_range,
+			owolib_version_range        : owolib_version_range,
 			mod_id                      : mod_id,
 			mod_name                    : mod_name,
 			mod_license                 : mod_license,
