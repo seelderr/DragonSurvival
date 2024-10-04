@@ -8,7 +8,7 @@
     "description": { "translate": "ds.advancements.be_old_cave_dragon.description" },
     "show_toast": true,
     "announce_to_chat": true,
-    "hidden": true,
+    "hidden": false,
     "frame": "challenge"
   },
   "criteria": {
@@ -19,5 +19,8 @@
         "size": 59.9
       }
     }
+  },
+  "rewards": {
+    "experience": 90
   }
 }

@@ -4,10 +4,10 @@
     "icon": {
       "id": "dragonsurvival:elder_dragon_heart"
     },
-    "title": { "translate": "ds.advancements.be_ancient_dragon.title" },
-    "description": { "translate": "ds.advancements.be_ancient_dragon.description" },
-    "show_toast": true,
-    "announce_to_chat": true,
+    "title": { "translate": "ds.advancements.be_full_growth_dragon.title" },
+    "description": { "translate": "ds.advancements.be_full_growth_dragon.description" },
+    "show_toast": false,
+    "announce_to_chat": false,
     "frame": "challenge"
   },
   "criteria": {
@@ -17,5 +17,8 @@
         "size": 59.9
       }
     }
+  },
+  "rewards": {
+    "experience": 10
   }
 }

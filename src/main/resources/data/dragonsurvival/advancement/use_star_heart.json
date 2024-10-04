@@ -11,25 +11,16 @@
     "frame": "goal"
   },
   "criteria": {
-    "use_star_heart": {
+    "requirement": {
       "trigger": "minecraft:using_item",
       "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:inverted",
-            "term": {
-              "condition": "minecraft:entity_properties",
-              "entity": "this",
-              "predicate": {
-                "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'none'}}}"
-              }
-            }
-          }
-        ],
         "item": {
           "items": "dragonsurvival:star_heart"
         }
       }
     }
+  },
+  "rewards": {
+    "experience": 30
   }
 }

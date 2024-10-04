@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:cave/be_cave_dragon",
+  "parent": "dragonsurvival:cave/rock_eater",
   "display": {
     "icon": {
-      "id": "minecraft:water_bucket"
+      "id": "dragonsurvival:charged_soup"
     },
     "title": {
       "translate": "ds.advancements.enter_water_safely.title"
@@ -11,7 +11,7 @@
       "translate": "ds.advancements.enter_water_safely.description"
     },
     "frame": "challenge",
-    "hidden": true
+    "hidden": false
   },
   "criteria": {
     "go_swimming_in_water": {
@@ -36,5 +36,8 @@
         ]
       }
     }
+  },
+  "rewards": {
+    "experience": 40
   }
 }

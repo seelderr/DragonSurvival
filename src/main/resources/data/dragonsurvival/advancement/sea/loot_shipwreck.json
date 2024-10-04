@@ -2,14 +2,15 @@
   "parent": "dragonsurvival:sea/be_sea_dragon",
   "display": {
     "icon": {
-      "id": "minecraft:chest"
+      "id": "minecraft:heart_of_the_sea"
     },
     "title": {
       "translate": "ds.advancements.loot_shipwreck.title"
     },
     "description": {
       "translate": "ds.advancements.loot_shipwreck.description"
-    }
+    },
+    "hidden": false
   },
   "criteria": {
     "open_shipwreck_treasure": {
@@ -57,5 +58,8 @@
         "loot_table": "minecraft:chests/shipwreck_supply"
       }
     }
+  },
+  "rewards": {
+    "experience": 20
   }
 }

@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:dragon_survival_root",
+  "parent": "dragonsurvival:be_root",
   "display": {
     "icon": {
-      "id": "dragonsurvival:dragon_soul"
+      "id": "dragonsurvival:star_bone"
     },
     "title": { "translate": "ds.advancements.be_dragon.title" },
     "description": { "translate": "ds.advancements.be_dragon.description" },
@@ -15,7 +15,6 @@
     }
   },
   "rewards": {
-    "experience": 10,
-    "loot": ["dragonsurvival:generic/be_dragon_loot"]
+    "experience": 12
   }
 }

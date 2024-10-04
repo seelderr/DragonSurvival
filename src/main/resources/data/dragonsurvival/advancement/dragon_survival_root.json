@@ -8,11 +8,11 @@
     "icon": {
       "id": "dragonsurvival:elder_dragon_bone"
     },
-    "background": "dragonsurvival:textures/block/dragons_memory_side.png",
+    "background": "dragonsurvival:textures/block/stone_dragon_door_top.png",
     "title": "Dragon Survival",
     "description": "",
     "show_toast": false,
     "announce_to_chat": false,
-    "hidden": true
+    "hidden": false
   }
 }

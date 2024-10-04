@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:forest/master_one_forest_passive",
+  "parent": "dragonsurvival:forest/be_old_forest_dragon",
   "display": {
     "icon": {
-      "id": "dragonsurvival:elder_dragon_heart"
+      "id": "dragonsurvival:forest_source_of_magic"
     },
     "title": {
       "translate": "ds.advancements.master_all_forest_passives.title"
@@ -11,7 +11,7 @@
       "translate": "ds.advancements.master_all_forest_passives.description"
     },
     "frame": "challenge",
-    "hidden": true
+    "hidden": false
   },
   "criteria": {
     "cliffhanger": {
@@ -76,5 +76,8 @@
     ["forest_athletics"],
     ["light_in_darkness"],
     ["forest_magic"]
-  ]
+  ],
+  "rewards": {
+    "experience": 150
+  }
 }

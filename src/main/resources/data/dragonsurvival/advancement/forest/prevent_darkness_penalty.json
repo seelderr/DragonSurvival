@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:forest/be_forest_dragon",
+  "parent": "dragonsurvival:forest/stand_on_sweet_berries",
   "display": {
     "icon": {
       "id": "dragonsurvival:luminous_ointment"
@@ -11,7 +11,7 @@
       "translate": "ds.advancements.prevent_darkness_penalty.description"
     },
     "frame": "challenge",
-    "hidden": true
+    "hidden": false
   },
   "criteria": {
     "requirement": {
@@ -39,5 +39,8 @@
         ]
       }
     }
+  },
+  "rewards": {
+    "experience": 40
   }
 }

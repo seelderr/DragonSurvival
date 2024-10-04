@@ -2,14 +2,15 @@
   "parent": "dragonsurvival:sea/be_sea_dragon",
   "display": {
     "icon": {
-      "id": "minecraft:gray_wool"
+      "id": "minecraft:water_bucket"
     },
     "title": {
       "translate": "ds.advancements.rain_dancing.title"
     },
     "description": {
       "translate": "ds.advancements.rain_dancing.description"
-    }
+    },
+    "hidden": false
   },
   "criteria": {
     "is_sea_dragon": {
@@ -57,5 +58,8 @@
     [
       "is_sea_dragon"
     ]
-  ]
+  ],
+  "rewards": {
+    "experience": 30
+  }
 }

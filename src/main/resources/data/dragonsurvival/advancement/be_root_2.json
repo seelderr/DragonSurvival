@@ -1,0 +1,33 @@
+{
+  "parent": "dragonsurvival:be_root",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_altar_stone"
+    },
+    "title": { "translate": "ds.advancements.be_root_2.title" },
+    "description": { "translate": "ds.advancements.be_root_2.description" },
+    "show_toast": false,
+    "announce_to_chat": false,
+    "hidden": false
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "#dragonsurvival:dragon_altars"
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 6
+  }
+}

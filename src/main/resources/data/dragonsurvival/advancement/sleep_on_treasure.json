@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:dragon_survival_root",
+  "parent": "dragonsurvival:be_dragon",
   "display": {
     "icon": {
       "id": "minecraft:gold_nugget"
@@ -7,7 +7,8 @@
     "title": { "translate": "ds.advancements.sleep_on_treasure.title" },
     "description": { "translate": "ds.advancements.sleep_on_treasure.description" },
     "show_toast": false,
-    "announce_to_chat": true
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "sleep": {
@@ -16,5 +17,8 @@
         "count": 10
       }
     }
+  },
+  "rewards": {
+    "experience": 10
   }
 }

@@ -1,15 +1,16 @@
 {
-  "parent": "dragonsurvival:forest/transplant_chorus_fruit",
+  "parent": "dragonsurvival:forest/be_forest_dragon",
   "display": {
     "icon": {
-      "id": "dragonsurvival:smelly_meat_porridge"
+      "id": "dragonsurvival:meat_wild_berries"
     },
     "title": {
       "translate": "ds.advancements.meat_eater.title"
     },
     "description": {
       "translate": "ds.advancements.meat_eater.description"
-    }
+    },
+    "hidden": false
   },
   "criteria": {
     "sweet_sour_rabbit": {
@@ -69,5 +70,8 @@
         }
       }
     }
+  },
+  "rewards": {
+    "experience": 60
   }
 }

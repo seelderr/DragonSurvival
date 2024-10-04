@@ -9,7 +9,8 @@
     },
     "description": {
       "translate": "ds.advancements.swim_in_lava.description"
-    }
+    },
+    "hidden": false
   },
   "criteria": {
     "be_under_lava": {
@@ -40,5 +41,8 @@
         ]
       }
     }
+  },
+  "rewards": {
+    "experience": 20
   }
 }
