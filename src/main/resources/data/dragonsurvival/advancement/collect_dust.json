@@ -4,8 +4,8 @@
     "icon": {
       "id": "dragonsurvival:elder_dragon_dust"
     },
-    "title": { "translate": "ds.advancements.be_root.title" },
-    "description": { "translate": "ds.advancements.be_root.description" },
+    "title": { "translate": "ds.advancements.collect_dust.title" },
+    "description": { "translate": "ds.advancements.collect_dust.description" },
     "show_toast": false,
     "announce_to_chat": false,
     "hidden": false
