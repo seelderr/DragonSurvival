@@ -466,7 +466,7 @@
   "ds.gui.sort": "Sort inventory",
   "ds.gui.claws": "§6Dragon Tab§r",
   "ds.gui.claws.rendering": "Toggle showing claws and teeth textures on your model.",
-  "ds.gui.growth_stage": "■ §6Stage§r§7: %s",
+  "ds.gui.growth_stage": "■ §6Stage§r§7: ",
   "ds.gui.growth_age": "■ §6Age§r§7: %s",
   "ds.gui.growth_help": "\n■ All dragons will gradually grow as time passes, improving their attributes. At certain growth stages, your appearance will change, and your growth will slow. You can use these items to speed up growth:§r\n§6■ %s\n\n§7■ A Star Bone will revert your growth slightly, and a Star Heart will completely stop you from growing. The biggest dragons can take other players for a ride!",
   "ds.growth.now_growing": "Gradual growth is §2active§r",
