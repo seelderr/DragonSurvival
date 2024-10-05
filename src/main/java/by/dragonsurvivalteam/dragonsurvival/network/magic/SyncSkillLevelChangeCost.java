@@ -7,11 +7,13 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
@@ -25,6 +27,9 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 					DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 
 					if (staticAbility instanceof PassiveDragonAbility ability) {
+						if (sender instanceof ServerPlayer serverPlayer) {
+							DSAdvancementTriggers.UPGRADE_ABILITY.get().trigger(serverPlayer, ability.getName(), message.level);
+						}
 						PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(sender, ability.getClass());
 						int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : 0;
 

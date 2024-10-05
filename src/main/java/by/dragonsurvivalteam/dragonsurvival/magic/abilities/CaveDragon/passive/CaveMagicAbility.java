@@ -56,9 +56,6 @@ public class CaveMagicAbility extends MagicAbility{
 		                              };
 	}
 
-
-
-
 	@Override
 	public boolean isDisabled(){
 		return super.isDisabled() || !caveMagic;

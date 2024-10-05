@@ -29,4 +29,7 @@ public class DSAdvancementTriggers {
     public static final Supplier<UseStarHeartTrigger> USE_STAR_HEART = DS_TRIGGERS.register(
             "use_star_heart", UseStarHeartTrigger::new
     );
+    public static final Supplier<UpgradeAbilityTrigger> UPGRADE_ABILITY = DS_TRIGGERS.register(
+            "upgrade_ability", UpgradeAbilityTrigger::new
+    );
 }
