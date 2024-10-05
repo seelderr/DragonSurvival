@@ -7,6 +7,7 @@
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
     "AccessorAnimationController",
+    "BlockMixin",
     "EntityMixin",
     "FireworkRocketItemMixin",
     "IItemExtensionMixin",
