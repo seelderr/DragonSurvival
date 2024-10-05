@@ -10,7 +10,8 @@
     "description": {
       "translate": "ds.advancements.diamonds_in_lava.description"
     },
-    "frame": "goal"
+    "frame": "goal",
+    "hidden": false
   },
   "criteria": {
     "silk_touch_nest": {
@@ -43,6 +44,9 @@
         "item": {}
       }
     }
+  },
+  "rewards": {
+    "experience": 40
   }
 }
 

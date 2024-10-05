@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:cave/master_one_cave_passive",
+  "parent": "dragonsurvival:cave/be_old_cave_dragon",
   "display": {
     "icon": {
-      "id": "dragonsurvival:elder_dragon_heart"
+      "id": "dragonsurvival:cave_source_of_magic"
     },
     "title": {
       "translate": "ds.advancements.master_all_cave_passives.title"
@@ -11,7 +11,7 @@
       "translate": "ds.advancements.master_all_cave_passives.description"
     },
     "frame": "challenge",
-    "hidden": true
+    "hidden": false
   },
   "criteria": {
     "burn": {
@@ -76,5 +76,8 @@
     ["cave_athletics"],
     ["contrast_shower"],
     ["cave_magic"]
-  ]
+  ],
+  "rewards": {
+    "experience": 90
+  }
 }

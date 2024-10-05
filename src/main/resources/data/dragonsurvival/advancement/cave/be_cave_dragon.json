@@ -1,12 +1,15 @@
 {
-  "parent": "dragonsurvival:be_dragon",
+  "parent": "dragonsurvival:be_root_2",
   "display": {
     "icon": {
       "id": "dragonsurvival:dragon_soul",
       "components": { "minecraft:custom_model_data": 2 }
     },
     "title": { "translate": "ds.advancements.be_cave_dragon.title" },
-    "description": { "translate": "ds.advancements.be_cave_dragon.description" }
+    "description": { "translate": "ds.advancements.be_cave_dragon.description" },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
   },
   "criteria": {
     "be_cave_dragon": {
@@ -17,6 +20,6 @@
     }
   },
   "rewards": {
-    "loot": ["dragonsurvival:generic/be_cave_dragon_loot"]
+    "experience": 12
   }
 }

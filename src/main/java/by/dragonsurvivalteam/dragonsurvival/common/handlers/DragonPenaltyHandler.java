@@ -14,11 +14,15 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
+
+import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownPotion;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -42,7 +46,9 @@ public class DragonPenaltyHandler{
 				return;
 			}
 
-			if(!PotionUtils.getPotion(potion.getItem()).getEffects().isEmpty()){
+			Optional<Potion> potionData = PotionUtils.getPotion(potion.getItem());
+			// If we have no data here, just default to doing nothing (some mods do strange things with potion items that have no Potion data)
+			if(potionData.isEmpty() || !potionData.get().getEffects().isEmpty()){
 				return;
 			}
 
@@ -100,7 +106,8 @@ public class DragonPenaltyHandler{
 			if(dragonStateHandler.isDragon() && dragonStateHandler.getType() instanceof SeaDragonType seaDragonType){
 				Player player = (Player)destroyItemEvent.getEntity();
 				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
-					if(PotionUtils.getPotion(itemStack) == Potions.WATER && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) && !player.level().isClientSide()){
+					Optional<Potion> potion = PotionUtils.getPotion(itemStack);
+					if(potion.isPresent() && potion.get() == Potions.WATER && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) && !player.level().isClientSide()){
 						seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
 						PacketDistributor.sendToPlayersTrackingEntity(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
 					}

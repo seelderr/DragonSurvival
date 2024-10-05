@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:hunter/open_hunter_vault",
+  "parent": "dragonsurvival:hunter/fire_bolas",
   "display": {
     "icon": {
       "id": "dragonsurvival:dragon_hunter_sword"

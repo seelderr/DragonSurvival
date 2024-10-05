@@ -1,6 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
@@ -58,6 +62,27 @@ public class PlayerLoginHandler {
 
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event){
+        if(event.getEntity() instanceof ServerPlayer player) {
+            DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+                AbstractDragonType type = dragonStateHandler.getType();
+
+                if(type instanceof CaveDragonType cave){
+                    cave.timeInRain = 0;
+                    cave.lavaAirSupply = ServerConfig.caveLavaSwimmingTicks;
+                }
+
+                if(type instanceof SeaDragonType sea) {
+                    sea.timeWithoutWater = 0;
+                }
+
+                if(type instanceof ForestDragonType forest) {
+                    forest.timeInDarkness = 0;
+                }
+
+                SyncComplete.handleDragonSync(player);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
+            });
+        }
         syncCompleteSingle(event.getEntity());
     }
 

@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:cave/go_home",
+  "parent": "dragonsurvival:cave/be_cave_dragon",
   "display": {
     "icon": {
       "id": "dragonsurvival:charged_coal"
@@ -9,7 +9,8 @@
     },
     "description": {
       "translate": "ds.advancements.rock_eater.description"
-    }
+    },
+    "hidden": false
   },
   "criteria": {
     "charged_coal": {
@@ -100,5 +101,8 @@
         }
       }
     }
+  },
+  "rewards": {
+    "experience": 60
   }
 }

@@ -1,7 +1,7 @@
 {
   "type": "minecraft:smelting",
   "ingredient": {
-    "tag": "dragonsurvival:cooked_seafood"
+    "tag": "c:foods/cooked_fish"
   },
   "result": {
     "id": "dragonsurvival:charred_seafood"

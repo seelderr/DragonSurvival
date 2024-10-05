@@ -8,20 +8,14 @@
     "description": { "translate": "ds.advancements.open_good_vault.description" },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal"
+    "frame": "goal",
+    "hidden": false
   },
   "criteria": {
-    "use_on_vault": {
+    "requirement": {
       "trigger": "minecraft:item_used_on_block",
       "conditions": {
-        "player": [],
         "location": [
-          {
-            "condition": "minecraft:match_tool",
-            "predicate": {
-              "items": "dragonsurvival:good_dragon_key"
-            }
-          },
           {
             "condition": "minecraft:location_check",
             "predicate": {
@@ -29,9 +23,18 @@
                 "blocks": "dragonsurvival:dragon_vault_friendly"
               }
             }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "dragonsurvival:good_dragon_key"
+            }
           }
         ]
       }
     }
+  },
+  "rewards": {
+    "experience": 10
   }
 }

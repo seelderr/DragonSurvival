@@ -113,6 +113,8 @@ public class CaveDragonType extends AbstractDragonType{
 		}
 
 		if(!player.level().isClientSide()){
+			// Clamp the air supply to whatever the max is. This is needed to prevent issues if the server config is changed and lowers the max air supply.
+			lavaAirSupply = Math.min(lavaAirSupply, ServerConfig.caveLavaSwimmingTicks);
 			if(player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())
 			   && ServerConfig.bonusesEnabled
 			   && ServerConfig.caveLavaSwimming

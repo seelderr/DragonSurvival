@@ -91,15 +91,15 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar) {
 		for (int slot = 0; slot < EmoteCap.MAX_EMOTES; slot++) {
 			int finalSlot = slot;
-			registrar.add(new AnimationController<>(this, "2_" + slot, 0, state -> emotePredicate(state, finalSlot)));
+			registrar.add(new AnimationController<>(this, "emote_" + slot, 0, state -> emotePredicate(state, finalSlot)));
 		}
 
-		mainAnimationController = new AnimationController<>(this, "3", 2, this::predicate);
+		mainAnimationController = new AnimationController<>(this, "main", 2, this::predicate);
 		registrar.add(mainAnimationController);
-		registrar.add(new AnimationController<>(this, "4", this::bitePredicate));
-		registrar.add(new AnimationController<>(this, "5", this::tailPredicate));
-		registrar.add(new AnimationController<>(this, "1", this::headPredicate));
-		registrar.add(new AnimationController<>(this, "6", this::breathPredicate));
+		registrar.add(new AnimationController<>(this, "bite", this::bitePredicate));
+		registrar.add(new AnimationController<>(this, "tail", this::tailPredicate));
+		registrar.add(new AnimationController<>(this, "head", this::headPredicate));
+		registrar.add(new AnimationController<>(this, "breath", this::breathPredicate));
 	}
 
 	// For the breath weapon only, we want it to play on a separate controller,
@@ -364,7 +364,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 		}else if(!player.onGround() && dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0){
 			state.setAnimation(AnimationUtils.createAnimation(builder, JUMP));
 			animationController.transitionLength(2);
-		// Extra condition to prevent the player from triggering the fall animation when falling a trivial distance (this happens when you are really big)
 		}else if(!player.onGround()) {
 			state.setAnimation(AnimationUtils.createAnimation(builder, FALL_LOOP));
 			animationController.transitionLength(2);

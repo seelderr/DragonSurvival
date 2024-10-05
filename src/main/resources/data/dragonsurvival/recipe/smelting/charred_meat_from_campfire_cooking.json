@@ -1,7 +1,7 @@
 {
   "type": "minecraft:campfire_cooking",
   "ingredient": {
-    "tag": "dragonsurvival:cooked_meats"
+    "tag": "c:foods/cooked_meat"
   },
   "result": {
     "id": "dragonsurvival:charred_meat"
