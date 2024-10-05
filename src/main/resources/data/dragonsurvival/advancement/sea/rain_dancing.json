@@ -1,5 +1,4 @@
 {
-  "parent": "dragonsurvival:sea/be_sea_dragon",
   "display": {
     "icon": {
       "id": "minecraft:water_bucket"
@@ -12,6 +11,7 @@
     },
     "hidden": false
   },
+  "parent": "dragonsurvival:sea/be_sea_dragon",
   "criteria": {
     "is_sea_dragon": {
       "trigger": "minecraft:location",
@@ -34,6 +34,13 @@
           {
             "condition": "minecraft:weather_check",
             "raining": true
+          },
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
+            }
           }
         ]
       }
@@ -45,20 +52,18 @@
           {
             "condition": "minecraft:weather_check",
             "thundering": true
+          },
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'sea'}}}"
+            }
           }
         ]
       }
     }
   },
-  "requirements": [
-    [
-      "raining",
-      "thundering"
-    ],
-    [
-      "is_sea_dragon"
-    ]
-  ],
   "rewards": {
     "experience": 30
   }
