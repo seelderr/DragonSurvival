@@ -281,6 +281,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 			builder = renderAbility(state, currentCast);
 		}
 
+		// TODO: This method doesn't work great when the player is artificially slowed (walk through a spider web to see the issue)
 		// The reason the threshold is so high here is that lower thresholds cause the player to be stuck transitioning away from the walk animation longer than they should when they stop moving.
 		boolean isMovingHorizontalWalk = player.getDeltaMovement().horizontalDistance() > defaultPlayerWalkSpeed / 5;
 		boolean isMovingHorizontalSneak = player.getDeltaMovement().horizontalDistance() > defaultPlayerSneakSpeed / 5;
