@@ -14,8 +14,38 @@
     "hidden": false
   },
   "criteria": {
-    "silk_touch_nest": {
-      "trigger": "minecraft:bee_nest_destroyed",
+    "mine_stone_diamond_ore": {
+      "trigger": "dragonsurvival:mine_block",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{'neoforge:attachments':{'dragonsurvival:dragon_handler': {'type': 'cave'}}}",
+              "location": {
+                "fluid": {
+                  "fluids": "#minecraft:lava"
+                }
+              }
+            }
+          },
+          {
+            "condition": "minecraft:location_check",
+            "offsetY": 1,
+            "predicate": {
+              "fluid": {
+                "fluids": "#minecraft:lava"
+              }
+            }
+          }
+        ],
+        "block": "minecraft:diamond_ore",
+        "item": {}
+      }
+    },
+    "mine_deepslate_diamond_ore": {
+      "trigger": "dragonsurvival:mine_block",
       "conditions": {
         "player": [
           {
@@ -45,6 +75,12 @@
       }
     }
   },
+  "requirements": [
+    [
+      "mine_stone_diamond_ore",
+      "mine_deepslate_diamond_ore"
+    ]
+  ],
   "rewards": {
     "experience": 40
   }

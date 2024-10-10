@@ -2,37 +2,37 @@
   "parent": "dragonsurvival:evil/get_hunter_omen",
   "display": {
     "icon": {
-      "id": "dragonsurvival:evil_dragon_vault"
+      "id": "dragonsurvival:dragon_vault_angry"
     },
     "title": { "translate": "ds.advancements.open_evil_vault.title" },
     "description": { "translate": "ds.advancements.open_evil_vault.description" },
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal",
     "hidden": false
   },
   "criteria": {
-    "use_on_vault": {
+    "use_on_evil_vault": {
       "trigger": "minecraft:item_used_on_block",
       "conditions": {
         "player": [],
         "location": [
           {
+            "condition": "minecraft:block_state_property",
+            "block": "dragonsurvival:dragon_vault_angry",
+            "properties": {}
+          },
+          {
             "condition": "minecraft:match_tool",
             "predicate": {
               "items": "dragonsurvival:evil_dragon_key"
-            }
-          },
-          {
-            "condition": "minecraft:location_check",
-            "predicate": {
-              "block": {
-                "blocks": "dragonsurvival:dragon_vault_angry"
-              }
             }
           }
         ]
       }
     }
+  },
+  "rewards": {
+    "experience": 10
   }
 }

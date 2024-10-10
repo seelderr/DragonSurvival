@@ -11,13 +11,9 @@
     "frame": "goal"
   },
   "criteria": {
-    "use_star_heart": {
-      "trigger": "minecraft:using_item",
-      "conditions": {
-        "item": {
-          "items": "dragonsurvival:dragon_soul"
-        }
-      }
+    "use_dragon_soul": {
+      "trigger": "dragonsurvival:use_dragon_soul",
+      "conditions": {}
     }
   },
   "rewards": {

@@ -358,7 +358,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 			displayData.forEach(result::add);
 
 			List<Component> components = List.of(
-					Component.translatable("ds.gui.growth_stage", handler.getLevel().getName()),
+					Component.translatable("ds.gui.growth_stage").append(Component.translatable(handler.getLevel().getName())),
 					Component.translatable("ds.gui.growth_age", age),
 					Component.translatable("ds.gui.growth_help", result.toString())
 			);
