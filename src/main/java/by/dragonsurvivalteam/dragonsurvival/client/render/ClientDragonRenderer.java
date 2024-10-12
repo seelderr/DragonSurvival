@@ -417,51 +417,46 @@ public class ClientDragonRenderer {
                 moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
             }
 
-            double f = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
-            double f1 = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
+            double moveVectorAngleDeg = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
+            double moveVectorSqrMag = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
 
             boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
             if (!isFreeLook) {
                 if (moveVector.length() > 0 && isFirstPerson) {
                     bodyYaw = player.getYRot();
-                    if (moveVector.length() > 0) {
-                        double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
-                        if (95.0F < f5 && f5 < 265.0F) {
-                            f -= 180.0F;
-                        }
+                    double rotationMoveYawDeltaDeg = Math.abs(Mth.wrapDegrees(player.getYRot()) - moveVectorAngleDeg);
+                    if (95.0F < rotationMoveYawDeltaDeg && rotationMoveYawDeltaDeg < 265.0F) {
+                        moveVectorAngleDeg -= 180.0F;
+                    }
 
-                        double _f = Mth.wrapDegrees(f - bodyYaw);
-                        bodyYaw += _f * 0.3F;
-                        double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
+                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
+                    double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
 
-                        if (_f1 < -75.0F) {
-                            _f1 = -75.0F;
-                        }
+                    if (_f1 < -75.0F) {
+                        _f1 = -75.0F;
+                    }
 
-                        if (_f1 >= 75.0F) {
-                            _f1 = 75.0F;
+                    if (_f1 >= 75.0F) {
+                        _f1 = 75.0F;
 
-                            bodyYaw = player.getYRot() - _f1;
-                            bodyYaw += _f1 * 0.2F;
-                        }
+                        bodyYaw = player.getYRot() - _f1;
+                        bodyYaw += _f1 * 0.2F;
                     }
                     bodyYaw = Mth.wrapDegrees(bodyYaw);
                 }
             }
 
 
-            if (f1 > 0.000028) {
-                double f2 = Mth.wrapDegrees(f - bodyYaw);
-                bodyYaw += 0.5F * f2;
+            if (moveVectorSqrMag > 0.000028) {
+                bodyYaw = RenderUtil.lerpYaw(0.5F, bodyYaw, moveVectorAngleDeg);
 
                 if (isFirstPerson) {
-                    double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
-                    if (95.0F < f5 && f5 < 265.0F) {
-                        f -= 180.0F;
+                    double rotationMoveYawDeltaDeg = Math.abs(Mth.wrapDegrees(player.getYRot()) - moveVectorAngleDeg);
+                    if (95.0F < rotationMoveYawDeltaDeg && rotationMoveYawDeltaDeg < 265.0F) {
+                        moveVectorAngleDeg -= 180.0F;
                     }
 
-                    double _f = Mth.wrapDegrees(f - bodyYaw);
-                    bodyYaw += _f * 0.3F;
+                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
                     double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
 
                     if (_f1 < -75.0F) {
