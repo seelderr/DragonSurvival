@@ -31,7 +31,7 @@ public class RotatingKeyRenderer extends GeoItemRenderer<RotatingKeyItem> {
         Vector3f eulerAngles = new Vector3f();
         lookAtRot.getEulerAnglesZXY(eulerAngles);
 
-        eulerAngles.mul(180 / (float) Math.PI);
+        eulerAngles.mul(180 / (float) java.lang.Math.PI);
 
         MathParser.setVariable("query.x_rotation", () -> eulerAngles.x + 180);
         MathParser.setVariable("query.y_rotation", () -> eulerAngles.y - animatable.playerHoldingItem.getYRot() - 90);
