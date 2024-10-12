@@ -387,101 +387,100 @@ public class ClientDragonRenderer {
     }
 
     public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
-        if (player != null) {
-            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-                if (playerStateHandler.isDragon()) {
-                    // Handle headYaw
-                    float yRot = player.getViewYRot(realtimeDeltaTick);
-                    float xRot = player.getViewXRot(realtimeDeltaTick);
-                    double headYaw = Functions.angleDifference(playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot));
-                    headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
+        if (player == null) return;
 
-                    // Handle headPitch
-                    double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
+        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+            if (!playerStateHandler.isDragon()) return;
+            // Handle headYaw
+            float yRot = player.getViewYRot(realtimeDeltaTick);
+            float xRot = player.getViewXRot(realtimeDeltaTick);
+            double headYaw = Functions.angleDifference(playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot));
+            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
-                    // Handle bodyYaw
-                    double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-                    boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
-                    boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook;
-                    if (!isFreeLook && !wasFreeLook) {
-                        if (headYaw > 150) {
-                            bodyYaw += 150 - headYaw;
-                        } else if (headYaw < -150) {
-                            bodyYaw -= 150 + headYaw;
-                        }
-                    }
+            // Handle headPitch
+            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
 
-                    Vec3 moveVector = player.getDeltaMovement();
-                    if (ServerFlightHandler.isFlying(player)) {
-                        moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-                    }
-
-                    double f = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
-                    double f1 = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
-
-                    boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
-                    if (!isFreeLook) {
-                        if (moveVector.length() > 0 && isFirstPerson) {
-                            bodyYaw = player.getYRot();
-                            if (moveVector.length() > 0) {
-                                double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
-                                if (95.0F < f5 && f5 < 265.0F) {
-                                    f -= 180.0F;
-                                }
-
-                                double _f = Mth.wrapDegrees(f - bodyYaw);
-                                bodyYaw += _f * 0.3F;
-                                double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
-
-                                if (_f1 < -75.0F) {
-                                    _f1 = -75.0F;
-                                }
-
-                                if (_f1 >= 75.0F) {
-                                    _f1 = 75.0F;
-
-                                    bodyYaw = player.getYRot() - _f1;
-                                    bodyYaw += _f1 * 0.2F;
-                                }
-                            }
-                            bodyYaw = Mth.wrapDegrees(bodyYaw);
-                        }
-                    }
-
-
-                    if (f1 > 0.000028) {
-                        double f2 = Mth.wrapDegrees(f - bodyYaw);
-                        bodyYaw += 0.5F * f2;
-
-                        if (isFirstPerson) {
-                            double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
-                            if (95.0F < f5 && f5 < 265.0F) {
-                                f -= 180.0F;
-                            }
-
-                            double _f = Mth.wrapDegrees(f - bodyYaw);
-                            bodyYaw += _f * 0.3F;
-                            double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
-
-                            if (_f1 < -75.0F) {
-                                _f1 = -75.0F;
-                            }
-
-                            if (_f1 >= 75.0F) {
-                                _f1 = 75.0F;
-
-                                bodyYaw = player.getYRot() - _f1;
-                                bodyYaw += _f1 * 0.2F;
-                            }
-                        }
-                    }
-                    bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
-
-                    // Update the movement data
-                    playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, moveVector, realtimeDeltaTick);
+            // Handle bodyYaw
+            double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
+            boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
+            boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook;
+            if (!isFreeLook && !wasFreeLook) {
+                if (headYaw > 150) {
+                    bodyYaw += 150 - headYaw;
+                } else if (headYaw < -150) {
+                    bodyYaw -= 150 + headYaw;
                 }
-            });
-        }
+            }
+
+            Vec3 moveVector = player.getDeltaMovement();
+            if (ServerFlightHandler.isFlying(player)) {
+                moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+            }
+
+            double f = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
+            double f1 = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
+
+            boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
+            if (!isFreeLook) {
+                if (moveVector.length() > 0 && isFirstPerson) {
+                    bodyYaw = player.getYRot();
+                    if (moveVector.length() > 0) {
+                        double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
+                        if (95.0F < f5 && f5 < 265.0F) {
+                            f -= 180.0F;
+                        }
+
+                        double _f = Mth.wrapDegrees(f - bodyYaw);
+                        bodyYaw += _f * 0.3F;
+                        double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
+
+                        if (_f1 < -75.0F) {
+                            _f1 = -75.0F;
+                        }
+
+                        if (_f1 >= 75.0F) {
+                            _f1 = 75.0F;
+
+                            bodyYaw = player.getYRot() - _f1;
+                            bodyYaw += _f1 * 0.2F;
+                        }
+                    }
+                    bodyYaw = Mth.wrapDegrees(bodyYaw);
+                }
+            }
+
+
+            if (f1 > 0.000028) {
+                double f2 = Mth.wrapDegrees(f - bodyYaw);
+                bodyYaw += 0.5F * f2;
+
+                if (isFirstPerson) {
+                    double f5 = Math.abs(Mth.wrapDegrees(player.getYRot()) - f);
+                    if (95.0F < f5 && f5 < 265.0F) {
+                        f -= 180.0F;
+                    }
+
+                    double _f = Mth.wrapDegrees(f - bodyYaw);
+                    bodyYaw += _f * 0.3F;
+                    double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
+
+                    if (_f1 < -75.0F) {
+                        _f1 = -75.0F;
+                    }
+
+                    if (_f1 >= 75.0F) {
+                        _f1 = 75.0F;
+
+                        bodyYaw = player.getYRot() - _f1;
+                        bodyYaw += _f1 * 0.2F;
+                    }
+                }
+            }
+            bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
+
+            // Update the movement data
+            playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, moveVector, realtimeDeltaTick);
+        });
     }
 
     @SubscribeEvent
