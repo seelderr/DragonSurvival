@@ -2,17 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.common.criteria;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.advancements.critereon.BeeNestDestroyedTrigger;
+
+import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
-
-import java.util.Optional;
 
 public class MineBlockTrigger extends SimpleCriterionTrigger<MineBlockTrigger.MineBlockInstance> {
     public void trigger(ServerPlayer pPlayer, Block block) {

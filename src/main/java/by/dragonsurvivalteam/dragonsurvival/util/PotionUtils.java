@@ -2,12 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 import static net.minecraft.core.component.DataComponents.POTION_CONTENTS;
 
-import net.minecraft.core.Holder;
+import java.util.Optional;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
-
-import java.util.Optional;
 
 public class PotionUtils {
     // We need to be careful here, as some mods might have items that are instances of
