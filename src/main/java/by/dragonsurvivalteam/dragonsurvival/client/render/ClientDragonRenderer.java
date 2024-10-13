@@ -50,6 +50,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -418,59 +419,37 @@ public class ClientDragonRenderer {
             }
 
             double moveVectorAngleDeg = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
-            double moveVectorSqrMag = Math.pow(moveVector.x, 2.0) + Math.pow(moveVector.z, 2.0);
+
+            final float EPSILON = 0.00001f;
+
+            boolean isMoving = moveVector.horizontalDistanceSqr() > EPSILON;
 
             boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
-            if (!isFreeLook) {
-                if (moveVector.length() > 0 && isFirstPerson) {
-                    bodyYaw = player.getYRot();
-                    double rotationMoveYawDeltaDeg = Math.abs(Mth.wrapDegrees(player.getYRot()) - moveVectorAngleDeg);
-                    if (95.0F < rotationMoveYawDeltaDeg && rotationMoveYawDeltaDeg < 265.0F) {
-                        moveVectorAngleDeg -= 180.0F;
-                    }
 
-                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
-                    double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
-
-                    if (_f1 < -75.0F) {
-                        _f1 = -75.0F;
-                    }
-
-                    if (_f1 >= 75.0F) {
-                        _f1 = 75.0F;
-
-                        bodyYaw = player.getYRot() - _f1;
-                        bodyYaw += _f1 * 0.2F;
-                    }
-                    bodyYaw = Mth.wrapDegrees(bodyYaw);
-                }
-            }
-
-
-            if (moveVectorSqrMag > 0.000028) {
+            if (isMoving) {
                 bodyYaw = RenderUtil.lerpYaw(0.5F, bodyYaw, moveVectorAngleDeg);
 
-                if (isFirstPerson) {
-                    double rotationMoveYawDeltaDeg = Math.abs(Mth.wrapDegrees(player.getYRot()) - moveVectorAngleDeg);
-                    if (95.0F < rotationMoveYawDeltaDeg && rotationMoveYawDeltaDeg < 265.0F) {
-                        moveVectorAngleDeg -= 180.0F;
-                    }
-
-                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
-                    double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
-
-                    if (_f1 < -75.0F) {
-                        _f1 = -75.0F;
-                    }
-
-                    if (_f1 >= 75.0F) {
-                        _f1 = 75.0F;
-
-                        bodyYaw = player.getYRot() - _f1;
-                        bodyYaw += _f1 * 0.2F;
-                    }
-                }
+                // TODO
+//                if (isFirstPerson) {
+//                    double rotationToMoveYawDeltaDegAbs = Math.abs(Mth.wrapDegrees(player.getYRot()) - moveVectorAngleDeg);
+//                    final float tolerance = 5F;
+//                    if (rotationToMoveYawDeltaDegAbs > 90F + tolerance) {
+//                        moveVectorAngleDeg = Mth.wrapDegrees(moveVectorAngleDeg - 180.0F);
+//                    }
+//
+//                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
+//                    double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
+//
+//                    if (_f1 >= 75.0F) {
+//                        _f1 = 75.0F;
+//
+//                        bodyYaw = player.getYRot() - 75.0F;
+//                        bodyYaw += 75.0F * 0.2F;
+//                    }
+//                }
             }
+
+            // Lerp the current yaw towards the calculated yaw
             bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
 
             // Update the movement data
