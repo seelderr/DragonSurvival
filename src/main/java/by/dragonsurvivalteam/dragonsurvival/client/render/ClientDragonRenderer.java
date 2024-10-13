@@ -395,22 +395,24 @@ public class ClientDragonRenderer {
             // Handle headYaw
             float yRot = player.getViewYRot(realtimeDeltaTick);
             float xRot = player.getViewXRot(realtimeDeltaTick);
-            double headYaw = Functions.angleDifference(playerStateHandler.getMovementData().bodyYaw, Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot));
-            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
+            double targetHeadYawRel = Functions.angleDifference(
+                    playerStateHandler.getMovementData().bodyYaw,
+                    Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot)
+            );
+            targetHeadYawRel = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, targetHeadYawRel);
 
             // Handle headPitch
             double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
 
             // Handle bodyYaw
-            double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
+            double targetBodyYaw = playerStateHandler.getMovementData().bodyYaw;
             boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
             boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook;
+
             if (!isFreeLook && !wasFreeLook) {
-                if (headYaw > 150) {
-                    bodyYaw += 150 - headYaw;
-                } else if (headYaw < -150) {
-                    bodyYaw -= 150 + headYaw;
-                }
+                // If the head turns too far, turn the body along with it
+                double headYawBeyondLimit = Math.max(0, Math.abs(targetHeadYawRel) - 150);
+                targetBodyYaw -= Math.copySign(headYawBeyondLimit, targetHeadYawRel);
             }
 
             Vec3 moveVector = player.getDeltaMovement();
@@ -422,38 +424,35 @@ public class ClientDragonRenderer {
 
             final float EPSILON = 0.00001f;
 
-            boolean isMoving = moveVector.horizontalDistanceSqr() > EPSILON;
+            // Rotate body towards move angle when moving
+            if (moveVector.horizontalDistanceSqr() > EPSILON) {
+                targetBodyYaw = RenderUtil.lerpYaw(0.5F, targetBodyYaw, moveVectorAngleDeg);
+            }
 
-            boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
+            // In first person, the body follows the look direction a lot more strictly
+            // isFirstPerson is synced to other clients!
+            if (playerStateHandler.getMovementData().isFirstPerson) {
+                final float tolerance = 5F;
+                if (Mth.degreesDifferenceAbs(player.getYRot(), (float) moveVectorAngleDeg) > 90F + tolerance) {
+                    moveVectorAngleDeg = Mth.wrapDegrees(moveVectorAngleDeg - 180.0F);
+                }
 
-            if (isMoving) {
-                bodyYaw = RenderUtil.lerpYaw(0.5F, bodyYaw, moveVectorAngleDeg);
+                targetBodyYaw = RenderUtil.lerpYaw(0.3F, targetBodyYaw, moveVectorAngleDeg);
+                double _f1 = Mth.wrapDegrees(player.getYRot() - targetBodyYaw);
 
-                // TODO
-//                if (isFirstPerson) {
-//                    double rotationToMoveYawDeltaDegAbs = Math.abs(Mth.wrapDegrees(player.getYRot()) - moveVectorAngleDeg);
-//                    final float tolerance = 5F;
-//                    if (rotationToMoveYawDeltaDegAbs > 90F + tolerance) {
-//                        moveVectorAngleDeg = Mth.wrapDegrees(moveVectorAngleDeg - 180.0F);
-//                    }
-//
-//                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
-//                    double _f1 = Mth.wrapDegrees(player.getYRot() - bodyYaw);
-//
-//                    if (_f1 >= 75.0F) {
-//                        _f1 = 75.0F;
-//
-//                        bodyYaw = player.getYRot() - 75.0F;
-//                        bodyYaw += 75.0F * 0.2F;
-//                    }
-//                }
+                if (_f1 >= 75.0F) {
+                    _f1 = 75.0F;
+
+                    targetBodyYaw = player.getYRot() - 75.0F;
+                    targetBodyYaw += 75.0F * 0.2F;
+                }
             }
 
             // Lerp the current yaw towards the calculated yaw
-            bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, bodyYaw);
+            targetBodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, targetBodyYaw);
 
             // Update the movement data
-            playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, moveVector, realtimeDeltaTick);
+            playerStateHandler.setMovementData(targetBodyYaw, targetHeadYawRel, headPitch, moveVector, realtimeDeltaTick);
         });
     }
 
