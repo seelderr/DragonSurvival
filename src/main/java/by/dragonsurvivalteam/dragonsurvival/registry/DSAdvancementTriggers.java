@@ -20,8 +20,8 @@ public class DSAdvancementTriggers {
     public static final Supplier<SleepOnTreasureTrigger> SLEEP_ON_TREASURE = DS_TRIGGERS.register(
             "sleep_on_treasure", SleepOnTreasureTrigger::new
     );
-    public static final Supplier<MineBlockTrigger> MINE_BLOCK = DS_TRIGGERS.register(
-            "mine_block", MineBlockTrigger::new
+    public static final Supplier<MineBlockUnderLavaTrigger> MINE_BLOCK_UNDER_LAVA = DS_TRIGGERS.register(
+            "mine_block_under_lava", MineBlockUnderLavaTrigger::new
     );
     public static final Supplier<UseDragonSoulTrigger> USE_DRAGON_SOUL = DS_TRIGGERS.register(
             "use_dragon_soul", UseDragonSoulTrigger::new
