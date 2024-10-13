@@ -59,11 +59,21 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		LayerSettings set = settings.get();
 		DragonEditorObject.DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
-		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
-			settings.get().glowing = !settings.get().glowing;
-			box.selected = settings.get().glowing;
-			DragonEditorScreen.HANDLER.getSkinData().compileSkin();
-		});
+
+		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {}){
+			final Function<Boolean, Boolean> setGlowingAction = value -> {
+				settings.get().glowing = value;
+				this.selected = settings.get().glowing;
+				DragonEditorScreen.HANDLER.getSkinData().compileSkin();
+				screen.update();
+				return !value;
+			};
+
+			@Override
+			public void onPress(){
+				screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(setGlowingAction, !settings.get().glowing));
+			}
+		};
 
 		float[] hsb = new float[]{set.hue, set.saturation, set.brightness};
 
