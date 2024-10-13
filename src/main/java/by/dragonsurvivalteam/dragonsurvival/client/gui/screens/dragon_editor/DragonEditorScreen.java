@@ -63,12 +63,17 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.ScreenEvent;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.common.util.Lazy;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.apache.commons.lang3.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class DragonEditorScreen extends Screen {
 	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
 	private static final ResourceLocation SAVE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
@@ -855,5 +860,16 @@ public class DragonEditorScreen extends Screen {
 
 	public static String partToTechnical(final String part) {
 		return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + ".", "");
+	}
+
+	@SubscribeEvent
+	public static void undoRedoKeybinds(ScreenEvent.KeyPressed.Post event) {
+		if (event.getScreen() instanceof DragonEditorScreen screen) {
+			if (event.getKeyCode() == GLFW.GLFW_KEY_Z && event.getModifiers() == GLFW.GLFW_MOD_CONTROL) {
+				screen.actionHistory.undo();
+			} else if (event.getKeyCode() == GLFW.GLFW_KEY_Y && event.getModifiers() == GLFW.GLFW_MOD_CONTROL) {
+				screen.actionHistory.redo();
+			}
+		}
 	}
 }
