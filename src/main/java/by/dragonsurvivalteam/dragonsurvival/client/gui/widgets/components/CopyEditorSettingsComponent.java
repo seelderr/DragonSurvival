@@ -79,6 +79,8 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
 				screen.update();
 				btn.onPress();
+				// TODO: We don't support undoing this action at this time, so to prevent weird behavior it clears the undo/redo stack
+				screen.actionHistory.clear();
 			}
 		};
 		confirm.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));

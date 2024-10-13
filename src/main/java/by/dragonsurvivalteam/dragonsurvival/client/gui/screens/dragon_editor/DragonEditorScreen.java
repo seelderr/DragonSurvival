@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.UndoRedoButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -43,13 +44,12 @@ import com.google.gson.Gson;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Function;
 import java.util.function.Supplier;
+
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
@@ -57,6 +57,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -108,6 +109,9 @@ public class DragonEditorScreen extends Screen {
 	private boolean hasInit;
 	private DragonEditorConfirmComponent conf;
 	private boolean isEditor;
+	private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
+	private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
+	private ExtendedCheckbox wingsCheckbox;
 
 	public DragonEditorScreen(Screen source){
 		this(source, null);
@@ -119,6 +123,154 @@ public class DragonEditorScreen extends Screen {
 		this.source = source;
 		this.dragonType = dragonType;
 	}
+
+	public record EditorAction<T>(Function<T, T> action, T value) {
+
+		public T run() {
+			return action.apply(value);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (obj instanceof EditorAction) {
+				EditorAction<?> action = (EditorAction<?>) obj;
+				if (action.action != null && action.value != null) {
+					return action.action.equals(this.action) && action.value.equals(this.value);
+				}
+			}
+			return false;
+		}
+	}
+
+	private float zoomToSetForDragonLevel(DragonLevel level) {
+        return switch (level) {
+            case NEWBORN -> level.size * 3 - 5;
+            case YOUNG, ADULT -> level.size * 2;
+        };
+	}
+
+	public final Function<DragonLevel, DragonLevel> selectLevelAction = (newLevel) -> {
+		DragonLevel prevLevel = level;
+		level = newLevel;
+		dragonRender.zoom = zoomToSetForDragonLevel(level);
+		HANDLER.getSkinData().compileSkin();
+		update();
+
+		return prevLevel;
+	};
+
+	// setHueAction, setSaturationAction, setBrightnessAction in HueSelectorComponent.Java
+
+	// setDragonSlotAction in DragonEditorSlotButton.Java
+
+	public final Function<CompoundTag, CompoundTag> setSkinPresetAction = (tag) -> {
+		CompoundTag prevTag = HANDLER.getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess());
+		HANDLER.getSkinData().skinPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), tag);
+		HANDLER.getSkinData().compileSkin();
+		update();
+		return prevTag;
+	};
+
+	public final Function<AbstractDragonBody, AbstractDragonBody> dragonBodySelectAction = (body) -> {
+		AbstractDragonBody prevBody = dragonBody;
+		dragonBody = body;
+		update();
+		return prevBody;
+	};
+
+	public final Function<Pair<EnumSkinLayer, String>, Pair<EnumSkinLayer, String>> dragonPartSelectAction = (pair) -> {
+		Pair<EnumSkinLayer, String> prevPair = new Pair<>(pair.getFirst(), preset.skinAges.get(level).get().layerSettings.get(pair.getFirst()).get().selectedSkin);
+
+		EnumSkinLayer layer = pair.getFirst();
+		String value = pair.getSecond();
+		dropdownButtons.get(layer).current = value;
+		dropdownButtons.get(layer).updateMessage();
+		preset.skinAges.get(level).get().layerSettings.get(layer).get().selectedSkin = DragonEditorScreen.partToTechnical(value);
+
+		// Make sure that when we change a part, the color is properly updated to the default color of the new part
+		LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layer).get();
+		DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, dragonType);
+		if (text != null && !settings.modifiedColor) {
+			settings.hue = text.average_hue;
+		}
+
+		HANDLER.getSkinData().compileSkin();
+		update();
+
+		return prevPair;
+	};
+
+	public final Function<Boolean, Boolean> checkWingsButtonAction = (selected) -> {
+		boolean prevSelected = !wingsCheckbox.selected;
+		wingsCheckbox.selected = selected;
+		HANDLER.setHasFlight(selected);
+		HANDLER.getSkinData().compileSkin();
+		update();
+		return prevSelected;
+	};
+
+	public final Function<Boolean, Boolean> checkDefaultSkinAction = (selected) -> {
+		boolean prevSelected = !defaultSkinCheckbox.selected;
+		defaultSkinCheckbox.selected = selected;
+		preset.skinAges.get(level).get().defaultSkin = selected;
+		HANDLER.getSkinData().compileSkin();
+		update();
+		return prevSelected;
+	};
+
+	public static class UndoRedoList {
+		private record UndoRedoPair(EditorAction<?> undo, EditorAction<?> redo) {}
+
+		private final List<UndoRedoPair> delegate = new ArrayList<>();
+		private final int maxSize;
+		private int selectedIndex = 0;
+
+		public UndoRedoList(int maxSize) {
+			this.maxSize = maxSize;
+		}
+
+		public <T> void add(EditorAction<T> action) {
+			// Run the action here instead of elsewhere, so that we make sure whatever is being undone is actually done
+			T previousState = action.run();
+
+			if(selectedIndex > 0 && action.equals(delegate.get(selectedIndex - 1).redo)) {
+				return;
+			}
+
+			delegate.subList(selectedIndex, delegate.size()).clear();
+
+			EditorAction<T> undoAction = new EditorAction<>(action.action, previousState);
+
+			delegate.add(new UndoRedoPair(undoAction, action));
+
+			if (delegate.size() > maxSize) {
+				delegate.removeFirst();
+			} else {
+				selectedIndex++;
+			}
+		}
+
+		public void undo() {
+			if (selectedIndex > 0) {
+				selectedIndex--;
+				delegate.get(selectedIndex).undo.run();
+			}
+		}
+
+		public void redo() {
+			if (selectedIndex < delegate.size()) {
+				delegate.get(selectedIndex).redo.run();
+				selectedIndex++;
+			}
+		}
+
+		public void clear() {
+			delegate.clear();
+			selectedIndex = 0;
+		}
+	}
+
+	public final UndoRedoList actionHistory = new UndoRedoList(200);
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
@@ -188,7 +340,7 @@ public class DragonEditorScreen extends Screen {
 				}
 			}
 
-			for(ColorSelectorButton colorSelectorButton : colorButtons){
+			for(ColorSelectorButton colorSelectorButton : colorSelectorButtons.values()) {
 				DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
 
 				colorSelectorButton.visible = (text != null && text.colorable) && !defaultSkinCheckbox.selected;
@@ -242,10 +394,14 @@ public class DragonEditorScreen extends Screen {
 			if (dragonBody == null) {
 				dragonBody = DragonBodies.getStatic("center");
 			}
+		} else {
+			dragonBody = this.dragonBody;
 		}
 
 		if (level == null) {
 			level = DragonLevel.NEWBORN;
+		} else {
+			level = this.level;
 		}
 
 		String type = dragonType.getTypeNameUpperCase();
@@ -327,6 +483,7 @@ public class DragonEditorScreen extends Screen {
 			String curValue = partToTranslation(preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin);
 
 			DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers);
+			dropdownButtons.put(layers, btn);
 			addRenderableWidget(btn);
 			addRenderableWidget(new ArrowButton(btn.getX() - 15, btn.getY() + 1, 16, 16, false, s -> {
 				int index = 0;
@@ -372,13 +529,9 @@ public class DragonEditorScreen extends Screen {
 				}
 			}));
 
-			ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {
-				preset.skinAges.get(level).get().layerSettings.get(layers).get().hue = s.floatValue();
-				HANDLER.getSkinData().compileSkin();
-				update();
-			});
+			ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {});
+			colorSelectorButtons.put(layers, colorButton);
 			addRenderableWidget(colorButton);
-			colorButtons.add(colorButton);
 			i++;
 		}
 
@@ -423,12 +576,12 @@ public class DragonEditorScreen extends Screen {
 		}
 
 
-		ExtendedCheckbox wingsCheckBox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> preset.skinAges.get(level).get().wings = p.selected());
-		wingsCheckBox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.wings.tooltip")));
-		wingsCheckBox.selected = preset.skinAges.get(level).get().wings;
-		addRenderableWidget(wingsCheckBox);
+		wingsCheckbox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> actionHistory.add(new EditorAction<>(checkWingsButtonAction, p.selected())));
+		wingsCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.wings.tooltip")));
+		wingsCheckbox.selected = preset.skinAges.get(level).get().wings;
+		addRenderableWidget(wingsCheckbox);
 
-		defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> preset.skinAges.get(level).get().defaultSkin = p.selected());
+		defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> actionHistory.add(new EditorAction<>(checkDefaultSkinAction, p.selected())));
 		defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.default_skin.tooltip")));
 		addRenderableWidget(defaultSkinCheckbox);
 
@@ -490,10 +643,12 @@ public class DragonEditorScreen extends Screen {
 		addRenderableWidget(discardButton);
 
 		ExtendedButton resetButton = new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
+			// Don't actually modify the skin preset here, do it inside of setSkinPresetAction
+			SkinPreset preset = new SkinPreset();
+			preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), this.preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 			preset.skinAges.put(level, Lazy.of(()->new SkinAgeGroup(level, dragonType)));
-			HANDLER.getSkinData().compileSkin();
-			wingsCheckBox.selected = true;
-			update();
+			wingsCheckbox.selected = true;
+			actionHistory.add(new EditorAction<>(setSkinPresetAction, preset.serializeNBT(Minecraft.getInstance().player.registryAccess())));
 		}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick){
@@ -505,7 +660,6 @@ public class DragonEditorScreen extends Screen {
 
 
 		ExtendedButton randomButton = new ExtendedButton(guiLeft + 260, 11, 18, 18, Component.empty(), btn -> {
-
 			ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA);
 
 			extraKeys.removeIf(s -> {
@@ -514,6 +668,9 @@ public class DragonEditorScreen extends Screen {
 				return !text.random;
 			});
 
+			// Don't actually modify the skin preset here, do it inside of setSkinPresetAction
+			SkinPreset preset = new SkinPreset();
+			preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), this.preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 			for(EnumSkinLayer layer : EnumSkinLayer.values()){
 				ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer);
 
@@ -552,10 +709,9 @@ public class DragonEditorScreen extends Screen {
 						settings.modifiedColor = true;
 					}
 				}
-				HANDLER.getSkinData().compileSkin();
 			}
 
-			update();
+			actionHistory.add(new EditorAction<>(setSkinPresetAction, preset.serializeNBT(Minecraft.getInstance().player.registryAccess())));
 		}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick){
@@ -564,6 +720,14 @@ public class DragonEditorScreen extends Screen {
 		};
 		randomButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.random")));
 		addRenderableWidget(randomButton);
+
+		UndoRedoButton undoButton = new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, button -> actionHistory.undo());
+		undoButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.undo")));
+		addRenderableWidget(undoButton);
+
+		UndoRedoButton redoButton = new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, button -> actionHistory.redo());
+		redoButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.redo")));
+		addRenderableWidget(redoButton);
 
 		ExtendedButton saveSlotButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }){
 			@Override
