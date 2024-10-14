@@ -33,12 +33,12 @@ public class Functions{
 		return ticks / 20d;
 	}
 
-	public static double angleDifference(double angle1, double angle2){
-		double phi = Math.abs(angle1 - angle2) % 360;
-		double dif = phi > 180 ? 360 - phi : phi;
-		int sign = angle1 - angle2 >= 0 && angle1 - angle2 <= 180 || angle1 - angle2 <= -180 && angle1 - angle2 >= -360 ? 1 : -1;
-		dif *= sign;
-		return dif;
+	public static float angleDifference(float b, float a) {
+		return Mth.wrapDegrees(b - a);
+	}
+
+	public static double angleDifference(double b, double a) {
+		return Mth.wrapDegrees(b - a);
 	}
 	
 	
