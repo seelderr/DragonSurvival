@@ -388,71 +388,116 @@ public class ClientDragonRenderer {
     }
 
     public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
+        // TODO: use in-game tick speed instead of realtime
+
+        final float EPSILON = 0.00001f;
+        // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
+        final float MOVE_EPSILON = 0.001f;
+        // Difference between the move and view vectors needed to flip the move vector in first person
+        final float VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT = 95F;
+
+        // Factor to align the body to the move vector
+        final float MOVE_ALIGN_FACTOR = 0.2F;
+
         if (player == null) return;
 
         DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
             if (!playerStateHandler.isDragon()) return;
             // Handle headYaw
-            float yRot = player.getViewYRot(realtimeDeltaTick);
-            float xRot = player.getViewXRot(realtimeDeltaTick);
-            double targetHeadYawRel = Functions.angleDifference(
+            float viewYRot = player.getViewYRot(realtimeDeltaTick);
+            float viewXRot = player.getViewXRot(realtimeDeltaTick);
+            // Head yaw is relative to body
+            double headYaw = Functions.angleDifference(
                     playerStateHandler.getMovementData().bodyYaw,
-                    Mth.wrapDegrees(player.getYRot() != 0.0 ? player.getYRot() : yRot)
+                    viewYRot
             );
-            targetHeadYawRel = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, targetHeadYawRel);
+//            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
             // Handle headPitch
-            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, xRot);
-
-            // Handle bodyYaw
-            double targetBodyYaw = playerStateHandler.getMovementData().bodyYaw;
-            boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
-            boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook;
-
-            if (!isFreeLook && !wasFreeLook) {
-                // If the head turns too far, turn the body along with it
-                double headYawBeyondLimit = Math.max(0, Math.abs(targetHeadYawRel) - 150);
-                targetBodyYaw -= Math.copySign(headYawBeyondLimit, targetHeadYawRel);
-            }
+            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, viewXRot);
 
             Vec3 moveVector = player.getDeltaMovement();
             if (ServerFlightHandler.isFlying(player)) {
                 moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
             }
 
-            double moveVectorAngleDeg = Mth.atan2(moveVector.z, moveVector.x) * (180.0 / Math.PI) - 90.0;
+            // Handle bodyYaw
+            double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
+            boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
+            boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook; // TODO: what's this for?
+            boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
+            boolean isMoving = moveVector.horizontalDistanceSqr() > MOVE_EPSILON;
 
-            final float EPSILON = 0.00001f;
+
+            // +Z: 0 deg; -X: 90 deg
+            // Actual move angle
+            double moveAngle = Math.toDegrees(Math.atan2(-moveVector.x, moveVector.z));
+            // Move angle that the body will try to align to
+            double targetMoveAngle = moveAngle;
+
+            // If in first person and moving back, flip the target move angle
+            if (isFirstPerson && !isFreeLook) {
+                if (Math.abs(Functions.angleDifference(viewYRot, moveAngle)) > VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT) {
+                    targetMoveAngle += 180;
+                }
+            }
+
+            // When moving, turn the body towards the move direction
+            if (isMoving) {
+                bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * MOVE_ALIGN_FACTOR, bodyYaw, targetMoveAngle);
+            }
+
+//            if (!isFreeLook && !wasFreeLook) {
+//                // If the head turns too far, turn the body along with it
+//                double headYawBeyondLimit = Math.max(0, Math.abs(targetHeadYawRel) - 150);
+//                bodyYaw -= Math.copySign(headYawBeyondLimit, targetHeadYawRel);
+//            }
+
 
             // Rotate body towards move angle when moving
-            if (moveVector.horizontalDistanceSqr() > EPSILON) {
-                targetBodyYaw = RenderUtil.lerpYaw(0.5F, targetBodyYaw, moveVectorAngleDeg);
-            }
+//            boolean isMoving = moveVector.horizontalDistanceSqr() > EPSILON;
+//            if (isMoving) {
+//                if (isFirstPerson) {
+//                    final float tolerance = 5F;
+//
+//                    // When moving backwards, treat the move vector angle as opposite in terms of aligning the body
+//                    // This aligns the body towards the move direction in reverse to visually walk backwards
+//                    double viewMoveDeltaAbs = Math.abs(Functions.angleDifference(player.getYRot(), moveVectorAngleDeg));
+//                    if (viewMoveDeltaAbs > 90F + tolerance) {
+//                        moveVectorAngleDeg = Mth.wrapDegrees(moveVectorAngleDeg - 180.0F);
+//                    }
+//
+//                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
+//                }
+//                else {
+//                    // In third person,
+//                    bodyYaw = RenderUtil.lerpYaw(0.5F, bodyYaw, moveVectorAngleDeg);
+//                }
+//            }
 
             // In first person, the body follows the look direction a lot more strictly
             // isFirstPerson is synced to other clients!
-            if (playerStateHandler.getMovementData().isFirstPerson) {
-                final float tolerance = 5F;
-                if (Mth.degreesDifferenceAbs(player.getYRot(), (float) moveVectorAngleDeg) > 90F + tolerance) {
-                    moveVectorAngleDeg = Mth.wrapDegrees(moveVectorAngleDeg - 180.0F);
-                }
-
-                targetBodyYaw = RenderUtil.lerpYaw(0.3F, targetBodyYaw, moveVectorAngleDeg);
-                double _f1 = Mth.wrapDegrees(player.getYRot() - targetBodyYaw);
-
-                if (_f1 >= 75.0F) {
-                    _f1 = 75.0F;
-
-                    targetBodyYaw = player.getYRot() - 75.0F;
-                    targetBodyYaw += 75.0F * 0.2F;
-                }
-            }
-
-            // Lerp the current yaw towards the calculated yaw
-            targetBodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.3, playerStateHandler.getMovementData().bodyYaw, targetBodyYaw);
+//            if (isFirstPerson) {
+////                double _f1 = Mth.wrapDegrees(player.getYRot() - targetBodyYaw);
+////
+////                if (_f1 >= 75.0F) {
+////                    _f1 = 75.0F;
+////
+////                    targetBodyYaw = player.getYRot() - 75.0F;
+////                    targetBodyYaw += 75.0F * 0.2F;
+////                }
+//
+//                // While in first person, body yaw should not go beyond 75 degrees away from the view angle
+//
+//                final double MAX_BODY_VIEW_DELTA = 75;
+//
+//                double delta = Functions.angleDifference(player.getYRot(), bodyYaw);
+//                delta = Math.clamp(delta, -MAX_BODY_VIEW_DELTA, MAX_BODY_VIEW_DELTA);
+////                bodyYaw = Mth.wrapDegrees(player.getYRot() + delta);
+//            }
 
             // Update the movement data
-            playerStateHandler.setMovementData(targetBodyYaw, targetHeadYawRel, headPitch, moveVector, realtimeDeltaTick);
+            playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, moveVector, realtimeDeltaTick);
         });
     }
 
