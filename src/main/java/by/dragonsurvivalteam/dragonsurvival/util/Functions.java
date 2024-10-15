@@ -33,11 +33,29 @@ public class Functions {
         return ticks / 20d;
     }
 
-    public static float angleDifference(float b, float a) {
+    /**
+     * Returns a signed angle delta between a and b within the range [-180..180), returning the shorter distance.
+     * <br/>
+     * a + return value = b
+     *
+     * @param a First angle
+     * @param b Second angle
+     * @return Delta between angles
+     */
+    public static float angleDifference(float a, float b) {
         return Mth.wrapDegrees(b - a);
     }
 
-    public static double angleDifference(double b, double a) {
+    /**
+     * Returns a signed angle delta between a and b within the range [-180..180), returning the shorter distance.
+     * <br/>
+     * a + return value = b
+     *
+     * @param a First angle
+     * @param b Second angle
+     * @return Delta between angles
+     */
+    public static double angleDifference(double a, double b) {
         return Mth.wrapDegrees(b - a);
     }
 

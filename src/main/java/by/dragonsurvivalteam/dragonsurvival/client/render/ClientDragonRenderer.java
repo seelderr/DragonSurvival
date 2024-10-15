@@ -408,8 +408,8 @@ public class ClientDragonRenderer {
             float viewXRot = player.getViewXRot(realtimeDeltaTick);
             // Head yaw is relative to body
             double headYaw = Functions.angleDifference(
-                    playerStateHandler.getMovementData().bodyYaw,
-                    viewYRot
+                    viewYRot,
+                    playerStateHandler.getMovementData().bodyYaw
             );
 //            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
