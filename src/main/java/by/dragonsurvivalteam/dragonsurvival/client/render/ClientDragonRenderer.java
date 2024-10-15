@@ -46,11 +46,11 @@ import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -387,49 +387,50 @@ public class ClientDragonRenderer {
         }
     }
 
-    public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
-        // TODO: use in-game tick speed instead of realtime
-
-        final double EPSILON = 0.00001D;
-        // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
-        final double MOVE_EPSILON = 0.001D;
-        // Difference between the move and view vectors needed to flip the move vector in first person
-        final double VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT = 95D;
-
-        // Factor to align the body to the move vector
-        final double MOVE_ALIGN_FACTOR = 0.4D;
-
-        final double BODY_ANGLE_LIMIT_TP = 180D - 20D;
-        final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
-        final double VIEW_ALIGN_FACTOR_FP = 0.3D;
-
-        if (player == null) return;
-
-        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-            if (!playerStateHandler.isDragon()) return;
+    private record BodyAngles(double bodyYaw, double headPitch, double headYaw) {
+        public static BodyAngles calculateNext(Player player, DragonStateHandler dragonStateHandler, float realtimeDeltaTick) {
             // Handle headYaw
             float viewYRot = player.getViewYRot(realtimeDeltaTick);
             float viewXRot = player.getViewXRot(realtimeDeltaTick);
             // Head yaw is relative to body
-            double headYaw = Functions.angleDifference(
-                    viewYRot,
-                    playerStateHandler.getMovementData().bodyYaw
-            );
-//            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
-
-            // Handle headPitch
-            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headPitch, viewXRot);
+            DragonMovementData movementData = dragonStateHandler.getMovementData();
 
             Vec3 moveVector = player.getDeltaMovement();
             if (ServerFlightHandler.isFlying(player)) {
                 moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
             }
 
+            var headAngles = calculateNextHeadAngles(realtimeDeltaTick, movementData, viewXRot, viewYRot);
+
+            return new BodyAngles(
+                    calculateNextBodyYaw(realtimeDeltaTick, movementData, moveVector, viewYRot),
+                    headAngles.getA(),
+                    headAngles.getB()
+            );
+        }
+
+        private static double calculateNextBodyYaw(
+                float realtimeDeltaTick,
+                DragonMovementData movementData,
+                Vec3 moveVector,
+                float viewYRot) {
+
+            // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
+            final double MOVE_EPSILON = 0.001D;
+            // Difference between the move and view vectors needed to flip the move vector in first person
+            final double VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT = 95D;
+
+            // Factor to align the body to the move vector
+            final double MOVE_ALIGN_FACTOR = 0.4D;
+
+            final double BODY_ANGLE_LIMIT_TP = 180D - 20D;
+            final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
+            final double VIEW_ALIGN_FACTOR_FP = 0.3D;
             // Handle bodyYaw
-            double bodyYaw = playerStateHandler.getMovementData().bodyYaw;
-            boolean isFreeLook = playerStateHandler.getMovementData().isFreeLook;
-            boolean wasFreeLook = playerStateHandler.getMovementData().wasFreeLook; // TODO: what's this for?
-            boolean isFirstPerson = playerStateHandler.getMovementData().isFirstPerson;
+            double bodyYaw = movementData.bodyYaw;
+            boolean isFreeLook = movementData.isFreeLook;
+            boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
+            boolean isFirstPerson = movementData.isFirstPerson;
             boolean isMoving = moveVector.horizontalDistanceSqr() > MOVE_EPSILON;
 
 
@@ -465,7 +466,38 @@ public class ClientDragonRenderer {
                     bodyYaw = Functions.limitAngleDelta(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_TP);
                 }
             }
+            return bodyYaw;
+        }
 
+        private static Tuple<Double, Double> calculateNextHeadAngles(
+                float realtimeDeltaTick,
+                DragonMovementData movementData,
+                float viewXRot,
+                float viewYRot) {
+            double headYaw = Functions.angleDifference(
+                    viewYRot,
+                    movementData.bodyYaw
+            );
+//            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
+
+            // Handle headPitch
+            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, movementData.headPitch, viewXRot);
+            return new Tuple<>(headPitch, headYaw);
+        }
+    }
+
+    public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
+        if (player == null) return;
+
+        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+            if (!playerStateHandler.isDragon()) return;
+
+            Vec3 moveVector = player.getDeltaMovement();
+            if (ServerFlightHandler.isFlying(player)) {
+                moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+            }
+
+            var newAngles = BodyAngles.calculateNext(player, playerStateHandler, realtimeDeltaTick);
 //            if (!isFreeLook && !wasFreeLook) {
 //                // If the head turns too far, turn the body along with it
 //                double headYawBeyondLimit = Math.max(0, Math.abs(targetHeadYawRel) - 150);
@@ -516,7 +548,7 @@ public class ClientDragonRenderer {
 //            }
 
             // Update the movement data
-            playerStateHandler.setMovementData(bodyYaw, headYaw, headPitch, moveVector, realtimeDeltaTick);
+            playerStateHandler.setMovementData(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector, realtimeDeltaTick);
         });
     }
 
