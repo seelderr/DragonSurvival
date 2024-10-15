@@ -15,7 +15,7 @@
   },
   "criteria": {
     "mine_stone_diamond_ore": {
-      "trigger": "dragonsurvival:mine_block",
+      "trigger": "dragonsurvival:mine_block_under_lava",
       "conditions": {
         "player": [
           {
@@ -45,7 +45,7 @@
       }
     },
     "mine_deepslate_diamond_ore": {
-      "trigger": "dragonsurvival:mine_block",
+      "trigger": "dragonsurvival:mine_block_under_lava",
       "conditions": {
         "player": [
           {
