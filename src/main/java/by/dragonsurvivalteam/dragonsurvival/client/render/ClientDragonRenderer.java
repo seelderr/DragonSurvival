@@ -390,14 +390,18 @@ public class ClientDragonRenderer {
     public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
         // TODO: use in-game tick speed instead of realtime
 
-        final float EPSILON = 0.00001f;
+        final double EPSILON = 0.00001D;
         // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
-        final float MOVE_EPSILON = 0.001f;
+        final double MOVE_EPSILON = 0.001D;
         // Difference between the move and view vectors needed to flip the move vector in first person
-        final float VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT = 95F;
+        final double VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT = 95D;
 
         // Factor to align the body to the move vector
-        final float MOVE_ALIGN_FACTOR = 0.2F;
+        final double MOVE_ALIGN_FACTOR = 0.4D;
+
+        final double BODY_ANGLE_LIMIT_TP = 180D - 20D;
+        final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
+        final double VIEW_ALIGN_FACTOR_FP = 0.3D;
 
         if (player == null) return;
 
@@ -446,6 +450,20 @@ public class ClientDragonRenderer {
             // When moving, turn the body towards the move direction
             if (isMoving) {
                 bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * MOVE_ALIGN_FACTOR, bodyYaw, targetMoveAngle);
+            }
+
+            // Limit body angle based on view direction and PoV
+            if (isFirstPerson) {
+                if (isFreeLook) {
+                    bodyYaw = Functions.limitAngleDelta(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_FP_FREE);
+                } else {
+                    bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * VIEW_ALIGN_FACTOR_FP, bodyYaw, viewYRot);
+                }
+            } else {
+                // No restrictions in free look
+                if (!isFreeLook) {
+                    bodyYaw = Functions.limitAngleDelta(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_TP);
+                }
             }
 
 //            if (!isFreeLook && !wasFreeLook) {
