@@ -437,7 +437,8 @@ public class ClientDragonRenderer {
 
             // If in first person and moving back, flip the target move angle
             if (isFirstPerson && !isFreeLook) {
-                if (Math.abs(Functions.angleDifference(viewYRot, moveAngle)) > VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT) {
+                // TODO look at player inputs rather than actual move direction?
+                if (Math.abs(Functions.angleDifference(moveAngle, viewYRot)) > VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT) {
                     targetMoveAngle += 180;
                 }
             }
