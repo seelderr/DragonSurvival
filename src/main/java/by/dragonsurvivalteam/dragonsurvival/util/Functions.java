@@ -59,6 +59,26 @@ public class Functions {
         return Mth.wrapDegrees(b - a);
     }
 
+    /**
+     * Clamps value (as degrees) to be within +-halfRange of center.
+     * <br/>
+     * Returns a wrapped value in the range -180..180, snapping towards the closer of the bounds.
+     * Prefers snapping towards the positive direction (CW for Minecraft yaw).
+     *
+     * @param value     Input angle
+     * @param center    Center angle of the range arc
+     * @param halfRange Half of the range arc. <= 0 always returns center, >= 180 always returns value (wrapped).
+     * @return Value, limited to be within +-halfRange of center.
+     */
+    public static double limitAngleDelta(double value, double center, double halfRange) {
+        if (halfRange <= 0) return Mth.wrapDegrees(center);
+        if (halfRange >= 180) return Mth.wrapDegrees(value);
+
+        var delta = angleDifference(center, value);
+        delta = Math.clamp(delta, -halfRange, halfRange);
+
+        return center + delta;
+    }
 
     public static ListTag newDoubleList(double... pNumbers) {
         ListTag listtag = new ListTag();
@@ -79,7 +99,6 @@ public class Functions {
         for (float f : pNumbers) {
             listtag.add(FloatTag.valueOf(f));
         }
-
 
         return listtag;
     }
