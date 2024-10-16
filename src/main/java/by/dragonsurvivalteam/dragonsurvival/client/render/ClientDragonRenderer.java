@@ -496,55 +496,8 @@ public class ClientDragonRenderer {
                 moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
             }
 
+            // Get new body yaw & head angles
             var newAngles = BodyAngles.calculateNext(player, playerStateHandler, realtimeDeltaTick);
-//            if (!isFreeLook && !wasFreeLook) {
-//                // If the head turns too far, turn the body along with it
-//                double headYawBeyondLimit = Math.max(0, Math.abs(targetHeadYawRel) - 150);
-//                bodyYaw -= Math.copySign(headYawBeyondLimit, targetHeadYawRel);
-//            }
-
-
-            // Rotate body towards move angle when moving
-//            boolean isMoving = moveVector.horizontalDistanceSqr() > EPSILON;
-//            if (isMoving) {
-//                if (isFirstPerson) {
-//                    final float tolerance = 5F;
-//
-//                    // When moving backwards, treat the move vector angle as opposite in terms of aligning the body
-//                    // This aligns the body towards the move direction in reverse to visually walk backwards
-//                    double viewMoveDeltaAbs = Math.abs(Functions.angleDifference(player.getYRot(), moveVectorAngleDeg));
-//                    if (viewMoveDeltaAbs > 90F + tolerance) {
-//                        moveVectorAngleDeg = Mth.wrapDegrees(moveVectorAngleDeg - 180.0F);
-//                    }
-//
-//                    bodyYaw = RenderUtil.lerpYaw(0.3F, bodyYaw, moveVectorAngleDeg);
-//                }
-//                else {
-//                    // In third person,
-//                    bodyYaw = RenderUtil.lerpYaw(0.5F, bodyYaw, moveVectorAngleDeg);
-//                }
-//            }
-
-            // In first person, the body follows the look direction a lot more strictly
-            // isFirstPerson is synced to other clients!
-//            if (isFirstPerson) {
-////                double _f1 = Mth.wrapDegrees(player.getYRot() - targetBodyYaw);
-////
-////                if (_f1 >= 75.0F) {
-////                    _f1 = 75.0F;
-////
-////                    targetBodyYaw = player.getYRot() - 75.0F;
-////                    targetBodyYaw += 75.0F * 0.2F;
-////                }
-//
-//                // While in first person, body yaw should not go beyond 75 degrees away from the view angle
-//
-//                final double MAX_BODY_VIEW_DELTA = 75;
-//
-//                double delta = Functions.angleDifference(player.getYRot(), bodyYaw);
-//                delta = Math.clamp(delta, -MAX_BODY_VIEW_DELTA, MAX_BODY_VIEW_DELTA);
-////                bodyYaw = Mth.wrapDegrees(player.getYRot() + delta);
-//            }
 
             // Update the movement data
             playerStateHandler.setMovementData(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector, realtimeDeltaTick);
