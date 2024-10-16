@@ -462,7 +462,15 @@ public class ClientDragonRenderer {
                 }
 
                 var factor = player.onGround() ? MOVE_ALIGN_FACTOR : MOVE_ALIGN_FACTOR_AIR;
-                bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * factor, bodyYaw, targetAngle);
+
+                // In first person, force the body to turn away from the view direction if possible
+                // This prevents issues with the body yaw and angle limit fighting, never letting the body
+                // pass through the area in front of the player when that's the shorter path for the body yaw
+                if (isFirstPerson) {
+                    bodyYaw = Functions.lerpAngleAwayFrom(realtimeDeltaTick * factor, bodyYaw, targetAngle, viewYRot + 180);
+                } else {
+                    bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * factor, bodyYaw, targetAngle);
+                }
             } else if (hasPosDelta && !player.onGround()) {
                 // When moving without input and in the air, slowly align to the move vector
 
