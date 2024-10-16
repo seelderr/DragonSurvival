@@ -14,6 +14,8 @@ import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import java.util.List;
 import java.util.Objects;
+
+import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -29,9 +31,7 @@ public class DragonEditorDropdownButton extends DropDownButton{
 
 	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers){
 		super(x, y, xSize, ySize, current, values, selected -> {
-			dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin = DragonEditorScreen.partToTechnical(selected);
-			DragonEditorScreen.HANDLER.getSkinData().compileSkin();
-			dragonEditorScreen.update();
+			dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonPartSelectAction, new Pair<>(layers, selected)));
 		});
 		this.dragonEditorScreen = dragonEditorScreen;
 		this.layers = layers;
@@ -125,12 +125,6 @@ public class DragonEditorDropdownButton extends DropDownButton{
 			((AccessorScreen)screen).children().add(renderButton);
 			screen.renderables.add(renderButton);
 		}else{
-			LayerSettings settings = dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get();
-			DragonEditorObject.DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layers, settings.selectedSkin, dragonEditorScreen.dragonType);
-			if (text != null && !settings.modifiedColor) {
-				settings.hue = text.average_hue;
-			}
-
 			screen.children().removeIf(s -> s == list || s == renderButton);
 			screen.renderables.removeIf(s -> s == list || s == renderButton);
 		}

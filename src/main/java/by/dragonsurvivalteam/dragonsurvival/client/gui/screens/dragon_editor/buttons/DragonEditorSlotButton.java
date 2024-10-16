@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import java.awt.*;
 import java.util.HashMap;
+import java.util.function.Function;
+
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;
@@ -14,23 +16,29 @@ import org.jetbrains.annotations.NotNull;
 public class DragonEditorSlotButton extends Button{
 	private final DragonEditorScreen screen;
 	public int num;
+	private final Function<Integer, Integer> setDragonSlotAction;
 
 	public DragonEditorSlotButton(int p_i232255_1_, int p_i232255_2_, int num, DragonEditorScreen parent){
 		super(p_i232255_1_, p_i232255_2_, 12, 12, Component.empty(), btn -> {}, DEFAULT_NARRATION);
 		this.num = num;
 		screen = parent;
+		setDragonSlotAction = slot -> {
+			int prevSlot = screen.currentSelected;
+			if(screen.dragonType != null){
+				DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(screen.dragonType.getTypeNameUpperCase(), t -> new HashMap<>());
+				DragonEditorRegistry.getSavedCustomizations().skinPresets.get(screen.dragonType.getTypeNameUpperCase()).put(screen.currentSelected, screen.preset);
+			}
+
+			screen.currentSelected = slot;
+			screen.update();
+			DragonEditorScreen.HANDLER.getSkinData().compileSkin();
+			return prevSlot;
+		};
 	}
 
 	@Override
 	public void onPress(){
-		if(screen.dragonType != null){
-			DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(screen.dragonType.getTypeNameUpperCase(), t -> new HashMap<>());
-			DragonEditorRegistry.getSavedCustomizations().skinPresets.get(screen.dragonType.getTypeNameUpperCase()).put(screen.currentSelected, screen.preset);
-		}
-
-		screen.currentSelected = num - 1;
-		screen.update();
-		DragonEditorScreen.HANDLER.getSkinData().compileSkin();
+		screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(setDragonSlotAction, num - 1));
 	}
 
 	@Override

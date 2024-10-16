@@ -22,8 +22,7 @@ public class DragonBodyButton extends Button {
 	public DragonBodyButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, AbstractDragonBody dragonBody, int pos, boolean locked) {
 		super(x, y, xSize, ySize, Component.literal(dragonBody.toString()), btn -> {
 			if (!locked) {
-				dragonEditorScreen.dragonBody = dragonBody;
-				dragonEditorScreen.update();
+				dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonBodySelectAction, dragonBody));
 			}
 		}, DEFAULT_NARRATION);
 		location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeNameLowerCase() + ".png");

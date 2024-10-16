@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:be_root_2",
+  "parent": "dragonsurvival:place_altar",
   "display": {
     "icon": {
       "id": "dragonsurvival:dragon_soul",
