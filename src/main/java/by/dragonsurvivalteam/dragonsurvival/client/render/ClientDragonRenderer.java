@@ -428,12 +428,15 @@ public class ClientDragonRenderer {
             // Body angle limits in certain circumstances
             final double BODY_ANGLE_LIMIT_TP = 180D - 30D;
             final double BODY_ANGLE_LIMIT_TP_SOFTNESS = 0.9D;
+            final double BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL = 0.15D;
 
             final double BODY_ANGLE_LIMIT_FP = 10D;
             final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.3D;
+            final double BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL = 0.4D;
 
             final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
             final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.8D;
+            final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL = 0.4D;
 
             // Handle bodyYaw
             double bodyYaw = movementData.bodyYaw;
@@ -470,18 +473,33 @@ public class ClientDragonRenderer {
                         posDeltaAngle);
             }
 
-            // Limit body angle based on view direction and PoV
-            if (isFirstPerson) {
-                if (isFreeLook) {
-                    bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_FP_FREE, realtimeDeltaTick * BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS);
+            {
+                // Limit body angle based on view direction and PoV
+                var angleLimit = 0D;
+                var factor = 0D;
+                var airMul = 1D;
+                if (isFirstPerson) {
+                    if (isFreeLook) {
+                        angleLimit = BODY_ANGLE_LIMIT_FP_FREE;
+                        factor = BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS;
+                        airMul = BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL;
+                    } else {
+                        angleLimit = BODY_ANGLE_LIMIT_FP;
+                        factor = BODY_ANGLE_LIMIT_FP_SOFTNESS;
+                        airMul = BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL;
+                    }
                 } else {
-                    bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_FP, realtimeDeltaTick * BODY_ANGLE_LIMIT_FP_SOFTNESS);
+                    // No restrictions in free look
+                    if (!isFreeLook) {
+                        angleLimit = BODY_ANGLE_LIMIT_TP;
+                        factor = BODY_ANGLE_LIMIT_TP_SOFTNESS;
+                        airMul = BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL;
+                    }
                 }
-            } else {
-                // No restrictions in free look
-                if (!isFreeLook) {
-                    bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_TP, realtimeDeltaTick * BODY_ANGLE_LIMIT_TP_SOFTNESS);
+                if (!player.onGround()) {
+                    factor *= airMul;
                 }
+                bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, angleLimit, realtimeDeltaTick * factor);
             }
             return bodyYaw;
         }
