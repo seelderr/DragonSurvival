@@ -395,7 +395,6 @@ public class ClientDragonRenderer {
             // Head yaw is relative to body
             DragonMovementData movementData = dragonStateHandler.getMovementData();
 
-            // TODO: use player input vector instead
             // Get pos delta since last tick - not scaled by realtimeDeltaTick
             var posDelta = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 
