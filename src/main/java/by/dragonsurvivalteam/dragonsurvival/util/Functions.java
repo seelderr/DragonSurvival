@@ -98,6 +98,34 @@ public class Functions {
         return RenderUtil.lerpYaw(pullCoeff, value, targetAngle);
     }
 
+    /**
+     * Lerps from start to end, but making sure to avoid a particular angle, potentially taking a longer path.
+     *
+     * @param t          Lerp factor
+     * @param start      Start angle
+     * @param end        End angle
+     * @param avoidAngle Angle to be avoided - the lerp will pass through the other arc.
+     * @return Linearly interpolated angle
+     */
+    public static double lerpAngleAwayFrom(double t, double start, double end, double avoidAngle) {
+        if (Math.abs(Mth.wrapDegrees(avoidAngle - end)) < 0.0001) {
+            // You're trying to go to the same angle that you're trying to avoid - too bad!
+            return RenderUtil.lerpYaw(t, start, end);
+        }
+
+        start = Mth.wrapDegrees(start);
+        end = Mth.wrapDegrees(end);
+        double diff = Mth.wrapDegrees(end - start);
+        double avoidDiff = Mth.wrapDegrees(avoidAngle - start);
+        var flipDir = Math.signum(diff) == Math.signum(avoidDiff) && Math.abs(diff) > Math.abs(avoidDiff);
+
+        if (flipDir) {
+            diff = Math.copySign(360 - Math.abs(diff), -diff);
+        }
+
+        return Mth.wrapDegrees(start + diff * t);
+    }
+
 
     public static ListTag newDoubleList(double... pNumbers) {
         ListTag listtag = new ListTag();
