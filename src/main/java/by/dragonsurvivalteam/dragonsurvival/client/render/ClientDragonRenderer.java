@@ -395,15 +395,14 @@ public class ClientDragonRenderer {
             // Head yaw is relative to body
             DragonMovementData movementData = dragonStateHandler.getMovementData();
 
-            Vec3 moveVector = player.getDeltaMovement();
-            if (ServerFlightHandler.isFlying(player)) {
-                moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-            }
+            // TODO: use player input vector instead
+            // Get pos delta since last tick - not scaled by realtimeDeltaTick
+            var posDelta = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
 
             var headAngles = calculateNextHeadAngles(realtimeDeltaTick, movementData, viewXRot, viewYRot);
 
             return new BodyAngles(
-                    calculateNextBodyYaw(realtimeDeltaTick, movementData, moveVector, viewYRot),
+                    calculateNextBodyYaw(realtimeDeltaTick, movementData, posDelta, viewYRot),
                     headAngles.getA(),
                     headAngles.getB()
             );
@@ -412,7 +411,7 @@ public class ClientDragonRenderer {
         private static double calculateNextBodyYaw(
                 float realtimeDeltaTick,
                 DragonMovementData movementData,
-                Vec3 moveVector,
+                Vec3 posDelta,
                 float viewYRot) {
 
             // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
@@ -431,12 +430,12 @@ public class ClientDragonRenderer {
             boolean isFreeLook = movementData.isFreeLook;
             boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
             boolean isFirstPerson = movementData.isFirstPerson;
-            boolean isMoving = moveVector.horizontalDistanceSqr() > MOVE_EPSILON;
+            boolean isMoving = posDelta.horizontalDistanceSqr() > MOVE_EPSILON;
 
 
             // +Z: 0 deg; -X: 90 deg
             // Actual move angle
-            double moveAngle = Math.toDegrees(Math.atan2(-moveVector.x, moveVector.z));
+            double moveAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
             // Move angle that the body will try to align to
             double targetMoveAngle = moveAngle;
 
