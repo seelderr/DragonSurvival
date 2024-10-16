@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3f;
+import software.bernie.geckolib.util.RenderUtil;
 
 public class Functions {
     public static int minutesToTicks(int minutes) {
@@ -79,6 +80,24 @@ public class Functions {
 
         return center + delta;
     }
+
+
+    /**
+     * @param value     Input angle
+     * @param center    Center angle of the range arc
+     * @param halfRange Half of the range arc. <= 0 always returns center, >= 180 always returns value (wrapped).
+     * @param pullCoeff Pull coefficient. Clamped to 0..1 (no limit..hard limit)
+     * @return Value, limited to be within +-halfRange of center.
+     * @see Functions#limitAngleDelta(double, double, double)
+     * <br/>
+     * Instead of strictly limiting the angle, this enforces a soft spring-like limit.
+     */
+    public static double limitAngleDeltaSoft(double value, double center, double halfRange, double pullCoeff) {
+        pullCoeff = Math.clamp(pullCoeff, 0, 1);
+        var targetAngle = limitAngleDelta(value, center, halfRange);
+        return RenderUtil.lerpYaw(pullCoeff, value, targetAngle);
+    }
+
 
     public static ListTag newDoubleList(double... pNumbers) {
         ListTag listtag = new ListTag();

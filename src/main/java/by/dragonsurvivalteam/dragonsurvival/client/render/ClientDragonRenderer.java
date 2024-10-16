@@ -419,12 +419,17 @@ public class ClientDragonRenderer {
 
             // Factor to align the body to the move vector
             final double MOVE_ALIGN_FACTOR = 0.4D;
-            // Factor to align the body to the view direction in first person
-            final double VIEW_ALIGN_FACTOR_FP = 0.3D;
+
 
             // Body angle limits in certain circumstances
-            final double BODY_ANGLE_LIMIT_TP = 180D - 20D;
+            final double BODY_ANGLE_LIMIT_TP = 180D - 30D;
+            final double BODY_ANGLE_LIMIT_TP_SOFTNESS = 0.9D;
+
+            final double BODY_ANGLE_LIMIT_FP = 10D;
+            final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.3D;
+
             final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
+            final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.8D;
 
             // Handle bodyYaw
             double bodyYaw = movementData.bodyYaw;
@@ -452,14 +457,14 @@ public class ClientDragonRenderer {
             // Limit body angle based on view direction and PoV
             if (isFirstPerson) {
                 if (isFreeLook) {
-                    bodyYaw = Functions.limitAngleDelta(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_FP_FREE);
+                    bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_FP_FREE, realtimeDeltaTick * BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS);
                 } else {
-                    bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * VIEW_ALIGN_FACTOR_FP, bodyYaw, viewYRot);
+                    bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_FP, realtimeDeltaTick * BODY_ANGLE_LIMIT_FP_SOFTNESS);
                 }
             } else {
                 // No restrictions in free look
                 if (!isFreeLook) {
-                    bodyYaw = Functions.limitAngleDelta(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_TP);
+                    bodyYaw = Functions.limitAngleDeltaSoft(bodyYaw, viewYRot, BODY_ANGLE_LIMIT_TP, realtimeDeltaTick * BODY_ANGLE_LIMIT_TP_SOFTNESS);
                 }
             }
             return bodyYaw;
