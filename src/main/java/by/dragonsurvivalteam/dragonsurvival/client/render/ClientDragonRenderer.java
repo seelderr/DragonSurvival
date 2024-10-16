@@ -51,6 +51,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -414,12 +415,15 @@ public class ClientDragonRenderer {
                 Vec3 posDelta,
                 float viewYRot) {
 
+            final double EPSILON = 0.0000001D;
+
             // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
             final double MOVE_EPSILON = 0.001D;
 
             // Factor to align the body to the move vector
-            final double MOVE_ALIGN_FACTOR = 0.4D;
-
+            final double MOVE_ALIGN_FACTOR = 0.3D;
+            final double MOVE_ALIGN_FACTOR_AIR = 0.2D;
+            final double MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL = 0.75D; // Multiplier for the above
 
             // Body angle limits in certain circumstances
             final double BODY_ANGLE_LIMIT_TP = 180D - 30D;
@@ -436,22 +440,34 @@ public class ClientDragonRenderer {
             boolean isFreeLook = movementData.isFreeLook;
             boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
             boolean isFirstPerson = movementData.isFirstPerson;
-            boolean isMoving = posDelta.horizontalDistanceSqr() > MOVE_EPSILON;
-            boolean isInputBack = player.zza < 0; // Looks at raw player input, zza is forward/backward
+            boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_EPSILON;
 
+            var rawInput = new Vec2(player.xxa, player.zza);
+            var hasMoveInput = rawInput.lengthSquared() > EPSILON;
+            boolean isInputBack = rawInput.y < 0;
 
-            // +Z: 0 deg; -X: 90 deg
-            // Move angle that the body will try to align to
-            double targetMoveAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
+            if (hasMoveInput) {
+                // When providing move input, turn the body towards the input direction
+                var targetAngle = Math.toDegrees(Math.atan2(-rawInput.x, rawInput.y)) + viewYRot;
 
-            // If in first person and moving back, flip the target move angle
-            if (isFirstPerson && !isFreeLook && isInputBack) {
-                targetMoveAngle += 180;
-            }
+                // If in first person and moving back, flip the target angle
+                if (isFirstPerson && !isFreeLook && isInputBack) {
+                    targetAngle += 180;
+                }
 
-            // When moving, turn the body towards the move direction
-            if (isMoving) {
-                bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * MOVE_ALIGN_FACTOR, bodyYaw, targetMoveAngle);
+                var factor = player.onGround() ? MOVE_ALIGN_FACTOR : MOVE_ALIGN_FACTOR_AIR;
+                bodyYaw = RenderUtil.lerpYaw(realtimeDeltaTick * factor, bodyYaw, targetAngle);
+            } else if (hasPosDelta && !player.onGround()) {
+                // When moving without input and in the air, slowly align to the move vector
+
+                // +Z: 0 deg; -X: 90 deg
+                // Move angle that the body will try to align to
+                double posDeltaAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
+
+                bodyYaw = RenderUtil.lerpYaw(
+                        realtimeDeltaTick * MOVE_ALIGN_FACTOR_AIR * MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL,
+                        bodyYaw,
+                        posDeltaAngle);
             }
 
             // Limit body angle based on view direction and PoV
