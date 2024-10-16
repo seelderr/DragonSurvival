@@ -417,15 +417,16 @@ public class ClientDragonRenderer {
 
             // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
             final double MOVE_EPSILON = 0.001D;
-            // Difference between the move and view vectors needed to flip the move vector in first person
-            final double VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT = 95D;
 
             // Factor to align the body to the move vector
             final double MOVE_ALIGN_FACTOR = 0.4D;
+            // Factor to align the body to the view direction in first person
+            final double VIEW_ALIGN_FACTOR_FP = 0.3D;
 
+            // Body angle limits in certain circumstances
             final double BODY_ANGLE_LIMIT_TP = 180D - 20D;
             final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
-            final double VIEW_ALIGN_FACTOR_FP = 0.3D;
+
             // Handle bodyYaw
             double bodyYaw = movementData.bodyYaw;
             boolean isFreeLook = movementData.isFreeLook;
