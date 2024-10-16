@@ -402,7 +402,7 @@ public class ClientDragonRenderer {
             var headAngles = calculateNextHeadAngles(realtimeDeltaTick, movementData, viewXRot, viewYRot);
 
             return new BodyAngles(
-                    calculateNextBodyYaw(realtimeDeltaTick, movementData, posDelta, viewYRot),
+                    calculateNextBodyYaw(realtimeDeltaTick, player, movementData, posDelta, viewYRot),
                     headAngles.getA(),
                     headAngles.getB()
             );
@@ -410,6 +410,7 @@ public class ClientDragonRenderer {
 
         private static double calculateNextBodyYaw(
                 float realtimeDeltaTick,
+                Player player,
                 DragonMovementData movementData,
                 Vec3 posDelta,
                 float viewYRot) {
@@ -431,20 +432,16 @@ public class ClientDragonRenderer {
             boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
             boolean isFirstPerson = movementData.isFirstPerson;
             boolean isMoving = posDelta.horizontalDistanceSqr() > MOVE_EPSILON;
+            boolean isInputBack = player.zza < 0; // Looks at raw player input, zza is forward/backward
 
 
             // +Z: 0 deg; -X: 90 deg
-            // Actual move angle
-            double moveAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
             // Move angle that the body will try to align to
-            double targetMoveAngle = moveAngle;
+            double targetMoveAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
 
             // If in first person and moving back, flip the target move angle
-            if (isFirstPerson && !isFreeLook) {
-                // TODO look at player inputs rather than actual move direction?
-                if (Math.abs(Functions.angleDifference(moveAngle, viewYRot)) > VIEW_ANGLE_DELTA_FOR_BACKWARD_MOVEMENT) {
-                    targetMoveAngle += 180;
-                }
+            if (isFirstPerson && !isFreeLook && isInputBack) {
+                targetMoveAngle += 180;
             }
 
             // When moving, turn the body towards the move direction
