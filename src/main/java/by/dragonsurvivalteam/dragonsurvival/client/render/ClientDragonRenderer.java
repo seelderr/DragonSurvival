@@ -454,8 +454,10 @@ public class ClientDragonRenderer {
                 // When providing move input, turn the body towards the input direction
                 var targetAngle = Math.toDegrees(Math.atan2(-rawInput.x, rawInput.y)) + viewYRot;
 
-                // If in first person and moving back, flip the target angle
-                if (isFirstPerson && !isFreeLook && isInputBack) {
+                // If in first person and moving back when not flying, flip the target angle
+                // Checks dragon flight or creative/spectator flight
+                var isFlying = ServerFlightHandler.isFlying(player) || player.getAbilities().flying;
+                if (isFirstPerson && !isFreeLook && isInputBack && !isFlying) {
                     targetAngle += 180;
                 }
 
