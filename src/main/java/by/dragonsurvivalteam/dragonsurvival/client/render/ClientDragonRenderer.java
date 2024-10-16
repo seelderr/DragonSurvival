@@ -470,6 +470,7 @@ public class ClientDragonRenderer {
                 DragonMovementData movementData,
                 float viewXRot,
                 float viewYRot) {
+            // Yaw is relative to the body
             double headYaw = Functions.angleDifference(
                     viewYRot,
                     movementData.bodyYaw
@@ -477,7 +478,9 @@ public class ClientDragonRenderer {
 //            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
 
             // Handle headPitch
-            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, movementData.headPitch, viewXRot);
+//            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, movementData.headPitch, viewXRot);
+            // Pitch is also technically relative, since the body doesn't have pitch
+            double headPitch = viewXRot;
             return new Tuple<>(headPitch, headYaw);
         }
     }
