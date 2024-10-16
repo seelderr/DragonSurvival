@@ -418,11 +418,12 @@ public class ClientDragonRenderer {
             final double EPSILON = 0.0000001D;
 
             // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
-            final double MOVE_EPSILON = 0.001D;
+            final double MOVE_DELTA_EPSILON = 0.0001D;
+            final double MOVE_DELTA_FULL_EFFECT_MIN_MAG = 0.3D;
 
             // Factor to align the body to the move vector
             final double MOVE_ALIGN_FACTOR = 0.3D;
-            final double MOVE_ALIGN_FACTOR_AIR = 0.2D;
+            final double MOVE_ALIGN_FACTOR_AIR = 0.12D;
             final double MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL = 0.75D; // Multiplier for the above
 
             // Body angle limits in certain circumstances
@@ -443,7 +444,7 @@ public class ClientDragonRenderer {
             boolean isFreeLook = movementData.isFreeLook;
             boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
             boolean isFirstPerson = movementData.isFirstPerson;
-            boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_EPSILON;
+            boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_DELTA_EPSILON;
 
             var rawInput = new Vec2(player.xxa, player.zza);
             var hasMoveInput = rawInput.lengthSquared() > EPSILON;
@@ -465,10 +466,17 @@ public class ClientDragonRenderer {
 
                 // +Z: 0 deg; -X: 90 deg
                 // Move angle that the body will try to align to
-                double posDeltaAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
+                var posDeltaAngle = Math.toDegrees(Math.atan2(-posDelta.x, posDelta.z));
+
+                var factor = MOVE_ALIGN_FACTOR_AIR * MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL;
+                double deltaMagFactor = Math.min(
+                        1,
+                        (posDelta.length() - MOVE_DELTA_EPSILON) / MOVE_DELTA_FULL_EFFECT_MIN_MAG
+                );
+                factor *= deltaMagFactor;
 
                 bodyYaw = RenderUtil.lerpYaw(
-                        realtimeDeltaTick * MOVE_ALIGN_FACTOR_AIR * MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL,
+                        realtimeDeltaTick * factor,
                         bodyYaw,
                         posDeltaAngle);
             }
