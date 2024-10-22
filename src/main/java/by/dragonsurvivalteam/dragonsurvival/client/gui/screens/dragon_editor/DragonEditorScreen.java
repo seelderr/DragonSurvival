@@ -401,14 +401,10 @@ public class DragonEditorScreen extends Screen {
 			if (dragonBody == null) {
 				dragonBody = DragonBodies.getStatic("center");
 			}
-		} else {
-			dragonBody = this.dragonBody;
 		}
 
 		if (level == null) {
 			level = DragonLevel.NEWBORN;
-		} else {
-			level = this.level;
 		}
 
 		String type = dragonType.getTypeNameUpperCase();
