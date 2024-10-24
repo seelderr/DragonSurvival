@@ -414,6 +414,10 @@ public class ClientDragonRenderer {
         static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.8D;
         static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL = 0.4D;
 
+        // Head angle values
+        static final double HEAD_YAW_FACTOR = 0.3D;
+        static final double HEAD_PITCH_FACTOR = 0.3D;
+
         public static BodyAngles calculateNext(Player player, DragonStateHandler dragonStateHandler, float realtimeDeltaTick) {
             // Handle headYaw
             float viewYRot = player.getViewYRot(realtimeDeltaTick);
@@ -529,16 +533,24 @@ public class ClientDragonRenderer {
                 float viewXRot,
                 float viewYRot) {
             // Yaw is relative to the body
-            double headYaw = Functions.angleDifference(
+            double headYawTarget = Functions.angleDifference(
                     viewYRot,
                     movementData.bodyYaw
             );
-//            headYaw = RenderUtil.lerpYaw(realtimeDeltaTick * 0.25, playerStateHandler.getMovementData().headYaw, headYaw);
+            double headYaw = Functions.lerpAngleAwayFrom(
+                    realtimeDeltaTick * HEAD_YAW_FACTOR,
+                    movementData.headYaw,
+                    headYawTarget,
+                    180
+            );
 
-            // Handle headPitch
-//            double headPitch = Mth.lerp(realtimeDeltaTick * 0.25, movementData.headPitch, viewXRot);
             // Pitch is also technically relative, since the body doesn't have pitch
-            double headPitch = viewXRot;
+            double headPitch = Mth.lerp(
+                    realtimeDeltaTick * HEAD_PITCH_FACTOR,
+                    movementData.headPitch,
+                    viewXRot
+            );
+
             return new Tuple<>(headPitch, headYaw);
         }
     }
