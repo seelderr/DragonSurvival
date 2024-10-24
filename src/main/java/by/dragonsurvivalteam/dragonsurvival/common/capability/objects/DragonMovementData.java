@@ -21,7 +21,7 @@ public class DragonMovementData{
 	public float prevXRot = 0;
 	public float prevZRot = 0;
 
-	public Vec2 desiredMoveVec;
+	public Vec2 desiredMoveVec = Vec2.ZERO;
 
 	public boolean isFirstPerson = false;
 	public boolean isFreeLook = false;
