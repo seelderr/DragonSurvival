@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
+import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -415,16 +416,28 @@ public class ClientDragonRenderer {
         if (player != null) {
             DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
                 if (playerStateHandler.isDragon()) {
-                    DragonMovementData md = playerStateHandler.getMovementData();
+                    Input input = player.input;
                     playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
                     playerStateHandler.setFreeLook(Keybind.FREE_LOOK.isDown());
+                    playerStateHandler.setDesiredMoveVec(new Vec2(input.leftImpulse, input.forwardImpulse));
                     if (player.isPassenger()) {
                         // Prevent animation jank while we are riding an entity
                         PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
                     } else {
                         PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
                     }
-                    PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite, md.isFreeLook));
+
+                    DragonMovementData md = playerStateHandler.getMovementData();
+                    PacketDistributor.sendToServer(
+                            new SyncDragonMovement.Data(
+                                    player.getId(),
+                                    md.isFirstPerson,
+                                    md.bite,
+                                    md.isFreeLook,
+                                    md.desiredMoveVec.x,
+                                    md.desiredMoveVec.y
+                            )
+                    );
                 }
             });
         }
@@ -519,7 +532,7 @@ public class ClientDragonRenderer {
             boolean isFirstPerson = movementData.isFirstPerson;
             boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_DELTA_EPSILON;
 
-            var rawInput = new Vec2(player.xxa, player.zza);
+            var rawInput = movementData.desiredMoveVec;
             var hasMoveInput = rawInput.lengthSquared() > EPSILON;
             boolean isInputBack = rawInput.y < 0;
 
