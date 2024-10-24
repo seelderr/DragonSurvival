@@ -475,11 +475,11 @@ public class ClientDragonRenderer {
         static final double BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL = 0.15D;
 
         static final double BODY_ANGLE_LIMIT_FP = 10D;
-        static final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.3D;
+        static final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.75D;
         static final double BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL = 0.4D;
 
-        static final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
-        static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.8D;
+        static final double BODY_ANGLE_LIMIT_FP_FREE = 60D;
+        static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.85D;
         static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL = 0.4D;
 
         // Head angle values
