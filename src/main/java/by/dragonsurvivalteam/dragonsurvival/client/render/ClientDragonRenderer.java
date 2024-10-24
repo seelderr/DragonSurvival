@@ -465,32 +465,66 @@ public class ClientDragonRenderer {
 
     private record BodyAngles(double bodyYaw, double headPitch, double headYaw) {
 
-        static final double EPSILON = 0.0000001D;
+        /// Minimum magnitude for player input to consider the player to be moving
+        /// This is used for deliberate movement, i.e. player input
+        /// Forced movement (mid-air momentum etc.) relies on MOVE_DELTA_EPSILON for the world-space move delta vector
+        static final double INPUT_EPSILON = 0.0000001D;
 
-        // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
+        /// Minimum magnitude to consider the player to be moving (horizontally)
+        /// Applies to world-space horizontal movement (as opposed to raw player input)
         static final double MOVE_DELTA_EPSILON = 0.0001D;
+
+        /// When moving (without input) too slower, the body aligns to the move direction slower too.
+        /// This constant determines the move vector magnitude below which it begins to slow down.
+        /// The body stops aligning below MOVE_DELTA_EPSILON,
+        /// and aligns at full speed above MOVE_DELTA_FULL_EFFECT_MIN_MAG.
         static final double MOVE_DELTA_FULL_EFFECT_MIN_MAG = 0.3D;
 
-        // Factor to align the body to the move vector
+        /// Factor to align the body to the move vector
         static final double MOVE_ALIGN_FACTOR = 0.3D;
+        /// Multiplier for MOVE_ALIGN_FACTOR when in the air
         static final double MOVE_ALIGN_FACTOR_AIR = 0.12D;
+        /// Multiplier for MOVE_ALIGN_FACTOR * MOVE_ALIGN_FACTOR_AIR when there's no player input
         static final double MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL = 0.75D; // Multiplier for the above
 
-        // Body angle limits in certain circumstances
+        // Body angle limits in various circumstances
+        // 0 is straight ahead, 180 is no restriction
+
+        /// Body angle limits: Third person
         static final double BODY_ANGLE_LIMIT_TP = 180D - 30D;
+        /// Body angle limit softness: Third person
         static final double BODY_ANGLE_LIMIT_TP_SOFTNESS = 0.9D;
+        /// Body angle limit softness, multiplier when in the air: Third person
         static final double BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL = 0.15D;
 
+        // Third person + free look is unrestricted
+        /// Body angle limits: Third person, free look
+        static final double BODY_ANGLE_LIMIT_TP_FREE = 180D;
+        /// Body angle limit softness: Third person, free look
+        static final double BODY_ANGLE_LIMIT_TP_SOFTNESS_FREE = 0D;
+        /// Body angle limit softness, multiplier when in the air: Third person, free look
+        static final double BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL_FREE = 0D;
+
+        /// Body angle limits: First person
         static final double BODY_ANGLE_LIMIT_FP = 10D;
+        /// Body angle limit softness: First person
         static final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.75D;
+        /// Body angle limit softness, multiplier when in the air: First person
         static final double BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL = 0.4D;
 
+        /// Body angle limits: First person, free look
         static final double BODY_ANGLE_LIMIT_FP_FREE = 60D;
+        /// Body angle limit softness: First person, free look
         static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.85D;
+        /// Body angle limit softness, multiplier when in the air: First person, free look
         static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL = 0.4D;
 
         // Head angle values
+        // Head yaw has no angle limits defined here, but avoids passing through 180 (behind the player)
+
+        /// Head yaw lerp factor
         static final double HEAD_YAW_FACTOR = 0.3D;
+        /// Head yaw pitch factor
         static final double HEAD_PITCH_FACTOR = 0.3D;
 
         public static BodyAngles calculateNext(Player player, DragonStateHandler dragonStateHandler, float realtimeDeltaTick) {
@@ -524,10 +558,10 @@ public class ClientDragonRenderer {
             boolean isFreeLook = movementData.isFreeLook;
             boolean wasFreeLook = movementData.wasFreeLook; // TODO: what's this for?
             boolean isFirstPerson = movementData.isFirstPerson;
-            boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_DELTA_EPSILON;
+            boolean hasPosDelta = posDelta.horizontalDistanceSqr() > MOVE_DELTA_EPSILON * MOVE_DELTA_EPSILON;
 
             var rawInput = movementData.desiredMoveVec;
-            var hasMoveInput = rawInput.lengthSquared() > EPSILON;
+            var hasMoveInput = rawInput.lengthSquared() > INPUT_EPSILON * INPUT_EPSILON;
             boolean isInputBack = rawInput.y < 0;
 
             if (hasMoveInput) {
@@ -561,7 +595,7 @@ public class ClientDragonRenderer {
                 var factor = MOVE_ALIGN_FACTOR_AIR * MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL;
                 double deltaMagFactor = Math.min(
                         1,
-                        (posDelta.length() - MOVE_DELTA_EPSILON) / MOVE_DELTA_FULL_EFFECT_MIN_MAG
+                        (posDelta.horizontalDistance() - MOVE_DELTA_EPSILON) / MOVE_DELTA_FULL_EFFECT_MIN_MAG
                 );
                 factor *= deltaMagFactor;
 
@@ -587,8 +621,11 @@ public class ClientDragonRenderer {
                         airMul = BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL;
                     }
                 } else {
-                    // No restrictions in free look
-                    if (!isFreeLook) {
+                    if (isFreeLook) {
+                        angleLimit = BODY_ANGLE_LIMIT_TP_FREE;
+                        factor = BODY_ANGLE_LIMIT_TP_SOFTNESS_FREE;
+                        airMul = BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL_FREE;
+                    } else {
                         angleLimit = BODY_ANGLE_LIMIT_TP;
                         factor = BODY_ANGLE_LIMIT_TP_SOFTNESS;
                         airMul = BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL;
