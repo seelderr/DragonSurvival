@@ -561,8 +561,10 @@ public class ClientDragonRenderer {
         DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
             if (!playerStateHandler.isDragon()) return;
 
-            Vec3 moveVector = player.getDeltaMovement();
-            if (ServerFlightHandler.isFlying(player)) {
+            Vec3 moveVector;
+            if (!ServerFlightHandler.isFlying(player)) {
+                moveVector = player.getDeltaMovement();
+            } else {
                 moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
             }
 
