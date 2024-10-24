@@ -389,6 +389,31 @@ public class ClientDragonRenderer {
     }
 
     private record BodyAngles(double bodyYaw, double headPitch, double headYaw) {
+
+        static final double EPSILON = 0.0000001D;
+
+        // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
+        static final double MOVE_DELTA_EPSILON = 0.0001D;
+        static final double MOVE_DELTA_FULL_EFFECT_MIN_MAG = 0.3D;
+
+        // Factor to align the body to the move vector
+        static final double MOVE_ALIGN_FACTOR = 0.3D;
+        static final double MOVE_ALIGN_FACTOR_AIR = 0.12D;
+        static final double MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL = 0.75D; // Multiplier for the above
+
+        // Body angle limits in certain circumstances
+        static final double BODY_ANGLE_LIMIT_TP = 180D - 30D;
+        static final double BODY_ANGLE_LIMIT_TP_SOFTNESS = 0.9D;
+        static final double BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL = 0.15D;
+
+        static final double BODY_ANGLE_LIMIT_FP = 10D;
+        static final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.3D;
+        static final double BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL = 0.4D;
+
+        static final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
+        static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.8D;
+        static final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL = 0.4D;
+
         public static BodyAngles calculateNext(Player player, DragonStateHandler dragonStateHandler, float realtimeDeltaTick) {
             // Handle headYaw
             float viewYRot = player.getViewYRot(realtimeDeltaTick);
@@ -414,30 +439,6 @@ public class ClientDragonRenderer {
                 DragonMovementData movementData,
                 Vec3 posDelta,
                 float viewYRot) {
-
-            final double EPSILON = 0.0000001D;
-
-            // Minimum (square) magnitude to consider the player to be moving (horizontally); shouldn't be too small
-            final double MOVE_DELTA_EPSILON = 0.0001D;
-            final double MOVE_DELTA_FULL_EFFECT_MIN_MAG = 0.3D;
-
-            // Factor to align the body to the move vector
-            final double MOVE_ALIGN_FACTOR = 0.3D;
-            final double MOVE_ALIGN_FACTOR_AIR = 0.12D;
-            final double MOVE_ALIGN_FACTOR_AIR_PASSIVE_MUL = 0.75D; // Multiplier for the above
-
-            // Body angle limits in certain circumstances
-            final double BODY_ANGLE_LIMIT_TP = 180D - 30D;
-            final double BODY_ANGLE_LIMIT_TP_SOFTNESS = 0.9D;
-            final double BODY_ANGLE_LIMIT_TP_SOFTNESS_AIR_MUL = 0.15D;
-
-            final double BODY_ANGLE_LIMIT_FP = 10D;
-            final double BODY_ANGLE_LIMIT_FP_SOFTNESS = 0.3D;
-            final double BODY_ANGLE_LIMIT_FP_SOFTNESS_AIR_MUL = 0.4D;
-
-            final double BODY_ANGLE_LIMIT_FP_FREE = 90D + 15D;
-            final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS = 0.8D;
-            final double BODY_ANGLE_LIMIT_FP_FREE_SOFTNESS_AIR_MUL = 0.4D;
 
             // Handle bodyYaw
             double bodyYaw = movementData.bodyYaw;
