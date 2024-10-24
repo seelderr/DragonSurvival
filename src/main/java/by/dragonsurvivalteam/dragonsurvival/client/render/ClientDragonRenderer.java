@@ -163,9 +163,7 @@ public class ClientDragonRenderer {
         }
     }
 
-    /**
-     * Amount of client ticks the player model will not be rendered if the player was recently a dragon (to avoid player model pop-up after respawning)
-     */
+    /** Amount of client ticks the player model will not be rendered if the player was recently a dragon (to avoid player model pop-up after respawning) */
     private static final int MAX_DELAY = 10;
     private static int renderDelay;
 
@@ -177,9 +175,7 @@ public class ClientDragonRenderer {
         }
     }
 
-    /**
-     * Called for every player
-     */
+    /** Called for every player */
     @SubscribeEvent
     public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
         if (!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)) {
@@ -443,9 +439,7 @@ public class ClientDragonRenderer {
         }
     }
 
-    /**
-     * Don't render fire overlay for cave dragons
-     */
+    /** Don't render fire overlay for cave dragons */
     @SubscribeEvent
     public static void removeFireOverlay(RenderBlockScreenEffectEvent event) {
         if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE) {

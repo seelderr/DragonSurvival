@@ -4,8 +4,9 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.growth;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncGrowthState;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import java.util.List;
+
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
