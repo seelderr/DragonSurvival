@@ -388,6 +388,74 @@ public class ClientDragonRenderer {
         }
     }
 
+    public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
+        if (player == null) return;
+
+        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+            if (!playerStateHandler.isDragon()) return;
+
+            Vec3 moveVector;
+            if (!ServerFlightHandler.isFlying(player)) {
+                moveVector = player.getDeltaMovement();
+            } else {
+                moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
+            }
+
+            // Get new body yaw & head angles
+            var newAngles = BodyAngles.calculateNext(player, playerStateHandler, realtimeDeltaTick);
+
+            // Update the movement data
+            playerStateHandler.setMovementData(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector, realtimeDeltaTick);
+        });
+    }
+
+    @SubscribeEvent
+    public static void updateFirstPersonDataAndSendMovementData(ClientTickEvent.Pre event) {
+        LocalPlayer player = Minecraft.getInstance().player;
+        if (player != null) {
+            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+                if (playerStateHandler.isDragon()) {
+                    DragonMovementData md = playerStateHandler.getMovementData();
+                    playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
+                    playerStateHandler.setFreeLook(Keybind.FREE_LOOK.isDown());
+                    if (player.isPassenger()) {
+                        // Prevent animation jank while we are riding an entity
+                        PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
+                    } else {
+                        PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
+                    }
+                    PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite, md.isFreeLook));
+                }
+            });
+        }
+    }
+
+    /**
+     * Don't render fire overlay for cave dragons
+     */
+    @SubscribeEvent
+    public static void removeFireOverlay(RenderBlockScreenEffectEvent event) {
+        if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE) {
+            return;
+        }
+
+        DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(handler -> {
+            if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+                event.setCanceled(true);
+            }
+        });
+    }
+
+    @SubscribeEvent
+    public static void calculateRealtimeDeltaTick(RenderFrameEvent.Pre event) {
+        deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();
+    }
+
+    @SubscribeEvent
+    public static void unloadWorld(LevelEvent.Unload worldEvent) {
+        playerDragonHashMap.clear();
+    }
+
     private record BodyAngles(double bodyYaw, double headPitch, double headYaw) {
 
         static final double EPSILON = 0.0000001D;
@@ -555,71 +623,7 @@ public class ClientDragonRenderer {
         }
     }
 
-    public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
-        if (player == null) return;
-
-        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-            if (!playerStateHandler.isDragon()) return;
-
-            Vec3 moveVector;
-            if (!ServerFlightHandler.isFlying(player)) {
-                moveVector = player.getDeltaMovement();
-            } else {
-                moveVector = new Vec3(player.getX() - player.xo, player.getY() - player.yo, player.getZ() - player.zo);
-            }
-
-            // Get new body yaw & head angles
-            var newAngles = BodyAngles.calculateNext(player, playerStateHandler, realtimeDeltaTick);
-
-            // Update the movement data
-            playerStateHandler.setMovementData(newAngles.bodyYaw, newAngles.headYaw, newAngles.headPitch, moveVector, realtimeDeltaTick);
-        });
-    }
-
-    @SubscribeEvent
-    public static void updateFirstPersonDataAndSendMovementData(ClientTickEvent.Pre event) {
-        LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null) {
-            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
-                if (playerStateHandler.isDragon()) {
-                    DragonMovementData md = playerStateHandler.getMovementData();
-                    playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
-                    playerStateHandler.setFreeLook(Keybind.FREE_LOOK.isDown());
-                    if (player.isPassenger()) {
-                        // Prevent animation jank while we are riding an entity
-                        PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), 0, 0, 0));
-                    } else {
-                        PacketDistributor.sendToServer(new SyncDeltaMovement.Data(player.getId(), player.getDeltaMovement().x, player.getDeltaMovement().y, player.getDeltaMovement().z));
-                    }
-                    PacketDistributor.sendToServer(new SyncDragonMovement.Data(player.getId(), md.isFirstPerson, md.bite, md.isFreeLook));
-                }
-            });
-        }
-    }
-
-    /**
-     * Don't render fire overlay for cave dragons
-     */
-    @SubscribeEvent
-    public static void removeFireOverlay(RenderBlockScreenEffectEvent event) {
-        if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE) {
-            return;
-        }
-
-        DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(handler -> {
-            if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
-                event.setCanceled(true);
-            }
-        });
-    }
-
-    @SubscribeEvent
-    public static void calculateRealtimeDeltaTick(RenderFrameEvent.Pre event) {
-        deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();
-    }
-
-    @SubscribeEvent
-    public static void unloadWorld(LevelEvent.Unload worldEvent) {
-        playerDragonHashMap.clear();
-    }
 }
+
+
+
