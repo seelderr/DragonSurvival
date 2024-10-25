@@ -83,7 +83,7 @@ public class ServerFlightHandler{
 		LivingEntity livingEntity = event.getEntity();
 		double flightSpeed = event.getDistance();
 
-		DragonStateProvider.getCap(livingEntity).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(livingEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && dragonStateHandler.hasFlight()){
 				try{
 					if (!enableFlightFallDamage) {
@@ -136,7 +136,7 @@ public class ServerFlightHandler{
 			return;
 		}
 
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
 
 		if(dragonStateHandler.isWingsSpread()){
 			player.fallDistance = Math.max(0, player.fallDistance * 0.5f);
@@ -155,15 +155,15 @@ public class ServerFlightHandler{
 		}
 	}
 
-	public static boolean isFlying(LivingEntity player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+	public static boolean isFlying(Player player){
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
 		return dragonStateHandler.hasFlight() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
 	}
 
 	@SubscribeEvent
 	public static void playerFlightIcon(PlayerTickEvent.Post playerTickEvent){
 		Player player = playerTickEvent.getEntity();
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
+		DragonStateProvider.getOptional(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(player.tickCount % 10 == 0){
 					if(handler.isWingsSpread()){
@@ -201,7 +201,7 @@ public class ServerFlightHandler{
 	public static void playerFlightAttacks(PlayerTickEvent.Post playerTickEvent){
 
 		Player player = playerTickEvent.getEntity();
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
+		DragonStateProvider.getOptional(player).ifPresent(handler -> {
 			if(handler.isDragon()){
 				if(handler.getMovementData().spinAttack > 0){
 					if(!isFlying(player) && !canSwimSpin(player)){
@@ -247,7 +247,7 @@ public class ServerFlightHandler{
 	}
 
 	public static boolean isSpin(Player entity){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
+		DragonStateHandler handler = DragonStateProvider.getData(entity);
 
 		if(isFlying(entity) || canSwimSpin(entity)){
 			return handler.getMovementData().spinAttack > 0;
@@ -256,8 +256,8 @@ public class ServerFlightHandler{
 		return false;
 	}
 
-	public static boolean canSwimSpin(LivingEntity player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+	public static boolean canSwimSpin(Player player){
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
 		boolean validSwim = (Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) || Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE);
 		return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
 	}
@@ -270,7 +270,7 @@ public class ServerFlightHandler{
 	public static void playerFoodExhaustion(PlayerTickEvent.Post playerTickEvent){
 		Player player = playerTickEvent.getEntity();
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				boolean wingsSpread = dragonStateHandler.isWingsSpread();
 
@@ -303,7 +303,7 @@ public class ServerFlightHandler{
 	}
 
 	public static boolean isGliding(Player player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
 		boolean hasFood = player.getFoodData().getFoodLevel() > flightHungerThreshold || player.isCreative();
 		return hasFood && player.isSprinting() && isFlying(player);
 	}

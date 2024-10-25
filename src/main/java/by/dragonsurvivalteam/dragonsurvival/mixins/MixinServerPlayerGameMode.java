@@ -20,7 +20,7 @@ public class MixinServerPlayerGameMode {
     @ModifyExpressionValue(method = "destroyBlock", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/block/state/BlockState;canHarvestBlock(Lnet/minecraft/world/level/BlockGetter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/entity/player/Player;)Z"))
     private boolean canHarvestBlock(boolean originalResult, @Local(ordinal = 1) BlockState state) {
         if (!originalResult) {
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+            DragonStateHandler handler = DragonStateProvider.getData(player);
             if (handler.isDragon()) {
                 return handler.canHarvestWithPaw(state);
             }

@@ -58,7 +58,7 @@ public class DragonPenaltyHandler{
 					continue;
 				}
 
-				DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+				DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
 						if(dragonStateHandler.getType() == null || !Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
 							return;
@@ -78,7 +78,7 @@ public class DragonPenaltyHandler{
 
 		ItemStack itemStack = destroyItemEvent.getItem();
 
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				List<String> hurtfulItems = new ArrayList<>(
 						Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
@@ -100,7 +100,7 @@ public class DragonPenaltyHandler{
 			return;
 		}
 		ItemStack itemStack = destroyItemEvent.getItem();
-		DragonStateProvider.getCap(destroyItemEvent.getEntity()).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(destroyItemEvent.getEntity()).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && dragonStateHandler.getType() instanceof SeaDragonType seaDragonType){
 				Player player = (Player)destroyItemEvent.getEntity();
 				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
@@ -129,7 +129,7 @@ public class DragonPenaltyHandler{
 		}
 
 		Player player = event.getEntity();
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				ItemStack mainHandItem = player.getMainHandItem();
 				ItemStack offHandItem = player.getOffhandItem();

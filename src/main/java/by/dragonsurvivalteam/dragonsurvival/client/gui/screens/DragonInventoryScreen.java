@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
@@ -18,6 +20,9 @@ import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import java.awt.*;
+import java.util.*;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -33,12 +38,6 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonInventoryScreen extends EffectRenderingInventoryScreen<DragonContainer>{
 	public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/inventory_button.png");
@@ -90,7 +89,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		super(screenContainer, inv, titleIn);
 		player = inv.player;
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
+		DragonStateProvider.getOptional(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
 
 		imageWidth = 203;
 		imageHeight = 166;
@@ -109,7 +108,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
 		leftPos = (width - imageWidth) / 2;
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.TabType.INVENTORY, this));
 		addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.TabType.ABILITY, this));
@@ -122,7 +121,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 			init();
 
 			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenu));
-			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
+			DragonStateProvider.getOptional(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
 		}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -159,7 +158,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		{
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getData(player);
 
 				if (handler.getClawToolData().shouldRenderClaws) {
 					guiGraphics.pose().pushPose();
@@ -199,7 +198,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		RenderSystem.disableBlend();
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		int scissorY1 = topPos + 77;
 		int scissorX1 = leftPos + 101;
@@ -296,7 +295,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		if (isGrowthIconHovered) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			String age = (int)handler.getSize() - handler.getLevel().size + "/";
 			double seconds = 0;

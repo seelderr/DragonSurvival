@@ -32,7 +32,7 @@ public class ClientMagicHandler{
 	public static void onFovEvent(ComputeFovModifierEvent event){
 		Player player = event.getPlayer();
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(player).ifPresent(cap -> {
 			if(Arrays.stream(cap.getEmoteData().currentEmotes).anyMatch(Objects::nonNull) && DragonStateProvider.isDragon(player)){
 				event.setNewFovModifier(1f);
 				return;

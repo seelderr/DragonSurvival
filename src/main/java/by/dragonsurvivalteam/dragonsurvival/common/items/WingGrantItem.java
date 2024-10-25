@@ -24,7 +24,7 @@ public class WingGrantItem extends Item{
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		if(handler.isDragon()){
 			if(!world.isClientSide){

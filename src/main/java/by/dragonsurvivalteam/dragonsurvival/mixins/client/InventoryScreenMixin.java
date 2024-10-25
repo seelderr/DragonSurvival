@@ -40,7 +40,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
             newEntity = entity;
         }
 
-        DragonStateProvider.getCap(newEntity).ifPresentOrElse(cap -> {
+        DragonStateProvider.getOptional(newEntity).ifPresentOrElse(cap -> {
             if (cap.isDragon()) {
                 double bodyYaw = cap.getMovementData().bodyYaw;
                 double headYaw = cap.getMovementData().headYaw;

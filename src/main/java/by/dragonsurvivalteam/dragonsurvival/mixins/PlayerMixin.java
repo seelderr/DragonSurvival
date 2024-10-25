@@ -53,7 +53,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
 	@Inject(method = "isImmobile", at = @At("HEAD"), cancellable = true)
 	private void castMovement(CallbackInfoReturnable<Boolean> callback) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(this);
+		DragonStateHandler handler = DragonStateProvider.getData((Player) (Object) this);
 
 		if (!isDeadOrDying() && !isSleeping()) {
 			if (!ServerConfig.canMoveWhileCasting) {
@@ -73,7 +73,7 @@ public abstract class PlayerMixin extends LivingEntity {
 	/** Allow treasure blocks to trigger sleep logic */
 	@Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
 	public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> callback) {
-		DragonStateProvider.getCap(this).ifPresent(handler -> {
+		DragonStateProvider.getOptional(this).ifPresent(handler -> {
 			if (handler.isDragon() && handler.treasureResting && handler.treasureSleepTimer >= 100) {
 				callback.setReturnValue(true);
 			}
@@ -81,16 +81,17 @@ public abstract class PlayerMixin extends LivingEntity {
 	}
 
 	/** Enable cave dragons to properly swim in lava */
-	@Inject(method = "travel", at = @At("HEAD"))
+	@SuppressWarnings("ConstantValue") // it's not always false
+    @Inject(method = "travel", at = @At("HEAD"))
 	public void travel(Vec3 travelVector, CallbackInfo callback) {
-		DragonStateProvider.getCap(this).ifPresent(handler -> {
+		DragonStateProvider.getOptional(this).ifPresent(handler -> {
 			if (!handler.isDragon()) {
 				return;
 			}
 
 			boolean handleLavaSwimming = ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(handler, DragonTypes.CAVE);
 
-			if (handleLavaSwimming && /* Only triggers when sprinting when in lava */ DragonSizeHandler.getOverridePose(this) == Pose.SWIMMING || isSwimming() && !isPassenger()) {
+			if (handleLavaSwimming && /* Only triggers when sprinting when in lava */ DragonSizeHandler.getOverridePose((Player) (Object) this) == Pose.SWIMMING || isSwimming() && !isPassenger()) {
 				// Mostly a copy from vanilla Player#travel
 				double lookY = getLookAngle().y;
 				double yModifier = lookY < -0.2 ? 0.185 : 0.06;

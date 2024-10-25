@@ -35,7 +35,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class SourceOfMagicHandler {
 
 	public static void cancelSourceOfMagicServer(Player player){
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(player).ifPresent(cap -> {
 			if(cap.getMagicData().onMagicSource){
 				cap.getMagicData().onMagicSource = false;
 				cap.getMagicData().magicSourceTimer = 0;
@@ -45,7 +45,7 @@ public class SourceOfMagicHandler {
 	}
 
 	public static void cancelSourceOfMagicClient(Player player){
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(player).ifPresent(cap -> {
 			if(cap.getMagicData().onMagicSource){
 				cap.getMagicData().onMagicSource = false;
 				cap.getMagicData().magicSourceTimer = 0;
@@ -63,7 +63,7 @@ public class SourceOfMagicHandler {
 		Player player = event.getEntity();
 
 		if(DragonStateProvider.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if(handler.getMagicData().onMagicSource){
 				if(!(player.getBlockStateOn().getBlock() instanceof SourceOfMagicBlock)){
@@ -131,7 +131,7 @@ public class SourceOfMagicHandler {
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonStateProvider.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if(handler.getMagicData().onMagicSource){
 				Vec3 velocity = player.getDeltaMovement();
@@ -149,7 +149,7 @@ public class SourceOfMagicHandler {
 
 		if(entity instanceof Player player){
 			if(!player.level().isClientSide()){
-				DragonStateProvider.getCap(player).ifPresent(cap -> {
+				DragonStateProvider.getOptional(player).ifPresent(cap -> {
 					if(cap.getMagicData().onMagicSource){
 						cancelSourceOfMagicServer(player);
 					}

@@ -140,7 +140,7 @@ public class DragonDestructionHandler {
             return;
         }
 
-        DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
                 if(dragonStateHandler.getSize() < ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
                     return;
@@ -176,7 +176,7 @@ public class DragonDestructionHandler {
 
         Player player = Minecraft.getInstance().player;
         if (player != null) {
-            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+            DragonStateProvider.getOptional(player).ifPresent(playerStateHandler -> {
                 if (playerStateHandler.isDragon()) {
                     if(Keybind.DISABLE_DESTRUCTION.consumeClick()) {
                         playerStateHandler.setDestructionEnabled(!playerStateHandler.getDestructionEnabled());
@@ -200,7 +200,7 @@ public class DragonDestructionHandler {
             return;
         }
 
-        DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
             if(dragonStateHandler.isDragon()) {
 
                 if(!dragonStateHandler.getDestructionEnabled()) {

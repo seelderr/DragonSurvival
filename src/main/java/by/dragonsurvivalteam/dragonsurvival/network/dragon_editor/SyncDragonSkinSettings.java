@@ -23,7 +23,7 @@ public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings.D
 		Player sender = context.player();
 
 		context.enqueueWork(() ->
-				DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 					handler.getSkinData().renderNewborn = message.newborn();
 					handler.getSkinData().renderYoung = message.young();
 					handler.getSkinData().renderAdult = message.adult();

@@ -239,7 +239,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 		}else{
 			if(DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()){
 				if(player.getBlockStateOn().getBlock() == state.getBlock()){
-					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+					DragonStateHandler handler = DragonStateProvider.getData(player);
 
 					if(!handler.getMagicData().onMagicSource){
 						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
@@ -339,7 +339,11 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
 	}
 	
 	public static boolean shouldHarmPlayer(BlockState state, Entity entity) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
+		if (!(entity instanceof Player player)) {
+			return false;
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		Block block = state.getBlock();
 
 		if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {

@@ -28,7 +28,7 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 		DragonInventoryScreen.mouseX = Minecraft.getInstance().mouseHandler.xpos();
 		DragonInventoryScreen.mouseY = Minecraft.getInstance().mouseHandler.ypos();
 		PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
-		DragonStateProvider.getCap(ClientProxy.getLocalPlayer()).ifPresent(cap -> {
+		DragonStateProvider.getOptional(ClientProxy.getLocalPlayer()).ifPresent(cap -> {
 			boolean clawsMenuOpen = cap.getClawToolData().isMenuOpen();
 			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenuOpen));
 			cap.getClawToolData().setMenuOpen(clawsMenuOpen);
@@ -38,7 +38,7 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 	public static void handleServer(final RequestOpenDragonInventory.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(
-				() -> DragonStateProvider.getCap(sender).ifPresent(handler -> {
+				() -> DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				if (handler.isDragon()) {
 					context.enqueueWork(() -> {
 						sender.containerMenu.removed(sender);

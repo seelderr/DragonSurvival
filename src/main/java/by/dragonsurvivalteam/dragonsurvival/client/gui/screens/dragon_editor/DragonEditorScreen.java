@@ -42,14 +42,13 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
@@ -64,7 +63,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -451,7 +449,7 @@ public class DragonEditorScreen extends Screen {
 
 		Minecraft minecraft = getMinecraft();
 		if (!hasInit) {
-			DragonStateHandler dshandler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
+			DragonStateHandler dshandler = DragonStateProvider.getData(minecraft.player);
 			
 			initialize(dshandler);
 			update();
@@ -605,7 +603,7 @@ public class DragonEditorScreen extends Screen {
 
 			@Override
 			public void onPress(){
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
+				DragonStateHandler handler = DragonStateProvider.getData(minecraft.player);
 				minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 				boolean dragonDataIsPreserved = ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage;
@@ -795,7 +793,7 @@ public class DragonEditorScreen extends Screen {
 	}
 
 	public void confirm(){
-		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(!cap.isDragon() || dragonWouldChange(cap)){

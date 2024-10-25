@@ -41,7 +41,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 		BlockState blockUnder = player.getBlockStateOn();
 		Block block = blockUnder.getBlock();
 
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
 
 		boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getTypeName()).contains(block);
 

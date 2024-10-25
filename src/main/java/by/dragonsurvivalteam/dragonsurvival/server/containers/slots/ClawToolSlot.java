@@ -69,7 +69,7 @@ public class ClawToolSlot extends Slot {
 
 	private void syncSlots() {
 		if (!dragonContainer.player.level().isClientSide()) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragonContainer.player);
+			DragonStateHandler handler = DragonStateProvider.getData(dragonContainer.player);
 			PacketDistributor.sendToPlayersTrackingEntityAndSelf(dragonContainer.player, new SyncDragonClawsMenu.Data(dragonContainer.player.getId(), handler.getClawToolData().isMenuOpen(), handler.getClawToolData().serializeNBT(dragonContainer.player.registryAccess())));
 		}
 	}

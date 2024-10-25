@@ -70,7 +70,7 @@ public class AbilityButton extends Button {
 			screen.renderables.forEach(s-> {
 				if(s instanceof AbilityButton btn){
 					if(btn != this && btn.skillType == 0 && btn.dragging){
-						MagicCap cap = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player).getMagicData();
+						MagicCap cap = DragonStateProvider.getData(Minecraft.getInstance().player).getMagicData();
 						btn.onRelease(pMouseX, pMouseY);
 						DragonAbility ab1 = cap.getAbilityFromSlot(btn.slot);
 						DragonAbility ab2 = cap.getAbilityFromSlot(slot);
@@ -94,7 +94,7 @@ public class AbilityButton extends Button {
 
 	@Override
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
 			DragonAbility ab =
 				skillType == 0 ? cap.getMagicData().getAbilityFromSlot(slot) :
 					skillType == 1 ? cap.getMagicData().getPassiveAbilityFromSlot(slot) :

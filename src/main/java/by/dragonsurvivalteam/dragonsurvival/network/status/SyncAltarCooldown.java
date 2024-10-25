@@ -21,7 +21,7 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown.Data> {
 	}
 
 	public static void handleServer (final Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> DragonStateProvider.getCap(context.player()).ifPresent(cap -> {
+		context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
 				cap.altarCooldown = message.cooldown;
 				cap.hasUsedAltar = true;
 				cap.isInAltar = false;

@@ -23,7 +23,7 @@ public class MixinPlayerEnd {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (handler.switchedWeapon) {
             ItemStack originalMainHand = handler.storedMainHandWeapon;

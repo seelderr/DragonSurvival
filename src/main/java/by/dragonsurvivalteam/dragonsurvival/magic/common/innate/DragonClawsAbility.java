@@ -30,7 +30,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 	@OnlyIn(Dist.CLIENT)
 	@Override
 	public ArrayList<Component> getInfo() {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
+		DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
 		ArrayList<Component> components = super.getInfo();
 		components.add(Component.translatable("ds.skill.tool_type." + getName()));
@@ -60,7 +60,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
 	@OnlyIn(Dist.CLIENT)
 	public @Nullable Pair<Tiers, Integer> getHarvestInfo() {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
+		DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
 		if (handler.getType() == null) {
 			return null;

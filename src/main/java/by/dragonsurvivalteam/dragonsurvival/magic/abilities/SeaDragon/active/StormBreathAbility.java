@@ -3,12 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.SmallLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -248,15 +248,15 @@ public class StormBreathAbility extends BreathAbility{
 
 			if(!chargedSpreadBlacklist.contains(ResourceHelper.getKey(source).toString())){
 				if(target != source){
-					EntityStateHandler capSource = EntityStateProvider.getEntityHandler(source);
-					EntityStateHandler entityCap = EntityStateProvider.getEntityHandler(target);
+					EntityStateHandler sourceData = source.getData(DragonSurvivalMod.ENTITY_HANDLER);
+					EntityStateHandler targetData = target.getData(DragonSurvivalMod.ENTITY_HANDLER);
 
-					entityCap.chainCount = capSource.chainCount + 1;
+					targetData.chainCount = sourceData.chainCount + 1;
 
 					if(!target.level().isClientSide()){
 						if(target.getRandom().nextInt(100) < 40){
-							if(entityCap.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
-								entityCap.lastAfflicted = player != null ? player.getId() : -1;
+							if(targetData.chainCount < chargedEffectMaxChain || chargedEffectMaxChain == -1){
+								targetData.lastAfflicted = player != null ? player.getId() : -1;
 								target.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 							}
 						}
@@ -310,10 +310,9 @@ public class StormBreathAbility extends BreathAbility{
 		if(!entity.level().isClientSide()){
 			if(!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())){
 				if(entity.getRandom().nextInt(100) < 40){
-					EntityStateHandler cap = EntityStateProvider.getEntityHandler(entity);
-
-					cap.lastAfflicted = player.getId();
-					cap.chainCount = 1;
+					EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
+					data.lastAfflicted = player.getId();
+					data.chainCount = 1;
 
 					entity.addEffect(new MobEffectInstance(DSEffects.CHARGED, Functions.secondsToTicks(10), 0, false, true));
 				}
@@ -465,14 +464,14 @@ public class StormBreathAbility extends BreathAbility{
 		}
 
 		if(player.level().isClientSide()){
-			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 6; i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()) / 6; i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
 				player.level().addParticle(new SmallLightningParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
-			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 12; i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()) / 12; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);

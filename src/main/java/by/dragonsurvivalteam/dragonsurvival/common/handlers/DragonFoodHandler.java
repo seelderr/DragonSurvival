@@ -23,7 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -319,8 +319,9 @@ public class DragonFoodHandler {
 		return stack.getFoodProperties(null) != null;
 	}
 
-	public static int getUseDuration(final ItemStack itemStack, final LivingEntity entity) {
-		FoodProperties foodProperties = getDragonFoodProperties(itemStack.getItem(), DragonStateProvider.getOrGenerateHandler(entity).getType());
+	public static int getUseDuration(final ItemStack itemStack, final Player entity) {
+		FoodProperties foodProperties = getDragonFoodProperties(itemStack.getItem(), DragonStateProvider.getData(entity).getType());
+
 		if (foodProperties != null) {
 			return foodProperties.eatDurationTicks();
 		} else {
@@ -332,7 +333,7 @@ public class DragonFoodHandler {
 	public static class GameEvents {
 		@SubscribeEvent
 		public static void setDragonFoodUseDuration(final LivingEntityUseItemEvent.Start event) {
-			DragonStateProvider.getCap(event.getEntity()).ifPresent(handler -> {
+			DragonStateProvider.getOptional(event.getEntity()).ifPresent(handler -> {
 				if (handler.isDragon()) {
 					if (DragonFoodHandler.isEdible(event.getItem(), handler.getType())) {
 						FoodProperties foodProperties = DragonFoodHandler.getDragonFoodProperties(event.getItem().getItem(), handler.getType());

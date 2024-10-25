@@ -31,14 +31,14 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
             return;
         }
 
-        DragonStateProvider.getCap(player).ifPresent(handler -> {
+        DragonStateProvider.getOptional(player).ifPresent(handler -> {
             if (!handler.isDragon()) {
                 return;
             }
 
             DragonMovementData movementData = handler.getMovementData();
             Vec3 originalPassPos = player.getPassengerRidingPosition(player);
-            double size = DragonStateProvider.getOrGenerateHandler(passenger).getSize();
+            double size = DragonStateProvider.getData(passenger).getSize();
             double heightOffset = size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE ? -0.55 : -0.15 - size / DragonLevel.ADULT.size * 0.2;
 
             Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.4 * player.getBbWidth());
@@ -62,12 +62,12 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
             return;
         }
 
-        DragonStateProvider.getCap(vehicle).ifPresent(vehicleHandler -> {
+        DragonStateProvider.getOptional(vehicle).ifPresent(vehicleHandler -> {
             if (!vehicleHandler.isDragon()) {
                 return;
             }
 
-            DragonStateProvider.getCap(passenger).ifPresent(passengerHandler -> {
+            DragonStateProvider.getOptional(passenger).ifPresent(passengerHandler -> {
                 DragonMovementData vehicleMovement = vehicleHandler.getMovementData();
 
                 if (passengerHandler.isDragon()) {
@@ -93,7 +93,7 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
     /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */
     @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
-        DragonStateProvider.getCap((Entity) (Object) this).ifPresent(handler -> {
+        DragonStateProvider.getOptional((Entity) (Object) this).ifPresent(handler -> {
             if (handler.isDragon() && DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
                 callback.setReturnValue(false);
             }

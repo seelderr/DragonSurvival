@@ -60,7 +60,7 @@ public class DragonAltarBlock extends Block{
 
 	@Override
 	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(pPlayer);
+		DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
 
 		if(!pLevel.isClientSide()) {
 			if(handler.altarCooldown > 0){

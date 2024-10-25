@@ -94,7 +94,7 @@ public class WingObtainmentController{
 			return;
 
 		if(changedDimensionEvent.getTo() == Level.END){
-			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+			DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 				if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
 					executorService.schedule(() -> PacketDistributor.sendToPlayer(player, new SyncChatEvent.Data(enderDragonUUID.toString(), "ds.endmessage")), 3, TimeUnit.SECONDS);
 				}
@@ -130,7 +130,7 @@ public class WingObtainmentController{
 		Component message = chatEvent.getMessage();
 		ServerPlayer player = chatEvent.getPlayer();
 		String lowercase = message.getString().toLowerCase();
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin){
 				if(player.level().dimension() == Level.END) {
 					if(!player.serverLevel().getDragons().isEmpty()){
@@ -140,7 +140,7 @@ public class WingObtainmentController{
 							dragonStateHandler.setHasFlight(true);
 							dragonStateHandler.getMovementData().spinLearned = true;
 							PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-							PacketDistributor.sendToAllPlayers(new SyncComplete.Data(player.getId(), DragonStateProvider.getOrGenerateHandler(player).serializeNBT(player.registryAccess())));
+							PacketDistributor.sendToAllPlayers(new SyncComplete.Data(player.getId(), DragonStateProvider.getData(player).serializeNBT(player.registryAccess())));
 						}
 					}
 				}
@@ -157,7 +157,7 @@ public class WingObtainmentController{
 		if(living instanceof Player){
 			DamageSource damageSource = damageEvent.getSource();
 			if(living.level().dimension() == Level.END && damageSource == living.damageSources().fellOutOfWorld() && living.position().y < -60){
-				DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
+				DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
 						DimensionTransition transition = new DimensionTransition(living.level().getServer().overworld(), living, DimensionTransition.DO_NOTHING);
 						living.changeDimension(transition);

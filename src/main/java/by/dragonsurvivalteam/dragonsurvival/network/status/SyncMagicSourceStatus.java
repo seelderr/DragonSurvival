@@ -19,7 +19,7 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus.Dat
 	}
 
 	public static void handleServer(Data message, IPayloadContext context) {
-		context.enqueueWork(() -> DragonStateProvider.getCap(context.player()).ifPresent(cap -> {
+		context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
 			cap.getMagicData().onMagicSource = message.state;
 			cap.getMagicData().magicSourceTimer = message.timer;
 		})).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));

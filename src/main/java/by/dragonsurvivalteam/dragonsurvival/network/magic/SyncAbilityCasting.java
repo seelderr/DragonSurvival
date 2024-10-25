@@ -24,7 +24,7 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting.Data> {
 	public static void handleServer(final SyncAbilityCasting.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot);
 				ability.loadNBT(message.nbt);
 				handler.getMagicData().isCasting = message.isCasting;

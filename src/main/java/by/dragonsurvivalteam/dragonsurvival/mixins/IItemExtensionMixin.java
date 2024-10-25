@@ -18,7 +18,7 @@ public interface IItemExtensionMixin {
     @ModifyReturnValue(method = "getFoodProperties", at = @At("RETURN"))
     private FoodProperties dragonSurvival$getDragonFoodProperties(final FoodProperties original, final ItemStack stack, @Nullable final LivingEntity entity) {
         if (entity instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+            DragonStateHandler handler = DragonStateProvider.getData(player);
 
             if (handler.isDragon()) {
                 return DragonFoodHandler.getDragonFoodProperties(stack, handler.getType());

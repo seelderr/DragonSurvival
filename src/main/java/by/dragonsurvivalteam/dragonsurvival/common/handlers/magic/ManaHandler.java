@@ -27,7 +27,7 @@ public class ManaHandler{
 	public static void playerTick(PlayerTickEvent.Post event){
 		Player player = event.getEntity();
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(player).ifPresent(cap -> {
 			if(cap.getMagicData().getCurrentlyCasting() != null){
 				return;
 			}
@@ -64,7 +64,7 @@ public class ManaHandler{
 			return true;
 		}
 
-		return DragonStateProvider.getCap(player).map(cap -> {
+		return DragonStateProvider.getOptional(player).map(cap -> {
 			if(DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(cap.getTypeName())){
 				if(DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getTypeName()).contains(blockBelow.getBlock()) || DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getTypeName()).contains(feetBlock.getBlock())){
 					if(!(blockBelow.getBlock() instanceof AbstractFurnaceBlock) && !(feetBlock.getBlock() instanceof AbstractFurnaceBlock) && !(blockBelow.getBlock() instanceof AbstractCauldronBlock) && !(feetBlock.getBlock() instanceof AbstractCauldronBlock)){
@@ -95,7 +95,7 @@ public class ManaHandler{
 			return;
 		}
 
-		DragonStateProvider.getCap(entity).ifPresent(cap -> {
+		DragonStateProvider.getOptional(entity).ifPresent(cap -> {
 			cap.getMagicData().setCurrentMana(Math.min(getMaxMana(entity), cap.getMagicData().getCurrentMana() + mana));
 			PacketDistributor.sendToPlayer((ServerPlayer)entity, new SyncMagicStats.Data(entity.getId(), cap.getMagicData().getSelectedAbilitySlot(), cap.getMagicData().getCurrentMana(), cap.getMagicData().shouldRenderAbilities()));
 		});
@@ -117,7 +117,7 @@ public class ManaHandler{
 			return;
 		}
 
-		DragonStateProvider.getCap(entity).ifPresent(cap -> {
+		DragonStateProvider.getOptional(entity).ifPresent(cap -> {
 			if(ServerConfig.consumeEXPAsMana){
 				if(getCurrentMana(entity) < mana && (getCurrentMana(entity) + entity.totalExperience / 10 >= mana || entity.experienceLevel > 0)){
 					int missingMana = mana - getCurrentMana(entity);
@@ -136,6 +136,6 @@ public class ManaHandler{
 	}
 
 	public static int getCurrentMana(Player entity){
-		return DragonStateProvider.getCap(entity).map(cap -> Math.min(cap.getMagicData().getCurrentMana(), getMaxMana(entity))).orElse(0);
+		return DragonStateProvider.getOptional(entity).map(cap -> Math.min(cap.getMagicData().getCurrentMana(), getMaxMana(entity))).orElse(0);
 	}
 }

@@ -22,7 +22,7 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus.Data> {
 	public static void handleServer(final SyncSpinStatus.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				handler.getMovementData().spinAttack = message.spinAttack;
 				handler.getMovementData().spinCooldown = message.spinCooldown;
 				handler.getMovementData().spinLearned = message.spinLearned;

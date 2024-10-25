@@ -15,16 +15,16 @@ import net.minecraft.world.level.Level;
 
 public class DragonUtils {
 
-	public static AbstractDragonType getDragonType(Entity entity){
-		return DragonStateProvider.getOrGenerateHandler(entity).getType();
+	public static AbstractDragonType getDragonType(Player entity){
+		return DragonStateProvider.getData(entity).getType();
 	}
 	
 	public static AbstractDragonType getDragonType(DragonStateHandler handler) {
 		return handler.getType();
 	}
 
-	public static AbstractDragonBody getDragonBody(Entity entity) {
-		return DragonStateProvider.getOrGenerateHandler(entity).getBody();
+	public static AbstractDragonBody getDragonBody(Player entity) {
+		return DragonStateProvider.getData(entity).getBody();
 	}
 
 	public static AbstractDragonBody getDragonBody(DragonStateHandler handler) {
@@ -32,11 +32,11 @@ public class DragonUtils {
 	}
 
 	public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
-		if (!(entity instanceof Player)) {
+		if (!(entity instanceof Player player)) {
 			return false;
 		}
 
-		return isDragonType(DragonStateProvider.getOrGenerateHandler(entity), typeToCheck);
+		return isDragonType(DragonStateProvider.getData(player), typeToCheck);
 	}
 	
 	public static boolean isDragonType(final DragonStateHandler playerHandler, final AbstractDragonType typeToCheck) {
@@ -55,8 +55,8 @@ public class DragonUtils {
 		return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
 	}
 
-	public static DragonLevel getDragonLevel(Entity entity){
-		return DragonStateProvider.getOrGenerateHandler(entity).getLevel();
+	public static DragonLevel getDragonLevel(Player entity){
+		return DragonStateProvider.getData(entity).getLevel();
 	}
 
 	public static boolean isNearbyDragonPlayerToEntity(double detectionRadius, Level level, Entity entity) {

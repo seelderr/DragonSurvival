@@ -33,6 +33,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -129,11 +130,11 @@ public class DSItems {
 
 	public static final Holder<Item> SEASONED_FISH = DS_ITEMS.register("seasoned_fish", () -> new DragonFoodItem(defaultProperties));
 	public static final Holder<Item> GOLDEN_CORAL_PUFFERFISH = DS_ITEMS.register("golden_coral_pufferfish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
-	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
-		e.removeAllEffects();
+	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA , entity -> {
+		entity.removeAllEffects();
 
-		if(!e.level().isClientSide()){
-			if(DragonStateProvider.getOrGenerateHandler(e).getType() instanceof SeaDragonType type){
+		if (entity instanceof ServerPlayer serverPlayer) {
+			if (DragonStateProvider.getData(serverPlayer).getType() instanceof SeaDragonType type) {
 				type.timeWithoutWater = 0;
 			}
 		}

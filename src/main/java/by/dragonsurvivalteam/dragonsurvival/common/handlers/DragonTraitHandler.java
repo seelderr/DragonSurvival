@@ -17,7 +17,7 @@ public class DragonTraitHandler{
 	@SubscribeEvent
 	public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent){
 		Player player = playerTickEvent.getEntity();
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				for(DragonAbility passiveAbility : dragonStateHandler.getMagicData().abilities.values()){
 					if(passiveAbility instanceof TickablePassiveAbility tickablePassiveAbility){
@@ -34,8 +34,8 @@ public class DragonTraitHandler{
 
 	@SubscribeEvent
 	public static void onDeath(LivingDeathEvent event){
-		if(event.getEntity() instanceof Player){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(event.getEntity());
+		if(event.getEntity() instanceof Player player) {
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 			if(handler.isDragon()){
 				handler.getType().onPlayerDeath();
 			}

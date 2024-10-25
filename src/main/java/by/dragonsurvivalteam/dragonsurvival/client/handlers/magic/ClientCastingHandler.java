@@ -45,7 +45,7 @@ public class ClientCastingHandler {
         if (player.isSpectator() || !DragonStateProvider.isDragon(player))
             return;
 
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
         MagicCap magicData = dragonStateHandler.getMagicData();
 
         // TODO: all of this needs a rework, the current code just the original updated to fit the new Keybinds

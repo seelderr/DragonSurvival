@@ -32,7 +32,7 @@ public class DSModifiers {
 			// Special case for health modifier
 			float oldMax = player.getMaxHealth();
 
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 			AttributeInstance instance = player.getAttribute(attribute);
 			if (instance == null) { return; }
 			AttributeModifier oldMod = instance.getModifier(modifier);

@@ -22,7 +22,7 @@ public class SyncDragonPassengerID implements IMessage<SyncDragonPassengerID.Dat
     public static void handleServer(final Data message, final IPayloadContext context) {
         Entity entity = context.player();
         context.enqueueWork(() -> {
-            DragonStateProvider.getCap(entity).ifPresent(handler -> {
+            DragonStateProvider.getOptional(entity).ifPresent(handler -> {
                 handler.setPassengerId(message.passengerId);
             });
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));

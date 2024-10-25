@@ -3,11 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.LargePoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
@@ -240,14 +240,14 @@ public class ForestBreathAbility extends BreathAbility{
 		}
 
 		if(player.level().isClientSide()){
-			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()); i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()); i++){
 				double xSpeed = speed * 1f * xComp;
 				double ySpeed = speed * 1f * yComp;
 				double zSpeed = speed * 1f * zComp;
 				player.level().addParticle(new LargePoisonParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
 			}
 
-			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getOrGenerateHandler(player).getSize()) / 2; i++){
+			for(int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()) / 2; i++){
 				double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
 				double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
 				double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
@@ -308,8 +308,8 @@ public class ForestBreathAbility extends BreathAbility{
 		super.onEntityHit(entityHit);
 
 		if(!entityHit.level().isClientSide()){
-			if(entityHit.getRandom().nextInt(100) < 30){
-				EntityStateProvider.getEntityHandler(entityHit).lastAfflicted = player != null ? player.getId() : -1;
+			if(entityHit.getRandom().nextInt(100) < 30) {
+				entityHit.getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
 				entityHit.addEffect(new MobEffectInstance(DSEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
 			}
 		}
