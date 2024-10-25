@@ -1,19 +1,21 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import net.neoforged.fml.loading.LoadingModList;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class ApplyMixinPlugin implements IMixinConfigPlugin {
     private final static String PREFIX = ApplyMixinPlugin.class.getPackageName() + ".";
 
     // If there are other mods for which the mixins also need to apply to (e.g. forks)
     private final static Map<String, String> ALIAS = Map.of(
-            "sodium", "embeddium"
+            "sodium", "embeddium",
+            "iris", "oculus"
     );
 
     @Override
