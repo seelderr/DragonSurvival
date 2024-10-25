@@ -80,7 +80,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	@Override
 	public void onChanneling(final Player player, int castDuration) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		currentBreathRange = calculateCurrentBreathRange(handler.getSize());
 
@@ -224,7 +224,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public ArrayList<Component> getInfo() {
 		ArrayList<Component> components = new ArrayList<>();
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		int range = calculateCurrentBreathRange(handler.getSize());
 
 		components.add(Component.translatable("ds.skill.mana_cost", getInitManaCost()));

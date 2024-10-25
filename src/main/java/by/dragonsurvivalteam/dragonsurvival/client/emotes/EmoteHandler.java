@@ -32,7 +32,7 @@ public class EmoteHandler {
     public static void playerTick(final PlayerTickEvent.Post event) {
         Player player = event.getEntity();
 
-        DragonStateProvider.getCap(player).ifPresent(cap -> {
+        DragonStateProvider.getOptional(player).ifPresent(cap -> {
             for (int index = 0; index < cap.getEmoteData().currentEmotes.length; index++) {
                 Emote emote = cap.getEmoteData().currentEmotes[index];
 

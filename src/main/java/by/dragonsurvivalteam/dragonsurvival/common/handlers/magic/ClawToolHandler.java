@@ -48,7 +48,7 @@ public class ClawToolHandler{
 	public static void experiencePickup(PlayerXpEvent.PickupXp event){
 		Player player = event.getEntity();
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(player).ifPresent(cap -> {
 			ArrayList<ItemStack> stacks = new ArrayList<>();
 
 			for(int i = 0; i < ClawInventory.Slot.size(); i++){
@@ -83,7 +83,7 @@ public class ClawToolHandler{
 
 		if(ent instanceof Player player){
 			if(!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getData(player);
 
 				for(int i = 0; i < ClawInventory.Slot.size(); i++){
 					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
@@ -107,7 +107,7 @@ public class ClawToolHandler{
 			return;
 		}
 		Player playerEntity = harvestCheck.getEntity();
-		DragonStateProvider.getCap(playerEntity).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(playerEntity).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				ItemStack stack = playerEntity.getMainHandItem();
 				BlockState blockState = harvestCheck.getTargetBlock();
@@ -127,7 +127,7 @@ public class ClawToolHandler{
 		}
 
 		ItemStack harvestTool = mainStack;
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		for (int i = 1; i < ClawInventory.Slot.size(); i++) {
 			ItemStack breakingItem = handler.getClawToolData().getClawsInventory().getItem(i);
@@ -158,7 +158,7 @@ public class ClawToolHandler{
 		}
 
 		ItemStack harvestTool = mainStack;
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		int toolSlot = -1;
 
 		for (int i = 0; i < ClawInventory.Slot.size(); i++) {
@@ -206,18 +206,18 @@ public class ClawToolHandler{
 	 * @return Only the sword in the dragon tool slot <br>
 	 * Returns {@link ItemStack#EMPTY} if the player is holding any sort of tool
 	 */
-	public static ItemStack getDragonSword(final LivingEntity player) {
-		if (!(player instanceof Player)) {
+	public static ItemStack getDragonSword(final LivingEntity entity) {
+		if (!(entity instanceof Player player)) {
 			return ItemStack.EMPTY;
 		}
 
-		ItemStack itemInHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+		ItemStack itemInHand = entity.getItemInHand(InteractionHand.MAIN_HAND);
 
 		if (!ToolUtils.shouldUseDragonTools(itemInHand)) {
 			return ItemStack.EMPTY;
 		}
 
-		DragonStateHandler cap = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler cap = DragonStateProvider.getData(player);
 
 		return cap.getClawToolData().getClawsInventory().getItem(0);
 	}
@@ -235,7 +235,7 @@ public class ClawToolHandler{
 				clawTool.hurtAndBreak(1, player, LivingEntity.getSlotForHand(event.getHand()));
 			} else {
 				if (!player.level().isClientSide()) {
-					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+					DragonStateHandler handler = DragonStateProvider.getData(player);
 
 					if (handler.switchedTool || handler.switchedWeapon) {
 						player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -257,7 +257,7 @@ public class ClawToolHandler{
 
 			Player player = event.getEntity();
 			ItemStack mainStack = player.getMainHandItem();
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if (!handler.switchedTool && !ToolUtils.shouldUseDragonTools(mainStack)) {
 				// Bonus does not apply to held tools

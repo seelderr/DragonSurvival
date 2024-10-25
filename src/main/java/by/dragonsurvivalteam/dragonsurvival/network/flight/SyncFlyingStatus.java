@@ -22,7 +22,7 @@ public class SyncFlyingStatus implements IMessage<SyncFlyingStatus.Data> {
 
 	public static void handleServer(final SyncFlyingStatus.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler -> handler.setWingsSpread(message.state)))
+		context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.setWingsSpread(message.state)))
 				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 

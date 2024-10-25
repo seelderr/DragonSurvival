@@ -23,7 +23,7 @@ public class SyncDragonMovement implements IMessage<SyncDragonMovement.Data> {
 	public static void handleServer(final Data message, final IPayloadContext context) {
 		Entity entity = context.player();
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(entity).ifPresent(handler -> {
+			DragonStateProvider.getOptional(entity).ifPresent(handler -> {
 				handler.setFirstPerson(message.isFirstPerson);
 				handler.setBite(message.bite);
 				handler.setFreeLook(message.isFreeLook);

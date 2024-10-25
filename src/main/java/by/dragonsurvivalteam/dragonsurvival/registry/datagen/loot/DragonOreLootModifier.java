@@ -63,7 +63,7 @@ public class DragonOreLootModifier extends LootModifier {
                             BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
                             if(expDrop > 0 && !hasSilkTouch) {
-                                DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+                                DragonStateHandler handler = DragonStateProvider.getData(player);
                                 int fortuneRoll = 1;
                                 if (fortuneLevel >= 1)
                                     fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;

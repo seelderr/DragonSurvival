@@ -17,7 +17,7 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Dat
 	public static void handleServer(final SyncDragonAbilitySlot.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				if (handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()) != null) {
 					handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot()).onKeyReleased(sender);
 				}

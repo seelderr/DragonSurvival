@@ -29,7 +29,7 @@ public class DragonSizeCommand {
         ArgumentCommandNode<CommandSourceStack, Double> dragonSize = argument("dragon_size", DoubleArgumentType.doubleArg(DragonLevel.NEWBORN.size, 1000000.0)).requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
             double size = Mth.clamp(context.getArgument("dragon_size", Double.TYPE), 1.0, ServerConfig.maxGrowthSize);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
-            DragonStateHandler cap = DragonStateProvider.getOrGenerateHandler(serverPlayer);
+            DragonStateHandler cap = DragonStateProvider.getData(serverPlayer);
             if(cap.isDragon()) {
                 cap.setSize(size, serverPlayer);
                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize.Data(serverPlayer.getId(), size));

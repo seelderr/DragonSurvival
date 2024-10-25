@@ -112,7 +112,7 @@ public class AltarTypeButton extends Button {
 		if(type == null){
 			Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds.choice_human"));
 
-			DragonStateProvider.getCap(player).ifPresent(cap -> {
+			DragonStateProvider.getOptional(player).ifPresent(cap -> {
 				player.level().playSound(player, player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 				cap.revertToHumanForm(player, false);
 				PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));

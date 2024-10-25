@@ -29,7 +29,7 @@ public class FoodBar {
             return false;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(localPlayer);
+        DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
 
         if (!handler.isDragon()) {
             return false;

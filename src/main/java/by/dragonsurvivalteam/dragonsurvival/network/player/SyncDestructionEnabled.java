@@ -23,7 +23,7 @@ public class SyncDestructionEnabled implements IMessage<SyncDestructionEnabled.D
     public static void handleServer(final Data message, final IPayloadContext context) {
         Entity entity = context.player();
         context.enqueueWork(() -> {
-            DragonStateProvider.getCap(entity).ifPresent(handler -> {
+            DragonStateProvider.getOptional(entity).ifPresent(handler -> {
                 handler.setDestructionEnabled(message.destructionEnabled);
             });
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));

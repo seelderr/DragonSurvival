@@ -28,7 +28,7 @@ public class SyncDragonHandler implements IMessage<SyncDragonHandler.Data> {
 	public static void handleServer(final Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(cap -> {
+			DragonStateProvider.getOptional(sender).ifPresent(cap -> {
 				if (message.dragonType == null && cap.getType() != null) {
 					DragonCommand.reInsertClawTools(sender, cap);
 				}

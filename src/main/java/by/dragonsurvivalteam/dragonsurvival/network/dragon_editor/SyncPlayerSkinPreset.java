@@ -25,7 +25,7 @@ public class SyncPlayerSkinPreset implements IMessage<SyncPlayerSkinPreset.Data>
 		Player sender = context.player();
 
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				handler.getSkinData().skinPreset = new SkinPreset();
 				handler.getSkinData().skinPreset.deserializeNBT(sender.registryAccess(), message.preset());
 			});

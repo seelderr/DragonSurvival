@@ -75,7 +75,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	@Override
 	public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult blockHitResult){
 		if(player.getBlockStateOn().getBlock() == blockState.getBlock()){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if(!handler.treasureResting){
 				if(world.isClientSide()){

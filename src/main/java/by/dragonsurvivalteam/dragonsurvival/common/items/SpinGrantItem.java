@@ -24,7 +24,7 @@ public class SpinGrantItem extends Item{
 
 	@Override
 	public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand p_77659_3_){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		if(handler.isDragon()){
 			if(!world.isClientSide()){

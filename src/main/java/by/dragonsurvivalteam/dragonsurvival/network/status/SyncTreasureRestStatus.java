@@ -21,7 +21,7 @@ public class SyncTreasureRestStatus implements IMessage<SyncTreasureRestStatus.D
 
 	public static void handleServer(Data message, IPayloadContext context) {
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(context.player()).ifPresent(handler -> {
+			DragonStateProvider.getOptional(context.player()).ifPresent(handler -> {
 				if (handler.isDragon()) {
 					boolean update = false;
 

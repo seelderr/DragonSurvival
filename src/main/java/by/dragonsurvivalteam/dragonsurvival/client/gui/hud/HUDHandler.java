@@ -48,7 +48,7 @@ public class HUDHandler {
                 event.setCanceled(true);
             }
         } else if (id == VanillaGuiLayers.AIR_LEVEL) {
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(ClientProxy.getLocalPlayer());
+            DragonStateHandler handler = DragonStateProvider.getData(ClientProxy.getLocalPlayer());
 
             if (!handler.isDragon()) {
                 return;

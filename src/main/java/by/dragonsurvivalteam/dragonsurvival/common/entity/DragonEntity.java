@@ -108,7 +108,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 		Player player = getPlayer();
 
 		AnimationController<DragonEntity> animationController = state.getController();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
 
@@ -143,7 +143,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
 	private PlayState bitePredicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
 
@@ -206,7 +206,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	}
 
 	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(getPlayer());
+		DragonStateHandler handler = DragonStateProvider.getData(getPlayer());
 
 		if (handler.getEmoteData().currentEmotes[slot] != null) {
 			Emote emote = handler.getEmoteData().currentEmotes[slot];
@@ -230,8 +230,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
 	public @Nullable Player getPlayer() {
 		Entity entity = level().getEntity(playerId);
-		if(entity instanceof Player){
-			return (Player) entity;
+		if (entity instanceof Player player) {
+			return player;
 		} else {
 			return null;
 		}
@@ -246,7 +246,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 		Player player = getPlayer();
 
 		AnimationController<DragonEntity> animationController = state.getController();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		if (handler.refreshBody) {
 			animationController.forceAnimationReset();

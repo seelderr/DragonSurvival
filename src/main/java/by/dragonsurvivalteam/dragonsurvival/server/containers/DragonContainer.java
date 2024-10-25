@@ -126,7 +126,7 @@ public class DragonContainer extends AbstractContainerMenu {
 		}
 
 		// Claw tool slots
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
+		DragonStateProvider.getOptional(player).ifPresent(handler -> {
 			for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 				ClawToolSlot clawToolSlot = new ClawToolSlot(this, handler.getClawToolData().getClawsInventory(), i, -50, 35 + i * 18, i);
 				addSlot(clawToolSlot);
@@ -152,7 +152,7 @@ public class DragonContainer extends AbstractContainerMenu {
 	}
 
 	public void update() {
-		DragonStateProvider.getCap(player).ifPresent(handler -> menuStatus = handler.getClawToolData().isMenuOpen() ? 1 : 0);
+		DragonStateProvider.getOptional(player).ifPresent(handler -> menuStatus = handler.getClawToolData().isMenuOpen() ? 1 : 0);
 		broadcastChanges();
 	}
 

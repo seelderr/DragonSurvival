@@ -79,7 +79,7 @@ public abstract class ActiveDragonAbility extends DragonAbility{
 		if(player.isCreative())
 			return true;
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		if(hasCastDisablingEffect(player)){
 			return false;

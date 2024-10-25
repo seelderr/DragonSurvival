@@ -21,7 +21,7 @@ public class SyncEmote implements IMessage<SyncEmote.Data> {
 		Entity sender = context.player();
 		context.enqueueWork(() -> {
 			context.enqueueWork(() -> {
-				DragonStateProvider.getCap(sender).ifPresent(handler -> handler.getEmoteData().deserializeNBT(sender.registryAccess(), message.nbt));
+				DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.getEmoteData().deserializeNBT(sender.registryAccess(), message.nbt));
 			});
 		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
@@ -30,7 +30,7 @@ public class SyncEmote implements IMessage<SyncEmote.Data> {
 		Entity sender = context.player().level().getEntity(message.playerId);
 		if(sender instanceof Player player) {
 			context.enqueueWork(() -> {
-				DragonStateProvider.getCap(player).ifPresent(handler -> handler.getEmoteData().deserializeNBT(player.registryAccess(), message.nbt));
+				DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getEmoteData().deserializeNBT(player.registryAccess(), message.nbt));
 			});
 		}
 	}

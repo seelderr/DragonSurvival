@@ -53,7 +53,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player = dragon.getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		DragonMovementData md = handler.getMovementData();
 
 		MathParser.setVariable("query.y_velocity", () -> md.deltaMovement.y);
@@ -131,7 +131,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 			return defaultTexture;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 
 		if (handler.getSkinData().blankSkin) {
@@ -172,7 +172,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
 		if (dragon.playerId != null || dragon.getPlayer() != null) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragon.getPlayer());
+			DragonStateHandler handler = DragonStateProvider.getData(dragon.getPlayer());
 			AbstractDragonBody body = handler.getBody();
 			if (body != null) {
 				return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));

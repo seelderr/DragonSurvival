@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import java.awt.*;
 import java.util.HashMap;
 import java.util.function.Function;
-
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.network.chat.Component;

@@ -162,7 +162,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock{
 
 	@Override
 	public @NotNull InteractionResult useWithoutItem(@NotNull BlockState blockState, @NotNull final Level level, @NotNull final BlockPos blockPos, @NotNull final Player player, @NotNull final BlockHitResult hitResult) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		boolean canOpen = switch (blockState.getValue(OPEN_REQ)) {
 			case NONE -> true;

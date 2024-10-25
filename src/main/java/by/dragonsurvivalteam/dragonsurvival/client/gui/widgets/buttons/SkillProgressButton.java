@@ -53,7 +53,7 @@ public class SkillProgressButton extends Button{
 		guiGraphics.blit(texture, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
 		if (ability != null) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(Minecraft.getInstance().player);
+			DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
 			if (handler.isDragon()) {
 				DragonAbility playerAbility = DragonAbilities.getSelfAbility(Minecraft.getInstance().player, ability.getClass());

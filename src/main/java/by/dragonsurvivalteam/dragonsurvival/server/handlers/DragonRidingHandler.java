@@ -31,8 +31,8 @@ public class DragonRidingHandler {
 	}
 
 	private static DragonRideAttemptResult playerCanRideDragon(Player rider, Player mount) {
-		DragonStateHandler riderCap = DragonStateProvider.getOrGenerateHandler(rider);
-		DragonStateHandler mountCap = DragonStateProvider.getOrGenerateHandler(mount);
+		DragonStateHandler riderCap = DragonStateProvider.getData(rider);
+		DragonStateHandler mountCap = DragonStateProvider.getData(mount);
 		if(!mountCap.isDragon() || rider.isSpectator() || mount.isSpectator() || rider.isSleeping() || mount.isSleeping()) {
 			return DragonRideAttemptResult.OTHER;
 		}
@@ -63,8 +63,8 @@ public class DragonRidingHandler {
 		if(ent instanceof ServerPlayer target){
 			Player self = event.getEntity();
 
-			DragonStateProvider.getCap(target).ifPresent(targetCap -> {
-				DragonStateProvider.getCap(self).ifPresent(selfCap -> {
+			DragonStateProvider.getOptional(target).ifPresent(targetCap -> {
+				DragonStateProvider.getOptional(self).ifPresent(selfCap -> {
 					DragonRideAttemptResult result = playerCanRideDragon(self, target);
 					if(result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
 						self.startRiding(target);
@@ -90,7 +90,7 @@ public class DragonRidingHandler {
 	@SubscribeEvent
 	public static void updateRidingState(PlayerTickEvent.Post event){
 		if(event.getEntity() instanceof ServerPlayer player){
-			DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+			DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 				int passengerId = dragonStateHandler.getPassengerId();
 				if(passengerId == -1){
 					return;
@@ -123,7 +123,7 @@ public class DragonRidingHandler {
 	@SubscribeEvent
 	public static void dismountOnPlayerDisconnect(PlayerEvent.PlayerLoggedOutEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player && player.getVehicle() instanceof ServerPlayer vehicle) {
-			DragonStateProvider.getCap(vehicle).ifPresent(handler -> {
+			DragonStateProvider.getOptional(vehicle).ifPresent(handler -> {
 				player.stopRiding();
 				vehicle.connection.send(new ClientboundSetPassengersPacket(vehicle));
 				handler.setPassengerId(-1);

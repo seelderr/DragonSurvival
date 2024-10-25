@@ -4,9 +4,8 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.growth;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncGrowthState;
-import java.util.List;
-
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
+import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -28,7 +27,7 @@ public class StarHeartItem extends Item{
 	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_){
 		if(!world.isClientSide() && player instanceof ServerPlayer serverPlayer){
 			DSAdvancementTriggers.USE_STAR_HEART.get().trigger(serverPlayer);
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if(handler.isDragon()){
 				handler.growing = !handler.growing;

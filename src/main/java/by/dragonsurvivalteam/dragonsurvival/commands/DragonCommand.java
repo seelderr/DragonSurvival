@@ -108,7 +108,7 @@ public class DragonCommand{
 	}
 
 	private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player){
-		DragonStateHandler cap = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler cap = DragonStateProvider.getData(player);
 		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
 		AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
 

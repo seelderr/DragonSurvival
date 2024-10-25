@@ -89,7 +89,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		super(screenContainer, inv, titleIn);
 		player = inv.player;
 
-		DragonStateProvider.getCap(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
+		DragonStateProvider.getOptional(player).ifPresent(cap -> clawsMenu = cap.getClawToolData().isMenuOpen());
 
 		imageWidth = 203;
 		imageHeight = 166;
@@ -108,7 +108,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
 		leftPos = (width - imageWidth) / 2;
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.TabType.INVENTORY, this));
 		addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.TabType.ABILITY, this));
@@ -121,7 +121,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 			init();
 
 			PacketDistributor.sendToServer(new SyncDragonClawsMenuToggle.Data(clawsMenu));
-			DragonStateProvider.getCap(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
+			DragonStateProvider.getOptional(player).ifPresent(cap -> cap.getClawToolData().setMenuOpen(clawsMenu));
 		}){
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
@@ -158,7 +158,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		{
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getData(player);
 
 				if (handler.getClawToolData().shouldRenderClaws) {
 					guiGraphics.pose().pushPose();
@@ -198,6 +198,17 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		guiGraphics.blit(BACKGROUND, leftPos, topPos, 0, 0, imageWidth, imageHeight);
 		RenderSystem.disableBlend();
 
+		DragonStateHandler handler = DragonStateProvider.getData(player);
+
+		int scissorY1 = topPos + 77;
+		int scissorX1 = leftPos + 101;
+		int scissorX0 = leftPos + 25;
+		int scissorY0 = topPos + 8;
+		// With a scale of 20 the smaller dragon sizes feel too small
+		int scale = (int) (20 + ((ServerConfig.maxGrowthSize - handler.getSize()) * 0.25));
+
+		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, scale, 0, mouseX, mouseY, player);
+
 		if(clawsMenu){
 			guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 		}
@@ -206,8 +217,6 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 			if (textures == null || textures.isEmpty()) {
 				initResources();
 			}
-
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
 			double curSize = handler.getSize();
 			float progress = 0;
@@ -279,21 +288,15 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
 		super.render(guiGraphics, mouseX, mouseY, partialTick);
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
-		int scissorX0 =  leftPos;
-		int scissorY0 = topPos;
-		int scissorX1 = 140 + leftPos;
-		// 0.55 is the smallest height mult we have (for the north body type) so we use that as the base
-		float bodyHeightAddition = (float) ((((handler.getBody().getHeightMult() - 0.55) / 0.45) * -0.6) - 0.5);
-		int scissorY1 = 140 + topPos;
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, 100);
-		InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, 20, bodyHeightAddition, mouseX, mouseY, minecraft.player);
 		guiGraphics.pose().popPose();
 
 		renderTooltip(guiGraphics, mouseX, mouseY);
 
 		if (isGrowthIconHovered) {
+			DragonStateHandler handler = DragonStateProvider.getData(player);
+
 			String age = (int)handler.getSize() - handler.getLevel().size + "/";
 			double seconds = 0;
 

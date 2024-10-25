@@ -22,7 +22,7 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 	public static void handleServer(final SyncSkillLevelChangeCost.Data message, final IPayloadContext context) {
 		Player sender = context.player();
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				if (handler.isDragon()) {
 					DragonAbility staticAbility = DragonAbilities.ABILITY_LOOKUP.get(message.skill);
 

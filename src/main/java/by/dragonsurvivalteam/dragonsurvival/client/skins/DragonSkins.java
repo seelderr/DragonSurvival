@@ -170,7 +170,7 @@ public class DragonSkins{
 	}
 
 	public static boolean renderStage(Player player, DragonLevel level){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		return switch(level){
 			case NEWBORN -> handler.getSkinData().renderNewborn;
