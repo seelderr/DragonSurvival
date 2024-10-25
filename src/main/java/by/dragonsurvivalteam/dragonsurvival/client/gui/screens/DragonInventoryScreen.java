@@ -94,16 +94,16 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 		imageWidth = 203;
 		imageHeight = 166;
 	}
-	@Override
+
+    @Override
+	@SuppressWarnings("DataFlowIssue") // minecraft gets set from setScreen -> init
 	protected void init(){
 		super.init();
 
-		if(mouseX != -1 && mouseY != -1){
-			if(minecraft.getWindow() != null){
-				InputConstants.grabOrReleaseMouse(minecraft.getWindow().getWindow(), 212993, mouseX, mouseY);
-				mouseX = -1;
-				mouseY = -1;
-			}
+		if (mouseX != -1 && mouseY != -1) {
+			InputConstants.grabOrReleaseMouse(minecraft.getWindow().getWindow(), 212993, mouseX, mouseY);
+			mouseX = -1;
+			mouseY = -1;
 		}
 
 		leftPos = (width - imageWidth) / 2;

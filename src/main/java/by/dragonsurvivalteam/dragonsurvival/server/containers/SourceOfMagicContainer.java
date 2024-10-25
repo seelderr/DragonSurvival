@@ -42,7 +42,7 @@ public class SourceOfMagicContainer extends AbstractContainerMenu{
 	public ItemStack quickMoveStack(Player pPlayer, int pIndex){
 		ItemStack itemstack = ItemStack.EMPTY;
 		Slot slot = slots.get(pIndex);
-		if(slot != null && slot.hasItem()){
+		if(slot.hasItem()){
 			ItemStack itemstack1 = slot.getItem();
 			itemstack = itemstack1.copy();
 			if(pIndex == 0){

@@ -133,11 +133,11 @@ public class DSTrades {
 
 		@Nullable @Override
 		public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
-			if (!(pTrader.level() instanceof ServerLevel)) {
+			if (!(pTrader.level() instanceof ServerLevel serverlevel)) {
 				return null;
 			} else {
-				ServerLevel serverlevel = (ServerLevel)pTrader.level();
-				BlockPos blockpos = serverlevel.findNearestMapStructure(this.destination, pTrader.blockPosition(), 100, true);
+                BlockPos blockpos = serverlevel.findNearestMapStructure(this.destination, pTrader.blockPosition(), 100, true);
+
 				if (blockpos != null) {
 					ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte)2, true, true);
 					MapItem.renderBiomePreviewMap(serverlevel, itemstack);

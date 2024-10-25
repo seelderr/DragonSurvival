@@ -68,7 +68,7 @@ public class MagicHUD {
 
 		DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
 
-		if (handler == null || !handler.isDragon()) {
+		if (!handler.isDragon()) {
 			return false;
 		}
 

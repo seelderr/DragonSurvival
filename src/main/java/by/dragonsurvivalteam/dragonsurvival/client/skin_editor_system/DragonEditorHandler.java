@@ -117,6 +117,11 @@ public class DragonEditorHandler{
 
 	private static void genTexturesGPU(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
+
+		if (player == null) {
+			return;
+		}
+
 		DragonStateHandler handler = DragonStateProvider.getData(player);
 		GlStateBackup state = new GlStateBackup();
 		RenderSystem.backupGlState(state);
@@ -214,6 +219,11 @@ public class DragonEditorHandler{
 
 	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
+
+		if (player == null) {
+			return List.of();
+		}
+
 		DragonStateHandler handler = DragonStateProvider.getData(player);
 		List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
 		SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();

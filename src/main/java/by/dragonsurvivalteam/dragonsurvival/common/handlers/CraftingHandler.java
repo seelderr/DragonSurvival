@@ -19,9 +19,9 @@ public class CraftingHandler {
     public static void returnBeacon(PlayerEvent.ItemCraftedEvent craftedEvent){
         Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
-        int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.PASSIVE_FIRE_BEACON
-                || item.getItem() == DSItems.PASSIVE_MAGIC_BEACON
-                || item.getItem() == DSItems.PASSIVE_PEACE_BEACON, 1, true);
+        int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.PASSIVE_FIRE_BEACON)
+                || item.is(DSItems.PASSIVE_MAGIC_BEACON)
+                || item.is(DSItems.PASSIVE_PEACE_BEACON), 1, true);
         if(rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.get().asItem()){
             craftedEvent.getEntity().addItem(new ItemStack(Items.BEACON));
         }
@@ -31,8 +31,8 @@ public class CraftingHandler {
     public static void returnNetherStarHeart(PlayerEvent.ItemCraftedEvent craftedEvent){
         Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
-        int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_HEART, 1, true);
-        if(rem == 0 && result.getItem() == DSItems.STAR_HEART){
+        int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.STAR_HEART), 1, true);
+        if(rem == 0 && result.is(DSItems.STAR_HEART)) {
             craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
         }
     }
@@ -41,8 +41,8 @@ public class CraftingHandler {
     public static void returnNetherStarBone(PlayerEvent.ItemCraftedEvent craftedEvent){
         Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
-        int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.getItem() == DSItems.STAR_BONE, 1, true);
-        if(rem == 0 && result.getItem() == DSItems.STAR_BONE){
+        int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.STAR_BONE), 1, true);
+        if(rem == 0 && result.is(DSItems.STAR_BONE)) {
             craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
         }
     }

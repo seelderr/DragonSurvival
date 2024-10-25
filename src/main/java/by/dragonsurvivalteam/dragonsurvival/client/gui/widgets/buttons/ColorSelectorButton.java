@@ -76,13 +76,13 @@ public class ColorSelectorButton extends ExtendedButton {
 					active = visible = false;
 
 					if (hueComponent != null && text.defaultColor == null) {
-						hueComponent.visible = ColorSelectorButton.this.visible && text.defaultColor == null;
+						hueComponent.visible = ColorSelectorButton.this.visible;
 						if (hueComponent.visible)
 							hueComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}
 
 					if (colorComponent != null && text.defaultColor != null) {
-						colorComponent.visible = ColorSelectorButton.this.visible && text.defaultColor != null;
+						colorComponent.visible = ColorSelectorButton.this.visible;
 						if (colorComponent.visible)
 							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 					}

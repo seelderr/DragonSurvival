@@ -29,7 +29,7 @@ public class BlockInteractionHandler {
         }
 
         ItemStack itemStack = rightClickBlock.getItemStack();
-        if(itemStack.getItem() == DSItems.ELDER_DRAGON_BONE){
+        if(itemStack.is(DSItems.ELDER_DRAGON_BONE)){
             if(!rightClickBlock.getEntity().isSpectator()){
 
                 final Level world = rightClickBlock.getLevel();

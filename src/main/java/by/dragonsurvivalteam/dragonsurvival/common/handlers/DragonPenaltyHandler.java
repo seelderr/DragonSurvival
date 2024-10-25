@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import java.util.ArrayList;
@@ -103,9 +104,10 @@ public class DragonPenaltyHandler{
 		DragonStateProvider.getOptional(destroyItemEvent.getEntity()).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon() && dragonStateHandler.getType() instanceof SeaDragonType seaDragonType){
 				Player player = (Player)destroyItemEvent.getEntity();
-				if(ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
+				if(!player.level().isClientSide() && ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem){
 					Optional<Potion> potion = PotionUtils.getPotion(itemStack);
-					if(potion.isPresent() && potion.get() == Potions.WATER && Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) && !player.level().isClientSide()){
+
+					if(potion.isPresent() && potion.get() == Potions.WATER.value() && DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA)){
 						seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
 						PacketDistributor.sendToPlayersTrackingEntity(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
 					}

@@ -321,7 +321,7 @@ public class ClientFlightHandler {
                                 float verticalDelta = Mth.cos(pitch);
 
                                 verticalDelta = (float) ((double) verticalDelta * (double) verticalDelta * Math.min(1.0D, lookMagnitude / 0.4D));
-                                double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
+                                double gravity = player.getAttributeValue(Attributes.GRAVITY);
 
                                 if (ServerFlightHandler.isGliding(player)) {
                                     if (!wasGliding) {
