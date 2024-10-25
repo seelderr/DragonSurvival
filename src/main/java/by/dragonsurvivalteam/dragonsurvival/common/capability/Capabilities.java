@@ -9,6 +9,7 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class Capabilities {
+    // Acts as API for other mods to query dragon data
     public static final EntityCapability<DragonStateHandler, Void> DRAGON_CAPABILITY = EntityCapability.createVoid(
             DragonSurvivalMod.res("dragon_capability"),
             DragonStateHandler.class);
