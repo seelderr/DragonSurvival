@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.criteria;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
@@ -12,9 +11,12 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Optional;
+
 public class MineBlockUnderLavaTrigger extends SimpleCriterionTrigger<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> {
     public void trigger(ServerPlayer player, Block block) {
-        this.trigger(player, instance -> instance.block.map(holder -> holder.value().equals(block)).orElse(false));
+        // If no block is specified it will act as any block should trigger the advancement
+        this.trigger(player, instance -> instance.block.map(holder -> holder.value().equals(block)).orElse(true));
     }
 
     @Override
