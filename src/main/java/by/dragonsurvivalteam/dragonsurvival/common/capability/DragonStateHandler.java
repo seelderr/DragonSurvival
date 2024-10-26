@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -42,9 +41,10 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 public class DragonStateHandler extends EntityStateHandler {
+	@SuppressWarnings("unchecked")
+    public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
-	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
-
+	// Weapon / tool swap data - START
     /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
 	public boolean switchedWeapon;
@@ -52,11 +52,9 @@ public class DragonStateHandler extends EntityStateHandler {
 	public ItemStack storedMainHandTool = ItemStack.EMPTY;
 	public boolean switchedTool;
 	public int switchedToolSlot = -1;
-	/**
-	 * Since {@link Player#hasCorrectToolForDrops(BlockState)} has its own swap<br>
-	 * Which would close the swap of {@link net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)}
-	 */
-	public int toolSwapLayer = 0;
+	/** To track the state if a tool swap is triggered within a tool swap (should only swap back if the last tool swap finishes) */
+	public int toolSwapLayer;
+	// Weapon / tool swap data - END
 
 	public boolean hasFlown;
 	public boolean growing = true;
@@ -72,7 +70,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     /** Last timestamp the server synchronized the player */
     public int lastSync = 0;
-
 
 	private final DragonMovementData movementData = new DragonMovementData();
 	private final ClawInventory clawToolData = new ClawInventory(this);
@@ -98,7 +95,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final ResourceLocation modifier) {
-		if (attribute != null && modifier != null && attribute.hasModifier(modifier)) {
+		if (attribute != null && modifier != null) {
 			attribute.removeModifier(modifier);
 		}
 	}
