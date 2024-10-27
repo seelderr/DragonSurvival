@@ -14,14 +14,10 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
 public class DSBlockTags extends BlockTagsProvider {
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
@@ -31,24 +27,24 @@ public class DSBlockTags extends BlockTagsProvider {
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS_SMALL = key("wooden_dragon_doors_small");
 
 	public DSBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-		super(output, lookupProvider, MODID, existingFileHelper);
+		super(output, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
 	}
 
 	@Override
 	protected void addTags(@NotNull final HolderLookup.Provider provider) {
 		addToVanillaTags();
 
-		tag(DRAGON_ALTARS).addAll(DS_BLOCKS.getEntries().stream()
-						.filter(entry -> entry.value() instanceof DragonAltarBlock)
-				        .map(DeferredHolder::getKey).toList());
+		DSBlocks.DS_BLOCKS.getEntries().forEach(holder -> {
+			Block block = holder.value();
 
-		tag(DRAGON_TREASURES).addAll(DS_BLOCKS.getEntries().stream()
-				.filter(entry -> entry.value() instanceof TreasureBlock)
-				.map(DeferredHolder::getKey).toList());
-
-		tag(key("dragon_bones")).addAll(DS_BLOCKS.getEntries().stream()
-				.filter(entry -> entry.value() instanceof SkeletonPieceBlock)
-				.map(DeferredHolder::getKey).toList());
+            switch (block) {
+                case DragonAltarBlock ignored -> tag(DRAGON_ALTARS).add(block);
+                case TreasureBlock ignored -> tag(DRAGON_TREASURES).add(block);
+				// TODO :: Currently not used anywhere?
+                case SkeletonPieceBlock ignored -> tag(key("dragon_bones")).add(block);
+                default -> { /* Nothing to do */ }
+            }
+		});
 
 		tag(WOODEN_DRAGON_DOORS_SMALL)
 				.add(DSBlocks.OAK_SMALL_DOOR.value())
@@ -93,6 +89,7 @@ public class DSBlockTags extends BlockTagsProvider {
 				.add(Blocks.BIG_DRIPLEAF)
 				.add(Blocks.SMALL_DRIPLEAF);
 
+		// TODO :: what is this used for?
 		tag(key("castle_blocks"))
 				.add(Blocks.STONE_BRICKS)
 				.add(Blocks.STONE_BRICK_STAIRS)
@@ -193,7 +190,7 @@ public class DSBlockTags extends BlockTagsProvider {
 	}
 
 	private static TagKey<Block> key(@NotNull final String name) {
-		return BlockTags.create(ResourceLocation.fromNamespaceAndPath(MODID, name));
+		return BlockTags.create(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, name));
 	}
 
 	@Override
