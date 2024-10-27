@@ -3,24 +3,30 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
+import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.common.NeoForgeMod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -28,12 +34,12 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-	@Shadow public abstract ItemStack getMainHandItem();
-	@Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
+	@Shadow protected boolean jumping;
 	@Shadow protected ItemStack useItem;
 
 	public LivingEntityMixin(EntityType<?> type, Level level) {
@@ -46,7 +52,7 @@ public abstract class LivingEntityMixin extends Entity {
         if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player player) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
 
-            if (handler.isDragon() && ToolUtils.shouldUseDragonTools(getMainHandItem())) {
+            if (handler.isDragon() && ToolUtils.shouldUseDragonTools(player.getMainHandItem())) {
                 // Without this the item in the dragon slot for the sword would not grant any of its attributes
                 ItemStack sword = handler.getClawToolData().getClawsInventory().getItem(ClawInventory.Slot.SWORD.ordinal());
 
@@ -153,4 +159,79 @@ public abstract class LivingEntityMixin extends Entity {
 
 		return instance;
 	}
+
+	/** Enable cave dragons to properly swim in lava */
+	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;", shift = At.Shift.AFTER), cancellable = true)
+	private void dragonSurvival$handleLavaSwimming(final Vec3 travelVector, final CallbackInfo callback, @Local double gravity) {
+        //noinspection ConstantValue -> it's not always true
+        if (!((Object) this instanceof Player player)) {
+			return;
+		}
+
+		DragonStateHandler data = DragonStateProvider.getData(player);
+
+		if (!data.isDragon()) {
+			return;
+		}
+
+		if (ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(data, DragonTypes.CAVE) && isInLava() && player.isAffectedByFluids() && !player.canStandOnFluid(level().getFluidState(blockPosition()))) {
+			// This y-related movement logic is copied from 'Player#travel' (it doesn't get called when swimming in lava)
+			Vec3 deltaMovement = getDeltaMovement();
+			float lookY = (float) getLookAngle().y;
+
+			// Speed increase depending on how much the player looks up or down (0.06 is the min. speed and 0.15 is the max. speed bonus)
+			float yModifier = 0.06f + (0.15f - 0.06f) * Mth.abs(Math.clamp(lookY, -1, 1));
+
+			if (isSprinting()) {
+				yModifier *= 1.2f;
+			}
+
+			// Move the player up or down, depending on where they look (but only if they're moving)
+			if (deltaMovement.horizontalDistance() > 0.05 && (lookY <= 0 || jumping || !level().getBlockState(BlockPosHelper.get(getX(), getY() + 1 - 0.1, getZ())).getFluidState().isEmpty())) {
+				setDeltaMovement(deltaMovement.add(0, (lookY - deltaMovement.y) * Mth.abs(yModifier), 0));
+			}
+
+			double oldY = getY();
+			float speedModifier = isSprinting() ? 0.9f : getWaterSlowDown();
+			float swimSpeed = 0.05f;
+			// FIXME :: Use Attributes#WATER_MOVEMENT_EFFICIENCY instead
+			float swimSpeedModifier = Math.min(3, EnchantmentUtils.getLevel(player, Enchantments.DEPTH_STRIDER));
+
+			if (!onGround()) {
+				swimSpeedModifier *= 0.5f;
+			}
+
+			if (swimSpeedModifier > 0) {
+				speedModifier += (0.54600006f - speedModifier) * swimSpeedModifier / 2.5f;
+				swimSpeed += (player.getSpeed() - swimSpeed) * swimSpeedModifier / 2.5f;
+			}
+
+			if (player.hasEffect(MobEffects.DOLPHINS_GRACE)) {
+				speedModifier = 0.96f;
+			}
+
+			swimSpeed *= (float) player.getAttributeValue(NeoForgeMod.SWIM_SPEED);
+			moveRelative(swimSpeed, travelVector);
+			move(MoverType.SELF, getDeltaMovement());
+			Vec3 newMovement = getDeltaMovement();
+
+			if (horizontalCollision && player.onClimbable()) {
+				newMovement = new Vec3(newMovement.x, 0.2, newMovement.z);
+			}
+
+			setDeltaMovement(newMovement.multiply(speedModifier, 0.8, speedModifier));
+			Vec3 adjustedMovement = player.getFluidFallingAdjustedMovement(gravity, player.isFallFlying(), getDeltaMovement());
+			setDeltaMovement(adjustedMovement);
+
+			if (horizontalCollision && isFree(adjustedMovement.x, adjustedMovement.y + 0.6 - getY() + oldY, adjustedMovement.z)) {
+				setDeltaMovement(adjustedMovement.x, 0.3, adjustedMovement.z);
+			}
+
+			player.calculateEntityAnimation(false);
+			callback.cancel();
+		}
+	}
+
+	@Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
+	@Shadow protected abstract float getWaterSlowDown();
 }

@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
@@ -19,8 +16,6 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
-import java.util.List;
-import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.selector.EntitySelector;
@@ -30,6 +25,12 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.List;
+import java.util.Locale;
+
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
 
 
 public class DragonCommand{
@@ -107,16 +108,21 @@ public class DragonCommand{
 		giveFlight.addChild(target);
 	}
 
+	// TODO :: add proper argument types
 	private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player){
 		DragonStateHandler cap = DragonStateProvider.getData(player);
-		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
+		AbstractDragonType dragonType = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
 		AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
 
-		if(dragonType1 == null && cap.getType() != null){
+		if (dragonType != null && dragonBody == null || dragonType == null && dragonBody != null) {
+			return 0;
+		}
+
+		if(dragonType == null && cap.getType() != null){
 			reInsertClawTools(player, cap);
 		}
 
-		cap.setType(dragonType1, player);
+		cap.setType(dragonType, player);
 		cap.setBody(dragonBody, player);
 		cap.setHasFlight(flight);
 		cap.getMovementData().spinLearned = flight;
