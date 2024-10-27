@@ -22,9 +22,7 @@ public class DragonConfigHandler{
 	public static HashSet<Block> SEA_DRAGON_HYDRATION_BLOCKS = new HashSet<>();
 	public static HashSet<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = new HashSet<>();
 	public static HashSet<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = new HashSet<>();
-	public static HashSet<Block> DRAGON_DESTRUCTIBLE_BLOCKS = new HashSet<>();
 
-	public static Map<String, HashSet<Block>> DRAGON_SPEEDUP_BLOCKS;
 	public static Map<String, HashSet<Block>> DRAGON_BREATH_BLOCKS;
 	public static Map<String, HashSet<Block>> DRAGON_MANA_BLOCKS;
 
@@ -34,22 +32,12 @@ public class DragonConfigHandler{
 		if (event.getConfig().getSpec() == ConfigHandler.serverSpec) {
 			DragonSurvivalMod.LOGGER.info("Rebuilding configuration...");
 
-			rebuildSpeedupBlocksMap();
 			rebuildSeaDragonConfigs();
 			rebuildBreathBlocks();
 			rebuildManaBlocks();
 			rebuildForestDragonConfigs();
-			rebuildDestructibleBlocks();
 			rebuildBlacklistedItems();
 		}
-	}
-
-	public static void rebuildSpeedupBlocksMap(){
-		HashMap<String, HashSet<Block>> speedupMap = new HashMap<>();
-		speedupMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveSpeedupBlocks));
-		speedupMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestSpeedupBlocks));
-		speedupMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.seaSpeedupBlocks));
-		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
 	public static void rebuildBreathBlocks(){
@@ -75,10 +63,6 @@ public class DragonConfigHandler{
 
 	public static void rebuildForestDragonConfigs(){
 		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
-	}
-
-	public static void rebuildDestructibleBlocks(){
-		DRAGON_DESTRUCTIBLE_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.destructibleBlocks);
 	}
 
 	public static void rebuildBlacklistedItems(){

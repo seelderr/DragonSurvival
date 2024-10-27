@@ -6,14 +6,15 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 
 public class ServerConfig{
@@ -49,16 +50,6 @@ public class ServerConfig{
 
 	@ConfigOption( side = ConfigSide.SERVER, category = "general", key = "allowDragonChoiceFromInventory", comment = "Should the dragon altar be accessible from the vanilla inventory if the player has not made a choice yet?" )
 	public static Boolean allowDragonChoiceFromInventory = true;
-
-	// Growth
-	@ConfigType(Block.class) // FIXME :: handle with tag
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "destructibleBlocks", comment = "Blocks that are destructible when block destruction is enabled. Blocks that can be harvested with an axe are also destroyable by default on whitelist mode. Formatting: block/modid:id" )
-	public static List<String> destructibleBlocks = List.of(
-			"minecraft:leaves",
-			"minecraft:mineable/axe",
-			"minecraft:flowers",
-			"minecraft:replaceable"
-	);
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
 	public static Boolean useBlacklistForDestructibleBlocks = false;
@@ -353,25 +344,6 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "lavaSwimTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava." )
 	public static Integer caveLavaSwimmingTicks = 3600;
 
-	@ConfigType(Block.class) // FIXME :: handle with tag
-	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveSpeedupBlocks", comment = "Blocks cave dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<String> caveSpeedupBlocks = List.of(
-			"minecraft:base_stone_nether",
-			"minecraft:base_stone_overworld",
-			"minecraft:stone_bricks",
-			"minecraft:beacon_base_blocks",
-			"c:cobblestone",
-			"c:sandstone/blocks",
-			"c:stones",
-			"c:ores",
-			"quark:deepslate",
-			"quark:deepslate_bricks",
-			"quark:cobbled_deepslate",
-			"minecraft:lava",
-			"minecraft:fire",
-			"minecraft:soul_fire"
-	);
-
 
 	@ConfigRange( min = 0.0, max = 100.0 )
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "fallReduction", comment = "How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable." )
@@ -383,25 +355,9 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "cactiImmunity", comment = "Whether forest dragons are immune to Cactus damage." )
 	public static Boolean forestCactiImmunity = true;
 
-	@ConfigType(Block.class) // FIXME :: handle with tag
-	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestSpeedupBlocks", comment = "Blocks forest dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<String> forestSpeedupBlocks = List.of(
-			"minecraft:logs",
-			"minecraft:leaves",
-			"minecraft:planks",
-			"minecraft:dirt",
-			"minecraft:grass",
-			"minecraft:dirt",
-			"minecraft:wooden_slab"
-	);
-
 
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "waterBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air." )
 	public static Boolean seaSwimmingBonuses = true;
-
-	@ConfigType(Block.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "seaSpeedupBlocks", comment = "Blocks sea dragons gain speed when standing above. Formatting: block/modid:id" )
-	public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:mud", "minecraft:coral_blocks", "c:sands", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water", "quark:permafrost", "immersive_weathering:permafrost", "architects_palette:polished_packed_ice");
 
 	//Dragon Penalties
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties." )

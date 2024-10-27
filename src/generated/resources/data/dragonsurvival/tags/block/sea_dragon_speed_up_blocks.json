@@ -1,0 +1,12 @@
+{
+  "values": [
+    "#minecraft:ice",
+    "#minecraft:impermeable",
+    "#minecraft:sand",
+    "#minecraft:coral_blocks",
+    "#c:sandstone/blocks",
+    "#c:sands",
+    "minecraft:mud",
+    "minecraft:dirt_path"
+  ]
+}

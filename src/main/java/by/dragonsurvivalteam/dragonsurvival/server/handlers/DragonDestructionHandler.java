@@ -1,13 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_DESTRUCTIBLE_BLOCKS;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -63,25 +62,21 @@ public class DragonDestructionHandler {
                 for (int i2 = k; i2 <= j1; ++i2) {
                     BlockPos blockpos = new BlockPos(k1, l1, i2);
                     BlockState blockstate = player.level().getBlockState(blockpos);
+
                     if (!blockstate.isAir()) {
-                        if(ServerConfig.useBlacklistForDestructibleBlocks) {
-                            if(!DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock())) {
-                                if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
-                                    player.level().destroyBlock(blockpos, false);
-                                }
-                                else {
-                                    player.level().removeBlock(blockpos, false);
-                                }
+                        boolean isInTag = blockstate.is(DSBlockTags.DESTRUCTIBLE_BLOCKS);
+
+                        if(!isInTag && ServerConfig.useBlacklistForDestructibleBlocks) {
+                            if (random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
+                                player.level().destroyBlock(blockpos, false);
+                            } else {
+                                player.level().removeBlock(blockpos, false);
                             }
-                        }
-                        else {
-                            if(DRAGON_DESTRUCTIBLE_BLOCKS.contains(blockstate.getBlock())) {
-                                if(random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
-                                    player.level().destroyBlock(blockpos, false);
-                                }
-                                else {
-                                    player.level().removeBlock(blockpos, false);
-                                }
+                        } else if (isInTag) {
+                            if (random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
+                                player.level().destroyBlock(blockpos, false);
+                            } else {
+                                player.level().removeBlock(blockpos, false);
                             }
                         }
                     }

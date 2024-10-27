@@ -1,0 +1,10 @@
+{
+  "values": [
+    "#minecraft:logs",
+    "#minecraft:leaves",
+    "#minecraft:planks",
+    "#minecraft:dirt",
+    "#minecraft:wooden_slabs",
+    "minecraft:grass_block"
+  ]
+}

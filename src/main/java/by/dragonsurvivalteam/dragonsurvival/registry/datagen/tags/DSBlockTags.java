@@ -12,6 +12,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -20,11 +21,17 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSBlockTags extends BlockTagsProvider {
-	public static final TagKey<Block> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
+	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = key("hunter_ability_blocks");
+	public static final TagKey<Block> DESTRUCTIBLE_BLOCKS = key("destructible_blocks");
+	public static final TagKey<Block> CAVE_DRAGON_SPEED_UP_BLOCKS = key("cave_dragon_speed_up_blocks");
+	public static final TagKey<Block> SEA_DRAGON_SPEED_UP_BLOCKS = key("sea_dragon_speed_up_blocks");
+	public static final TagKey<Block> FOREST_DRAGON_SPEED_UP_BLOCKS = key("forest_dragon_speed_up_blocks");
+
 	public static final TagKey<Block> DRAGON_ALTARS = key("dragon_altars");
 	public static final TagKey<Block> DRAGON_TREASURES = key("dragon_treasures");
-	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = key("hunter_ability_blocks");
+	public static final TagKey<Block> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS_SMALL = key("wooden_dragon_doors_small");
+
 
 	public DSBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
 		super(output, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
@@ -45,6 +52,43 @@ public class DSBlockTags extends BlockTagsProvider {
                 default -> { /* Nothing to do */ }
             }
 		});
+
+		tag(DESTRUCTIBLE_BLOCKS)
+				.addTag(BlockTags.LEAVES)
+				.addTag(BlockTags.MINEABLE_WITH_AXE)
+				.addTag(BlockTags.FLOWERS)
+				.addTag(BlockTags.REPLACEABLE);
+
+		tag(CAVE_DRAGON_SPEED_UP_BLOCKS)
+				.addTag(BlockTags.BASE_STONE_NETHER)
+				.addTag(BlockTags.BASE_STONE_OVERWORLD)
+				.addTag(BlockTags.STONE_BRICKS)
+				.addTag(BlockTags.BEACON_BASE_BLOCKS)
+				.addTag(Tags.Blocks.COBBLESTONES)
+				.addTag(Tags.Blocks.SANDSTONE_BLOCKS)
+				.addTag(Tags.Blocks.STONES)
+				.addTag(Tags.Blocks.ORES)
+				.add(Blocks.LAVA)
+				.add(Blocks.FIRE)
+				.add(Blocks.SOUL_FIRE);
+
+		tag(SEA_DRAGON_SPEED_UP_BLOCKS)
+				.addTag(BlockTags.ICE)
+				.addTag(BlockTags.IMPERMEABLE)
+				.addTag(BlockTags.SAND)
+				.addTag(BlockTags.CORAL_BLOCKS)
+				.addTag(Tags.Blocks.SANDSTONE_BLOCKS)
+				.addTag(Tags.Blocks.SANDS)
+				.add(Blocks.MUD)
+				.add(Blocks.DIRT_PATH);
+
+		tag(FOREST_DRAGON_SPEED_UP_BLOCKS)
+				.addTag(BlockTags.LOGS)
+				.addTag(BlockTags.LEAVES)
+				.addTag(BlockTags.PLANKS)
+				.addTag(BlockTags.DIRT)
+				.addTag(BlockTags.WOODEN_SLABS)
+				.add(Blocks.GRASS_BLOCK);
 
 		tag(WOODEN_DRAGON_DOORS_SMALL)
 				.add(DSBlocks.OAK_SMALL_DOOR.value())

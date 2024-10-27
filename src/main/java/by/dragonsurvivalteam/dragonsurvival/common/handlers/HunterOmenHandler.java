@@ -45,7 +45,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 @EventBusSubscriber
 public class HunterOmenHandler {
-	// FIXME: This will fail if a player dies, then closes the game/server. The player will respawn without the effect.
+	// FIXME: This will fail if a player dies, then closes the game/server. The player will respawn without the effect. <- why not handle this with data attachments + copyOnDeath
 	private static final Map<UUID, MobEffectInstance> playersToReapplyHunterOmen = new HashMap<>();
 
 	private static boolean doesEntityApplyHunterOmen(Entity entity){
