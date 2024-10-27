@@ -19,6 +19,7 @@ import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -302,10 +303,9 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 			builder = renderAbility(state, currentCast);
 		}
 
-		// TODO: This method doesn't work great when the player is artificially slowed (walk through a spider web to see the issue)
-		// The reason the threshold is so high here is that lower thresholds cause the player to be stuck transitioning away from the walk animation longer than they should when they stop moving.
-		boolean isMovingHorizontalWalk = player.getDeltaMovement().horizontalDistance() > defaultPlayerWalkSpeed / 5;
-		boolean isMovingHorizontalSneak = player.getDeltaMovement().horizontalDistance() > defaultPlayerSneakSpeed / 5;
+		final double INPUT_EPSILON = 0.0000001D;
+		Vec2 rawInput = handler.getMovementData().desiredMoveVec;
+		boolean hasMoveInput = rawInput.lengthSquared() > INPUT_EPSILON * INPUT_EPSILON;
 
 		// TODO: The transition length of animations doesn't work correctly when the framerate varies too much from 60 FPS
 		if(handler.getMagicData().onMagicSource){
@@ -391,7 +391,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 			animationController.transitionLength(2);
 		} else if(player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)){
 			// Player is Sneaking
-			if(isMovingHorizontalSneak){
+			if(hasMoveInput){
 				useDynamicScaling = true;
 				baseSpeed = defaultPlayerSneakSpeed;
 				state.setAnimation(AnimationUtils.createAnimation(builder, SNEAK_WALK));
@@ -413,7 +413,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 			baseSpeed = defaultPlayerSprintSpeed;
 			state.setAnimation(AnimationUtils.createAnimation(builder, RUN));
 			animationController.transitionLength(2);
-		}else if(isMovingHorizontalWalk){
+		}else if(hasMoveInput){
 			useDynamicScaling = true;
 			state.setAnimation(AnimationUtils.createAnimation(builder, WALK));
 			animationController.transitionLength(2);
