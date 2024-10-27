@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
@@ -31,9 +31,9 @@ public class DSItemTags extends ItemTagsProvider {
 				.addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_health"))
 				.addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_mental_cleansing"));
 
-		copy(DataBlockTagProvider.DRAGON_ALTARS, createKey("dragon_altars"));
-		copy(DataBlockTagProvider.DRAGON_TREASURES, createKey("dragon_treasures"));
-		copy(DataBlockTagProvider.WOODEN_DRAGON_DOORS, createKey("wooden_dragon_doors"));
+		copy(DSBlockTags.DRAGON_ALTARS, createKey("dragon_altars"));
+		copy(DSBlockTags.DRAGON_TREASURES, createKey("dragon_treasures"));
+		copy(DSBlockTags.WOODEN_DRAGON_DOORS, createKey("wooden_dragon_doors"));
 	}
 
 	private static TagKey<Item> createKey(@NotNull final String name) {

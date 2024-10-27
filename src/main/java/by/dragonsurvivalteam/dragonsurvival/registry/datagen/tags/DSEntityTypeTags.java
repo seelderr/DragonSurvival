@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import java.util.concurrent.CompletableFuture;

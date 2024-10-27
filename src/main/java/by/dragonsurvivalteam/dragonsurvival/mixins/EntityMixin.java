@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMove
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSEntityTypeTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;

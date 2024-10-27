@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncHunterStacksRemoval;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.FastColor;
@@ -200,7 +200,7 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
     }
 
     private static boolean isHunterRelevant(final BlockState blockState) {
-        return blockState.is(DataBlockTagProvider.HUNTER_ABILITY_BLOCKS);
+        return blockState.is(DSBlockTags.HUNTER_ABILITY_BLOCKS);
     }
 
     private static void clearHunterStacks(final ServerPlayer player) {

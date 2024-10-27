@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
@@ -20,14 +20,14 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DataBlockTagProvider extends BlockTagsProvider {
+public class DSBlockTags extends BlockTagsProvider {
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS = createKey("wooden_dragon_doors");
 	public static final TagKey<Block> DRAGON_ALTARS = createKey("dragon_altars");
 	public static final TagKey<Block> DRAGON_TREASURES = createKey("dragon_treasures");
 	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = createKey("hunter_ability_blocks");
 	public static final TagKey<Block> WOODEN_DRAGON_DOORS_SMALL = createKey("wooden_dragon_doors_small");
 
-	public DataBlockTagProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+	public DSBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
 		super(output, lookupProvider, modId, existingFileHelper);
 	}
 

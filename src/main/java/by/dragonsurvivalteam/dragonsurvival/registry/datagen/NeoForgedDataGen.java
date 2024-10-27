@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.DataProvider;
@@ -37,14 +39,14 @@ public class NeoForgedDataGen {
 				LootContextParamSets.BLOCK);
 		generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) output -> new LootTableProvider(output, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
 
-		BlockTagsProvider blockTagsProvider = new DataBlockTagProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
+		BlockTagsProvider blockTagsProvider = new DSBlockTags(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
 		generator.addProvider(event.includeServer(), blockTagsProvider);
 
 		generator.addProvider(event.includeServer(), new DSItemTags(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-		generator.addProvider(event.includeServer(), new DataDamageTypeTagsProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeServer(), new DSDamageTypeTags(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DSEntityTypeTags(packOutput, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DSEffectTags(packOutput, lookupProvider, existingFileHelper));
-		generator.addProvider(event.includeServer(), new DataPoiTypeTagsProvider(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
+		generator.addProvider(event.includeServer(), new DSPoiTypeTags(packOutput, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DataBlockModelProvider(packOutput, DragonSurvivalMod.MODID, existingFileHelper));
 	}
 }
