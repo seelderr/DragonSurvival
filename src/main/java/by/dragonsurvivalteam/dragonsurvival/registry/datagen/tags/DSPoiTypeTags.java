@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import java.util.concurrent.CompletableFuture;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.PoiTypeTagsProvider;
@@ -10,14 +10,15 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+
 public class DSPoiTypeTags extends PoiTypeTagsProvider {
-    public DSPoiTypeTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pOutput, pProvider, modId, existingFileHelper);
+    public DSPoiTypeTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, @Nullable ExistingFileHelper existingFileHelper) {
+        super(pOutput, pProvider, DragonSurvivalMod.MODID, existingFileHelper);
     }
 
     @Override
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(PoiTypeTags.ACQUIRABLE_JOB_SITE)
-                .addOptional(ResourceLocation.fromNamespaceAndPath(this.modId, "dragon_rider_poi"));
+        tag(PoiTypeTags.ACQUIRABLE_JOB_SITE).addOptional(ResourceLocation.fromNamespaceAndPath(this.modId, "dragon_rider_poi"));
     }
 }

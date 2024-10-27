@@ -1,5 +1,4 @@
 {
-  "replace": false,
   "values": [
     "minecraft:stone_bricks",
     "minecraft:stone_brick_stairs",
@@ -12,11 +11,11 @@
     "minecraft:deepslate_brick_stairs",
     "minecraft:deepslate_brick_slab",
     "minecraft:deepslate_brick_wall",
-    "minecraft:cracked_deepslate_bricks",
     "minecraft:deepslate_tiles",
     "minecraft:deepslate_tile_stairs",
     "minecraft:deepslate_tile_slab",
     "minecraft:deepslate_tile_wall",
+    "minecraft:cracked_deepslate_bricks",
     "minecraft:cracked_deepslate_tiles",
     "minecraft:polished_deepslate",
     "minecraft:polished_deepslate_stairs",

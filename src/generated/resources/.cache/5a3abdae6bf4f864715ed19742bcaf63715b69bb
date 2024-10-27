@@ -1,8 +1,10 @@
-// 1.21.1	2024-08-14T10:43:51.2159546	Dragon Survival Block tags
+// 1.21.1	2024-10-27T14:37:40.2937187	Dragon Survival Block tags
+cfdfa924695a061d4c8b66f106d176243a4d38e3 data/dragonsurvival/tags/block/castle_blocks.json
 bcd9fc9215902ea5cae88a8bbf012021624d977e data/dragonsurvival/tags/block/dragon_altars.json
+f9a6a5f3b67bb79883689bdd154a227493642cf6 data/dragonsurvival/tags/block/dragon_bones.json
 50d0e46d98181ed48f2323211041c958002f5e4c data/dragonsurvival/tags/block/dragon_treasures.json
 0fd05ce24f7e0237534571ed952465bbb582b59d data/dragonsurvival/tags/block/hunter_ability_blocks.json
-10d403f7ef80facaca35aec79c7fadf7cf066ad2 data/dragonsurvival/tags/block/wooden_dragon_doors.json
+8f7349d5971017f0edcef42622012fdf6b4937b9 data/dragonsurvival/tags/block/wooden_dragon_doors.json
 e4a43a2505031c577298e729f1b98ec87b4dfdc6 data/dragonsurvival/tags/block/wooden_dragon_doors_small.json
 4f77dfd68927b9086fdc21084a376b2b66d4c9f5 data/minecraft/tags/block/mineable/axe.json
 fdece799d1a60ca557192eb0c2c9874ec93fabff data/minecraft/tags/block/mineable/pickaxe.json

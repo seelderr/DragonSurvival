@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import java.util.concurrent.CompletableFuture;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -14,9 +14,12 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+
 public class DSEntityTypeTags extends EntityTypeTagsProvider {
     public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("animal_avoid_blacklist"));
     public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("vehicle_whitelist"));
+    public static final TagKey<EntityType<?>> HUNTER_TARGETS = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("hunter_targets"));
 
     public DSEntityTypeTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
         super(output, provider, DragonSurvivalMod.MODID, helper);
@@ -38,5 +41,42 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
                 .addOptional(ResourceLocation.fromNamespaceAndPath("create", "stationary_contraption"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("hexerei", "broom"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("botania", "player_mover"));
+
+        tag(HUNTER_TARGETS)
+                .add(EntityType.EVOKER)
+                .add(EntityType.PILLAGER)
+                .add(EntityType.VINDICATOR)
+                .add(EntityType.STRAY)
+                .add(EntityType.SKELETON)
+                .add(EntityType.SPIDER)
+                .add(EntityType.CAVE_SPIDER)
+                .add(EntityType.ZOMBIE)
+                .add(EntityType.ZOMBIE_VILLAGER)
+                .add(EntityType.HUSK)
+                .add(EntityType.ZOMBIFIED_PIGLIN)
+                .add(EntityType.BLAZE)
+                .add(EntityType.DROWNED)
+                .add(EntityType.ENDERMITE)
+                .add(EntityType.HOGLIN)
+                .add(EntityType.MAGMA_CUBE)
+                .add(EntityType.RAVAGER)
+                .add(EntityType.SLIME)
+                .add(EntityType.WITCH)
+                .add(EntityType.WITHER_SKELETON)
+                .add(EntityType.WITHER)
+                .addOptionalTag(ResourceLocation.fromNamespaceAndPath("zombiemobs", "zombie_animals"));
+
+        tag(key("hunter_faction"))
+                .add(EntityType.VILLAGER)
+                .add(DSEntities.HUNTER_AMBUSHER.value())
+                .add(DSEntities.HUNTER_GRIFFIN.value())
+                .add(DSEntities.HUNTER_HOUND.value())
+                .add(DSEntities.HUNTER_KNIGHT.value())
+                .add(DSEntities.HUNTER_LEADER.value())
+                .add(DSEntities.HUNTER_SPEARMAN.value());
+    }
+
+    private static TagKey<EntityType<?>> key(@NotNull final String path) {
+        return TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res(path));
     }
 }

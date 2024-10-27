@@ -21,8 +21,8 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 
 public class DataBlockStateProvider extends BlockStateProvider {
-	public DataBlockStateProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
-		super(output, modId, existingFileHelper);
+	public DataBlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
+		super(output, DragonSurvivalMod.MODID, existingFileHelper);
 	}
 
 	@Override
