@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
@@ -17,11 +17,11 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DataDamageTypeTagsProvider extends DamageTypeTagsProvider {
+public class DSDamageTypeTags extends DamageTypeTagsProvider {
     public static TagKey<DamageType> DRAGON_BREATH = createKey("dragon_breath");
     public static TagKey<DamageType> DRAGON_MAGIC = createKey("dragon_magic");
 
-    public DataDamageTypeTagsProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pLookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+    public DSDamageTypeTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pLookupProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
         super(pOutput, pLookupProvider, modId, existingFileHelper);
     }
 

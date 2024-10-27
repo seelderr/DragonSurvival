@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
@@ -10,8 +10,8 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DataPoiTypeTagsProvider extends PoiTypeTagsProvider {
-    public DataPoiTypeTagsProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+public class DSPoiTypeTags extends PoiTypeTagsProvider {
+    public DSPoiTypeTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
         super(pOutput, pProvider, modId, existingFileHelper);
     }
 

@@ -10,7 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSItemTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;

@@ -17,8 +17,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSEffectTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSDamageTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -209,7 +209,7 @@ public class MagicHandler {
 				}
 				if (event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
 					Registry<Enchantment> enchantments = event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).get();
-					if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_MAGIC)) {
+					if (event.getSource().is(DSDamageTypeTags.DRAGON_MAGIC)) {
 						Optional<Holder.Reference<Enchantment>> draconicSuperiority = enchantments.getHolder(DSEnchantments.DRACONIC_SUPERIORITY);
 						if (draconicSuperiority.isPresent()) {
 							EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source);
@@ -224,7 +224,7 @@ public class MagicHandler {
 			}
 		}
 
-		if (event.getSource().is(DataDamageTypeTagsProvider.DRAGON_BREATH)) {
+		if (event.getSource().is(DSDamageTypeTags.DRAGON_BREATH)) {
 			return;
 		}
 
