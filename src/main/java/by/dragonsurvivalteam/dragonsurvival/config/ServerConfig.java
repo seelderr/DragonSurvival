@@ -416,9 +416,9 @@ public class ServerConfig{
 	@ConfigType(Item.class) // TODO :: Use tag
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
 	public static List<String> blacklistedItems = List.of(
-			"c:tools/shields",
-			"c:tools/bows",
-			"c:tools/crossbows",
+			"c:tools/shield",
+			"c:tools/bow",
+			"c:tools/crossbow",
 			"minecraft:trident",
 			"minecraft:elytra",
 			"quark:flamerang",
