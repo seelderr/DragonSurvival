@@ -13,6 +13,9 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import java.util.Arrays;
 import java.util.Objects;
+
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -78,6 +81,16 @@ public abstract class PlayerMixin extends LivingEntity {
 				callback.setReturnValue(true);
 			}
 		});
+	}
+
+	/** Make sure dragon hitboxes are considered here */
+	@ModifyReturnValue(method = "canPlayerFitWithinBlocksAndEntitiesWhen", at = @At("RETURN"))
+	private boolean considerDragonPosesInCanPlayerFit(boolean returnValue, @Local(argsOnly = true) Pose pose) {
+		if(DragonStateProvider.isDragon(this)) {
+			return DragonSizeHandler.canPoseFit(this, pose);
+		} else {
+			return returnValue;
+		}
 	}
 
 	/** Enable cave dragons to properly swim in lava */
