@@ -40,7 +40,7 @@ public abstract class LivingEntityMixin extends Entity {
 		super(type, level);
 	}
 
-    @SuppressWarnings("ConstantValue")
+    @SuppressWarnings("ConstantValue") // both checks in the if statement are valid
     @Redirect(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack dragonSurvival$grantDragonSwordAttributes(LivingEntity entity, EquipmentSlot slot) {
         if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player player) {
