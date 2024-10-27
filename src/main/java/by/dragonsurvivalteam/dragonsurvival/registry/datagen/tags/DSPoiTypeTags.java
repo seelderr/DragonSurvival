@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.PoiTypeTagsProvider;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.PoiTypeTags;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
@@ -18,7 +18,8 @@ public class DSPoiTypeTags extends PoiTypeTagsProvider {
     }
 
     @Override
+    @SuppressWarnings("DataFlowIssue") // resource key won't be null
     protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(PoiTypeTags.ACQUIRABLE_JOB_SITE).addOptional(ResourceLocation.fromNamespaceAndPath(this.modId, "dragon_rider_poi"));
+        tag(PoiTypeTags.ACQUIRABLE_JOB_SITE).add(DSTrades.DRAGON_RIDER_POI.getKey());
     }
 }

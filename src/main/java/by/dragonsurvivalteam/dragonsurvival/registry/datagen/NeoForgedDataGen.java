@@ -64,6 +64,7 @@ public class NeoForgedDataGen {
 		generator.addProvider(event.includeServer(), new DSEntityTypeTags(packOutput, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DSEffectTags(packOutput, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DSPoiTypeTags(packOutput, lookupProvider, existingFileHelper));
+		generator.addProvider(event.includeServer(), new DSEnchantmentTags(packOutput, lookupProvider, existingFileHelper));
 		generator.addProvider(event.includeServer(), new DataBlockModelProvider(packOutput, existingFileHelper));
 	}
 }

@@ -17,9 +17,9 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSEntityTypeTags extends EntityTypeTagsProvider {
-    public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("animal_avoid_blacklist"));
-    public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("vehicle_whitelist"));
-    public static final TagKey<EntityType<?>> HUNTER_TARGETS = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("hunter_targets"));
+    public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST =key("animal_avoid_blacklist");
+    public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = key("vehicle_whitelist");
+    public static final TagKey<EntityType<?>> HUNTER_TARGETS = key("hunter_targets");
 
     public DSEntityTypeTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
         super(output, provider, DragonSurvivalMod.MODID, helper);
@@ -66,6 +66,7 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
                 .add(EntityType.WITHER)
                 .addOptionalTag(ResourceLocation.fromNamespaceAndPath("zombiemobs", "zombie_animals"));
 
+        // TODO :: currently unused
         tag(key("hunter_faction"))
                 .add(EntityType.VILLAGER)
                 .add(DSEntities.HUNTER_AMBUSHER.value())

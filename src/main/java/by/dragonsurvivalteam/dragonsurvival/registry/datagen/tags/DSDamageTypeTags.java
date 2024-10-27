@@ -48,6 +48,7 @@ public class DSDamageTypeTags extends DamageTypeTagsProvider {
                 .add(DSDamageTypes.DRAGON_BREATH)
                 .add(DamageTypes.FIREBALL);
 
+        // Used in enchantments
         tag(key("anti_dragon")).add(DSDamageTypes.ANTI_DRAGON);
     }
 
