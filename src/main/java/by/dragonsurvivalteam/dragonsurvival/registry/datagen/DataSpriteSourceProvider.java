@@ -4,6 +4,8 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -13,8 +15,8 @@ import net.neoforged.neoforge.common.data.SpriteSourceProvider;
 
 public class DataSpriteSourceProvider extends SpriteSourceProvider {
 
-    public DataSpriteSourceProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, String modId, ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, modId, existingFileHelper);
+    public DataSpriteSourceProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper) {
+        super(output, lookupProvider, MODID, existingFileHelper);
     }
 
     @Override

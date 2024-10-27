@@ -44,6 +44,6 @@
   "slots": [
     "chest"
   ],
-  "supported_items": "#dragonsurvival:enchantable/elytra_and_chest_armor",
+  "supported_items": "#dragonsurvival:enchantable/chest_armor_and_elytra",
   "weight": 10
 }

@@ -13,8 +13,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DSEffectTags extends TagsProvider<MobEffect> {
-    public static final TagKey<MobEffect> OVERWHELMING_MIGHT_BLACKLIST = createKey("overwhelming_might_blacklist");
-    public static final TagKey<MobEffect> UNBREAKABLE_SPIRIT_BLACKLIST = createKey("unbreakable_spirit_blacklist");
+    public static final TagKey<MobEffect> OVERWHELMING_MIGHT_BLACKLIST = key("overwhelming_might_blacklist");
+    public static final TagKey<MobEffect> UNBREAKABLE_SPIRIT_BLACKLIST = key("unbreakable_spirit_blacklist");
 
     public DSEffectTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
         super(output, Registries.MOB_EFFECT, provider, DragonSurvivalMod.MODID, helper);
@@ -26,7 +26,7 @@ public class DSEffectTags extends TagsProvider<MobEffect> {
         tag(UNBREAKABLE_SPIRIT_BLACKLIST);
     }
 
-    private static TagKey<MobEffect> createKey(@NotNull final String path) {
+    private static TagKey<MobEffect> key(@NotNull final String path) {
         return TagKey.create(Registries.MOB_EFFECT, DragonSurvivalMod.res(path));
     }
 }
