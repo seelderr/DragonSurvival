@@ -112,9 +112,14 @@ public class ClientDragonRenderer {
 	public static void renderBreathHitBox(final RenderLevelStageEvent event) {
 		if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
 			LocalPlayer localPlayer = Minecraft.getInstance().player;
+
+			if (localPlayer == null) {
+				return;
+			}
+
 			DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
 
-			if (localPlayer == null || !handler.isDragon()) {
+			if (!handler.isDragon()) {
 				return;
 			}
 
