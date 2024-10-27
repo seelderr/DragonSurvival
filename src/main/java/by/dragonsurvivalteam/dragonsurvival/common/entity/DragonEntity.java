@@ -412,11 +412,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 			useDynamicScaling = true;
 			baseSpeed = defaultPlayerSprintSpeed;
 			state.setAnimation(AnimationUtils.createAnimation(builder, RUN));
-			animationController.transitionLength(2);
+			animationController.transitionLength(5);
 		}else if(hasMoveInput){
 			useDynamicScaling = true;
 			state.setAnimation(AnimationUtils.createAnimation(builder, WALK));
-			animationController.transitionLength(2);
+			animationController.transitionLength(5);
 		}else if(handler.getMovementData().dig){
 			state.setAnimation(AnimationUtils.createAnimation(builder, DIG));
 			animationController.transitionLength(2);
