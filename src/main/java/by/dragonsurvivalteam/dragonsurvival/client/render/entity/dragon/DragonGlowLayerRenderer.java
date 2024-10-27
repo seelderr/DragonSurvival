@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
@@ -17,8 +19,6 @@ import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 // TODO :: geckolib has an 'AutoGlowingGeoLayer' class, could that help here?
 // FIXME :: glow layer doesn't like translucency much (it goes dark once the alpha changes)

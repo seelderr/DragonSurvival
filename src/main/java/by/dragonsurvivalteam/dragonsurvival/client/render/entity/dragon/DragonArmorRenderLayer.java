@@ -1,5 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.LOGGER;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
@@ -10,6 +13,13 @@ import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -28,17 +38,6 @@ import net.minecraft.world.item.component.DyedItemColor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
-
-import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.LOGGER;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
 	private final GeoEntityRenderer<DragonEntity> renderer;

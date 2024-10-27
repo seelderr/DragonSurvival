@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
+import java.util.ArrayList;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
@@ -39,8 +40,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerDestroyItemEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.ArrayList;
 
 @EventBusSubscriber
 public class ClawToolHandler{

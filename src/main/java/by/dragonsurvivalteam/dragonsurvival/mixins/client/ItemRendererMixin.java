@@ -53,13 +53,11 @@ public abstract class ItemRendererMixin { // FIXME :: doesn't work with sodium s
         HunterHandler.itemTranslucency = -1;
     }
 
-    @Unique
-    private static boolean dragonSurvival$isRelevantDisplayContext(final ItemDisplayContext context) {
+    @Unique private static boolean dragonSurvival$isRelevantDisplayContext(final ItemDisplayContext context) {
         return context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
     }
 
-    @Unique
-    private static @Nullable Player dragonSurvival$getPlayerWithHunterStacks(final LivingEntity entity) {
+    @Unique private static @Nullable Player dragonSurvival$getPlayerWithHunterStacks(final LivingEntity entity) {
         if (entity instanceof Player player && DragonStateProvider.getData(player).hasHunterStacks()) {
             return player;
         }

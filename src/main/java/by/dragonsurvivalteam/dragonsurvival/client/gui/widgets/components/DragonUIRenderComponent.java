@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.math.Axis;
+import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -15,9 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
-
-import java.util.List;
-import java.util.function.Supplier;
 
 public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Renderable {
 	private final Screen screen;

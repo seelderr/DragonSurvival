@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -17,8 +18,6 @@ import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.CompletableFuture;
 
 public class DSBlockTags extends BlockTagsProvider {
 	public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = key("hunter_ability_blocks");

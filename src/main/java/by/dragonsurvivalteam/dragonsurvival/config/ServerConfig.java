@@ -6,15 +6,14 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
-
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 
 public class ServerConfig{

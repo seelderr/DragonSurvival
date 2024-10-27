@@ -1,5 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.DS_TRIGGERS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment.DS_ARMOR_MATERIALS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes.DS_MAP_DECORATIONS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes.DS_STRUCTURE_PLACEMENT_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
+
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -11,6 +29,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootEx
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
 import com.mojang.serialization.MapCodec;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -37,28 +58,6 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLibClient;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
-
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.DS_TRIGGERS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment.DS_ARMOR_MATERIALS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes.DS_MAP_DECORATIONS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes.DS_STRUCTURE_PLACEMENT_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
 
 @SuppressWarnings("unused")
 @Mod( DragonSurvivalMod.MODID )

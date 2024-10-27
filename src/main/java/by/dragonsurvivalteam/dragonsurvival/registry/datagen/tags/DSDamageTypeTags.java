@@ -1,7 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -14,10 +16,6 @@ import net.minecraft.world.damagesource.DamageTypes;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.concurrent.CompletableFuture;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DSDamageTypeTags extends DamageTypeTagsProvider {
     public static TagKey<DamageType> DRAGON_BREATH = key("dragon_breath");

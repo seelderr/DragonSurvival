@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -11,8 +13,6 @@ import net.minecraft.world.damagesource.DamageScaling;
 import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DeathMessageType;
 import net.minecraft.world.level.Level;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DSDamageTypes {
     // We don't need to use a DeferredRegister for DamageTypes, as they are fully data driven.

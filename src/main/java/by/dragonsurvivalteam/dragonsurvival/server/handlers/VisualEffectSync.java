@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncVisualEffectAdded;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncVisualEffectRemoved;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import java.util.List;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
@@ -13,8 +14,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.List;
 
 /** To update effects which affect clients (through visuals) on non-player entities (they get synchronized correctly) (vanilla handles glowing and invisibility effects with data accessors) */
 @EventBusSubscriber // FIXME :: could technically be done with data attachments (as our own data accessors)?

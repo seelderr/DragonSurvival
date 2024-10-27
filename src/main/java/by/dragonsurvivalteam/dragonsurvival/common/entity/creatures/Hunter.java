@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HurtByTargetGoalExtended;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
+import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -19,8 +20,6 @@ import net.minecraft.world.level.Level;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
-
-import javax.annotation.Nullable;
 
 public abstract class Hunter extends PathfinderMob implements GeoEntity, DragonHunter {
 	private static final EntityDataAccessor<Boolean> IS_AGGRO = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);

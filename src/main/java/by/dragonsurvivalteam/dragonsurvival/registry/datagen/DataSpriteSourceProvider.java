@@ -4,8 +4,6 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
