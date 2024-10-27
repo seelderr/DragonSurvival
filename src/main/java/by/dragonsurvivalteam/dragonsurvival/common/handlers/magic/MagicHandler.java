@@ -17,8 +17,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSDamageTypeTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEffectTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -161,7 +161,7 @@ public class MagicHandler {
 					return;
 				}
 
-				if(Objects.equals(cap.getType(), DragonTypes.SEA)){
+				if(DragonUtils.isDragonType(cap, DragonTypes.SEA)){
 					event.setCanceled(true);
 				}
 			});
@@ -234,7 +234,7 @@ public class MagicHandler {
 					return;
 				}
 
-				if (Objects.equals(handler.getType(), DragonTypes.SEA)) {
+				if (DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
 					SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
 					boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
 
@@ -247,7 +247,7 @@ public class MagicHandler {
 							serverLevel.sendParticles(new SeaSweepParticle.Data(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
 						}
 					}
-				} else if (Objects.equals(handler.getType(), DragonTypes.CAVE)) {
+				} else if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
 					BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 					boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 

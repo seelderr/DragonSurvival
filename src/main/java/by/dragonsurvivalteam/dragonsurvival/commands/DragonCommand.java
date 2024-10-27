@@ -114,7 +114,8 @@ public class DragonCommand{
 		AbstractDragonType dragonType = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
 		AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
 
-		if (dragonType != null && dragonBody == null || dragonType == null && dragonBody != null) {
+		if (dragonType != null && dragonBody == null) {
+			// TODO :: setting a null dragon body causes issue (when building modifiers e.g.), not sure why it's an option here
 			return 0;
 		}
 

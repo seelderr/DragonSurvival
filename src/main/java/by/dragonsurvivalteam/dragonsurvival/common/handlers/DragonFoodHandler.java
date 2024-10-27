@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ToolTipHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -12,12 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -33,6 +25,15 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+
+import javax.annotation.Nullable;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DragonFoodHandler {
@@ -262,11 +263,11 @@ public class DragonFoodHandler {
 			}
 		}
 
-		if (Objects.equals(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD == null) {
+		if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD == null) {
 			FOREST_DRAGON_FOOD = foods;
-		} else if (Objects.equals(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
+		} else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
 			CAVE_DRAGON_FOOD = foods;
-		} else if (Objects.equals(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
+		} else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
 			SEA_DRAGON_FOOD = foods;
 		}
 
