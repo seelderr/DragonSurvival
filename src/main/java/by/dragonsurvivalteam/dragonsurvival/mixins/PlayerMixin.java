@@ -2,16 +2,18 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
@@ -19,13 +21,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Arrays;
 import java.util.Objects;
 
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
-
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
-	/** Add -0.07 to 0.08, so we get the vanilla default of 0.01 */
-	@Unique private final static AttributeModifier dragonSurvival$SLOW_FALL_MOD = new AttributeModifier(SLOW_FALLING, -0.07, AttributeModifier.Operation.ADD_VALUE);
-
 	protected PlayerMixin(EntityType<? extends LivingEntity> type, Level level) {
 		super(type, level);
 	}
@@ -35,6 +32,20 @@ public abstract class PlayerMixin extends LivingEntity {
 		if (ServerConfig.disableSuffocation && source == damageSources().inWall() && DragonStateProvider.isDragon(this)) {
 			callback.setReturnValue(true);
 		}
+	}
+
+	/** Disables the mining speed penalty for not being on the ground (for sea dragons that are in the water) */
+	@WrapOperation(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;onGround()Z"))
+	private boolean dragonSurvival$disablePenalty(final Player instance, final Operation<Boolean> original) {
+		if (instance.isInWater() && DragonUtils.isDragonType(instance, DragonTypes.SEA)) {
+			return true;
+		}
+
+		if (instance.isInLava() && DragonUtils.isDragonType(instance, DragonTypes.CAVE)) {
+			return true;
+		}
+
+		return original.call(instance);
 	}
 
 	@Inject(method = "isImmobile", at = @At("HEAD"), cancellable = true)

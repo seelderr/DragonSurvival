@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_BLACKLISTED_ITEMS;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -12,15 +10,14 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrownPotion;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.PotionItem;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.Potions;
 import net.minecraft.world.phys.AABB;
@@ -31,6 +28,12 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_BLACKLISTED_ITEMS;
 
 @EventBusSubscriber
 public class DragonPenaltyHandler{
@@ -61,7 +64,7 @@ public class DragonPenaltyHandler{
 
 				DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 					if(dragonStateHandler.isDragon()){
-						if(dragonStateHandler.getType() == null || !Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE)){
+						if(dragonStateHandler.getType() == null || !DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE)){
 							return;
 						}
 						player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveSplashDamage.floatValue());
@@ -82,7 +85,7 @@ public class DragonPenaltyHandler{
 		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				List<String> hurtfulItems = new ArrayList<>(
-						Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
+						DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
 				for(String item : hurtfulItems){
 					if(item.replace("item:", "").replace("tag:", "").startsWith(ResourceHelper.getKey(itemStack.getItem()) + ":")){
