@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.RevealingTheSoulAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
@@ -19,14 +18,11 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSEffectTags;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataDamageTypeTagsProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -35,95 +31,61 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.event.entity.EntityStruckByLightningEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingExperienceDropEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
-import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
+import java.util.Optional;
+
 @SuppressWarnings("unused")
 @EventBusSubscriber
-public class MagicHandler{
-	@SubscribeEvent
-	public static void magicUpdate(PlayerTickEvent.Post event){
+public class MagicHandler {
+	@SubscribeEvent // TODO :: is this needed?
+	public static void setPlayerForAbilities(PlayerTickEvent.Pre event) {
 		Player player = event.getEntity();
 
-		AttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
-
-		DragonStateProvider.getOptional(player).ifPresent(cap -> {
-			if(cap.isDragon()) {
-				if(cap.getMagicData().abilities.isEmpty() || cap.getMagicData().innateDragonAbilities.isEmpty() || cap.getMagicData().activeDragonAbilities.isEmpty()){
-					cap.getMagicData().initAbilities(cap.getType());
-				}
-	
-				for(int i = 0; i < MagicCap.activeAbilitySlots; i++){
-					ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(i);
-	
-					if(ability != null){
-						ability.tickCooldown();
-					}
-				}
-			}
-		});
-	}
-
-	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent.Post event){
-		Player player = event.getEntity();
-
-		DragonStateProvider.getOptional(player).ifPresent(cap -> {
-			if(!cap.isDragon()){
+		DragonStateProvider.getOptional(player).ifPresent(data -> {
+			if (!data.isDragon()) {
 				return;
 			}
 
-			for(DragonAbility ability : cap.getMagicData().abilities.values()){
+			for (DragonAbility ability : data.getMagicData().abilities.values()) {
 				ability.player = player;
-			}
-
-			if (player.hasEffect(DSEffects.HUNTER)) {
-				BlockState blockStateFeet = player.getBlockStateOn();
-
-				if (isHunterRelevant(blockStateFeet)) {
-					player.addEffect(new MobEffectInstance(MobEffects.INVISIBILITY, 10, 0, false, false));
-				}
-
-				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 20, 2, false, false));
 			}
 		});
 	}
 
-	private static boolean isHunterRelevant(final BlockState blockState) {
-		return blockState.is(DataBlockTagProvider.HUNTER_ABILITY_BLOCKS);
-	}
-
 	@SubscribeEvent
-	public static void livingVisibility(LivingEvent.LivingVisibilityEvent event){
-		if(event.getEntity() instanceof Player player){
-			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
-					return;
-				}
+	public static void magicUpdate(PlayerTickEvent.Post event) {
+		DragonStateProvider.getOptional(event.getEntity()).ifPresent(data -> {
+			if (!data.isDragon()) {
+				return;
+			}
 
-				if(player.hasEffect(DSEffects.HUNTER)){
-					event.modifyVisibility(0);
+			if (data.getMagicData().abilities.isEmpty() || data.getMagicData().innateDragonAbilities.isEmpty() || data.getMagicData().activeDragonAbilities.isEmpty()) {
+				data.getMagicData().initAbilities(data.getType());
+			}
+
+			for (int i = 0; i < MagicCap.activeAbilitySlots; i++) {
+				ActiveDragonAbility ability = data.getMagicData().getAbilityFromSlot(i);
+
+				if (ability != null) {
+					ability.tickCooldown();
 				}
-			});
-		}
+			}
+		});
 	}
 
 	@SubscribeEvent
@@ -204,37 +166,6 @@ public class MagicHandler{
 				}
 			});
 		}
-	}
-
-	@SubscribeEvent
-	public static void playerDamaged(LivingIncomingDamageEvent event){
-		if(event.getEntity() instanceof Player player){
-			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
-					return;
-				}
-
-				if(player.hasEffect(DSEffects.HUNTER)){
-					player.removeEffect(DSEffects.HUNTER);
-				}
-			});
-		}
-	}
-
-	@SubscribeEvent
-	public static void playerHitEntity(CriticalHitEvent event){
-		Player player = event.getEntity();
-		DragonStateProvider.getOptional(player).ifPresent(cap -> {
-			if(!cap.isDragon()){
-				return;
-			}
-
-			if(player.hasEffect(DSEffects.HUNTER)){
-				MobEffectInstance hunter = player.getEffect(DSEffects.HUNTER);
-				player.removeEffect(DSEffects.HUNTER);
-				event.setDamageMultiplier(event.getDamageMultiplier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
-			}
-		});
 	}
 
 	public static MobEffectInstance modifyEffect(final Player affected, final MobEffectInstance instance, @Nullable final Entity applier) {

@@ -41,7 +41,7 @@ public class PotionSync{
 	}
 
 	@SubscribeEvent
-	public static void potionRemoved(MobEffectEvent.Expired event){
+	public static void potionRemoved(MobEffectEvent.Expired event){ // FIXME :: does this also need to check MobEffectEvent.Remove ?
 		if(!effectsToSync.contains(event.getEffectInstance().getEffect())){
 			return;
 		}

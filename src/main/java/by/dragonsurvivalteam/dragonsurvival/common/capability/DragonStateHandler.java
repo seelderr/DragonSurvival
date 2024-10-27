@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
@@ -55,6 +56,9 @@ public class DragonStateHandler extends EntityStateHandler {
 	/** To track the state if a tool swap is triggered within a tool swap (should only swap back if the last tool swap finishes) */
 	public int toolSwapLayer;
 	// Weapon / tool swap data - END
+
+	// Only needs to be updated on effect removal (server -> client)
+	int hunterStacks;
 
 	public boolean hasFlown;
 	public boolean growing = true;
@@ -718,5 +722,27 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		this.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
 		this.hasUsedAltar = true;
+	}
+
+	// --- Hunter handler --- //
+
+	public void modifyHunterStacks(int modification) {
+		hunterStacks = Math.clamp(hunterStacks + modification, 0, HunterHandler.MAX_HUNTER_STACKS);
+	}
+
+	public boolean hasMaxHunterStacks() {
+		return hunterStacks == HunterHandler.MAX_HUNTER_STACKS;
+	}
+
+	public boolean hasHunterStacks() {
+		return hunterStacks > 0;
+	}
+
+	public void clearHunterStacks() {
+		hunterStacks = 0;
+	}
+
+	public int getHunterStacks() {
+		return hunterStacks;
 	}
 }

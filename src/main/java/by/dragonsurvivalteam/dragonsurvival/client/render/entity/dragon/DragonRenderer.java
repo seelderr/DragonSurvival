@@ -5,19 +5,16 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
@@ -25,6 +22,10 @@ import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.Color;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
@@ -35,8 +36,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public boolean shouldRenderLayers = true;
 	public boolean isRenderLayers = false;
 
-	/** Used when rendering dyeable armor pieces in {@link ClientDragonRenderer#renderArmorPiece} */
-	public Color renderColor = Color.ofRGB(255, 255, 255); // FIXME :: is this still needed with the armor render layer which handles color itself?
+	private static final Color RENDER_COLOR = Color.ofRGB(255, 255, 255);
 
 	private static final HashSet<String> magicAnimations = new HashSet<>();
 	static {
@@ -81,7 +81,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
 		Player player = animatable.getPlayer();
 
-		if (player == null || player.hasEffect(MobEffects.INVISIBILITY)) {
+		if (player == null || player.isInvisible()) {
 			return;
 		}
 
@@ -143,8 +143,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
 	}
 
-	@Override
+	@Override // Also used by the layers
 	public Color getRenderColor(final DragonEntity animatable, float partialTick, int packedLight) {
-		return renderColor;
+		return HunterHandler.modifyAlpha(animatable.getPlayer(), RENDER_COLOR);
 	}
 }

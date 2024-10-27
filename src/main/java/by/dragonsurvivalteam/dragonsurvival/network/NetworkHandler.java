@@ -1,7 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.network;
 
-import by.dragonsurvivalteam.dragonsurvival.network.claw.*;
-import by.dragonsurvivalteam.dragonsurvival.network.container.*;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
+import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
+import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonEditor;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory;
+import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
@@ -62,6 +68,7 @@ public class NetworkHandler {
 
 		// Ability packets
 		registrar.playToClient(SyncMagicStats.Data.TYPE, SyncMagicStats.Data.STREAM_CODEC, SyncMagicStats::handleClient);
+		registrar.playToClient(SyncHunterStacksRemoval.TYPE, SyncHunterStacksRemoval.STREAM_CODEC, SyncHunterStacksRemoval::handleClient);
 		registrar.playBidirectional(SyncMagicCap.Data.TYPE, SyncMagicCap.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncMagicCap::handleClient, SyncMagicCap::handleServer));
 		registrar.playToServer(SyncDragonAbilitySlot.Data.TYPE, SyncDragonAbilitySlot.Data.STREAM_CODEC, SyncDragonAbilitySlot::handleServer);
 		registrar.playBidirectional(SyncAbilityCasting.Data.TYPE, SyncAbilityCasting.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAbilityCasting::handleClient, SyncAbilityCasting::handleServer));
