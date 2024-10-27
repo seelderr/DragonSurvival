@@ -51,7 +51,7 @@ public class ServerConfig{
 	public static Boolean allowDragonChoiceFromInventory = true;
 
 	// Growth
-	@ConfigType(Block.class)
+	@ConfigType(Block.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "destructibleBlocks", comment = "Blocks that are destructible when block destruction is enabled. Blocks that can be harvested with an axe are also destroyable by default on whitelist mode. Formatting: block/modid:id" )
 	public static List<String> destructibleBlocks = List.of(
 			"minecraft:leaves",
@@ -353,7 +353,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "lavaSwimTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava." )
 	public static Integer caveLavaSwimmingTicks = 3600;
 
-	@ConfigType(Block.class)
+	@ConfigType(Block.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveSpeedupBlocks", comment = "Blocks cave dragons gain speed when standing above. Formatting: block/modid:id" )
 	public static List<String> caveSpeedupBlocks = List.of(
 			"minecraft:base_stone_nether",
@@ -383,7 +383,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "cactiImmunity", comment = "Whether forest dragons are immune to Cactus damage." )
 	public static Boolean forestCactiImmunity = true;
 
-	@ConfigType(Block.class)
+	@ConfigType(Block.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestSpeedupBlocks", comment = "Blocks forest dragons gain speed when standing above. Formatting: block/modid:id" )
 	public static List<String> forestSpeedupBlocks = List.of(
 			"minecraft:logs",
@@ -413,7 +413,7 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride" )
 	public static Boolean ridingBlacklist = true;
 
-	@ConfigType(Item.class) // TODO :: Use tag
+	@ConfigType(Item.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
 	public static List<String> blacklistedItems = List.of(
 			"c:tools/shield",
@@ -834,15 +834,15 @@ public class ServerConfig{
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "temporaryEffect", comment = "Duration of effect given in exchange for experience in minutes" )
 	public static Integer minutesOfDragonEffect = 10;
 
-	@ConfigType(MobEffect.class)
+	@ConfigType(MobEffect.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
 	public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
 
-	@ConfigType(MobEffect.class)
+	@ConfigType(MobEffect.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
 	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
-	@ConfigType(MobEffect.class)
+	@ConfigType(MobEffect.class) // FIXME :: handle with tag
 	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
 	public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
 }
