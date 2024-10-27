@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -13,6 +14,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -94,7 +96,14 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
     /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */
     @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
-        DragonStateProvider.getOptional((Entity) (Object) this).ifPresent(handler -> {
+        Entity entity = (Entity) (Object) this;
+
+        // Disable fire texture
+        if (entity instanceof ItemEntity item && item.getData(DragonSurvivalMod.ENTITY_HANDLER).isFireImmune) {
+            callback.setReturnValue(false);
+        }
+
+        DragonStateProvider.getOptional(entity).ifPresent(handler -> {
             if (handler.isDragon() && DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
                 callback.setReturnValue(false);
             }

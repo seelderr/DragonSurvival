@@ -38,6 +38,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class DragonStateHandler extends EntityStateHandler {
@@ -597,7 +598,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	@Override
-	public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+	public @UnknownNullability CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
 		return serializeNBT(provider, false);
 	}
 
@@ -696,7 +697,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	}
 
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+	public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
 		deserializeNBT(provider, tag, false);
 	}
 
