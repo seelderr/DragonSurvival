@@ -21,7 +21,7 @@ public abstract class RenderTypeHelperMixin {
 
     @ModifyReturnValue(method = "getFallbackItemRenderType", at = @At("RETURN"))
     private static RenderType dragonSurvival$getTranslucentRenderType(final RenderType renderType, @Local(argsOnly = true) boolean cull) {
-        if (HunterAbility.translucentItems && HunterHandler.itemTranslucency != -1 && renderType == Sheets.cutoutBlockSheet()) {
+        if (HunterAbility.translucentItems && HunterHandler.itemTranslucency != -1  && HunterHandler.itemTranslucency != 1 && renderType == Sheets.cutoutBlockSheet()) {
             return getEntityRenderType(RenderType.translucent(), cull);
         }
 

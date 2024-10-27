@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
@@ -20,7 +21,9 @@ import org.spongepowered.asm.mixin.injection.At;
 public abstract class PlayerRendererMixin {
     @WrapOperation(method = "renderHand", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/model/geom/ModelPart;render(Lcom/mojang/blaze3d/vertex/PoseStack;Lcom/mojang/blaze3d/vertex/VertexConsumer;II)V"))
     private void dragonSurvival$renderTranslucent(final ModelPart instance, final PoseStack poseStack, final VertexConsumer buffer, int packedLight, int packedOverlay, final Operation<Void> original, @Local(argsOnly = true) final MultiBufferSource bufferSource, @Local(argsOnly = true) final AbstractClientPlayer player) {
-        if (DragonStateProvider.getData(player).hasHunterStacks()) {
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (data.hasHunterStacks() && !data.isBeingRenderedInInventory) {
             VertexConsumer translucentBuffer = bufferSource.getBuffer(RenderType.entityTranslucent(player.getSkin().texture()));
             instance.render(poseStack, translucentBuffer, packedLight, packedOverlay, HunterHandler.modifyAlpha(player, -1));
         } else {

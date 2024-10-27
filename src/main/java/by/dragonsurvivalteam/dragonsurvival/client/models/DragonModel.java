@@ -192,9 +192,13 @@ public class DragonModel extends GeoModel<DragonEntity> {
 	public RenderType getRenderType(final DragonEntity animatable, final ResourceLocation texture) {
 		Player player = animatable.getPlayer();
 
-		if (player != null && DragonStateProvider.getData(player).hasHunterStacks()) {
-			// Required type to make other entities and water visible through the translucent dragon
-			return RenderType.itemEntityTranslucentCull(texture);
+		if (player != null) {
+			DragonStateHandler data = DragonStateProvider.getData(player);
+
+			if (data.hasHunterStacks() && !data.isBeingRenderedInInventory) {
+				// Required type to make other entities and water visible through the translucent dragon
+				return RenderType.itemEntityTranslucentCull(texture);
+			}
 		}
 
 		return RenderType.entityCutout(texture);

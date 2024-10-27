@@ -58,8 +58,10 @@ public class DragonStateHandler extends EntityStateHandler {
 	public int toolSwapLayer;
 	// Weapon / tool swap data - END
 
-	// Only needs to be updated on effect removal (server -> client)
-	int hunterStacks;
+	/** Translucent rendering in the inventory screen leads to issues (invisible model) */
+	public boolean isBeingRenderedInInventory;
+	/** Only needs to be updated on effect removal (server -> client) */
+	private int hunterStacks;
 
 	public boolean hasFlown;
 	public boolean growing = true;

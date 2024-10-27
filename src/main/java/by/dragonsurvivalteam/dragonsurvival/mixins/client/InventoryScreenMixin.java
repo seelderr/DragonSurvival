@@ -5,19 +5,25 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.gui.screens.recipebook.RecipeUpdateListener;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.phys.Vec3;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArgs;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.invoke.arg.Args;
 
 @Mixin(InventoryScreen.class)
@@ -81,6 +87,32 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
             dragon_survival$storedYAngle = args.get(8);
             args.set(7, 0.f);
             args.set(8, 0.f);
+        }
+    }
+
+    @Inject(method = "renderEntityInInventory", at = @At("HEAD"))
+    private static void dragonSurvival$setFlag(final GuiGraphics graphics, float x, float y, float scale, final Vector3f translate, final Quaternionf pose, final Quaternionf cameraOrientation, final LivingEntity entity, final CallbackInfo callback) {
+        if (entity instanceof Player player) {
+            DragonStateProvider.getData(player).isBeingRenderedInInventory = true;
+        } else if (entity instanceof DragonEntity dragon) {
+            Player player = dragon.getPlayer();
+
+            if (player != null) {
+                DragonStateProvider.getData(player).isBeingRenderedInInventory = true;
+            }
+        }
+    }
+
+    @Inject(method = "renderEntityInInventory", at = @At("RETURN"))
+    private static void dragonSurvival$clearFlag(final GuiGraphics graphics, float x, float y, float scale, final Vector3f translate, final Quaternionf pose, final Quaternionf cameraOrientation, final LivingEntity entity, final CallbackInfo callback) {
+        if (entity instanceof Player player) {
+            DragonStateProvider.getData(player).isBeingRenderedInInventory = false;
+        } else if (entity instanceof DragonEntity dragon) {
+            Player player = dragon.getPlayer();
+
+            if (player != null) {
+                DragonStateProvider.getData(player).isBeingRenderedInInventory = false;
+            }
         }
     }
 }

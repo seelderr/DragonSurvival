@@ -191,7 +191,7 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
     }
 
     private static float calculateAlpha(@NotNull final DragonStateHandler data, boolean isLocalPlayer) {
-        if (!data.hasHunterStacks()) {
+        if (!data.hasHunterStacks() || data.isBeingRenderedInInventory) {
             return 1;
         }
 
