@@ -403,6 +403,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 				state.setAnimation(AnimationUtils.createAnimation(builder, SNEAK));
 				animationController.transitionLength(5);
 			}
+
+			// TODO: This is a temporary fix for the transition between the swim and sneak animation causing the dragon to jerk up in a weird way
+			if(AnimationUtils.isAnimationPlaying(animationController, "swim") || AnimationUtils.isAnimationPlaying(animationController, "swim_fast")){
+				animationController.transitionLength(0);
+			}
 		}else if(player.isSprinting()){
 			useDynamicScaling = true;
 			baseSpeed = defaultPlayerSprintSpeed;
