@@ -11,8 +11,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect.Data> {
-	public static void handleClient(final SyncPotionAddedEffect.Data message, final IPayloadContext context) {
+public class SyncVisualEffectAdded implements IMessage<SyncVisualEffectAdded.Data> {
+	public static void handleClient(final SyncVisualEffectAdded.Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
 	}
 
