@@ -30,6 +30,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 	private final int xSize;
 	private final int ySize;
 	public boolean visible;
+	public boolean isBodyTypeChange;
 
 
 	public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize){
@@ -37,6 +38,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 		this.y = y;
 		this.xSize = xSize;
 		this.ySize = ySize;
+		this.isBodyTypeChange = false;
 
 		btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, pButton -> {}){
 			@Override
@@ -67,6 +69,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 			@Override
 			public void onPress(){
 				screen.confirmation = false;
+				screen.showUi = true;
 			}
 		};
 	}
@@ -87,12 +90,16 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
 		String suffix = "";
 
-		if (!ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage) {
+		if (!ServerConfig.saveAllAbilities && (!ServerConfig.saveGrowthStage && !isBodyTypeChange)) {
 			// No data will be kept
 			suffix = "all";
-		} else if (ServerConfig.saveAllAbilities && !ServerConfig.saveGrowthStage) {
+		} else if ((ServerConfig.saveAllAbilities || isBodyTypeChange) && !ServerConfig.saveGrowthStage) {
 			// Abilities will be kept
-			suffix = "abilities";
+			if(isBodyTypeChange){
+				suffix = "ability_from_body";
+			} else {
+				suffix = "ability";
+			}
 		} else if (!ServerConfig.saveAllAbilities) {
 			// Growth will be kept
 			suffix = "growth";
