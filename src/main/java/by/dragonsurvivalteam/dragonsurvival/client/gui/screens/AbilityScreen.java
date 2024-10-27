@@ -121,7 +121,7 @@ public class AbilityScreen extends Screen{
 
 	@Override
 	public void renderBackground(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		this.renderMenuBackground(pGuiGraphics);
+		// Don't render the vanilla background, it darkens the UI in an undesirable way
 	}
 
 	@Override
