@@ -9,21 +9,18 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class MineBlockUnderLavaTrigger extends SimpleCriterionTrigger<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> {
-    public void trigger(ServerPlayer pPlayer, Block block) {
-        this.trigger(pPlayer, triggerInstance -> {
-            if (triggerInstance.block.isPresent()) {
-                return triggerInstance.block.get().value().equals(block);
-            }
-            return true;
-        });
+    public void trigger(ServerPlayer player, Block block) {
+        // If no block is specified it will act as any block should trigger the advancement
+        this.trigger(player, instance -> instance.block.map(holder -> holder.value().equals(block)).orElse(true));
     }
 
     @Override
-    public Codec<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> codec() {
+    public @NotNull Codec<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> codec() {
         return MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance.CODEC;
     }
 

@@ -35,7 +35,7 @@ public class BolasOnPlayerRenderer {
             float scale = entity.getEyeHeight();
 
             if (entity instanceof Player player) {
-                DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
+                DragonStateHandler handler = DragonStateProvider.getData(player);
 
                 if (handler.isDragon()) {
                     scale = (float) DragonSizeHandler.calculateDragonEyeHeight(handler, player);

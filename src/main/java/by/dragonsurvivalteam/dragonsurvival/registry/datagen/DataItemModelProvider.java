@@ -3,10 +3,14 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import java.util.List;
+import java.util.Objects;
+
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.SpawnEggItem;
+import net.minecraft.world.item.SwordItem;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -70,6 +74,11 @@ public class DataItemModelProvider extends ItemModelProvider {
 
 				if(holder.get() instanceof SpawnEggItem item) {
 					getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")));
+				} else if(holder.get() instanceof SwordItem item) {
+					ResourceLocation itemLoc = Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item));
+					getBuilder(itemLoc.toString())
+							.parent(new ModelFile.UncheckedModelFile("item/handheld"))
+							.texture("layer0", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "item/" + itemLoc.getPath()));
 				} else {
 					basicItem(holder.get());
 				}

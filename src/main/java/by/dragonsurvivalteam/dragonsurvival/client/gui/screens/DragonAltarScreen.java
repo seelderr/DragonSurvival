@@ -58,7 +58,7 @@ public class DragonAltarScreen extends Screen{
 	@Override
 	public void onClose() {
 		super.onClose();
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(
+		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(
 			cap -> {
 				cap.isInAltar = false;
 				if(!cap.hasUsedAltar) {

@@ -9,13 +9,11 @@ import net.neoforged.neoforge.common.util.INBTSerializable;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class EntityStateHandler implements INBTSerializable<CompoundTag> {
-
     // Last entity this entity recieved a debuff from
     public int lastAfflicted = -1;
-
     // Amount of times the last chain attack has chained
     public int chainCount;
-
+    // To handle the burn effect damage
     public Vec3 lastPos;
 
     @Override

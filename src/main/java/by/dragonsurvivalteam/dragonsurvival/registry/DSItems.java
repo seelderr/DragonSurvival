@@ -24,6 +24,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
@@ -33,6 +34,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -53,6 +55,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
+import net.neoforged.neoforge.common.EffectCures;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
@@ -99,7 +102,11 @@ public class DSItems {
 	public static final Holder<Item> WEAK_DRAGON_HEART = DS_ITEMS.register("weak_dragon_heart", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.weakDragonHeart"));
 	public static final Holder<Item> ELDER_DRAGON_HEART = DS_ITEMS.register("elder_dragon_heart", () -> new CustomHoverTextItem(new Item.Properties(), "ds.description.elderDragonHeart"));
 
-	public static final Holder<Item> CHARGED_COAL = DS_ITEMS.register("charged_coal", () -> new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , LivingEntity::removeAllEffects));
+	static Consumer<LivingEntity> removeEffectsCuredByMilk = e -> {
+		e.removeEffectsCuredBy(EffectCures.MILK);
+	};
+
+	public static final Holder<Item> CHARGED_COAL = DS_ITEMS.register("charged_coal", () -> new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , removeEffectsCuredByMilk));
 	public static final Holder<Item> CHARGED_SOUP = DS_ITEMS.register("charged_soup", () -> new ChargedSoupItem(defaultProperties));
 	public static final Holder<Item> CHARRED_MEAT = DS_ITEMS.register("charred_meat", () -> new DragonFoodItem(defaultProperties));
 	public static final Holder<Item> CHARRED_VEGETABLE = DS_ITEMS.register("charred_vegetable", () -> new DragonFoodItem(defaultProperties));
@@ -117,7 +124,7 @@ public class DSItems {
 	}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)));
 	public static final Holder<Item> DOUBLE_QUARTZ = DS_ITEMS.register("double_quartz", () -> new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
 
-	public static final Holder<Item> SWEET_SOUR_RABBIT = DS_ITEMS.register("sweet_sour_rabbit", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST , LivingEntity::removeAllEffects));
+	public static final Holder<Item> SWEET_SOUR_RABBIT = DS_ITEMS.register("sweet_sour_rabbit", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST , removeEffectsCuredByMilk));
 	public static final Holder<Item> LUMINOUS_OINTMENT = DS_ITEMS.register("luminous_ointment", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), () -> new MobEffectInstance(DSEffects.MAGIC, Functions.minutesToTicks(5))));
 	public static final Holder<Item> DIAMOND_CHORUS = DS_ITEMS.register("diamond_chorus", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, e -> {
 		e.removeEffect(MobEffects.POISON);
@@ -129,11 +136,11 @@ public class DSItems {
 
 	public static final Holder<Item> SEASONED_FISH = DS_ITEMS.register("seasoned_fish", () -> new DragonFoodItem(defaultProperties));
 	public static final Holder<Item> GOLDEN_CORAL_PUFFERFISH = DS_ITEMS.register("golden_coral_pufferfish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
-	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA , e -> {
-		e.removeAllEffects();
+	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA , entity -> {
+		removeEffectsCuredByMilk.accept(entity);
 
-		if(!e.level().isClientSide()){
-			if(DragonStateProvider.getOrGenerateHandler(e).getType() instanceof SeaDragonType type){
+		if (entity instanceof ServerPlayer serverPlayer) {
+			if (DragonStateProvider.getData(serverPlayer).getType() instanceof SeaDragonType type) {
 				type.timeWithoutWater = 0;
 			}
 		}

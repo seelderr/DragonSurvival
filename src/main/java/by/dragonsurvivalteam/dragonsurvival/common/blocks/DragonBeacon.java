@@ -60,7 +60,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 
 	@Override
 	public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
-		Optional<DragonStateHandler> dragonState = DragonStateProvider.getCap(pPlayer);
+		Optional<DragonStateHandler> dragonState = DragonStateProvider.getOptional(pPlayer);
 
 		if (dragonState.isPresent()) {
 			DragonStateHandler dragonStateHandler = dragonState.orElse(null);

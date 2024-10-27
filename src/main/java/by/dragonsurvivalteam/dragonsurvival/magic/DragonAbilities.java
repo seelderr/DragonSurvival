@@ -15,13 +15,13 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import com.mojang.datafixers.util.Pair;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.AABB;
@@ -86,11 +86,13 @@ public class DragonAbilities{
                             PASSIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
                             PASSIVE_ABILITIES.get(type.getSubtypeName()).add(passive);
                         }
-                        case ActiveDragonAbility active when Objects.equals(ability.getDragonType().getSubtypeName(), type.getSubtypeName()) -> {
-                            ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
-                            ABILITIES.get(type.getSubtypeName()).add(ability);
-                            ACTIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
-                            ACTIVE_ABILITIES.get(type.getSubtypeName()).add(active);
+                        case ActiveDragonAbility active -> {
+							if (Objects.equals(ability.getDragonType().getSubtypeName(), type.getSubtypeName())) {
+								ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+								ABILITIES.get(type.getSubtypeName()).add(ability);
+								ACTIVE_ABILITIES.computeIfAbsent(type.getSubtypeName(), s -> new ArrayList<>());
+								ACTIVE_ABILITIES.get(type.getSubtypeName()).add(active);
+							}
                         }
                         default -> { /* Nothing to do */ }
                     }
@@ -132,8 +134,8 @@ public class DragonAbilities{
 		return instances;
 	}
 
-	public static void addAbility(LivingEntity player, Class<? extends DragonAbility> c){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+	public static void addAbility(Player player, Class<? extends DragonAbility> c){
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		try{
 			DragonAbility ability = c.newInstance();
@@ -154,12 +156,12 @@ public class DragonAbilities{
 		}
 	}
 
-	public static void setAbilityLevel(LivingEntity player, Class<? extends DragonAbility> abilityClass, int level){
+	public static void setAbilityLevel(Player player, Class<? extends DragonAbility> abilityClass, int level){
 		if(!hasAbility(player, abilityClass)){
 			addAbility(player, abilityClass);
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		handler.getMagicData().abilities.values().stream().filter(ability -> ability.getClass() == abilityClass).forEach(ability -> ability.level = Mth.clamp(level, ability.getMinLevel(), ability.getMaxLevel()));
 
 		if(player.level().isClientSide()){
@@ -169,8 +171,8 @@ public class DragonAbilities{
 		}
 	}
 
-	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c, @Nullable AbstractDragonType type) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+	public static boolean hasAbility(Player player, Class<? extends DragonAbility> c, @Nullable AbstractDragonType type) {
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		return handler.getMagicData().abilities.values().stream().anyMatch(s-> {
 			if (s.getClass() != c && !s.getClass().isAssignableFrom(c) && !c.isAssignableFrom(s.getClass()))
 				return false;
@@ -179,18 +181,20 @@ public class DragonAbilities{
             return type.getSubtypeName() == null || type.getSubtypeName().equals(s.getDragonType().getSubtypeName());
         });
 	}
-	public static boolean hasAbility(LivingEntity player, Class<? extends DragonAbility> c) {
+	public static boolean hasAbility(Player player, Class<? extends DragonAbility> c) {
 		return hasAbility(player, c, null);
 	}
-	public static boolean hasSelfAbility(LivingEntity player, Class<? extends DragonAbility> c) {
-		AbstractDragonType dragonType = DragonStateProvider.getOrGenerateHandler(player).getType();
+	public static boolean hasSelfAbility(Player player, Class<? extends DragonAbility> c) {
+		AbstractDragonType dragonType = DragonStateProvider.getData(player).getType();
 		if (dragonType == null)
 			return hasAbility(player, c, null);
 		else
 			return hasAbility(player, c, dragonType);
 	}
-	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c, @Nullable String dragonType){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+
+	@SuppressWarnings("unchecked")
+    public static <T extends DragonAbility> T getAbility(Player player, Class<T> c, @Nullable String dragonType){
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		Optional<T> optionalT = (Optional<T>)handler.getMagicData().abilities.values().stream().filter(ability-> {
 			if (ability.getClass() != c && !ability.getClass().isAssignableFrom(c) && !c.isAssignableFrom(ability.getClass()))
 				return false;
@@ -199,17 +203,17 @@ public class DragonAbilities{
 		return optionalT.orElseGet(() -> {
 			if(Modifier.isAbstract(c.getModifiers())) return null;
 			try{
-				return c.newInstance();
-			}catch(InstantiationException | IllegalAccessException e){
+				return c.getDeclaredConstructor().newInstance();
+			}catch(InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e){
 				throw new RuntimeException(e);
 			}
-		});
+        });
 	}
-	public static <T extends DragonAbility> T getAbility(LivingEntity player, Class<T> c) {
+	public static <T extends DragonAbility> T getAbility(Player player, Class<T> c) {
 		return getAbility(player, c, null);
 	}
-	public static <T extends DragonAbility> T getSelfAbility(LivingEntity player, Class<T> c) {
-		AbstractDragonType dragonType = DragonStateProvider.getOrGenerateHandler(player).getType();
+	public static <T extends DragonAbility> T getSelfAbility(Player player, Class<T> c) {
+		AbstractDragonType dragonType = DragonStateProvider.getData(player).getType();
 		if (dragonType == null)
 			return getAbility(player, c, null);
 		else
@@ -217,7 +221,7 @@ public class DragonAbilities{
 	}
 
 	public static AABB calculateBreathArea(@NotNull final Player player, double range) {
-		return calculateBreathArea(player, DragonStateProvider.getOrGenerateHandler(player), range);
+		return calculateBreathArea(player, DragonStateProvider.getData(player), range);
 	}
 
 	public static AABB calculateBreathArea(@NotNull final Player player, final DragonStateHandler handler, double range) {

@@ -13,12 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -40,6 +34,13 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.UnknownNullability;
+
+import javax.annotation.Nullable;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 public class DragonStateHandler extends EntityStateHandler {
 
@@ -377,12 +378,8 @@ public class DragonStateHandler extends EntityStateHandler {
 			default -> ItemStack.EMPTY.getItem();
 		};
 
-		if (item != null) {
-			return item.getDefaultInstance();
-		}
-
-		return ItemStack.EMPTY;
-	}
+        return item.getDefaultInstance();
+    }
 
 	/** Calls {@link DragonStateHandler#getDragonHarvestLevel(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
 	public int getDragonHarvestLevel(final BlockState blockState) {

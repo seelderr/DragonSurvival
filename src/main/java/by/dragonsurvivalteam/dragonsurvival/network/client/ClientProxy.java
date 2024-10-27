@@ -62,7 +62,7 @@ public class ClientProxy {
             Entity entity = player.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
-                DragonStateProvider.getCap(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state());
+                DragonStateProvider.getOptional(entity).ifPresent(handler -> handler.getClawToolData().shouldRenderClaws = message.state());
             }
         }
     }
@@ -74,7 +74,7 @@ public class ClientProxy {
             Entity entity = player.level().getEntity(message.playerId());
 
             if (entity instanceof Player) {
-                DragonStateProvider.getCap(entity).ifPresent(handler -> {
+                DragonStateProvider.getOptional(entity).ifPresent(handler -> {
                     handler.getClawToolData().setMenuOpen(message.state());
                     handler.getClawToolData().deserializeNBT(provider, message.clawInventory());
                 });
@@ -90,7 +90,7 @@ public class ClientProxy {
             Entity entity = world.getEntity(message.playerId());
 
             if (entity instanceof Player) {
-                DragonStateProvider.getCap(entity).ifPresent(dragonStateHandler -> {
+                DragonStateProvider.getOptional(entity).ifPresent(dragonStateHandler -> {
                     dragonStateHandler.getSkinData().renderNewborn = message.newborn();
                     dragonStateHandler.getSkinData().renderYoung = message.young();
                     dragonStateHandler.getSkinData().renderAdult = message.adult();
@@ -109,7 +109,7 @@ public class ClientProxy {
         PacketDistributor.sendToServer(new SyncDragonClawRender.Data(localPlayer.getId(), ClientDragonRenderer.renderDragonClaws));
         PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(localPlayer.getId(), ClientDragonRenderer.renderNewbornSkin, ClientDragonRenderer.renderYoungSkin, ClientDragonRenderer.renderAdultSkin));
 
-        DragonStateProvider.getCap(localPlayer).ifPresent(cap -> {
+        DragonStateProvider.getOptional(localPlayer).ifPresent(cap -> {
             if(DragonEditorRegistry.getSavedCustomizations() != null){
                 AbstractDragonType type = cap.getType();
                 if(type != null) {
@@ -130,7 +130,7 @@ public class ClientProxy {
         context.reply(new SyncDragonClawRender.Data(sender.getId(), ClientDragonRenderer.renderDragonClaws));
         context.reply(new SyncDragonSkinSettings.Data(sender.getId(), ClientDragonRenderer.renderNewbornSkin, ClientDragonRenderer.renderYoungSkin, ClientDragonRenderer.renderAdultSkin));
 
-        DragonStateProvider.getCap(sender).ifPresent(cap -> {
+        DragonStateProvider.getOptional(sender).ifPresent(cap -> {
             if(DragonEditorRegistry.getSavedCustomizations() != null){
                 AbstractDragonType type = cap.getType();
                 if(type != null) {
@@ -151,7 +151,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     SkinPreset preset = new SkinPreset();
                     preset.deserializeNBT(provider, message.preset());
                     handler.getSkinData().skinPreset = preset;
@@ -189,7 +189,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setWingsSpread(message.state()));
+                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.setWingsSpread(message.state()));
             }
         }
     }
@@ -201,7 +201,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+                DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
                     dragonStateHandler.getMovementData().spinAttack = message.spinAttack();
                     dragonStateHandler.getMovementData().spinCooldown = message.spinCooldown();
                     dragonStateHandler.getMovementData().spinLearned = message.spinLearned();
@@ -219,7 +219,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(message.abilitySlot());
                     ability.loadNBT(message.nbt());
                     handler.getMagicData().isCasting = message.isCasting();
@@ -246,7 +246,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMagicData().deserializeNBT(provider, message.nbt()));
+                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getMagicData().deserializeNBT(provider, message.nbt()));
             }
         }
     }
@@ -258,7 +258,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerid());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     handler.getMagicData().setCurrentMana(message.currentMana());
                     handler.getMagicData().setSelectedAbilitySlot(message.selectedSlot());
                     handler.getMagicData().setRenderAbilities(message.renderHotbar());
@@ -304,7 +304,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     handler.setBite(message.bite());
                     handler.setFirstPerson(message.isFirstPerson());
                     handler.setFreeLook(message.isFreeLook());
@@ -321,7 +321,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.setPassengerId(message.passengerId()));
+                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.setPassengerId(message.passengerId()));
             }
         }
     }
@@ -341,7 +341,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     if (handler.getType() != null) {
                         handler.getType().readNBT(message.nbt());
                     }
@@ -354,7 +354,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            DragonStateProvider.getCap(localPlayer).ifPresent(handler -> handler.growing = message.growing());
+            DragonStateProvider.getOptional(localPlayer).ifPresent(handler -> handler.growing = message.growing());
         }
     }
 
@@ -365,7 +365,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     handler.setDestructionEnabled(message.destructionEnabled());
                 });
             }
@@ -380,7 +380,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     handler.setType(message.dragonType(), player);
                     handler.setBody(message.dragonBody(), player);
                     handler.setIsHiding(message.hiding());
@@ -403,7 +403,7 @@ public class ClientProxy {
         Entity entity = Minecraft.getInstance().level.getEntity(message.playerId());
 
         if (entity instanceof Player player) {
-            DragonStateProvider.getCap(player).ifPresent(handler -> handler.setSize(message.size(), player));
+            DragonStateProvider.getOptional(player).ifPresent(handler -> handler.setSize(message.size(), player));
             player.refreshDimensions();
         }
     }
@@ -415,7 +415,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> handler.getMovementData().dig = message.status());
+                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getMovementData().dig = message.status());
             }
         }
     }
@@ -446,7 +446,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateHandler dragonStateHandler = DragonStateProvider.getOrGenerateHandler(player);
+                DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
                 dragonStateHandler.altarCooldown = message.cooldown();
             }
         }
@@ -459,7 +459,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     handler.getMagicData().onMagicSource = message.state();
                     handler.getMagicData().magicSourceTimer = message.timer();
                 });
@@ -474,7 +474,7 @@ public class ClientProxy {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 
             if (entity instanceof Player player) {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     if (message.state() != handler.treasureResting) {
                         handler.treasureRestTimer = 0;
                         handler.treasureSleepTimer = 0;

@@ -29,7 +29,7 @@ public class MixinPlayerStart {
         if (toolSlot != ItemStack.EMPTY) {
             player.setItemInHand(InteractionHand.MAIN_HAND, toolSlot);
 
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+            DragonStateHandler handler = DragonStateProvider.getData(player);
             handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY);
             handler.storedMainHandWeapon = mainHand;
             handler.switchedWeapon = true;

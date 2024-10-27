@@ -181,7 +181,7 @@ public class DataBlockStateProvider extends BlockStateProvider {
 									modLoc(modelName + "_south"),
 									modLoc(modelName + "_east"),
 									modLoc(modelName + "_west")
-							);
+							).texture("particle", modLoc(modelName + "_down"));
 							return ConfiguredModel.builder().modelFile(builder).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
 						});
 			} else if (holder.get() instanceof SourceOfMagicBlock) {

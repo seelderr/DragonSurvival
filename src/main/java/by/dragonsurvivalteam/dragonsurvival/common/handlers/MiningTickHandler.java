@@ -16,7 +16,7 @@ public class MiningTickHandler{
 	@SubscribeEvent
 	public static void updateMiningTick(PlayerTickEvent.Post playerTickEvent){
 		Player player = playerTickEvent.getEntity();
-		DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				if(player instanceof ServerPlayer){
 					ServerPlayerGameMode interactionManager = ((ServerPlayer)player).gameMode;

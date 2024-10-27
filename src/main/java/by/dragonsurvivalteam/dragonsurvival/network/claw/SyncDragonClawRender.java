@@ -24,7 +24,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender.Data>
 	public static void handleServer(final SyncDragonClawRender.Data message, final IPayloadContext context) {
 		if(ServerConfig.syncClawRender) {
 			Player sender = context.player();
-			context.enqueueWork(() -> DragonStateProvider.getCap(sender).ifPresent(handler ->
+			context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler ->
 					handler.getClawToolData().shouldRenderClaws = message.state
 			)).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 		}

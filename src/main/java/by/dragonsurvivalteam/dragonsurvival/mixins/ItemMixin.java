@@ -22,7 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Item.class)
 public class ItemMixin
 {
-    @Unique private static List<ResourceKey<Enchantment>> dragonSurvival$enchantmentsToNotDisplayDescription = List.of(
+    @Unique private static final List<ResourceKey<Enchantment>> dragonSurvival$enchantmentsToNotDisplayDescription = List.of(
             DSEnchantments.SHRINK,
             DSEnchantments.DRAGONSBONK,
             DSEnchantments.DRAGONSBOON

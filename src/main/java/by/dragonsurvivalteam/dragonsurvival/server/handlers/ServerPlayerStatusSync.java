@@ -25,7 +25,7 @@ public class ServerPlayerStatusSync {
 
 		if(player.isAddedToLevel() && player.isAlive()){
 			if(DragonStateProvider.isDragon(player)){
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getData(player);
 				if(player.tickCount >= handler.lastSync + syncTicks){
                     // We don't do an initial sync here since it could result in the player syncing before their data is loaded, causing data loss.
 					handler.lastSync = player.tickCount;

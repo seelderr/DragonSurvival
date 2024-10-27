@@ -43,7 +43,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		SkinPreset preset = handler.getSkinData().skinPreset;
 		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel()).get();

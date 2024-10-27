@@ -41,7 +41,7 @@ public class DragonTreasureHandler{
 		Player player = event.getEntity();
 
 		if(DragonStateProvider.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if(handler.treasureResting){
 				if(player.isCrouching() || !(player.getBlockStateOn().getBlock() instanceof TreasureBlock) || handler.getMovementData().bite){
@@ -96,7 +96,7 @@ public class DragonTreasureHandler{
 		Player player = Minecraft.getInstance().player;
 
 		if(DragonStateProvider.isDragon(player)){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if(handler.treasureResting){
 				Vec3 velocity = player.getDeltaMovement();
@@ -118,7 +118,7 @@ public class DragonTreasureHandler{
 			return;
 		}
 
-		DragonStateProvider.getCap(playerEntity).ifPresent(cap -> {
+		DragonStateProvider.getOptional(playerEntity).ifPresent(cap -> {
 			if(event.getName() == VanillaGuiLayers.AIR_LEVEL){
 
 				Window window = Minecraft.getInstance().getWindow();
@@ -148,7 +148,7 @@ public class DragonTreasureHandler{
 		if(entity instanceof Player player){
 
 			if(!player.level().isClientSide()){
-				DragonStateProvider.getCap(player).ifPresent(cap -> {
+				DragonStateProvider.getOptional(player).ifPresent(cap -> {
 					if(cap.treasureResting){
 						cap.treasureResting = false;
 						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));

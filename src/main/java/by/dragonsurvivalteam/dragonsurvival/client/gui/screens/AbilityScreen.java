@@ -121,7 +121,7 @@ public class AbilityScreen extends Screen{
 
 	@Override
 	public void renderBackground(@NotNull GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		this.renderMenuBackground(pGuiGraphics);
+		// Don't render the vanilla background, it darkens the UI in an undesirable way
 	}
 
 	@Override
@@ -145,7 +145,7 @@ public class AbilityScreen extends Screen{
 			addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int)(219 / 2F) + i * 23, startY + 8 - 30, 4 + i, this));
 		}
 
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
 			for(int num = 0; num < MagicCap.activeAbilitySlots; num++){
 				addRenderableWidget(new AbilityButton((int)(guiLeft + (90+20) / 2.0), guiTop + 40 - 25 + num * 35, 0, num, this));
 			}
@@ -169,7 +169,7 @@ public class AbilityScreen extends Screen{
 
 	@Override
 	public void tick(){
-		DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
 			type = cap.getType();
 			unlockAbleSkills.clear();
 

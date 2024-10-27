@@ -1,23 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival;
 
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.DS_TRIGGERS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment.DS_ARMOR_MATERIALS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes.DS_MAP_DECORATIONS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes.DS_STRUCTURE_PLACEMENT_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -29,9 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootEx
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
 import com.mojang.serialization.MapCodec;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Supplier;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -59,28 +38,48 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import software.bernie.geckolib.GeckoLibClient;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.DS_TRIGGERS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSContainers.DS_CONTAINERS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSCreativeTabs.DS_CREATIVE_MODE_TABS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEffects.DS_MOB_EFFECTS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEntities.DS_ENTITY_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSEquipment.DS_ARMOR_MATERIALS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes.DS_MAP_DECORATIONS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSParticles.DS_PARTICLES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.DS_POTIONS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSSounds.DS_SOUNDS;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes.DS_STRUCTURE_PLACEMENT_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TILE_ENTITIES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
+
 @SuppressWarnings("unused")
 @Mod( DragonSurvivalMod.MODID )
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DragonSurvivalMod{
-	public static ResourceLocation res(String name) {
-		return ResourceLocation.fromNamespaceAndPath(MODID, name);
-	}
-
 	public static final String MODID = "dragonsurvival";
 	public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
-	public static final DeferredRegister<AttachmentType<?>> DS_ATTACHMENT_TYPES = DeferredRegister.create(
-			NeoForgeRegistries.Keys.ATTACHMENT_TYPES,
-			MODID);
+
 	public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
 	private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonOreLootModifier>> DRAGON_ORE = DragonSurvivalMod.GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
 	private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonHeartLootModifier>> DRAGON_HEART = DragonSurvivalMod.GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
 	private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<AddTableLootExtendedLootModifier>> ADD_TABLE_LOOT_EXTENDED = DragonSurvivalMod.GLM.register("add_table_loot_extended", () -> AddTableLootExtendedLootModifier.CODEC);
 
+	public static final DeferredRegister<AttachmentType<?>> DS_ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
+
 	public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register(
 			"entity_handler",
-			() -> AttachmentType.serializable(EntityStateHandler::new).copyOnDeath().build()
+			() -> AttachmentType.serializable(EntityStateHandler::new).build()
 	);
+
+	// TODO :: does this need a custom copy handle for entering the end portal?
 	public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register(
 			"dragon_handler",
 			() -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
@@ -150,5 +149,9 @@ public class DragonSurvivalMod{
 
 	private static void registerBuiltinResourcePack(AddPackFindersEvent event, MutableComponent name, String folder) {
 		event.addPackFinders(res(folder), PackType.CLIENT_RESOURCES, name, PackSource.BUILT_IN, false, Pack.Position.TOP);
+	}
+
+	public static ResourceLocation res(String name) {
+		return ResourceLocation.fromNamespaceAndPath(MODID, name);
 	}
 }

@@ -14,6 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.VaultBlock;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
@@ -65,6 +66,9 @@ public class BlockLootTableSubProvider extends BlockLootSubProvider {
                 } else if (block instanceof DragonBeacon) {
                     // We want all dragon beacons to drop empty dragon beacons instead
                     return createSingleItemTable(DSBlocks.DRAGON_BEACON_ITEM.value());
+                } else if (block instanceof VaultBlock) {
+                    // Vaults should not drop anything
+                    return LootTable.lootTable();
                 }
 
                 return createSingleItemTable(key.get().asItem());

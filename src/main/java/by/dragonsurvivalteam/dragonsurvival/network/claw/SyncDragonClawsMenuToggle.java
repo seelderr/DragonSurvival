@@ -19,7 +19,7 @@ public class SyncDragonClawsMenuToggle implements IMessage<SyncDragonClawsMenuTo
 		Player sender = context.player();
 
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				handler.getClawToolData().setMenuOpen(message.state);
 
 				if (sender.containerMenu instanceof DragonContainer container) {
@@ -33,7 +33,7 @@ public class SyncDragonClawsMenuToggle implements IMessage<SyncDragonClawsMenuTo
 		Player sender = context.player();
 
 		context.enqueueWork(() -> {
-			DragonStateProvider.getCap(sender).ifPresent(handler -> {
+			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				handler.getClawToolData().setMenuOpen(message.state);
 
 				if (sender.containerMenu instanceof DragonContainer container) {

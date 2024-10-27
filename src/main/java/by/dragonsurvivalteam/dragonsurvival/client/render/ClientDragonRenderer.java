@@ -119,7 +119,7 @@ public class ClientDragonRenderer {
     public static void renderBreathHitBox(final RenderLevelStageEvent event) {
         if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
             LocalPlayer localPlayer = Minecraft.getInstance().player;
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(localPlayer);
+            DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
 
             if (localPlayer == null || !handler.isDragon()) {
                 return;
@@ -183,7 +183,7 @@ public class ClientDragonRenderer {
         }
 
         Minecraft minecraft = Minecraft.getInstance();
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!playerDragonHashMap.containsKey(player.getId())) {
             DragonEntity dummyDragon = DSEntities.DRAGON.get().create(player.level());
@@ -375,7 +375,7 @@ public class ClientDragonRenderer {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         if (!handler.isDragon()) {
             return;
         }
@@ -388,7 +388,7 @@ public class ClientDragonRenderer {
     public static void setDragonMovementData(Player player, float realtimeDeltaTick) {
         if (player == null) return;
 
-        DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+        DragonStateProvider.getOptional(player).ifPresent(playerStateHandler -> {
             if (!playerStateHandler.isDragon()) return;
 
             Vec3 moveVector;
@@ -410,7 +410,7 @@ public class ClientDragonRenderer {
     public static void updateFirstPersonDataAndSendMovementData(ClientTickEvent.Pre event) {
         LocalPlayer player = Minecraft.getInstance().player;
         if (player != null) {
-            DragonStateProvider.getCap(player).ifPresent(playerStateHandler -> {
+            DragonStateProvider.getOptional(player).ifPresent(playerStateHandler -> {
                 if (playerStateHandler.isDragon()) {
                     Input input = player.input;
                     playerStateHandler.setFirstPerson(Minecraft.getInstance().options.getCameraType().isFirstPerson());
@@ -446,7 +446,7 @@ public class ClientDragonRenderer {
             return;
         }
 
-        DragonStateProvider.getCap(Minecraft.getInstance().player).ifPresent(handler -> {
+        DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(handler -> {
             if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
                 event.setCanceled(true);
             }

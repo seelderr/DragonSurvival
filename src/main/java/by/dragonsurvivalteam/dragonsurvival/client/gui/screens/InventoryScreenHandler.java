@@ -76,7 +76,7 @@ public class InventoryScreenHandler {
         Screen screen = renderEvent.getScreen();
         if(screen instanceof InventoryScreen inventoryScreen){
             Player player = Minecraft.getInstance().player;
-            DragonStateProvider.getCap(player).ifPresentOrElse(cap -> {
+            DragonStateProvider.getOptional(player).ifPresentOrElse(cap -> {
                 if(altarOpenButton != null) {
                     altarOpenButton.visible = !cap.hasUsedAltar;
                 }

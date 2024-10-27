@@ -13,7 +13,8 @@ public class ApplyMixinPlugin implements IMixinConfigPlugin {
 
     // If there are other mods for which the mixins also need to apply to (e.g. forks)
     private final static Map<String, String> ALIAS = Map.of(
-            "sodium", "embeddium"
+            "sodium", "embeddium",
+            "iris", "oculus"
     );
 
     @Override

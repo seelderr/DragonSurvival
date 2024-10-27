@@ -29,7 +29,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 		Entity entity = context.player().level().getEntity(message.playerId);
 		if(entity instanceof Player player) {
 			context.enqueueWork(() -> {
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+				DragonStateHandler handler = DragonStateProvider.getData(player);
 				handler.deserializeNBT(player.registryAccess(), message.nbt);
 				DSModifiers.updateAllModifiers(player);
 				player.refreshDimensions();
@@ -47,7 +47,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 	}
 
 	public static void handleDragonSync(Player player) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		DSModifiers.updateAllModifiers(player);
 		player.refreshDimensions();
 
@@ -69,7 +69,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 	public static void handleServer(final Data message, final IPayloadContext context) {
 		Player player = context.player();
 		context.enqueueWork(() -> {
-					DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+					DragonStateHandler handler = DragonStateProvider.getData(player);
 					handler.deserializeNBT(player.registryAccess(), message.nbt);
 					handleDragonSync(player);
 				})

@@ -98,7 +98,7 @@ public class ClientFlightHandler {
     public static void flightCamera(CalculateDetachedCameraDistanceEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = minecraft.player;
-        DragonStateProvider.getCap(player).ifPresent(handler -> {
+        DragonStateProvider.getOptional(player).ifPresent(handler -> {
             if (handler.isDragon()) {
                 // I'm not entirely sure why 20 works here, but it seems to be the magic number that
                 // keeps the dragon's size from the camera's perspective constant.
@@ -167,7 +167,7 @@ public class ClientFlightHandler {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!handler.isDragon()) {
             return;
@@ -201,7 +201,7 @@ public class ClientFlightHandler {
     @OnlyIn(Dist.CLIENT)
     public static void flightParticles(PlayerTickEvent.Post playerTickEvent) {
         Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getCap(player).ifPresent(handler -> {
+        DragonStateProvider.getOptional(player).ifPresent(handler -> {
             if (handler.isDragon()) {
                 if (handler.getMovementData().spinAttack > 0) {
 
@@ -260,7 +260,7 @@ public class ClientFlightHandler {
                 // TODO :: Set to 0 once ground is reached?
                 levitationLeft--;
             } else {
-                DragonStateProvider.getCap(player).ifPresent(handler -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> {
                     if (handler.isDragon()) {
                         Double flightMult = 1.0;
                         if (DragonUtils.getDragonBody(handler) != null) {
@@ -321,7 +321,7 @@ public class ClientFlightHandler {
                                 float verticalDelta = Mth.cos(pitch);
 
                                 verticalDelta = (float) ((double) verticalDelta * (double) verticalDelta * Math.min(1.0D, lookMagnitude / 0.4D));
-                                double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
+                                double gravity = player.getAttributeValue(Attributes.GRAVITY);
 
                                 if (ServerFlightHandler.isGliding(player)) {
                                     if (!wasGliding) {
@@ -475,7 +475,7 @@ public class ClientFlightHandler {
         LocalPlayer player = minecraft.player;
         if (player == null) return;
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         if (!handler.isDragon()) return; // handler should never be null
 
         while (Keybind.TOGGLE_WINGS.consumeClick()) {

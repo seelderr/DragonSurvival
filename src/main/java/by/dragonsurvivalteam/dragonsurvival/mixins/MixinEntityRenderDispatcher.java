@@ -24,6 +24,7 @@ public class MixinEntityRenderDispatcher{
 		}
 	}
 
+	// FIXME :: not exactly safe (other mixins could cause this to not run and cause an hard-to-debug pose stack is empty crash)
 	@Inject(method = "renderShadow", at = @At(value = "TAIL"))
 	private static void renderShadowOffsetEnd(PoseStack poseStack, MultiBufferSource buffer, Entity entity, float weight, float partialTicks, LevelReader level, float size, CallbackInfo ci){
 		if(DragonStateProvider.isDragon(entity)) {

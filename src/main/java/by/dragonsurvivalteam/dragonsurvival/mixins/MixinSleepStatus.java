@@ -13,7 +13,7 @@ public class MixinSleepStatus{
 	// This is done here so that the dragon rests without the player sleep UI appearing or the camera view changing.
 	@Redirect(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;isSleeping()Z"))
 	public boolean isSleeping(ServerPlayer target){
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(target);
+		DragonStateHandler handler = DragonStateProvider.getData(target);
 		return target.isSleeping() || handler.treasureResting;
 	}
 }

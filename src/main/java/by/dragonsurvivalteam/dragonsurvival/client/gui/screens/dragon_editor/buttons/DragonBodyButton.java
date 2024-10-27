@@ -32,11 +32,6 @@ public class DragonBodyButton extends Button {
 		this.locked = locked;
 		this.setTooltip(Tooltip.create(Component.translatable("ds.gui.body_types." + dragonBody.getBodyName().toLowerCase() + ".tooltip")));
 	}
-	
-	public void press() {
-		dragonEditorScreen.dragonBody = dragonBody;
-		dragonEditorScreen.update();
-	}
 
 	@Override
 	public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
@@ -53,6 +48,5 @@ public class DragonBodyButton extends Button {
 			i = 1;
 		}
 		guiGraphics.blit(this.location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height, 256, 256);
-		//RenderSystem.setShaderTexture(0, WIDGETS_LOCATION);
 	}
 }

@@ -157,7 +157,7 @@ public class Functions {
         Vector3f lookVector = new Vector3f(0, 0, 0);
 
         if (entity instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+            DragonStateHandler handler = DragonStateProvider.getData(player);
             if (handler.isDragon()) {
                 float f1 = -(float) handler.getMovementData().bodyYaw * ((float) Math.PI / 180F);
 

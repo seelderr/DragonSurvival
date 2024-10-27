@@ -15,10 +15,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Stream;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -32,10 +28,15 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
+import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.cache.GeckoLibCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 @EventBusSubscriber
 public class DragonEntity extends LivingEntity implements GeoEntity {
@@ -107,9 +108,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	private PlayState breathPredicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
 
-		AnimationController<DragonEntity> animationController = state.getController();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		if (player == null) {
+			return PlayState.STOP;
+		}
 
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
 
 		if (currentCast != null) {
@@ -143,10 +146,13 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
 	private PlayState bitePredicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
 
+		if (player == null) {
+			return PlayState.STOP;
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		ActiveDragonAbility currentCast = handler.getMagicData().getCurrentlyCasting();
-
 		RawAnimation builder = null;
 
 		if (currentCast instanceof ISecondAnimation || lastCast instanceof ISecondAnimation) {
@@ -206,7 +212,13 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	}
 
 	private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(getPlayer());
+		Player player = getPlayer();
+
+		if (player == null) {
+			return PlayState.STOP;
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		if (handler.getEmoteData().currentEmotes[slot] != null) {
 			Emote emote = handler.getEmoteData().currentEmotes[slot];
@@ -229,9 +241,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	}
 
 	public @Nullable Player getPlayer() {
+		if (playerId == null) {
+			return null;
+		}
+
 		Entity entity = level().getEntity(playerId);
-		if(entity instanceof Player){
-			return (Player) entity;
+
+		if (entity instanceof Player player) {
+			return player;
 		} else {
 			return null;
 		}
@@ -245,8 +262,12 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	private PlayState predicate(final AnimationState<DragonEntity> state) {
 		Player player = getPlayer();
 
+		if (player == null) {
+			return PlayState.STOP;
+		}
+
 		AnimationController<DragonEntity> animationController = state.getController();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 
 		if (handler.refreshBody) {
 			animationController.forceAnimationReset();
@@ -382,6 +403,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 				state.setAnimation(AnimationUtils.createAnimation(builder, SNEAK));
 				animationController.transitionLength(5);
 			}
+
+			// TODO: This is a temporary fix for the transition between the swim and sneak animation causing the dragon to jerk up in a weird way
+			if(AnimationUtils.isAnimationPlaying(animationController, "swim") || AnimationUtils.isAnimationPlaying(animationController, "swim_fast")){
+				animationController.transitionLength(0);
+			}
 		}else if(player.isSprinting()){
 			useDynamicScaling = true;
 			baseSpeed = defaultPlayerSprintSpeed;
@@ -420,7 +446,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 	}
 
 	@Override
-	public double getTick(Object obj) {
+	public double getTick(Object obj) { // using 'getPlayer' breaks animations even though it returns the same entity...?
 		// Prevent being on a negative tick (will cause t-posing!) by adding 200 here
 		return (playerId != null ? level().getEntity(playerId).tickCount : globalTickCount) + 200;
 	}
@@ -505,26 +531,44 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
 	@Override
 	public @NotNull Iterable<ItemStack> getArmorSlots(){
-		return playerId != null ? getPlayer().getArmorSlots() : List.of();
+		Player player = getPlayer();
+
+		if (player != null) {
+			return player.getArmorSlots();
+		}
+
+		return List.of();
 	}
 
 	@Override
 	public @NotNull ItemStack getItemBySlot(@NotNull EquipmentSlot slotIn){
-		return playerId != null ? getPlayer().getItemBySlot(slotIn) : ItemStack.EMPTY;
+		Player player = getPlayer();
+
+		if (player != null) {
+			return player.getItemBySlot(slotIn);
+		}
+
+		return ItemStack.EMPTY;
 	}
 
 	@Override
 	public void setItemSlot(@NotNull EquipmentSlot slotIn, @NotNull ItemStack stack){
-		if (playerId != null) {
-			getPlayer().setItemSlot(slotIn, stack);
-		} else if (getPlayer() != null) {
-			getPlayer().setItemSlot(slotIn, stack);
+		Player player = getPlayer();
+
+		if (player != null) {
+			player.setItemSlot(slotIn, stack);
 		}
 	}
 
 	@Override
 	public @NotNull HumanoidArm getMainArm(){
-		return playerId != null ? getPlayer().getMainArm() : HumanoidArm.LEFT;
+		Player player = getPlayer();
+
+		if (player != null) {
+			return player.getMainArm();
+		}
+
+		return HumanoidArm.LEFT;
 	}
 
 	// Animations

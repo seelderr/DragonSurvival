@@ -94,7 +94,7 @@ public class SkinsScreen extends Screen{
 		this.sourceScreen = sourceScreen;
 
 		LocalPlayer localPlayer = sourceScreen.getMinecraft().player;
-		SkinCap skinData = DragonStateProvider.getOrGenerateHandler(localPlayer).getSkinData();
+		SkinCap skinData = DragonStateProvider.getData(localPlayer).getSkinData();
 		renderNewborn = skinData.renderNewborn;
 		renderYoung = skinData.renderYoung;
 		renderAdult = skinData.renderAdult;
@@ -139,7 +139,7 @@ public class SkinsScreen extends Screen{
 			handler.getSkinData().skinPreset.initDefaults(handler);
 
 			if(noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())){
-				handler.getSkinData().skinPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonStateProvider.getOrGenerateHandler(minecraft.player).getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
+				handler.getSkinData().skinPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonStateProvider.getData(minecraft.player).getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 			}else{
 				handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
 			}
@@ -175,7 +175,7 @@ public class SkinsScreen extends Screen{
 	// We override this to not blur the background
 	@Override
 	public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		this.renderMenuBackground(pGuiGraphics);
+		// Don't render the vanilla background, it darkens the UI in an undesirable way
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {
@@ -220,7 +220,7 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable rendering of the newborn dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 			boolean newValue = !handler.getSkinData().renderNewborn;
 
 			handler.getSkinData().renderNewborn = newValue;
@@ -238,7 +238,7 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable rendering of the young dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 			boolean newValue = !handler.getSkinData().renderYoung;
 
 			handler.getSkinData().renderYoung = newValue;
@@ -256,7 +256,7 @@ public class SkinsScreen extends Screen{
 
 		// Button to enable / disable rendering of the adult dragon skin
 		addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, Component.translatable("ds.level.adult"), button -> {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(getMinecraft().player);
+			DragonStateHandler handler = DragonStateProvider.getData(getMinecraft().player);
 			boolean newValue = !handler.getSkinData().renderAdult;
 
 			handler.getSkinData().renderAdult = newValue;

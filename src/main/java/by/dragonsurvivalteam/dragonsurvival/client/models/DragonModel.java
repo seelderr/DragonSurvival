@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
@@ -15,8 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +21,11 @@ import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/cave_newborn.png");
@@ -53,7 +54,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player = dragon.getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		DragonMovementData md = handler.getMovementData();
 
 		MathParser.setVariable("query.y_velocity", () -> md.deltaMovement.y);
@@ -123,15 +124,18 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		Player player;
-		if(dragon.overrideUUIDWithLocalPlayerForTextureFetch) {
+
+		if (dragon.overrideUUIDWithLocalPlayerForTextureFetch) {
 			player = Minecraft.getInstance().player;
-		} else if (dragon.getPlayer() != null){
-			player = dragon.getPlayer();
 		} else {
+			player = dragon.getPlayer();
+		}
+
+		if (player == null) {
 			return defaultTexture;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		SkinAgeGroup ageGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 
 		if (handler.getSkinData().blankSkin) {
@@ -171,13 +175,17 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 	@Override
 	public ResourceLocation getAnimationResource(final DragonEntity dragon) {
-		if (dragon.playerId != null || dragon.getPlayer() != null) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragon.getPlayer());
+		Player player = dragon.getPlayer();
+
+		if (player != null) {
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 			AbstractDragonBody body = handler.getBody();
+
 			if (body != null) {
 				return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));
 			}
 		}
+
 		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
 	}
 

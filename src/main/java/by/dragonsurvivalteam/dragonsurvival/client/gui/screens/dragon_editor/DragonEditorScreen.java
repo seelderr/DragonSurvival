@@ -42,14 +42,13 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Pair;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.*;
@@ -64,7 +63,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ScreenEvent;
@@ -91,7 +89,7 @@ public class DragonEditorScreen extends Screen {
 	                                     "spinning_on_back"};
 	public int guiLeft;
 	public int guiTop;
-	public boolean confirmation;
+	public boolean confirmation = false;
 	public boolean showUi = true;
 
 	public DragonUIRenderComponent dragonRender;
@@ -386,7 +384,7 @@ public class DragonEditorScreen extends Screen {
 		pGuiGraphics.fill(0, 0, width, height, -350, backgroundColor);
 	}
 
-	private void initialize(final DragonStateHandler localHandler) {
+	private void initDummyDragon(final DragonStateHandler localHandler) {
 		if (dragonType == null && localHandler.isDragon()) {
 			level = localHandler.getLevel();
 			dragonType = localHandler.getType();
@@ -435,6 +433,14 @@ public class DragonEditorScreen extends Screen {
 		HANDLER.setBody(dragonBody);
 	}
 
+	private boolean dragonTypeWouldChange(DragonStateHandler handler) {
+		return handler.getType() != null && !handler.getType().equals(dragonType);
+	}
+
+	private boolean dragonBodyWouldChange(DragonStateHandler handler) {
+		return handler.getBody() != null && !handler.getBody().equals(dragonBody);
+	}
+
 	public boolean dragonWouldChange(DragonStateHandler handler) {
 		return (handler.getType() != null && !handler.getType().equals(dragonType)) || (handler.getBody() != null && !handler.getBody().equals(dragonBody));
 	}
@@ -451,9 +457,9 @@ public class DragonEditorScreen extends Screen {
 
 		Minecraft minecraft = getMinecraft();
 		if (!hasInit) {
-			DragonStateHandler dshandler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
+			DragonStateHandler dshandler = DragonStateProvider.getData(minecraft.player);
 			
-			initialize(dshandler);
+			initDummyDragon(dshandler);
 			update();
 
 			hasInit = true;
@@ -605,12 +611,14 @@ public class DragonEditorScreen extends Screen {
 
 			@Override
 			public void onPress(){
-				DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(minecraft.player);
+				DragonStateHandler handler = DragonStateProvider.getData(minecraft.player);
 				minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 				boolean dragonDataIsPreserved = ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage;
 				if(handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved){
 					confirmation = true;
+					showUi = false;
+					conf.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
 				} else {
 					confirm();
 				}
@@ -627,7 +635,6 @@ public class DragonEditorScreen extends Screen {
 								super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
 							}
 						};
-						((AccessorScreen)DragonEditorScreen.this).children().addFirst(conf);
 						((AccessorScreen)DragonEditorScreen.this).children().add(conf);
 						renderables.add(renderButton);
 					}
@@ -795,7 +802,7 @@ public class DragonEditorScreen extends Screen {
 	}
 
 	public void confirm(){
-		DragonStateProvider.getCap(minecraft.player).ifPresent(cap -> {
+		DragonStateProvider.getOptional(minecraft.player).ifPresent(cap -> {
 			minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
 			if(!cap.isDragon() || dragonWouldChange(cap)){

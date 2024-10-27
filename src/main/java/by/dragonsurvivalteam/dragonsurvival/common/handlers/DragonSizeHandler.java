@@ -36,7 +36,7 @@ public class DragonSizeHandler{
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		Pose overridePose = overridePose(player);
 		EntityDimensions newDimensions = calculateDimensions(handler, player, overridePose);
 		event.setNewSize(new EntityDimensions(newDimensions.width(), newDimensions.height(), newDimensions.eyeHeight(), event.getOldSize().attachments(), event.getOldSize().fixed()));
@@ -132,7 +132,7 @@ public class DragonSizeHandler{
 		return overridePose;
 	}
 
-	public static Pose getOverridePose(LivingEntity player){
+	public static Pose getOverridePose(Player player){
 		if(player != null){
 			boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(player, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
 			boolean flying = ServerFlightHandler.isFlying(player);
@@ -152,7 +152,7 @@ public class DragonSizeHandler{
 	}
 
 	public static boolean canPoseFit(LivingEntity entity, Pose pose){
-		Optional<DragonStateHandler> capability = DragonStateProvider.getCap(entity);
+		Optional<DragonStateHandler> capability = DragonStateProvider.getOptional(entity);
 
 		if (capability.isEmpty()){
 			return false;
@@ -186,7 +186,7 @@ public class DragonSizeHandler{
 		// Only using the player id results in one side not refreshing the dimensions
 		String playerIdSide = player.getId() + (player.level().isClientSide() ? "client" : "server");
 
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
+		DragonStateProvider.getOptional(player).ifPresent(handler -> {
 			if (handler.isDragon()) {
 				overridePose(player);
 

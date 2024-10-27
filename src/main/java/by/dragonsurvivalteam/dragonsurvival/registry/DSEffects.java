@@ -84,7 +84,7 @@ public class DSEffects {
 		public void onEffectStarted(LivingEntity living, int strength){
 			if(!living.level().isClientSide()){
 					if(living instanceof Player player) {
-						DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+						DragonStateHandler handler = DragonStateProvider.getData(player);
 						if(handler.isDragon()){
 							handler.setWingsSpread(false);
 							PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));

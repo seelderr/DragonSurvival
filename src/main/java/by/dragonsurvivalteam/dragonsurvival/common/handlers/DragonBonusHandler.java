@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -8,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.util.Objects;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
@@ -34,7 +34,7 @@ public class DragonBonusHandler {
 		LivingEntity living = event.getEntity();
 		DamageSource damageSource = event.getSource();
 
-		DragonStateProvider.getCap(living).ifPresent(handler -> {
+		DragonStateProvider.getOptional(living).ifPresent(handler -> {
 			if (handler.isDragon()) {
 				if (ServerConfig.bonusesEnabled) {
 					if (ServerConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
@@ -78,23 +78,27 @@ public class DragonBonusHandler {
 	@SubscribeEvent
 	public static void reduceFallDistance(LivingFallEvent livingFallEvent){
 		LivingEntity living = livingFallEvent.getEntity();
-		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				float distance = livingFallEvent.getDistance();
 
-				if(Objects.equals(dragonStateHandler.getType(),DragonTypes.FOREST)){
+		if (!(living instanceof Player player)) {
+			return;
+		}
 
-					if(ServerConfig.bonusesEnabled){
-						distance -= ServerConfig.forestFallReduction.floatValue();
-					}
+		DragonStateHandler data = DragonStateProvider.getData(player);
 
-					CliffhangerAbility ability = DragonAbilities.getSelfAbility(living, CliffhangerAbility.class);
-					distance -= ability.getHeight();
+		if (data.isDragon()) {
+			float distance = livingFallEvent.getDistance();
+
+			if (DragonUtils.isDragonType(data, DragonTypes.FOREST)) {
+				if (ServerConfig.bonusesEnabled) {
+					distance -= ServerConfig.forestFallReduction.floatValue();
 				}
 
-				livingFallEvent.setDistance(distance);
+				CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
+				distance -= ability.getHeight();
 			}
-		});
+
+			livingFallEvent.setDistance(distance);
+		}
 	}
 
 	@SubscribeEvent
@@ -109,7 +113,7 @@ public class DragonBonusHandler {
 			return;
 		}
 
-		DragonStateProvider.getCap(living).ifPresent(dragonStateHandler -> {
+		DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
 			if(dragonStateHandler.isDragon()){
 				if(living instanceof ServerPlayer){
 					PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));

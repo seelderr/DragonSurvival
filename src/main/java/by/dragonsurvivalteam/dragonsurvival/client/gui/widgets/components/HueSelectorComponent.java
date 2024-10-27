@@ -14,11 +14,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import com.google.common.collect.ImmutableList;
 import java.awt.*;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;

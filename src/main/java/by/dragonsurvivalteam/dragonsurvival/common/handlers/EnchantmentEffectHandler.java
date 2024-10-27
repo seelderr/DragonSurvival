@@ -53,10 +53,10 @@ public class EnchantmentEffectHandler {
             if (event.getSource().getEntity() instanceof Player killer && event.getSource().getWeaponItem() != null) {
                 int dragonsbaneLevel = EnchantmentUtils.getLevel(killer.level(), DSEnchantments.DRAGONSBANE, event.getSource().getWeaponItem());
                 if (dragonsbaneLevel > 0 && event.getEntity() instanceof Player dyingPlayer) {
-                    DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(event.getEntity());
+                    DragonStateHandler handler = DragonStateProvider.getData(dyingPlayer);
                     handler.setSize(handler.getSize() - getStolenTime(handler) * dragonsbaneLevel, dyingPlayer);
                     if (DragonStateProvider.isDragon(killer)) {
-                        DragonStateHandler killerHandler = DragonStateProvider.getOrGenerateHandler(killer);
+                        DragonStateHandler killerHandler = DragonStateProvider.getData(killer);
                         killerHandler.setSize(killerHandler.getSize() + getStolenTime(killerHandler));
                     }
                     killer.level().playLocalSound(killer.blockPosition(), SoundEvents.AMBIENT_UNDERWATER_LOOP_ADDITIONS_ULTRA_RARE, SoundSource.PLAYERS, 2.0f, 1.0f, false);

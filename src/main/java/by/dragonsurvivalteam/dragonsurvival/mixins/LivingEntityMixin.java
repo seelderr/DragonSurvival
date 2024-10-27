@@ -43,8 +43,8 @@ public abstract class LivingEntityMixin extends Entity {
     @SuppressWarnings("ConstantValue")
     @Redirect(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"))
     private ItemStack dragonSurvival$grantDragonSwordAttributes(LivingEntity entity, EquipmentSlot slot) {
-        if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player) {
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(entity);
+        if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player player) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
 
             if (handler.isDragon() && ToolUtils.shouldUseDragonTools(getMainHandItem())) {
                 // Without this the item in the dragon slot for the sword would not grant any of its attributes
@@ -62,12 +62,12 @@ public abstract class LivingEntityMixin extends Entity {
 	@ModifyReturnValue(at = @At(value = "RETURN"), method = "getPassengerRidingPosition")
 	public Vec3 dragonSurvival$getDragonPassengersRidingOffset(Vec3 original) {
 		if ((Object) this instanceof Player player) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if (handler.isDragon()) {
 				double height = DragonSizeHandler.calculateDragonHeight(handler, player);
 
-				if (!DragonStateProvider.getOrGenerateHandler(getPassengers().getFirst()).isDragon()) {
+				if (!DragonStateProvider.isDragon(getPassengers().getFirst())) {
 					// Human passenger
 					switch (getPose()) {
 						case FALL_FLYING, SWIMMING, SPIN_ATTACK -> {
@@ -111,7 +111,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Unique private int dragonSurvival$getHumanOrDragonUseDuration(int original){
 		if ((Object) this instanceof Player player) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if (handler != null && handler.isDragon()) {
 				return DragonFoodHandler.getUseDuration(useItem, player);
@@ -134,7 +134,7 @@ public abstract class LivingEntityMixin extends Entity {
 	@ModifyExpressionValue(method = "triggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;"))
 	private UseAnim dragonSurvival$replaceEatAndDrinkAnimation(UseAnim original, ItemStack stack, int amount) {
 		if ((Object) this instanceof Player player) {
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
 			if (handler.isDragon()) {
 				return DragonFoodHandler.isEdible(stack, handler.getType()) ? UseAnim.EAT : original;

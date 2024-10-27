@@ -26,7 +26,7 @@ public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
                 Entity entity = player.level().getEntity(message.playerId);
 
                 if (entity instanceof Player) {
-                    DragonStateProvider.getCap(entity).ifPresent(handler -> {
+                    DragonStateProvider.getOptional(entity).ifPresent(handler -> {
                         if (handler.switchedTool || handler.switchedWeapon) {
                             player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
                         } else {

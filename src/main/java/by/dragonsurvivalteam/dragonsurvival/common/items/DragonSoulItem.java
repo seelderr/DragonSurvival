@@ -69,7 +69,7 @@ public class DragonSoulItem extends Item {
             if (playerIn instanceof ServerPlayer serverPlayer) {
                 DSAdvancementTriggers.USE_DRAGON_SOUL.get().trigger(serverPlayer);
             }
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(playerIn);
+            DragonStateHandler handler = DragonStateProvider.getData(playerIn);
             if(pStack.has(DataComponents.CUSTOM_DATA)) {
                 if(handler.isDragon()) {
                     // Swap the player's dragon data with the item's NBT
@@ -197,7 +197,12 @@ public class DragonSoulItem extends Item {
     @Override
     public void onUseTick(@NotNull final Level level, @NotNull final LivingEntity livingEntity, @NotNull final ItemStack soul, int remainingUseDuration) {
         super.onUseTick(level, livingEntity, soul, remainingUseDuration);
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(livingEntity);
+
+        if (!(livingEntity instanceof Player player)) {
+            return;
+        }
+
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         String type = getType(soul);
 
         if (type.isBlank() && handler.isDragon()) {
@@ -208,7 +213,7 @@ public class DragonSoulItem extends Item {
             case "forest" -> DSSounds.FOREST_BREATH_END.get();
             case "cave" -> DSSounds.FIRE_BREATH_END.get();
             case "sea" -> DSSounds.STORM_BREATH_END.get();
-            default -> null;
+            default -> throw new IllegalStateException("Dragon type [" + type + "] is invalid");
         };
 
         if (sound != null) {

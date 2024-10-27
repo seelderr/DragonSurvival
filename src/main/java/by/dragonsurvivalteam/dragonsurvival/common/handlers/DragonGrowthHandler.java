@@ -41,7 +41,7 @@ public class DragonGrowthHandler{
 		Player player = event.getEntity();
 		Level world = player.getCommandSenderWorld();
 
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
+		DragonStateProvider.getOptional(player).ifPresent(handler -> {
 			if(!handler.isDragon()){
 				return;
 			}
@@ -128,7 +128,7 @@ public class DragonGrowthHandler{
 
 		int increment = 0;
 
-		if(item == DSItems.STAR_BONE){
+		if(item == DSItems.STAR_BONE.value()){
 			return -2;
 		}
 
@@ -182,7 +182,7 @@ public class DragonGrowthHandler{
 			return;
 		}
 
-		DragonStateProvider.getCap(player).ifPresent(handler -> {
+		DragonStateProvider.getOptional(player).ifPresent(handler -> {
 			if(handler.growing){
                 /*
                     1. Newborn - young = 3-4 h

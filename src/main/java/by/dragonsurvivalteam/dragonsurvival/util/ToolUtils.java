@@ -61,7 +61,7 @@ public class ToolUtils {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!handler.isDragon()) {
             return;
@@ -91,7 +91,7 @@ public class ToolUtils {
             return;
         }
 
-        DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!handler.isDragon()) {
             return;

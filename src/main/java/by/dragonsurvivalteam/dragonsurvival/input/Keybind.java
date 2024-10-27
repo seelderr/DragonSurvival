@@ -32,16 +32,15 @@ public enum Keybind {
 
     SPIN_ABILITY("ds.keybind.spin", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_V),
     FREE_LOOK("ds.keybind.free_look", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
-    DISABLE_DESTRUCTION("ds.keybind.toggle_destruction", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_RIGHT_ALT),
-    ;
+    DISABLE_DESTRUCTION("ds.keybind.toggle_destruction", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_RIGHT_ALT);
 
     private final Lazy<KeyMapping> keyMapping;
 
-    private Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
+    Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
         this(description, keyConflictContext, defaultKey, "ds.keybind.category");
     }
 
-    private Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey, String category) {
+    Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey, String category) {
         keyMapping = Lazy.of(() -> new KeyMapping(description, keyConflictContext, InputConstants.Type.KEYSYM, defaultKey, category));
     }
 

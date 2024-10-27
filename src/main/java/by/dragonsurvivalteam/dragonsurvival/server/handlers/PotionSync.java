@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber
 public class PotionSync{
 
-	private static List<Holder<MobEffect>> effectsToSync = new ArrayList<>(
+	private static final List<Holder<MobEffect>> effectsToSync = new ArrayList<>(
 		List.of(DSEffects.DRAIN,
 				DSEffects.CHARGED,
 				DSEffects.BURN,

@@ -26,7 +26,7 @@ public class SmithingScreenMixin {
     private void addDragonToInit(CallbackInfo ci){
         dragonSurvival$player = ((SmithingScreen)(Object)this).getMinecraft().player;
         if (DragonStateProvider.isDragon(dragonSurvival$player)) {
-            DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(dragonSurvival$player);
+            DragonStateHandler handler = DragonStateProvider.getData(dragonSurvival$player);
             dragonSurvival$dragon = FakeClientPlayerUtils.getFakeDragon(1, handler);
             dragonSurvival$dragon.overrideUUIDWithLocalPlayerForTextureFetch = true;
             dragonSurvival$dragon.yBodyRot = 210.0F;

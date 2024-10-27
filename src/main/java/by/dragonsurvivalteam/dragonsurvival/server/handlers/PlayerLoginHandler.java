@@ -22,7 +22,7 @@ public class PlayerLoginHandler {
     public static void syncCompleteSingle(Entity tracker, Entity tracked) {
         if(tracker instanceof ServerPlayer){
             if(tracked instanceof ServerPlayer){
-                DragonStateProvider.getCap(tracked).ifPresent(dragonStateHandler -> {
+                DragonStateProvider.getOptional(tracked).ifPresent(dragonStateHandler -> {
                     PacketDistributor.sendToPlayer((ServerPlayer)tracker, new SyncComplete.Data(tracked.getId(), dragonStateHandler.serializeNBT(tracked.registryAccess())));
                 });
             }
@@ -31,7 +31,7 @@ public class PlayerLoginHandler {
 
     public static void syncCompleteSingle(Entity entity) {
         if(entity instanceof ServerPlayer player) {
-            DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
                 SyncComplete.handleDragonSync(player);
                 PacketDistributor.sendToPlayer(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
             });
@@ -40,7 +40,7 @@ public class PlayerLoginHandler {
 
     public static void syncCompleteAll(Entity entity) {
         if(entity instanceof ServerPlayer player) {
-            DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
                 SyncComplete.handleDragonSync(player);
                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
             });
@@ -63,7 +63,7 @@ public class PlayerLoginHandler {
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event){
         if(event.getEntity() instanceof ServerPlayer player) {
-            DragonStateProvider.getCap(player).ifPresent(dragonStateHandler -> {
+            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
                 AbstractDragonType type = dragonStateHandler.getType();
 
                 if(type instanceof CaveDragonType cave){
@@ -100,7 +100,7 @@ public class PlayerLoginHandler {
             if(player.isDeadOrDying()) return;
 
             if(player.tickCount > 5 * 20){
-                DragonStateProvider.getCap(player).ifPresent(cap -> {
+                DragonStateProvider.getOptional(player).ifPresent(cap -> {
                     if(!cap.hasUsedAltar && !cap.isInAltar && !DragonStateProvider.isDragon(player)){
                         PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
                         cap.isInAltar = true;

@@ -51,7 +51,7 @@ public class DragonEditorHandler{
 		}
 
 		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
-			DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 			return getSkinTextureResourceLocation(player, layer, type.getSubtypeNameLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
 
@@ -117,7 +117,12 @@ public class DragonEditorHandler{
 
 	private static void genTexturesGPU(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+
+		if (player == null) {
+			return;
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		GlStateBackup state = new GlStateBackup();
 		RenderSystem.backupGlState(state);
 		RenderSystem.backupProjectionMatrix();
@@ -214,7 +219,12 @@ public class DragonEditorHandler{
 
 	private static List<Pair<NativeImage, ResourceLocation>> genTextures(final DragonEntity dragon) {
 		Player player = dragon.getPlayer();
-		DragonStateHandler handler = DragonStateProvider.getOrGenerateHandler(player);
+
+		if (player == null) {
+			return List.of();
+		}
+
+		DragonStateHandler handler = DragonStateProvider.getData(player);
 		List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
 		SkinAgeGroup skinAgeGroup = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get();
 		NativeImage normal = new NativeImage(512, 512, true);
