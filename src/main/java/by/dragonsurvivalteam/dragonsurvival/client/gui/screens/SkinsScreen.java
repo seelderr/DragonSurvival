@@ -175,7 +175,7 @@ public class SkinsScreen extends Screen{
 	// We override this to not blur the background
 	@Override
 	public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		this.renderMenuBackground(pGuiGraphics);
+		// Don't render the vanilla background, it darkens the UI in an undesirable way
 	}
 
 	public static void drawNonShadowString(@NotNull final GuiGraphics guiGraphics, final Font font, final Component component, int x, int y, int color) {

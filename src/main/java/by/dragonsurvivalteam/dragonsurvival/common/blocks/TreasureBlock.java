@@ -24,10 +24,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.*;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition.Builder;
@@ -73,7 +70,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public InteractionResult useWithoutItem(BlockState blockState, Level world, BlockPos blockPos, Player player, BlockHitResult blockHitResult){
+	public @NotNull InteractionResult useWithoutItem(BlockState blockState, @NotNull Level world, @NotNull BlockPos blockPos, Player player, @NotNull BlockHitResult blockHitResult){
 		if(player.getBlockStateOn().getBlock() == blockState.getBlock()){
 			DragonStateHandler handler = DragonStateProvider.getData(player);
 
@@ -100,12 +97,12 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public boolean useShapeForLightOcclusion(BlockState p_220074_1_){
+	public boolean useShapeForLightOcclusion(@NotNull BlockState blockState){
 		return true;
 	}
 
 	@Override
-	public Optional<ServerPlayer.RespawnPosAngle> getRespawnPosition(BlockState state, EntityType<?> type, LevelReader levelReader, BlockPos pos, float orientation){
+	public @NotNull Optional<ServerPlayer.RespawnPosAngle> getRespawnPosition(@NotNull BlockState state, @NotNull EntityType<?> type, @NotNull LevelReader levelReader, @NotNull BlockPos pos, float orientation){
 		if(levelReader instanceof Level){
 			Optional<Vec3> standUpPosition = RespawnAnchorBlock.findStandUpPosition(type, levelReader, pos);
 			if(standUpPosition.isPresent()) {
@@ -117,22 +114,22 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public boolean isBed(BlockState state, BlockGetter level, BlockPos pos, LivingEntity sleeper){
+	public boolean isBed(@NotNull BlockState state, @NotNull BlockGetter level, @NotNull BlockPos pos, @NotNull LivingEntity sleeper){
 		return DragonStateProvider.isDragon(sleeper);
 	}
 
 	@Override
-	public FluidState getFluidState(BlockState state){
+	public @NotNull FluidState getFluidState(BlockState state){
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
 	@Override
-	public boolean canBeReplaced(BlockState p_196253_1_, BlockPlaceContext p_196253_2_){
-		int i = p_196253_1_.getValue(LAYERS);
+	public boolean canBeReplaced(BlockState blockState, BlockPlaceContext context){
+		int i = blockState.getValue(LAYERS);
 
-		if(p_196253_2_.getItemInHand().getItem() == asItem() && i < 8){
-			if(p_196253_2_.replacingClickedOnBlock()){
-				return p_196253_2_.getClickedFace() == Direction.UP;
+		if(context.getItemInHand().getItem() == asItem() && i < 8){
+			if(context.replacingClickedOnBlock()){
+				return context.getClickedFace() == Direction.UP;
 			}
 		}
 
@@ -140,48 +137,44 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public VoxelShape getBlockSupportShape(BlockState p_230335_1_, BlockGetter p_230335_2_, BlockPos p_230335_3_){
-		return SHAPE_BY_LAYER[p_230335_1_.getValue(LAYERS)];
+	public @NotNull VoxelShape getBlockSupportShape(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos){
+		return SHAPE_BY_LAYER[blockState.getValue(LAYERS)];
 	}
 
 	@Override
 	@OnlyIn( Dist.CLIENT )
-	public float getShadeBrightness(BlockState p_220080_1_, BlockGetter p_220080_2_, BlockPos p_220080_3_){
+	public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos){
 		return 1.0F;
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState p_220053_1_, BlockGetter p_220053_2_, BlockPos p_220053_3_, CollisionContext p_220053_4_){
-		return SHAPE_BY_LAYER[p_220053_1_.getValue(LAYERS)];
+	public @NotNull VoxelShape getShape(BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos, @NotNull CollisionContext context){
+		return SHAPE_BY_LAYER[blockState.getValue(LAYERS)];
 	}
 
 	@Override
-	public VoxelShape getCollisionShape(BlockState p_220071_1_, BlockGetter p_220071_2_, BlockPos p_220071_3_, CollisionContext p_220071_4_){
-		if(p_220071_4_ instanceof EntityCollisionContext && ((EntityCollisionContext)p_220071_4_).getEntity() instanceof FallingBlockEntity){
-			return SHAPE_BY_LAYER[p_220071_1_.getValue(LAYERS)];
-		}
-
-		return SHAPE_BY_LAYER[Math.max(p_220071_1_.getValue(LAYERS) - 1, 0)];
+	public @NotNull VoxelShape getCollisionShape(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos, @NotNull CollisionContext context){
+		return SHAPE_BY_LAYER[Math.max(blockState.getValue(LAYERS), 0)];
 	}
 
 	@Override
-	public VoxelShape getVisualShape(BlockState p_230322_1_, BlockGetter p_230322_2_, BlockPos p_230322_3_, CollisionContext p_230322_4_){
+	public @NotNull VoxelShape getVisualShape(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos, @NotNull CollisionContext context){
 		return Shapes.empty();
 	}
 
 	@Override
-	public boolean propagatesSkylightDown(BlockState p_200123_1_, BlockGetter p_200123_2_, BlockPos p_200123_3_){
+	public boolean propagatesSkylightDown(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos){
 		return true;
 	}
 
 	@Override
-	@Nullable public BlockState getStateForPlacement(BlockPlaceContext p_196258_1_){
-		BlockState blockstate = p_196258_1_.getLevel().getBlockState(p_196258_1_.getClickedPos());
+	@Nullable public BlockState getStateForPlacement(BlockPlaceContext context){
+		BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
 		if(blockstate.is(this)){
 			int i = blockstate.getValue(LAYERS);
-			return blockstate.setValue(LAYERS, Math.min(8, i + 1)).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
+			return blockstate.setValue(LAYERS, Math.min(8, i + 1)).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 		}else{
-			return super.getStateForPlacement(p_196258_1_).setValue(WATERLOGGED, p_196258_1_.getLevel().getFluidState(p_196258_1_.getClickedPos()).getType() == Fluids.WATER);
+			return super.getStateForPlacement(context).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
 		}
 	}
 
@@ -191,19 +184,19 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> p_206840_1_){
-		p_206840_1_.add(LAYERS);
-		p_206840_1_.add(WATERLOGGED);
+	protected void createBlockStateDefinition(Builder<Block, BlockState> builder){
+		builder.add(LAYERS);
+		builder.add(WATERLOGGED);
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag){
-		super.appendHoverText(pStack, pContext, pTootipComponents, pTooltipFlag);
-		pTootipComponents.add(Component.translatable("ds.description.treasures"));
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+		pTooltipComponents.add(Component.translatable("ds.description.treasures"));
 	}
 
 	@Override
-	public void onBrokenAfterFall(Level world, BlockPos pos, FallingBlockEntity entity){
+	public void onBrokenAfterFall(Level world, @NotNull BlockPos pos, @NotNull FallingBlockEntity entity){
 		BlockState state = world.getBlockState(pos);
 		if(state.getBlock() instanceof TreasureBlock){
 			if(state.getBlock() == entity.getBlockState().getBlock()){
@@ -215,12 +208,12 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 	// TODO: Is unit codec okay here?
 	@Override
-	protected MapCodec<? extends FallingBlock> codec() {
+	protected @NotNull MapCodec<? extends FallingBlock> codec() {
 		return MapCodec.unit(this);
 	}
 
 	@Override
-	public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos){
+	public @NotNull BlockState updateShape(BlockState pState, @NotNull Direction pFacing, @NotNull BlockState pFacingState, @NotNull LevelAccessor pLevel, @NotNull BlockPos pCurrentPos, @NotNull BlockPos pFacingPos){
 		if(pState.getValue(WATERLOGGED)){
 			pLevel.scheduleTick(pCurrentPos, Fluids.WATER, Fluids.WATER.getTickDelay(pLevel));
 		}
@@ -229,11 +222,11 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 	}
 
 	@Override
-	public void tick(BlockState p_225534_1_, ServerLevel p_225534_2_, BlockPos p_225534_3_, RandomSource p_225534_4_){
-		boolean belowEmpty = isFree(p_225534_2_.getBlockState(p_225534_3_.below())) && p_225534_3_.getY() >= p_225534_2_.getMinBuildHeight();
-		boolean lowerLayer = p_225534_2_.getBlockState(p_225534_3_.below()).getBlock() == p_225534_1_.getBlock() && p_225534_2_.getBlockState(p_225534_3_.below()).getValue(LAYERS) < 8;
+	public void tick(BlockState state, ServerLevel level, BlockPos blockPos, @NotNull RandomSource randomSource){
+		boolean belowEmpty = isFree(level.getBlockState(blockPos.below())) && blockPos.getY() >= level.getMinBuildHeight();
+		boolean lowerLayer = level.getBlockState(blockPos.below()).getBlock() == state.getBlock() && level.getBlockState(blockPos.below()).getValue(LAYERS) < 8;
 		if(belowEmpty || lowerLayer){
-			FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_225534_2_, (double)p_225534_3_.getX() + 0.5D, p_225534_3_.getY(), (double)p_225534_3_.getZ() + 0.5D, p_225534_2_.getBlockState(p_225534_3_)){
+			FallingBlockEntity fallingblockentity = new FallingBlockEntity(level, (double)blockPos.getX() + 0.5D, blockPos.getY(), (double)blockPos.getZ() + 0.5D, level.getBlockState(blockPos)){
 				@Override
 				public void tick(){
 					BlockState state = level().getBlockState(blockPosition().below());
@@ -241,6 +234,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 					if(state.getBlock() == getBlockState().getBlock()){
 						int i = state.getValue(LAYERS);
 
+						// TODO: This code snaps the block in place if it enters the same block as a treasure layer, even if the layer is only 1 block high. Maybe check for collisions with the actual voxel shape somehow?
 						if(i > 0 && i < 8){
 							int missingLayers = 8 - i;
 							int newLayers = getBlockState().getValue(LAYERS);
@@ -254,9 +248,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 							level().setBlockAndUpdate(blockPosition().below(), state.setValue(LAYERS, Math.min(8, i + newLayers)));
 
 							if(leftOver > 0){
-								p_225534_2_.setBlock(blockPosition(), getBlockState().setValue(LAYERS, Math.min(8, leftOver)), Block.UPDATE_ALL);
+								level().setBlock(blockPosition(), getBlockState().setValue(LAYERS, Math.min(8, leftOver)), Block.UPDATE_ALL);
 							}else{
-								p_225534_2_.setBlock(p_225534_3_, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
+								level().setBlock(blockPos, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL);
 							}
 
 							remove(RemovalReason.DISCARDED);
@@ -267,8 +261,8 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 					super.tick();
 				}
 			};
-			p_225534_2_.setBlock(p_225534_3_, p_225534_1_.getFluidState().createLegacyBlock(), Block.UPDATE_ALL);
-			p_225534_2_.addFreshEntity(fallingblockentity);
+			level.setBlock(blockPos, state.getFluidState().createLegacyBlock(), Block.UPDATE_ALL);
+			level.addFreshEntity(fallingblockentity);
 			falling(fallingblockentity);
 		}
 	}

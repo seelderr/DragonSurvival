@@ -185,6 +185,7 @@
   "ds.gui.dragon_editor.screenshot": "Screenshot",
   "ds.gui.dragon_editor.confirm.all": "\nWith your current config settings all progress will be lost when you change species.\n\nWould you still like to continue?",
   "ds.gui.dragon_editor.confirm.ability": "\nWith your current config settings your growth progress will be lost when you change species.\n\nWould you still like to continue?",
+  "ds.gui.dragon_editor.confirm.ability_from_body": "\nWith your current config settings your growth progress will be lost when you change body type.\n\nWould you still like to continue?",
   "ds.gui.dragon_editor.confirm.growth": "\nWith your current config settings your ability progress will be lost when you change species.\n\nWould you still like to continue?",
   "ds.hold_shift.for_food": "Hold 'Shift' for full food info",
   "ds.cave.dragon.food": "§c■ Cave dragon food§r",

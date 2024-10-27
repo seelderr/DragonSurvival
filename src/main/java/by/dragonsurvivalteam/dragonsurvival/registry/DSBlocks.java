@@ -1008,9 +1008,19 @@ public class DSBlocks{
 		return ResourceLocation.fromNamespaceAndPath(MODID, path).toString();
 	}
 
+	// Copied from "vault" entry for Blocks.java
+	private static final BlockBehaviour.Properties vaultBlockProperties = BlockBehaviour.Properties.of()
+			.mapColor(MapColor.STONE)
+			.instrument(NoteBlockInstrument.BASEDRUM)
+			.noOcclusion()
+			.sound(SoundType.VAULT)
+			.lightLevel(p_323402_ -> p_323402_.getValue(VaultBlock.STATE).lightLevel())
+			.strength(50.0F)
+			.isViewBlocking((a, b, c) -> false);
+
 	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_FRIENDLY = DS_BLOCKS.register(
 			"dragon_vault_friendly",
-			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion())
+			() -> new VaultBlock(vaultBlockProperties)
 	);
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_FRIENDLY_ITEM = DS_ITEMS.register(
@@ -1021,7 +1031,7 @@ public class DSBlocks{
 
 	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_ANGRY = DS_BLOCKS.register(
 			"dragon_vault_angry",
-			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion())
+			() -> new VaultBlock(vaultBlockProperties)
 	);
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ANGRY_ITEM = DS_ITEMS.register(
@@ -1032,7 +1042,7 @@ public class DSBlocks{
 
 	public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_HUNTER = DS_BLOCKS.register(
 			"dragon_vault_hunter",
-			() -> new VaultBlock(VaultBlock.Properties.of().noOcclusion())
+			() -> new VaultBlock(vaultBlockProperties)
 	);
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_HUNTER_ITEM = DS_ITEMS.register(

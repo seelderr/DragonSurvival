@@ -89,7 +89,7 @@ public class DragonEditorScreen extends Screen {
 	                                     "spinning_on_back"};
 	public int guiLeft;
 	public int guiTop;
-	public boolean confirmation;
+	public boolean confirmation = false;
 	public boolean showUi = true;
 
 	public DragonUIRenderComponent dragonRender;
@@ -384,7 +384,7 @@ public class DragonEditorScreen extends Screen {
 		pGuiGraphics.fill(0, 0, width, height, -350, backgroundColor);
 	}
 
-	private void initialize(final DragonStateHandler localHandler) {
+	private void initDummyDragon(final DragonStateHandler localHandler) {
 		if (dragonType == null && localHandler.isDragon()) {
 			level = localHandler.getLevel();
 			dragonType = localHandler.getType();
@@ -433,6 +433,14 @@ public class DragonEditorScreen extends Screen {
 		HANDLER.setBody(dragonBody);
 	}
 
+	private boolean dragonTypeWouldChange(DragonStateHandler handler) {
+		return handler.getType() != null && !handler.getType().equals(dragonType);
+	}
+
+	private boolean dragonBodyWouldChange(DragonStateHandler handler) {
+		return handler.getBody() != null && !handler.getBody().equals(dragonBody);
+	}
+
 	public boolean dragonWouldChange(DragonStateHandler handler) {
 		return (handler.getType() != null && !handler.getType().equals(dragonType)) || (handler.getBody() != null && !handler.getBody().equals(dragonBody));
 	}
@@ -451,7 +459,7 @@ public class DragonEditorScreen extends Screen {
 		if (!hasInit) {
 			DragonStateHandler dshandler = DragonStateProvider.getData(minecraft.player);
 			
-			initialize(dshandler);
+			initDummyDragon(dshandler);
 			update();
 
 			hasInit = true;
@@ -609,6 +617,8 @@ public class DragonEditorScreen extends Screen {
 				boolean dragonDataIsPreserved = ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage;
 				if(handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved){
 					confirmation = true;
+					showUi = false;
+					conf.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
 				} else {
 					confirm();
 				}
@@ -625,7 +635,6 @@ public class DragonEditorScreen extends Screen {
 								super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
 							}
 						};
-						((AccessorScreen)DragonEditorScreen.this).children().addFirst(conf);
 						((AccessorScreen)DragonEditorScreen.this).children().add(conf);
 						renderables.add(renderButton);
 					}
