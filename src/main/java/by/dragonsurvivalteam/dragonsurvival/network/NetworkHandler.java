@@ -75,8 +75,8 @@ public class NetworkHandler {
 		registrar.playToServer(SyncSkillLevelChangeCost.Data.TYPE, SyncSkillLevelChangeCost.Data.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 
 		// Potion sync
-		registrar.playToClient(SyncPotionRemovedEffect.Data.TYPE, SyncPotionRemovedEffect.Data.STREAM_CODEC, SyncPotionRemovedEffect::handleClient);
-		registrar.playToClient(SyncPotionAddedEffect.Data.TYPE, SyncPotionAddedEffect.Data.STREAM_CODEC, SyncPotionAddedEffect::handleClient);
+		registrar.playToClient(SyncVisualEffectRemoved.Data.TYPE, SyncVisualEffectRemoved.Data.STREAM_CODEC, SyncVisualEffectRemoved::handleClient);
+		registrar.playToClient(SyncVisualEffectAdded.Data.TYPE, SyncVisualEffectAdded.Data.STREAM_CODEC, SyncVisualEffectAdded::handleClient);
 
 		// Emote packets
 		registrar.playBidirectional(SyncEmote.Data.TYPE, SyncEmote.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncEmote::handleClient, SyncEmote::handleServer));

@@ -10,9 +10,10 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect.Data> {
-	public static void handleClient(final SyncPotionRemovedEffect.Data message, final IPayloadContext context) {
+public class SyncVisualEffectRemoved implements IMessage<SyncVisualEffectRemoved.Data> {
+	public static void handleClient(final SyncVisualEffectRemoved.Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
 	}
 
@@ -20,15 +21,13 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_removed_effect"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.VAR_INT,
-			Data::effectId,
+			ByteBufCodecs.VAR_INT, Data::playerId,
+			ByteBufCodecs.VAR_INT, Data::effectId,
 			Data::new
 		);
 
 		@Override
-		public Type<? extends CustomPacketPayload> type() {
+		public @NotNull Type<? extends CustomPacketPayload> type() {
 			return TYPE;
 		}
 	}
