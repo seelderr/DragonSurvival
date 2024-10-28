@@ -64,7 +64,7 @@ public class DragonDestructionHandler {
                     BlockState blockstate = player.level().getBlockState(blockpos);
 
                     if (!blockstate.isAir()) {
-                        boolean isInTag = blockstate.is(DSBlockTags.DESTRUCTIBLE_BLOCKS);
+                        boolean isInTag = blockstate.is(DSBlockTags.GIANT_DRAGON_DESTRUCTIBLE);
 
                         if(!isInTag && ServerConfig.useBlacklistForDestructibleBlocks) {
                             if (random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {

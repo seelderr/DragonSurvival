@@ -21,8 +21,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSBlockTags extends BlockTagsProvider {
-    public static final TagKey<Block> HUNTER_EFFECT = key("enables_hunter_effect");
-    public static final TagKey<Block> DESTRUCTIBLE_BLOCKS = key("giant_dragon_destructible");
+    public static final TagKey<Block> ENABLES_HUNTER_EFFECT = key("enables_hunter_effect");
+    public static final TagKey<Block> GIANT_DRAGON_DESTRUCTIBLE = key("giant_dragon_destructible");
 
     public static final TagKey<Block> SPEEDS_UP_CAVE_DRAGON = key("speeds_up_cave_dragon");
     public static final TagKey<Block> SPEEDS_UP_SEA_DRAGON = key("speeds_up_sea_dragon");
@@ -82,7 +82,7 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(Blocks.GRASS_BLOCK);
 
         // Destructible blocks for very large dragon sizes
-        tag(DESTRUCTIBLE_BLOCKS)
+        tag(GIANT_DRAGON_DESTRUCTIBLE)
                 .addTag(BlockTags.LEAVES)
                 .addTag(BlockTags.MINEABLE_WITH_AXE)
                 .addTag(BlockTags.FLOWERS)
@@ -114,7 +114,7 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(DSBlocks.LEGACY_DRAGON_DOOR.value());
 
         // Blocks which grant hunter stacks when standing on them with the hunter effect
-        tag(HUNTER_EFFECT)
+        tag(ENABLES_HUNTER_EFFECT)
                 .addTag(BlockTags.FLOWERS)
                 .addTag(BlockTags.SAPLINGS)
                 .add(Blocks.WARPED_NYLIUM)
