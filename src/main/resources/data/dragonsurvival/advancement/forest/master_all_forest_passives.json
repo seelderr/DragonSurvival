@@ -44,18 +44,10 @@
     }
   },
   "requirements": [
-    [
-      "cliffhanger"
-    ],
-    [
-      "forest_athletics"
-    ],
-    [
-      "light_in_darkness"
-    ],
-    [
-      "forest_magic"
-    ]
+    ["cliffhanger"],
+    ["forest_athletics"],
+    ["light_in_darkness"],
+    ["forest_magic"]
   ],
   "rewards": {
     "experience": 150

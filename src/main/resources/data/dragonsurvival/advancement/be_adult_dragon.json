@@ -4,12 +4,8 @@
     "icon": {
       "id": "dragonsurvival:weak_dragon_heart"
     },
-    "title": {
-      "translate": "ds.advancements.be_adult_dragon.title"
-    },
-    "description": {
-      "translate": "ds.advancements.be_adult_dragon.description"
-    },
+    "title": { "translate": "ds.advancements.be_adult_dragon.title" },
+    "description": { "translate": "ds.advancements.be_adult_dragon.description" },
     "show_toast": true,
     "announce_to_chat": true,
     "frame": "goal"

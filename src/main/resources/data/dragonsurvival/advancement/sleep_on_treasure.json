@@ -4,12 +4,8 @@
     "icon": {
       "id": "minecraft:gold_nugget"
     },
-    "title": {
-      "translate": "ds.advancements.sleep_on_treasure.title"
-    },
-    "description": {
-      "translate": "ds.advancements.sleep_on_treasure.description"
-    },
+    "title": { "translate": "ds.advancements.sleep_on_treasure.title" },
+    "description": { "translate": "ds.advancements.sleep_on_treasure.description" },
     "show_toast": false,
     "announce_to_chat": true,
     "hidden": false

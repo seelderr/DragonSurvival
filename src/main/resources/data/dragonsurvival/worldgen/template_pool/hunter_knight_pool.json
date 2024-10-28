@@ -2,12 +2,12 @@
   "name": "dragonsurvival:hunter_knight_pool",
   "fallback": "minecraft:empty",
   "elements": [
-    {
+	{	
       "weight": 1,
       "element": {
         "location": "dragonsurvival:entity/hunter_knight",
         "processors": "minecraft:empty",
-        "projection": "rigid",
+		"projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     }

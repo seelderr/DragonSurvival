@@ -4,12 +4,8 @@
     "icon": {
       "id": "dragonsurvival:good_dragon_helmet"
     },
-    "title": {
-      "translate": "ds.advancements.make_good_armor.title"
-    },
-    "description": {
-      "translate": "ds.advancements.make_good_armor.description"
-    },
+    "title": { "translate": "ds.advancements.make_good_armor.title" },
+    "description": { "translate": "ds.advancements.make_good_armor.description" },
     "show_toast": true,
     "announce_to_chat": true,
     "frame": "goal",

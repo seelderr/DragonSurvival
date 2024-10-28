@@ -246,6 +246,7 @@
   "ds.skill.aoe": "§6■ Radius:§r %s",
   "ds.skill.damage": "§6■ Damage:§r %s",
   "ds.skill.range.blocks": "§6■ Range:§r %s blocks",
+
   "ds.skill.duration.seconds": "§6■ Duration:§r %ss",
   "ds.skill.keybind": "§6■ Currently bound to:§r [%s]",
   "ds.skill.bonus_exp.multiplier": "§6■ EXP multiplier:§r %s",
@@ -386,7 +387,7 @@
   "ds.description.cave_source_of_magic": "■§7 Cave dragons can bathe here to temporarily gain infinite mana. Damages other creatures.",
   "ds.description.forest_source_of_magic": "■§7 Forest dragons can bathe here to temporarily gain infinite mana. Damages other creatures.",
   "ds.description.sea_source_of_magic": "■§7 Sea dragons can bathe here to temporarily gain infinite mana. Damages other creatures.",
-  "ds.description.dragon_pressure_plate": "■§7 Produces a redstone signal while any dragon stands on it. It will not activate if a human steps on it.",
+  "ds.description.dragon_pressure_plate": "■§7 Produces a redstone signal while any dragon stands on it. It will not activate if a human steps on it." ,
   "ds.description.cave_dragon_pressure_plate": "■§7 Produces a redstone signal while a cave dragon stands on it. Can open a cave dragon door, if adjacent to it.",
   "ds.description.forest_dragon_pressure_plate": "■§7 Produces a redstone signal while a forest dragon stands on it. Can open a forest dragon door, if adjacent to it.",
   "ds.description.sea_dragon_pressure_plate": "■§7 Produces a redstone signal while a sea dragon stands on it. Can open a sea dragon door, if adjacent to it.",
