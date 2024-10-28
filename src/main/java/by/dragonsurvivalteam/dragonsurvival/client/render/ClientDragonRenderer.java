@@ -41,6 +41,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -266,12 +267,14 @@ public class ClientDragonRenderer {
                     }
                 }
                 if (!player.isInvisible()) {
-                    if (ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonStateProvider.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))) {
+                    boolean isPlayerGliding = ServerFlightHandler.isGliding(player);
+                    Entity playerVehicle = player.getVehicle();
+                    if (isPlayerGliding || (player.isPassenger() && DragonStateProvider.isDragon(playerVehicle) && ServerFlightHandler.isGliding((Player) playerVehicle))) {
                         float upRot = 0;
-                        if (ServerFlightHandler.isGliding(player)) {
+                        if (isPlayerGliding) {
                             upRot = Mth.clamp((float) (player.getDeltaMovement().y * 20), -80, 80);
                         } else {
-                            upRot = Mth.clamp((float) (player.getVehicle().getDeltaMovement().y * 20), -80, 80);
+                            upRot = Mth.clamp((float) (playerVehicle.getDeltaMovement().y * 20), -80, 80);
                         }
 
                         dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
@@ -291,12 +294,12 @@ public class ClientDragonRenderer {
 
                         Vec3 vector3d1 = new Vec3(0, 0, 0);
                         Vec3 vector3d = new Vec3(0, 0, 0);
-                        if (ServerFlightHandler.isGliding(player)) {
+                        if (isPlayerGliding) {
                             vector3d1 = player.getDeltaMovement();
                             vector3d = player.getViewVector(1f);
                         } else {
-                            vector3d1 = player.getVehicle().getDeltaMovement();
-                            vector3d = player.getVehicle().getViewVector(1f);
+                            vector3d1 = playerVehicle.getDeltaMovement();
+                            vector3d = playerVehicle.getViewVector(1f);
                         }
                         double d0 = vector3d1.horizontalDistanceSqr();
                         double d1 = vector3d.horizontalDistanceSqr();
@@ -326,7 +329,7 @@ public class ClientDragonRenderer {
                         handler.getMovementData().prevZRot = 0;
                         handler.getMovementData().prevXRot = 0;
                     }
-                    if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight) {
+                    if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !isPlayerGliding || renderFirstPersonFlight) {
                         dragonRenderer.render(dummyDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
                     }
                 }
@@ -570,6 +573,7 @@ public class ClientDragonRenderer {
             boolean isInputBack = rawInput.y < 0;
 
             if (hasMoveInput) {
+
                 // When providing move input, turn the body towards the input direction
                 var targetAngle = Math.toDegrees(Math.atan2(-rawInput.x, rawInput.y)) + viewYRot;
 
@@ -578,6 +582,10 @@ public class ClientDragonRenderer {
                 var isFlying = ServerFlightHandler.isFlying(player) || player.getAbilities().flying;
                 if (isFirstPerson && !isFreeLook && isInputBack && !isFlying) {
                     targetAngle += 180;
+                }
+
+                if (player instanceof LocalPlayer localPlayer) {
+                    localPlayer.sendSystemMessage(Component.literal("Move input: to angle %f".formatted(targetAngle)));
                 }
 
                 var factor = player.onGround() ? MOVE_ALIGN_FACTOR : MOVE_ALIGN_FACTOR_AIR;
