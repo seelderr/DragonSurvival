@@ -148,7 +148,7 @@ public class DSModifiers {
 
     public static double buildDamageMod(DragonStateHandler handler) {
         if (!ServerConfig.attackDamage) return 0;
-        double ageBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage;
+        double ageBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.newbornBonusDamage;
         if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
             ageBonus += ServerConfig.largeDamageBonus * ((handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE);
         }

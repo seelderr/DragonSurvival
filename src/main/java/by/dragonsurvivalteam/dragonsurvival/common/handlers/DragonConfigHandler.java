@@ -71,7 +71,7 @@ public class DragonConfigHandler {
 
     public static void rebuildSeaDragonConfigs() {
         SEA_DRAGON_HYDRATION_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.seaHydrationBlocks);
-        SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.getResourceElements(Item.class, ServerConfig.seaAdditionalWaterUseables);
+        SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.getResourceElements(Item.class, ServerConfig.seaHydrationItems);
     }
 
     public static void rebuildForestDragonConfigs() {

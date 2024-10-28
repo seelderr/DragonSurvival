@@ -119,7 +119,7 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
     @SuppressWarnings("ConstantValue")
     @ModifyReturnValue(method = "canRide", at = @At(value = "RETURN"))
     public boolean dragonSurvival$canRide(boolean original, @Local(argsOnly = true, ordinal = 0) Entity entity) {
-        if (ServerConfig.ridingBlacklist && DragonStateProvider.isDragon((Entity) (Object) this) && /* Still allow riding dragons */ !DragonStateProvider.isDragon(entity)) {
+        if (ServerConfig.limitedRiding && DragonStateProvider.isDragon((Entity) (Object) this) && /* Still allow riding dragons */ !DragonStateProvider.isDragon(entity)) {
             return entity.getType().is(DSEntityTypeTags.VEHICLE_WHITELIST);
         }
 

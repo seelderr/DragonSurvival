@@ -51,7 +51,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
     public void isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> callback) {
-        if (ServerConfig.disableSuffocation && source == damageSources().inWall() && DragonStateProvider.isDragon(this)) {
+        if (ServerConfig.disableDragonSuffocation && source == damageSources().inWall() && DragonStateProvider.isDragon(this)) {
             callback.setReturnValue(true);
         }
     }
