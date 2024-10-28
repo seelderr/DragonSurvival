@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -103,19 +104,22 @@ public class DragonPenaltyHandler {
         if (!ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0) {
             return;
         }
-        ItemStack itemStack = destroyItemEvent.getItem();
-        DragonStateProvider.getOptional(destroyItemEvent.getEntity()).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && dragonStateHandler.getType() instanceof SeaDragonType seaDragonType) {
+
+        DragonStateProvider.getOptional(destroyItemEvent.getEntity()).ifPresent(handler -> {
+            if (handler.isDragon() && handler.getType() instanceof SeaDragonType seaDragonType) {
+                ItemStack itemStack = destroyItemEvent.getItem();
                 Player player = (Player) destroyItemEvent.getEntity();
+
                 if (!player.level().isClientSide() && ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem) {
                     Optional<Potion> potion = PotionUtils.getPotion(itemStack);
 
-                    if (potion.isPresent() && potion.get() == Potions.WATER.value() && DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA)) {
+                    if (potion.isPresent() && potion.get() == Potions.WATER.value() && DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
                         seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
                         PacketDistributor.sendToPlayersTrackingEntity(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
                     }
                 }
-                if (DragonConfigHandler.SEA_DRAGON_HYDRATION_USE_ALTERNATIVES.contains(itemStack.getItem()) && !player.level().isClientSide()) {
+
+                if (itemStack.is(DSItemTags.SEA_ADDITIONAL_WATER_USABLES) && !player.level().isClientSide()) {
                     seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
                 }

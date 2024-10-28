@@ -1,0 +1,17 @@
+{
+  "values": [
+    "#minecraft:base_stone_overworld",
+    "#minecraft:beacon_base_blocks",
+    "#minecraft:base_stone_nether",
+    "#minecraft:stone_bricks",
+    "#c:sandstone/blocks",
+    "#c:cobblestones",
+    "#c:stones",
+    "#c:ores",
+    "#dragonsurvival:regenerates_cave_dragon_mana",
+    {
+      "id": "#immersive_weathering:charred_blocks",
+      "required": false
+    }
+  ]
+}

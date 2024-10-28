@@ -70,9 +70,6 @@ public class ConfigHandler {
 
     private static final HashMap<Class<?>, Registry<?>> REGISTRY_MAP = new HashMap<>();
 
-    @ConfigOption(side = ConfigSide.SERVER, key = "test_config", comment = "some comment")
-    public static List<BlockStateConfig> testConfig = List.of(BlockStateConfig.of("#minecraft:campfires:lit=true"), BlockStateConfig.of("#minecraft:others:lit=false,my_state=true,c=1"));
-
     public static void initTypes() {
         REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
         REGISTRY_MAP.put(Block.class, BuiltInRegistries.BLOCK);
@@ -545,10 +542,6 @@ public class ConfigHandler {
             DragonFoodHandler.rebuildFoodMap();
 
             // Technically only relevant if the config spec belongs to us
-            DragonConfigHandler.rebuildSeaDragonConfigs();
-            DragonConfigHandler.rebuildBreathBlocks();
-            DragonConfigHandler.rebuildManaBlocks();
-            DragonConfigHandler.rebuildForestDragonConfigs();
             DragonConfigHandler.rebuildBlacklistedItems();
         }
     }

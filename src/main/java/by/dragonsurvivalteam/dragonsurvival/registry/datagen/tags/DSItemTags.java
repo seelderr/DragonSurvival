@@ -21,6 +21,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> KEEP_EFFECTS = key("keep_effects");
+    public static final TagKey<Item> SEA_ADDITIONAL_WATER_USABLES = key("sea_additional_water_usables");
 
     public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
         super(output, provider, blockTags, DragonSurvivalMod.MODID, helper);
@@ -30,10 +31,15 @@ public class DSItemTags extends ItemTagsProvider {
     protected void addTags(@NotNull final HolderLookup.Provider provider) {
         addToVanillaTags();
 
+        // Effects from these items are kept even if they're not the correct food for the dragon
         tag(KEEP_EFFECTS)
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_speed"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_health"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_mental_cleansing"));
+
+        // Additional usable modded items which restore water when used
+        tag(SEA_ADDITIONAL_WATER_USABLES)
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "icicle"));
 
         // Used in recipes
         tag(key("charred_food"))

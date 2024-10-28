@@ -5,7 +5,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -53,8 +52,10 @@ public class BlockStateConfig implements CustomConfig {
                 if (!property.getValue(properties.get(key)).map(value -> value.equals(state.getValue(property))).orElse(false)) {
                     return false;
                 }
-
             }
+
+            // It's a valid block and the required properties match
+            return true;
         }
 
         return false;

@@ -49,10 +49,10 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
         AbstractDragonType type = DragonStateProvider.getData(player).getType();
 
         TagKey<Block> speedUpBlockTag = switch (type) {
-            case CaveDragonType ignored -> DSBlockTags.CAVE_DRAGON_SPEED_UP_BLOCKS;
-            case SeaDragonType ignored -> DSBlockTags.SEA_DRAGON_SPEED_UP_BLOCKS;
-            case ForestDragonType ignored -> DSBlockTags.FOREST_DRAGON_SPEED_UP_BLOCKS;
-            default -> throw new IllegalStateException("Not a valid dragon type: " + type);
+            case CaveDragonType ignored -> DSBlockTags.SPEEDS_UP_CAVE_DRAGON;
+            case SeaDragonType ignored -> DSBlockTags.SPEEDS_UP_SEA_DRAGON;
+            case ForestDragonType ignored -> DSBlockTags.SPEEDS_UP_FOREST_DRAGON;
+            default -> throw new IllegalStateException("Not a valid dragon type: " + type.getClass().getName());
         };
 
         boolean isSpeedBlock = player.getBlockStateOn().is(speedUpBlockTag);

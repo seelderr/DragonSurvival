@@ -200,7 +200,7 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
     }
 
     private static boolean isHunterRelevant(final BlockState blockState) {
-        return blockState.is(DSBlockTags.HUNTER_ABILITY_BLOCKS);
+        return blockState.is(DSBlockTags.HUNTER_EFFECT);
     }
 
     private static void clearHunterStacks(final ServerPlayer player) {

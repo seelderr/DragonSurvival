@@ -21,22 +21,28 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSBlockTags extends BlockTagsProvider {
-    public static final TagKey<Block> HUNTER_ABILITY_BLOCKS = key("hunter_ability_blocks");
-    public static final TagKey<Block> DESTRUCTIBLE_BLOCKS = key("destructible_blocks");
+    public static final TagKey<Block> HUNTER_EFFECT = key("enables_hunter_effect");
+    public static final TagKey<Block> DESTRUCTIBLE_BLOCKS = key("giant_dragon_destructible");
 
-    public static final TagKey<Block> CAVE_DRAGON_SPEED_UP_BLOCKS = key("cave_dragon_speed_up_blocks");
-    public static final TagKey<Block> SEA_DRAGON_SPEED_UP_BLOCKS = key("sea_dragon_speed_up_blocks");
-    public static final TagKey<Block> FOREST_DRAGON_SPEED_UP_BLOCKS = key("forest_dragon_speed_up_blocks");
+    public static final TagKey<Block> SPEEDS_UP_CAVE_DRAGON = key("speeds_up_cave_dragon");
+    public static final TagKey<Block> SPEEDS_UP_SEA_DRAGON = key("speeds_up_sea_dragon");
+    public static final TagKey<Block> SPEEDS_UP_FOREST_DRAGON = key("speeds_up_forest_dragon");
 
-    public static final TagKey<Block> CAVE_DRAGON_MANA_BLOCKS = key("cave_dragon_mana_blocks");
-    public static final TagKey<Block> SEA_DRAGON_MANA_BLOCKS = key("sea_dragon_mana_blocks");
-    public static final TagKey<Block> FOREST_DRAGON_MANA_BLOCKS = key("forest_dragon_mana_blocks");
+    public static final TagKey<Block> REGENERATES_CAVE_DRAGON_MANA = key("regenerates_cave_dragon_mana");
+    public static final TagKey<Block> REGENERATES_SEA_DRAGON_MANA = key("regenerates_sea_dragon_mana");
+    public static final TagKey<Block> REGENERATES_FOREST_DRAGON_MANA = key("regenerates_forest_dragon_mana");
+
+    public static final TagKey<Block> NETHER_BREATH_DESTRUCTIBLE = key("nether_breath_destructible");
+    public static final TagKey<Block> STORM_BREATH_DESTRUCTIBLE = key("sea_dragon_speed_up_blocks");
+    public static final TagKey<Block> FOREST_BREATH_DESTRUCTIBLE = key("forest_dragon_speed_up_blocks");
+
+    public static final TagKey<Block> HYDRATES_SEA_DRAGON = key("hydrates_sea_dragon");
+    public static final TagKey<Block> FOREST_BREATH_GROW_BLACKLIST = key("forest_breath_grow_blacklist");
 
     public static final TagKey<Block> DRAGON_ALTARS = key("dragon_altars");
     public static final TagKey<Block> DRAGON_TREASURES = key("dragon_treasures");
     public static final TagKey<Block> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
     public static final TagKey<Block> WOODEN_DRAGON_DOORS_SMALL = key("wooden_dragon_doors_small");
-
 
     public DSBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
@@ -47,6 +53,7 @@ public class DSBlockTags extends BlockTagsProvider {
         addToVanillaTags();
         addToDragonSpeedUpBlocks();
         addToDragonManaBlocks();
+        addToBreathDestructibleBlocks();
 
         DSBlocks.DS_BLOCKS.getEntries().forEach(holder -> {
             Block block = holder.value();
@@ -60,11 +67,26 @@ public class DSBlockTags extends BlockTagsProvider {
             }
         });
 
+        // Blocks that hydrate sea dragons (or damage cave dragons) when standing on them
+        tag(HYDRATES_SEA_DRAGON)
+                .addTag(REGENERATES_SEA_DRAGON_MANA)
+                .add(Blocks.MUDDY_MANGROVE_ROOTS)
+                .add(Blocks.MUD)
+                .addOptional(DragonSurvivalMod.location("regions_unexplored", "plains_mud"))
+                .addOptional(DragonSurvivalMod.location("regions_unexplored", "silt_mud"))
+                .addOptional(DragonSurvivalMod.location("regions_unexplored", "peat_mud"))
+                .addOptional(DragonSurvivalMod.location("regions_unexplored", "forest_mud"));
+
+        // Blocks which will not trigger bonemeal-like-growth when hit with the forest breath
+        tag(FOREST_BREATH_GROW_BLACKLIST)
+                .add(Blocks.GRASS_BLOCK);
+
+        // Destructible blocks for very large dragon sizes
         tag(DESTRUCTIBLE_BLOCKS)
                 .addTag(BlockTags.LEAVES)
                 .addTag(BlockTags.MINEABLE_WITH_AXE)
                 .addTag(BlockTags.FLOWERS)
-                .addTag(BlockTags.REPLACEABLE);
+                .addTag(BlockTags.REPLACEABLE); // Potentially has no entries?
 
         tag(WOODEN_DRAGON_DOORS_SMALL)
                 .add(DSBlocks.OAK_SMALL_DOOR.value())
@@ -91,7 +113,8 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(DSBlocks.FOREST_DRAGON_DOOR.value())
                 .add(DSBlocks.LEGACY_DRAGON_DOOR.value());
 
-        tag(HUNTER_ABILITY_BLOCKS)
+        // Blocks which grant hunter stacks when standing on them with the hunter effect
+        tag(HUNTER_EFFECT)
                 .addTag(BlockTags.FLOWERS)
                 .addTag(BlockTags.SAPLINGS)
                 .add(Blocks.WARPED_NYLIUM)
@@ -139,16 +162,26 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(Blocks.LANTERN);
     }
 
-    private void addToDragonManaBlocks() {
-        // TODO :: keep a config for blockstate specific entries (e.g. lit campfire)
+    /** These blocks can be destroyed by the respective dragon breath */
+    private void addToBreathDestructibleBlocks() {
+        tag(NETHER_BREATH_DESTRUCTIBLE)
+                .addTag(BlockTags.IMPERMEABLE) // Glass
+                .addTag(BlockTags.CROPS)
+                .addTag(BlockTags.FLOWERS)
+                .add(Blocks.COBWEB);
 
-        tag(CAVE_DRAGON_MANA_BLOCKS)
+        tag(STORM_BREATH_DESTRUCTIBLE)
+                .addTag(BlockTags.IMPERMEABLE) // Glass
+                .addTag(BlockTags.FLOWERS);
+
+        tag(FOREST_BREATH_DESTRUCTIBLE)
+                .addTag(BlockTags.BANNERS);
+    }
+
+    /** These blocks grant mana regeneration when the corresponding dragon type stands on them */
+    private void addToDragonManaBlocks() {
+        tag(REGENERATES_CAVE_DRAGON_MANA)
                 .addTag(BlockTags.FIRE)
-//                .addTag(BlockTags.CAMPFIRES)
-//                .addTag(Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES)
-//                .add(Blocks.SMOKER)
-//                .add(Blocks.FURNACE)
-//                .add(Blocks.BLAST_FURNACE)
                 .add(Blocks.LAVA_CAULDRON)
                 .add(Blocks.MAGMA_BLOCK)
                 .add(Blocks.LAVA)
@@ -158,13 +191,19 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addOptional(DragonSurvivalMod.location("netherdepthsupgrade", "wet_lava_sponge"))
                 .addOptional(DragonSurvivalMod.location("regions_unexplored", "brimwood_log_magma"));
 
-        tag(SEA_DRAGON_MANA_BLOCKS)
+        tag(REGENERATES_SEA_DRAGON_MANA)
                 .addTag(BlockTags.SNOW)
                 .addTag(BlockTags.ICE)
                 .add(Blocks.WATER_CAULDRON)
                 .add(Blocks.WET_SPONGE)
                 .add(Blocks.WATER)
-                .add(DSBlocks.CAVE_SOURCE_OF_MAGIC.value())
+                .add(DSBlocks.SEA_SOURCE_OF_MAGIC.value())
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "thin_ice"))
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "cryosol"))
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "permafrost"))
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "frosty_grass"))
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "frosty_fern"))
+                .addOptional(DragonSurvivalMod.location("immersive_weathering", "icicle"))
                 .addOptional(DragonSurvivalMod.location("immersive_weathering", "snowy_stone"))
                 .addOptional(DragonSurvivalMod.location("immersive_weathering", "snowy_stone_slab"))
                 .addOptional(DragonSurvivalMod.location("immersive_weathering", "snowy_stone_wall"))
@@ -183,7 +222,7 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addOptional(DragonSurvivalMod.location("immersive_weathering", "snow_brick_stairs"))
                 .addOptional(DragonSurvivalMod.location("immersive_weathering", "snowy_chiseled_stone_bricks"));
 
-        tag(FOREST_DRAGON_MANA_BLOCKS)
+        tag(REGENERATES_FOREST_DRAGON_MANA)
                 .addTag(BlockTags.FLOWERS)
                 .addTag(BlockTags.LEAVES)
                 .add(Blocks.BROWN_MUSHROOM_BLOCK)
@@ -211,8 +250,9 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addOptional(DragonSurvivalMod.location("vinery", "grass_slab"));
     }
 
+    /** These blocks grant a speed bonus when the corresponding dragon type stands on them */
     private void addToDragonSpeedUpBlocks() {
-        tag(CAVE_DRAGON_SPEED_UP_BLOCKS)
+        tag(SPEEDS_UP_CAVE_DRAGON)
                 .addTag(BlockTags.BASE_STONE_OVERWORLD)
                 .addTag(BlockTags.BEACON_BASE_BLOCKS)
                 .addTag(BlockTags.BASE_STONE_NETHER)
@@ -221,25 +261,25 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addTag(Tags.Blocks.COBBLESTONES)
                 .addTag(Tags.Blocks.STONES)
                 .addTag(Tags.Blocks.ORES)
-                .addTag(CAVE_DRAGON_MANA_BLOCKS)
+                .addTag(REGENERATES_CAVE_DRAGON_MANA)
                 .addOptionalTag(DragonSurvivalMod.location("immersive_weathering", "charred_blocks"));
 
-        tag(SEA_DRAGON_SPEED_UP_BLOCKS)
+        tag(SPEEDS_UP_SEA_DRAGON)
                 .addTag(BlockTags.CORAL_BLOCKS)
                 .addTag(BlockTags.IMPERMEABLE) // Glass
                 .addTag(BlockTags.SAND)
                 .addTag(Tags.Blocks.SANDSTONE_BLOCKS)
                 .addTag(Tags.Blocks.SANDS)
-                .addTag(SEA_DRAGON_MANA_BLOCKS)
+                .addTag(REGENERATES_SEA_DRAGON_MANA)
                 .add(Blocks.DIRT_PATH)
                 .add(Blocks.MUD);
 
-        tag(FOREST_DRAGON_SPEED_UP_BLOCKS)
+        tag(SPEEDS_UP_FOREST_DRAGON)
                 .addTag(BlockTags.WOODEN_SLABS)
                 .addTag(BlockTags.PLANKS)
                 .addTag(BlockTags.LOGS)
                 .addTag(BlockTags.DIRT)
-                .addTag(FOREST_DRAGON_MANA_BLOCKS)
+                .addTag(REGENERATES_FOREST_DRAGON_MANA)
                 .add(Blocks.GRASS_BLOCK);
     }
     

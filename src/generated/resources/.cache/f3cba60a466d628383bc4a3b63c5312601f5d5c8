@@ -1,10 +1,11 @@
-// 1.21.1	2024-10-27T15:39:22.4272364	Dragon Survival Item tags
+// 1.21.1	2024-10-28T21:28:52.4142415	Dragon Survival Item tags
 98e47e9f5e29dfe7526d64d46c38d29fda2da305 data/dragonsurvival/tags/item/charred_food.json
 2e41bde741c6c9d625aeead589e829b9a90f90ac data/dragonsurvival/tags/item/cold_items.json
 bcd9fc9215902ea5cae88a8bbf012021624d977e data/dragonsurvival/tags/item/dragon_altars.json
 50d0e46d98181ed48f2323211041c958002f5e4c data/dragonsurvival/tags/item/dragon_treasures.json
 a291334c6e7cf2a0595394a0593e82cca559418e data/dragonsurvival/tags/item/enchantable/chest_armor_and_elytra.json
 2df28bd6fa11058002f7d344f897353d061274ef data/dragonsurvival/tags/item/keep_effects.json
+519ef05e74e9249ac14f7330a9adb730808c1eb3 data/dragonsurvival/tags/item/sea_additional_water_usables.json
 8f7349d5971017f0edcef42622012fdf6b4937b9 data/dragonsurvival/tags/item/wooden_dragon_doors.json
 e4a43a2505031c577298e729f1b98ec87b4dfdc6 data/dragonsurvival/tags/item/wooden_dragon_doors_small.json
 162bfb76c7b6309e56ed98a64c751cd6afd21d9d data/minecraft/tags/item/chest_armor.json

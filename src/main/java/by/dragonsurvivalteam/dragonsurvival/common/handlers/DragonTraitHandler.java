@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.TickablePassiveAbility;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LayeredCauldronBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -42,26 +43,19 @@ public class DragonTraitHandler {
         }
     }
 
-    public static boolean isInCauldron(BlockState feetBlock, BlockState blockUnder) {
-        //Because it is used for both cave and sea dragon it is added here
-        boolean isInCauldron = false;
-        if (blockUnder.getBlock() instanceof LayeredCauldronBlock) {
-            if (blockUnder.hasProperty(LayeredCauldronBlock.LEVEL)) {
-                int level = blockUnder.getValue(LayeredCauldronBlock.LEVEL);
-
-                if (level > 0) {
-                    isInCauldron = true;
-                }
-            }
-        } else if (feetBlock.getBlock() instanceof LayeredCauldronBlock) {
-            if (feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)) {
-                int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
-
-                if (level > 0) {
-                    isInCauldron = true;
-                }
-            }
+    public static boolean isInCauldron(final Player player, final Block typeToCheck) {
+        if (isInCauldron(player.getBlockStateOn(), typeToCheck)) {
+            return true;
         }
-        return isInCauldron;
+
+        return isInCauldron(player.getInBlockState(), typeToCheck);
+    }
+
+    private static boolean isInCauldron(final BlockState state, final Block typeToCheck) {
+        if (state.getBlock() == typeToCheck && state.hasProperty(LayeredCauldronBlock.LEVEL)) {
+            return state.getValue(LayeredCauldronBlock.LEVEL) > 0;
+        }
+
+        return false;
     }
 }

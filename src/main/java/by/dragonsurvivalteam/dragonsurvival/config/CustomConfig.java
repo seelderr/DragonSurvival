@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import java.util.Optional;
-
 public interface CustomConfig {
     String convert();
 
