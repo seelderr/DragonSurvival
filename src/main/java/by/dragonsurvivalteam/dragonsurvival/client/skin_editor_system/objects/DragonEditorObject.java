@@ -4,14 +4,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLa
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.HashMap;
 
-public class DragonEditorObject{
+public class DragonEditorObject {
 	public HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaults = new HashMap<>();
 
 	public Dragon sea_dragon;
 	public Dragon forest_dragon;
 	public Dragon cave_dragon;
 
-	public static class Dragon{
+	public static class Dragon {
 		public HashMap<EnumSkinLayer, DragonTextureMetadata[]> layers;
 	}
 

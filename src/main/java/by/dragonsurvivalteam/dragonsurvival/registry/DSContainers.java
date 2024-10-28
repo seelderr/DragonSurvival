@@ -15,8 +15,8 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
-public class DSContainers{
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+public class DSContainers {
 
 	public static final DeferredRegister<MenuType<?>> DS_CONTAINERS = DeferredRegister.create(
 			BuiltInRegistries.MENU,

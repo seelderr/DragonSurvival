@@ -9,37 +9,37 @@ import software.bernie.geckolib.animation.AnimationController;
 import software.bernie.geckolib.animation.RawAnimation;
 
 public class AnimationUtils {
-    public static RawAnimation createAnimation(@Nullable final RawAnimation builder, @NotNull final RawAnimation staticAnimation) {
-        if (builder == null) {
-            return staticAnimation;
-        }
+	public static RawAnimation createAnimation(@Nullable final RawAnimation builder, @NotNull final RawAnimation staticAnimation) {
+		if (builder == null) {
+			return staticAnimation;
+		}
 
-        assert staticAnimation.getAnimationStages().size() == 1;
-        RawAnimation.Stage stage = staticAnimation.getAnimationStages().get(0);
-        builder.then(stage.animationName(), stage.loopType());
+		assert staticAnimation.getAnimationStages().size() == 1;
+		RawAnimation.Stage stage = staticAnimation.getAnimationStages().get(0);
+		builder.then(stage.animationName(), stage.loopType());
 
-        return builder;
-    }
+		return builder;
+	}
 
-    public static <E extends GeoAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<E> controller) {
+	public static <E extends GeoAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<E> controller) {
 
-        if(speed == controller.getAnimationSpeed()) {
-            return;
-        }
+		if (speed == controller.getAnimationSpeed()) {
+			return;
+		}
 
-        if(controller.getCurrentAnimation() != null) {
-            double distance = currentAnimationTick - ((AccessorAnimationController)controller).getTickOffset();
-            ((AccessorAnimationController) controller).setTickOffset(currentAnimationTick - distance * (controller.getAnimationSpeed() / speed));
-            controller.setAnimationSpeed(speed);
-        }
-    }
+		if (controller.getCurrentAnimation() != null) {
+			double distance = currentAnimationTick - ((AccessorAnimationController) controller).getTickOffset();
+			((AccessorAnimationController) controller).setTickOffset(currentAnimationTick - distance * (controller.getAnimationSpeed() / speed));
+			controller.setAnimationSpeed(speed);
+		}
+	}
 
-    // TODO: This is a hack since GeckoLib's state.isCurrentAnimation() doesn't work. If they ever fix that, we can remove this.
-    public static boolean isAnimationPlaying(AnimationController<?> controller, String animationName) {
-        return controller.getCurrentAnimation() != null && controller.getCurrentAnimation().animation().name().equals(animationName);
-    }
+	// TODO: This is a hack since GeckoLib's state.isCurrentAnimation() doesn't work. If they ever fix that, we can remove this.
+	public static boolean isAnimationPlaying(AnimationController<?> controller, String animationName) {
+		return controller.getCurrentAnimation() != null && controller.getCurrentAnimation().animation().name().equals(animationName);
+	}
 
-    public static double getMovementSpeed(LivingEntity of){
-        return Math.sqrt(Math.pow(of.getX() - of.xo, 2) + Math.pow(of.getZ() - of.zo, 2));
-    }
+	public static double getMovementSpeed(LivingEntity of) {
+		return Math.sqrt(Math.pow(of.getX() - of.xo, 2) + Math.pow(of.getZ() - of.zo, 2));
+	}
 }

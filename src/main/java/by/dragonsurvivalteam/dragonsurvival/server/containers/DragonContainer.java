@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.slots.ClawToolSlot;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -50,10 +51,11 @@ public class DragonContainer extends AbstractContainerMenu {
 
 	private final int craftingResultIndex;
 
-	/** (Unsure)
-	Data which needs to be synchronized between Server and Client<br>
-	Used by {@link ClawToolSlot} to determine if they are active or not
-	*/
+	/**
+	 * (Unsure)
+	 * Data which needs to be synchronized between Server and Client<br>
+	 * Used by {@link ClawToolSlot} to determine if they are active or not
+	 */
 	protected final ContainerData dataStatus = new ContainerData() {
 		@Override
 		public int get(int index) {
@@ -111,7 +113,7 @@ public class DragonContainer extends AbstractContainerMenu {
 
 		// Inventory slots
 		for (int column = 0; column < 3; column++) {
-			for(int row = 0; row < 9; row++) {
+			for (int row = 0; row < 9; row++) {
 				Slot s = new Slot(inventory, row + column * 9 + 9, 8 + row * 18, 84 + column * 18);
 				addSlot(s);
 				inventorySlots.add(s);
@@ -264,7 +266,9 @@ public class DragonContainer extends AbstractContainerMenu {
 		clearContainer(player, craftMatrix);
 	}
 
-	/** Callback for when the crafting matrix is changed */
+	/**
+	 * Callback for when the crafting matrix is changed
+	 */
 	@Override
 	public void slotsChanged(@NotNull final Container inventory) {
 		if (player instanceof ServerPlayer serverPlayer) {

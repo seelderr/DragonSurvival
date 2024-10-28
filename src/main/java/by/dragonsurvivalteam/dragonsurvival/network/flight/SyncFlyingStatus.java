@@ -26,7 +26,7 @@ public class SyncFlyingStatus implements IMessage<SyncFlyingStatus.Data> {
 				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
-	public record Data(int playerId, boolean state) implements CustomPacketPayload  {
+	public record Data(int playerId, boolean state) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "flying_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(

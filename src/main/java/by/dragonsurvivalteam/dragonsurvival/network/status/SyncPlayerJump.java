@@ -11,7 +11,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Jump animation length is 20.8 ticks */
+/**
+ * Jump animation length is 20.8 ticks
+ */
 public class SyncPlayerJump implements IMessage<SyncPlayerJump.Data> {
 
 	public static void handleClient(final Data message, final IPayloadContext context) {

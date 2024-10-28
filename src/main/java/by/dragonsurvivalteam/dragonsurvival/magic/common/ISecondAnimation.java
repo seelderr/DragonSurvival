@@ -1,4 +1,4 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common;
 
-public interface ISecondAnimation{
+public interface ISecondAnimation {
 }

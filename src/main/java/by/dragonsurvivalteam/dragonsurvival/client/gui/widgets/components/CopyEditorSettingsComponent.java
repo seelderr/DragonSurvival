@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.E
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -34,7 +35,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 	private final int ySize;
 	public boolean visible;
 
-	public CopyEditorSettingsComponent(DragonEditorScreen screen, CopySettingsButton btn, int x, int y, int xSize, int ySize){
+	public CopyEditorSettingsComponent(DragonEditorScreen screen, CopySettingsButton btn, int x, int y, int xSize, int ySize) {
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
@@ -42,35 +43,36 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		this.ySize = ySize;
 		this.btn = btn;
 
-		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, Component.empty(), pButton -> {}){
+		confirm = new ExtendedButton(x + xSize / 2 - 18, y + ySize - 15, 15, 15, Component.empty(), pButton -> {
+		}) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				guiGraphics.blit(DragonAltarScreen.CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
 			}
 
 			@Override
-			public void onPress(){
-				SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, Lazy.of(()->new SkinAgeGroup(screen.level))).get();
+			public void onPress() {
+				SkinAgeGroup preset = screen.preset.skinAges.getOrDefault(screen.level, Lazy.of(() -> new SkinAgeGroup(screen.level))).get();
 
-				if(newborn.active && newborn.selected()){
-					screen.preset.skinAges.put(DragonLevel.NEWBORN, Lazy.of(()->{
+				if (newborn.active && newborn.selected()) {
+					screen.preset.skinAges.put(DragonLevel.NEWBORN, Lazy.of(() -> {
 						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.NEWBORN);
 						ageGroup.readNBT(preset.writeNBT());
 						return ageGroup;
 					}));
 				}
 
-				if(young.active && young.selected()){
-					screen.preset.skinAges.put(DragonLevel.YOUNG, Lazy.of(()->{
+				if (young.active && young.selected()) {
+					screen.preset.skinAges.put(DragonLevel.YOUNG, Lazy.of(() -> {
 						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.YOUNG);
 						ageGroup.readNBT(preset.writeNBT());
 						return ageGroup;
 					}));
 				}
 
-				if(adult.active && adult.selected()){
-					screen.preset.skinAges.put(DragonLevel.ADULT, Lazy.of(()->{
+				if (adult.active && adult.selected()) {
+					screen.preset.skinAges.put(DragonLevel.ADULT, Lazy.of(() -> {
 						SkinAgeGroup ageGroup = new SkinAgeGroup(DragonLevel.ADULT);
 						ageGroup.readNBT(preset.writeNBT());
 						return ageGroup;
@@ -85,9 +87,10 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 		};
 		confirm.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));
 
-		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, Component.empty(), pButton -> {}){
+		cancel = new ExtendedButton(x + xSize / 2 + 3, y + ySize - 15, 15, 15, Component.empty(), pButton -> {
+		}) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 //				guiGraphics.pose().pushPose();
 //				guiGraphics.pose().translate(0, 0, 100);
 				setMessage(Component.empty());
@@ -97,45 +100,48 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 			}
 
 			@Override
-			public void onPress(){
+			public void onPress() {
 				btn.onPress();
 			}
 		};
 		cancel.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.cancel")));
 
-		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {}){
+		newborn = new ExtendedCheckbox(x + 5, y + 12, xSize - 10, 10, 10, Component.translatable("ds.level.newborn"), false, s -> {
+		}) {
 
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-				if(screen.level == DragonLevel.NEWBORN){
+				if (screen.level == DragonLevel.NEWBORN) {
 					selected = true;
 					active = false;
-				}else{
+				} else {
 					active = true;
 				}
 			}
 		};
-		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {}){
+		young = new ExtendedCheckbox(x + 5, y + 27, xSize - 10, 10, 10, Component.translatable("ds.level.young"), false, s -> {
+		}) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-				if(screen.level == DragonLevel.YOUNG){
+				if (screen.level == DragonLevel.YOUNG) {
 					selected = true;
 					active = false;
-				}else{
+				} else {
 					active = true;
 				}
 			}
 		};
-		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {}){
+		adult = new ExtendedCheckbox(x + 5, y + 27 + 15, xSize - 10, 10, 10, Component.translatable("ds.level.adult"), false, s -> {
+		}) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 				super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-				if(screen.level == DragonLevel.ADULT){
+				if (screen.level == DragonLevel.ADULT) {
 					selected = true;
 					active = false;
-				}else{
+				} else {
 					active = true;
 				}
 			}
@@ -143,17 +149,17 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 	}
 
 	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
+	public boolean isMouseOver(double pMouseX, double pMouseY) {
+		return visible && pMouseY >= (double) y - 3 && pMouseY <= (double) y + ySize + 3 && pMouseX >= (double) x && pMouseX <= (double) x + xSize;
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public List<? extends GuiEventListener> children() {
 		return ImmutableList.of(confirm, cancel, newborn, young, adult);
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 		// Render pop-up contents above the other elements
 		guiGraphics.pose().pushPose();
 		guiGraphics.pose().translate(0, 0, 200);

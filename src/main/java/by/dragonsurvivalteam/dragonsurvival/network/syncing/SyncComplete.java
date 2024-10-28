@@ -27,7 +27,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class SyncComplete implements IMessage<SyncComplete.Data> {
 	public static void handleClient(final Data message, final IPayloadContext context) {
 		Entity entity = context.player().level().getEntity(message.playerId);
-		if(entity instanceof Player player) {
+		if (entity instanceof Player player) {
 			context.enqueueWork(() -> {
 				DragonStateHandler handler = DragonStateProvider.getData(player);
 				handler.deserializeNBT(player.registryAccess(), message.nbt);
@@ -39,7 +39,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 
 	public static void dropAllItemsInList(Player player, NonNullList<ItemStack> items) {
 		items.forEach(stack -> {
-			if(DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
+			if (DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
 				player.getInventory().removeItem(stack);
 				player.drop(stack, false);
 			}
@@ -52,11 +52,11 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 		player.refreshDimensions();
 
 		// If we are a dragon, make sure to drop any blacklisted items equipped
-		if(handler.isDragon()) {
+		if (handler.isDragon()) {
 			dropAllItemsInList(player, player.getInventory().armor);
 			dropAllItemsInList(player, player.getInventory().offhand);
 			ItemStack mainHandItem = player.getMainHandItem();
-			if(DragonPenaltyHandler.itemIsBlacklisted(mainHandItem.getItem())) {
+			if (DragonPenaltyHandler.itemIsBlacklisted(mainHandItem.getItem())) {
 				player.getInventory().removeItem(mainHandItem);
 				player.drop(mainHandItem, false);
 			}
@@ -74,7 +74,7 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
 					handleDragonSync(player);
 				})
 				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))
-				.thenAccept(v  -> context.reply(new RequestClientData.Data()));
+				.thenAccept(v -> context.reply(new RequestClientData.Data()));
 	}
 
 	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {

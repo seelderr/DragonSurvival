@@ -22,7 +22,7 @@ public class SyncDragonClawRender implements IMessage<SyncDragonClawRender.Data>
 	}
 
 	public static void handleServer(final SyncDragonClawRender.Data message, final IPayloadContext context) {
-		if(ServerConfig.syncClawRender) {
+		if (ServerConfig.syncClawRender) {
 			Player sender = context.player();
 			context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler ->
 					handler.getClawToolData().shouldRenderClaws = message.state

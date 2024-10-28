@@ -5,13 +5,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.datafixers.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.TieredItem;
+import net.minecraft.world.item.Tiers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
@@ -76,15 +79,15 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
 		if (Tiers.WOOD.equals(tier)) {
 			textureId = 1;
-		} else if(Tiers.STONE.equals(tier)) {
+		} else if (Tiers.STONE.equals(tier)) {
 			textureId = 2;
-		} else if(Tiers.IRON.equals(tier)) {
+		} else if (Tiers.IRON.equals(tier)) {
 			textureId = 3;
-		} else if(Tiers.GOLD.equals(tier)) {
+		} else if (Tiers.GOLD.equals(tier)) {
 			textureId = 4;
-		} else if(Tiers.DIAMOND.equals(tier)) {
+		} else if (Tiers.DIAMOND.equals(tier)) {
 			textureId = 5;
-		} else if(Tiers.NETHERITE.equals(tier)) {
+		} else if (Tiers.NETHERITE.equals(tier)) {
 			textureId = 6;
 		}
 

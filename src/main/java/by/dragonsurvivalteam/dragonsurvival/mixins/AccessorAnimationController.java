@@ -7,11 +7,11 @@ import software.bernie.geckolib.animation.AnimationController;
 
 @Mixin(AnimationController.class)
 public interface AccessorAnimationController {
-    @Dynamic
-    @Accessor("tickOffset")
-    void setTickOffset(double tickOffset);
+	@Dynamic
+	@Accessor("tickOffset")
+	void setTickOffset(double tickOffset);
 
-    @Dynamic
-    @Accessor
-    double getTickOffset();
+	@Dynamic
+	@Accessor
+	double getTickOffset();
 }

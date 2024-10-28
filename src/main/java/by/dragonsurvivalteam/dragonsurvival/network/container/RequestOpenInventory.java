@@ -14,11 +14,11 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 public class RequestOpenInventory implements IMessage<RequestOpenInventory.Data> {
 
 	public static void handleServer(final RequestOpenInventory.Data message, final IPayloadContext context) {
-		ServerPlayer sender = (ServerPlayer)context.player();
+		ServerPlayer sender = (ServerPlayer) context.player();
 		context.enqueueWork(() -> {
 			sender.containerMenu.removed(sender);
 
-            InventoryMenu inventory = sender.inventoryMenu;
+			InventoryMenu inventory = sender.inventoryMenu;
 			sender.initMenu(inventory);
 		});
 	}
@@ -27,12 +27,15 @@ public class RequestOpenInventory implements IMessage<RequestOpenInventory.Data>
 
 		public static final Type<RequestOpenInventory.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_inventory"));
 
-		public static final StreamCodec<ByteBuf, RequestOpenInventory.Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, RequestOpenInventory.Data> STREAM_CODEC = new StreamCodec<>() {
 			@Override
-			public void encode(ByteBuf pBuffer, RequestOpenInventory.Data pValue) {}
+			public void encode(ByteBuf pBuffer, RequestOpenInventory.Data pValue) {
+			}
 
 			@Override
-			public RequestOpenInventory.Data decode(ByteBuf pBuffer) { return new RequestOpenInventory.Data(); }
+			public RequestOpenInventory.Data decode(ByteBuf pBuffer) {
+				return new RequestOpenInventory.Data();
+			}
 		};
 
 		@Override

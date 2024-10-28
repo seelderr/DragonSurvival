@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicCap;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -36,8 +37,9 @@ public class AbilityButton extends Button {
 
 	public DragonAbility ability;
 
-	public AbilityButton(int x, int y, int skillType, int slot, Screen screen){
-		super(x, y, 32, 32, Component.empty(), button -> {}, DEFAULT_NARRATION);
+	public AbilityButton(int x, int y, int skillType, int slot, Screen screen) {
+		super(x, y, 32, 32, Component.empty(), button -> {
+		}, DEFAULT_NARRATION);
 		this.slot = slot;
 		this.skillType = skillType;
 		this.screen = screen;
@@ -46,15 +48,15 @@ public class AbilityButton extends Button {
 	public boolean dragging = false;
 
 	@Override
-	protected void onDrag(double pMouseX, double pMouseY, double pDragX, double pDragY){
+	protected void onDrag(double pMouseX, double pMouseY, double pDragX, double pDragY) {
 		super.onDrag(pMouseX, pMouseY, pDragX, pDragY);
 
-		if(skillType == 0){
+		if (skillType == 0) {
 			dragging = true;
 
-			screen.renderables.forEach(s-> {
-				if(s instanceof AbilityButton btn){
-					if(btn != this && btn.skillType == 0){
+			screen.renderables.forEach(s -> {
+				if (s instanceof AbilityButton btn) {
+					if (btn != this && btn.skillType == 0) {
 						btn.onRelease(pMouseX, pMouseY);
 					}
 				}
@@ -63,13 +65,13 @@ public class AbilityButton extends Button {
 	}
 
 	@Override
-	public void onClick(double pMouseX, double pMouseY){
+	public void onClick(double pMouseX, double pMouseY) {
 		super.onClick(pMouseX, pMouseY);
 
-		if(skillType == 0){
-			screen.renderables.forEach(s-> {
-				if(s instanceof AbilityButton btn){
-					if(btn != this && btn.skillType == 0 && btn.dragging){
+		if (skillType == 0) {
+			screen.renderables.forEach(s -> {
+				if (s instanceof AbilityButton btn) {
+					if (btn != this && btn.skillType == 0 && btn.dragging) {
 						MagicCap cap = DragonStateProvider.getData(Minecraft.getInstance().player).getMagicData();
 						btn.onRelease(pMouseX, pMouseY);
 						DragonAbility ab1 = cap.getAbilityFromSlot(btn.slot);
@@ -84,10 +86,10 @@ public class AbilityButton extends Button {
 	}
 
 	@Override
-	public void onRelease(double pMouseX, double pMouseY){
+	public void onRelease(double pMouseX, double pMouseY) {
 		super.onRelease(pMouseX, pMouseY);
 
-		if(skillType == 0){
+		if (skillType == 0) {
 			dragging = false;
 		}
 	}
@@ -96,11 +98,11 @@ public class AbilityButton extends Button {
 	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
 			DragonAbility ab =
-				skillType == 0 ? cap.getMagicData().getAbilityFromSlot(slot) :
-					skillType == 1 ? cap.getMagicData().getPassiveAbilityFromSlot(slot) :
-						skillType == 2 ? cap.getMagicData().getInnateAbilityFromSlot(slot) : null;
+					skillType == 0 ? cap.getMagicData().getAbilityFromSlot(slot) :
+							skillType == 1 ? cap.getMagicData().getPassiveAbilityFromSlot(slot) :
+									skillType == 2 ? cap.getMagicData().getInnateAbilityFromSlot(slot) : null;
 
-			if(ab != null)
+			if (ab != null)
 				ability = ab;
 
 			type = cap.getType();
@@ -108,10 +110,10 @@ public class AbilityButton extends Button {
 
 		boolean isDragging = false;
 
-		if(skillType == 0){
-			for(Renderable s : screen.renderables){
-				if(s instanceof AbilityButton btn){
-					if(btn != this && btn.skillType == 0 && btn.dragging){
+		if (skillType == 0) {
+			for (Renderable s : screen.renderables) {
+				if (s instanceof AbilityButton btn) {
+					if (btn != this && btn.skillType == 0 && btn.dragging) {
 						isDragging = true;
 						break;
 					}
@@ -121,10 +123,10 @@ public class AbilityButton extends Button {
 
 		guiGraphics.blit(isDragging ? BLANK_3_TEXTURE : ability instanceof PassiveDragonAbility ? BLANK_2_TEXTURE : BLANK_1_TEXTURE, getX() - 1, getY() - 1, 0, 0, 20, 20, 20, 20);
 
-		if(ability != null && !dragging){
+		if (ability != null && !dragging) {
 			guiGraphics.blit(ability.getIcon(), getX(), getY(), 0, 0, 32, 32, 32, 32);
 
-			if(ability.isDisabled()){
+			if (ability.isDisabled()) {
 				RenderSystem.enableBlend();
 				guiGraphics.blit(MagicDragonRender.INVALID_ICON, getX(), getY(), 0, 0, 32, 32, 32, 32);
 				RenderSystem.disableBlend();

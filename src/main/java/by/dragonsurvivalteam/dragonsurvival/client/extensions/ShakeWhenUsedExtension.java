@@ -10,28 +10,26 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import org.jetbrains.annotations.NotNull;
 
 public class ShakeWhenUsedExtension implements IClientItemExtensions {
-    private double startTime = 0.0F;
+	private double startTime = 0.0F;
 
-    @Override
-    public boolean applyForgeHandTransform(@NotNull PoseStack poseStack, @NotNull LocalPlayer player, @NotNull HumanoidArm arm, @NotNull ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
-        if(player.getUseItemRemainingTicks() > 0)
-        {
-            if(startTime == 0.0F)
-            {
-                startTime = Blaze3D.getTime();
-            }
+	@Override
+	public boolean applyForgeHandTransform(@NotNull PoseStack poseStack, @NotNull LocalPlayer player, @NotNull HumanoidArm arm, @NotNull ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
+		if (player.getUseItemRemainingTicks() > 0) {
+			if (startTime == 0.0F) {
+				startTime = Blaze3D.getTime();
+			}
 
-            Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().applyItemArmTransform(poseStack, arm, equipProcess);
+			Minecraft.getInstance().getEntityRenderDispatcher().getItemInHandRenderer().applyItemArmTransform(poseStack, arm, equipProcess);
 
-            double time = (Blaze3D.getTime() - startTime) * 10.0;
-            float shakeX = (float) Math.sin(time) * 0.1F;
-            float shakeZ = (float) Math.cos(time) * 0.1F;
-            poseStack.translate(shakeX, 0, shakeZ);
-            return true;
-        }
+			double time = (Blaze3D.getTime() - startTime) * 10.0;
+			float shakeX = (float) Math.sin(time) * 0.1F;
+			float shakeZ = (float) Math.cos(time) * 0.1F;
+			poseStack.translate(shakeX, 0, shakeZ);
+			return true;
+		}
 
-        startTime = 0.0F;
+		startTime = 0.0F;
 
-        return false;
-    }
+		return false;
+	}
 }

@@ -13,37 +13,37 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
-public class FireBallEntity extends DragonBallEntity{
-	public FireBallEntity(double x, double y, double z, Vec3 velocity, Level level){
+public class FireBallEntity extends DragonBallEntity {
+	public FireBallEntity(double x, double y, double z, Vec3 velocity, Level level) {
 		super(DSEntities.FIREBALL.get(), x, y, z, velocity, level);
 	}
 
-	public FireBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
+	public FireBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_) {
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
 	@Override
-	protected ParticleOptions getTrailParticle(){
+	protected ParticleOptions getTrailParticle() {
 		return ParticleTypes.LARGE_SMOKE;
 	}
 
 	@Override
-	protected boolean shouldBurn(){
+	protected boolean shouldBurn() {
 		return false;
 	}
 
 	@Override
-	protected boolean canSelfDamage(){
+	protected boolean canSelfDamage() {
 		return false;
 	}
 
 	@Override
 	public void onHitCommon() {
-		if((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition()) && !hasHit) {
-			if(!this.level().isClientSide) {
+		if ((getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition()) && !hasHit) {
+			if (!this.level().isClientSide) {
 				float explosivePower = getExplosivePower();
 				DamageSource damagesource;
-				if(getOwner() == null){
+				if (getOwner() == null) {
 					damagesource = getDamageSource(this, this);
 				} else {
 					damagesource = getDamageSource(this, getOwner());
@@ -58,12 +58,12 @@ public class FireBallEntity extends DragonBallEntity{
 	}
 
 	@Override
-	public boolean isInvulnerableTo(DamageSource damageSource){
+	public boolean isInvulnerableTo(DamageSource damageSource) {
 		return damageSource.is(DamageTypeTags.IS_EXPLOSION) || super.isInvulnerableTo(damageSource);
 	}
 
 	@Override
-	protected void onHitEntity(@NotNull EntityHitResult hitResult){
+	protected void onHitEntity(@NotNull EntityHitResult hitResult) {
 		// Apply the explosion damage using math from the real explosion formula
 		float explosivePower = getSkillLevel();
 		// From Explosion.class on line 215 (the left side of the formula is 1.0f if you are at the center of the explosion)

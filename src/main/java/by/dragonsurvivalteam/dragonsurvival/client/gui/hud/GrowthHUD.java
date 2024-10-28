@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.awt.*;
 import java.util.HashMap;
 import net.minecraft.client.Minecraft;
@@ -26,15 +27,15 @@ public class GrowthHUD {
 	private static final Color COLOR = new Color(99, 99, 99);
 	private static final Color BRIGHTER_COLOR = COLOR.brighter();
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthXOffset", comment = "Offset the x position of the item growth icon in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthXOffset", comment = "Offset the x position of the item growth icon in relation to its normal position")
 	public static Integer growthXOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthYOffset", comment = "Offset the y position of the item growth icon in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "growth"}, key = "growthYOffset", comment = "Offset the y position of the item growth icon in relation to its normal position")
 	public static Integer growthYOffset = 0;
 
-	public static void renderGrowthHUD(final DragonStateHandler handler, @NotNull final GuiGraphics guiGraphics, int width, int height){
+	public static void renderGrowthHUD(final DragonStateHandler handler, @NotNull final GuiGraphics guiGraphics, int width, int height) {
 		Player localPlayer = Minecraft.getInstance().player;
 
 		if (localPlayer == null || localPlayer.isSpectator()) {

@@ -9,19 +9,20 @@ import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
 
 public class SleepOnTreasureTrigger extends SimpleCriterionTrigger<SleepOnTreasureTrigger.SleepOnTreasureInstance> {
-    public void trigger(ServerPlayer player, int count) {
-        this.trigger(player, triggerInstance -> triggerInstance.count.map(integer -> integer < count).orElse(true));
-    }
+	public void trigger(ServerPlayer player, int count) {
+		this.trigger(player, triggerInstance -> triggerInstance.count.map(integer -> integer < count).orElse(true));
+	}
 
-    @Override
-    public Codec<SleepOnTreasureInstance> codec() {
-        return SleepOnTreasureInstance.CODEC;
-    }
+	@Override
+	public Codec<SleepOnTreasureInstance> codec() {
+		return SleepOnTreasureInstance.CODEC;
+	}
 
-    public record SleepOnTreasureInstance(Optional<ContextAwarePredicate> player, Optional<Integer> count) implements SimpleCriterionTrigger.SimpleInstance {
-        public static final Codec<SleepOnTreasureInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
-                EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SleepOnTreasureInstance::player),
-                Codec.INT.optionalFieldOf("count").forGetter(SleepOnTreasureInstance::count)
-        ).apply(instance, SleepOnTreasureInstance::new));
-    }
+	public record SleepOnTreasureInstance(Optional<ContextAwarePredicate> player,
+										  Optional<Integer> count) implements SimpleCriterionTrigger.SimpleInstance {
+		public static final Codec<SleepOnTreasureInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+				EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SleepOnTreasureInstance::player),
+				Codec.INT.optionalFieldOf("count").forGetter(SleepOnTreasureInstance::count)
+		).apply(instance, SleepOnTreasureInstance::new));
+	}
 }

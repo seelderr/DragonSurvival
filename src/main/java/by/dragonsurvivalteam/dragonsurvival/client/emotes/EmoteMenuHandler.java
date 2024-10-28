@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -12,6 +14,12 @@ import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
+
+import java.awt.*;
+import java.util.*;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
@@ -35,15 +43,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
-import java.awt.*;
-import java.util.List;
-import java.util.*;
-import java.util.function.Supplier;
-import java.util.stream.Stream;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
-@EventBusSubscriber( Dist.CLIENT )
+@EventBusSubscriber(Dist.CLIENT)
 public class EmoteMenuHandler {
 	private static final int PER_PAGE = 10;
 	private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/empty_slot.png");
@@ -57,12 +57,12 @@ public class EmoteMenuHandler {
 	private static final ResourceLocation BUTTON_RIGHT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_right.png");
 	public static final ResourceLocation resetTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteXOffset", comment = "Offset the x position of the emote button in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteXOffset", comment = "Offset the x position of the emote button in relation to its normal position")
 	public static Integer emoteXOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteYOffset", comment = "Offset the y position of the emote button in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteYOffset", comment = "Offset the y position of the emote button in relation to its normal position")
 	public static Integer emoteYOffset = 0;
 
 	private static int emotePage = 0;
@@ -87,7 +87,7 @@ public class EmoteMenuHandler {
 	}
 
 	@SubscribeEvent
-	public static void addEmoteButton(ScreenEvent.Init.Post initGuiEvent){
+	public static void addEmoteButton(ScreenEvent.Init.Post initGuiEvent) {
 		Screen screen = initGuiEvent.getScreen();
 		currentlyKeybinding = null;
 
@@ -96,7 +96,7 @@ public class EmoteMenuHandler {
 			emotePage = Mth.clamp(emotePage, 0, maxPages() - 1);
 			List<Emote> emotes = getEmotes();
 
-			if(emotes == null || emotes.isEmpty()){
+			if (emotes == null || emotes.isEmpty()) {
 				return;
 			}
 
@@ -110,7 +110,8 @@ public class EmoteMenuHandler {
 			startY += emoteYOffset;
 
 			// Emote page count
-			ExtendedButton emotePages = new ExtendedButton(startX, startY - (PER_PAGE + 2) * height - 5, width, height, Component.empty().append(">"), button -> {}, Supplier::get){
+			ExtendedButton emotePages = new ExtendedButton(startX, startY - (PER_PAGE + 2) * height - 5, width, height, Component.empty().append(">"), button -> {
+			}, Supplier::get) {
 				@Override
 				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 					int color = new Color(0.15F, 0.15F, 0.15F, 0.75F).getRGB();
@@ -130,7 +131,7 @@ public class EmoteMenuHandler {
 
 			// Emote left scroll button
 			ExtendedButton leftScroll = new ExtendedButton(startX + width / 4 - 10, startY - (PER_PAGE + 2) * height - 5, 15, height, Component.empty(), button -> {
-				if(emotePage > 0){
+				if (emotePage > 0) {
 					emotePage = Mth.clamp(emotePage - 1, 0, maxPages() - 1);
 					emotes.clear();
 					emotes.addAll(getEmotes());
@@ -151,7 +152,7 @@ public class EmoteMenuHandler {
 
 			// Emote right scroll button
 			ExtendedButton rightScroll = new ExtendedButton(startX + width - (width / 4 + 5), startY - (PER_PAGE + 2) * height - 5, 15, height, Component.empty(), button -> {
-				if(emotePage < maxPages() - 1){
+				if (emotePage < maxPages() - 1) {
 					emotePage = Mth.clamp(emotePage + 1, 0, maxPages() - 1);
 					emotes.clear();
 					emotes.addAll(getEmotes());
@@ -186,9 +187,9 @@ public class EmoteMenuHandler {
 					guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.emote.toggle"), getX() + width / 2, getY() + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
 
 					DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
-					if(handler.getEmoteData().emoteMenuOpen){
+					if (handler.getEmoteData().emoteMenuOpen) {
 						guiGraphics.blit(BUTTON_UP, getX(), getY(), 0, 0, 9, 9, 9, 9);
-					}else{
+					} else {
 						guiGraphics.blit(BUTTON_DOWN, getX(), getY(), 0, 0, 9, 9, 9, 9);
 					}
 				}
@@ -196,7 +197,7 @@ public class EmoteMenuHandler {
 			initGuiEvent.addListener(toggleButton);
 
 			// Emote entries
-			for(int i = 0; i < PER_PAGE; i++){
+			for (int i = 0; i < PER_PAGE; i++) {
 				int finalI = i;
 
 				// Emote buttons (Loop | Sound | Emote)
@@ -204,11 +205,11 @@ public class EmoteMenuHandler {
 					DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
-					if(emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && Objects.equals(s.animation, emote.animation))){
+					if (emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && Objects.equals(s.animation, emote.animation))) {
 						return;
 					}
 
-					if(emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend)){
+					if (emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend)) {
 						clearEmotes(Minecraft.getInstance().player);
 					}
 
@@ -221,7 +222,7 @@ public class EmoteMenuHandler {
 
 						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
-						if(emote != null){
+						if (emote != null) {
 							guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(emote.name), getX() + 22, getY() + (getHeight() - 8) / 2, Color.lightGray.getRGB());
 							guiGraphics.blit(emote.loops ? PLAY_LOOPED : PLAY_ONCE, getX(), getY(), 0, 0, 10, 10, 10, 10);
 							guiGraphics.blit(emote.sound != null ? SOUND : NO_SOUND, getX() + 10, getY(), 0, 0, 10, 10, 10, 10);
@@ -235,7 +236,7 @@ public class EmoteMenuHandler {
 				ExtendedButton emoteKeybindMenu = new ExtendedButton(startX - 65, startY - 20 - height * (PER_PAGE - 1 - finalI), 60, height, Component.empty(), btn -> {
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
-					if(emote != null){
+					if (emote != null) {
 						currentlyKeybinding = emote.id;
 					}
 				}, Supplier::get) {
@@ -248,13 +249,13 @@ public class EmoteMenuHandler {
 						Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
 						DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
-						if(emote != null){
-							if(Objects.equals(currentlyKeybinding, emote.id)){
+						if (emote != null) {
+							if (Objects.equals(currentlyKeybinding, emote.id)) {
 								RenderingUtils.drawRect(guiGraphics, getX(), getY(), getWidth() - 1, getHeight(), new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB());
 								TextRenderUtil.drawCenteredScaledText(guiGraphics, getX() + width / 2, getY() + 1, 1f, "...", -1);
-							}else if(handler.getEmoteData().emoteKeybinds.containsKey(emote.id)){
+							} else if (handler.getEmoteData().emoteKeybinds.containsKey(emote.id)) {
 								int id = handler.getEmoteData().emoteKeybinds.get(emote.id);
-								if(id != 0){
+								if (id != 0) {
 									Key input = Type.KEYSYM.getOrCreate(id);
 									TextRenderUtil.drawCenteredScaledText(guiGraphics, getX() + getWidth() / 2, getY() + 1, 1f, input.getDisplayName().getString(), -1);
 								}
@@ -263,12 +264,12 @@ public class EmoteMenuHandler {
 					}
 
 					@Override
-					public boolean mouseClicked(double mouseX, double mouseY, int button){
-						if(button == GLFW.GLFW_MOUSE_BUTTON_RIGHT){
+					public boolean mouseClicked(double mouseX, double mouseY, int button) {
+						if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
 							DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 							Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 
-							if(emote != null){
+							if (emote != null) {
 								handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
 								PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), handler.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 								return true;
@@ -286,7 +287,7 @@ public class EmoteMenuHandler {
 					Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
 					DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
-					if(emote != null){
+					if (emote != null) {
 						currentlyKeybinding = null;
 						handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
 						PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), handler.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
@@ -299,7 +300,7 @@ public class EmoteMenuHandler {
 						DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 						visible = emote != null && handler.getEmoteData().emoteKeybinds.getOrDefault(emote.id, -1) != -1;
 
-						if(!handler.getEmoteData().emoteMenuOpen || !keybinding || emote == null || handler.getEmoteData().emoteKeybinds.getOrDefault(emote.id, -1) == -1){
+						if (!handler.getEmoteData().emoteMenuOpen || !keybinding || emote == null || handler.getEmoteData().emoteKeybinds.getOrDefault(emote.id, -1) == -1) {
 							return;
 						}
 
@@ -323,7 +324,7 @@ public class EmoteMenuHandler {
 					active = visible = handler.getEmoteData().emoteMenuOpen;
 					isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 
-					if(!handler.getEmoteData().emoteMenuOpen){
+					if (!handler.getEmoteData().emoteMenuOpen) {
 						return;
 					}
 
@@ -348,7 +349,7 @@ public class EmoteMenuHandler {
 		}
 	}
 
-	public static void clearEmotes(final Entity entity){
+	public static void clearEmotes(final Entity entity) {
 		if (entity instanceof Player player) {
 			DragonStateHandler handler = DragonStateProvider.getData(player);
 			handler.getEmoteData().currentEmotes = new Emote[EmoteCap.MAX_EMOTES];
@@ -357,17 +358,17 @@ public class EmoteMenuHandler {
 		}
 	}
 
-	public static void addEmote(Emote emote){
+	public static void addEmote(Emote emote) {
 		DragonStateHandler cap = DragonStateProvider.getData(Minecraft.getInstance().player);
-		for(int i = 0; i < EmoteCap.MAX_EMOTES; i++){
-			if(cap.getEmoteData().currentEmotes[i] == null){
+		for (int i = 0; i < EmoteCap.MAX_EMOTES; i++) {
+			if (cap.getEmoteData().currentEmotes[i] == null) {
 				cap.getEmoteData().currentEmotes[i] = emote;
 				break;
 			}
 		}
 
 		List<Emote> ls1 = Stream.of(cap.getEmoteData().currentEmotes).limit(EmoteCap.MAX_EMOTES).toList();
-		List<Integer> ls2 = Stream.of( cap.getEmoteData().emoteTicks).limit(EmoteCap.MAX_EMOTES).toList();
+		List<Integer> ls2 = Stream.of(cap.getEmoteData().emoteTicks).limit(EmoteCap.MAX_EMOTES).toList();
 
 		cap.getEmoteData().currentEmotes = ls1.toArray(new Emote[0]);
 		cap.getEmoteData().emoteTicks = ls2.toArray(new Integer[0]);
@@ -375,31 +376,31 @@ public class EmoteMenuHandler {
 		PacketDistributor.sendToServer(new SyncEmote.Data(Minecraft.getInstance().player.getId(), cap.getEmoteData().serializeNBT(Minecraft.getInstance().player.registryAccess())));
 	}
 
-	public static List<Emote> getEmotes(){
+	public static List<Emote> getEmotes() {
 		DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
-        HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
-        ArrayList<Emote> emotes = new ArrayList<>(DSEmotes.EMOTES);
+		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
+		ArrayList<Emote> emotes = new ArrayList<>(DSEmotes.EMOTES);
 
 		emotes.removeIf(em -> {
-			if(em.requirements != null){
-				if(em.requirements.type != null){
+			if (em.requirements != null) {
+				if (em.requirements.type != null) {
 					boolean hasType = false;
-					for(String t : em.requirements.type){
-						if(t.equalsIgnoreCase(handler.getTypeName())){
+					for (String t : em.requirements.type) {
+						if (t.equalsIgnoreCase(handler.getTypeName())) {
 							hasType = true;
 							break;
 						}
 					}
 
-					if(!hasType){
+					if (!hasType) {
 						return true;
 					}
 				}
 
-				if(em.requirements.age != null){
+				if (em.requirements.age != null) {
 					boolean hasAge = false;
-					for(String t : em.requirements.age){
-						if(t.equalsIgnoreCase(handler.getLevel().name)){
+					for (String t : em.requirements.age) {
+						if (t.equalsIgnoreCase(handler.getLevel().name)) {
 							hasAge = true;
 							break;
 						}
@@ -413,30 +414,30 @@ public class EmoteMenuHandler {
 		});
 
 		int num = 0;
-		for(Emote emote : emotes){
+		for (Emote emote : emotes) {
 			num = createMap(num, list, emote);
 		}
 
 		return list.size() > emotePage ? list.get(emotePage) : new ArrayList<>();
 	}
 
-	public static int maxPages(){
+	public static int maxPages() {
 		int num = 0;
 		HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
 
-		for(Emote emote : DSEmotes.EMOTES){
+		for (Emote emote : DSEmotes.EMOTES) {
 			num = createMap(num, list, emote);
 		}
 
 		return list.keySet().size();
 	}
 
-	private static int createMap(int num, HashMap<Integer, ArrayList<Emote>> list, Emote emote){
-		if(!list.containsKey(num)){
+	private static int createMap(int num, HashMap<Integer, ArrayList<Emote>> list, Emote emote) {
+		if (!list.containsKey(num)) {
 			list.put(num, new ArrayList<>());
 		}
 
-		if(list.get(num).size() >= PER_PAGE){
+		if (list.get(num).size() >= PER_PAGE) {
 			num++;
 			list.put(num, new ArrayList<>());
 		}
@@ -463,28 +464,28 @@ public class EmoteMenuHandler {
 
 		DragonStateHandler handler = DragonStateProvider.getData(player);
 
-		if(handler.isDragon()){
-			if(sc instanceof ChatScreen){
-				if(currentlyKeybinding != null){
-					if(pKeyCode == 256){
+		if (handler.isDragon()) {
+			if (sc instanceof ChatScreen) {
+				if (currentlyKeybinding != null) {
+					if (pKeyCode == 256) {
 						handler.getEmoteData().emoteKeybinds.remove(currentlyKeybinding);
-					}else{
+					} else {
 						handler.getEmoteData().emoteKeybinds.put(currentlyKeybinding, keyInputEvent.getKey());
 					}
 					PacketDistributor.sendToServer(new SyncEmote.Data(player.getId(), handler.getEmoteData().serializeNBT(player.registryAccess())));
 					currentlyKeybinding = null;
 				}
-			}else{
-				if(handler.getEmoteData().emoteKeybinds.contains(pKeyCode)){
+			} else {
+				if (handler.getEmoteData().emoteKeybinds.contains(pKeyCode)) {
 					Map.Entry<String, Integer> entry = handler.getEmoteData().emoteKeybinds.entrySet().stream().filter(s -> s.getValue() == pKeyCode).findFirst().orElse(null);
-					if(entry != null){
+					if (entry != null) {
 						Emote emote = DSEmotes.EMOTES.stream().filter(s -> Objects.equals(s.id, entry.getKey())).findFirst().orElse(null);
 
-						if(emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && Objects.equals(s.animation, emote.animation))){
+						if (emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && Objects.equals(s.animation, emote.animation))) {
 							return;
 						}
 
-						if(emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend)){
+						if (emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && s.blend) || !emote.blend && Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && !s.blend)) {
 							clearEmotes(player);
 						}
 

@@ -11,13 +11,13 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DataPoiTypeTagsProvider extends PoiTypeTagsProvider {
-    public DataPoiTypeTagsProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pOutput, pProvider, modId, existingFileHelper);
-    }
+	public DataPoiTypeTagsProvider(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, String modId, @Nullable ExistingFileHelper existingFileHelper) {
+		super(pOutput, pProvider, modId, existingFileHelper);
+	}
 
-    @Override
-    protected void addTags(HolderLookup.@NotNull Provider provider) {
-        tag(PoiTypeTags.ACQUIRABLE_JOB_SITE)
-                .addOptional(ResourceLocation.fromNamespaceAndPath(this.modId, "dragon_rider_poi"));
-    }
+	@Override
+	protected void addTags(HolderLookup.@NotNull Provider provider) {
+		tag(PoiTypeTags.ACQUIRABLE_JOB_SITE)
+				.addOptional(ResourceLocation.fromNamespaceAndPath(this.modId, "dragon_rider_poi"));
+	}
 }

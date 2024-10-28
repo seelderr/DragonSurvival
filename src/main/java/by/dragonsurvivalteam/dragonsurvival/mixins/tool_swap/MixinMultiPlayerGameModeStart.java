@@ -13,12 +13,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(value = MultiPlayerGameMode.class, priority = 1)
 public class MixinMultiPlayerGameModeStart {
-    @Inject(method = { "startDestroyBlock", "continueDestroyBlock" }, at = @At("HEAD"))
-    private void startSwap(final BlockPos blockPosition, final Direction directionFacing, final CallbackInfoReturnable<Boolean> callback) {
-        LocalPlayer localPlayer = Minecraft.getInstance().player;
+	@Inject(method = {"startDestroyBlock", "continueDestroyBlock"}, at = @At("HEAD"))
+	private void startSwap(final BlockPos blockPosition, final Direction directionFacing, final CallbackInfoReturnable<Boolean> callback) {
+		LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-        if (localPlayer != null) {
-            ToolUtils.swapStart(localPlayer, localPlayer.level().getBlockState(blockPosition));
-        }
-    }
+		if (localPlayer != null) {
+			ToolUtils.swapStart(localPlayer, localPlayer.level().getBlockState(blockPosition));
+		}
+	}
 }

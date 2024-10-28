@@ -19,6 +19,7 @@ import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.brigadier.tree.ArgumentCommandNode;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
+
 import java.util.List;
 import java.util.Locale;
 import net.minecraft.commands.CommandSourceStack;
@@ -32,8 +33,8 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 
-public class DragonCommand{
-	public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher){
+public class DragonCommand {
+	public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
 		RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
 		LiteralCommandNode<CommandSourceStack> dragon = literal("dragon").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
@@ -42,7 +43,7 @@ public class DragonCommand{
 
 		ArgumentCommandNode<CommandSourceStack, String> dragonType = argument("dragon_type", StringArgumentType.string()).suggests((context, builder) -> {
 			SuggestionsBuilder builder1 = null;
-			for(String value : DragonTypes.getAllSubtypes()){
+			for (String value : DragonTypes.getAllSubtypes()) {
 				String val = value.toLowerCase(Locale.ENGLISH);
 				builder1 = builder1 == null ? builder.suggest(val) : builder1.suggest(val);
 			}
@@ -55,7 +56,7 @@ public class DragonCommand{
 			ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
 			return runCommand(type, "center", 1, false, serverPlayer);
 		}).build();
-		
+
 		ArgumentCommandNode<CommandSourceStack, String> dragonBody = argument("dragon_body", StringArgumentType.string()).suggests((context, builder) -> {
 			SuggestionsBuilder sgBuilder = null;
 			for (String val : DragonBodies.getBodies()) {
@@ -63,7 +64,7 @@ public class DragonCommand{
 			}
 
 			return sgBuilder.buildFuture();
-			
+
 		}).executes(context -> {
 			String type = context.getArgument("dragon_type", String.class);
 			String body = context.getArgument("dragon_body", String.class);
@@ -107,12 +108,12 @@ public class DragonCommand{
 		giveFlight.addChild(target);
 	}
 
-	private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player){
+	private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player) {
 		DragonStateHandler cap = DragonStateProvider.getData(player);
 		AbstractDragonType dragonType1 = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
 		AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
 
-		if(dragonType1 == null && cap.getType() != null){
+		if (dragonType1 == null && cap.getType() != null) {
 			reInsertClawTools(player, cap);
 		}
 
@@ -120,7 +121,7 @@ public class DragonCommand{
 		cap.setBody(dragonBody, player);
 		cap.setHasFlight(flight);
 		cap.getMovementData().spinLearned = flight;
-		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
+		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length - 1)];
 		float size = stage == 4 ? 40f : dragonLevel.size;
 		cap.setSize(size, player);
 		cap.setPassengerId(-1);
@@ -131,12 +132,12 @@ public class DragonCommand{
 		return 1;
 	}
 
-	public static void reInsertClawTools(Player player, DragonStateHandler dragonStateHandler){
-		for(int i = 0; i < 4; i++){
+	public static void reInsertClawTools(Player player, DragonStateHandler dragonStateHandler) {
+		for (int i = 0; i < 4; i++) {
 			ItemStack stack = dragonStateHandler.getClawToolData().getClawsInventory().getItem(i);
 
-			if(player instanceof ServerPlayer serverPlayer){
-				if(!serverPlayer.addItem(stack)){
+			if (player instanceof ServerPlayer serverPlayer) {
+				if (!serverPlayer.addItem(stack)) {
 					serverPlayer.level().addFreshEntity(new ItemEntity(serverPlayer.level(), serverPlayer.position().x, serverPlayer.position().y, serverPlayer.position().z, stack));
 				}
 			}

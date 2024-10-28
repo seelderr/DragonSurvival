@@ -10,9 +10,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Locale;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
@@ -21,7 +25,7 @@ import net.minecraft.world.entity.player.Player;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
-public class DragonSkins{
+public class DragonSkins {
 	protected static boolean initialized = false;
 	public static NetSkinLoader skinLoader = new GithubSkinLoaderAPI();
 	private static final ArrayList<String> hasFailedFetch = new ArrayList<>();
@@ -31,16 +35,16 @@ public class DragonSkins{
 	private static double lastSkinFetchAttemptTime = 0;
 	private static int numSkinFetchAttempts = 0;
 
-	public static ResourceLocation getPlayerSkin(String playerName, DragonLevel level){
+	public static ResourceLocation getPlayerSkin(String playerName, DragonLevel level) {
 		String skinKey = playerName + "_" + level.name;
-		if(playerSkinCache.containsKey(skinKey) && playerSkinCache.get(skinKey) != null){
+		if (playerSkinCache.containsKey(skinKey) && playerSkinCache.get(skinKey) != null) {
 			return playerSkinCache.get(skinKey);
 		}
 
-		if(!hasFailedFetch.contains(skinKey) && !playerSkinCache.containsKey(skinKey)){
+		if (!hasFailedFetch.contains(skinKey) && !playerSkinCache.containsKey(skinKey)) {
 			ResourceLocation texture = fetchSkinFile(playerName, level);
 
-			if(texture != null){
+			if (texture != null) {
 				playerSkinCache.put(skinKey, texture);
 				return texture;
 			}
@@ -49,11 +53,11 @@ public class DragonSkins{
 		return null;
 	}
 
-	public static ResourceLocation getPlayerGlow(String playerName, DragonLevel level){
+	public static ResourceLocation getPlayerGlow(String playerName, DragonLevel level) {
 		String skinKey = playerName + "_" + level.name;
-		if(playerGlowCache.containsKey(skinKey)){
+		if (playerGlowCache.containsKey(skinKey)) {
 			return playerGlowCache.get(skinKey);
-		}else{
+		} else {
 			ResourceLocation texture = fetchSkinFile(playerName, level, "glow");
 			playerGlowCache.put(skinKey, texture);
 			return texture;
@@ -61,21 +65,21 @@ public class DragonSkins{
 	}
 
 
-	public static ResourceLocation getPlayerSkin(Player player, AbstractDragonType type, DragonLevel dragonStage){
+	public static ResourceLocation getPlayerSkin(Player player, AbstractDragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 
 		boolean renderStage = renderStage(player, dragonStage);
 
-		if((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && renderStage){
-			if(playerSkinCache.containsKey(playerKey) && playerSkinCache.get(playerKey) != null){
+		if ((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && renderStage) {
+			if (playerSkinCache.containsKey(playerKey) && playerSkinCache.get(playerKey) != null) {
 				return playerSkinCache.get(playerKey);
 			}
 
-			if(!hasFailedFetch.contains(playerKey) && !playerSkinCache.containsKey(playerKey)){
+			if (!hasFailedFetch.contains(playerKey) && !playerSkinCache.containsKey(playerKey)) {
 				texture = fetchSkinFile(player, dragonStage);
 
-				if(texture != null){
+				if (texture != null) {
 					playerSkinCache.put(playerKey, texture);
 				}
 			}
@@ -165,34 +169,34 @@ public class DragonSkins{
 		}
 	}
 
-	public static ResourceLocation fetchSkinFile(Player playerEntity, DragonLevel dragonStage, String... extra){
+	public static ResourceLocation fetchSkinFile(Player playerEntity, DragonLevel dragonStage, String... extra) {
 		return fetchSkinFile(playerEntity.getGameProfile().getName(), dragonStage, extra);
 	}
 
-	public static boolean renderStage(Player player, DragonLevel level){
+	public static boolean renderStage(Player player, DragonLevel level) {
 		DragonStateHandler handler = DragonStateProvider.getData(player);
 
-		return switch(level){
+		return switch (level) {
 			case NEWBORN -> handler.getSkinData().renderNewborn;
 			case YOUNG -> handler.getSkinData().renderYoung;
 			case ADULT -> handler.getSkinData().renderAdult;
-        };
+		};
 	}
 
-	public static ResourceLocation getGlowTexture(Player player, AbstractDragonType type, DragonLevel dragonStage){
+	public static ResourceLocation getGlowTexture(Player player, AbstractDragonType type, DragonLevel dragonStage) {
 		ResourceLocation texture = null;
 		String playerKey = player.getGameProfile().getName() + "_" + dragonStage.name;
 		boolean renderStage = renderStage(player, dragonStage);
 
 
-		if((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage){
-			if(playerGlowCache.containsKey(playerKey)){
+		if ((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage) {
+			if (playerGlowCache.containsKey(playerKey)) {
 				return playerGlowCache.get(playerKey);
-			}else{
+			} else {
 				texture = fetchSkinFile(player, dragonStage, "glow");
 				playerGlowCache.put(playerKey, texture);
 
-				if(texture == null){
+				if (texture == null) {
 					DragonSurvivalMod.LOGGER.info("Custom glow for user {} doesn't exist", player.getGameProfile().getName());
 				}
 			}
@@ -204,6 +208,7 @@ public class DragonSkins{
 	public static void init() {
 		init(false);
 	}
+
 	public static void init(boolean force) {
 		if (initialized && !force)
 			return;
@@ -215,35 +220,34 @@ public class DragonSkins{
 		if (currentLanguage.equals("zh_cn")) {
 			first = new GitcodeSkinLoader();
 			second = new GithubSkinLoader();
-		} else{
+		} else {
 			first = new GithubSkinLoader();
 			second = new GitcodeSkinLoader();
 		}
 		if (!first.ping()) {
-			if (!second.ping())
-			{
+			if (!second.ping()) {
 				DragonSurvivalMod.LOGGER.warn("Unable to connect to skin database.");
 				return;
 			}
 			first = second;
 		}
 		skinLoader = first;
-        skins = skinLoader.querySkinList();
+		skins = skinLoader.querySkinList();
 		if (skins != null)
 			parseSkinObjects(skins);
 	}
 
 	public static void parseSkinObjects(Collection<SkinObject> skinObjects) {
-		for(SkinObject skin : skinObjects){
+		for (SkinObject skin : skinObjects) {
 			boolean isGlow = false;
 			String skinName = skin.name;
 
 			skinName = skin.name.substring(0, skinName.indexOf("."));
-			if (skinName.endsWith("_glow")){
+			if (skinName.endsWith("_glow")) {
 				isGlow = true;
 				skinName = skin.name.substring(0, skinName.lastIndexOf("_"));
 			}
-			if(skinName.contains("_")){
+			if (skinName.contains("_")) {
 				String name = skinName.substring(0, skinName.lastIndexOf("_"));
 				if (isGlow)
 					name += "_glow";
@@ -251,8 +255,8 @@ public class DragonSkins{
 				String level = skinName.substring(skinName.lastIndexOf("_") + 1);
 				DragonLevel size = level.equalsIgnoreCase("adult") ? DragonLevel.ADULT : level.equalsIgnoreCase("young") ? DragonLevel.YOUNG : level.equalsIgnoreCase("newborn") ? DragonLevel.NEWBORN : null;
 
-				if(size != null){
-					if(!SKIN_USERS.containsKey(size)){
+				if (size != null) {
+					if (!SKIN_USERS.containsKey(size)) {
 						SKIN_USERS.put(size, new HashMap<>());
 					}
 					skin.short_name = name;

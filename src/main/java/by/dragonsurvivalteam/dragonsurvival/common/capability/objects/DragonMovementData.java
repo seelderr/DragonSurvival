@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.objects;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 
-public class DragonMovementData{
+public class DragonMovementData {
 	// Animations are authored with 60 FPS as a reference, and 1 tick is 1/20th of a second
 	public static final double REFERENCE_REALTIME_TICK = 1.0 / 3.0;
 	public double realtimeDeltaTick = 0;
@@ -17,7 +17,7 @@ public class DragonMovementData{
 	public double headPitchLastFrame = 0;
 	public double bodyYawLastFrame = 0;
 	public Vec3 deltaMovementLastFrame = Vec3.ZERO;
-	
+
 	public float prevXRot = 0;
 	public float prevZRot = 0;
 
@@ -37,8 +37,9 @@ public class DragonMovementData{
 	public int spinAttack;
 
 	public double getTickFactor() {
-        return realtimeDeltaTick == 0 ? 1 : REFERENCE_REALTIME_TICK / realtimeDeltaTick;
+		return realtimeDeltaTick == 0 ? 1 : REFERENCE_REALTIME_TICK / realtimeDeltaTick;
 	}
 
-	public DragonMovementData(){}
+	public DragonMovementData() {
+	}
 }

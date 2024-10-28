@@ -14,7 +14,9 @@ public class ClawInventory extends SubCap {
 		AXE,
 		SHOVEL;
 
-		/** Equivalent to the container size */
+		/**
+		 * Equivalent to the container size
+		 */
 		public static int size() {
 			return values().length;
 		}
@@ -35,7 +37,7 @@ public class ClawInventory extends SubCap {
 		CompoundTag tag = new CompoundTag();
 
 		tag.putBoolean("clawsMenu", isMenuOpen);
-		for(Slot slot : Slot.values()) {
+		for (Slot slot : Slot.values()) {
 			if (clawsInventory.getItem(slot.ordinal()).isEmpty()) continue;
 			tag.put(slot.name(), clawsInventory.getItem(slot.ordinal()).save(provider));
 		}
@@ -45,11 +47,11 @@ public class ClawInventory extends SubCap {
 	}
 
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag){
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 		setMenuOpen(tag.getBoolean("clawsMenu"));
 		shouldRenderClaws = tag.getBoolean("renderClaws");
 
-		for(Slot slot : Slot.values()) {
+		for (Slot slot : Slot.values()) {
 			CompoundTag slotTag = tag.getCompound(slot.name());
 			if (slotTag.isEmpty()) continue;
 			Optional<ItemStack> stack = ItemStack.parse(provider, slotTag);

@@ -17,98 +17,98 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 
 @RegisterDragonAbility
-public class InspirationAbility extends AoeBuffAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationEnabled", comment = "Whether the inspiration ability should be enabled" )
+public class InspirationAbility extends AoeBuffAbility {
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationEnabled", comment = "Whether the inspiration ability should be enabled")
 	public static Boolean inspirationEnabled = true;
 
-	@ConfigRange( min = 0.05, max = 10000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in seconds of the inspiration ability" )
+	@ConfigRange(min = 0.05, max = 10000.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCooldown", comment = "The cooldown in seconds of the inspiration ability")
 	public static Double inspirationCooldown = 60.0;
 
-	@ConfigRange( min = 0.05, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in seconds of the inspiration ability" )
+	@ConfigRange(min = 0.05, max = 10000)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in seconds of the inspiration ability")
 	public static Double inspirationCasttime = 1.0;
 
-	@ConfigRange( min = 1.0, max = 10000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used" )
+	@ConfigRange(min = 1.0, max = 10000.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used")
 	public static Double inspirationDuration = 200.0;
 
-	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability" )
+	@ConfigRange(min = 0, max = 100)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationManaCost", comment = "The mana cost for using the inspiration ability")
 	public static Integer inspirationManaCost = 1;
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return "inspiration";
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 3;
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.FOREST;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_1.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_2.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_3.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_4.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_1.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_2.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_3.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_4.png")};
 	}
 
 
 	@Override
-	public int getMaxLevel(){
+	public int getMaxLevel() {
 		return 4;
 	}
 
 	@Override
-	public int getMinLevel(){
+	public int getMinLevel() {
 		return 0;
 	}
 
 	@Override
-	public int getManaCost(){
+	public int getManaCost() {
 		return inspirationManaCost;
 	}
 
 	@Override
-	public Integer[] getRequiredLevels(){
+	public Integer[] getRequiredLevels() {
 		return new Integer[]{0, 15, 35, 50};
 	}
 
 	@Override
-	public int getSkillCooldown(){
+	public int getSkillCooldown() {
 		return Functions.secondsToTicks(inspirationCooldown);
 	}
 
 	@Override
-	public int getRange(){
+	public int getRange() {
 		return 5;
 	}
 
 	@Override
-	public ParticleOptions getParticleEffect(){
+	public ParticleOptions getParticleEffect() {
 		return new BeaconParticle.FireData();
 	}
 
 	@Override
-	public MobEffectInstance getEffect(){
+	public MobEffectInstance getEffect() {
 		return new MobEffectInstance(MobEffects.DIG_SPEED, Functions.secondsToTicks(inspirationDuration), 2);
 	}
 
 	@Override
-	public int getSkillCastingTime(){
+	public int getSkillCastingTime() {
 		return Functions.secondsToTicks(inspirationCasttime);
 	}
 
 	@Override
-	public boolean isDisabled(){
+	public boolean isDisabled() {
 		return super.isDisabled() || !inspirationEnabled;
 	}
 }

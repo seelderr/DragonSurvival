@@ -48,18 +48,18 @@ public class HunterOmenHandler {
 	// FIXME: This will fail if a player dies, then closes the game/server. The player will respawn without the effect.
 	private static final Map<UUID, MobEffectInstance> playersToReapplyHunterOmen = new HashMap<>();
 
-	private static boolean doesEntityApplyHunterOmen(Entity entity){
+	private static boolean doesEntityApplyHunterOmen(Entity entity) {
 		String typeName = ResourceHelper.getKey(entity).toString();
 		return ServerConfig.hunterOmenStatusGivers.contains(typeName) || entity instanceof DragonHunter || entity instanceof AbstractVillager;
 	}
 
 	// This used to apply hunter omen for the villagers when killed. Drops are now handled by VillagerLootModifier.
 	@SubscribeEvent
-	public static void applyHunterOmenOnMurderedEntities(LivingDeathEvent deathEvent){
+	public static void applyHunterOmenOnMurderedEntities(LivingDeathEvent deathEvent) {
 		LivingEntity livingEntity = deathEvent.getEntity();
 		Entity killer = deathEvent.getSource().getEntity();
-		if(killer instanceof Player playerEntity){
-			if(doesEntityApplyHunterOmen(livingEntity)){
+		if (killer instanceof Player playerEntity) {
+			if (doesEntityApplyHunterOmen(livingEntity)) {
 				applyHunterOmenFromKilling(playerEntity);
 			}
 		}
@@ -76,7 +76,7 @@ public class HunterOmenHandler {
 		return false;
 	}
 
-	public static ObjectArrayList<ItemStack> getVillagerLoot(AbstractVillager villager, Level level, @Nullable Player player, boolean wasKilled){
+	public static ObjectArrayList<ItemStack> getVillagerLoot(AbstractVillager villager, Level level, @Nullable Player player, boolean wasKilled) {
 		List<ItemStack> nonEmeraldTrades = new ArrayList<>();
 		villager.getOffers().stream().filter(merchantOffer -> merchantOffer.getResult().getItem() != Items.EMERALD).forEach(merchantOffer -> {
 			// Be careful to copy the stack, since otherwise if we use this function when the villager is alive (when we steal from them)
@@ -85,13 +85,13 @@ public class HunterOmenHandler {
 		});
 
 		ObjectArrayList<ItemStack> loot = new ObjectArrayList<>();
-		if(!nonEmeraldTrades.isEmpty()) {
+		if (!nonEmeraldTrades.isEmpty()) {
 			int lootingLevel = 0;
-			if(player != null) {
+			if (player != null) {
 				lootingLevel = EnchantmentUtils.getLevel(player, Enchantments.LOOTING);
 			}
 			int numRolls = Math.min(lootingLevel + 1, nonEmeraldTrades.size());
-			for(int i = 0; i < numRolls; i++) {
+			for (int i = 0; i < numRolls; i++) {
 				int roll = level.getRandom().nextInt(nonEmeraldTrades.size());
 				loot.add(nonEmeraldTrades.get(roll));
 				nonEmeraldTrades.remove(roll);
@@ -99,20 +99,20 @@ public class HunterOmenHandler {
 		}
 
 		// Have the cartographer drop a hunter's castle map if the player kills them (but not from stealing)
-		if(wasKilled && villager instanceof Villager realVillager) {
-			if(realVillager.getVillagerData().getProfession() == VillagerProfession.CARTOGRAPHER) {
-				ServerLevel serverlevel = (ServerLevel)level;
+		if (wasKilled && villager instanceof Villager realVillager) {
+			if (realVillager.getVillagerData().getProfession() == VillagerProfession.CARTOGRAPHER) {
+				ServerLevel serverlevel = (ServerLevel) level;
 				BlockPos blockpos = serverlevel.findNearestMapStructure(DSTrades.ON_DRAGON_HUNTERS_CASTLE_MAPS, realVillager.blockPosition(), 100, true);
 				if (blockpos != null) {
-					ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte)2, true, true);
+					ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte) 2, true, true);
 					MapItem.renderBiomePreviewMap(serverlevel, itemstack);
 					MapItemSavedData.addTargetDecoration(itemstack, blockpos, "+", DSMapDecorationTypes.DRAGON_HUNTER);
 					itemstack.set(DataComponents.ITEM_NAME, Component.translatable("ds.mapstructures.hunters_castle"));
 					boolean lootHasMapOfSameType = loot.stream().anyMatch(stack -> {
-						if(stack.getItem() == itemstack.getItem()) {
+						if (stack.getItem() == itemstack.getItem()) {
 							MapDecorations mapDecorations = stack.get(DataComponents.MAP_DECORATIONS);
-							if(mapDecorations != null) {
-                                return mapDecorations.decorations().values().stream().anyMatch(
+							if (mapDecorations != null) {
+								return mapDecorations.decorations().values().stream().anyMatch(
 										mapDecoration -> mapDecoration.type() == DSMapDecorationTypes.DRAGON_HUNTER
 								);
 							}
@@ -120,7 +120,7 @@ public class HunterOmenHandler {
 						return false;
 					});
 
-					if(!lootHasMapOfSameType){
+					if (!lootHasMapOfSameType) {
 						loot.add(itemstack);
 					}
 				}
@@ -132,18 +132,18 @@ public class HunterOmenHandler {
 
 	// I want to use a loot modifier here, but it isn't possible since the villagers don't have an initial loot table to begin with.
 	@SubscribeEvent
-	public static void modifyDropsForVillagers(LivingDeathEvent deathEvent){
+	public static void modifyDropsForVillagers(LivingDeathEvent deathEvent) {
 		Entity entity = deathEvent.getEntity();
 		Entity killer = deathEvent.getSource().getEntity();
-		if(killer instanceof Player player) {
-			if(entity instanceof AbstractVillager abstractVillager) {
+		if (killer instanceof Player player) {
+			if (entity instanceof AbstractVillager abstractVillager) {
 				ObjectArrayList<ItemStack> loot = getVillagerLoot(abstractVillager, player.level(), player, true);
-				for(ItemStack stack : loot){
+				for (ItemStack stack : loot) {
 					entity.spawnAtLocation(stack);
 				}
 
 				int experience;
-				if(entity instanceof Villager villager) {
+				if (entity instanceof Villager villager) {
 					experience = (int) Math.pow(2.0, villager.getVillagerData().getLevel());
 				} else {
 					// This happens with the wandering trader in vanilla.
@@ -155,30 +155,30 @@ public class HunterOmenHandler {
 	}
 
 	@SubscribeEvent
-	public static void preserveHunterOmenOnRespawn(LivingDeathEvent deathEvent){
+	public static void preserveHunterOmenOnRespawn(LivingDeathEvent deathEvent) {
 		LivingEntity livingEntity = deathEvent.getEntity();
-		if(livingEntity instanceof Player playerEntity) {
-			if(playerEntity.hasEffect(DSEffects.HUNTER_OMEN)){
+		if (livingEntity instanceof Player playerEntity) {
+			if (playerEntity.hasEffect(DSEffects.HUNTER_OMEN)) {
 				playersToReapplyHunterOmen.put(playerEntity.getUUID(), playerEntity.getEffect(DSEffects.HUNTER_OMEN));
 			}
 		}
 	}
 
 	@SubscribeEvent
-	public static void reapplyHunterOmenOnRespawn(PlayerEvent.PlayerRespawnEvent respawnEvent){
+	public static void reapplyHunterOmenOnRespawn(PlayerEvent.PlayerRespawnEvent respawnEvent) {
 		Player playerEntity = respawnEvent.getEntity();
 		UUID playerUUID = playerEntity.getUUID();
 		MobEffectInstance effectInstance = playersToReapplyHunterOmen.remove(playerUUID);
-		if(effectInstance != null){
+		if (effectInstance != null) {
 			playerEntity.addEffect(effectInstance);
 		}
 	}
 
-	private static void applyHunterOmenFromKilling(Player playerEntity){
+	private static void applyHunterOmenFromKilling(Player playerEntity) {
 		int duration = 0;
 
 		MobEffectInstance effectInstance = playerEntity.getEffect(DSEffects.HUNTER_OMEN);
-		if(effectInstance != null){
+		if (effectInstance != null) {
 			duration = effectInstance.getDuration();
 		}
 
@@ -187,34 +187,34 @@ public class HunterOmenHandler {
 	}
 
 	@SubscribeEvent
-	public static void voidsHunterOmen(MobEffectEvent.Added potionAddedEvent){
+	public static void voidsHunterOmen(MobEffectEvent.Added potionAddedEvent) {
 		MobEffectInstance effectInstance = potionAddedEvent.getEffectInstance();
 		LivingEntity livingEntity = potionAddedEvent.getEntity();
-		if(effectInstance.getEffect() == MobEffects.HERO_OF_THE_VILLAGE){
+		if (effectInstance.getEffect() == MobEffects.HERO_OF_THE_VILLAGE) {
 			livingEntity.removeEffect(DSEffects.HUNTER_OMEN);
 		}
 	}
 
 	@SubscribeEvent
-	public static void ironGolemTargetsMarkedPlayers(EntityJoinLevelEvent joinWorldEvent){
+	public static void ironGolemTargetsMarkedPlayers(EntityJoinLevelEvent joinWorldEvent) {
 		Entity entity = joinWorldEvent.getEntity();
-		if(entity instanceof IronGolem golemEntity){
+		if (entity instanceof IronGolem golemEntity) {
 			golemEntity.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(golemEntity, Player.class, 0, true, false, livingEntity -> livingEntity.hasEffect(DSEffects.HUNTER_OMEN)));
 		}
 	}
 
 	@SubscribeEvent
-	public static void applyHunterOmenOnHurtEntities(LivingIncomingDamageEvent attackEntityEvent){
+	public static void applyHunterOmenOnHurtEntities(LivingIncomingDamageEvent attackEntityEvent) {
 		Entity attacked = attackEntityEvent.getEntity();
-		Player attacker = attackEntityEvent.getSource().getEntity() instanceof Player ? (Player)attackEntityEvent.getSource().getEntity() : null;
+		Player attacker = attackEntityEvent.getSource().getEntity() instanceof Player ? (Player) attackEntityEvent.getSource().getEntity() : null;
 
-		if(attacker == null){
+		if (attacker == null) {
 			return;
 		}
 
-		if(doesEntityApplyHunterOmen(attacked)) {
+		if (doesEntityApplyHunterOmen(attacked)) {
 			int duration = 0;
-			if(attacker.hasEffect(DSEffects.HUNTER_OMEN)) {
+			if (attacker.hasEffect(DSEffects.HUNTER_OMEN)) {
 				duration = attacker.getEffect(DSEffects.HUNTER_OMEN).getDuration();
 			}
 

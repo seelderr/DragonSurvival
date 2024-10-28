@@ -7,12 +7,12 @@ import net.minecraft.sounds.SoundSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT )
-public class FireBreathSound extends AbstractTickableSoundInstance{
+@OnlyIn(Dist.CLIENT)
+public class FireBreathSound extends AbstractTickableSoundInstance {
 	private final NetherBreathAbility ability;
 
-	public FireBreathSound(NetherBreathAbility ability){
-		super(DSSounds.FIRE_BREATH_LOOP.get(), SoundSource.PLAYERS,ability.getPlayer().getRandom());
+	public FireBreathSound(NetherBreathAbility ability) {
+		super(DSSounds.FIRE_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
 		looping = true;
 
 		this.x = ability.getPlayer().getX();
@@ -23,8 +23,8 @@ public class FireBreathSound extends AbstractTickableSoundInstance{
 	}
 
 	@Override
-	public void tick(){
-		if(ability.getPlayer() == null || ability.chargeTime == 0)
+	public void tick() {
+		if (ability.getPlayer() == null || ability.chargeTime == 0)
 			stop();
 
 		this.x = ability.getPlayer().getX();
@@ -33,7 +33,7 @@ public class FireBreathSound extends AbstractTickableSoundInstance{
 	}
 
 	@Override
-	public boolean canStartSilent(){
+	public boolean canStartSilent() {
 		return true;
 	}
 }

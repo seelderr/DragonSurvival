@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
@@ -32,16 +33,17 @@ public class DropDownButton extends ExtendedButton {
 	public AbstractWidget renderButton;
 	public Component message;
 
-	public DropDownButton(int x, int y, int xSize, int ySize, String current, String[] values, Consumer<String> setter){
-		super(x, y, xSize, ySize, Component.empty(), pButton -> {});
+	public DropDownButton(int x, int y, int xSize, int ySize, String current, String[] values, Consumer<String> setter) {
+		super(x, y, xSize, ySize, Component.empty(), pButton -> {
+		});
 		this.values = values;
 		this.setter = setter;
 		this.current = current;
 		updateMessage();
 	}
 
-	public void updateMessage(){
-		if(current != null)
+	public void updateMessage() {
+		if (current != null)
 			message = Component.translatable(DragonEditorScreen.partToTranslation(current));
 	}
 
@@ -53,15 +55,15 @@ public class DropDownButton extends ExtendedButton {
 			return;
 		}
 
-		if(toggled && (!visible || !isHoveredOrFocused() && !list.isMouseOver(mouseX, mouseY))){
+		if (toggled && (!visible || !isHoveredOrFocused() && !list.isMouseOver(mouseX, mouseY))) {
 			toggled = false;
 			screen.children.removeIf(s -> s == list || s == renderButton);
 			screen.renderables.removeIf(s -> s == list || s == renderButton);
 		}
 
-		if(toggled && list != null){
+		if (toggled && list != null) {
 			int offset = screen.height - (getY() + height + 80);
-			list.reposition(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
+			list.reposition(getX(), getY() + height + Math.min(offset, 0), width, (int) (Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)));
 		}
 
 		Minecraft mc = Minecraft.getInstance();
@@ -82,81 +84,83 @@ public class DropDownButton extends ExtendedButton {
 
 
 	@Override
-	public @NotNull Component getMessage(){
+	public @NotNull Component getMessage() {
 		return message;
 	}
 
 	@Override
-	public void onClick(double pMouseX, double pMouseY){
+	public void onClick(double pMouseX, double pMouseY) {
 		List<? extends GuiEventListener> list = Minecraft.getInstance().screen.children().stream().filter(s -> s.isMouseOver(pMouseX, pMouseY)).toList();
 
-		if(list.size() == 1)
+		if (list.size() == 1)
 			onPress();
 	}
+
 	@Override
-	public void onPress(){
+	public void onPress() {
 		Screen screen = Minecraft.getInstance().screen;
 
 		if (screen == null) {
 			return;
 		}
 
-		if(!toggled){
+		if (!toggled) {
 			int offset = screen.height - (getY() + height + 80);
-			list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int)(Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
+			list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int) (Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
 			DropdownEntry center = null;
 
-			for(int i = 0; i < values.length; i++){
+			for (int i = 0; i < values.length; i++) {
 				String val = values[i];
 				DropdownEntry ent = createEntry(i, val);
 				list.addEntry(ent);
 
-				if(Objects.equals(val, current))
+				if (Objects.equals(val, current))
 					center = ent;
 			}
 
-			if(center != null)
+			if (center != null)
 				list.centerScrollOn(center);
 
 			boolean hasBorder = false;
-			if(!screen.children().isEmpty()){
+			if (!screen.children().isEmpty()) {
 				screen.renderables.add(0, list);
 				screen.renderables.add(list);
-				((AccessorScreen)screen).children().add(0, list);
-				((AccessorScreen)screen).children().add(list);
+				((AccessorScreen) screen).children().add(0, list);
+				((AccessorScreen) screen).children().add(list);
 
-				for(GuiEventListener child : screen.children())
-					if(child instanceof ContainerObjectSelectionList){
-						if(((ContainerObjectSelectionList<?>)child).visible){
+				for (GuiEventListener child : screen.children())
+					if (child instanceof ContainerObjectSelectionList) {
+						if (((ContainerObjectSelectionList<?>) child).visible) {
 							hasBorder = true;
 							break;
 						}
 					}
-			}else{
-				((AccessorScreen)screen).children().add(list);
+			} else {
+				((AccessorScreen) screen).children().add(list);
 				screen.renderables.add(list);
 			}
 
 			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {}){
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {
+			}) {
 				@Override
-				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
 					active = visible = false;
 					list.visible = DropDownButton.this.visible;
 
-					if(finalHasBorder)
-						RenderSystem.enableScissor(0, (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int)(32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
+					if (finalHasBorder)
+						RenderSystem.enableScissor(0, (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
 
-					if(list.visible)
+					if (list.visible)
 						list.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 
-					if(finalHasBorder)
+					if (finalHasBorder)
 						RenderSystem.disableScissor();
 				}
 			};
-			((AccessorScreen)screen).children().add(renderButton);
+			((AccessorScreen) screen).children().add(renderButton);
 			screen.renderables.add(renderButton);
-		}else{
+		} else {
 			screen.children().removeIf(s -> s == list || s == renderButton);
 			screen.renderables.removeIf(s -> s == list || s == renderButton);
 		}
@@ -165,12 +169,12 @@ public class DropDownButton extends ExtendedButton {
 		updateMessage();
 	}
 
-	public DropdownEntry createEntry(int pos, String val){
+	public DropdownEntry createEntry(int pos, String val) {
 		return new DropdownValueEntry(this, pos, val, setter);
 	}
 
 	@Override
-	public Tooltip getTooltip(){
+	public Tooltip getTooltip() {
 		if (tooltip == null) {
 			return Tooltip.create(Component.empty());
 		}

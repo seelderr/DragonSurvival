@@ -9,24 +9,24 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbil
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class CaveDragonInfoAbility extends InnateDragonAbility{
+public class CaveDragonInfoAbility extends InnateDragonAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "cave_dragon";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.CAVE;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_dragon_1.png")};
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 3;
 	}
 }

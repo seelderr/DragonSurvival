@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
@@ -65,7 +66,7 @@ public class DSTrades {
 					ImmutableSet.of(),
 					SoundEvents.VILLAGER_WORK_ARMORER));
 
-	public static class ItemTrade implements VillagerTrades.ItemListing{
+	public static class ItemTrade implements VillagerTrades.ItemListing {
 		private ItemCost baseCostA = new ItemCost(ItemStack.EMPTY.getItem(), 0);
 		private Optional<ItemCost> costB = Optional.empty();
 		private final ItemStack result;
@@ -73,7 +74,7 @@ public class DSTrades {
 		private float priceMultiplier = 0;
 		private int xp = 1;
 
-		public ItemTrade(ItemStack baseCostA, ItemStack costB, ItemStack result, int maxUses, float priceMultiplier, int xp){
+		public ItemTrade(ItemStack baseCostA, ItemStack costB, ItemStack result, int maxUses, float priceMultiplier, int xp) {
 			this.baseCostA = new ItemCost(baseCostA.getItem(), baseCostA.getCount());
 			this.costB = Optional.of(new ItemCost(costB.getItem(), costB.getCount()));
 			this.result = result;
@@ -82,7 +83,7 @@ public class DSTrades {
 			this.xp = xp;
 		}
 
-		public ItemTrade(ItemStack baseCostA, ItemStack costB, ItemStack result, int maxUses, int xp){
+		public ItemTrade(ItemStack baseCostA, ItemStack costB, ItemStack result, int maxUses, int xp) {
 			this.baseCostA = new ItemCost(baseCostA.getItem(), baseCostA.getCount());
 			this.costB = Optional.of(new ItemCost(costB.getItem(), costB.getCount()));
 			this.result = result;
@@ -90,14 +91,14 @@ public class DSTrades {
 			this.xp = xp;
 		}
 
-		public ItemTrade(ItemStack baseCostA, ItemStack result, int maxUses, int xp){
+		public ItemTrade(ItemStack baseCostA, ItemStack result, int maxUses, int xp) {
 			this.baseCostA = new ItemCost(baseCostA.getItem(), baseCostA.getCount());
 			this.result = result;
 			this.maxUses = maxUses;
 			this.xp = xp;
 		}
 
-		public ItemTrade(ItemStack baseCostA, ItemStack result, int maxUses, float priceMultiplier, int xp){
+		public ItemTrade(ItemStack baseCostA, ItemStack result, int maxUses, float priceMultiplier, int xp) {
 			this.baseCostA = new ItemCost(baseCostA.getItem(), baseCostA.getCount());
 			this.result = result;
 			this.maxUses = maxUses;
@@ -105,8 +106,9 @@ public class DSTrades {
 			this.xp = xp;
 		}
 
-		@Nullable @Override
-		public MerchantOffer getOffer(@NotNull Entity entity, @NotNull RandomSource random){
+        @Nullable
+        @Override
+		public MerchantOffer getOffer(@NotNull Entity entity, @NotNull RandomSource random) {
 			return new MerchantOffer(baseCostA, costB, result, maxUses, xp, priceMultiplier);
 		}
 	}
@@ -131,15 +133,16 @@ public class DSTrades {
 			this.villagerXp = pVillagerXp;
 		}
 
-		@Nullable @Override
+        @Nullable
+        @Override
 		public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
 			if (!(pTrader.level() instanceof ServerLevel serverlevel)) {
 				return null;
 			} else {
-                BlockPos blockpos = serverlevel.findNearestMapStructure(this.destination, pTrader.blockPosition(), 100, true);
+				BlockPos blockpos = serverlevel.findNearestMapStructure(this.destination, pTrader.blockPosition(), 100, true);
 
 				if (blockpos != null) {
-					ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte)2, true, true);
+					ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte) 2, true, true);
 					MapItem.renderBiomePreviewMap(serverlevel, itemstack);
 					MapItemSavedData.addTargetDecoration(itemstack, blockpos, "+", this.destinationType);
 					itemstack.set(DataComponents.ITEM_NAME, Component.translatable(this.displayName));
@@ -197,12 +200,12 @@ public class DSTrades {
 	public static final Int2ObjectMap<VillagerTrades.ItemListing[]> LEADER_TRADES = new Int2ObjectOpenHashMap<>();
 
 	// Needed for map trade
-	public static final TagKey<Structure> ON_DRAGON_HUNTERS_CASTLE_MAPS = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID,"on_dragon_hunter_maps"));
+	public static final TagKey<Structure> ON_DRAGON_HUNTERS_CASTLE_MAPS = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "on_dragon_hunter_maps"));
 
 	// This is for adding trades to villagers that are within the vanilla framework. We only do this for the dragon rider, as the leader is a completely custom entity that extends Villager and does some special things.
 	@SubscribeEvent
 	public static void addCustomTrades(final VillagerTradesEvent event) {
-		if(event.getType() == DSTrades.DRAGON_RIDER_PROFESSION.value()) {
+		if (event.getType() == DSTrades.DRAGON_RIDER_PROFESSION.value()) {
 			Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
 			trades.get(1).add(
@@ -258,8 +261,7 @@ public class DSTrades {
 			LEADER_TRADES.put(5, LEADER_TRADES_LEVEL_5.toArray(new VillagerTrades.ItemListing[0]));
 		}
 
-		if(event.getType() == VillagerProfession.CARTOGRAPHER)
-		{
+		if (event.getType() == VillagerProfession.CARTOGRAPHER) {
 			Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 			trades.get(2).add(new TreasureMapForEmeralds(15, ON_DRAGON_HUNTERS_CASTLE_MAPS, "ds.mapstructures.hunters_castle", DSMapDecorationTypes.DRAGON_HUNTER, 16, 30));
 		}

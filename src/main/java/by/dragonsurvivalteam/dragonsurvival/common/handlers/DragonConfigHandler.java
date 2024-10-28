@@ -17,7 +17,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.config.ModConfigEvent;
 
 @EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
-public class DragonConfigHandler{
+public class DragonConfigHandler {
 	public static HashSet<Item> DRAGON_BLACKLISTED_ITEMS = new HashSet<>();
 	public static HashSet<Block> SEA_DRAGON_HYDRATION_BLOCKS = new HashSet<>();
 	public static HashSet<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = new HashSet<>();
@@ -44,7 +44,7 @@ public class DragonConfigHandler{
 		}
 	}
 
-	public static void rebuildSpeedupBlocksMap(){
+	public static void rebuildSpeedupBlocksMap() {
 		HashMap<String, HashSet<Block>> speedupMap = new HashMap<>();
 		speedupMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveSpeedupBlocks));
 		speedupMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestSpeedupBlocks));
@@ -52,7 +52,7 @@ public class DragonConfigHandler{
 		DRAGON_SPEEDUP_BLOCKS = speedupMap;
 	}
 
-	public static void rebuildBreathBlocks(){
+	public static void rebuildBreathBlocks() {
 		HashMap<String, HashSet<Block>> breathMap = new HashMap<>();
 		breathMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
 		breathMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
@@ -60,7 +60,7 @@ public class DragonConfigHandler{
 		DRAGON_BREATH_BLOCKS = breathMap;
 	}
 
-	public static void rebuildManaBlocks(){
+	public static void rebuildManaBlocks() {
 		HashMap<String, HashSet<Block>> map = new HashMap<>();
 		map.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.caveDragonManaBlocks));
 		map.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ServerConfig.forestDragonManaBlocks));
@@ -68,20 +68,20 @@ public class DragonConfigHandler{
 		DRAGON_MANA_BLOCKS = map;
 	}
 
-	public static void rebuildSeaDragonConfigs(){
+	public static void rebuildSeaDragonConfigs() {
 		SEA_DRAGON_HYDRATION_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.seaHydrationBlocks);
 		SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = ConfigHandler.getResourceElements(Item.class, ServerConfig.seaAdditionalWaterUseables);
 	}
 
-	public static void rebuildForestDragonConfigs(){
+	public static void rebuildForestDragonConfigs() {
 		FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
 	}
 
-	public static void rebuildDestructibleBlocks(){
+	public static void rebuildDestructibleBlocks() {
 		DRAGON_DESTRUCTIBLE_BLOCKS = ConfigHandler.getResourceElements(Block.class, ServerConfig.destructibleBlocks);
 	}
 
-	public static void rebuildBlacklistedItems(){
+	public static void rebuildBlacklistedItems() {
 		DRAGON_BLACKLISTED_ITEMS = ConfigHandler.getResourceElements(Item.class, ServerConfig.blacklistedItems);
 	}
 }

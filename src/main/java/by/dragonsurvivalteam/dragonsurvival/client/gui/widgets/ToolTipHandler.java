@@ -12,7 +12,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.awt.Color;
+
+import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.ChatFormatting;
@@ -32,7 +33,7 @@ import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @EventBusSubscriber(Dist.CLIENT)
-public class ToolTipHandler{
+public class ToolTipHandler {
 	//private static final ResourceLocation tooltip_1 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
 	//private static final ResourceLocation tooltip_2 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
 
@@ -51,20 +52,20 @@ public class ToolTipHandler{
 	//private static final int tick = 0;
 
 	@SubscribeEvent
-	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent){
-		if(tooltipEvent.getEntity() != null){
+	public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent) {
+		if (tooltipEvent.getEntity() != null) {
 			Item item = tooltipEvent.getItemStack().getItem();
 			List<Component> toolTip = tooltipEvent.getToolTip();
 
-			if(DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)){
+			if (DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)) {
 				toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
 			}
 
-			if(DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)){
+			if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
 				toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
 			}
 
-			if(DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)){
+			if (DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)) {
 				toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
 			}
 		}
@@ -96,75 +97,77 @@ public class ToolTipHandler{
 	}
 
 	@SubscribeEvent
-	public static void itemDescriptions(ItemTooltipEvent event){
-		if(event.getEntity() != null){
+	public static void itemDescriptions(ItemTooltipEvent event) {
+		if (event.getEntity() != null) {
 			Item item = event.getItemStack().getItem();
 			List<Component> toolTip = event.getToolTip();
 
-			if(item == DSBlocks.FIRE_DRAGON_BEACON.get().asItem()){
+			if (item == DSBlocks.FIRE_DRAGON_BEACON.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.passiveFireBeacon"));
 			}
-			if(item == DSBlocks.MAGIC_DRAGON_BEACON.get().asItem()){
+			if (item == DSBlocks.MAGIC_DRAGON_BEACON.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.passiveMagicBeacon"));
 			}
-			if(item == DSBlocks.PEACE_DRAGON_BEACON.get().asItem()){
+			if (item == DSBlocks.PEACE_DRAGON_BEACON.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.passivePeaceBeacon"));
 			}
-			if(item == DSBlocks.CAVE_DRAGON_DOOR.get().asItem()){
+			if (item == DSBlocks.CAVE_DRAGON_DOOR.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.caveDoor"));
 			}
-			if(item == DSBlocks.FOREST_DRAGON_DOOR.get().asItem()){
+			if (item == DSBlocks.FOREST_DRAGON_DOOR.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.forestDoor"));
 			}
-			if(item == DSBlocks.SEA_DRAGON_DOOR.get().asItem()){
+			if (item == DSBlocks.SEA_DRAGON_DOOR.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.seaDoor"));
 			}
-			if(item == DSBlocks.LEGACY_DRAGON_DOOR.get().asItem()){
+			if (item == DSBlocks.LEGACY_DRAGON_DOOR.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.legacyDoor"));
 			}
-			if(item == DSBlocks.HELMET_BLOCK_1.get().asItem()){
+			if (item == DSBlocks.HELMET_BLOCK_1.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.grayHelmet"));
 			}
-			if(item == DSBlocks.HELMET_BLOCK_2.get().asItem()){
+			if (item == DSBlocks.HELMET_BLOCK_2.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.goldHelmet"));
 			}
-			if(item == DSBlocks.HELMET_BLOCK_3.get().asItem()){
+			if (item == DSBlocks.HELMET_BLOCK_3.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.blackHelmet"));
 			}
-			if(item == DSBlocks.DRAGON_BEACON.get().asItem()){
+			if (item == DSBlocks.DRAGON_BEACON.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.dragonBeacon"));
 			}
-			if(item == DSBlocks.DRAGON_MEMORY_BLOCK.get().asItem()){
+			if (item == DSBlocks.DRAGON_MEMORY_BLOCK.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.dragonMemoryBlock"));
 			}
-			if(item == DSBlocks.SEA_SOURCE_OF_MAGIC.get().asItem()){
+			if (item == DSBlocks.SEA_SOURCE_OF_MAGIC.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.sea_source_of_magic"));
 			}
-			if(item == DSBlocks.FOREST_SOURCE_OF_MAGIC.get().asItem()){
+			if (item == DSBlocks.FOREST_SOURCE_OF_MAGIC.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.forest_source_of_magic"));
 			}
-			if(item == DSBlocks.CAVE_SOURCE_OF_MAGIC.get().asItem()){
+			if (item == DSBlocks.CAVE_SOURCE_OF_MAGIC.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.cave_source_of_magic"));
 			}
-			if(item == DSBlocks.DRAGON_PRESSURE_PLATE.get().asItem()){
+			if (item == DSBlocks.DRAGON_PRESSURE_PLATE.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.HUMAN_PRESSURE_PLATE.get().asItem()){
+			if (item == DSBlocks.HUMAN_PRESSURE_PLATE.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.human_pressure_plate"));
 			}
-			if(item == DSBlocks.SEA_PRESSURE_PLATE.get().asItem()){
+			if (item == DSBlocks.SEA_PRESSURE_PLATE.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.sea_dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.FOREST_PRESSURE_PLATE.get().asItem()){
+			if (item == DSBlocks.FOREST_PRESSURE_PLATE.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.forest_dragon_pressure_plate"));
 			}
-			if(item == DSBlocks.CAVE_PRESSURE_PLATE.get().asItem()){
+			if (item == DSBlocks.CAVE_PRESSURE_PLATE.get().asItem()) {
 				toolTip.add(Component.translatable("ds.description.cave_dragon_pressure_plate"));
 			}
 		}
 	}
 
-	/** Renders the special border elements for the info tooltips */
+	/**
+	 * Renders the special border elements for the info tooltips
+	 */
 	// TODO: This doesn't work properly
 	// Tooltips no longer strictly follow the mouse cursor, but this event was never updated to reflect that
 	// I'm not sure how to factor in the "nudge factor" on tooltips where they render slightly offset from
@@ -219,21 +222,20 @@ public class ToolTipHandler{
 		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y - 16, 400,16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
 		event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y + height, 400,16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
 	}*/
-
-	private static boolean isHelpText(){
-		if(!tooltipChanges){
+	private static boolean isHelpText() {
+		if (!tooltipChanges) {
 			return false;
 		}
-		if(Minecraft.getInstance().level == null){
-			return false;
-		}
-
-		if(Minecraft.getInstance().screen == null){
+		if (Minecraft.getInstance().level == null) {
 			return false;
 		}
 
-		for(GuiEventListener btn : Minecraft.getInstance().screen.children()){
-			if(btn instanceof HelpButton && ((HelpButton)btn).isHoveredOrFocused()){
+		if (Minecraft.getInstance().screen == null) {
+			return false;
+		}
+
+		for (GuiEventListener btn : Minecraft.getInstance().screen.children()) {
+			if (btn instanceof HelpButton && ((HelpButton) btn).isHoveredOrFocused()) {
 				return true;
 			}
 		}
@@ -242,8 +244,8 @@ public class ToolTipHandler{
 	}
 
 	@SubscribeEvent
-	public static void onTooltipColorEvent(RenderTooltipEvent.Color event){
-		if(!tooltipChanges){
+	public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
+		if (!tooltipChanges) {
 			return;
 		}
 		boolean render = isHelpText();
@@ -260,44 +262,44 @@ public class ToolTipHandler{
 
 		boolean button = false;
 
-		if(screen){
-			for(GuiEventListener widget : ((AbilityScreen)Minecraft.getInstance().screen).widgetList()){
-				if(widget instanceof SkillProgressButton && ((SkillProgressButton)widget).isHoveredOrFocused()){
+		if (screen) {
+			for (GuiEventListener widget : ((AbilityScreen) Minecraft.getInstance().screen).widgetList()) {
+				if (widget instanceof SkillProgressButton && ((SkillProgressButton) widget).isHoveredOrFocused()) {
 					button = true;
 					break;
 				}
 			}
 		}
 
-		if(render){
+		if (render) {
 			int top = new Color(154, 132, 154).getRGB();
 			int bottom = new Color(89, 68, 89).getRGB();
 
 			event.setBorderStart(top);
 			event.setBorderEnd(bottom);
-		}else if(screen || isFood){
+		} else if (screen || isFood) {
 			AbstractDragonType type = DragonUtils.getDragonType(Minecraft.getInstance().player);
 			Color topColor = null;
 			Color bottomColor = null;
 
-			if(type != null){
-				if(Objects.equals(type, DragonTypes.SEA) && button || isSeaFood){
+			if (type != null) {
+				if (Objects.equals(type, DragonTypes.SEA) && button || isSeaFood) {
 					topColor = new Color(93, 201, 255);
 					bottomColor = new Color(49, 109, 144);
-				}else if(Objects.equals(type, DragonTypes.FOREST) && button || isForestFood){
+				} else if (Objects.equals(type, DragonTypes.FOREST) && button || isForestFood) {
 					topColor = new Color(0, 255, 148);
 					bottomColor = new Color(4, 130, 82);
-				}else if(Objects.equals(type, DragonTypes.CAVE) && button || isCaveFood){
+				} else if (Objects.equals(type, DragonTypes.CAVE) && button || isCaveFood) {
 					topColor = new Color(255, 118, 133);
 					bottomColor = new Color(139, 66, 74);
 				}
 			}
 
-			if(topColor != null){
+			if (topColor != null) {
 				event.setBorderStart(topColor.getRGB());
 			}
 
-			if(bottomColor != null){
+			if (bottomColor != null) {
 				event.setBorderEnd(bottomColor.getRGB());
 			}
 		}

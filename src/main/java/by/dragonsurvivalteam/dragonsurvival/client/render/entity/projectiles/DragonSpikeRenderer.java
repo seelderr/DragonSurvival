@@ -10,14 +10,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 
-@OnlyIn( Dist.CLIENT )
-public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity>{
-	public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_){
+@OnlyIn(Dist.CLIENT)
+public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity> {
+	public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_) {
 		super(p_i46179_1_);
 	}
 
 	@Override
-	public ResourceLocation getTextureLocation(DragonSpikeEntity entity){
+	public ResourceLocation getTextureLocation(DragonSpikeEntity entity) {
 		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
 	}
 }

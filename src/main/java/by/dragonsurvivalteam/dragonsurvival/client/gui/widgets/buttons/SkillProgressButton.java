@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,22 +20,23 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
-public class SkillProgressButton extends Button{
+public class SkillProgressButton extends Button {
 	private final int slot;
 	private final AbilityScreen screen;
 	private ActiveDragonAbility ability;
 
-	public SkillProgressButton(int x, int y, int slot, AbilityScreen screen){
-		super(x, y, 16, 16, Component.empty(), button -> {}, DEFAULT_NARRATION);
+	public SkillProgressButton(int x, int y, int slot, AbilityScreen screen) {
+		super(x, y, 16, 16, Component.empty(), button -> {
+		}, DEFAULT_NARRATION);
 		this.slot = slot;
 		this.screen = screen;
 	}
 
 	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_) {
 		ResourceLocation texture = ability != null ? ability.getIcon() : AbilityButton.BLANK_TEXTURE;
 
-		if(screen.unlockAbleSkills.size() > slot){
+		if (screen.unlockAbleSkills.size() > slot) {
 			ActiveDragonAbility ability1 = screen.unlockAbleSkills.get(slot);
 
 			if (ability1 != null && ability1.getIcon() != null) {

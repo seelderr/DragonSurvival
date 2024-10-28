@@ -13,36 +13,36 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
-public class FearOfDarkAbility extends InnateDragonAbility{
+public class FearOfDarkAbility extends InnateDragonAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "fear_of_dark";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.FOREST;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_1.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/fear_of_dark_1.png")};
 	}
 
 	@Override
-	public int getLevel(){
+	public int getLevel() {
 		return ServerConfig.penaltiesEnabled && ServerConfig.forestStressTicks != 0.0 ? 1 : 0;
 	}
 
 	@Override
-	@OnlyIn( Dist.CLIENT )
-	public boolean isDisabled(){
+	@OnlyIn(Dist.CLIENT)
+	public boolean isDisabled() {
 		return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.forestStressTicks == 0.0;
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 4;
 	}
 }

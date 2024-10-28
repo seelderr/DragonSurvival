@@ -30,8 +30,9 @@ public class TabButton extends Button {
 	private final TabType tabType;
 	private final Screen parent;
 
-	public TabButton(int x, int y, TabType tabType, Screen parent){
-		super(x, y, 28, 32, Component.empty(), button -> {}, DEFAULT_NARRATION);
+	public TabButton(int x, int y, TabType tabType, Screen parent) {
+		super(x, y, 28, 32, Component.empty(), button -> {
+		}, DEFAULT_NARRATION);
 		this.tabType = tabType;
 		this.parent = parent;
 
@@ -52,23 +53,23 @@ public class TabButton extends Button {
 	}
 
 	@Override
-	public void onPress(){
-		if(!isCurrent())
-			switch(tabType){
+	public void onPress() {
+		if (!isCurrent())
+			switch (tabType) {
 				case INVENTORY -> {
 					boolean setSuccessfully = false;
-					if(parent instanceof AbilityScreen){
-						if(((AbilityScreen)parent).sourceScreen != null){
-							setSuccessfully = setInventoryScreen(((AbilityScreen)parent).sourceScreen);
+					if (parent instanceof AbilityScreen) {
+						if (((AbilityScreen) parent).sourceScreen != null) {
+							setSuccessfully = setInventoryScreen(((AbilityScreen) parent).sourceScreen);
 						}
-					} else if(parent instanceof SkinsScreen){
-						if(((SkinsScreen)parent).sourceScreen != null){
-							setSuccessfully = setInventoryScreen(((SkinsScreen)parent).sourceScreen);
+					} else if (parent instanceof SkinsScreen) {
+						if (((SkinsScreen) parent).sourceScreen != null) {
+							setSuccessfully = setInventoryScreen(((SkinsScreen) parent).sourceScreen);
 						}
 					}
 
-					if(!setSuccessfully) {
-						if(InventoryScreenHandler.dragonInventory){
+					if (!setSuccessfully) {
+						if (InventoryScreenHandler.dragonInventory) {
 							SendOpenDragonInventoryAndMaintainCursorPosition();
 						} else {
 							Minecraft.getInstance().setScreen(new InventoryScreen(Minecraft.getInstance().player));
@@ -81,8 +82,8 @@ public class TabButton extends Button {
 			}
 	}
 
-	public boolean isCurrent(){
-		return switch(tabType){
+	public boolean isCurrent() {
+		return switch (tabType) {
 			case INVENTORY -> parent instanceof DragonInventoryScreen || parent instanceof InventoryScreen;
 			case ABILITY -> parent instanceof AbilityScreen;
 			case SKINS -> parent instanceof SkinsScreen;
@@ -91,7 +92,7 @@ public class TabButton extends Button {
 	}
 
 	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_) {
 		if (isCurrent()) {
 			guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), tabType == TabType.INVENTORY ? 0 : 28, 0, 28, 32);
 		} else if (isHovered()) {

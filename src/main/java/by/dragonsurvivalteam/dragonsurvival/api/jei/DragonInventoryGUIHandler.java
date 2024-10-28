@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
+
 import java.util.List;
 import java.util.Optional;
 import mezz.jei.api.constants.RecipeTypes;
@@ -15,9 +16,9 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
 
 // TODO: This might not work? Test JEI integration
-public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonContainer, RecipeHolder<CraftingRecipe>>, IGuiContainerHandler<DragonInventoryScreen>{
+public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonContainer, RecipeHolder<CraftingRecipe>>, IGuiContainerHandler<DragonInventoryScreen> {
 	@Override
-	public @NotNull Class<? extends DragonContainer> getContainerClass(){
+	public @NotNull Class<? extends DragonContainer> getContainerClass() {
 		return DragonContainer.class;
 	}
 
@@ -32,7 +33,6 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonCont
 	}
 
 
-
 	@Override
 	public boolean canHandle(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
 		return true;
@@ -45,6 +45,6 @@ public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonCont
 
 	@Override
 	public @NotNull List<Slot> getInventorySlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
-        return container.inventorySlots;
+		return container.inventorySlots;
 	}
 }

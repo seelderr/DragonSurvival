@@ -11,11 +11,11 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
-import java.util.Arrays;
-import java.util.Objects;
-
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
+
+import java.util.Arrays;
+import java.util.Objects;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
@@ -40,8 +40,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
-	/** Add -0.07 to 0.08, so we get the vanilla default of 0.01 */
-	@Unique private final static AttributeModifier dragonSurvival$SLOW_FALL_MOD = new AttributeModifier(SLOW_FALLING, -0.07, AttributeModifier.Operation.ADD_VALUE);
+	/**
+	 * Add -0.07 to 0.08, so we get the vanilla default of 0.01
+	 */
+	@Unique
+	private final static AttributeModifier dragonSurvival$SLOW_FALL_MOD = new AttributeModifier(SLOW_FALLING, -0.07, AttributeModifier.Operation.ADD_VALUE);
 
 	protected PlayerMixin(EntityType<? extends LivingEntity> type, Level level) {
 		super(type, level);
@@ -73,7 +76,9 @@ public abstract class PlayerMixin extends LivingEntity {
 		}
 	}
 
-	/** Allow treasure blocks to trigger sleep logic */
+	/**
+	 * Allow treasure blocks to trigger sleep logic
+	 */
 	@Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
 	public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> callback) {
 		DragonStateProvider.getOptional(this).ifPresent(handler -> {
@@ -83,19 +88,23 @@ public abstract class PlayerMixin extends LivingEntity {
 		});
 	}
 
-	/** Make sure dragon hitboxes are considered here */
+	/**
+	 * Make sure dragon hitboxes are considered here
+	 */
 	@ModifyReturnValue(method = "canPlayerFitWithinBlocksAndEntitiesWhen", at = @At("RETURN"))
 	private boolean considerDragonPosesInCanPlayerFit(boolean returnValue, @Local(argsOnly = true) Pose pose) {
-		if(DragonStateProvider.isDragon(this)) {
+		if (DragonStateProvider.isDragon(this)) {
 			return DragonSizeHandler.canPoseFit(this, pose);
 		} else {
 			return returnValue;
 		}
 	}
 
-	/** Enable cave dragons to properly swim in lava */
+	/**
+	 * Enable cave dragons to properly swim in lava
+	 */
 	@SuppressWarnings("ConstantValue") // it's not always false
-    @Inject(method = "travel", at = @At("HEAD"))
+	@Inject(method = "travel", at = @At("HEAD"))
 	public void travel(Vec3 travelVector, CallbackInfo callback) {
 		DragonStateProvider.getOptional(this).ifPresent(handler -> {
 			if (!handler.isDragon()) {

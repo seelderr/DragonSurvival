@@ -25,102 +25,102 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
 
-public class DragonSpikeEntity extends AbstractArrow{
+public class DragonSpikeEntity extends AbstractArrow {
 	public static final EntityDataAccessor<Integer> ARROW_LEVEL = SynchedEntityData.defineId(DragonSpikeEntity.class, EntityDataSerializers.INT);
 
-	public DragonSpikeEntity(Level level){
+	public DragonSpikeEntity(Level level) {
 		super(DSEntities.DRAGON_SPIKE.get(), level);
 	}
 
-	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level worldIn){
+	public DragonSpikeEntity(EntityType<? extends AbstractArrow> type, Level worldIn) {
 		super(type, worldIn);
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
 		super.defineSynchedData(pBuilder);
 		pBuilder.define(ARROW_LEVEL, 1);
 	}
 
 
 	@Override
-	protected void onHitEntity(EntityHitResult entityHitResult){
+	protected void onHitEntity(EntityHitResult entityHitResult) {
 		Entity entity = entityHitResult.getEntity();
 		Entity entity1 = getOwner();
 		DamageSource damagesource;
-		if(entity1 == null){
+		if (entity1 == null) {
 			damagesource = damageSources().arrow(this, this);
-		}else{
+		} else {
 			damagesource = damageSources().arrow(this, entity1);
-			if(entity1 instanceof LivingEntity livingEntity){
+			if (entity1 instanceof LivingEntity livingEntity) {
 				livingEntity.setLastHurtMob(entity);
 			}
 		}
-		float damage = (float)getBaseDamage();
+		float damage = (float) getBaseDamage();
 
 		boolean targetIsInImmunityFrames = (entity.invulnerableTime > 10.0F && !damagesource.is(DamageTypeTags.BYPASSES_COOLDOWN));
-		if(TargetingFunctions.attackTargets(getOwner(), ent -> ent.hurt(damagesource, damage), entity)){
-			if(entity instanceof LivingEntity livingentity){
-				if(!level().isClientSide()){
+		if (TargetingFunctions.attackTargets(getOwner(), ent -> ent.hurt(damagesource, damage), entity)) {
+			if (entity instanceof LivingEntity livingentity) {
+				if (!level().isClientSide()) {
 					livingentity.setArrowCount(livingentity.getArrowCount() + 1);
 				}
 
-				if(!level().isClientSide() && entity1 instanceof LivingEntity){
-					EnchantmentHelper.doPostAttackEffects((ServerLevel)level(), livingentity, damagesource);
+				if (!level().isClientSide() && entity1 instanceof LivingEntity) {
+					EnchantmentHelper.doPostAttackEffects((ServerLevel) level(), livingentity, damagesource);
 				}
 
 				doPostHurtEffects(livingentity);
 
-				if(entity1 instanceof ServerPlayer serverPlayer && !isSilent()){
+				if (entity1 instanceof ServerPlayer serverPlayer && !isSilent()) {
 					serverPlayer.connection.send(new ClientboundGameEventPacket(ClientboundGameEventPacket.ARROW_HIT_PLAYER, 0.0F));
 				}
 			}
 
-			if(getPierceLevel() <= 0){
+			if (getPierceLevel() <= 0) {
 				remove(RemovalReason.DISCARDED);
 			}
-		} else if(getPierceLevel() == 0 && !targetIsInImmunityFrames) {
+		} else if (getPierceLevel() == 0 && !targetIsInImmunityFrames) {
 			setDeltaMovement(getDeltaMovement().scale(-0.1D));
 			setYRot(getYRot() + 180.0F);
 			yRotO += 180.0F;
 
-			if(getDeltaMovement().lengthSqr() < 1.0E-7D){
+			if (getDeltaMovement().lengthSqr() < 1.0E-7D) {
 				remove(RemovalReason.DISCARDED);
 			}
 		}
 	}
 
 	@Override
-	public double getBaseDamage(){
+	public double getBaseDamage() {
 		return getArrow_level() * SpikeAbility.spikeDamage;
 	}
 
-	public int getArrow_level(){
+	public int getArrow_level() {
 		return entityData.get(ARROW_LEVEL);
 	}
 
-	public void setArrow_level(int arrow_level){
+	public void setArrow_level(int arrow_level) {
 		entityData.set(ARROW_LEVEL, arrow_level);
 	}
 
 	@Override
-	public boolean isCritArrow(){
+	public boolean isCritArrow() {
 		return false;
 	}
 
 	@Override
-	protected void onHitBlock(BlockHitResult blockHitResult){
+	protected void onHitBlock(BlockHitResult blockHitResult) {
 		super.onHitBlock(blockHitResult);
 	}
 
 	@Override
 
-	protected SoundEvent getDefaultHitGroundSoundEvent(){
+	protected SoundEvent getDefaultHitGroundSoundEvent() {
 		return SoundEvents.AXE_STRIP;
 	}
 
 	@Override
-	protected ItemStack getPickupItem(){
+	protected ItemStack getPickupItem() {
 		return ItemStack.EMPTY;
 	}
 

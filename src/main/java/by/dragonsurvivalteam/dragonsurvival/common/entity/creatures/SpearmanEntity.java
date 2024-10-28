@@ -21,7 +21,7 @@ import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
 
 public class SpearmanEntity extends Hunter {
-	public SpearmanEntity(EntityType<? extends PathfinderMob> entityType, Level world){
+	public SpearmanEntity(EntityType<? extends PathfinderMob> entityType, Level world) {
 		super(entityType, world);
 	}
 
@@ -72,7 +72,7 @@ public class SpearmanEntity extends Hunter {
 					// Copied from witch conversion code
 					Mob leader = DSEntities.HUNTER_LEADER.get().create(this.level());
 					leader.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
-					leader.finalizeSpawn((ServerLevel)this.level(), this.level().getCurrentDifficultyAt(leader.blockPosition()), MobSpawnType.CONVERSION, null);
+					leader.finalizeSpawn((ServerLevel) this.level(), this.level().getCurrentDifficultyAt(leader.blockPosition()), MobSpawnType.CONVERSION, null);
 					leader.setNoAi(this.isNoAi());
 					if (this.hasCustomName()) {
 						leader.setCustomName(this.getCustomName());
@@ -86,7 +86,7 @@ public class SpearmanEntity extends Hunter {
 					this.discard();
 				}
 
-				for(int i = 0; i < 20; i++) {
+				for (int i = 0; i < 20; i++) {
 					this.level().addParticle(ParticleTypes.HAPPY_VILLAGER, this.getX() + (this.random.nextDouble() - 0.5D) * 2D, this.getY() + this.random.nextDouble() * 2D, this.getZ() + (this.random.nextDouble() - 0.5D) * 2D, (this.random.nextDouble() - 0.5D) * 0.5D, this.random.nextDouble() * 0.5D, (this.random.nextDouble() - 0.5D) * 0.5D);
 				}
 
@@ -118,9 +118,9 @@ public class SpearmanEntity extends Hunter {
 	public PlayState armsPredicate(final AnimationState<SpearmanEntity> state) {
 		if (swingTime > 0) {
 			return state.setAndContinue(ATTACK_BLEND);
-		} else if(isAggro()) {
+		} else if (isAggro()) {
 			return state.setAndContinue(AGGRO_BLEND);
-		} else if(isNotIdle()) {
+		} else if (isNotIdle()) {
 			return state.setAndContinue(WALK_ARMS_BLEND);
 		}
 
@@ -134,7 +134,7 @@ public class SpearmanEntity extends Hunter {
 			return state.setAndContinue(RUN_BLEND);
 		} else if (movement > getWalkThreshold()) {
 			return state.setAndContinue(WALK_BLEND);
-		} else if(isAggro()) {
+		} else if (isAggro()) {
 			return state.setAndContinue(IDLE_BLEND);
 		}
 
@@ -150,9 +150,9 @@ public class SpearmanEntity extends Hunter {
 	}
 
 	private static final RandomAnimationPicker IDLE_ANIMS = new RandomAnimationPicker(
-		new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle1"), 90),
-		new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle2"), 9),
-		new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle3"), 1)
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle1"), 90),
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle2"), 9),
+			new RandomAnimationPicker.WeightedAnimation(RawAnimation.begin().thenLoop("idle3"), 1)
 	);
 
 	private static final RawAnimation WALK_BLEND = RawAnimation.begin().thenLoop("blend_walk");

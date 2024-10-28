@@ -25,13 +25,13 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class DragonPressurePlates extends PressurePlateBlock implements SimpleWaterloggedBlock{
+public class DragonPressurePlates extends PressurePlateBlock implements SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
 	public PressurePlateType type;
 
-	public enum PressurePlateType{
+	public enum PressurePlateType {
 		DRAGON,
 		HUMAN,
 		SEA,
@@ -39,7 +39,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 		FOREST
 	}
 
-	public DragonPressurePlates(Properties properties, PressurePlateType type){
+	public DragonPressurePlates(Properties properties, PressurePlateType type) {
 		super(BlockSetType.WARPED, properties);
 		registerDefaultState(stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
 
@@ -47,26 +47,26 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){
+	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
 		return PRESSED_AABB;
 	}
 
 	@Override
-	public BlockState updateShape(BlockState state, Direction dir, BlockState state2, LevelAccessor level, BlockPos pos, BlockPos pos2){
-		if(state.getValue(WATERLOGGED)){
+	public BlockState updateShape(BlockState state, Direction dir, BlockState state2, LevelAccessor level, BlockPos pos, BlockPos pos2) {
+		if (state.getValue(WATERLOGGED)) {
 			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 		}
 		return super.updateShape(state, dir, state2, level, pos, pos2);
 	}
 
 	@Override
-	protected int getSignalStrength(Level pLevel, BlockPos pPos){
+	protected int getSignalStrength(Level pLevel, BlockPos pPos) {
 		net.minecraft.world.phys.AABB axisalignedbb = TOUCH_AABB.move(pPos);
 		List<? extends Entity> list = pLevel.getEntities(null, axisalignedbb);
 
-		if(!list.isEmpty()){
-			for(Entity entity : list){
-				if(!entity.isIgnoringBlockTriggers()){
+		if (!list.isEmpty()) {
+			for (Entity entity : list) {
+				if (!entity.isIgnoringBlockTriggers()) {
 					return switch (type) {
 						case DRAGON -> DragonStateProvider.isDragon(entity) ? 15 : 0;
 						case HUMAN -> !DragonStateProvider.isDragon(entity) ? 15 : 0;
@@ -81,7 +81,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 	}
 
 	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder){
+	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
 		super.createBlockStateDefinition(pBuilder);
 		pBuilder.add(FACING);
 		pBuilder.add(WATERLOGGED);
@@ -103,7 +103,7 @@ public class DragonPressurePlates extends PressurePlateBlock implements SimpleWa
 	}
 
 	@Override
-	public FluidState getFluidState(BlockState state){
+	public FluidState getFluidState(BlockState state) {
 		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 

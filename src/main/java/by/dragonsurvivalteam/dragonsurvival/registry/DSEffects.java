@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.ToughSkinAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
+
 import java.util.Set;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -32,26 +33,26 @@ public class DSEffects {
 			MODID
 	);
 
-	private static class Stress extends MobEffect{
+	private static class Stress extends MobEffect {
 
-		protected Stress(int color){
+		protected Stress(int color) {
 			super(MobEffectCategory.HARMFUL, color);
 		}
 
 		@Override
-		public boolean applyEffectTick(@NotNull LivingEntity living, int p_76394_2_){
-			if(living instanceof Player player){
+		public boolean applyEffectTick(@NotNull LivingEntity living, int p_76394_2_) {
+			if (living instanceof Player player) {
 				FoodData food = player.getFoodData();
 
-				if(food.getSaturationLevel() > 0){
+				if (food.getSaturationLevel() > 0) {
 					int oldFood = food.getFoodLevel();
-					food.eat(1, (float)((-0.5F * food.getSaturationLevel()) * ServerConfig.stressExhaustion));
-					if(oldFood != 20){
-						food.setFoodLevel((int)(food.getFoodLevel() - 1 * ServerConfig.stressExhaustion));
+					food.eat(1, (float) ((-0.5F * food.getSaturationLevel()) * ServerConfig.stressExhaustion));
+					if (oldFood != 20) {
+						food.setFoodLevel((int) (food.getFoodLevel() - 1 * ServerConfig.stressExhaustion));
 					}
 				}
 
-				player.causeFoodExhaustion((float)(1.0f * ServerConfig.stressExhaustion));
+				player.causeFoodExhaustion((float) (1.0f * ServerConfig.stressExhaustion));
 
 				return true;
 			}
@@ -60,19 +61,19 @@ public class DSEffects {
 		}
 
 		@Override
-		public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier){
+		public boolean shouldApplyEffectTickThisTick(int pDuration, int pAmplifier) {
 			int i = 20 >> pAmplifier;
-			if(i > 0){
+			if (i > 0) {
 				return pDuration % i == 0;
-			}else{
+			} else {
 				return true;
 			}
 		}
 	}
 
 	public static Holder<MobEffect> STRESS = DS_MOB_EFFECTS.register(
-		"stress",
-		() -> new Stress(0xf4a2e8)
+			"stress",
+			() -> new Stress(0xf4a2e8)
 	);
 
 	private static class WingDisablingEffect extends ModifiableMobEffect {
@@ -81,15 +82,15 @@ public class DSEffects {
 		}
 
 		@Override
-		public void onEffectStarted(LivingEntity living, int strength){
-			if(!living.level().isClientSide()){
-					if(living instanceof Player player) {
-						DragonStateHandler handler = DragonStateProvider.getData(player);
-						if(handler.isDragon()){
-							handler.setWingsSpread(false);
-							PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
-						}
+		public void onEffectStarted(LivingEntity living, int strength) {
+			if (!living.level().isClientSide()) {
+				if (living instanceof Player player) {
+					DragonStateHandler handler = DragonStateProvider.getData(player);
+					if (handler.isDragon()) {
+						handler.setWingsSpread(false);
+						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
 					}
+				}
 			}
 		}
 	}
@@ -98,22 +99,22 @@ public class DSEffects {
 	// -The player can't jump (DragonBonusHandler.java)
 	// -The player can't activate their wings (ClientFlightHandler.java)
 	public static Holder<MobEffect> TRAPPED = DS_MOB_EFFECTS.register(
-		"trapped",
-		() -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0xdddddd, true)
-				.addAttributeModifier(Attributes.MOVEMENT_SPEED, SLOW_MOVEMENT, -0.5, Operation.ADD_MULTIPLIED_TOTAL)
+			"trapped",
+			() -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0xdddddd, true)
+					.addAttributeModifier(Attributes.MOVEMENT_SPEED, SLOW_MOVEMENT, -0.5, Operation.ADD_MULTIPLIED_TOTAL)
 	);
 
 	// There are some missing effects here, since they are handled elsewhere:
 	// -The player can't activate their wings (ClientFlightHandler.java)
 	public static Holder<MobEffect> WINGS_BROKEN = DS_MOB_EFFECTS.register(
-		"wings_broken",
-		() -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0x0, true)
+			"wings_broken",
+			() -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0x0, true)
 	);
 
-	private static class ModifiableMobEffect extends MobEffect{
+	private static class ModifiableMobEffect extends MobEffect {
 		private final boolean uncurable;
 
-		protected ModifiableMobEffect(MobEffectCategory type, int color, boolean uncurable){
+		protected ModifiableMobEffect(MobEffectCategory type, int color, boolean uncurable) {
 			super(type, color);
 			this.uncurable = uncurable;
 		}
@@ -129,43 +130,43 @@ public class DSEffects {
 	}
 
 	public static Holder<MobEffect> MAGIC_DISABLED = DS_MOB_EFFECTS.register(
-		"magic_disabled",
-		() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+			"magic_disabled",
+			() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> HUNTER_OMEN = DS_MOB_EFFECTS.register(
-		"hunter_omen",
-		() -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true)
+			"hunter_omen",
+			() -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true)
 	);
 
 	public static Holder<MobEffect> PEACE = DS_MOB_EFFECTS.register(
-		"peace",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"peace",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> MAGIC = DS_MOB_EFFECTS.register(
-		"magic",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"magic",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> FIRE = DS_MOB_EFFECTS.register(
-		"fire",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"fire",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> ANIMAL_PEACE = DS_MOB_EFFECTS.register(
-		"animal_peace",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"animal_peace",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> SOURCE_OF_MAGIC = DS_MOB_EFFECTS.register(
-		"source_of_magic",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"source_of_magic",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
-	private static class TradeEffect extends MobEffect{
+	private static class TradeEffect extends MobEffect {
 
-		protected TradeEffect(MobEffectCategory type, int color){
+		protected TradeEffect(MobEffectCategory type, int color) {
 			super(type, color);
 		}
 
@@ -182,49 +183,49 @@ public class DSEffects {
 	}
 
 	public static Holder<MobEffect> ROYAL_DEPARTURE = DS_MOB_EFFECTS.register(
-		"royal_departure",
-		() -> new TradeEffect(MobEffectCategory.HARMFUL, -3407617)
+			"royal_departure",
+			() -> new TradeEffect(MobEffectCategory.HARMFUL, -3407617)
 	);
 
 	public static Holder<MobEffect> WATER_VISION = DS_MOB_EFFECTS.register(
-		"water_vision",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"water_vision",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> LAVA_VISION = DS_MOB_EFFECTS.register(
-		"lava_vision",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"lava_vision",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> HUNTER = DS_MOB_EFFECTS.register(
-		"hunter",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"hunter",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> REVEALING_THE_SOUL = DS_MOB_EFFECTS.register(
-		"revealing_the_soul",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+			"revealing_the_soul",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> BURN = DS_MOB_EFFECTS.register(
-		"burn",
-		() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+			"burn",
+			() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> CHARGED = DS_MOB_EFFECTS.register(
-		"charged",
-		() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+			"charged",
+			() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> DRAIN = DS_MOB_EFFECTS.register(
-		"drain",
-		() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
+			"drain",
+			() -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false)
 	);
 
 	public static Holder<MobEffect> STRONG_LEATHER = DS_MOB_EFFECTS.register(
-		"strong_leather",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
-			.addAttributeModifier(Attributes.ARMOR, TOUGH_SKIN, ToughSkinAbility.toughSkinArmorValue, Operation.ADD_VALUE)
+			"strong_leather",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+					.addAttributeModifier(Attributes.ARMOR, TOUGH_SKIN, ToughSkinAbility.toughSkinArmorValue, Operation.ADD_VALUE)
 	);
 
 	public static Holder<MobEffect> BLOOD_SIPHON = DS_MOB_EFFECTS.register(
@@ -238,17 +239,17 @@ public class DSEffects {
 	);
 
 	public static Holder<MobEffect> cave_wings = DS_MOB_EFFECTS.register(
-		"wings_cave",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)
+			"wings_cave",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)
 	);
 
 	public static Holder<MobEffect> sea_wings = DS_MOB_EFFECTS.register(
-		"wings_sea",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)
+			"wings_sea",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)
 	);
 
 	public static Holder<MobEffect> forest_wings = DS_MOB_EFFECTS.register(
-		"wings_forest",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)
+			"wings_forest",
+			() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, true)
 	);
 }

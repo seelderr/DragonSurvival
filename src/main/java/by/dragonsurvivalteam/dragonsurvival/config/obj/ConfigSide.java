@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.config.obj;
 
-public enum ConfigSide{
+public enum ConfigSide {
 	CLIENT,
 	SERVER
 }

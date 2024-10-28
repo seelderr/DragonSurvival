@@ -14,7 +14,7 @@ public class DragonSkinBodyButton extends Button {
 	private final AbstractDragonBody dragonBody;
 	private final ResourceLocation location;
 	private final int pos;
-	
+
 	public DragonSkinBodyButton(SkinsScreen screen, int x, int y, int xSize, int ySize, AbstractDragonBody body, int pos) {
 		super(x, y, xSize, ySize, Component.literal(body.toString()), btn -> {
 			screen.dragonBody = body;

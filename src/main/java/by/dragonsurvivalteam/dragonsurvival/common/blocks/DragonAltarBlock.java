@@ -32,45 +32,45 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 
-public class DragonAltarBlock extends Block{
+public class DragonAltarBlock extends Block {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	private final VoxelShape SHAPE = Shapes.block();
 
 
-	public DragonAltarBlock(Properties properties){
+	public DragonAltarBlock(Properties properties) {
 		super(properties);
 		registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
 	}
 
 	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context){
+	public BlockState getStateForPlacement(BlockPlaceContext context) {
 		return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
 	}
 
 	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder){
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
 		builder.add(FACING);
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag){
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag) {
 		super.appendHoverText(pStack, pContext, pTootipComponents, pTooltipFlag);
 		pTootipComponents.add(Component.translatable("ds.description.dragonAltar"));
 	}
 
 	@Override
-	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult){
+	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
 		DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
 
-		if(!pLevel.isClientSide()) {
-			if(handler.altarCooldown > 0){
+		if (!pLevel.isClientSide()) {
+			if (handler.altarCooldown > 0) {
 				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
 				int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
 				int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
 				pPlayer.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
 				return InteractionResult.FAIL;
 			} else {
-				PacketDistributor.sendToPlayer((ServerPlayer)pPlayer, new AllowOpenDragonAltar.Data());
+				PacketDistributor.sendToPlayer((ServerPlayer) pPlayer, new AllowOpenDragonAltar.Data());
 				handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
 				handler.hasUsedAltar = true;
 				handler.isInAltar = true;
@@ -82,7 +82,7 @@ public class DragonAltarBlock extends Block{
 	}
 
 	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context){
+	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
 		return SHAPE;
 	}
 }

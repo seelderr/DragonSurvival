@@ -9,24 +9,24 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbil
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class ForestDragonInfoAbility extends InnateDragonAbility{
+public class ForestDragonInfoAbility extends InnateDragonAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "forest_dragon";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.FOREST;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_dragon_1.png")};
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 3;
 	}
 }

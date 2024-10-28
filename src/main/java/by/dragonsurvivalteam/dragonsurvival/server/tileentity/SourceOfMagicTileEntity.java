@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import io.netty.buffer.Unpooled;
+
 import java.util.HashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -38,21 +39,23 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	public static HashMap<Item, Integer> consumables = new HashMap<>();
 	public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
 	private int ticks;
-	static{
+
+	static {
 		consumables.put(DSItems.ELDER_DRAGON_DUST.value(), Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
 		consumables.put(DSItems.ELDER_DRAGON_BONE.value(), Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
 		consumables.put(DSItems.DRAGON_HEART_SHARD.value(), Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
 		consumables.put(DSItems.WEAK_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
 		consumables.put(DSItems.ELDER_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
 	}
-	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+
+	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState) {
 		super(DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), pWorldPosition, pBlockState);
 	}
 
-	public static void serverTick(Level level, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity){
-        if (!pState.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()) {
+	public static void serverTick(Level level, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity) {
+		if (!pState.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()) {
 			level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, true));
-		} else if(pState.getValue(SourceOfMagicBlock.FILLED) && pBlockEntity.isEmpty()) {
+		} else if (pState.getValue(SourceOfMagicBlock.FILLED) && pBlockEntity.isEmpty()) {
 			level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, false));
 		}
 
@@ -64,55 +67,55 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public boolean isEmpty(){
+	public boolean isEmpty() {
 		return stacks.isEmpty() || getItem(0).isEmpty();
 	}
 
 	@Override
-	public @NotNull ItemStack getItem(int i){
+	public @NotNull ItemStack getItem(int i) {
 		return stacks.get(i);
 	}
 
 	@Override
-	public @NotNull ItemStack removeItem(int index, int amount){
+	public @NotNull ItemStack removeItem(int index, int amount) {
 		return ContainerHelper.removeItem(stacks, index, amount);
 	}
 
 	@Override
-	public @NotNull ItemStack removeItemNoUpdate(int i){
+	public @NotNull ItemStack removeItemNoUpdate(int i) {
 		return ContainerHelper.takeItem(stacks, 0);
 	}
 
 	@Override
-	public void setItem(int i, @NotNull ItemStack itemStack){
-		if(i >= 0 && i < stacks.size()){
+	public void setItem(int i, @NotNull ItemStack itemStack) {
+		if (i >= 0 && i < stacks.size()) {
 			stacks.set(i, itemStack);
 		}
 	}
 
 	@Override
-	public boolean stillValid(@NotNull Player playerEntity){
+	public boolean stillValid(@NotNull Player playerEntity) {
 		return true;
 	}
 
 	@Override
-	public void loadAdditional(@NotNull CompoundTag pTag, @NotNull HolderLookup.Provider pRegistries){
+	public void loadAdditional(@NotNull CompoundTag pTag, @NotNull HolderLookup.Provider pRegistries) {
 		stacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
 		ContainerHelper.loadAllItems(pTag, stacks, pRegistries);
 	}
 
 	@Override
-	public void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries){
+	public void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
 		ContainerHelper.saveAllItems(pTag, stacks, pRegistries);
 	}
 
 	@Override
-	public int getContainerSize(){
+	public int getContainerSize() {
 		return 1;
 	}
 
 	@Override
-	public @NotNull Component getDisplayName(){
+	public @NotNull Component getDisplayName() {
 		return Component.empty().append("Source Of Magic");
 	}
 
@@ -124,7 +127,7 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
 	}
 
 	@Override
-	public void clearContent(){
+	public void clearContent() {
 		stacks.clear();
 	}
 

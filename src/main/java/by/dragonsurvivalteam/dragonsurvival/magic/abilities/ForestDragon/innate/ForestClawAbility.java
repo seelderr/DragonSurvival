@@ -9,26 +9,26 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbili
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class ForestClawAbility extends DragonClawsAbility{
+public class ForestClawAbility extends DragonClawsAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "forest_claws_and_teeth";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.FOREST;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_1.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_2.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_3.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_4.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_5.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_6.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_7.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_1.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_2.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_3.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_4.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_5.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_6.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_claws_and_teeth_7.png")};
 	}
 }

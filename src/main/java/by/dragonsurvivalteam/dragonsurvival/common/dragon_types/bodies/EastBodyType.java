@@ -70,11 +70,12 @@ public class EastBodyType extends AbstractDragonBody {
 
 	@Override
 	public CompoundTag writeNBT() {
-        return new CompoundTag();
+		return new CompoundTag();
 	}
 
 	@Override
-	public void readNBT(CompoundTag base) {}
+	public void readNBT(CompoundTag base) {
+	}
 
 	@Override
 	public String getBodyName() {
@@ -82,53 +83,69 @@ public class EastBodyType extends AbstractDragonBody {
 	}
 
 	@Override
-	public void onPlayerUpdate() {}
+	public void onPlayerUpdate() {
+	}
 
 	@Override
-	public void onPlayerDeath() {}
+	public void onPlayerDeath() {
+	}
 
 	public Double getJumpBonus() {
 		return eastJumpBonus;
 	}
+
 	public Double getFlightMult() {
 		return eastFlightMult;
 	}
+
 	public Double getStepBonus() {
 		return eastStepBonus;
 	}
+
 	public Double getDamageBonus() {
 		return eastDamageBonus;
 	}
+
 	public Double getArmorBonus() {
 		return eastArmorBonus;
 	}
+
 	public Double getManaBonus() {
 		return eastManaBonus;
 	}
+
 	public Double getSwimSpeedBonus() {
 		return eastSwimSpeedBonus;
 	}
+
 	public Double getHealthBonus() {
 		return eastHealthBonus;
 	}
+
 	public Double getKnockbackBonus() {
 		return eastKnockbackBonus;
 	}
+
 	public Double getRunMult() {
 		return eastRunMult;
 	}
+
 	public Double getDamageMult() {
 		return eastDamageMult;
 	}
+
 	public Double getExpMult() {
 		return eastExpMult;
 	}
+
 	public Double getFlightStaminaMult() {
 		return eastFlightStaminaMult;
 	}
+
 	public Double getHealthMult() {
 		return eastHealthMult;
 	}
+
 	public Double getGravityMult() {
 		return eastGravityMult;
 	}

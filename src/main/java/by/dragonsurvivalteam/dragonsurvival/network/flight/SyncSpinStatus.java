@@ -30,7 +30,8 @@ public class SyncSpinStatus implements IMessage<SyncSpinStatus.Data> {
 		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
-	public record Data(int playerId, int spinAttack, int spinCooldown, boolean spinLearned) implements CustomPacketPayload {
+	public record Data(int playerId, int spinAttack, int spinCooldown,
+					   boolean spinLearned) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "spin_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(

@@ -5,11 +5,11 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-public class ClientConfig{
+public class ClientConfig {
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "alternateCastMode", comment = "Should the cast mode where you click the keybind to cast be used?")
 	public static Boolean alternateCastMode = false;
 
-	ClientConfig(ModConfigSpec.Builder builder){
+	ClientConfig(ModConfigSpec.Builder builder) {
 		ConfigHandler.addConfigs(builder, ConfigSide.CLIENT);
 	}
 
@@ -19,11 +19,11 @@ public class ClientConfig{
 	@ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "stableNightVision", comment = "When enabled it stops the blinking effect of night vision when low duration, disable if it causes rendering issues with other mods.")
 	public static Boolean stableNightVision = true;
 
-	@ConfigRange(min =0.0, max = 1.0)
+	@ConfigRange(min = 0.0, max = 1.0)
 	@ConfigOption(side = ConfigSide.CLIENT, category = "animation", key = "smallSizeAnimationSpeedFactor", comment = "The factor by which the additional animation speed from being smaller is multiplied. 1.0 represents the speed accurately reflecting the size of the dragon.")
 	public static Double smallSizeAnimationSpeedFactor = 0.3;
 
-	@ConfigRange(min =0.0, max = 1.0)
+	@ConfigRange(min = 0.0, max = 1.0)
 	@ConfigOption(side = ConfigSide.CLIENT, category = "animation", key = "largeSizeAnimationSpeedFactor", comment = "The factor by which the reduced additional animation speed from being bigger is multiplied. 1.0 represents the speed accurately reflecting the size of the dragon.")
 	public static Double largeSizeAnimationSpeedFactor = 1.0;
 

@@ -58,7 +58,7 @@ public class DragonBonusHandler {
 	}
 
 	@SubscribeEvent
-	public static void removeLavaFootsteps(PlayLevelSoundEvent.AtEntity event){
+	public static void removeLavaFootsteps(PlayLevelSoundEvent.AtEntity event) {
 		if (!(event.getEntity() instanceof Player player)) {
 			return;
 		}
@@ -76,7 +76,7 @@ public class DragonBonusHandler {
 
 	// TODO: This can be completely removed and have these events utilize Attributes.SAFE_FALL_DISTANCE
 	@SubscribeEvent
-	public static void reduceFallDistance(LivingFallEvent livingFallEvent){
+	public static void reduceFallDistance(LivingFallEvent livingFallEvent) {
 		LivingEntity living = livingFallEvent.getEntity();
 
 		if (!(living instanceof Player player)) {
@@ -102,11 +102,11 @@ public class DragonBonusHandler {
 	}
 
 	@SubscribeEvent
-	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent){
+	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent) {
 		final LivingEntity living = jumpEvent.getEntity();
 
 
-		if(living.getEffect(DSEffects.TRAPPED) != null){
+		if (living.getEffect(DSEffects.TRAPPED) != null) {
 			Vec3 deltaMovement = living.getDeltaMovement();
 			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
 			living.setJumping(false);
@@ -114,8 +114,8 @@ public class DragonBonusHandler {
 		}
 
 		DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				if(living instanceof ServerPlayer){
+			if (dragonStateHandler.isDragon()) {
+				if (living instanceof ServerPlayer) {
 					PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
 				}
 			}

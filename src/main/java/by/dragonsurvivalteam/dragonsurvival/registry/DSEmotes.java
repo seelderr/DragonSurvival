@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +28,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSEmotes {
 	public static final ResourceLocation DS_CLIENT_EMOTES = ResourceLocation.fromNamespaceAndPath(MODID, "emotes.json");
 	public static final ArrayList<Emote> EMOTES = new ArrayList<>();
@@ -35,12 +36,12 @@ public class DSEmotes {
 	private static boolean hasStarted = false;
 
 	@SubscribeEvent
-	public static void clientStart(FMLClientSetupEvent event){
-		if(FMLEnvironment.dist  == Dist.CLIENT) {
+	public static void clientStart(FMLClientSetupEvent event) {
+		if (FMLEnvironment.dist == Dist.CLIENT) {
 			DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
 
-			if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
-				((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
+			if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
+				((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener) manager -> {
 					DSEmotes.EMOTES.clear();
 					DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
 				});
@@ -48,8 +49,8 @@ public class DSEmotes {
 		}
 	}
 
-	protected static void reload(ResourceManager manager, ResourceLocation location){
-		try{
+	protected static void reload(ResourceManager manager, ResourceLocation location) {
+		try {
 			Gson gson = GsonFactory.getDefault();
 			Resource resource = manager.getResource(location).orElse(null);
 			if (resource == null)

@@ -21,6 +21,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class DSItems {
 	);
 
 	private static final Properties defaultProperties = new Item.Properties();
-	private static final Properties defaultNonFoodProperties = new Item.Properties(){
+	private static final Properties defaultNonFoodProperties = new Item.Properties() {
 		@Override
 		public Item.Properties food(FoodProperties pFood) {
 			return null;
@@ -106,7 +107,7 @@ public class DSItems {
 		e.removeEffectsCuredBy(EffectCures.MILK);
 	};
 
-	public static final Holder<Item> CHARGED_COAL = DS_ITEMS.register("charged_coal", () -> new ChargedCoalItem(defaultProperties, DragonTypes.CAVE , removeEffectsCuredByMilk));
+	public static final Holder<Item> CHARGED_COAL = DS_ITEMS.register("charged_coal", () -> new ChargedCoalItem(defaultProperties, DragonTypes.CAVE, removeEffectsCuredByMilk));
 	public static final Holder<Item> CHARGED_SOUP = DS_ITEMS.register("charged_soup", () -> new ChargedSoupItem(defaultProperties));
 	public static final Holder<Item> CHARRED_MEAT = DS_ITEMS.register("charred_meat", () -> new DragonFoodItem(defaultProperties));
 	public static final Holder<Item> CHARRED_VEGETABLE = DS_ITEMS.register("charred_vegetable", () -> new DragonFoodItem(defaultProperties));
@@ -124,7 +125,7 @@ public class DSItems {
 	}, () -> new MobEffectInstance(MobEffects.ABSORPTION, Functions.minutesToTicks(5)), () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(10), 1)));
 	public static final Holder<Item> DOUBLE_QUARTZ = DS_ITEMS.register("double_quartz", () -> new DragonFoodItem(defaultProperties, DragonTypes.CAVE, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
 
-	public static final Holder<Item> SWEET_SOUR_RABBIT = DS_ITEMS.register("sweet_sour_rabbit", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST , removeEffectsCuredByMilk));
+	public static final Holder<Item> SWEET_SOUR_RABBIT = DS_ITEMS.register("sweet_sour_rabbit", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, removeEffectsCuredByMilk));
 	public static final Holder<Item> LUMINOUS_OINTMENT = DS_ITEMS.register("luminous_ointment", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, () -> new MobEffectInstance(MobEffects.GLOWING, Functions.minutesToTicks(5)), () -> new MobEffectInstance(DSEffects.MAGIC, Functions.minutesToTicks(5))));
 	public static final Holder<Item> DIAMOND_CHORUS = DS_ITEMS.register("diamond_chorus", () -> new DragonFoodItem(defaultProperties, DragonTypes.FOREST, e -> {
 		e.removeEffect(MobEffects.POISON);
@@ -136,7 +137,7 @@ public class DSItems {
 
 	public static final Holder<Item> SEASONED_FISH = DS_ITEMS.register("seasoned_fish", () -> new DragonFoodItem(defaultProperties));
 	public static final Holder<Item> GOLDEN_CORAL_PUFFERFISH = DS_ITEMS.register("golden_coral_pufferfish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA, () -> new MobEffectInstance(MobEffects.REGENERATION, Functions.secondsToTicks(5))));
-	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA , entity -> {
+	public static final Holder<Item> FROZEN_RAW_FISH = DS_ITEMS.register("frozen_raw_fish", () -> new DragonFoodItem(defaultProperties, DragonTypes.SEA, entity -> {
 		removeEffectsCuredByMilk.accept(entity);
 
 		if (entity instanceof ServerPlayer serverPlayer) {
@@ -157,13 +158,13 @@ public class DSItems {
 	public static final Holder<Item> WING_GRANT_ITEM = DS_ITEMS.register("wing_grant", () -> new WingGrantItem(defaultProperties));
 	public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", () -> new SpinGrantItem(defaultProperties));
 
-	public static final Holder<Item> GOOD_DRAGON_UPGRADE = DS_ITEMS.register("good_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)){
-			@Override
-			public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
-				super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-				pTooltipComponents.add(Component.translatable("ds.description.good_dragon_upgrade"));
+	public static final Holder<Item> GOOD_DRAGON_UPGRADE = DS_ITEMS.register("good_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)) {
+				@Override
+				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+					pTooltipComponents.add(Component.translatable("ds.description.good_dragon_upgrade"));
+				}
 			}
-		}
 	);
 	public static final Supplier<ArmorItem> GOOD_DRAGON_HELMET = DS_ITEMS.register("good_dragon_helmet", () -> new GoodDragonArmorItem(
 			ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
@@ -178,7 +179,7 @@ public class DSItems {
 			ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
 	);
 
-	public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)){
+	public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", () -> new Item(defaultProperties.rarity(Rarity.RARE)) {
 		@Override
 		public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 			super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -199,8 +200,7 @@ public class DSItems {
 	);
 
 	public static final Holder<Item> DRAGON_HUNTER_SWORD = DS_ITEMS.register("dragon_hunter_sword", () -> new DragonHunterWeapon(
-			DSEquipment.DRAGON_HUNTER, new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.8F)))
-			{
+					DSEquipment.DRAGON_HUNTER, new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.8F))) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -209,7 +209,7 @@ public class DSItems {
 			}
 	);
 	public static final Holder<Item> PARTISAN = DS_ITEMS.register("hunter_partisan", () -> new SwordItem(
-			Tiers.IRON, new Item.Properties().component(
+					Tiers.IRON, new Item.Properties().component(
 					DataComponents.ATTRIBUTE_MODIFIERS,
 					ItemAttributeModifiers.builder()
 							.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 6, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
@@ -217,8 +217,7 @@ public class DSItems {
 							.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.build()
-			))
-			{
+			)) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -228,16 +227,15 @@ public class DSItems {
 	);
 
 	public static final Holder<Item> HUNTER_PARTISAN_DIAMOND = DS_ITEMS.register("hunter_partisan_diamond", () -> new DragonHunterWeapon(
-			Tiers.DIAMOND, new Item.Properties().component(
-				DataComponents.ATTRIBUTE_MODIFIERS,
-				ItemAttributeModifiers.builder()
-						.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 7, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
-						.build()
-			))
-			{
+					Tiers.DIAMOND, new Item.Properties().component(
+					DataComponents.ATTRIBUTE_MODIFIERS,
+					ItemAttributeModifiers.builder()
+							.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID, 7, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, -3.2f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+							.build()
+			)) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -255,8 +253,7 @@ public class DSItems {
 							.add(Attributes.BLOCK_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_block_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.add(Attributes.ENTITY_INTERACTION_RANGE, new AttributeModifier(res("dragonsurvival.partisan_attack_reach"), 1f, AttributeModifier.Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
 							.build()
-			))
-			{
+			)) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -267,11 +264,10 @@ public class DSItems {
 
 	public static final String GOOD_DRAGON_KEY_ID = "good_dragon_key";
 	public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register(GOOD_DRAGON_KEY_ID, () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-			res("geo/" + GOOD_DRAGON_KEY_ID + ".geo.json"),
-			res("textures/item/" + GOOD_DRAGON_KEY_ID + ".png"),
-			res("treasure_friendly"))
-			{
+					new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
+					res("geo/" + GOOD_DRAGON_KEY_ID + ".geo.json"),
+					res("textures/item/" + GOOD_DRAGON_KEY_ID + ".png"),
+					res("treasure_friendly")) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -282,11 +278,10 @@ public class DSItems {
 
 	public static final String EVIL_DRAGON_KEY_ID = "evil_dragon_key";
 	public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(EVIL_DRAGON_KEY_ID, () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-			res("geo/" + EVIL_DRAGON_KEY_ID + ".geo.json"),
-			res("textures/item/" + EVIL_DRAGON_KEY_ID + ".png"),
-			res("treasure_angry"))
-			{
+					new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
+					res("geo/" + EVIL_DRAGON_KEY_ID + ".geo.json"),
+					res("textures/item/" + EVIL_DRAGON_KEY_ID + ".png"),
+					res("treasure_angry")) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -297,11 +292,10 @@ public class DSItems {
 
 	public static final String HUNTER_KEY_ID = "hunter_key";
 	public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register(HUNTER_KEY_ID, () -> new RotatingKeyItem(
-			new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-			res("geo/" + HUNTER_KEY_ID + ".geo.json"),
-			res("textures/item/" + HUNTER_KEY_ID + ".png"),
-			res("treasure_hunter"))
-			{
+					new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
+					res("geo/" + HUNTER_KEY_ID + ".geo.json"),
+					res("textures/item/" + HUNTER_KEY_ID + ".png"),
+					res("treasure_hunter")) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -312,8 +306,7 @@ public class DSItems {
 
 	public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(defaultNonFoodProperties.rarity(Rarity.EPIC)));
 
-	public static final Holder<Item> SPEARMAN_PROMOTION = DS_ITEMS.register("spearman_promotion", () -> new Item(defaultNonFoodProperties.rarity(Rarity.COMMON))
-	{
+	public static final Holder<Item> SPEARMAN_PROMOTION = DS_ITEMS.register("spearman_promotion", () -> new Item(defaultNonFoodProperties.rarity(Rarity.COMMON)) {
 		@Override
 		public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 			super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
@@ -343,7 +336,7 @@ public class DSItems {
 	public static final Holder<Item> INACTIVE_FIRE_DRAGON_BEACON = DS_ITEMS.register("beacon_fire_0", () -> new Item(new Item.Properties()));
 
 	@SubscribeEvent
-	public static void registerItemExtensions(RegisterClientExtensionsEvent event){
+	public static void registerItemExtensions(RegisterClientExtensionsEvent event) {
 		event.registerItem(new ShakeWhenUsedExtension(), DRAGON_SOUL.value());
 		event.registerItem(new IClientItemExtensions() {
 			@Override

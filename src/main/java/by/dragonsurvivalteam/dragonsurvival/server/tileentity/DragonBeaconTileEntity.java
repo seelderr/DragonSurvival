@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
 import java.util.List;
 import java.util.Random;
 import net.minecraft.core.BlockPos;
@@ -29,17 +30,17 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 
 	public final float bobOffs;
 
-	public enum Type{
+	public enum Type {
 		PEACE,
 		MAGIC,
 		FIRE,
 		NONE
 	}
 
-	public DragonBeaconTileEntity(BlockPos pWorldPosition, BlockState pBlockState){
+	public DragonBeaconTileEntity(BlockPos pWorldPosition, BlockState pBlockState) {
 		super(DSTileEntities.DRAGON_BEACON.get(), pWorldPosition, pBlockState);
 		setType(this, pBlockState.getBlock());
-		bobOffs = new Random().nextFloat() * (float)Math.PI * 2.0F;
+		bobOffs = new Random().nextFloat() * (float) Math.PI * 2.0F;
 	}
 
 	public static void serverTick(Level level, BlockPos position, BlockState state, DragonBeaconTileEntity beacon) {
@@ -54,11 +55,12 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 			List<Player> dragons = level.getEntitiesOfClass(Player.class, new AABB(position).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
 
 			switch (beacon.type) {
-				case PEACE -> dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
-                    if (effect != null) {
-                        player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
-                    }
-                }));
+				case PEACE ->
+						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+							if (effect != null) {
+								player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+							}
+						}));
 				case MAGIC ->
 						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
 							if (effect != null) {
@@ -81,24 +83,24 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 	}
 
 	private static void setType(final DragonBeaconTileEntity beaconTileEntity, final Block beacon) {
-		if(beaconTileEntity.type == Type.NONE){
-			if(beacon == DSBlocks.MAGIC_DRAGON_BEACON.get()){
+		if (beaconTileEntity.type == Type.NONE) {
+			if (beacon == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
 				beaconTileEntity.type = Type.MAGIC;
-			}else if(beacon == DSBlocks.PEACE_DRAGON_BEACON.get()){
+			} else if (beacon == DSBlocks.PEACE_DRAGON_BEACON.get()) {
 				beaconTileEntity.type = Type.PEACE;
-			}else if(beacon == DSBlocks.FIRE_DRAGON_BEACON.get()){
+			} else if (beacon == DSBlocks.FIRE_DRAGON_BEACON.get()) {
 				beaconTileEntity.type = Type.FIRE;
 			}
 		}
 	}
 
 	@Override
-	public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries){
+	public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
 		type = Type.valueOf(pTag.getString("Type"));
 	}
 
 	@Override
-	public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries){
+	public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
 		pTag.putString("Type", type.name());
 	}
 }

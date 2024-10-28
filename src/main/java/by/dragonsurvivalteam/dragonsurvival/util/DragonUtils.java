@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import com.google.common.base.Objects;
+
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.world.entity.Entity;
@@ -15,10 +16,10 @@ import net.minecraft.world.level.Level;
 
 public class DragonUtils {
 
-	public static AbstractDragonType getDragonType(Player entity){
+	public static AbstractDragonType getDragonType(Player entity) {
 		return DragonStateProvider.getData(entity).getType();
 	}
-	
+
 	public static AbstractDragonType getDragonType(DragonStateHandler handler) {
 		return handler.getType();
 	}
@@ -38,7 +39,7 @@ public class DragonUtils {
 
 		return isDragonType(DragonStateProvider.getData(player), typeToCheck);
 	}
-	
+
 	public static boolean isDragonType(final DragonStateHandler playerHandler, final AbstractDragonType typeToCheck) {
 		if (playerHandler == null || typeToCheck == null || playerHandler.getType() == null) {
 			return false;
@@ -55,7 +56,7 @@ public class DragonUtils {
 		return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
 	}
 
-	public static DragonLevel getDragonLevel(Player entity){
+	public static DragonLevel getDragonLevel(Player entity) {
 		return DragonStateProvider.getData(entity).getLevel();
 	}
 
@@ -70,7 +71,9 @@ public class DragonUtils {
 		return false;
 	}
 
-	/** Converts the supplied harvest level to a corresponding vanilla tier */
+	/**
+	 * Converts the supplied harvest level to a corresponding vanilla tier
+	 */
 	public static @Nullable Tier levelToVanillaTier(int level) {
 		if (level < 0) {
 			return null;

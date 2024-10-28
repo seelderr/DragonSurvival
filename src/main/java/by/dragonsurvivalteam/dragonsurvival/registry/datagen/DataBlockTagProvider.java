@@ -6,6 +6,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+
 import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,8 +35,8 @@ public class DataBlockTagProvider extends BlockTagsProvider {
 	@Override
 	protected void addTags(@NotNull final HolderLookup.Provider provider) {
 		tag(DRAGON_ALTARS).addAll(DS_BLOCKS.getEntries().stream()
-						.filter(entry -> entry.getDelegate().value() instanceof DragonAltarBlock)
-				        .map(entry -> BuiltInRegistries.BLOCK.getResourceKey(entry.getDelegate().value()).get()).toList());
+				.filter(entry -> entry.getDelegate().value() instanceof DragonAltarBlock)
+				.map(entry -> BuiltInRegistries.BLOCK.getResourceKey(entry.getDelegate().value()).get()).toList());
 
 		tag(DRAGON_TREASURES).addAll(DS_BLOCKS.getEntries().stream()
 				.filter(entry -> entry.getDelegate().value() instanceof TreasureBlock)

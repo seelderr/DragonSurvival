@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import net.minecraft.nbt.CompoundTag;
 
-public class LayerSettings implements NBTInterface{
+public class LayerSettings implements NBTInterface {
 	public String selectedSkin = SkinCap.defaultSkinValue;
 
 	public float hue = 0.5f, saturation = 0.5f, brightness = 0.5f;
@@ -12,15 +12,16 @@ public class LayerSettings implements NBTInterface{
 
 	public boolean glowing = false;
 
-	public LayerSettings(){}
+	public LayerSettings() {
+	}
 
-	public LayerSettings(String selectedSkin, float defaultHue){
+	public LayerSettings(String selectedSkin, float defaultHue) {
 		this.selectedSkin = selectedSkin;
 		this.hue = defaultHue;
 	}
 
 	@Override
-	public CompoundTag writeNBT(){
+	public CompoundTag writeNBT() {
 		CompoundTag nbt = new CompoundTag();
 		nbt.putString("skin", selectedSkin);
 
@@ -34,7 +35,7 @@ public class LayerSettings implements NBTInterface{
 	}
 
 	@Override
-	public void readNBT(CompoundTag base){
+	public void readNBT(CompoundTag base) {
 		selectedSkin = base.getString("skin");
 
 		hue = base.getFloat("hue");

@@ -2,9 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+
 import java.util.List;
 import java.util.Objects;
-
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -45,14 +45,14 @@ public class DataItemModelProvider extends ItemModelProvider {
 	);
 
 	@Override
-	protected void registerModels(){
+	protected void registerModels() {
 		DSItems.DS_ITEMS.getEntries().forEach((holder) -> {
-			if(holder.get() instanceof BlockItem blockItem && blockItemsThatShouldBeBasicInstead.stream().noneMatch(blockItem.toString()::contains)) {
-				if(blockItemsThatAreManuallyAuthored.stream().anyMatch(blockItem.toString()::contains)) {
+			if (holder.get() instanceof BlockItem blockItem && blockItemsThatShouldBeBasicInstead.stream().noneMatch(blockItem.toString()::contains)) {
+				if (blockItemsThatAreManuallyAuthored.stream().anyMatch(blockItem.toString()::contains)) {
 					return;
 				}
 
-				if(blockItem.toString().contains("skeleton")) {
+				if (blockItem.toString().contains("skeleton")) {
 					// Parse the string up to "_skin"
 					String[] split = holder.getId().getPath().split("_skin");
 
@@ -62,19 +62,19 @@ public class DataItemModelProvider extends ItemModelProvider {
 					getBuilder(blockItem.toString())
 							.parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + split[0])))
 							.texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin));
-				} else if (blockItem.toString().contains("vault")){
+				} else if (blockItem.toString().contains("vault")) {
 					getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath()) + "_inactive"));
 				} else {
 					getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath())));
 				}
 			} else {
-				if(itemsThatAreManuallyAuthored.stream().anyMatch(holder.getId().getPath()::contains)) {
+				if (itemsThatAreManuallyAuthored.stream().anyMatch(holder.getId().getPath()::contains)) {
 					return;
 				}
 
-				if(holder.get() instanceof SpawnEggItem item) {
+				if (holder.get() instanceof SpawnEggItem item) {
 					getBuilder(item.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.withDefaultNamespace("item/template_spawn_egg")));
-				} else if(holder.get() instanceof SwordItem item) {
+				} else if (holder.get() instanceof SwordItem item) {
 					ResourceLocation itemLoc = Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item));
 					getBuilder(itemLoc.toString())
 							.parent(new ModelFile.UncheckedModelFile("item/handheld"))

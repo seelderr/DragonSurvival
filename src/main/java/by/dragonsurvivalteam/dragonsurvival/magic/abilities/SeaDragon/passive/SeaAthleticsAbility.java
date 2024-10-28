@@ -11,37 +11,37 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.AthleticsAbilit
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class SeaAthleticsAbility extends AthleticsAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "seaAthletics", comment = "Whether the sea athletics ability should be enabled" )
+public class SeaAthleticsAbility extends AthleticsAbility {
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "seaAthletics", comment = "Whether the sea athletics ability should be enabled")
 	public static Boolean seaAthletics = true;
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return "sea_athletics";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.SEA;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_1.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_2.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_3.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_4.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_5.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_1.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_2.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_3.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_4.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_athletics_5.png")};
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 2;
 	}
 
 	@Override
-	public boolean isDisabled(){
+	public boolean isDisabled() {
 		return super.isDisabled() || !seaAthletics;
 	}
 }

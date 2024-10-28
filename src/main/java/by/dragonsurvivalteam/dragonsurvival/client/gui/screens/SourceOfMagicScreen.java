@@ -29,14 +29,14 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 
 	private final Player player;
 
-	public SourceOfMagicScreen(SourceOfMagicContainer screenContainer, Inventory inv, Component titleIn){
+	public SourceOfMagicScreen(SourceOfMagicContainer screenContainer, Inventory inv, Component titleIn) {
 		super(screenContainer, inv, titleIn);
 		nest = screenContainer.nestEntity;
 		player = inv.player;
 	}
 
 	@Override
-	protected void init(){
+	protected void init() {
 		super.init();
 		addRenderableWidget(new HelpButton(leftPos + 12, topPos + 12, 12, 12, "ds.help.source_of_magic", 0));
 	}
@@ -53,11 +53,11 @@ public class SourceOfMagicScreen extends AbstractContainerScreen<SourceOfMagicCo
 
 		ResourceLocation resourceLocation = null;
 
-		if(DSBlocks.CAVE_SOURCE_OF_MAGIC.get().equals(block)){
+		if (DSBlocks.CAVE_SOURCE_OF_MAGIC.get().equals(block)) {
 			resourceLocation = hasItem ? CAVE_NEST1 : CAVE_NEST0;
-		}else if(DSBlocks.FOREST_SOURCE_OF_MAGIC.get().equals(block)){
+		} else if (DSBlocks.FOREST_SOURCE_OF_MAGIC.get().equals(block)) {
 			resourceLocation = hasItem ? FOREST_NEST1 : FOREST_NEST0;
-		}else if(DSBlocks.SEA_SOURCE_OF_MAGIC.get().equals(block)){
+		} else if (DSBlocks.SEA_SOURCE_OF_MAGIC.get().equals(block)) {
 			resourceLocation = hasItem ? SEA_NEST1 : SEA_NEST0;
 		}
 

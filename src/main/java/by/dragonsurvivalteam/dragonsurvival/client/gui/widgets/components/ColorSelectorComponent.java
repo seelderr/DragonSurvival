@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import com.google.common.collect.ImmutableList;
+
 import java.awt.*;
 import java.util.List;
 import java.util.function.Supplier;
@@ -32,7 +33,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 	private final Supplier<LayerSettings> settings;
 	public boolean visible;
 
-	public ColorSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer){
+	public ColorSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer) {
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
@@ -52,7 +53,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 
 		Color defaultC = Color.decode(text.defaultColor);
 
-		if(set.modifiedColor){
+		if (set.modifiedColor) {
 			defaultC = Color.getHSBColor(set.hue, set.saturation, set.brightness);
 		}
 
@@ -70,17 +71,17 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 	}
 
 	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double)y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
+	public boolean isMouseOver(double pMouseX, double pMouseY) {
+		return visible && pMouseY >= (double) y - 3 && pMouseY <= (double) y + ySize + 3 && pMouseX >= (double) x && pMouseX <= (double) x + xSize;
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public List<? extends GuiEventListener> children() {
 		return ImmutableList.of(colorPicker, glowing);
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 		guiGraphics.pose().pushPose();
 		// Render pop-up menu content above the other elements
 		guiGraphics.pose().translate(0, 0, 150);

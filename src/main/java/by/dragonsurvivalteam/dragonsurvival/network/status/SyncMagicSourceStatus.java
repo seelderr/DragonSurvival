@@ -25,8 +25,7 @@ public class SyncMagicSourceStatus implements IMessage<SyncMagicSourceStatus.Dat
 		})).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
 
-	public record Data(int playerId, boolean state, int timer) implements CustomPacketPayload
-	{
+	public record Data(int playerId, boolean state, int timer) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_source_status"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(

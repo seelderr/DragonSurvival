@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
+
 import java.awt.*;
 import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphics;
@@ -16,7 +17,7 @@ public class ColorPickerButton extends ExtendedButton {
 	double selectorX;
 	double selectorY;
 
-	public ColorPickerButton(int xPos, int yPos, int width, int height, Color defaultColor, Consumer<Color> colorConsumer){
+	public ColorPickerButton(int xPos, int yPos, int width, int height, Color defaultColor, Consumer<Color> colorConsumer) {
 		super(xPos, yPos, width, height, Component.empty(), null);
 		this.defaultColor = defaultColor;
 		this.colorConsumer = colorConsumer;
@@ -28,33 +29,33 @@ public class ColorPickerButton extends ExtendedButton {
 	}
 
 	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		RenderingUtils.renderColorSquare(guiGraphics, getX(), getY(), width, height);
 		RenderingUtils.fill(guiGraphics, getX() + selectorX - 2, getY() + selectorY - 2, getX() + selectorX + 2, getY() + selectorY + 2, Color.black.getRGB());
 		RenderingUtils.fill(guiGraphics, getX() + selectorX - 1, getY() + selectorY - 1, getX() + selectorX + 1, getY() + selectorY + 1, getColor().getRGB());
 	}
 
-	public Color getColor(){
+	public Color getColor() {
 		double hue = selectorX / width * 360.0 / 360.0;
 
-		if(selectorY > height / 2f){
+		if (selectorY > height / 2f) {
 			double saturation = 1f - (selectorY - height / 2f) / (height / 2f) * 360.0 / 360.0;
-			return Color.getHSBColor((float)hue, (float)saturation, 1f);
-		}else{
+			return Color.getHSBColor((float) hue, (float) saturation, 1f);
+		} else {
 			double brightness = selectorY / (height / 2f) * 360.0 / 360.0;
-			return Color.getHSBColor((float)hue, 1f, (float)brightness);
+			return Color.getHSBColor((float) hue, 1f, (float) brightness);
 		}
 	}
 
 	@Override
-	public void onClick(double pMouseX, double pMouseY){
+	public void onClick(double pMouseX, double pMouseY) {
 		selectorX = Mth.clamp(pMouseX - getX(), 0, width);
 		selectorY = Mth.clamp(pMouseY - getY(), 0, height);
 		colorConsumer.accept(getColor());
 	}
 
 	@Override
-	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY){
+	public boolean mouseDragged(double pMouseX, double pMouseY, int pButton, double pDragX, double pDragY) {
 		selectorX = Mth.clamp(pMouseX - getX(), 0, width);
 		selectorY = Mth.clamp(pMouseY - getY(), 0, height);
 		colorConsumer.accept(getColor());
@@ -64,5 +65,6 @@ public class ColorPickerButton extends ExtendedButton {
 
 	//Removes button sound
 	@Override
-	public void playDownSound(SoundManager pHandler){}
+	public void playDownSound(SoundManager pHandler) {
+	}
 }

@@ -18,6 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
+
 import java.awt.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -35,34 +36,34 @@ public class MagicHUD {
 
 	public static final Color COLOR = new Color(243, 48, 59);
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position")
 	public static Integer castbarXOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position")
 	public static Integer castbarYOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position")
 	public static Integer skillbarXOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position")
 	public static Integer skillbarYOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position")
 	public static Integer manabarXOffset = 0;
 
-	@ConfigRange( min = -1000, max = 1000 )
-	@ConfigOption( side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position" )
+	@ConfigRange(min = -1000, max = 1000)
+	@ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position")
 	public static Integer manabarYOffset = 0;
 
 	public static boolean renderExperienceBar(GuiGraphics guiGraphics, int screenWidth) {
 		Player localPlayer = ClientProxy.getLocalPlayer();
 
-		if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer() ||!Minecraft.getInstance().gameMode.hasExperience()) {
+		if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer() || !Minecraft.getInstance().gameMode.hasExperience()) {
 			return false;
 		}
 
@@ -120,13 +121,13 @@ public class MagicHUD {
 	private static int errorTicks;
 	private static MutableComponent errorMessage;
 
-	public static void castingError(MutableComponent component){
-		if(ClientCastingHandler.hasCast) return;
+	public static void castingError(MutableComponent component) {
+		if (ClientCastingHandler.hasCast) return;
 		errorTicks = Functions.secondsToTicks(5);
 		errorMessage = component;
 	}
 
-	public static void renderAbilityHUD(final DragonStateHandler handler, final GuiGraphics guiGraphics, int width, int height){
+	public static void renderAbilityHUD(final DragonStateHandler handler, final GuiGraphics guiGraphics, int width, int height) {
 		Player localPlayer = Minecraft.getInstance().player;
 
 		if (localPlayer == null || localPlayer.isSpectator()) {

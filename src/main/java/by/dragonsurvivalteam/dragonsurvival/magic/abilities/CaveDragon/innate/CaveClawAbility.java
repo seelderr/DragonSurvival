@@ -9,26 +9,26 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbili
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class CaveClawAbility extends DragonClawsAbility{
+public class CaveClawAbility extends DragonClawsAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "cave_claws_and_teeth";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.CAVE;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_1.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_2.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_3.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_4.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_5.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_6.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_7.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_1.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_2.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_3.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_4.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_5.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_6.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_claws_and_teeth_7.png")};
 	}
 }

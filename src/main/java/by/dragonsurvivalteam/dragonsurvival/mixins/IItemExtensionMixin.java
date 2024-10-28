@@ -15,16 +15,16 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(IItemExtension.class)
 public interface IItemExtensionMixin {
-    @ModifyReturnValue(method = "getFoodProperties", at = @At("RETURN"))
-    private FoodProperties dragonSurvival$getDragonFoodProperties(final FoodProperties original, final ItemStack stack, @Nullable final LivingEntity entity) {
-        if (entity instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
+	@ModifyReturnValue(method = "getFoodProperties", at = @At("RETURN"))
+	private FoodProperties dragonSurvival$getDragonFoodProperties(final FoodProperties original, final ItemStack stack, @Nullable final LivingEntity entity) {
+		if (entity instanceof Player player) {
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
-            if (handler.isDragon()) {
-                return DragonFoodHandler.getDragonFoodProperties(stack, handler.getType());
-            }
-        }
+			if (handler.isDragon()) {
+				return DragonFoodHandler.getDragonFoodProperties(stack, handler.getType());
+			}
+		}
 
-        return original;
-    }
+		return original;
+	}
 }

@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
 import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,7 +19,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
-/** Handle food which can replenish mana */
+/**
+ * Handle food which can replenish mana
+ */
 public class DragonTreatItem extends Item {
 	public AbstractDragonType type;
 

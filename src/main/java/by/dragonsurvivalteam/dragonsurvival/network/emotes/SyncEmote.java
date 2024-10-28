@@ -28,7 +28,7 @@ public class SyncEmote implements IMessage<SyncEmote.Data> {
 
 	public static void handleClient(final SyncEmote.Data message, final IPayloadContext context) {
 		Entity sender = context.player().level().getEntity(message.playerId);
-		if(sender instanceof Player player) {
+		if (sender instanceof Player player) {
 			context.enqueueWork(() -> {
 				DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getEmoteData().deserializeNBT(player.registryAccess(), message.nbt));
 			});
@@ -39,11 +39,11 @@ public class SyncEmote implements IMessage<SyncEmote.Data> {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "emote"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.COMPOUND_TAG,
-			Data::nbt,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.COMPOUND_TAG,
+				Data::nbt,
+				Data::new
 		);
 
 		@Override

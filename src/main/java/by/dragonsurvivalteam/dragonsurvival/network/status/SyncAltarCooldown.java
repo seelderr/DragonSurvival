@@ -20,16 +20,16 @@ public class SyncAltarCooldown implements IMessage<SyncAltarCooldown.Data> {
 		context.enqueueWork(() -> ClientProxy.handleSyncAltarCooldown(message));
 	}
 
-	public static void handleServer (final Data message, final IPayloadContext context) {
+	public static void handleServer(final Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
-				cap.altarCooldown = message.cooldown;
-				cap.hasUsedAltar = true;
-				cap.isInAltar = false;
-			})
+					cap.altarCooldown = message.cooldown;
+					cap.hasUsedAltar = true;
+					cap.isInAltar = false;
+				})
 		).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
 	}
 
-	public record Data (int playerId, int cooldown) implements CustomPacketPayload {
+	public record Data(int playerId, int cooldown) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "altar_cooldown"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(

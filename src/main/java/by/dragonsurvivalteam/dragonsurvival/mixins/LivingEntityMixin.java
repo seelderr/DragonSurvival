@@ -32,32 +32,37 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-	@Shadow public abstract ItemStack getMainHandItem();
-	@Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
-	@Shadow protected ItemStack useItem;
+	@Shadow
+	public abstract ItemStack getMainHandItem();
+
+	@Shadow
+	public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
+
+	@Shadow
+	protected ItemStack useItem;
 
 	public LivingEntityMixin(EntityType<?> type, Level level) {
 		super(type, level);
 	}
 
-    @SuppressWarnings("ConstantValue")
-    @Redirect(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"))
-    private ItemStack dragonSurvival$grantDragonSwordAttributes(LivingEntity entity, EquipmentSlot slot) {
-        if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
+	@SuppressWarnings("ConstantValue")
+	@Redirect(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"))
+	private ItemStack dragonSurvival$grantDragonSwordAttributes(LivingEntity entity, EquipmentSlot slot) {
+		if (slot == EquipmentSlot.MAINHAND && (Object) this instanceof Player player) {
+			DragonStateHandler handler = DragonStateProvider.getData(player);
 
-            if (handler.isDragon() && ToolUtils.shouldUseDragonTools(getMainHandItem())) {
-                // Without this the item in the dragon slot for the sword would not grant any of its attributes
-                ItemStack sword = handler.getClawToolData().getClawsInventory().getItem(ClawInventory.Slot.SWORD.ordinal());
+			if (handler.isDragon() && ToolUtils.shouldUseDragonTools(getMainHandItem())) {
+				// Without this the item in the dragon slot for the sword would not grant any of its attributes
+				ItemStack sword = handler.getClawToolData().getClawsInventory().getItem(ClawInventory.Slot.SWORD.ordinal());
 
-                if (!sword.isEmpty()) {
-                    return sword;
-                }
-            }
-        }
+				if (!sword.isEmpty()) {
+					return sword;
+				}
+			}
+		}
 
-        return getItemBySlot(slot);
-    }
+		return getItemBySlot(slot);
+	}
 
 	@ModifyReturnValue(at = @At(value = "RETURN"), method = "getPassengerRidingPosition")
 	public Vec3 dragonSurvival$getDragonPassengersRidingOffset(Vec3 original) {
@@ -98,7 +103,7 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 
 		return original;
-  	}
+	}
 
 	@Inject(method = "getEquipmentSlotForItem", at = @At(value = "HEAD"), cancellable = true)
 	private void dragonSurvival$disallowBlackListedItemsFromBeingEquipped(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> callback) {
@@ -109,7 +114,8 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
-	@Unique private int dragonSurvival$getHumanOrDragonUseDuration(int original){
+    @Unique
+    private int dragonSurvival$getHumanOrDragonUseDuration(int original) {
 		if ((Object) this instanceof Player player) {
 			DragonStateHandler handler = DragonStateProvider.getData(player);
 
@@ -122,12 +128,12 @@ public abstract class LivingEntityMixin extends Entity {
 	}
 
 	@ModifyExpressionValue(method = "shouldTriggerItemUseEffects", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
-	private int replaceUseDurationInShouldTriggerItemUseEffects(int original){
+	private int replaceUseDurationInShouldTriggerItemUseEffects(int original) {
 		return dragonSurvival$getHumanOrDragonUseDuration(original);
 	}
 
 	@ModifyExpressionValue(method = "onSyncedDataUpdated", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
-	private int replaceUseDurationInSyncedDataUpdated(int original){
+	private int replaceUseDurationInSyncedDataUpdated(int original) {
 		return dragonSurvival$getHumanOrDragonUseDuration(original);
 	}
 
@@ -144,7 +150,9 @@ public abstract class LivingEntityMixin extends Entity {
 		return original;
 	}
 
-	/** There is no event to actually modify the effect when it's being applied */
+	/**
+	 * There is no event to actually modify the effect when it's being applied
+	 */
 	@ModifyVariable(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("HEAD"), argsOnly = true)
 	private MobEffectInstance dragonSurvival$modifyEffect(final MobEffectInstance instance, final @Local(argsOnly = true) Entity applier) {
 		if ((Object) this instanceof Player affected) {

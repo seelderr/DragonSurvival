@@ -24,8 +24,8 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@SuppressWarnings( "rawtypes,unchecked" )
-@EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )
+@SuppressWarnings("rawtypes,unchecked")
+@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DSEntities {
 	public static final DeferredRegister<EntityType<?>> DS_ENTITY_TYPES = DeferredRegister.create(
 			BuiltInRegistries.ENTITY_TYPE,
@@ -41,7 +41,7 @@ public class DSEntities {
 	public static DeferredHolder<EntityType<?>, EntityType<Bolas>> BOLAS_ENTITY = DS_ENTITY_TYPES.register(
 			"bolas",
 			() -> EntityType.Builder.<Bolas>of((entity, level) ->
-					new Bolas(level), MobCategory.MISC)
+							new Bolas(level), MobCategory.MISC)
 					.sized(0.25F, 0.25F)
 					.clientTrackingRange(4)
 					.updateInterval(10)

@@ -13,17 +13,17 @@ import software.bernie.geckolib.model.data.EntityModelData;
 
 public class KnightModel extends GeoModel<KnightEntity> {
 	@Override
-	public ResourceLocation getModelResource(KnightEntity object){
+	public ResourceLocation getModelResource(KnightEntity object) {
 		return ResourceLocation.fromNamespaceAndPath(MODID, "geo/hunter_knight.geo.json");
 	}
 
 	@Override
-	public ResourceLocation getTextureResource(KnightEntity object){
+	public ResourceLocation getTextureResource(KnightEntity object) {
 		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/knight_on_horse.png");
 	}
 
 	@Override
-	public ResourceLocation getAnimationResource(KnightEntity animatable){
+	public ResourceLocation getAnimationResource(KnightEntity animatable) {
 		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_knight.animation.json");
 	}
 

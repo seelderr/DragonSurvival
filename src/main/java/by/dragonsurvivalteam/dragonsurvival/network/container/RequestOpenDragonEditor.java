@@ -19,12 +19,15 @@ public class RequestOpenDragonEditor implements IMessage<RequestOpenDragonEditor
 
 		public static final Type<RequestOpenDragonEditor.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_editor"));
 
-		public static final StreamCodec<ByteBuf, RequestOpenDragonEditor.Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, RequestOpenDragonEditor.Data> STREAM_CODEC = new StreamCodec<>() {
 			@Override
-			public void encode(ByteBuf pBuffer, RequestOpenDragonEditor.Data pValue) {}
+			public void encode(ByteBuf pBuffer, RequestOpenDragonEditor.Data pValue) {
+			}
 
 			@Override
-			public RequestOpenDragonEditor.Data decode(ByteBuf pBuffer) { return new RequestOpenDragonEditor.Data(); }
+			public RequestOpenDragonEditor.Data decode(ByteBuf pBuffer) {
+				return new RequestOpenDragonEditor.Data();
+			}
 		};
 
 		@Override

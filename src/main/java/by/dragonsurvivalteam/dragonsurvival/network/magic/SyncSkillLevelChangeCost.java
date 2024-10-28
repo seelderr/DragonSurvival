@@ -17,7 +17,9 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Synchronizes the logic of consuming or giving experience to the server side to prevent de-syncs */
+/**
+ * Synchronizes the logic of consuming or giving experience to the server side to prevent de-syncs
+ */
 public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCost.Data> {
 	public static void handleServer(final SyncSkillLevelChangeCost.Data message, final IPayloadContext context) {
 		Player sender = context.player();
@@ -46,13 +48,13 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "skill_level_change_cost"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::level,
-			ByteBufCodecs.STRING_UTF8,
-			Data::skill,
-			ByteBufCodecs.VAR_INT,
-			Data::levelChange,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::level,
+				ByteBufCodecs.STRING_UTF8,
+				Data::skill,
+				ByteBufCodecs.VAR_INT,
+				Data::levelChange,
+				Data::new
 		);
 
 		@Override

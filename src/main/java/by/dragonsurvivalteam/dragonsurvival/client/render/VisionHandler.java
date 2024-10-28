@@ -12,79 +12,83 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
-/** Handles water and lava vision effects */
+/**
+ * Handles water and lava vision effects
+ */
 @EventBusSubscriber(Dist.CLIENT)
 public class VisionHandler {
-    private static boolean hadLavaVision;
-    private static boolean hadWaterVision;
+	private static boolean hadLavaVision;
+	private static boolean hadWaterVision;
 
-    @SubscribeEvent
-    public static void onRenderFog(ViewportEvent.RenderFog event) {
-        if (hasLavaVision() && event.getCamera().getFluidInCamera() == FogType.LAVA) {
-            event.setNearPlaneDistance(0);
-            event.setFarPlaneDistance(event.getRenderer().getRenderDistance() * 0.5f);
-            event.setCanceled(true);
-        }
-    }
+	@SubscribeEvent
+	public static void onRenderFog(ViewportEvent.RenderFog event) {
+		if (hasLavaVision() && event.getCamera().getFluidInCamera() == FogType.LAVA) {
+			event.setNearPlaneDistance(0);
+			event.setFarPlaneDistance(event.getRenderer().getRenderDistance() * 0.5f);
+			event.setCanceled(true);
+		}
+	}
 
-    /** The alpha change in {@link LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered */
-    @SubscribeEvent
-    public static void onRenderWorldLastEvent(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
-            return;
-        }
+	/**
+	 * The alpha change in {@link LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered
+	 */
+	@SubscribeEvent
+	public static void onRenderWorldLastEvent(RenderLevelStageEvent event) {
+		if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+			return;
+		}
 
-        boolean hasLavaVision = hasLavaVision();
-        boolean hasWaterVision = hasWaterVision();
+		boolean hasLavaVision = hasLavaVision();
+		boolean hasWaterVision = hasWaterVision();
 
-        boolean shouldUpdate = !hadLavaVision && hasLavaVision || hadLavaVision && !hasLavaVision;
-        shouldUpdate = shouldUpdate || (!hadWaterVision && hasWaterVision || hadWaterVision && !hasWaterVision);
+		boolean shouldUpdate = !hadLavaVision && hasLavaVision || hadLavaVision && !hasLavaVision;
+		shouldUpdate = shouldUpdate || (!hadWaterVision && hasWaterVision || hadWaterVision && !hasWaterVision);
 
-        hadLavaVision = hasLavaVision;
-        hadWaterVision = hasWaterVision;
+		hadLavaVision = hasLavaVision;
+		hadWaterVision = hasWaterVision;
 
-        if (shouldUpdate) {
-            event.getLevelRenderer().allChanged();
-        }
-    }
+		if (shouldUpdate) {
+			event.getLevelRenderer().allChanged();
+		}
+	}
 
-    public static boolean hasLavaVision() {
-        if (FMLEnvironment.dist != Dist.CLIENT) {
-            return false;
-        }
+	public static boolean hasLavaVision() {
+		if (FMLEnvironment.dist != Dist.CLIENT) {
+			return false;
+		}
 
-        LocalPlayer player = Minecraft.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null) {
-            return player.hasEffect(DSEffects.LAVA_VISION);
-        }
+		if (player != null) {
+			return player.hasEffect(DSEffects.LAVA_VISION);
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public static boolean hasWaterVision() {
-        if (FMLEnvironment.dist != Dist.CLIENT) {
-            return false;
-        }
+	public static boolean hasWaterVision() {
+		if (FMLEnvironment.dist != Dist.CLIENT) {
+			return false;
+		}
 
-        LocalPlayer player = Minecraft.getInstance().player;
+		LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player != null) {
-            return player.hasEffect(DSEffects.WATER_VISION);
-        }
+		if (player != null) {
+			return player.hasEffect(DSEffects.WATER_VISION);
+		}
 
-        return false;
-    }
+		return false;
+	}
 
-    public static boolean hasVision(final VisionType type) {
-        return switch (type) {
-            case WATER -> hasWaterVision();
-            case LAVA -> hasLavaVision();
-        };
-    }
+	public static boolean hasVision(final VisionType type) {
+		return switch (type) {
+			case WATER -> hasWaterVision();
+			case LAVA -> hasLavaVision();
+		};
+	}
 
-    public enum VisionType {
-        WATER,
-        LAVA
-    }
+	public enum VisionType {
+		WATER,
+		LAVA
+	}
 }

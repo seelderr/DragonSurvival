@@ -39,7 +39,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 		}
 
 		Player player = animatable.getPlayer();
-		if(player == null) {
+		if (player == null) {
 			return;
 		}
 

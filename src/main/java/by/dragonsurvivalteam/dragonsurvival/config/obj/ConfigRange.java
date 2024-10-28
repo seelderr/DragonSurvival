@@ -5,9 +5,10 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Retention( RetentionPolicy.RUNTIME)
-@Target( ElementType.FIELD)
-public @interface ConfigRange{
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+public @interface ConfigRange {
 	double min() default -1;
+
 	double max() default -1;
 }

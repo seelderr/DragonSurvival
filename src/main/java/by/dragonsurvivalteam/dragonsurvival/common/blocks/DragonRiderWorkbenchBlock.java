@@ -8,24 +8,24 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 
 public class DragonRiderWorkbenchBlock extends HorizontalDirectionalBlock {
-    public static final MapCodec<DragonRiderWorkbenchBlock> CODEC = simpleCodec(DragonRiderWorkbenchBlock::new);
+	public static final MapCodec<DragonRiderWorkbenchBlock> CODEC = simpleCodec(DragonRiderWorkbenchBlock::new);
 
-    public DragonRiderWorkbenchBlock(Properties pProperties) {
-        super(pProperties);
-    }
+	public DragonRiderWorkbenchBlock(Properties pProperties) {
+		super(pProperties);
+	}
 
-    @Override
-    public MapCodec<DragonRiderWorkbenchBlock> codec() {
-        return CODEC;
-    }
+	@Override
+	public MapCodec<DragonRiderWorkbenchBlock> codec() {
+		return CODEC;
+	}
 
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
-        pBuilder.add(FACING);
-    }
+	@Override
+	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> pBuilder) {
+		pBuilder.add(FACING);
+	}
 
-    @Override
-    public BlockState getStateForPlacement(BlockPlaceContext pContext) {
-        return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
-    }
+	@Override
+	public BlockState getStateForPlacement(BlockPlaceContext pContext) {
+		return this.defaultBlockState().setValue(FACING, pContext.getHorizontalDirection().getOpposite());
+	}
 }

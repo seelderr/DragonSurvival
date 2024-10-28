@@ -58,23 +58,23 @@ import org.jetbrains.annotations.Nullable;
 
 @SuppressWarnings("unused")
 @EventBusSubscriber
-public class MagicHandler{
+public class MagicHandler {
 	@SubscribeEvent
-	public static void magicUpdate(PlayerTickEvent.Post event){
+	public static void magicUpdate(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 
 		AttributeInstance moveSpeed = player.getAttribute(Attributes.MOVEMENT_SPEED);
 
 		DragonStateProvider.getOptional(player).ifPresent(cap -> {
-			if(cap.isDragon()) {
-				if(cap.getMagicData().abilities.isEmpty() || cap.getMagicData().innateDragonAbilities.isEmpty() || cap.getMagicData().activeDragonAbilities.isEmpty()){
+			if (cap.isDragon()) {
+				if (cap.getMagicData().abilities.isEmpty() || cap.getMagicData().innateDragonAbilities.isEmpty() || cap.getMagicData().activeDragonAbilities.isEmpty()) {
 					cap.getMagicData().initAbilities(cap.getType());
 				}
-	
-				for(int i = 0; i < MagicCap.activeAbilitySlots; i++){
+
+				for (int i = 0; i < MagicCap.activeAbilitySlots; i++) {
 					ActiveDragonAbility ability = cap.getMagicData().getAbilityFromSlot(i);
-	
-					if(ability != null){
+
+					if (ability != null) {
 						ability.tickCooldown();
 					}
 				}
@@ -83,15 +83,15 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerTick(PlayerTickEvent.Post event){
+	public static void playerTick(PlayerTickEvent.Post event) {
 		Player player = event.getEntity();
 
 		DragonStateProvider.getOptional(player).ifPresent(cap -> {
-			if(!cap.isDragon()){
+			if (!cap.isDragon()) {
 				return;
 			}
 
-			for(DragonAbility ability : cap.getMagicData().abilities.values()){
+			for (DragonAbility ability : cap.getMagicData().abilities.values()) {
 				ability.player = player;
 			}
 
@@ -112,14 +112,14 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingVisibility(LivingEvent.LivingVisibilityEvent event){
-		if(event.getEntity() instanceof Player player){
+	public static void livingVisibility(LivingEvent.LivingVisibilityEvent event) {
+		if (event.getEntity() instanceof Player player) {
 			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
+				if (!cap.isDragon()) {
 					return;
 				}
 
-				if(player.hasEffect(DSEffects.HUNTER)){
+				if (player.hasEffect(DSEffects.HUNTER)) {
 					event.modifyVisibility(0);
 				}
 			});
@@ -127,17 +127,17 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void livingTick(EntityTickEvent.Post event){
-		if(event.getEntity() instanceof LivingEntity entity) {
+	public static void livingTick(EntityTickEvent.Post event) {
+		if (event.getEntity() instanceof LivingEntity entity) {
 			EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
 
-			if(entity.hasEffect(DSEffects.BURN)){
-				if(entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()){
+			if (entity.hasEffect(DSEffects.BURN)) {
+				if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
 					entity.removeEffect(DSEffects.BURN);
 				}
 			}
 
-			if(entity.tickCount % 20 == 0){
+			if (entity.tickCount % 20 == 0) {
 				MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
 
 				if (drainEffect != null) {
@@ -191,15 +191,15 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerStruckByLightning(EntityStruckByLightningEvent event){
-		if(event.getEntity() instanceof Player player){
-			
+	public static void playerStruckByLightning(EntityStruckByLightningEvent event) {
+		if (event.getEntity() instanceof Player player) {
+
 			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
+				if (!cap.isDragon()) {
 					return;
 				}
 
-				if(Objects.equals(cap.getType(), DragonTypes.SEA)){
+				if (Objects.equals(cap.getType(), DragonTypes.SEA)) {
 					event.setCanceled(true);
 				}
 			});
@@ -207,14 +207,14 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerDamaged(LivingIncomingDamageEvent event){
-		if(event.getEntity() instanceof Player player){
+	public static void playerDamaged(LivingIncomingDamageEvent event) {
+		if (event.getEntity() instanceof Player player) {
 			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
+				if (!cap.isDragon()) {
 					return;
 				}
 
-				if(player.hasEffect(DSEffects.HUNTER)){
+				if (player.hasEffect(DSEffects.HUNTER)) {
 					player.removeEffect(DSEffects.HUNTER);
 				}
 			});
@@ -222,17 +222,17 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void playerHitEntity(CriticalHitEvent event){
+	public static void playerHitEntity(CriticalHitEvent event) {
 		Player player = event.getEntity();
 		DragonStateProvider.getOptional(player).ifPresent(cap -> {
-			if(!cap.isDragon()){
+			if (!cap.isDragon()) {
 				return;
 			}
 
-			if(player.hasEffect(DSEffects.HUNTER)){
+			if (player.hasEffect(DSEffects.HUNTER)) {
 				MobEffectInstance hunter = player.getEffect(DSEffects.HUNTER);
 				player.removeEffect(DSEffects.HUNTER);
-				event.setDamageMultiplier(event.getDamageMultiplier() + (float)((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
+				event.setDamageMultiplier(event.getDamageMultiplier() + (float) ((hunter.getAmplifier() + 1) * HunterAbility.hunterDamageBonus));
 			}
 		});
 	}
@@ -323,7 +323,7 @@ public class MagicHandler{
 					if (hit) {
 						event.getEntity().getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player.getId();
 
-                        if (!player.level().isClientSide()) {
+						if (!player.level().isClientSide()) {
 							event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));
 						}
 					}
@@ -333,23 +333,23 @@ public class MagicHandler{
 	}
 
 	@SubscribeEvent
-	public static void experienceDrop(LivingExperienceDropEvent event){
+	public static void experienceDrop(LivingExperienceDropEvent event) {
 		Player player = event.getAttackingPlayer();
 
-		if(player != null){
+		if (player != null) {
 			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
+				if (!cap.isDragon()) {
 					return;
 				}
-				
+
 				double expMult = 1.0;
 				AbstractDragonBody body = DragonUtils.getDragonBody(player);
 				if (body != null) {
 					expMult = body.getExpMult();
 				}
 
-				if(player.hasEffect(DSEffects.REVEALING_THE_SOUL)){
-					int extra = (int)Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
+				if (player.hasEffect(DSEffects.REVEALING_THE_SOUL)) {
+					int extra = (int) Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
 					event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
 				}
 			});

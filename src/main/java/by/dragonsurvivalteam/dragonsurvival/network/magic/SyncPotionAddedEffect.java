@@ -20,15 +20,15 @@ public class SyncPotionAddedEffect implements IMessage<SyncPotionAddedEffect.Dat
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_added_effect"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::entityId,
-			ByteBufCodecs.VAR_INT,
-			Data::effectId,
-			ByteBufCodecs.VAR_INT,
-			Data::duration,
-			ByteBufCodecs.VAR_INT,
-			Data::amplifier,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::entityId,
+				ByteBufCodecs.VAR_INT,
+				Data::effectId,
+				ByteBufCodecs.VAR_INT,
+				Data::duration,
+				ByteBufCodecs.VAR_INT,
+				Data::amplifier,
+				Data::new
 		);
 
 		@Override

@@ -43,29 +43,29 @@ import net.neoforged.neoforge.event.entity.player.PlayerXpEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
-public class ClawToolHandler{
+public class ClawToolHandler {
 	@SubscribeEvent
-	public static void experiencePickup(PlayerXpEvent.PickupXp event){
+	public static void experiencePickup(PlayerXpEvent.PickupXp event) {
 		Player player = event.getEntity();
 
 		DragonStateProvider.getOptional(player).ifPresent(cap -> {
 			ArrayList<ItemStack> stacks = new ArrayList<>();
 
-			for(int i = 0; i < ClawInventory.Slot.size(); i++){
+			for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 				ItemStack clawStack = cap.getClawToolData().getClawsInventory().getItem(i);
 				Holder<Enchantment> mending = event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.MENDING);
 				int mendingLevel = clawStack.getEnchantmentLevel(mending);
 
-				if(mendingLevel > 0 && clawStack.isDamaged()){
+				if (mendingLevel > 0 && clawStack.isDamaged()) {
 					stacks.add(clawStack);
 				}
 			}
 
 			if (!stacks.isEmpty()) {
 				ItemStack repairTime = stacks.get(player.getRandom().nextInt(stacks.size()));
-				if(!repairTime.isEmpty() && repairTime.isDamaged()){
+				if (!repairTime.isEmpty() && repairTime.isDamaged()) {
 
-					int i = Math.min((int)(event.getOrb().value * repairTime.getXpRepairRatio()), repairTime.getDamageValue());
+					int i = Math.min((int) (event.getOrb().value * repairTime.getXpRepairRatio()), repairTime.getDamageValue());
 					event.getOrb().value -= i * 2;
 					repairTime.setDamageValue(repairTime.getDamageValue() - i);
 				}
@@ -78,17 +78,17 @@ public class ClawToolHandler{
 
 	// This needs to happen as early as possible to make sure drops are added before other mods interact with them
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
-	public static void playerDieEvent(LivingDropsEvent event){
+	public static void playerDieEvent(LivingDropsEvent event) {
 		Entity ent = event.getEntity();
 
-		if(ent instanceof Player player){
-			if(!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems){
+		if (ent instanceof Player player) {
+			if (!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems) {
 				DragonStateHandler handler = DragonStateProvider.getData(player);
 
-				for(int i = 0; i < ClawInventory.Slot.size(); i++){
+				for (int i = 0; i < ClawInventory.Slot.size(); i++) {
 					ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
-					if(!stack.isEmpty()){
+					if (!stack.isEmpty()) {
 						Holder<Enchantment> vanishingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.VANISHING_CURSE);
 						if (EnchantmentHelper.getTagEnchantmentLevel(vanishingCurse, stack) == 0) {
 							event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
@@ -102,23 +102,23 @@ public class ClawToolHandler{
 	}
 
 	@SubscribeEvent
-	public static void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck){
-		if(!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools){
+	public static void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck) {
+		if (!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools) {
 			return;
 		}
 		Player playerEntity = harvestCheck.getEntity();
 		DragonStateProvider.getOptional(playerEntity).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
+			if (dragonStateHandler.isDragon()) {
 				ItemStack stack = playerEntity.getMainHandItem();
 				BlockState blockState = harvestCheck.getTargetBlock();
-				if(ToolUtils.shouldUseDragonTools(stack) && !harvestCheck.canHarvest()){
+				if (ToolUtils.shouldUseDragonTools(stack) && !harvestCheck.canHarvest()) {
 					harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(blockState));
 				}
 			}
 		});
 	}
 
-	public static ItemStack getDragonHarvestTool(final Player player, final BlockState state){
+	public static ItemStack getDragonHarvestTool(final Player player, final BlockState state) {
 		ItemStack mainStack = player.getInventory().getSelected();
 		float newSpeed = 0F;
 
@@ -202,7 +202,6 @@ public class ClawToolHandler{
 	}
 
 	/**
-	 *
 	 * @return Only the sword in the dragon tool slot <br>
 	 * Returns {@link ItemStack#EMPTY} if the player is holding any sort of tool
 	 */
@@ -222,7 +221,9 @@ public class ClawToolHandler{
 		return cap.getClawToolData().getClawsInventory().getItem(0);
 	}
 
-	/** Handle tool breaking for the dragon */
+	/**
+	 * Handle tool breaking for the dragon
+	 */
 	@SubscribeEvent
 	public static void onToolBreak(final PlayerDestroyItemEvent event) {
 		if (event.getHand() == null) return;

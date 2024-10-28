@@ -15,10 +15,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = ServerPlayerGameMode.class, priority = 10_000)
 public class MixinServerPlayerGameModeEnd {
-    @Inject(method = "handleBlockBreakAction", at = @At("RETURN"))
-    private void finishSwap(final BlockPos blockPosition, final ServerboundPlayerActionPacket.Action action, final Direction face, int maxBuildHeight, int sequence, final CallbackInfo callback) {
-        ToolUtils.swapFinish(player);
-    }
+	@Inject(method = "handleBlockBreakAction", at = @At("RETURN"))
+	private void finishSwap(final BlockPos blockPosition, final ServerboundPlayerActionPacket.Action action, final Direction face, int maxBuildHeight, int sequence, final CallbackInfo callback) {
+		ToolUtils.swapFinish(player);
+	}
 
-    @Shadow @Final protected ServerPlayer player;
+	@Shadow
+	@Final
+	protected ServerPlayer player;
 }
