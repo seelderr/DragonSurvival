@@ -20,9 +20,7 @@ import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
-import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -50,10 +48,6 @@ public class ForestDragonType extends AbstractDragonType {
     @Override
     public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
         Level world = player.level();
-        BlockState feetBlock = player.getBlockStateOn();
-        BlockState blockUnder = world.getBlockState(player.blockPosition().below());
-        Block block = blockUnder.getBlock();
-        Biome biome = world.getBiome(player.blockPosition()).value();
 
         int maxStressTicks = ServerConfig.forestStressTicks;
         LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
@@ -102,9 +96,6 @@ public class ForestDragonType extends AbstractDragonType {
 
     @Override
     public boolean isInManaCondition(Player player, DragonStateHandler cap) {
-//		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-//		BlockState feetBlock = player.getFeetBlockState();
-
         if (player.level().canSeeSky(player.blockPosition())) {
             int light = player.level().getBrightness(LightLayer.SKY, player.blockPosition()) - player.level().getSkyDarken();
             float f = player.level().getSunAngle(1.0F);

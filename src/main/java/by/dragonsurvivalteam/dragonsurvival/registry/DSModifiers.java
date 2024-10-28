@@ -211,7 +211,7 @@ public class DSModifiers {
     }
 
     public static double buildSubmergedMiningSpeedMod(DragonStateHandler handler) {
-        return DragonUtils.isDragonType(handler, DragonTypes.SEA) ? (3 * (handler.getLevel().ordinal() + 1)) : 0;
+        return DragonUtils.isDragonType(handler, DragonTypes.SEA) ? (2 * (handler.getLevel().ordinal() + 1)) : 0;
     }
 
     public static void updateAllModifiers(Player player) {

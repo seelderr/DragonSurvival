@@ -71,10 +71,7 @@ public class CaveDragonType extends AbstractDragonType {
         double oldRainTime = timeInRain;
         int oldLavaTicks = lavaAirSupply;
 
-        if (ServerConfig.penaltiesEnabled
-                && !player.hasEffect(DSEffects.FIRE)
-                && !player.isCreative()
-                && !player.isSpectator()) {
+        if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.FIRE) && !player.isCreative() && !player.isSpectator()) {
             if (!world.isClientSide()) {
                 if (player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0 || player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0 || isInSeaBlock && ServerConfig.caveRainDamage != 0.0) {
                     if (player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0) {
@@ -116,19 +113,20 @@ public class CaveDragonType extends AbstractDragonType {
         if (!player.level().isClientSide()) {
             // Clamp the air supply to whatever the max is. This is needed to prevent issues if the server config is changed and lowers the max air supply.
             lavaAirSupply = Math.min(lavaAirSupply, ServerConfig.caveLavaSwimmingTicks);
-            if (player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())
-                    && ServerConfig.bonusesEnabled
-                    && ServerConfig.caveLavaSwimming
-                    && ServerConfig.caveLavaSwimmingTicks != 0) {
-                if (!player.canBreatheUnderwater() && !player.getAbilities().invulnerable) {
+
+            if (player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value()) && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && ServerConfig.caveLavaSwimmingTicks != 0) {
+                if (!player.getAbilities().invulnerable) {
                     lavaAirSupply--;
+
                     if (lavaAirSupply == -20) {
                         lavaAirSupply = 0;
+
                         if (!player.level().isClientSide()) {
-                            player.hurt(player.damageSources().drown(), 2F); //LAVA_YES
+                            player.hurt(player.damageSources().drown(), 2F);
                         }
                     }
                 }
+
                 if (!player.level().isClientSide() && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(NeoForgeMod.WATER_TYPE.value(), player)) {
                     player.stopRiding();
                 }
@@ -150,7 +148,7 @@ public class CaveDragonType extends AbstractDragonType {
             return true;
         }
 
-        //If cave dragon is ontop of a burning furnace
+        // If the cave dragon is on top of a burning furnace
         if (DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.CAVE.getTypeName())) {
             if (DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.CAVE.getTypeName()).contains(blockBelow.getBlock())) {
                 if (blockBelow.getBlock() instanceof AbstractFurnaceBlock) {
