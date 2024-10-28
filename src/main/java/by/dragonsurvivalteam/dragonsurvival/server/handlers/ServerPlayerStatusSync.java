@@ -17,17 +17,17 @@ public class ServerPlayerStatusSync {
 
 	// TODO: Include some error reporting that says what went out of sync if the server and client data are not the same.
 	@SubscribeEvent
-	public static void onServerTick(PlayerTickEvent.Post event){
-        int syncTicks = Functions.secondsToTicks(600);
-		if(event.getEntity().level().isClientSide()) return;
+	public static void onServerTick(PlayerTickEvent.Post event) {
+		int syncTicks = Functions.secondsToTicks(600);
+		if (event.getEntity().level().isClientSide()) return;
 
 		Player player = event.getEntity();
 
-		if(player.isAddedToLevel() && player.isAlive()){
-			if(DragonStateProvider.isDragon(player)){
+		if (player.isAddedToLevel() && player.isAlive()) {
+			if (DragonStateProvider.isDragon(player)) {
 				DragonStateHandler handler = DragonStateProvider.getData(player);
-				if(player.tickCount >= handler.lastSync + syncTicks){
-                    // We don't do an initial sync here since it could result in the player syncing before their data is loaded, causing data loss.
+				if (player.tickCount >= handler.lastSync + syncTicks) {
+					// We don't do an initial sync here since it could result in the player syncing before their data is loaded, causing data loss.
 					handler.lastSync = player.tickCount;
 					PacketDistributor.sendToPlayersTrackingEntity(player, new SyncComplete.Data(player.getId(), handler.serializeNBT(player.registryAccess())));
 				}

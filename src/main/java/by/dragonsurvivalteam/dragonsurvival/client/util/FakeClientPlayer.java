@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.authlib.GameProfile;
+
 import java.util.UUID;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -21,8 +22,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimationController;
 
-@OnlyIn(Dist.CLIENT )
-public class FakeClientPlayer extends AbstractClientPlayer{
+@OnlyIn(Dist.CLIENT)
+public class FakeClientPlayer extends AbstractClientPlayer {
 
 	public DragonStateHandler handler = new DragonStateHandler();
 	public Supplier<String> animationSupplier = null;
@@ -30,70 +31,92 @@ public class FakeClientPlayer extends AbstractClientPlayer{
 	public Long lastAccessed;
 	public int number;
 
-	public FakeClientPlayer(int number){
+	public FakeClientPlayer(int number) {
 		super(Minecraft.getInstance().level, new GameProfile(UUID.randomUUID(), "FAKE_PLAYER_" + number));
 		this.number = number;
 	}
 
 	@Override
-	public boolean shouldRender(double pX, double pY, double pZ){
+	public boolean shouldRender(double pX, double pY, double pZ) {
 		return true;
 	}
 
 	@Override
-	public boolean shouldRenderAtSqrDistance(double pDistance){
+	public boolean shouldRenderAtSqrDistance(double pDistance) {
 		return true;
 	}
 
 	@Override
-	public void tick(){}
+	public void tick() {
+	}
 
 	@Override
-	public void die(@NotNull DamageSource source){}
+	public void die(@NotNull DamageSource source) {
+	}
 
 	@Override
-	public void readAdditionalSaveData(@NotNull CompoundTag pCompound){}
+	public void readAdditionalSaveData(@NotNull CompoundTag pCompound) {
+	}
 
 	@Override
-	public void addAdditionalSaveData(@NotNull CompoundTag pCompound){}
+	public void addAdditionalSaveData(@NotNull CompoundTag pCompound) {
+	}
 
 	@Override
-	public boolean isInvulnerableTo(@NotNull DamageSource source){return true;}
+	public boolean isInvulnerableTo(@NotNull DamageSource source) {
+		return true;
+	}
 
 	@Override
-	public boolean canHarmPlayer(@NotNull Player player){return false;}
-
-	@Override
-	public void displayClientMessage(@NotNull Component chatComponent, boolean actionBar){}
-
-	@Override
-	public void awardStat(@NotNull Stat par1StatBase, int par2){}
-
-	@Override
-	public boolean shouldShowName(){
+	public boolean canHarmPlayer(@NotNull Player player) {
 		return false;
 	}
 
 	@Override
-	public Component getDisplayName(){
+	public void displayClientMessage(@NotNull Component chatComponent, boolean actionBar) {
+	}
+
+	@Override
+	public void awardStat(@NotNull Stat par1StatBase, int par2) {
+	}
+
+	@Override
+	public boolean shouldShowName() {
+		return false;
+	}
+
+	@Override
+	public Component getDisplayName() {
 		return Component.empty();
 	}
 
 	@Override
-	public boolean saveAsPassenger(@NotNull CompoundTag pCompound){return false;}
+	public boolean saveAsPassenger(@NotNull CompoundTag pCompound) {
+		return false;
+	}
 
 	@Override
-	public boolean save(@NotNull CompoundTag pCompound){return false;}
+	public boolean save(@NotNull CompoundTag pCompound) {
+		return false;
+	}
 
 	@Override
-	@Nullable public MinecraftServer getServer(){return Minecraft.getInstance().getSingleplayerServer();}
+    @Nullable
+    public MinecraftServer getServer() {
+		return Minecraft.getInstance().getSingleplayerServer();
+	}
 
 	@Override
-	public @NotNull Vec3 position(){return new Vec3(0, 0, 0);}
+	public @NotNull Vec3 position() {
+		return new Vec3(0, 0, 0);
+	}
 
 	@Override
-	public @NotNull BlockPos blockPosition(){return BlockPos.ZERO;}
+	public @NotNull BlockPos blockPosition() {
+		return BlockPos.ZERO;
+	}
 
 	@Override
-	public void onAddedToLevel(){}
+	public void onAddedToLevel() {
+	}
 }

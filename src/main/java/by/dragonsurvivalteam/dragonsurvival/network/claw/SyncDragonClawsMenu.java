@@ -21,13 +21,13 @@ public class SyncDragonClawsMenu implements IMessage<SyncDragonClawsMenu.Data> {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_claws_menu"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.BOOL,
-			Data::state,
-			ByteBufCodecs.COMPOUND_TAG,
-			Data::clawInventory,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.BOOL,
+				Data::state,
+				ByteBufCodecs.COMPOUND_TAG,
+				Data::clawInventory,
+				Data::new
 		);
 
 		@Override

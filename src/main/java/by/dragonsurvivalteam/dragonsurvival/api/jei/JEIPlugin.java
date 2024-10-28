@@ -11,19 +11,20 @@ import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
 
 @JeiPlugin
-@SuppressWarnings( "unused" )
-public class JEIPlugin implements IModPlugin{
+@SuppressWarnings("unused")
+public class JEIPlugin implements IModPlugin {
 	@Override
-	public @NotNull ResourceLocation getPluginUid(){
+	public @NotNull ResourceLocation getPluginUid() {
 		return ResourceLocation.fromNamespaceAndPath(MODID, "fix");
 	}
+
 	@Override
-	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration){
+	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
 		registration.addRecipeTransferHandler(new DragonInventoryGUIHandler());
 	}
 
 	@Override
-	public void registerGuiHandlers(IGuiHandlerRegistration registration){
+	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
 		registration.addGuiContainerHandler(DragonInventoryScreen.class, new DragonInventoryGUIHandler());
 	}
 }

@@ -21,23 +21,24 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 
-@Mixin( LevelRenderer.class )
-public abstract class MixinWorldRenderer{
+@Mixin(LevelRenderer.class)
+public abstract class MixinWorldRenderer {
 	@Shadow
 	@Final
 	private RenderBuffers renderBuffers;
 
-	@Shadow protected abstract void renderEntity(Entity pEntity, double pCamX, double pCamY, double pCamZ, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource);
+	@Shadow
+	protected abstract void renderEntity(Entity pEntity, double pCamX, double pCamY, double pCamZ, float pPartialTick, PoseStack pPoseStack, MultiBufferSource pBufferSource);
 
-	@Inject( method = "renderLevel", at = @At( value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 0 ) )
-	public void render(DeltaTracker deltaTracker, boolean p_109603_, Camera camera, GameRenderer renderer, LightTexture lightTex, Matrix4f matrix1, Matrix4f matrix2, CallbackInfo ci, @Local PoseStack poseStack){
-		if(camera.isDetached()){
+	@Inject(method = "renderLevel", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;checkPoseStack(Lcom/mojang/blaze3d/vertex/PoseStack;)V", ordinal = 0))
+	public void render(DeltaTracker deltaTracker, boolean p_109603_, Camera camera, GameRenderer renderer, LightTexture lightTex, Matrix4f matrix1, Matrix4f matrix2, CallbackInfo ci, @Local PoseStack poseStack) {
+		if (camera.isDetached()) {
 			return;
 		}
-		if(!ClientDragonRenderer.renderInFirstPerson){
+		if (!ClientDragonRenderer.renderInFirstPerson) {
 			return;
 		}
-		if(!DragonStateProvider.isDragon(camera.getEntity())){
+		if (!DragonStateProvider.isDragon(camera.getEntity())) {
 			return;
 		}
 
@@ -48,7 +49,7 @@ public abstract class MixinWorldRenderer{
 
 		final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
 
-		if(neckandHead != null){
+		if (neckandHead != null) {
 			neckandHead.setHidden(true);
 		}
 
@@ -59,7 +60,7 @@ public abstract class MixinWorldRenderer{
 		entityrenderermanager.setRenderHitBoxes(false);
 		renderEntity(camera.getEntity(), d, e, f, deltaTracker.getGameTimeDeltaPartialTick(false), poseStack, immediate);
 		entityrenderermanager.setRenderHitBoxes(shouldRender);
-		if(neckandHead != null){
+		if (neckandHead != null) {
 			neckandHead.setHidden(false);
 		}
 	}

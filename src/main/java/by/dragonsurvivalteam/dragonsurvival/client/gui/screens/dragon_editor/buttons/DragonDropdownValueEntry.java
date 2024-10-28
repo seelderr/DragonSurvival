@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import com.google.common.collect.ImmutableList;
+
 import java.util.List;
 import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphics;
@@ -10,8 +11,7 @@ import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 
-public class DragonDropdownValueEntry extends DropdownValueEntry
-{
+public class DragonDropdownValueEntry extends DropdownValueEntry {
 	private final int num;
 	private final String value;
 	private final String localeString;
@@ -31,26 +31,27 @@ public class DragonDropdownValueEntry extends DropdownValueEntry
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public List<? extends GuiEventListener> children() {
 		return ImmutableList.of(button);
 	}
 
 	@Override
-	public void render(GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks){
-		if(button == null){
+	public void render(GuiGraphics guiGraphics, int pIndex, int pTop, int pLeft, int pWidth, int pHeight, int pMouseX, int pMouseY, boolean pIsMouseOver, float pPartialTicks) {
+		if (button == null) {
 			Component displayString = Component.literal(localeString);
-			button = new ExtendedButton(pLeft + 3, 0, pWidth - 12, pHeight + 1, displayString, pButton -> {}){
-					@Override
-					public Component getMessage(){
-						return message;
-					}
+			button = new ExtendedButton(pLeft + 3, 0, pWidth - 12, pHeight + 1, displayString, pButton -> {
+			}) {
+				@Override
+				public Component getMessage() {
+					return message;
+				}
 
-					@Override
-					public void onPress(){
-						source.current = value;
-						setter.accept(value);
-						source.onPress();
-					}
+				@Override
+				public void onPress() {
+					source.current = value;
+					setter.accept(value);
+					source.onPress();
+				}
 			};
 		} else {
 			button.setY(pTop);

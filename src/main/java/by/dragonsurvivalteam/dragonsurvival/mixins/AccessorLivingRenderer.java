@@ -9,10 +9,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 
-@Mixin( LivingEntityRenderer.class )
-public interface AccessorLivingRenderer{
-	@Accessor( "layers" )
+@Mixin(LivingEntityRenderer.class)
+public interface AccessorLivingRenderer {
+	@Accessor("layers")
 	List<RenderLayer> dragonsurvival$getRenderLayers();
-	@Invoker( "shouldShowName" )
+
+	@Invoker("shouldShowName")
 	boolean dragonsurvival$callShouldShowName(LivingEntity p_177070_1_);
 }

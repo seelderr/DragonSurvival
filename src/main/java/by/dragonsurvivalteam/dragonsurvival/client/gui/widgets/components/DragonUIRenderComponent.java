@@ -4,6 +4,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.google.common.collect.ImmutableList;
 import com.mojang.math.Axis;
+
+import java.util.List;
+import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -16,9 +19,6 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
 
-import java.util.List;
-import java.util.function.Supplier;
-
 public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Renderable {
 	private final Screen screen;
 	private final Supplier<DragonEntity> getter;
@@ -27,7 +27,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 	public float zoom = 0;
 	public int x, y, width, height;
 
-	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter){
+	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter) {
 		this.screen = screen;
 		this.x = x;
 		this.y = y;
@@ -37,14 +37,14 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		if(isMouseOver(pMouseX, pMouseY)){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
+		if (isMouseOver(pMouseX, pMouseY)) {
 			screen.setFocused(this);
 		}
 
 		final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
 
-		if(neckandHead != null){
+		if (neckandHead != null) {
 			neckandHead.setHidden(false);
 		}
 
@@ -56,29 +56,29 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 
 		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
 		quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
-		quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
-		InventoryScreen.renderEntityInInventory(guiGraphics, x + (float) width / 2 + xOffset, y + height - 30 + yOffset, (int)scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
+		quaternion.rotateY((float) Math.toRadians(180 - xRot * 10));
+		InventoryScreen.renderEntityInInventory(guiGraphics, x + (float) width / 2 + xOffset, y + height - 30 + yOffset, (int) scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
 
 		guiGraphics.pose().popPose();
 	}
 
 	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
+	public boolean isMouseOver(double pMouseX, double pMouseY) {
 		return pMouseX >= x && pMouseX <= x + width && pMouseY >= y && pMouseY <= y + height;
 	}
 
 	@Override
-	public List<? extends GuiEventListener> children(){
+	public List<? extends GuiEventListener> children() {
 		return ImmutableList.of();
 	}
 
 	@Override
-	public boolean mouseDragged(double x1, double y1, int rightClick, double x2, double y2){
-		if(isMouseOver(x1, y1)){
-			if(rightClick == 0){
+	public boolean mouseDragged(double x1, double y1, int rightClick, double x2, double y2) {
+		if (isMouseOver(x1, y1)) {
+			if (rightClick == 0) {
 				xRot -= (float) (x2 / 5.0);
 				yRot -= (float) (y2 / 5.0);
-			}else if(rightClick == 1){
+			} else if (rightClick == 1) {
 				xOffset += (float) (x2);
 				yOffset += (float) (y2);
 
@@ -87,7 +87,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 			}
 
 			return true;
-		}else{
+		} else {
 			setDragging(false);
 		}
 
@@ -95,9 +95,9 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
 	}
 
 	@Override
-	public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY){
-		if(isMouseOver(pMouseX, pMouseY)){
-			zoom += (float)pScrollY * 2;
+	public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
+		if (isMouseOver(pMouseX, pMouseY)) {
+			zoom += (float) pScrollY * 2;
 			zoom = Mth.clamp(zoom, 10, 100);
 			return true;
 		}

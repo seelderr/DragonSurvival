@@ -14,51 +14,51 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
-public class HotBloodAbility extends InnateDragonAbility{
+public class HotBloodAbility extends InnateDragonAbility {
 	@Override
-	public Component getDescription(){
+	public Component getDescription() {
 		return Component.translatable("ds.skill.description." + getName(), ServerConfig.caveWaterDamage, 0.5);
 	}
 
 	@Override
-	public int getMaxLevel(){
+	public int getMaxLevel() {
 		return 1;
 	}
 
 	@Override
-	public int getMinLevel(){
+	public int getMinLevel() {
 		return 1;
 	}
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return "hot_blood";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.CAVE;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_1.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_1.png")};
 	}
 
 	@Override
-	public int getLevel(){
+	public int getLevel() {
 		return ServerConfig.penaltiesEnabled && ServerConfig.caveWaterDamage != 0.0 ? 1 : 0;
 	}
 
 	@Override
-	@OnlyIn( Dist.CLIENT )
-	public boolean isDisabled(){
+	@OnlyIn(Dist.CLIENT)
+	public boolean isDisabled() {
 		return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.caveWaterDamage == 0.0;
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 4;
 	}
 }

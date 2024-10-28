@@ -12,46 +12,46 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class BeaconParticle extends TextureSheetParticle{
+public class BeaconParticle extends TextureSheetParticle {
 	private final double fallSpeed;
 
-	public BeaconParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
+	public BeaconParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd) {
 		super(level, x, y, z, xd, yd, zd);
 		gravity = 0.9f;
 		fallSpeed = 0.02;
 	}
 
 	@Override
-	public void tick(){
+	public void tick() {
 		xo = x;
 		yo = y;
 		zo = z;
-		if(age++ >= lifetime){
+		if (age++ >= lifetime) {
 			remove();
-		}else{
+		} else {
 			//            this.setSpriteFromAge(this.sprites);
 			yd += fallSpeed;
 			move(0, yd, 0);
-			if(y == yo){
+			if (y == yo) {
 				xd *= 1.1D;
 				zd *= 1.1D;
 			}
 			yd *= 0.7F;
-			if(onGround){
+			if (onGround) {
 				xd *= 0.96F;
 				zd *= 0.96F;
 			}
 		}
 	}
 
-	public static BeaconParticle createParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd, SpriteSet spriteSet){
+	public static BeaconParticle createParticle(ClientLevel level, double x, double y, double z, double xd, double yd, double zd, SpriteSet spriteSet) {
 		BeaconParticle beaconParticle = new BeaconParticle(level, x, y, z, xd, yd, zd);
 		beaconParticle.pickSprite(spriteSet);
 		return beaconParticle;
 	}
 
 	@Override
-	public @NotNull ParticleRenderType getRenderType(){
+	public @NotNull ParticleRenderType getRenderType() {
 		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
@@ -87,12 +87,12 @@ public class BeaconParticle extends TextureSheetParticle{
 	public static class FireFactory implements ParticleProvider<FireData> {
 		private final SpriteSet spriteSet;
 
-		public FireFactory(SpriteSet spriteSet){
+		public FireFactory(SpriteSet spriteSet) {
 			this.spriteSet = spriteSet;
 		}
 
 		@Override
-		public Particle createParticle(@NotNull FireData type, @NotNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
+		public Particle createParticle(@NotNull FireData type, @NotNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd) {
 			return BeaconParticle.createParticle(level, x, y, z, xd, yd, zd, spriteSet);
 		}
 	}
@@ -129,12 +129,12 @@ public class BeaconParticle extends TextureSheetParticle{
 	public static class MagicFactory implements ParticleProvider<MagicData> {
 		private final SpriteSet spriteSet;
 
-		public MagicFactory(SpriteSet spriteSet){
+		public MagicFactory(SpriteSet spriteSet) {
 			this.spriteSet = spriteSet;
 		}
 
 		@Override
-		public Particle createParticle(@NotNull MagicData type, @NotNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
+		public Particle createParticle(@NotNull MagicData type, @NotNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd) {
 			return BeaconParticle.createParticle(level, x, y, z, xd, yd, zd, spriteSet);
 		}
 	}
@@ -172,12 +172,12 @@ public class BeaconParticle extends TextureSheetParticle{
 	public static class PeaceFactory implements ParticleProvider<PeaceData> {
 		private final SpriteSet spriteSet;
 
-		public PeaceFactory(SpriteSet spriteSet){
+		public PeaceFactory(SpriteSet spriteSet) {
 			this.spriteSet = spriteSet;
 		}
 
 		@Override
-		public Particle createParticle(@NotNull PeaceData type, @NotNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd){
+		public Particle createParticle(@NotNull PeaceData type, @NotNull ClientLevel level, double x, double y, double z, double xd, double yd, double zd) {
 			return BeaconParticle.createParticle(level, x, y, z, xd, yd, zd, spriteSet);
 		}
 	}

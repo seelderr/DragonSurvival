@@ -4,14 +4,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import java.util.Locale;
+
 import net.minecraft.network.chat.Component;
 
-public abstract class DragonWingAbility extends InnateDragonAbility{
+public abstract class DragonWingAbility extends InnateDragonAbility {
 	@Override
-	public Component getDescription(){
+	public Component getDescription() {
 		String key = Keybind.TOGGLE_WINGS.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
-		if(key.isEmpty())
+		if (key.isEmpty())
 			key = Keybind.TOGGLE_WINGS.getKey().getDisplayName().getString();
 
 		DragonStateHandler handler = DragonStateProvider.getData(player);
@@ -19,7 +20,7 @@ public abstract class DragonWingAbility extends InnateDragonAbility{
 	}
 
 	@Override
-	public int getLevel(){
+	public int getLevel() {
 		return DragonStateProvider.getOptional(getPlayer()).map(DragonStateHandler::hasFlight).orElse(false) ? 1 : 0;
 	}
 }

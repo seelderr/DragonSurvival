@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.La
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import com.google.common.collect.ImmutableList;
+
 import java.awt.*;
 import java.util.List;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final ExtendedButton saturationReset;
 	private final ExtendedButton brightnessReset;
 	private final ExtendedCheckbox glowing;
-    private final int x;
+	private final int x;
 	private final int y;
 	private final int xSize;
 	private final int ySize;
@@ -43,11 +44,11 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	private final ExtendedSlider brightnessSlider;
 
 	private boolean hasModifiedColor(DragonEditorObject.DragonTextureMetadata texture) {
-		return texture != null && (Float.compare(Math.round(settings.get().hue * 360), Math.round(texture.average_hue * 360)) != 0 || !(Math.abs(settings.get().saturation - 0.5f) < 0.05) || !(Math.abs(settings.get().brightness  - 0.5f) < 0.05));
+		return texture != null && (Float.compare(Math.round(settings.get().hue * 360), Math.round(texture.average_hue * 360)) != 0 || !(Math.abs(settings.get().saturation - 0.5f) < 0.05) || !(Math.abs(settings.get().brightness - 0.5f) < 0.05));
 	}
 
-	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer){
-        this.x = x;
+	public HueSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer) {
+		this.x = x;
 		this.y = y;
 		this.xSize = xSize;
 		this.ySize = ySize;
@@ -57,7 +58,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 		DragonEditorObject.DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
 
-		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {}){
+		glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
+		}) {
 			final Function<Boolean, Boolean> setGlowingAction = value -> {
 				settings.get().glowing = value;
 				this.selected = settings.get().glowing;
@@ -67,14 +69,14 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			};
 
 			@Override
-			public void onPress(){
+			public void onPress() {
 				screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(setGlowingAction, !settings.get().glowing));
 			}
 		};
 
 		float[] hsb = new float[]{set.hue, set.saturation, set.brightness};
 
-		if(text == null){
+		if (text == null) {
 			hsb[0] = 0.5f;
 			hsb[1] = 0.5f;
 			hsb[2] = 0.5f;
@@ -84,7 +86,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			hsb[2] = 0.5f;
 		}
 
-		hueSlider = new ExtendedSlider(x + 3, y + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[0] * 360.0f, true){
+		hueSlider = new ExtendedSlider(x + 3, y + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[0] * 360.0f, true) {
 			private int previousHue = 0;
 
 			private final Function<Integer, Integer> setHueAction = value -> {
@@ -98,7 +100,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			};
 
 			@Override
-			protected void applyValue(){
+			protected void applyValue() {
 				super.applyValue();
 
 				setHueAction.apply(this.getValueInt());
@@ -111,9 +113,9 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				RenderingUtils.renderPureColorSquare(guiGraphics.pose(), getX(), getY(), getWidth(), getHeight());
-				guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
+				guiGraphics.blitSprite(this.getSprite(), this.getX() + (int) (this.value * (double) (this.width - 8)), this.getY(), 8, this.height);
 			}
 
 			@Override
@@ -131,13 +133,13 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		hueReset = new ExtendedButton(x + 3 + xSize - 26, y + 24, 20, 20, Component.empty(), button -> hueSlider.setValue(text != null ? Math.round(text.average_hue * 360f) : 180)) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
-		saturationSlider = new ExtendedSlider(x + 3, y + 22 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[1] * 360, true){
+		saturationSlider = new ExtendedSlider(x + 3, y + 22 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[1] * 360, true) {
 			private int previousSaturation = 0;
 
 			private final Function<Integer, Integer> setSaturationAction = value -> {
@@ -151,7 +153,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			};
 
 			@Override
-			protected void applyValue(){
+			protected void applyValue() {
 				super.applyValue();
 
 				setSaturationAction.apply(this.getValueInt());
@@ -164,8 +166,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-				if(visible){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+				if (visible) {
 					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					float value1 = (hueSlider.getValueInt()) / 360f;
 
@@ -173,7 +175,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
-					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
+					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int) (this.value * (double) (this.width - 8)), this.getY(), 8, this.height);
 				}
 			}
 
@@ -192,14 +194,14 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		saturationReset = new ExtendedButton(x + 3 + xSize - 26, y + 22 + 24, 20, 20, Component.empty(), button -> saturationSlider.setValue(180)) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
 		};
 
 
-		brightnessSlider = new ExtendedSlider(x + 3, y + 44 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[2] * 360, true){
+		brightnessSlider = new ExtendedSlider(x + 3, y + 44 + 24, xSize - 26, 20, Component.empty(), Component.empty(), 0, 360, hsb[2] * 360, true) {
 			private int previousBrightness = 0;
 
 			private final Function<Integer, Integer> setBrightnessAction = value -> {
@@ -212,7 +214,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			};
 
 			@Override
-			protected void applyValue(){
+			protected void applyValue() {
 				super.applyValue();
 
 				setBrightnessAction.apply(this.getValueInt());
@@ -225,8 +227,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 			}
 
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
-				if(visible){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
+				if (visible) {
 					this.isHovered = mouseX >= getX() && mouseY >= getY() && mouseX < getX() + getWidth() && mouseY < getY() + getHeight();
 					float value1 = (hueSlider.getValueInt()) / 360f;
 
@@ -234,7 +236,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 					int col2 = Color.getHSBColor(value1, 1f, 1f).getRGB();
 
 					RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 0, getX(), getY(), getX() + getWidth(), getY() + getHeight(), new int[]{col2, col1, col1, col2});
-					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int)(this.value * (double)(this.width - 8)), this.getY(), 8, this.height);
+					guiGraphics.blitSprite(this.getSprite(), this.getX() + (int) (this.value * (double) (this.width - 8)), this.getY(), 8, this.height);
 				}
 			}
 
@@ -253,7 +255,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
 		brightnessReset = new ExtendedButton(x + 3 + xSize - 26, y + 44 + 24, 20, 20, Component.empty(), button -> brightnessSlider.setValue(180)) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				super.renderWidget(guiGraphics, mouseX, mouseY, partial);
 				guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
 			}
@@ -261,8 +263,8 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	}
 
 	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return visible && pMouseY >= (double) y - 3 && pMouseY <= (double)y + ySize + 3 && pMouseX >= (double)x && pMouseX <= (double)x + xSize;
+	public boolean isMouseOver(double pMouseX, double pMouseY) {
+		return visible && pMouseY >= (double) y - 3 && pMouseY <= (double) y + ySize + 3 && pMouseX >= (double) x && pMouseX <= (double) x + xSize;
 	}
 
 	@Override
@@ -271,7 +273,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 		guiGraphics.pose().pushPose();
 		// Render pop-up menu content above the other elements
 		guiGraphics.pose().translate(0, 0, 150);

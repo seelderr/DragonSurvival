@@ -6,7 +6,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,7 +27,7 @@ public class SmallPoisonParticle extends DragonParticle {
 	}
 
 	@Override
-	public void remove(){
+	public void remove() {
 		level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
 		super.remove();
 	}
@@ -76,17 +78,17 @@ public class SmallPoisonParticle extends DragonParticle {
 	}
 
 	@OnlyIn(Dist.CLIENT)
-	public static final class Factory implements ParticleProvider<Data>{
+	public static final class Factory implements ParticleProvider<Data> {
 		private final SpriteSet spriteSet;
 
-		public Factory(SpriteSet sprite){
+		public Factory(SpriteSet sprite) {
 
 			spriteSet = sprite;
 		}
 
 		@Override
 
-		public Particle createParticle(Data typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(Data typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.duration(), typeIn.swirls(), spriteSet);
 			particle.setSpriteFromAge(spriteSet);
 			return particle;

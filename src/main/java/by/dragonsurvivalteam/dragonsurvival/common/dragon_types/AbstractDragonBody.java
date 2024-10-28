@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import java.util.Locale;
 import java.util.Objects;
+
 import org.jetbrains.annotations.NotNull;
 
 public abstract class AbstractDragonBody implements NBTInterface, Comparable<AbstractDragonBody> {
@@ -12,13 +13,15 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public static Boolean bodyAffectsHitbox = true;
 
 	public abstract String getBodyName();
+
 	public abstract void onPlayerUpdate();
+
 	public abstract void onPlayerDeath();
-	
+
 	public int compareTo(@NotNull AbstractDragonBody b) {
 		return getBodyName().compareTo(b.getBodyName());
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (obj instanceof AbstractDragonBody b) {
 			return Objects.equals(getBodyName(), b.getBodyName());
@@ -30,7 +33,7 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public String toString() {
 		return getBodyName();
 	}
-	
+
 	public Boolean canHideWings() {
 		return true;
 	}
@@ -38,7 +41,7 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public Double getHeightMult() {
 		return 1.0;
 	}
-	
+
 	public Boolean isSquish() {
 		return false;
 	}
@@ -50,21 +53,23 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public Double getJumpBonus() {
 		return 0.0;
 	}
-	
+
 	public Double getStepBonus() {
 		return 0.0;
 	}
-	
+
 	public Double getDamageBonus() {
 		return 0.0;
 	}
 
-	public Double getHealthBonus() { return 0.0; }
-	
+	public Double getHealthBonus() {
+		return 0.0;
+	}
+
 	public Double getArmorBonus() {
 		return 0.0;
 	}
-	
+
 	public Double getManaBonus() {
 		return 0.0;
 	}
@@ -72,11 +77,11 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public Double getSwimSpeedBonus() {
 		return 0.0;
 	}
-	
+
 	public Double getKnockbackBonus() {
 		return 0.0;
 	}
-	
+
 	public Double getRunMult() {
 		return 1.0;
 	}
@@ -84,7 +89,7 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 	public Double getDamageMult() {
 		return 1.0;
 	}
-	
+
 	public Double getExpMult() {
 		return 1.0;
 	}

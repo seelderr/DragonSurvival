@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class AltarTypeButton extends Button {
 	private final DragonAltarScreen gui;
 	public AbstractDragonType type;
 
-	public AltarTypeButton(DragonAltarScreen gui, AbstractDragonType type, int x, int y){
+	public AltarTypeButton(DragonAltarScreen gui, AbstractDragonType type, int x, int y) {
 		super(x, y, 49, 147, Component.empty(), Button::onPress, DEFAULT_NARRATION);
 		this.gui = gui;
 		this.type = type;
@@ -75,7 +76,7 @@ public class AltarTypeButton extends Button {
 	}
 
 	@Override
-	public void onPress(){
+	public void onPress() {
 		initiateDragonForm(type);
 	}
 
@@ -103,13 +104,13 @@ public class AltarTypeButton extends Button {
 		guiGraphics.blit(BACKGROUND_TEXTURE, getX(), getY(), uOffset * 49, isHovered ? 0 : 147, 49, 147, 512, 512);
 	}
 
-	private void initiateDragonForm(AbstractDragonType type){
+	private void initiateDragonForm(AbstractDragonType type) {
 		LocalPlayer player = Minecraft.getInstance().player;
 
-		if(player == null)
+		if (player == null)
 			return;
 
-		if(type == null){
+		if (type == null) {
 			Minecraft.getInstance().player.sendSystemMessage(Component.translatable("ds.choice_human"));
 
 			DragonStateProvider.getOptional(player).ifPresent(cap -> {
@@ -118,7 +119,7 @@ public class AltarTypeButton extends Button {
 				PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
 			});
 			player.closeContainer();
-		}else
+		} else
 			Minecraft.getInstance().setScreen(new DragonEditorScreen(gui, type));
 	}
 }

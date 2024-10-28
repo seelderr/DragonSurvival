@@ -5,6 +5,7 @@ import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
+
 import java.util.Locale;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -153,7 +154,7 @@ public class DataBlockStateProvider extends BlockStateProvider {
 									VaultState vaultState = state.getValue(VaultBlock.STATE);
 									String suffix = vaultState.name().toLowerCase(Locale.ENGLISH);
 									// For some reason, vanilla named this state "ejecting_reward" instead of just "ejecting", so I'm maintaining that convention here
-									if(vaultState == VaultState.EJECTING) {
+									if (vaultState == VaultState.EJECTING) {
 										suffix = "ejecting_reward";
 									}
 									BlockModelBuilder builder = models().withExistingParent(name + "_" + suffix, "template_vault")
@@ -193,7 +194,7 @@ public class DataBlockStateProvider extends BlockStateProvider {
 							ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + name + (isEmpty ? "_empty" : "")));
 							return ConfiguredModel.builder().modelFile(modelFile).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
 						});
-			} else if(holder.get() instanceof RotatedPillarBlock) {
+			} else if (holder.get() instanceof RotatedPillarBlock) {
 				getVariantBuilder(holder.get())
 						.forAllStates(state -> {
 							BlockModelBuilder builder = models().withExistingParent(holder.getId().getPath(), BLOCK_FOLDER + "/cube_column")
@@ -201,13 +202,13 @@ public class DataBlockStateProvider extends BlockStateProvider {
 									.texture("end", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "dragons_memory_top"));
 							return ConfiguredModel.builder().modelFile(builder).build();
 						});
-			} else if(holder.get() instanceof DragonBeacon) {
+			} else if (holder.get() instanceof DragonBeacon) {
 				getVariantBuilder(holder.get())
 						.forAllStates(state -> {
 							ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "empty"));
 							return ConfiguredModel.builder().modelFile(modelFile).build();
-				});
-			} else if(holder.get() instanceof SkeletonPieceBlock) {
+						});
+			} else if (holder.get() instanceof SkeletonPieceBlock) {
 				// Parse the string up to "_skin"
 				String[] split = holder.getId().getPath().split("_skin");
 

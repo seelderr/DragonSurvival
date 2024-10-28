@@ -21,7 +21,8 @@ public class StormBreathEntity extends Entity implements GeoEntity {
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {}
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+	}
 
 	@Override
 

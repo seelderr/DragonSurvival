@@ -19,56 +19,56 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 
 public class FoodBar {
-    private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
-    private static final RandomSource RANDOM = RandomSource.create();
+	private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
+	private static final RandomSource RANDOM = RandomSource.create();
 
-    public static boolean render(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
-        Player localPlayer = ClientProxy.getLocalPlayer();
+	public static boolean render(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
+		Player localPlayer = ClientProxy.getLocalPlayer();
 
-        if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer()) {
-            return false;
-        }
+		if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer()) {
+			return false;
+		}
 
-        DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
+		DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
 
-        if (!handler.isDragon()) {
-            return false;
-        }
+		if (!handler.isDragon()) {
+			return false;
+		}
 
-        Minecraft.getInstance().getProfiler().push("food");
-        RenderSystem.enableBlend();
+		Minecraft.getInstance().getProfiler().push("food");
+		RenderSystem.enableBlend();
 
-        DragonFoodHandler.rightHeight = gui.rightHeight;
-        gui.rightHeight += 10;
+		DragonFoodHandler.rightHeight = gui.rightHeight;
+		gui.rightHeight += 10;
 
-        final int left = width / 2 + 91;
-        final int top = height - DragonFoodHandler.rightHeight;
-        DragonFoodHandler.rightHeight += 10;
-        final FoodData food = localPlayer.getFoodData();
-        final int type = DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
-        final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
+		final int left = width / 2 + 91;
+		final int top = height - DragonFoodHandler.rightHeight;
+		DragonFoodHandler.rightHeight += 10;
+		final FoodData food = localPlayer.getFoodData();
+		final int type = DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
+		final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
 
-        for (int i = 0; i < 10; i++) {
-            int icon = i * 2 + 1; // there can be 10 icons (food level maximum is 20)
-            int y = top;
+		for (int i = 0; i < 10; i++) {
+			int icon = i * 2 + 1; // there can be 10 icons (food level maximum is 20)
+			int y = top;
 
-            if (food.getSaturationLevel() <= 0 && localPlayer.tickCount % (food.getFoodLevel() * 3 + 1) == 0) {
-                // Animate the food icons (moving up / down)
-                y = top + RANDOM.nextInt(3) - 1;
-            }
+			if (food.getSaturationLevel() <= 0 && localPlayer.tickCount % (food.getFoodLevel() * 3 + 1) == 0) {
+				// Animate the food icons (moving up / down)
+				y = top + RANDOM.nextInt(3) - 1;
+			}
 
-            guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
+			guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
 
-            if (icon < food.getFoodLevel()) {
-                guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
-            } else if (icon == food.getFoodLevel()) {
-                guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
-            }
-        }
+			if (icon < food.getFoodLevel()) {
+				guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
+			} else if (icon == food.getFoodLevel()) {
+				guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
+			}
+		}
 
-        RenderSystem.disableBlend();
-        Minecraft.getInstance().getProfiler().pop();
+		RenderSystem.disableBlend();
+		Minecraft.getInstance().getProfiler().pop();
 
-        return true;
-    }
+		return true;
+	}
 }

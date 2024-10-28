@@ -9,25 +9,25 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonWingAbilit
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class SeaWingsAbility extends DragonWingAbility{
+public class SeaWingsAbility extends DragonWingAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "sea_wings";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.SEA;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_1.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_1.png")};
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 2;
 	}
 }

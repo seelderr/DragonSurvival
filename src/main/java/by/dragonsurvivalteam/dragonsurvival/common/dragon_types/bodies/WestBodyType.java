@@ -47,7 +47,7 @@ public class WestBodyType extends AbstractDragonBody {
 	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westKnockbackBonus", comment = "The knockback bonus given to West-type dragons")
 	public static Double westKnockbackBonus = 0.5;
-	
+
 	@ConfigRange(min = -10.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westRunMult", comment = "The run speed multiplier given to West-type dragons")
 	public static Double westRunMult = 0.9;
@@ -70,11 +70,12 @@ public class WestBodyType extends AbstractDragonBody {
 
 	@Override
 	public CompoundTag writeNBT() {
-        return new CompoundTag();
+		return new CompoundTag();
 	}
 
 	@Override
-	public void readNBT(CompoundTag base) {}
+	public void readNBT(CompoundTag base) {
+	}
 
 	@Override
 	public String getBodyName() {
@@ -86,53 +87,69 @@ public class WestBodyType extends AbstractDragonBody {
 	}
 
 	@Override
-	public void onPlayerUpdate() {}
+	public void onPlayerUpdate() {
+	}
 
 	@Override
-	public void onPlayerDeath() {}
+	public void onPlayerDeath() {
+	}
 
 	public Double getJumpBonus() {
 		return westJumpBonus;
 	}
+
 	public Double getStepBonus() {
 		return westStepBonus;
 	}
+
 	public Double getDamageBonus() {
 		return westDamageBonus;
 	}
+
 	public Double getArmorBonus() {
 		return westArmorBonus;
 	}
+
 	public Double getManaBonus() {
 		return westManaBonus;
 	}
+
 	public Double getSwimSpeedBonus() {
 		return westSwimSpeedBonus;
 	}
+
 	public Double getHealthBonus() {
 		return westHealthBonus;
 	}
+
 	public Double getKnockbackBonus() {
 		return westKnockbackBonus;
 	}
+
 	public Double getRunMult() {
 		return westRunMult;
 	}
+
 	public Double getDamageMult() {
 		return westDamageMult;
 	}
+
 	public Double getExpMult() {
 		return westExpMult;
 	}
+
 	public Double getFlightMult() {
 		return westFlightMult;
 	}
+
 	public Double getFlightStaminaMult() {
 		return westFlightStaminaMult;
 	}
+
 	public Double getHealthMult() {
 		return westHealthMult;
 	}
+
 	public Double getGravityMult() {
 		return westGravityMult;
 	}

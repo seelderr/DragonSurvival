@@ -8,11 +8,11 @@ import net.minecraft.sounds.SoundSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT )
-public class PoisonBreathSound extends AbstractTickableSoundInstance{
+@OnlyIn(Dist.CLIENT)
+public class PoisonBreathSound extends AbstractTickableSoundInstance {
 	private final ForestBreathAbility ability;
 
-	public PoisonBreathSound(ForestBreathAbility ability){
+	public PoisonBreathSound(ForestBreathAbility ability) {
 		super(DSSounds.FOREST_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
@@ -24,8 +24,8 @@ public class PoisonBreathSound extends AbstractTickableSoundInstance{
 	}
 
 	@Override
-	public void tick(){
-		if(ability.getPlayer() == null || ability.chargeTime == 0)
+	public void tick() {
+		if (ability.getPlayer() == null || ability.chargeTime == 0)
 			stop();
 
 		this.x = ability.getPlayer().getX();
@@ -34,7 +34,7 @@ public class PoisonBreathSound extends AbstractTickableSoundInstance{
 	}
 
 	@Override
-	public boolean canStartSilent(){
+	public boolean canStartSilent() {
 		return true;
 	}
 }

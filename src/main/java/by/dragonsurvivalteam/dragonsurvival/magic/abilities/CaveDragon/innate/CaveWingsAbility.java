@@ -9,25 +9,25 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonWingAbilit
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class CaveWingsAbility extends DragonWingAbility{
+public class CaveWingsAbility extends DragonWingAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "cave_wings";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.CAVE;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_1.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_1.png")};
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 2;
 	}
 }

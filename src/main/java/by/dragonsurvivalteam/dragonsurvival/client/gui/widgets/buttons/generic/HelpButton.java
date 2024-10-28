@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.List;
 import java.util.Objects;
 import net.minecraft.client.Minecraft;
@@ -23,21 +24,22 @@ public class HelpButton extends ExtendedButton {
 	public AbstractDragonType type;
 	boolean usesVanillaTooltip = false;
 
-	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation){
+	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation) {
 		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
 	}
 
 	// This is needed for the DragonScreen, as otherwise we'll get cut out by the scissoring used for the rendering of the player entity in the window
-	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation, boolean usesVanillaTooltip){
+	public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation, boolean usesVanillaTooltip) {
 		this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
-		if(usesVanillaTooltip){
+		if (usesVanillaTooltip) {
 			setTooltip(Tooltip.create(Component.translatable(text)));
 		}
 		this.usesVanillaTooltip = usesVanillaTooltip;
 	}
 
-	public HelpButton(AbstractDragonType type, int x, int y, int sizeX, int sizeY, String text, int variation){
-		super(x, y, sizeX, sizeY, Component.empty(), s -> {});
+	public HelpButton(AbstractDragonType type, int x, int y, int sizeX, int sizeY, String text, int variation) {
+		super(x, y, sizeX, sizeY, Component.empty(), s -> {
+		});
 		this.text = text;
 		this.variation = variation;
 		this.type = type;
@@ -48,8 +50,8 @@ public class HelpButton extends ExtendedButton {
 		RenderSystem.setShaderTexture(0, texture);
 
 		float size = variation == 0 ? 18f : 22f;
-		float xSize = (float)(width + (variation == 0 ? 0 : 2)) / size;
-		float ySize = (float)(height + (variation == 0 ? 0 : 2)) / size;
+		float xSize = (float) (width + (variation == 0 ? 0 : 2)) / size;
+		float ySize = (float) (height + (variation == 0 ? 0 : 2)) / size;
 
 		int i = 0;
 		if (isHovered() && !usesVanillaTooltip) {
@@ -73,7 +75,7 @@ public class HelpButton extends ExtendedButton {
 	}
 
 	@Override
-	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_){
+	public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_) {
 		return false;
 	}
 }

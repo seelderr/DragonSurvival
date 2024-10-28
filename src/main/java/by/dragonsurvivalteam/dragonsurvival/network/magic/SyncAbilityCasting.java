@@ -30,7 +30,8 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting.Data> {
 				handler.getMagicData().isCasting = message.isCasting;
 
 				if (message.isCasting) {
-					ability.onKeyPressed(sender, () -> {}, message.castStartTime, message.clientTime);
+					ability.onKeyPressed(sender, () -> {
+					}, message.castStartTime, message.clientTime);
 				} else {
 					ability.onKeyReleased(sender);
 				}
@@ -38,23 +39,24 @@ public class SyncAbilityCasting implements IMessage<SyncAbilityCasting.Data> {
 		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 	}
 
-	public record Data(int playerId, boolean isCasting, int abilitySlot, CompoundTag nbt, long castStartTime, long clientTime) implements CustomPacketPayload {
+	public record Data(int playerId, boolean isCasting, int abilitySlot, CompoundTag nbt, long castStartTime,
+					   long clientTime) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "ability_casting"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.BOOL,
-			Data::isCasting,
-			ByteBufCodecs.VAR_INT,
-			Data::abilitySlot,
-			ByteBufCodecs.COMPOUND_TAG,
-			Data::nbt,
-			ByteBufCodecs.VAR_LONG,
-			Data::castStartTime,
-			ByteBufCodecs.VAR_LONG,
-			Data::clientTime,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.BOOL,
+				Data::isCasting,
+				ByteBufCodecs.VAR_INT,
+				Data::abilitySlot,
+				ByteBufCodecs.COMPOUND_TAG,
+				Data::nbt,
+				ByteBufCodecs.VAR_LONG,
+				Data::castStartTime,
+				ByteBufCodecs.VAR_LONG,
+				Data::clientTime,
+				Data::new
 		);
 
 		@Override

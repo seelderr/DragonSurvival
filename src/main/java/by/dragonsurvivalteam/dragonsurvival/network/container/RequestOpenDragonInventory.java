@@ -39,13 +39,13 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 		Player sender = context.player();
 		context.enqueueWork(
 				() -> DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-				if (handler.isDragon()) {
-					context.enqueueWork(() -> {
-						sender.containerMenu.removed(sender);
-						sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
-					});
-				}
-			})
+					if (handler.isDragon()) {
+						context.enqueueWork(() -> {
+							sender.containerMenu.removed(sender);
+							sender.openMenu(new SimpleMenuProvider((containerId, inventory, player) -> new DragonContainer(containerId, inventory), Component.empty()));
+						});
+					}
+				})
 		);
 	}
 
@@ -53,12 +53,15 @@ public class RequestOpenDragonInventory implements IMessage<RequestOpenDragonInv
 
 		public static final Type<RequestOpenDragonInventory.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_inventory"));
 
-		public static final StreamCodec<ByteBuf, RequestOpenDragonInventory.Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, RequestOpenDragonInventory.Data> STREAM_CODEC = new StreamCodec<>() {
 			@Override
-			public void encode(ByteBuf pBuffer, RequestOpenDragonInventory.Data pValue) {}
+			public void encode(ByteBuf pBuffer, RequestOpenDragonInventory.Data pValue) {
+			}
 
 			@Override
-			public RequestOpenDragonInventory.Data decode(ByteBuf pBuffer) { return new RequestOpenDragonInventory.Data(); }
+			public RequestOpenDragonInventory.Data decode(ByteBuf pBuffer) {
+				return new RequestOpenDragonInventory.Data();
+			}
 		};
 
 		@Override

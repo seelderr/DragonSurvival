@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
+
 import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
@@ -30,8 +31,8 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.fml.loading.FMLPaths;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
-public class DragonEditorRegistry{
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+public class DragonEditorRegistry {
 	public static final String SAVED_FILE_NAME = "saved_customizations.json";
 	public static final ResourceLocation CUSTOMIZATION = ResourceLocation.fromNamespaceAndPath(MODID, "customization.json");
 	public static final HashMap<String, HashMap<EnumSkinLayer, DragonTextureMetadata[]>> CUSTOMIZATIONS = new HashMap<>();
@@ -41,22 +42,22 @@ public class DragonEditorRegistry{
 	public static File folder;
 	public static File savedFile;
 
-	public static String getDefaultPart(AbstractDragonType type, DragonLevel level, EnumSkinLayer layer){
+	public static String getDefaultPart(AbstractDragonType type, DragonLevel level, EnumSkinLayer layer) {
 		return defaultSkinValues.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(level, new HashMap<>()).getOrDefault(layer, SkinCap.defaultSkinValue);
 	}
 
-	public static SavedSkinPresets getSavedCustomizations(){
-		if(!init) genDefaults();
+	public static SavedSkinPresets getSavedCustomizations() {
+		if (!init) genDefaults();
 		return savedCustomizations;
 	}
 
 	@SubscribeEvent
-	public static void clientStart(FMLClientSetupEvent event){
-		if(FMLEnvironment.dist  == Dist.CLIENT){
+	public static void clientStart(FMLClientSetupEvent event) {
+		if (FMLEnvironment.dist == Dist.CLIENT) {
 			genDefaults();
 
-			if(Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager){
-				((ReloadableResourceManager)Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener)manager -> {
+			if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
+				((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener) manager -> {
 					CUSTOMIZATIONS.clear();
 					reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 				});
@@ -64,38 +65,38 @@ public class DragonEditorRegistry{
 		}
 	}
 
-	private static void genDefaults(){
-		if(init) return;
+	private static void genDefaults() {
+		if (init) return;
 
 		reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 
 		folder = new File(FMLPaths.GAMEDIR.get().toFile(), "dragon-survival");
 		savedFile = new File(folder, SAVED_FILE_NAME);
 
-		if(!folder.exists()){
+		if (!folder.exists()) {
 			folder.mkdirs();
 		}
 
 		File oldFile = new File(FMLPaths.CONFIGDIR.get().toFile(), "/dragon-survival/" + SAVED_FILE_NAME);
 
-		if(oldFile.exists()){
+		if (oldFile.exists()) {
 			oldFile.renameTo(savedFile);
 			oldFile.getParentFile().delete();
 			savedFile = new File(folder, SAVED_FILE_NAME);
 		}
 
-		if(!savedFile.exists()){
-			try{
+		if (!savedFile.exists()) {
+			try {
 				savedFile.createNewFile();
 				Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
 				savedCustomizations = new SavedSkinPresets();
 
-				for(String t : DragonTypes.getTypes()){
+				for (String t : DragonTypes.getTypes()) {
 					String type = t.toUpperCase(Locale.ENGLISH);
 					savedCustomizations.skinPresets.computeIfAbsent(type, b -> new HashMap<>());
 					savedCustomizations.current.computeIfAbsent(type, b -> new HashMap<>());
 
-					for(int i = 0; i < 9; i++){
+					for (int i = 0; i < 9; i++) {
 						savedCustomizations.skinPresets.get(type).computeIfAbsent(i, b -> {
 							SkinPreset preset = new SkinPreset();
 							preset.initDefaults(DragonTypes.getStatic(type));
@@ -103,7 +104,7 @@ public class DragonEditorRegistry{
 						});
 					}
 
-					for(DragonLevel level : DragonLevel.values()){
+					for (DragonLevel level : DragonLevel.values()) {
 						savedCustomizations.current.get(type).put(level, 0);
 					}
 				}
@@ -111,7 +112,7 @@ public class DragonEditorRegistry{
 				FileWriter writer = new FileWriter(savedFile);
 				gson.toJson(savedCustomizations, writer);
 				writer.close();
-			}catch(IOException e){
+			} catch (IOException e) {
 				DragonSurvivalMod.LOGGER.error(e);
 			}
 		} else {
@@ -133,8 +134,8 @@ public class DragonEditorRegistry{
 		init = true;
 	}
 
-	protected static void reload(ResourceManager manager, ResourceLocation location){
-		try{
+	protected static void reload(ResourceManager manager, ResourceLocation location) {
+		try {
 			Gson gson = GsonFactory.getDefault();
 			Optional<Resource> resource = manager.getResource(location);
 			if (resource.isEmpty())
@@ -160,12 +161,12 @@ public class DragonEditorRegistry{
 		}
 	}
 
-	private static void dragonType(AbstractDragonType type, DragonEditorObject.Dragon je){
-		if(je != null){
-			if(je.layers != null){
+	private static void dragonType(AbstractDragonType type, DragonEditorObject.Dragon je) {
+		if (je != null) {
+			if (je.layers != null) {
 				je.layers.forEach((layer, keys) -> {
-					for(DragonTextureMetadata key : keys){
-						if(key.key == null){
+					for (DragonTextureMetadata key : keys) {
+						if (key.key == null) {
 							key.key = key.texture.substring(key.texture.lastIndexOf("/") + 1);
 							key.key = key.key.substring(0, key.key.lastIndexOf("."));
 						}

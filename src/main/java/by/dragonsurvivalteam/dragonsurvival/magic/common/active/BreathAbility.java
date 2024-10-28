@@ -16,6 +16,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
 import com.mojang.datafixers.util.Pair;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -35,7 +36,7 @@ import net.minecraft.world.phys.Vec3;
 
 public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation {
 	@ConfigRange(min = 0, max = 10)
-	@ConfigOption(side = ConfigSide.SERVER, category = { "magic", "abilities" }, key = "baseBreathRange", comment = "The base range of the breath attack (breath range increases with dragon growth)")
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "baseBreathRange", comment = "The base range of the breath attack (breath range increases with dragon growth)")
 	public static Integer baseBreathRange = 3;
 
 	public int currentBreathRange;
@@ -89,9 +90,9 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 		speed = calculateCurrentBreathSpeed(handler.getSize());
 		spread = calculateSpread(handler.getSize());
 
-		xComp = (float)(Math.sin(yaw) * Math.cos(pitch));
-		yComp = (float)Math.sin(pitch);
-		zComp = (float)(Math.cos(yaw) * Math.cos(pitch));
+		xComp = (float) (Math.sin(yaw) * Math.cos(pitch));
+		yComp = (float) Math.sin(pitch);
+		zComp = (float) (Math.cos(yaw) * Math.cos(pitch));
 
 		Vec3 eyePos = player.getEyePosition();
 		Vec3 lookAngle = player.getLookAngle();
@@ -102,10 +103,10 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 		if (player.getAbilities().flying) {
 			forward = lookAngle.scale(2.0F);
-			breathPos = eyePos.add(forward).add(0F, -0.1-0.5F*(size / 30F), 0F);
+			breathPos = eyePos.add(forward).add(0F, -0.1 - 0.5F * (size / 30F), 0F);
 		} else {
 			forward = lookAngle.scale(1.0F);
-			breathPos = eyePos.add(forward).add(0F, -0.1F-0.2F*(size / 30F), 0F);
+			breathPos = eyePos.add(forward).add(0F, -0.1F - 0.2F * (size / 30F), 0F);
 		}
 
 		dx = breathPos.x;
@@ -165,7 +166,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 	public <T extends Entity> List<T> getEntitiesNearby(final Class<T> entityClass, double dX, double dY, double dZ, double radius) {
 		return player.level().getEntitiesOfClass(entityClass, player.getBoundingBox().inflate(dX, dY, dZ), entity -> entity != player && player.distanceTo(entity) <= radius + entity.getBbWidth() / 2f && entity.getY() <= player.getY() + dY);
 	}
-	
+
 	public Fluid clipContext() {
 		return ClipContext.Fluid.ANY;
 	}
@@ -266,12 +267,12 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
 	public static int calculateCurrentBreathRange(double size) {
 		float sizeFactor = Math.min((float) size / DragonLevel.ADULT.size, 1.0f);
-		float additionalBreathRange = sizeFactor * 4.0f + (float)size * 0.05f;
+		float additionalBreathRange = sizeFactor * 4.0f + (float) size * 0.05f;
 		return baseBreathRange + (int) additionalBreathRange;
 	}
 
 	public static float calculateCurrentBreathSpeed(double size) {
 		float sizeFactor = Math.min((float) size / DragonLevel.ADULT.size, 1.0f);
-		return sizeFactor * 0.3f + (float)size * 0.004f;
+		return sizeFactor * 0.3f + (float) size * 0.004f;
 	}
 }

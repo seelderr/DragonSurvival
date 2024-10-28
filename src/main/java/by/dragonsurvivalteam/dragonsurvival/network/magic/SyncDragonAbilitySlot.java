@@ -32,13 +32,13 @@ public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Dat
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_ability_slot"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.VAR_INT,
-			Data::selectedSlot,
-			ByteBufCodecs.BOOL,
-			Data::displayHotbar,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.VAR_INT,
+				Data::selectedSlot,
+				ByteBufCodecs.BOOL,
+				Data::displayHotbar,
+				Data::new
 		);
 
 		@Override

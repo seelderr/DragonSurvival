@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
+
 import java.util.List;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
@@ -17,21 +18,21 @@ import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-public class SpinGrantItem extends Item{
-	public SpinGrantItem(Properties properties){
+public class SpinGrantItem extends Item {
+	public SpinGrantItem(Properties properties) {
 		super(properties);
 	}
 
 	@Override
-	public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand p_77659_3_){
+	public InteractionResultHolder<ItemStack> use(@NotNull Level world, @NotNull Player player, @NotNull InteractionHand p_77659_3_) {
 		DragonStateHandler handler = DragonStateProvider.getData(player);
 
-		if(handler.isDragon()){
-			if(!world.isClientSide()){
+		if (handler.isDragon()) {
+			if (!world.isClientSide()) {
 				handler.getMovementData().spinLearned = !handler.getMovementData().spinLearned;
 				PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
 
-				if(!player.isCreative()){
+				if (!player.isCreative()) {
 					player.getItemInHand(p_77659_3_).shrink(1);
 				}
 			}
@@ -44,7 +45,7 @@ public class SpinGrantItem extends Item{
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
 		pTooltipComponents.add(Component.translatable("ds.description.spin_grant"));
 	}

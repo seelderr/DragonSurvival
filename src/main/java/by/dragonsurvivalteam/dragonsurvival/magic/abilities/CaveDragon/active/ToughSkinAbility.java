@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import net.minecraft.core.particles.ParticleOptions;
@@ -24,43 +25,43 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
-public class ToughSkinAbility extends AoeBuffAbility{
+public class ToughSkinAbility extends AoeBuffAbility {
 
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinEnabled", comment = "Whether the tough skin ability should be enabled" )
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinEnabled", comment = "Whether the tough skin ability should be enabled")
 	public static Boolean toughSkinEnabled = true;
 
-	@ConfigRange( min = 1.0, max = 10000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used" )
+	@ConfigRange(min = 1.0, max = 10000.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used")
 	public static Double toughSkinDuration = 200.0;
 
-	@ConfigRange( min = 1.0, max = 10000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in seconds of the tough skin ability" )
+	@ConfigRange(min = 1.0, max = 10000.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in seconds of the tough skin ability")
 	public static Double toughSkinCooldown = 30.0;
 
-	@ConfigRange( min = 1, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in seconds of the tough skin ability" )
+	@ConfigRange(min = 1, max = 10000)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in seconds of the tough skin ability")
 	public static Double toughSkinCasttime = 1.0;
 
-	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability" )
+	@ConfigRange(min = 0, max = 100)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability")
 	public static Integer toughSkinManaCost = 1;
 
-	@ConfigRange( min = 0, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinArmorValue", comment = "The amount of extra armor given per level of tough skin effect" )
+	@ConfigRange(min = 0, max = 10000)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinArmorValue", comment = "The amount of extra armor given per level of tough skin effect")
 	public static Double toughSkinArmorValue = 3.0;
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 3;
 	}
 
 	@Override
-	public int getSkillCastingTime(){
+	public int getSkillCastingTime() {
 		return Functions.secondsToTicks(toughSkinCasttime);
 	}
 
 	@Override
-	public ArrayList<Component> getInfo(){
+	public ArrayList<Component> getInfo() {
 		ArrayList<Component> components = super.getInfo();
 
 		if (!Keybind.ABILITY3.get().isUnbound()) {
@@ -73,7 +74,7 @@ public class ToughSkinAbility extends AoeBuffAbility{
 
 			String key = Keybind.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
-			if(key.isEmpty()){
+			if (key.isEmpty()) {
 				key = Keybind.ABILITY3.getKey().getDisplayName().getString();
 			}
 			components.add(Component.translatable("ds.skill.keybind", key));
@@ -83,83 +84,83 @@ public class ToughSkinAbility extends AoeBuffAbility{
 	}
 
 	@Override
-	public int getRange(){
+	public int getRange() {
 		return 5;
 	}
 
 	@Override
-	public ParticleOptions getParticleEffect(){
+	public ParticleOptions getParticleEffect() {
 		return new BeaconParticle.PeaceData();
 	}
 
 	@Override
-	public int getManaCost(){
+	public int getManaCost() {
 		return toughSkinManaCost;
 	}
 
 	@Override
-	public Integer[] getRequiredLevels(){
+	public Integer[] getRequiredLevels() {
 		return new Integer[]{0, 15, 35};
 	}
 
 	@Override
-	public int getSkillCooldown(){
+	public int getSkillCooldown() {
 		return Functions.secondsToTicks(toughSkinCooldown);
 	}
 
 	@Override
-	public MobEffectInstance getEffect(){
+	public MobEffectInstance getEffect() {
 		return new MobEffectInstance(DSEffects.STRONG_LEATHER, Functions.secondsToTicks(toughSkinDuration), getLevel() - 1);
 	}
 
 	@Override
-	public Component getDescription(){
+	public Component getDescription() {
 		return Component.translatable("ds.skill.description." + getName(), toughSkinDuration, getDefence(getLevel()));
 	}
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return "strong_leather";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.CAVE;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_1.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_2.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_1.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_2.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")};
 	}
 
 
-	public static double getDefence(int level){
+	public static double getDefence(int level) {
 		return level * toughSkinArmorValue;
 	}
 
 	@Override
-	@OnlyIn( Dist.CLIENT )
-	public ArrayList<Component> getLevelUpInfo(){
+	@OnlyIn(Dist.CLIENT)
+	public ArrayList<Component> getLevelUpInfo() {
 		ArrayList<Component> list = super.getLevelUpInfo();
 		list.add(Component.translatable("ds.skill.defence", "+" + toughSkinArmorValue));
 		return list;
 	}
 
 	@Override
-	public int getMaxLevel(){
+	public int getMaxLevel() {
 		return 3;
 	}
 
 	@Override
-	public int getMinLevel(){
+	public int getMinLevel() {
 		return 0;
 	}
 
 	@Override
-	public boolean isDisabled(){
+	public boolean isDisabled() {
 		return super.isDisabled() || !toughSkinEnabled;
 	}
 }

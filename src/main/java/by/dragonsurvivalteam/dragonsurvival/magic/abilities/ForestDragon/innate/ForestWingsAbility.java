@@ -9,26 +9,26 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonWingAbilit
 import net.minecraft.resources.ResourceLocation;
 
 @RegisterDragonAbility
-public class ForestWingsAbility extends DragonWingAbility{
+public class ForestWingsAbility extends DragonWingAbility {
 	@Override
-	public String getName(){
+	public String getName() {
 		return "forest_wings";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.FOREST;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_wings_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_wings_1.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_wings_1.png")};
 	}
 
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 2;
 	}
 }

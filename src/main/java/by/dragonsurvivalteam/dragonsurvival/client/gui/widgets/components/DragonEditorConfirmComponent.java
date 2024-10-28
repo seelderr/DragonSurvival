@@ -1,9 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import com.google.common.collect.ImmutableList;
+
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
@@ -17,10 +21,6 @@ import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_altar_warning.png");
 	private final AbstractWidget btn1;
@@ -33,16 +33,17 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 	public boolean isBodyTypeChange;
 
 
-	public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize){
+	public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize) {
 		this.x = x;
 		this.y = y;
 		this.xSize = xSize;
 		this.ySize = ySize;
 		this.isBodyTypeChange = false;
 
-		btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, pButton -> {}){
+		btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, pButton -> {
+		}) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getFGColor());
 
 				if (isHovered()) {
@@ -51,14 +52,15 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 			}
 
 			@Override
-			public void onPress(){
+			public void onPress() {
 				screen.confirm();
 			}
 		};
 
-		btn2 = new ExtendedButton(x + 66, y + 133, 41, 21, CommonComponents.GUI_NO, pButton -> {}){
+		btn2 = new ExtendedButton(x + 66, y + 133, 41, 21, CommonComponents.GUI_NO, pButton -> {
+		}) {
 			@Override
-			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 				guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getFGColor());
 
 				if (isHovered) {
@@ -67,7 +69,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 			}
 
 			@Override
-			public void onPress(){
+			public void onPress() {
 				screen.confirmation = false;
 				screen.showUi = true;
 			}
@@ -75,17 +77,17 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 	}
 
 	@Override
-	public @NotNull List<? extends GuiEventListener> children(){
+	public @NotNull List<? extends GuiEventListener> children() {
 		return ImmutableList.of(btn1, btn2);
 	}
 
 	@Override
-	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton){
+	public boolean mouseClicked(double pMouseX, double pMouseY, int pButton) {
 		return super.mouseClicked(pMouseX, pMouseY, pButton);
 	}
 
 	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
+	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
 		guiGraphics.fillGradient(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
 
 		String suffix = "";
@@ -95,7 +97,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 			suffix = "all";
 		} else if ((ServerConfig.saveAllAbilities || isBodyTypeChange) && !ServerConfig.saveGrowthStage) {
 			// Abilities will be kept
-			if(isBodyTypeChange){
+			if (isBodyTypeChange) {
 				suffix = "ability_from_body";
 			} else {
 				suffix = "ability";

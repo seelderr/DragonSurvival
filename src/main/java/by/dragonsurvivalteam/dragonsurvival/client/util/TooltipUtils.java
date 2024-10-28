@@ -11,27 +11,27 @@ import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
 
 public class TooltipUtils {
-    private static final String EMPTY = Component.empty().getString();
+	private static final String EMPTY = Component.empty().getString();
 
-    public static Tooltip createTooltip(final Component tooltip, int maxWidth) {
-        List<FormattedText> formattedTexts = Minecraft.getInstance().font.getSplitter().splitLines(tooltip, maxWidth, Style.EMPTY);
-        MutableComponent base = Component.empty();
+	public static Tooltip createTooltip(final Component tooltip, int maxWidth) {
+		List<FormattedText> formattedTexts = Minecraft.getInstance().font.getSplitter().splitLines(tooltip, maxWidth, Style.EMPTY);
+		MutableComponent base = Component.empty();
 
-        for (FormattedText formattedText : formattedTexts) {
-            base.append(formattedText.getString());
-        }
+		for (FormattedText formattedText : formattedTexts) {
+			base.append(formattedText.getString());
+		}
 
-        return Tooltip.create(base);
-    }
+		return Tooltip.create(base);
+	}
 
-    public static boolean needsTooltip(final AbstractWidget widget) {
-        Tooltip tooltip = widget.getTooltip();
+	public static boolean needsTooltip(final AbstractWidget widget) {
+		Tooltip tooltip = widget.getTooltip();
 
-        if (tooltip == null) {
-            return true;
-        }
+		if (tooltip == null) {
+			return true;
+		}
 
-        List<FormattedCharSequence> message = tooltip.toCharSequence(Minecraft.getInstance());
-        return message.isEmpty();
-    }
+		List<FormattedCharSequence> message = tooltip.toCharSequence(Minecraft.getInstance());
+		return message.isEmpty();
+	}
 }

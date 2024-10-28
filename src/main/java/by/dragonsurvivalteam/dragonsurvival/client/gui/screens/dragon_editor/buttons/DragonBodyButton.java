@@ -18,7 +18,7 @@ public class DragonBodyButton extends Button {
 	private final ResourceLocation location;
 	private final int pos;
 	private final boolean locked;
-	
+
 	public DragonBodyButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, AbstractDragonBody dragonBody, int pos, boolean locked) {
 		super(x, y, xSize, ySize, Component.literal(dragonBody.toString()), btn -> {
 			if (!locked) {

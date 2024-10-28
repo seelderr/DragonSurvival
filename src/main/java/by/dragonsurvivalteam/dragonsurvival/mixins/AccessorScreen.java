@@ -8,6 +8,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(Screen.class)
 public interface AccessorScreen {
-    @Accessor("children")
-    List<GuiEventListener> children();
+	@Accessor("children")
+	List<GuiEventListener> children();
 }

@@ -33,11 +33,11 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public class DragonAltarScreen extends Screen{
+public class DragonAltarScreen extends Screen {
 	public static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");
 	public static final ResourceLocation CANCEL_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cancel_button.png");
 	private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
-	private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "dig_head_locked", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "rocking_on_back" };
+	private final String[] animations = {"sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "dig_head_locked", "resting_left_head_locked", "vibing_sitting", "shy_sitting", "vibing_sitting", "rocking_on_back"};
 	public DragonStateHandler handler1 = new DragonStateHandler();
 	public DragonStateHandler handler2 = new DragonStateHandler();
 	private int guiLeft;
@@ -51,7 +51,7 @@ public class DragonAltarScreen extends Screen{
 	static double yrot = 0;
 	static double zrot = 0;
 
-	public DragonAltarScreen(){
+	public DragonAltarScreen() {
 		super(Component.translatable("ds.gui.dragon_altar"));
 	}
 
@@ -59,18 +59,18 @@ public class DragonAltarScreen extends Screen{
 	public void onClose() {
 		super.onClose();
 		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(
-			cap -> {
-				cap.isInAltar = false;
-				if(!cap.hasUsedAltar) {
-					Minecraft.getInstance().player.displayClientMessage(Component.translatable("ds.gui.altar.can_still_use"), false);
+				cap -> {
+					cap.isInAltar = false;
+					if (!cap.hasUsedAltar) {
+						Minecraft.getInstance().player.displayClientMessage(Component.translatable("ds.gui.altar.can_still_use"), false);
+					}
 				}
-			}
 		);
 	}
 
 	@Override
 	public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-		if(minecraft == null){
+		if (minecraft == null) {
 			return;
 		}
 
@@ -78,7 +78,7 @@ public class DragonAltarScreen extends Screen{
 
 		tick++;
 
-		if(tick % 200 * 20 == 0){
+		if (tick % 200 * 20 == 0) {
 			animation1++;
 			animation2++;
 
@@ -91,18 +91,18 @@ public class DragonAltarScreen extends Screen{
 			handler2.setBody(DragonBodies.staticBodies.get(handler1.getBody().getBodyName()));
 			handler1.setBody(DragonBodies.staticBodies.get(DragonBodies.bodyMappings.keySet().toArray()[randBody]));
 
-			if(animation1 >= animations.length){
+			if (animation1 >= animations.length) {
 				animation1 = 0;
 			}
 
-			if(animation2 >= animations.length){
+			if (animation2 >= animations.length) {
 				animation2 = 0;
 			}
 		}
 
-		for(Renderable btn : renderables){
-			if(btn instanceof AltarTypeButton button){
-				if(button.isHoveredOrFocused()){
+		for (Renderable btn : renderables) {
+			if (btn instanceof AltarTypeButton button) {
+				if (button.isHoveredOrFocused()) {
 					handler1.setType(button.type);
 					handler1.setHasFlight(true);
 					handler1.setSize(DragonLevel.NEWBORN.size);
@@ -118,7 +118,7 @@ public class DragonAltarScreen extends Screen{
 
 					LivingEntity entity1;
 					int entity1Scale = 40;
-					if(handler1.isDragon()) {
+					if (handler1.isDragon()) {
 						entity1 = FakeClientPlayerUtils.getFakeDragon(0, handler1);
 						entity1Scale = 20;
 					} else {
@@ -126,18 +126,18 @@ public class DragonAltarScreen extends Screen{
 					}
 
 					LivingEntity entity2;
-					if(handler2.isDragon()) {
+					if (handler2.isDragon()) {
 						entity2 = FakeClientPlayerUtils.getFakeDragon(1, handler2);
 					} else {
 						entity2 = FakeClientPlayerUtils.getFakePlayer(1, handler2);
 					}
 
 					Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
-					quaternion.rotateY((float)Math.toRadians(150));
+					quaternion.rotateY((float) Math.toRadians(150));
 					InventoryScreen.renderEntityInInventory(guiGraphics, (float) width / 2 + 170, button.getY() + button.getHeight(), entity1Scale, new Vector3f(), quaternion, null, entity1);
 
 					Quaternionf quaternion2 = Axis.ZP.rotationDegrees(180.0F);
-					quaternion2.rotateY((float)Math.toRadians(210));
+					quaternion2.rotateY((float) Math.toRadians(210));
 					InventoryScreen.renderEntityInInventory(guiGraphics, (float) width / 2 - 170, button.getY() + button.getHeight(), 40, new Vector3f(), quaternion2, null, entity2);
 				}
 			}
@@ -149,14 +149,14 @@ public class DragonAltarScreen extends Screen{
 	}
 
 	@Override
-	public void renderBackground(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick){
+	public void renderBackground(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 		// From super.renderBackground(guiGraphics);
 		guiGraphics.fillGradient(0, 0, this.width, this.height, -300, -1072689136, -804253680);
 
 		renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
 	}
 
-	public static void renderBorders(@NotNull final GuiGraphics guiGraphics, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height){
+	public static void renderBorders(@NotNull final GuiGraphics guiGraphics, ResourceLocation texture, int x0, int x1, int y0, int y1, int width, int height) {
 		Tesselator tesselator = Tesselator.getInstance();
 		BufferBuilder bufferbuilder = tesselator.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX_COLOR);
 		RenderSystem.setShaderTexture(0, texture);
@@ -165,14 +165,14 @@ public class DragonAltarScreen extends Screen{
 		RenderSystem.setShader(GameRenderer::getPositionTexColorShader);
 		RenderSystem.enableDepthTest();
 		RenderSystem.depthFunc(GL_ALWAYS);
-		bufferbuilder.addVertex(x0, y0, zLevel).setUv(0.0F, (float)y0 / 32.0F).setColor(64, 64, 64, 55);
-		bufferbuilder.addVertex(x0 + width, y0, zLevel).setUv((float)width / 32.0F, (float)y0 / 32.0F).setColor(64, 64, 64, 255);
-		bufferbuilder.addVertex(x0 + width, 0.0F, zLevel).setUv((float)width / 32.0F, 0.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0, y0, zLevel).setUv(0.0F, (float) y0 / 32.0F).setColor(64, 64, 64, 55);
+		bufferbuilder.addVertex(x0 + width, y0, zLevel).setUv((float) width / 32.0F, (float) y0 / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0 + width, 0.0F, zLevel).setUv((float) width / 32.0F, 0.0F).setColor(64, 64, 64, 255);
 		bufferbuilder.addVertex(x0, 0.0F, zLevel).setUv(0.0F, 0.0F).setColor(64, 64, 64, 255);
-		bufferbuilder.addVertex(x0, height, zLevel).setUv(0.0F, (float)height / 32.0F).setColor(64, 64, 64, 255);
-		bufferbuilder.addVertex(x0 + width, height, zLevel).setUv((float)width / 32.0F, (float)height / 32.0F).setColor(64, 64, 64, 255);
-		bufferbuilder.addVertex(x0 + width, y1, zLevel).setUv((float)width / 32.0F, (float)y1 / 32.0F).setColor(64, 64, 64, 255);
-		bufferbuilder.addVertex(x0, y1, zLevel).setUv(0.0F, (float)y1 / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0, height, zLevel).setUv(0.0F, (float) height / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0 + width, height, zLevel).setUv((float) width / 32.0F, (float) height / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0 + width, y1, zLevel).setUv((float) width / 32.0F, (float) y1 / 32.0F).setColor(64, 64, 64, 255);
+		bufferbuilder.addVertex(x0, y1, zLevel).setUv(0.0F, (float) y1 / 32.0F).setColor(64, 64, 64, 255);
 		BufferUploader.drawWithShader(bufferbuilder.buildOrThrow());
 
 		RenderSystem.depthFunc(GL_LEQUAL);
@@ -195,10 +195,10 @@ public class DragonAltarScreen extends Screen{
 	}
 
 	@Override
-	protected void init(){
+	protected void init() {
 		super.init();
 
-		if(!hasInit){
+		if (!hasInit) {
 			hasInit = true;
 		}
 
@@ -212,7 +212,7 @@ public class DragonAltarScreen extends Screen{
 		addRenderableWidget(new AltarTypeButton(this, DragonTypes.SEA, width / 2 + 2, guiTop + 30));
 		addRenderableWidget(new AltarTypeButton(this, null, width / 2 + 55, guiTop + 30));
 
-		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable("ds.gui.dragon_editor"), btn -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))){
+		addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable("ds.gui.dragon_editor"), btn -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))) {
 			@Override
 			public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
 				visible = DragonStateProvider.isDragon(minecraft.player);

@@ -15,55 +15,55 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
-public class TreasureParticle extends TextureSheetParticle{
+public class TreasureParticle extends TextureSheetParticle {
 	private final SpriteSet sprites;
 
-	public TreasureParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, TreasureParticle.Data data, SpriteSet spriteSet){
+	public TreasureParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, TreasureParticle.Data data, SpriteSet spriteSet) {
 		super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
 		sprites = spriteSet;
 		rCol = data.r();
 		gCol = data.g();
 		bCol = data.b();
 		quadSize *= 0.75F * data.scale();
-		int i = (int)(8.0D / (Math.random() * 0.8D + 0.2D));
-		lifetime = (int)Math.max((float)i * data.scale(), 1.0F);
+		int i = (int) (8.0D / (Math.random() * 0.8D + 0.2D));
+		lifetime = (int) Math.max((float) i * data.scale(), 1.0F);
 		pickSprite(spriteSet);
 	}
 
 	@Override
-	public float getQuadSize(float p_217561_1_){
-		return quadSize * Mth.clamp(((float)age + p_217561_1_) / (float)lifetime * 32.0F, 0.0F, 1.0F);
+	public float getQuadSize(float p_217561_1_) {
+		return quadSize * Mth.clamp(((float) age + p_217561_1_) / (float) lifetime * 32.0F, 0.0F, 1.0F);
 	}
 
 	@Override
-	public void tick(){
-		if(age++ >= lifetime){
+	public void tick() {
+		if (age++ >= lifetime) {
 			remove();
 		}
 	}
 
 	@Override
-	public ParticleRenderType getRenderType(){
+	public ParticleRenderType getRenderType() {
 		return ParticleRenderType.PARTICLE_SHEET_OPAQUE;
 	}
 
 	@Override
-	protected int getLightColor(float p_189214_1_){
+	protected int getLightColor(float p_189214_1_) {
 		int i = super.getLightColor(p_189214_1_);
 		int k = i >> 16 & 255;
 		return 240 | k << 16;
 	}
 
-	@OnlyIn( Dist.CLIENT )
+	@OnlyIn(Dist.CLIENT)
 	public static class Factory implements ParticleProvider<TreasureParticle.Data> {
 		private final SpriteSet sprites;
 
-		public Factory(SpriteSet sprites){
+		public Factory(SpriteSet sprites) {
 			this.sprites = sprites;
 		}
 
 		@Override
-		public Particle createParticle(TreasureParticle.Data typeIn, @NotNull ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed){
+		public Particle createParticle(TreasureParticle.Data typeIn, @NotNull ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
 			return new TreasureParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn, sprites);
 		}
 	}

@@ -8,13 +8,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-/** Inject at HEAD because Oculus will willingly run into a NullPointerException in case the entity does not have night vision */
+/**
+ * Inject at HEAD because Oculus will willingly run into a NullPointerException in case the entity does not have night vision
+ */
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
-    @Inject(method = "getNightVisionScale", at = @At(value = "HEAD"), cancellable = true)
-    private static void modifyNightVisionScale(final LivingEntity entity, float nanoTime, final CallbackInfoReturnable<Float> callback) {
-        if (entity.isUnderWater() && VisionHandler.hasWaterVision()) {
-            callback.setReturnValue(1f);
-        }
-    }
+	@Inject(method = "getNightVisionScale", at = @At(value = "HEAD"), cancellable = true)
+	private static void modifyNightVisionScale(final LivingEntity entity, float nanoTime, final CallbackInfoReturnable<Float> callback) {
+		if (entity.isUnderWater() && VisionHandler.hasWaterVision()) {
+			callback.setReturnValue(1f);
+		}
+	}
 }

@@ -33,8 +33,8 @@ public class DSSounds {
 	public static Supplier<SoundEvent> STORM_BREATH_LOOP = DS_SOUNDS.register("storm_breath_loop", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "storm_breath_loop")));
 	public static Supplier<SoundEvent> STORM_BREATH_END = DS_SOUNDS.register("storm_breath_end", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "storm_breath_end")));
 
-	public static Supplier<SoundEvent>  TREASURE_GEM_BREAK = DS_SOUNDS.register("treasure_gem_break", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_gem_break")));
-	public static Supplier<SoundEvent>  TREASURE_GEM_HIT = DS_SOUNDS.register("treasure_gem_hit", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_gem_hit")));
+	public static Supplier<SoundEvent> TREASURE_GEM_BREAK = DS_SOUNDS.register("treasure_gem_break", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_gem_break")));
+	public static Supplier<SoundEvent> TREASURE_GEM_HIT = DS_SOUNDS.register("treasure_gem_hit", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_gem_hit")));
 	public static DeferredSoundType TREASURE_GEM = new DeferredSoundType(1f, 1f, TREASURE_GEM_BREAK, TREASURE_GEM_HIT, TREASURE_GEM_HIT, TREASURE_GEM_HIT, TREASURE_GEM_HIT);
 	public static Supplier<SoundEvent> TREASURE_METAL_BREAK = DS_SOUNDS.register("treasure_metal_break", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_metal_break")));
 	public static Supplier<SoundEvent> TREASURE_METAL_HIT = DS_SOUNDS.register("treasure_metal_hit", () -> SoundEvent.createVariableRangeEvent(ResourceLocation.fromNamespaceAndPath(MODID, "treasure_metal_hit")));

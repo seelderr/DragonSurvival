@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
+
 import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -39,24 +40,24 @@ public class SeaDragonType extends AbstractDragonType {
 	}
 
 	@Override
-	public CompoundTag writeNBT(){
+	public CompoundTag writeNBT() {
 		CompoundTag tag = new CompoundTag();
 		tag.putDouble("timeWithoutWater", timeWithoutWater);
 		return tag;
 	}
 
 	@Override
-	public void readNBT(CompoundTag base){
+	public void readNBT(CompoundTag base) {
 		timeWithoutWater = base.getDouble("timeWithoutWater");
 	}
 
 	@Override
-	public String getTypeName(){
+	public String getTypeName() {
 		return "sea";
 	}
 
 	@Override
-	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler){
+	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
 		Level world = player.level();
 		BlockState feetBlock = player.getBlockStateOn();
 		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
@@ -69,19 +70,19 @@ public class SeaDragonType extends AbstractDragonType {
 		int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
 		WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
 
-		if(waterAbility != null){
+		if (waterAbility != null) {
 			maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
 		}
-		
+
 		double oldWaterTime = timeWithoutWater;
-		
-		if(!world.isClientSide()) {
+
+		if (!world.isClientSide()) {
 			if ((player.hasEffect(DSEffects.PEACE) || player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) && player.getAirSupply() < player.getMaxAirSupply()) {
 				player.setAirSupply(player.getMaxAirSupply());
 			}
 		}
-		
-		if(ServerConfig.penaltiesEnabled && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
+
+		if (ServerConfig.penaltiesEnabled && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
 			if (!world.isClientSide()) {
 				if (player.hasEffect(DSEffects.PEACE)) {
 					timeWithoutWater = 0;
@@ -91,22 +92,22 @@ public class SeaDragonType extends AbstractDragonType {
 						double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
 						timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
 					}
-					
+
 					if (player.isInWaterRainOrBubble() || isInSeaBlock) {
-						timeWithoutWater = Math.max(timeWithoutWater - (int)Math.ceil(maxTicksOutofWater * 0.005F), 0);
+						timeWithoutWater = Math.max(timeWithoutWater - (int) Math.ceil(maxTicksOutofWater * 0.005F), 0);
 					}
-					
+
 					timeWithoutWater = Math.min(timeWithoutWater, maxTicksOutofWater * 2);
-					
-					
+
+
 					if (!player.level().isClientSide()) {
 						float hydrationDamage = ServerConfig.seaDehydrationDamage.floatValue();
-						
+
 						if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
 							if (player.tickCount % 40 == 0) {
 								player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.DEHYDRATION)), hydrationDamage);
 							}
-							
+
 						} else if (timeWithoutWater >= maxTicksOutofWater * 2) {
 							if (player.tickCount % 20 == 0) {
 								player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.DEHYDRATION)), hydrationDamage);
@@ -114,14 +115,14 @@ public class SeaDragonType extends AbstractDragonType {
 						}
 					}
 				}
-				
-				if(oldWaterTime != timeWithoutWater){
+
+				if (oldWaterTime != timeWithoutWater) {
 					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
 				}
 			}
-			
-			if(world.isClientSide() && !player.isCreative() && !player.isSpectator()){
-				if(!player.hasEffect(DSEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater){
+
+			if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
+				if (!player.hasEffect(DSEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater) {
 					world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
 				}
 			}
@@ -163,17 +164,17 @@ public class SeaDragonType extends AbstractDragonType {
 	}
 
 	@Override
-	public void onPlayerDeath(){
+	public void onPlayerDeath() {
 		timeWithoutWater = 0;
 	}
 
 	@Override
-	public List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler){
+	public List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler) {
 		return null;
 	}
 
 	@Override
-	public List<TagKey<Block>> mineableBlocks(){
+	public List<TagKey<Block>> mineableBlocks() {
 		return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
 	}
 }

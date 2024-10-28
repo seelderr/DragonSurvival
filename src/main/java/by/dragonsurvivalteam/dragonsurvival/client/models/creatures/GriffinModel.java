@@ -7,18 +7,18 @@ import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
 public class GriffinModel extends GeoModel<GriffinEntity> {
-    @Override
-    public ResourceLocation getModelResource(GriffinEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, "geo/hunter_griffin.geo.json");
-    }
+	@Override
+	public ResourceLocation getModelResource(GriffinEntity animatable) {
+		return ResourceLocation.fromNamespaceAndPath(MODID, "geo/hunter_griffin.geo.json");
+	}
 
-    @Override
-    public ResourceLocation getTextureResource(GriffinEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/griffins/hunter_griffin_1.png");
-    }
+	@Override
+	public ResourceLocation getTextureResource(GriffinEntity animatable) {
+		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/griffins/hunter_griffin_1.png");
+	}
 
-    @Override
-    public ResourceLocation getAnimationResource(GriffinEntity animatable) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_griffin.animation.json");
-    }
+	@Override
+	public ResourceLocation getAnimationResource(GriffinEntity animatable) {
+		return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_griffin.animation.json");
+	}
 }

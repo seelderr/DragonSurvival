@@ -16,34 +16,33 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class SyncDestructionEnabled implements IMessage<SyncDestructionEnabled.Data> {
-    public static void handleClient(final Data message, final IPayloadContext context) {
-        context.enqueueWork(() -> ClientProxy.handleSyncDestructionEnabled(message));
-    }
+	public static void handleClient(final Data message, final IPayloadContext context) {
+		context.enqueueWork(() -> ClientProxy.handleSyncDestructionEnabled(message));
+	}
 
-    public static void handleServer(final Data message, final IPayloadContext context) {
-        Entity entity = context.player();
-        context.enqueueWork(() -> {
-            DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-                handler.setDestructionEnabled(message.destructionEnabled);
-            });
-        }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
-    }
+	public static void handleServer(final Data message, final IPayloadContext context) {
+		Entity entity = context.player();
+		context.enqueueWork(() -> {
+			DragonStateProvider.getOptional(entity).ifPresent(handler -> {
+				handler.setDestructionEnabled(message.destructionEnabled);
+			});
+		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
+	}
 
-    public record Data(int playerId, boolean destructionEnabled) implements CustomPacketPayload
-    {
-        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_destruction_enabled"));
+	public record Data(int playerId, boolean destructionEnabled) implements CustomPacketPayload {
+		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_destruction_enabled"));
 
-        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT,
-                Data::playerId,
-                ByteBufCodecs.BOOL,
-                Data::destructionEnabled,
-                Data::new
-        );
+		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.BOOL,
+				Data::destructionEnabled,
+				Data::new
+		);
 
-        @Override
-        public @NotNull Type<? extends CustomPacketPayload> type() {
-            return TYPE;
-        }
-    }
+		@Override
+		public @NotNull Type<? extends CustomPacketPayload> type() {
+			return TYPE;
+		}
+	}
 }

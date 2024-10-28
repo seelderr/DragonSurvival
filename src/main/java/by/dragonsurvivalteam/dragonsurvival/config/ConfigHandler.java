@@ -4,17 +4,11 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
+
 import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.minecraft.core.Holder;
@@ -46,8 +40,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
 
-@EventBusSubscriber( modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD )
-public class ConfigHandler{
+@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+public class ConfigHandler {
 
 	public static ClientConfig CLIENT;
 	public static ModConfigSpec clientSpec;
@@ -65,12 +59,12 @@ public class ConfigHandler{
 
 	public static void initTypes() {
 		REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
-		REGISTRY_MAP.put(Block.class,  BuiltInRegistries.BLOCK);
-		REGISTRY_MAP.put(EntityType.class,  BuiltInRegistries.ENTITY_TYPE);
+		REGISTRY_MAP.put(Block.class, BuiltInRegistries.BLOCK);
+		REGISTRY_MAP.put(EntityType.class, BuiltInRegistries.ENTITY_TYPE);
 		REGISTRY_MAP.put(BlockEntityType.class, BuiltInRegistries.BLOCK_ENTITY_TYPE);
-		REGISTRY_MAP.put(Biome.class,  BuiltInRegistries.BIOME_SOURCE);
-		REGISTRY_MAP.put(MobEffect.class,  BuiltInRegistries.MOB_EFFECT);
-		REGISTRY_MAP.put(Potion.class,  BuiltInRegistries.POTION);
+		REGISTRY_MAP.put(Biome.class, BuiltInRegistries.BIOME_SOURCE);
+		REGISTRY_MAP.put(MobEffect.class, BuiltInRegistries.MOB_EFFECT);
+		REGISTRY_MAP.put(Potion.class, BuiltInRegistries.POTION);
 	}
 
 	private static List<Field> getFields() {
@@ -80,16 +74,16 @@ public class ConfigHandler{
 		ModList.get().getAllScanData().forEach(s -> {
 			List<ModFileScanData.AnnotationData> ebsTargets = s.getAnnotations().stream().filter(s1 -> s1.targetType() == ElementType.FIELD).filter(annotationData -> annotationType.equals(annotationData.annotationType())).toList();
 
-			ebsTargets.forEach(ad ->  {
-				ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder)ad.annotationData().get("side");
+			ebsTargets.forEach(ad -> {
+				ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder) ad.annotationData().get("side");
 				Dist side = Objects.equals(sidesValue.value(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
 
-				if(side == FMLEnvironment.dist || side == Dist.DEDICATED_SERVER){
-					try{
+				if (side == FMLEnvironment.dist || side == Dist.DEDICATED_SERVER) {
+					try {
 						Class<?> c = Class.forName(ad.clazz().getClassName());
 						Field fe = c.getDeclaredField(ad.memberName());
 						instances.add(fe);
-					}catch(Exception e){
+					} catch (Exception e) {
 						DragonSurvivalMod.LOGGER.error(e);
 					}
 				}
@@ -113,14 +107,14 @@ public class ConfigHandler{
 			try {
 				defaultConfigValues.put(configOption.key(), field.get(null));
 			} catch (IllegalAccessException e) {
-                DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
+				DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
 			}
 
 			configFields.put(configOption.key(), field);
 			configObjects.put(configOption.key(), configOption);
 
 			ConfigType configType = field.getAnnotation(ConfigType.class);
-			if(configType != null){
+			if (configType != null) {
 				configTypes.put(configOption.key(), configType);
 			}
 
@@ -188,7 +182,7 @@ public class ConfigHandler{
 				} else if (field.getType().isEnum()) {
 					ModConfigSpec.EnumValue<?> value = builder.defineEnum(configOption.key(), (Enum) defaultValues, ((Enum<?>) defaultValues).getClass().getEnumConstants());
 					configValues.put(key, value);
-				} else if(tt instanceof List<?> list) { // TODO :: Numeric lists?
+				} else if (tt instanceof List<?> list) { // TODO :: Numeric lists?
 					// By default, lists are not allowed to be empty, so we define the range manually here.
 					ModConfigSpec.Range<Integer> sizeRange = ModConfigSpec.Range.of(0, Integer.MAX_VALUE);
 					ModConfigSpec.ConfigValue<List<?>> value = builder.defineList(List.of(configOption.key()), () -> list, () -> getDefaultListValueForConfig(configOption.key()), configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue), sizeRange);
@@ -196,10 +190,10 @@ public class ConfigHandler{
 				} else {
 					ModConfigSpec.ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
 					configValues.put(key, value);
-                    DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
+					DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
 				}
 			} catch (Exception e) {
-                DragonSurvivalMod.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
+				DragonSurvivalMod.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
 			}
 
 			for (int i = 0; i < categories.length; i++) {
@@ -219,80 +213,82 @@ public class ConfigHandler{
 	public static String getDefaultListValueForConfig(final String key) {
 		return switch (key) {
 			// Food options
-            case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> "minecraft:empty:0:0";
+			case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> "minecraft:empty:0:0";
 			// Hurtful items
-            case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> "minecraft:empty:0";
+			case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> "minecraft:empty:0";
 
 
-            // Blacklisted Slots
-            case "blacklistedSlots" -> "0";
+			// Blacklisted Slots
+			case "blacklistedSlots" -> "0";
 
-            // Dirt transformations (forest dragon breath)
-            case "dirtTransformationBlocks" -> "minecraft:empty:0";
-            default -> "minecraft:empty";
-        };
+			// Dirt transformations (forest dragon breath)
+			case "dirtTransformationBlocks" -> "minecraft:empty:0";
+			default -> "minecraft:empty";
+		};
 	}
 
-	/** More specific checks depending on the config type */
+	/**
+	 * More specific checks depending on the config type
+	 */
 	public static boolean checkSpecific(final String key, final Object configValue) {
 		// TODO :: Maybe specifiy the full path?
 		// Food options
-        switch (key) {
-            case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> {
-                if (configValue instanceof String string) {
-                    // namespace:item_id:hunger:saturation
-                    String[] split = string.split(":");
+		switch (key) {
+			case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> {
+				if (configValue instanceof String string) {
+					// namespace:item_id:hunger:saturation
+					String[] split = string.split(":");
 
-                    if (split.length == 2) {
-                        return ResourceLocation.tryParse(string) != null;
-                    } else if (split.length == 4) {
-                        return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
-                    }
-                }
+					if (split.length == 2) {
+						return ResourceLocation.tryParse(string) != null;
+					} else if (split.length == 4) {
+						return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
+					}
+				}
 
-                return false;
-            }
-            case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> {
-                if (configValue instanceof String string) {
-                    // namespace:item_id:damage
-                    String[] split = string.split(":");
+				return false;
+			}
+			case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> {
+				if (configValue instanceof String string) {
+					// namespace:item_id:damage
+					String[] split = string.split(":");
 
-                    if (split.length == 3) {
-                        return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
-                    }
-                }
+					if (split.length == 3) {
+						return ResourceLocation.tryParse(split[0] + ":" + split[1]) != null;
+					}
+				}
 
-                return false;
-            }
-
-
-            // Blacklisted Slots
-            case "blacklistedSlots" -> {
-                try {
-                    Integer.parseInt(String.valueOf(configValue));
-                } catch (NumberFormatException e) {
-                    return false;
-                }
-
-                return true;
-            }
+				return false;
+			}
 
 
-            // Dirt transformations (forest dragon breath)
-            case "dirtTransformationBlocks" -> {
-                if (configValue instanceof String string) {
-                    String[] data = string.split(":");
+			// Blacklisted Slots
+			case "blacklistedSlots" -> {
+				try {
+					Integer.parseInt(String.valueOf(configValue));
+				} catch (NumberFormatException e) {
+					return false;
+				}
 
-                    if (data.length == 3) {
-                        return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
-                    }
+				return true;
+			}
 
-                    return false;
-                }
-            }
-        }
 
-        String string = String.valueOf(configValue);
+			// Dirt transformations (forest dragon breath)
+			case "dirtTransformationBlocks" -> {
+				if (configValue instanceof String string) {
+					String[] data = string.split(":");
+
+					if (data.length == 3) {
+						return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
+					}
+
+					return false;
+				}
+			}
+		}
+
+		String string = String.valueOf(configValue);
 
 		if (string.split(":").length == 2) {
 			// Simply checking for this at the start is unsafe since `awtaj` is a valid resource location but can cause problems if it's just some gibberish
@@ -311,7 +307,9 @@ public class ConfigHandler{
 		}
 	}
 
-	/** Get the relevant string value from an object for specific types */
+	/**
+	 * Get the relevant string value from an object for specific types
+	 */
 	private static Object getRelevantString(final Object object) {
 		// TODO :: Might not be used / relevant at the moment?
 		if (object instanceof Registry<?> registry) {
@@ -328,19 +326,19 @@ public class ConfigHandler{
 	/**
 	 * @param registry Registry to check data for
 	 * @param location Value to parse
+	 * @param <T>      Types which can be used in a registry (e.g. Item or Block)
 	 * @return Either a list of the resolved tag or the resource element
-	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
 	public static <T> List<T> parseResourceLocation(final Registry<T> registry, final String location) {
 		ResourceLocation resourceLocation = ResourceLocation.tryParse(location);
 
-		if(resourceLocation == null){
+		if (resourceLocation == null) {
 			// Try parsing regex if it's not a valid resource location
 			String[] split = location.split(":");
 
 			// Just to be sure
 			if (split.length != 2) {
-                DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist has the wrong format: {}", location);
+				DragonSurvivalMod.LOGGER.warn("Regex definition for the blacklist has the wrong format: {}", location);
 				return Collections.emptyList();
 			}
 
@@ -368,16 +366,16 @@ public class ConfigHandler{
 		} else {
 			Optional<TagKey<T>> tag = registry.getTagNames().filter(registryTag -> registryTag.location().equals(resourceLocation)).findAny();
 
-			if(tag.isPresent()) {
+			if (tag.isPresent()) {
 				List<T> list = new ArrayList<>();
 				registry.holders().forEach(
 						holder -> holder.tags().forEach(
-                                holderTag -> {
-                                    if (tag.get().equals(holderTag)) {
-                                        list.add(holder.value());
-                                    }
-                                }
-                        )
+								holderTag -> {
+									if (tag.get().equals(holderTag)) {
+										list.add(holder.value());
+									}
+								}
+						)
 				);
 				return list;
 			}
@@ -393,7 +391,7 @@ public class ConfigHandler{
 	 *     <li>Resource entries from {@link ConfigHandler#parseResourceLocation(Registry, String)}</li>
 	 *     <li>Otherwise just the original string value</li>
 	 * </ul>
-	 *
+	 * <p>
 	 * Otherwise, it will check if the value is a {@link Number} and return the correct value for that<br>
 	 * If it's also not a number the original value will be returned
 	 */
@@ -448,7 +446,9 @@ public class ConfigHandler{
 		onModConfig(event.getConfig().getType());
 	}
 
-	/** Sets the values of the config fields */
+	/**
+	 * Sets the values of the config fields
+	 */
 	public static void onModConfig(final ModConfig.Type type) {
 		ConfigSide side = type == ModConfig.Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT;
 		List<String> configList = configs.get(side);
@@ -467,7 +467,7 @@ public class ConfigHandler{
 					}
 				}
 			} catch (IllegalAccessException e) {
-                DragonSurvivalMod.LOGGER.error("An error occurred while setting the config [{}]", config, e);
+				DragonSurvivalMod.LOGGER.error("An error occurred while setting the config [{}]", config, e);
 			}
 		}
 	}
@@ -478,7 +478,9 @@ public class ConfigHandler{
 		}
 	}
 
-	/** Update and save the config */
+	/**
+	 * Update and save the config
+	 */
 	public static void updateConfigValue(final ModConfigSpec.ConfigValue config, final String configKey) {
 		Object configValue = convertToString(configKey);
 		config.set(convertToString(configValue));
@@ -496,12 +498,13 @@ public class ConfigHandler{
 					}
 				}
 			} catch (IllegalAccessException e) {
-                DragonSurvivalMod.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", config.getPath(), configValue, e);
+				DragonSurvivalMod.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", config.getPath(), configValue, e);
 			}
 		});
 	}
 
-	@Nullable private static Object convertToString(final Object object) {
+    @Nullable
+    private static Object convertToString(final Object object) {
 		Object result;
 
 		if (object instanceof Collection<?> collection) {
@@ -519,13 +522,15 @@ public class ConfigHandler{
 		return result;
 	}
 
-	/** See {@link ConfigHandler#getRelevantValue(Field, Object, Class)} for more info */
+	/**
+	 * See {@link ConfigHandler#getRelevantValue(Field, Object, Class)} for more info
+	 */
 	private static Object convertFromGeneric(final Field field, String config) throws IllegalAccessException {
 		Object result;
 		Object object = configValues.get(config).get();
 		ConfigType type = configTypes.get(config);
 		Class clazz = null;
-		if(type != null) {
+		if (type != null) {
 			clazz = type.value();
 		}
 
@@ -545,10 +550,10 @@ public class ConfigHandler{
 	}
 
 	/**
-	 * @param type Class of the resource type
+	 * @param type   Class of the resource type
 	 * @param values Resource locations
+	 * @param <T>    Types which can be used in a registry (e.g. Item or Block)
 	 * @return HashSet of the resource element and the resolved tag
-	 * @param <T> Types which can be used in a registry (e.g. Item or Block)
 	 */
 	public static <T> HashSet<T> getResourceElements(final Class<T> type, final List<String> values) {
 		Registry<T> registry = (Registry<T>) REGISTRY_MAP.getOrDefault(type, null);
@@ -590,6 +595,6 @@ public class ConfigHandler{
 			checkType = Primitives.unwrap(type.value());
 		}
 
-        return ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class;
-    }
+		return ItemLike.class.isAssignableFrom(checkType) || checkType == Block.class || checkType == EntityType.class || checkType == MobEffect.class || checkType == Biome.class;
+	}
 }

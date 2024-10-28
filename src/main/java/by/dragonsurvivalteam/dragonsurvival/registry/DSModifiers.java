@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -23,7 +24,8 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 
 public class DSModifiers {
 
-	public record ModifierBuilder(ResourceLocation modifier, Holder<Attribute> attribute, Operation operation, Function<DragonStateHandler, Double> calculator) {
+	public record ModifierBuilder(ResourceLocation modifier, Holder<Attribute> attribute, Operation operation,
+								  Function<DragonStateHandler, Double> calculator) {
 		private AttributeModifier buildModifier(DragonStateHandler handler) {
 			return new AttributeModifier(modifier, calculator.apply(handler), operation);
 		}
@@ -34,16 +36,18 @@ public class DSModifiers {
 
 			DragonStateHandler handler = DragonStateProvider.getData(player);
 			AttributeInstance instance = player.getAttribute(attribute);
-			if (instance == null) { return; }
+			if (instance == null) {
+				return;
+			}
 			AttributeModifier oldMod = instance.getModifier(modifier);
 			if (oldMod != null) {
 				instance.removeModifier(oldMod);
 			}
 
-			if(handler.isDragon()) {
+			if (handler.isDragon()) {
 				AttributeModifier builtModifier = buildModifier(handler);
 				instance.addPermanentModifier(builtModifier);
-				if(attribute == Attributes.MAX_HEALTH) {
+				if (attribute == Attributes.MAX_HEALTH) {
 					float newHealth = Math.min(player.getMaxHealth(), player.getHealth() * player.getMaxHealth() / oldMax);
 					player.setHealth(newHealth);
 				}
@@ -118,27 +122,25 @@ public class DSModifiers {
 			new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getFlightStaminaMult())
 	);
 
-	public static double buildHealthMod(DragonStateHandler handler){
+	public static double buildHealthMod(DragonStateHandler handler) {
 		if (!ServerConfig.healthAdjustments) return 0;
 		double healthModifier;
 		double size = handler.getSize();
-		if(ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
+		if (ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
 			healthModifier = ServerConfig.maxHealth + ServerConfig.largeMaxHealthScalar * ((size - ServerConfig.maxHealthSize) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE) - 20;
-		}
-		else {
+		} else {
 			double healthModifierPercentage = Math.min(1.0, (size - DragonLevel.NEWBORN.size) / (ServerConfig.maxHealthSize - DragonLevel.NEWBORN.size));
 			healthModifier = Mth.lerp(healthModifierPercentage, ServerConfig.minHealth, ServerConfig.maxHealth) - 20;
 		}
 		return healthModifier;
 	}
 
-	public static double buildReachMod(DragonStateHandler handler){
+	public static double buildReachMod(DragonStateHandler handler) {
 		double reachModifier;
 		double size = handler.getSize();
-		if(ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+		if (ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 			reachModifier = ServerConfig.reachBonus + ServerConfig.largeReachScalar * (size / ServerConfig.DEFAULT_MAX_GROWTH_SIZE);
-		}
-		else {
+		} else {
 			reachModifier = Math.max(ServerConfig.reachBonus, (size - DragonLevel.NEWBORN.size) / (ServerConfig.DEFAULT_MAX_GROWTH_SIZE - DragonLevel.NEWBORN.size) * ServerConfig.reachBonus);
 		}
 		return reachModifier;
@@ -147,20 +149,20 @@ public class DSModifiers {
 	public static double buildDamageMod(DragonStateHandler handler) {
 		if (!ServerConfig.attackDamage) return 0;
 		double ageBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.babyBonusDamage;
-		if(ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+		if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 			ageBonus += ServerConfig.largeDamageBonus * ((handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE);
 		}
 		return ageBonus;
 	}
 
-	public static double buildSwimSpeedMod(DragonStateHandler handler){
+	public static double buildSwimSpeedMod(DragonStateHandler handler) {
 		return Objects.equals(handler.getType(), DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0;
 	}
 
 	public static double buildStepHeightMod(DragonStateHandler handler) {
 		double size = handler.getSize();
 		double stepHeightBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultStepHeight : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngStepHeight : ServerConfig.newbornStepHeight;
-		if(size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling)  {
+		if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling) {
 			stepHeightBonus += ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 		}
 		return stepHeightBonus;
@@ -169,14 +171,14 @@ public class DSModifiers {
 	public static double buildMovementSpeedMod(DragonStateHandler handler) {
 		double moveSpeedMultiplier = 1;
 		double size = handler.getSize();
-		if(handler.getLevel() == DragonLevel.NEWBORN) {
+		if (handler.getLevel() == DragonLevel.NEWBORN) {
 			double youngPercent = Math.min(1.0, (size - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size));
 			moveSpeedMultiplier = Mth.lerp(youngPercent, ServerConfig.moveSpeedNewborn, ServerConfig.moveSpeedYoung);
-		} else if(handler.getLevel() == DragonLevel.YOUNG) {
+		} else if (handler.getLevel() == DragonLevel.YOUNG) {
 			double adultPercent = Math.min(1.0, (size - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
 			moveSpeedMultiplier = Mth.lerp(adultPercent, ServerConfig.moveSpeedYoung, ServerConfig.moveSpeedAdult);
-		} else if(handler.getLevel() == DragonLevel.ADULT) {
-			if(ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+		} else if (handler.getLevel() == DragonLevel.ADULT) {
+			if (ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
 				moveSpeedMultiplier = ServerConfig.moveSpeedAdult + ServerConfig.largeMovementSpeedScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 			} else {
 				moveSpeedMultiplier = ServerConfig.moveSpeedAdult;
@@ -193,7 +195,7 @@ public class DSModifiers {
 				jumpBonus += ServerConfig.largeJumpHeightScalar * (handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
 			}
 		}
-		switch(handler.getLevel()){
+		switch (handler.getLevel()) {
 			case NEWBORN -> jumpBonus += ServerConfig.newbornJump; //1+ block
 			case YOUNG -> jumpBonus += ServerConfig.youngJump; //1.5+ block
 			case ADULT -> jumpBonus += ServerConfig.adultJump; //2+ blocks
@@ -212,19 +214,19 @@ public class DSModifiers {
 	}
 
 	public static void updateTypeModifiers(Player player) {
-		for(ModifierBuilder builder : TYPE_MODIFIER_BUILDERS) {
+		for (ModifierBuilder builder : TYPE_MODIFIER_BUILDERS) {
 			builder.updateModifier(player);
 		}
 	}
 
 	public static void updateSizeModifiers(Player player) {
-		for(ModifierBuilder builder : SIZE_MODIFIER_BUILDERS) {
+		for (ModifierBuilder builder : SIZE_MODIFIER_BUILDERS) {
 			builder.updateModifier(player);
 		}
 	}
 
 	public static void updateBodyModifiers(Player player) {
-		for(ModifierBuilder builder : BODY_MODIFIER_BUILDERS) {
+		for (ModifierBuilder builder : BODY_MODIFIER_BUILDERS) {
 			builder.updateModifier(player);
 		}
 	}

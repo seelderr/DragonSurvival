@@ -20,12 +20,15 @@ public class RequestClientData implements IMessage<RequestClientData.Data> {
 
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "request_client_data"));
 
-		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>() {
 			@Override
-			public void encode(ByteBuf pBuffer, Data pValue) {}
+			public void encode(ByteBuf pBuffer, Data pValue) {
+			}
 
 			@Override
-			public Data decode(ByteBuf pBuffer) { return new Data(); }
+			public Data decode(ByteBuf pBuffer) {
+				return new Data();
+			}
 		};
 
 		@Override

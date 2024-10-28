@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
@@ -13,6 +15,9 @@ import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -22,25 +27,21 @@ import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 public class DragonModel extends GeoModel<DragonEntity> {
 	private final ResourceLocation defaultTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/cave_newborn.png");
 	private final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(MODID, "geo/dragon_model.geo.json");
 	private ResourceLocation overrideTexture;
 	private CompletableFuture<Void> textureRegisterFuture = CompletableFuture.completedFuture(null);
 
-	/**TODO Body Types Update
-	Required:
-	 - tips for body types like for magic abilities
-
-	 Extras:
-     - customization.json - Ability to disallow some details in the editor for some Body Types (for example, wing details are not required for wingless).
-	 - emotes.json - Ability to disallow some emotions for certain Body Types.
-	*/
+	/**
+	 * TODO Body Types Update
+	 * Required:
+	 * - tips for body types like for magic abilities
+	 * <p>
+	 * Extras:
+	 * - customization.json - Ability to disallow some details in the editor for some Body Types (for example, wing details are not required for wingless).
+	 * - emotes.json - Ability to disallow some emotions for certain Body Types.
+	 */
 
 	@Override
 	public void applyMolangQueries(final AnimationState<DragonEntity> animationState, double currentTick) {
@@ -64,13 +65,13 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
 		MathParser.setVariable("query.gravity", () -> gravity);
 
-        double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
+		double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
 
 		double bodyYawAvg;
 		double headYawAvg;
 		double headPitchAvg;
 		double yAccelAvg;
-		if(!ClientDragonRenderer.isOverridingMovementData) {
+		if (!ClientDragonRenderer.isOverridingMovementData) {
 			double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) * md.getTickFactor();
 			double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) * md.getTickFactor();
 			double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) * md.getTickFactor();
@@ -112,14 +113,14 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
 		MathParser.setVariable("query.y_accel", () -> yAccelAvg);
 	}
-	
+
 	@Override
 	public ResourceLocation getModelResource(final DragonEntity dragon) {
 		return model;
 	}
 
 	public ResourceLocation getTextureResource(final DragonEntity dragon) {
-		if(overrideTexture != null) {
+		if (overrideTexture != null) {
 			return overrideTexture;
 		}
 
@@ -143,15 +144,16 @@ public class DragonModel extends GeoModel<DragonEntity> {
 		}
 
 		if (handler.getSkinData().recompileSkin.get(handler.getLevel())) {
-			if(ClientConfig.forceCPUSkinGeneration) {
+			if (ClientConfig.forceCPUSkinGeneration) {
 				if (textureRegisterFuture.isDone()) {
 					CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
 					textureRegisterFuture = imageGenerationFuture.thenRunAsync(() -> {
 						handler.getSkinData().isCompiled.put(handler.getLevel(), true);
 						handler.getSkinData().recompileSkin.put(handler.getLevel(), false);
-						for(Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()){
+						for (Pair<NativeImage, ResourceLocation> pair : imageGenerationFuture.join()) {
 							RenderingUtils.uploadTexture(pair.getFirst(), pair.getSecond());
-						}}, Minecraft.getInstance());
+						}
+					}, Minecraft.getInstance());
 				}
 			} else {
 				DragonEditorHandler.generateSkinTexturesGPU(dragon);

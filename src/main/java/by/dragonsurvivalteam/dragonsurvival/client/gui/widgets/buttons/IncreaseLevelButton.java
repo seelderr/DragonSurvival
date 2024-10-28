@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
+
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.client.Minecraft;
@@ -20,14 +21,14 @@ public class IncreaseLevelButton extends ArrowButton {
 	public int skillCost;
 	private final int slot;
 
-	public IncreaseLevelButton(int x, int y, int slot){
+	public IncreaseLevelButton(int x, int y, int slot) {
 		super(x, y, 16, 16, true, Button::onPress);
 
 		this.slot = slot;
 	}
 
 	@Override
-	public void onPress(){
+	public void onPress() {
 		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
 			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 

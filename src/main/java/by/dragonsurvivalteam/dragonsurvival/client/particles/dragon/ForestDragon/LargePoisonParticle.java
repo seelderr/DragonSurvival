@@ -6,7 +6,9 @@ import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.particle.*;
+import net.minecraft.client.particle.Particle;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.client.particle.SpriteSet;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -68,11 +70,11 @@ public class LargePoisonParticle extends DragonParticle {
 		}
 	}
 
-	@OnlyIn( Dist.CLIENT )
-	public static final class Factory implements ParticleProvider<Data>{
+	@OnlyIn(Dist.CLIENT)
+	public static final class Factory implements ParticleProvider<Data> {
 		private final SpriteSet spriteSet;
 
-		public Factory(SpriteSet sprite){
+		public Factory(SpriteSet sprite) {
 			spriteSet = sprite;
 		}
 

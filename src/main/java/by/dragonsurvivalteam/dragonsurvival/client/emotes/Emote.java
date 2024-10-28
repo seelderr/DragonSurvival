@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
-public class Emote{
+public class Emote {
 	public int duration = -1;
 	public double speed = 1;
 
@@ -19,7 +19,7 @@ public class Emote{
 	public String animation;
 	public Sound sound = null;
 
-	public static class Sound{
+	public static class Sound {
 		public String key;
 		public int interval;
 
@@ -27,13 +27,13 @@ public class Emote{
 		public float pitch = 1F;
 	}
 
-	public static class Requirement{
+	public static class Requirement {
 		public String[] type;
 		public String[] model;
 		public String[] age;
 	}
 
-	public static class Mirror{
+	public static class Mirror {
 		public boolean xPos;
 		public boolean yPos;
 		public boolean zPos;

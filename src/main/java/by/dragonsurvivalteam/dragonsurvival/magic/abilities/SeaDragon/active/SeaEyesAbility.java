@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+
 import java.util.ArrayList;
 import java.util.Locale;
 import net.minecraft.network.chat.Component;
@@ -25,56 +26,56 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
 @RegisterDragonAbility
-public class SeaEyesAbility extends ChargeCastAbility{
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVision", comment = "Whether the sea vision ability should be enabled" )
+public class SeaEyesAbility extends ChargeCastAbility {
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVision", comment = "Whether the sea vision ability should be enabled")
 	public static Boolean seaEyes = true;
 
-	@ConfigRange( min = 1.0, max = 10000.0 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used" )
+	@ConfigRange(min = 1.0, max = 10000.0)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used")
 	public static Double seaEyesDuration = 100.0;
 
-	@ConfigRange( min = 0.05, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in seconds of the sea vision ability" )
+	@ConfigRange(min = 0.05, max = 10000)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in seconds of the sea vision ability")
 	public static Double seaEyesCooldown = 60.0;
 
-	@ConfigRange( min = 0.05, max = 10000 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in seconds of the sea vision ability" )
+	@ConfigRange(min = 0.05, max = 10000)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in seconds of the sea vision ability")
 	public static Double seaEyesCasttime = 1.0;
 
-	@ConfigRange( min = 0, max = 100 )
-	@ConfigOption( side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability" )
+	@ConfigRange(min = 0, max = 100)
+	@ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability")
 	public static Integer seaEyesManaCost = 1;
 
 	@Override
-	public int getSkillCastingTime(){
+	public int getSkillCastingTime() {
 		return Functions.secondsToTicks(seaEyesCasttime);
 	}
 
 	@Override
-	public int getSortOrder(){
+	public int getSortOrder() {
 		return 4;
 	}
 
 	@Override
-	public void onCasting(Player player, int currentCastTime){
+	public void onCasting(Player player, int currentCastTime) {
 
 	}
 
 	@Override
-	public void castingComplete(Player player){
+	public void castingComplete(Player player) {
 		player.addEffect(new MobEffectInstance(DSEffects.WATER_VISION, getDuration()));
 		player.level().playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, true);
 	}
 
 	@Override
-	public ArrayList<Component> getInfo(){
+	public ArrayList<Component> getInfo() {
 		ArrayList<Component> components = super.getInfo();
 		components.add(Component.translatable("ds.skill.duration.seconds", Functions.ticksToSeconds(getDuration())));
 
 		if (!Keybind.ABILITY4.get().isUnbound()) {
 			String key = Keybind.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
-			if(key.isEmpty()){
+			if (key.isEmpty()) {
 				key = Keybind.ABILITY4.getKey().getDisplayName().getString();
 			}
 			components.add(Component.translatable("ds.skill.keybind", key));
@@ -84,81 +85,83 @@ public class SeaEyesAbility extends ChargeCastAbility{
 	}
 
 	@Override
-	public int getManaCost(){
+	public int getManaCost() {
 		return seaEyesManaCost;
 	}
 
 	@Override
-	public Integer[] getRequiredLevels(){
+	public Integer[] getRequiredLevels() {
 		return new Integer[]{0, 15, 45, 60};
 	}
 
 	@Override
-	public int getSkillCooldown(){
+	public int getSkillCooldown() {
 		return Functions.secondsToTicks(seaEyesCooldown);
 	}
 
 	@Override
-	public boolean requiresStationaryCasting(){return false;}
+	public boolean requiresStationaryCasting() {
+		return false;
+	}
 
 	@Override
-	public AbilityAnimation getLoopingAnimation(){
+	public AbilityAnimation getLoopingAnimation() {
 		return new AbilityAnimation("cast_self_buff", true, false);
 	}
 
 	@Override
-	public AbilityAnimation getStoppingAnimation(){
+	public AbilityAnimation getStoppingAnimation() {
 		return new AbilityAnimation("self_buff", 0.52 * 20, true, false);
 	}
 
-	public int getDuration(){
+	public int getDuration() {
 		return Functions.secondsToTicks(seaEyesDuration * getLevel());
 	}
 
 	@Override
-	public Component getDescription(){
+	public Component getDescription() {
 		return Component.translatable("ds.skill.description." + getName(), Functions.ticksToSeconds(getDuration()));
 	}
 
 	@Override
-	public String getName(){
+	public String getName() {
 		return "sea_eyes";
 	}
 
 	@Override
-	public AbstractDragonType getDragonType(){
+	public AbstractDragonType getDragonType() {
 		return DragonTypes.SEA;
 	}
 
 	@Override
-	public ResourceLocation[] getSkillTextures(){
+	public ResourceLocation[] getSkillTextures() {
 		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_0.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_1.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_2.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_3.png"),
-		                              ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_4.png")};
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_1.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_2.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_3.png"),
+				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_4.png")};
 	}
 
 	@Override
-	@OnlyIn( Dist.CLIENT )
-	public ArrayList<Component> getLevelUpInfo(){
+	@OnlyIn(Dist.CLIENT)
+	public ArrayList<Component> getLevelUpInfo() {
 		ArrayList<Component> list = super.getLevelUpInfo();
 		list.add(Component.translatable("ds.skill.duration.seconds", "+" + seaEyesDuration));
 		return list;
 	}
 
 	@Override
-	public int getMaxLevel(){
+	public int getMaxLevel() {
 		return 4;
 	}
 
 	@Override
-	public int getMinLevel(){
+	public int getMinLevel() {
 		return 0;
 	}
 
 	@Override
-	public boolean isDisabled(){
+	public boolean isDisabled() {
 		return super.isDisabled() || !seaEyes;
 	}
 }

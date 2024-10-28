@@ -11,10 +11,11 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 
-@Mixin( EntityRenderer.class )
-public interface AccessorEntityRenderer{
-	@Accessor( "shadowRadius" )
+@Mixin(EntityRenderer.class)
+public interface AccessorEntityRenderer {
+	@Accessor("shadowRadius")
 	void setShadowRadius(float radius);
-	@Invoker( "renderNameTag" )
+
+	@Invoker("renderNameTag")
 	void callRenderNameTag(Entity pEntity, Component pDisplayName, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, float pPartialTick);
 }

@@ -47,11 +47,11 @@ public class KnightEntity extends Hunter {
 	public PlayState fullPredicate(final AnimationState<KnightEntity> state) {
 		double movement = AnimationUtils.getMovementSpeed(this);
 
-		if(swingTime == 0) {
+		if (swingTime == 0) {
 			isAttackAnimSet = false;
 		}
 
-		if(isIdleAnimSet) {
+		if (isIdleAnimSet) {
 			isIdleAnimSet = !isNotIdle();
 		}
 
@@ -109,12 +109,12 @@ public class KnightEntity extends Hunter {
 	}
 
 	@Override
-	public void tick(){
+	public void tick() {
 		super.tick();
 		applyMagicDisabledDebuff();
 	}
 
-	private void applyMagicDisabledDebuff(){
+	private void applyMagicDisabledDebuff() {
 		double detectionRadius = 8.0;
 		List<Player> players = this.level().getEntitiesOfClass(Player.class, this.getBoundingBox().inflate(detectionRadius));
 
@@ -126,22 +126,23 @@ public class KnightEntity extends Hunter {
 	}
 
 	@Override
-	public boolean isBlocking(){
-		if(getOffhandItem().getItem() == Items.SHIELD){
+	public boolean isBlocking() {
+		if (getOffhandItem().getItem() == Items.SHIELD) {
 			return random.nextBoolean();
 		}
 		return false;
 	}
 
-	@Nullable public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverWorld, @NotNull DifficultyInstance difficultyInstance, @NotNull MobSpawnType spawnReason, @Nullable SpawnGroupData entityData){
+    @Nullable
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverWorld, @NotNull DifficultyInstance difficultyInstance, @NotNull MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
 		populateDefaultEquipmentSlots(random, difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData);
 	}
 
 	@Override
-	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, @NotNull DifficultyInstance difficultyInstance){
+	protected void populateDefaultEquipmentSlots(@NotNull RandomSource randomSource, @NotNull DifficultyInstance difficultyInstance) {
 		setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.IRON_SWORD));
-		if(random.nextDouble() < ServerConfig.knightShieldChance){
+		if (random.nextDouble() < ServerConfig.knightShieldChance) {
 			setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.SHIELD));
 		}
 	}

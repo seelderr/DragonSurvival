@@ -33,40 +33,42 @@ public class DragonRidingHandler {
 	private static DragonRideAttemptResult playerCanRideDragon(Player rider, Player mount) {
 		DragonStateHandler riderCap = DragonStateProvider.getData(rider);
 		DragonStateHandler mountCap = DragonStateProvider.getData(mount);
-		if(!mountCap.isDragon() || rider.isSpectator() || mount.isSpectator() || rider.isSleeping() || mount.isSleeping()) {
+		if (!mountCap.isDragon() || rider.isSpectator() || mount.isSpectator() || rider.isSleeping() || mount.isSleeping()) {
 			return DragonRideAttemptResult.OTHER;
 		}
 
 		double sizeRatio = riderCap.getSize() / mountCap.getSize();
 		boolean dragonIsTooSmallToRide = sizeRatio >= 0.5;
-		if(dragonIsTooSmallToRide) {
+		if (dragonIsTooSmallToRide) {
 			return DragonRideAttemptResult.SELF_TOO_BIG;
-		} else if(!riderCap.isDragon() && mountCap.getLevel() == DragonLevel.ADULT) {
+		} else if (!riderCap.isDragon() && mountCap.getLevel() == DragonLevel.ADULT) {
 			return DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN;
-		} else if(mount.getPose() != Pose.CROUCHING) {
+		} else if (mount.getPose() != Pose.CROUCHING) {
 			return DragonRideAttemptResult.NOT_CROUCHING;
 		}
 
 		return DragonRideAttemptResult.SUCCESS;
 	}
 
-	/** Mounting a dragon */
+	/**
+	 * Mounting a dragon
+	 */
 	@SubscribeEvent
-	public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event){
+	public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) {
 		Entity ent = event.getTarget();
 
-		if(event.getHand() != InteractionHand.MAIN_HAND){
+		if (event.getHand() != InteractionHand.MAIN_HAND) {
 			return;
 		}
 
 
-		if(ent instanceof ServerPlayer target){
+		if (ent instanceof ServerPlayer target) {
 			Player self = event.getEntity();
 
 			DragonStateProvider.getOptional(target).ifPresent(targetCap -> {
 				DragonStateProvider.getOptional(self).ifPresent(selfCap -> {
 					DragonRideAttemptResult result = playerCanRideDragon(self, target);
-					if(result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
+					if (result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
 						self.startRiding(target);
 						target.connection.send(new ClientboundSetPassengersPacket(target));
 						targetCap.setPassengerId(self.getId());
@@ -88,26 +90,26 @@ public class DragonRidingHandler {
 	}
 
 	@SubscribeEvent
-	public static void updateRidingState(PlayerTickEvent.Post event){
-		if(event.getEntity() instanceof ServerPlayer player){
+	public static void updateRidingState(PlayerTickEvent.Post event) {
+		if (event.getEntity() instanceof ServerPlayer player) {
 			DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
 				int passengerId = dragonStateHandler.getPassengerId();
-				if(passengerId == -1){
+				if (passengerId == -1) {
 					return;
 				}
 
 				Entity passenger = player.level().getEntity(passengerId);
 				// Check for any way that riding could have been interrupted and update our internal state tracking
-				if(passenger == null || !player.hasPassenger(passenger) || passenger.getRootVehicle() != player.getRootVehicle() || !player.isVehicle()) {
+				if (passenger == null || !player.hasPassenger(passenger) || passenger.getRootVehicle() != player.getRootVehicle() || !player.isVehicle()) {
 					dragonStateHandler.setPassengerId(-1);
 					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonPassengerID.Data(player.getId(), -1));
 					return;
 				}
 
-				if(passenger instanceof Player playerPassenger){
+				if (passenger instanceof Player playerPassenger) {
 					// In addition, if any of the conditions to allow a player to ride a dragon are no longer met, dismount the player
 					DragonRideAttemptResult result = playerCanRideDragon(playerPassenger, player);
-					if(result == DragonRideAttemptResult.SUCCESS || result == DragonRideAttemptResult.NOT_CROUCHING) {
+					if (result == DragonRideAttemptResult.SUCCESS || result == DragonRideAttemptResult.NOT_CROUCHING) {
 						return;
 					}
 

@@ -16,19 +16,19 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-public class BolasEntityRenderer extends EntityRenderer<Bolas>{
+public class BolasEntityRenderer extends EntityRenderer<Bolas> {
 
 	// This class is purely for rendering the bolas projectile. The bolas rendered on top of the target when it is trapped is handled elsewhere: renderBolas & renderTrap inside of ClientEvents.java, and thirdPersonPreRender in ClientDragonRender.java
 
 	private static final ResourceLocation BOLAS_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/item/dragon_hunting_mesh.png");
 
-	public BolasEntityRenderer(Context p_174198_){
+	public BolasEntityRenderer(Context p_174198_) {
 		super(p_174198_);
 	}
 
 	@Override
-	public void render(final Bolas bolas, float yaw, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource bufferSource, int eventLight){
-		if(bolas.tickCount >= 2 || !(entityRenderDispatcher.camera.getEntity().distanceToSqr(bolas) < 12.25D)){
+	public void render(final Bolas bolas, float yaw, float partialTicks, @NotNull PoseStack stack, @NotNull MultiBufferSource bufferSource, int eventLight) {
+		if (bolas.tickCount >= 2 || !(entityRenderDispatcher.camera.getEntity().distanceToSqr(bolas) < 12.25D)) {
 			stack.pushPose();
 			stack.scale(1.2F, 1.2F, 1.2F);
 			stack.mulPose(entityRenderDispatcher.cameraOrientation());

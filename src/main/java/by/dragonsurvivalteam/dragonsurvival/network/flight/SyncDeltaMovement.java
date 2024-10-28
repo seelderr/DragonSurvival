@@ -25,7 +25,7 @@ public class SyncDeltaMovement implements IMessage<SyncDeltaMovement.Data> {
 		PacketDistributor.sendToPlayersTrackingEntity(sender, new SyncDeltaMovement.Data(sender.getId(), message.speedX(), message.speedY(), message.speedZ()));
 	}
 
-	public record Data (int playerId, double speedX, double speedY, double speedZ) implements CustomPacketPayload {
+	public record Data(int playerId, double speedX, double speedY, double speedZ) implements CustomPacketPayload {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "flight_speed"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(

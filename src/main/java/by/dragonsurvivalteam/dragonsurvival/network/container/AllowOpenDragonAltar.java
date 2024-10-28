@@ -20,12 +20,15 @@ public class AllowOpenDragonAltar implements IMessage<AllowOpenDragonAltar.Data>
 
 		public static final Type<AllowOpenDragonAltar.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_altar"));
 
-		public static final StreamCodec<ByteBuf, AllowOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>(){
+		public static final StreamCodec<ByteBuf, AllowOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>() {
 			@Override
-			public void encode(ByteBuf pBuffer, AllowOpenDragonAltar.Data pValue) {}
+			public void encode(ByteBuf pBuffer, AllowOpenDragonAltar.Data pValue) {
+			}
 
 			@Override
-			public AllowOpenDragonAltar.Data decode(ByteBuf pBuffer) { return new AllowOpenDragonAltar.Data(); }
+			public AllowOpenDragonAltar.Data decode(ByteBuf pBuffer) {
+				return new AllowOpenDragonAltar.Data();
+			}
 		};
 
 		@Override

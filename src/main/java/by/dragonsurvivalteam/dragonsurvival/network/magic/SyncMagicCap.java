@@ -21,7 +21,7 @@ public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
 
 	public static void handleServer(final SyncMagicCap.Data message, final IPayloadContext context) {
 		Player sender = context.player();
-		context.enqueueWork(()-> {
+		context.enqueueWork(() -> {
 			DragonStateProvider.getOptional(sender).ifPresent(handler -> {
 				handler.getMagicData().deserializeNBT(context.player().registryAccess(), message.nbt);
 			});
@@ -32,11 +32,11 @@ public class SyncMagicCap implements IMessage<SyncMagicCap.Data> {
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_cap"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.COMPOUND_TAG,
-			Data::nbt,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.COMPOUND_TAG,
+				Data::nbt,
+				Data::new
 		);
 
 		@Override

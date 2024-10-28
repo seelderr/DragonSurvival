@@ -61,7 +61,9 @@ public class DragonFoodHandler {
 
 	private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS;
 
-	/** Rebuild the food map if any sort of server config changes */
+	/**
+	 * Rebuild the food map if any sort of server config changes
+	 */
 	@SubscribeEvent
 	public static void onConfigLoad(final ModConfigEvent event) {
 		if (event.getConfig().getType() == ModConfig.Type.SERVER) {
@@ -77,24 +79,24 @@ public class DragonFoodHandler {
 		map.put(DragonTypes.FOREST.getTypeName(), buildDragonFoodMap(DragonTypes.FOREST));
 		map.put(DragonTypes.SEA.getTypeName(), buildDragonFoodMap(DragonTypes.SEA));
 
-        clearTooltipMaps();
+		clearTooltipMaps();
 
 		DRAGON_FOODS = new ConcurrentHashMap<>(map);
 	}
 
-    public static void clearTooltipMaps() {
-        if (CAVE_DRAGON_FOOD != null) {
-            CAVE_DRAGON_FOOD.clear();
-        }
+	public static void clearTooltipMaps() {
+		if (CAVE_DRAGON_FOOD != null) {
+			CAVE_DRAGON_FOOD.clear();
+		}
 
-        if (FOREST_DRAGON_FOOD != null) {
-            FOREST_DRAGON_FOOD.clear();
-        }
+		if (FOREST_DRAGON_FOOD != null) {
+			FOREST_DRAGON_FOOD.clear();
+		}
 
-        if (SEA_DRAGON_FOOD != null) {
-            SEA_DRAGON_FOOD.clear();
-        }
-    }
+		if (SEA_DRAGON_FOOD != null) {
+			SEA_DRAGON_FOOD.clear();
+		}
+	}
 
 	private static ConcurrentHashMap<Item, FoodProperties> buildDragonFoodMap(final AbstractDragonType type) {
 		ConcurrentHashMap<Item, FoodProperties> map = new ConcurrentHashMap<>();
@@ -126,7 +128,7 @@ public class DragonFoodHandler {
 
 			Optional<TagKey<Item>> itemTag = BuiltInRegistries.ITEM.getTagNames().filter(tag -> tag.location().equals(resourceLocation)).findAny();
 
-			if(itemTag.isEmpty()) {
+			if (itemTag.isEmpty()) {
 				if (BuiltInRegistries.ITEM.containsKey(resourceLocation)) {
 					Item item = BuiltInRegistries.ITEM.get(resourceLocation);
 
@@ -228,15 +230,15 @@ public class DragonFoodHandler {
 			return new CopyOnWriteArrayList<>();
 		}
 
-        if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD != null && !FOREST_DRAGON_FOOD.isEmpty()) {
-            return FOREST_DRAGON_FOOD;
-        } else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD != null && !SEA_DRAGON_FOOD.isEmpty()) {
-            return SEA_DRAGON_FOOD;
-        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD != null && !CAVE_DRAGON_FOOD.isEmpty()) {
-            return CAVE_DRAGON_FOOD;
-        }
+		if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD != null && !FOREST_DRAGON_FOOD.isEmpty()) {
+			return FOREST_DRAGON_FOOD;
+		} else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD != null && !SEA_DRAGON_FOOD.isEmpty()) {
+			return SEA_DRAGON_FOOD;
+		} else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD != null && !CAVE_DRAGON_FOOD.isEmpty()) {
+			return CAVE_DRAGON_FOOD;
+		}
 
-        if (DRAGON_FOODS == null) {
+		if (DRAGON_FOODS == null) {
 			rebuildFoodMap();
 		}
 
@@ -282,7 +284,7 @@ public class DragonFoodHandler {
 
 		FoodProperties baseProperties = stack.getFoodProperties(null);
 		if (baseProperties != null) {
-			if(requireDragonFood) {
+			if (requireDragonFood) {
 				return getBadFoodProperties();
 			} else {
 				return baseProperties;
@@ -301,7 +303,7 @@ public class DragonFoodHandler {
 
 		FoodProperties baseProperties = item.getFoodProperties(new ItemStack(item), null);
 		if (baseProperties != null) {
-			if(requireDragonFood) {
+			if (requireDragonFood) {
 				return getBadFoodProperties();
 			} else {
 				return baseProperties;

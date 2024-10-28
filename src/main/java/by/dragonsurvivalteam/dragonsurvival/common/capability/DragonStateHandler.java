@@ -13,6 +13,12 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,19 +41,14 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.UnknownNullability;
 
-import javax.annotation.Nullable;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
-
 public class DragonStateHandler extends EntityStateHandler {
 
 	public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
-    /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
-    public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
+	/**
+	 * Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd}
+	 */
+	public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
 	public boolean switchedWeapon;
 
 	public ItemStack storedMainHandTool = ItemStack.EMPTY;
@@ -71,8 +72,10 @@ public class DragonStateHandler extends EntityStateHandler {
 	public boolean isInAltar = false;
 	public boolean refreshBody;
 
-    /** Last timestamp the server synchronized the player */
-    public int lastSync = 0;
+	/**
+	 * Last timestamp the server synchronized the player
+	 */
+	public int lastSync = 0;
 
 
 	private final DragonMovementData movementData = new DragonMovementData();
@@ -92,7 +95,9 @@ public class DragonStateHandler extends EntityStateHandler {
 	private double size;
 	private boolean destructionEnabled;
 
-	/** Sets the size, health and base damage */
+	/**
+	 * Sets the size, health and base damage
+	 */
 	public void setSize(double size, Player player) {
 		setSize(size);
 		DSModifiers.updateSizeModifiers(player);
@@ -117,15 +122,15 @@ public class DragonStateHandler extends EntityStateHandler {
 		movementData.bite = bite;
 	}
 
-    public void setDesiredMoveVec(Vec2 desiredMoveVec) {
-        movementData.desiredMoveVec = desiredMoveVec;
-    }
+	public void setDesiredMoveVec(Vec2 desiredMoveVec) {
+		movementData.desiredMoveVec = desiredMoveVec;
+	}
 
-    public void setMovementData(double bodyYaw, double headYaw, double headPitch, Vec3 deltaMovement, double realTimeDeltaTick) {
-        movementData.headYawLastFrame = movementData.headYaw;
-        movementData.bodyYawLastFrame = movementData.bodyYaw;
-        movementData.headPitchLastFrame = movementData.headPitch;
-        movementData.deltaMovementLastFrame = movementData.deltaMovement;
+	public void setMovementData(double bodyYaw, double headYaw, double headPitch, Vec3 deltaMovement, double realTimeDeltaTick) {
+		movementData.headYawLastFrame = movementData.headYaw;
+		movementData.bodyYawLastFrame = movementData.bodyYaw;
+		movementData.headPitchLastFrame = movementData.headPitch;
+		movementData.deltaMovementLastFrame = movementData.deltaMovement;
 
 		movementData.bodyYaw = bodyYaw;
 		movementData.headYaw = headYaw;
@@ -169,7 +174,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		savedDragonSize.put(type, size);
 	}
 
-	public AbstractDragonType getType(){
+	public AbstractDragonType getType() {
 		return dragonType;
 	}
 
@@ -261,7 +266,9 @@ public class DragonStateHandler extends EntityStateHandler {
 		return getLevel(size);
 	}
 
-	/** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
+	/**
+	 * Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account)
+	 */
 	public boolean canHarvestWithPaw(final BlockState state) {
 		if (!isDragon()) {
 			return false;
@@ -278,7 +285,9 @@ public class DragonStateHandler extends EntityStateHandler {
 		return canHarvestWithPawNoTools(state);
 	}
 
-	/** Determines if the current dragon type can harvest the supplied block without a tool (configured harvest bonuses are taken into account) */
+	/**
+	 * Determines if the current dragon type can harvest the supplied block without a tool (configured harvest bonuses are taken into account)
+	 */
 	public boolean canHarvestWithPawNoTools(final BlockState blockState) {
 		if (!isDragon()) {
 			return false;
@@ -308,6 +317,7 @@ public class DragonStateHandler extends EntityStateHandler {
 	/**
 	 * Returns an effective tool for the supplied block state<br>
 	 * The tier of the tool is based on the current harvest level of the dragon
+	 *
 	 * @param blockState The block for which the tool is required for
 	 * @return The appropriate harvest tool for the supplied block<br>
 	 * The tier depends on the dragon and configured harvest bonuses
@@ -351,14 +361,17 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 	}
 
-	/** Calls {@link DragonStateHandler#getToolOfType(Tier, int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
+	/**
+	 * Calls {@link DragonStateHandler#getToolOfType(Tier, int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)}
+	 */
 	public ItemStack getToolOfType(final Tier tier, final BlockState blockState) {
 		return getToolOfType(tier, getRelevantToolSlot(blockState));
 	}
 
 	/**
 	 * Returns a tiered item for the supplied slot - useful to fake checks regarding block breaking
-	 * @param tier The tier which the returned item is supposed to have
+	 *
+	 * @param tier     The tier which the returned item is supposed to have
 	 * @param toolSlot To determine the type of harvest tool (e.g. `1` for Pickaxe)
 	 * @return A default instance of the tool (or {@link ItemStack#EMPTY} if nothing matches / some problem occurs)
 	 */
@@ -373,21 +386,24 @@ public class DragonStateHandler extends EntityStateHandler {
 
 		Item item = switch (toolSlot) {
 			case 1 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "pickaxe"));
-			case 2 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace( tierPath + "axe"));
+			case 2 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "axe"));
 			case 3 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "shovel"));
 			default -> ItemStack.EMPTY.getItem();
 		};
 
-        return item.getDefaultInstance();
-    }
+		return item.getDefaultInstance();
+	}
 
-	/** Calls {@link DragonStateHandler#getDragonHarvestLevel(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
+	/**
+	 * Calls {@link DragonStateHandler#getDragonHarvestLevel(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)}
+	 */
 	public int getDragonHarvestLevel(final BlockState blockState) {
 		return getDragonHarvestLevel(getRelevantToolSlot(blockState));
 	}
 
 	/**
 	 * Don't call this when the player is not a dragon, if you do you get a -1
+	 *
 	 * @param slot The dragon tool slot of the harvest tool which needs to be checked
 	 * @return The harvest level of the current dragon type for the provided slot
 	 */
@@ -414,13 +430,14 @@ public class DragonStateHandler extends EntityStateHandler {
 		return harvestLevel;
 	}
 
-	/** Calls {@link DragonStateHandler#getDragonHarvestTier(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
+	/**
+	 * Calls {@link DragonStateHandler#getDragonHarvestTier(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)}
+	 */
 	public @Nullable Tier getDragonHarvestTier(final BlockState blockState) {
 		return getDragonHarvestTier(getRelevantToolSlot(blockState));
 	}
 
 	/**
-	 *
 	 * @param slot The (dragon) tool slot the item would belong to (e.g. `1` for Pickaxe)
 	 * @return the tier of the current dragon harvest level<br>
 	 * (Which is a combination of {@link ServerConfig#baseHarvestLevel} and {@link ServerConfig#bonusHarvestLevel} (if enabled))<br>
@@ -433,7 +450,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			return null;
 		}
 
-		return switch(harvestLevel) {
+		return switch (harvestLevel) {
 			case 0 -> Tiers.WOOD;
 			case 1 -> Tiers.STONE;
 			case 2 -> Tiers.IRON;
@@ -480,7 +497,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		this.isHiding = isHiding;
 	}
 
-	public MagicCap getMagicData(){
+	public MagicCap getMagicData() {
 		return magicData;
 	}
 
@@ -488,7 +505,7 @@ public class DragonStateHandler extends EntityStateHandler {
 		return movementData;
 	}
 
-	public double getSize(){
+	public double getSize() {
 		return size;
 	}
 
@@ -520,18 +537,18 @@ public class DragonStateHandler extends EntityStateHandler {
 		return hasFlight && areWingsSpread;
 	}
 
-	public boolean isHiding(){
+	public boolean isHiding() {
 		return isHiding;
 	}
 
-	public ClawInventory getClawToolData()  {
+	public ClawInventory getClawToolData() {
 		return clawToolData;
 	}
 
 	public CompoundTag serializeNBT(HolderLookup.Provider provider, boolean isSavingForSoul) {
 		CompoundTag tag = new CompoundTag();
 		tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
-		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName(): "none");
+		tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
 		tag.putString("dragonBody", dragonBody != null ? dragonBody.getBodyName() : "none");
 
 		if (isDragon()) {
@@ -567,8 +584,8 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		// Only store the size of the dragon the player is currently in if we are saving for the soul
-		if(isSavingForSoul) {
-			switch(getTypeName()) {
+		if (isSavingForSoul) {
+			switch (getTypeName()) {
 				case "sea" -> tag.putDouble("seaSize", getSavedDragonSize(DragonTypes.SEA.getTypeName()));
 				case "cave" -> tag.putDouble("caveSize", getSavedDragonSize(DragonTypes.CAVE.getTypeName()));
 				case "forest" -> tag.putDouble("forestSize", getSavedDragonSize(DragonTypes.FOREST.getTypeName()));
@@ -645,7 +662,7 @@ public class DragonStateHandler extends EntityStateHandler {
 			treasureResting = tag.getBoolean("resting");
 			treasureRestTimer = tag.getInt("restingTimer");
 
-			if(getSize() == 0){
+			if (getSize() == 0) {
 				setSize(DragonLevel.NEWBORN.size);
 			}
 		}
@@ -656,8 +673,8 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		// Only load the size of the dragon the player is currently in if we are loading for the soul
-		if(isLoadingForSoul) {
-			switch(getTypeName()) {
+		if (isLoadingForSoul) {
+			switch (getTypeName()) {
 				case "sea" -> setSavedDragonSize(DragonTypes.SEA.getTypeName(), tag.getDouble("seaSize"));
 				case "cave" -> setSavedDragonSize(DragonTypes.CAVE.getTypeName(), tag.getDouble("caveSize"));
 				case "forest" -> setSavedDragonSize(DragonTypes.FOREST.getTypeName(), tag.getDouble("forestSize"));
@@ -669,14 +686,14 @@ public class DragonStateHandler extends EntityStateHandler {
 		}
 
 		for (int i = 0; i < caps.length; i++) {
-			if(isLoadingForSoul) {
-				if(i == 2) {
+			if (isLoadingForSoul) {
+				if (i == 2) {
 					continue;
 				}
 			}
 
-			if(isLoadingForSoul) {
-				if(i == 3) {
+			if (isLoadingForSoul) {
+				if (i == 3) {
 					continue;
 				}
 			}

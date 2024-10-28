@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.dragonsurvivalteam.dragonsurvival.util.CompoundTagBuilder;
 import com.mojang.datafixers.util.Pair;
+
 import java.util.HashMap;
 import java.util.List;
 import net.minecraft.core.Holder;
@@ -31,7 +32,7 @@ import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.Color;
 
 @SuppressWarnings("unused")
-public class DSBlocks{
+public class DSBlocks {
 	public static final DeferredRegister<Block> DS_BLOCKS = DeferredRegister.create(
 			BuiltInRegistries.BLOCK,
 			MODID
@@ -771,10 +772,10 @@ public class DSBlocks{
 			"treasure_debris",
 			() -> new TreasureBlock(Color.ofRGB(148, 120, 114),
 					BlockBehaviour.Properties.of()
-					.mapColor(MapColor.COLOR_BROWN)
-					.noOcclusion()
-					.sound(DSSounds.TREASURE_METAL)
-					.strength(0.5F))
+							.mapColor(MapColor.COLOR_BROWN)
+							.noOcclusion()
+							.sound(DSSounds.TREASURE_METAL)
+							.strength(0.5F))
 	);
 
 	public static final Holder<Item> TREASURE_DEBRIS_ITEM = DS_ITEMS.register(
@@ -786,10 +787,10 @@ public class DSBlocks{
 			"treasure_diamond",
 			() -> new TreasureBlock(Color.ofRGB(212, 255, 255),
 					BlockBehaviour.Properties.of()
-					.mapColor(MapColor.DIAMOND)
-					.noOcclusion()
-					.sound(DSSounds.TREASURE_GEM)
-					.strength(0.5F))
+							.mapColor(MapColor.DIAMOND)
+							.noOcclusion()
+							.sound(DSSounds.TREASURE_GEM)
+							.strength(0.5F))
 	);
 
 	public static final Holder<Item> TREASURE_DIAMOND_ITEM = DS_ITEMS.register(
@@ -801,10 +802,10 @@ public class DSBlocks{
 			"treasure_emerald",
 			() -> new TreasureBlock(Color.ofRGB(57, 240, 94),
 					BlockBehaviour.Properties.of()
-					.mapColor(MapColor.COLOR_GREEN)
-					.noOcclusion()
-					.sound(DSSounds.TREASURE_GEM)
-					.strength(0.5F))
+							.mapColor(MapColor.COLOR_GREEN)
+							.noOcclusion()
+							.sound(DSSounds.TREASURE_GEM)
+							.strength(0.5F))
 	);
 
 	public static final Holder<Item> TREASURE_EMERALD_ITEM = DS_ITEMS.register(
@@ -816,11 +817,11 @@ public class DSBlocks{
 			"treasure_copper",
 			() -> new TreasureBlock(Color.ofRGB(255, 255, 208),
 					BlockBehaviour.Properties.of()
-					.mapColor(MapColor.COLOR_ORANGE)
-					.instrument(NoteBlockInstrument.HAT)
-					.noOcclusion()
-					.sound(DSSounds.TREASURE_METAL)
-					.strength(0.5F))
+							.mapColor(MapColor.COLOR_ORANGE)
+							.instrument(NoteBlockInstrument.HAT)
+							.noOcclusion()
+							.sound(DSSounds.TREASURE_METAL)
+							.strength(0.5F))
 	);
 
 	public static final Holder<Item> TREASURE_COPPER_ITEM = DS_ITEMS.register(
@@ -832,10 +833,10 @@ public class DSBlocks{
 			"treasure_gold",
 			() -> new TreasureBlock(Color.ofRGB(255, 255, 243),
 					BlockBehaviour.Properties.of()
-					.mapColor(MapColor.GOLD)
-					.noOcclusion()
-					.sound(DSSounds.TREASURE_METAL)
-					.strength(0.5F))
+							.mapColor(MapColor.GOLD)
+							.noOcclusion()
+							.sound(DSSounds.TREASURE_METAL)
+							.strength(0.5F))
 	);
 
 	public static final Holder<Item> TREASURE_GOLD_ITEM = DS_ITEMS.register(
@@ -847,10 +848,10 @@ public class DSBlocks{
 			"treasure_iron",
 			() -> new TreasureBlock(Color.ofRGB(211, 211, 211),
 					BlockBehaviour.Properties.of()
-					.mapColor(MapColor.METAL)
-					.noOcclusion()
-					.sound(DSSounds.TREASURE_METAL)
-					.strength(0.5F))
+							.mapColor(MapColor.METAL)
+							.noOcclusion()
+							.sound(DSSounds.TREASURE_METAL)
+							.strength(0.5F))
 	);
 
 	public static final Holder<Item> TREASURE_IRON_ITEM = DS_ITEMS.register(
@@ -1061,7 +1062,7 @@ public class DSBlocks{
 
 	public static final DeferredHolder<Item, BlockItem> DRAGON_RIDER_WORKBENCH_ITEM = DS_ITEMS.register(
 			"dragon_rider_workbench",
-			() -> new BlockItem(DRAGON_RIDER_WORKBENCH.get(), new Item.Properties()){
+			() -> new BlockItem(DRAGON_RIDER_WORKBENCH.get(), new Item.Properties()) {
 				@Override
 				public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 					super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);

@@ -8,11 +8,11 @@ import net.minecraft.sounds.SoundSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT )
-public class StormBreathSound extends AbstractTickableSoundInstance{
+@OnlyIn(Dist.CLIENT)
+public class StormBreathSound extends AbstractTickableSoundInstance {
 	private final StormBreathAbility ability;
 
-	public StormBreathSound(StormBreathAbility ability){
+	public StormBreathSound(StormBreathAbility ability) {
 		super(DSSounds.STORM_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
 		looping = true;
@@ -25,8 +25,8 @@ public class StormBreathSound extends AbstractTickableSoundInstance{
 	}
 
 	@Override
-	public void tick(){
-		if(ability.getPlayer() == null || ability.chargeTime == 0)
+	public void tick() {
+		if (ability.getPlayer() == null || ability.chargeTime == 0)
 			stop();
 
 		this.x = ability.getPlayer().getX();
@@ -35,7 +35,7 @@ public class StormBreathSound extends AbstractTickableSoundInstance{
 	}
 
 	@Override
-	public boolean canStartSilent(){
+	public boolean canStartSilent() {
 		return true;
 	}
 }

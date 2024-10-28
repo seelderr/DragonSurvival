@@ -29,29 +29,29 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 		this.renderer = renderer;
 	}
 
-    private static String getMaterial(String texture, ItemStack clawItem){
-        if (clawItem.getItem() instanceof TieredItem item) {
-            Tier tier = item.getTier();
+	private static String getMaterial(String texture, ItemStack clawItem) {
+		if (clawItem.getItem() instanceof TieredItem item) {
+			Tier tier = item.getTier();
 
-            switch (tier) {
-                case Tiers.NETHERITE -> texture += "netherite_";
-                case Tiers.DIAMOND -> texture += "diamond_";
-                case Tiers.IRON -> texture += "iron_";
-                case Tiers.GOLD -> texture += "gold_";
-                case Tiers.STONE -> texture += "stone_";
-                case Tiers.WOOD -> texture += "wooden_";
-                default -> texture += "modded_";
-            }
+			switch (tier) {
+				case Tiers.NETHERITE -> texture += "netherite_";
+				case Tiers.DIAMOND -> texture += "diamond_";
+				case Tiers.IRON -> texture += "iron_";
+				case Tiers.GOLD -> texture += "gold_";
+				case Tiers.STONE -> texture += "stone_";
+				case Tiers.WOOD -> texture += "wooden_";
+				default -> texture += "modded_";
+			}
 
-            return texture;
-        }
+			return texture;
+		}
 
-        return texture + "modded_";
-    }
+		return texture + "modded_";
+	}
 
-    @Override
+	@Override
 	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		if(!((DragonRenderer) renderer).shouldRenderLayers) {
+		if (!((DragonRenderer) renderer).shouldRenderLayers) {
 			return;
 		}
 
@@ -101,7 +101,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
 	public String constructClaws(final Player player) {
 		String texturePath = "textures/armor/";
 		DragonStateHandler handler = DragonStateProvider.getData(player);
-		if(handler.getType() == null) {
+		if (handler.getType() == null) {
 			return null;
 		}
 

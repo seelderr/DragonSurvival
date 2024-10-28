@@ -70,11 +70,12 @@ public class CenterBodyType extends AbstractDragonBody {
 
 	@Override
 	public CompoundTag writeNBT() {
-        return new CompoundTag();
+		return new CompoundTag();
 	}
 
 	@Override
-	public void readNBT(CompoundTag base) {}
+	public void readNBT(CompoundTag base) {
+	}
 
 	@Override
 	public String getBodyName() {
@@ -86,53 +87,69 @@ public class CenterBodyType extends AbstractDragonBody {
 	}
 
 	@Override
-	public void onPlayerUpdate() {}
+	public void onPlayerUpdate() {
+	}
 
 	@Override
-	public void onPlayerDeath() {}
+	public void onPlayerDeath() {
+	}
 
 	public Double getJumpBonus() {
 		return centerJumpBonus;
 	}
+
 	public Double getStepBonus() {
 		return centerStepBonus;
 	}
+
 	public Double getDamageBonus() {
 		return centerDamageBonus;
 	}
+
 	public Double getArmorBonus() {
 		return centerArmorBonus;
 	}
+
 	public Double getManaBonus() {
 		return centerManaBonus;
 	}
+
 	public Double getSwimSpeedBonus() {
 		return centerSwimSpeedBonus;
 	}
+
 	public Double getHealthBonus() {
 		return centerHealthBonus;
 	}
+
 	public Double getKnockbackBonus() {
 		return centerKnockbackBonus;
 	}
+
 	public Double getRunMult() {
 		return centerRunMult;
 	}
+
 	public Double getDamageMult() {
 		return centerDamageMult;
 	}
+
 	public Double getExpMult() {
 		return centerExpMult;
 	}
+
 	public Double getFlightMult() {
 		return centerFlightMult;
 	}
+
 	public Double getFlightStaminaMult() {
 		return centerFlightStaminaMult;
 	}
+
 	public Double getHealthMult() {
 		return centerHealthMult;
 	}
+
 	public Double getGravityMult() {
 		return centerGravityMult;
 	}

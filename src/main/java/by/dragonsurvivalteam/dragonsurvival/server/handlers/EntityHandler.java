@@ -13,11 +13,13 @@ import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 @EventBusSubscriber
 public class EntityHandler {
-    /** Adds dragon avoidance goal */
-    @SubscribeEvent
-    public static void onJoin(EntityJoinLevelEvent joinWorldEvent) {
-        if (joinWorldEvent.getEntity() instanceof Animal animal && !animal.getType().is(DSEntityTypeTags.ANIMAL_AVOID_BLACKLIST)) {
-            animal.goalSelector.addGoal(5, new AvoidEntityGoal<>(animal, Player.class, living -> ServerConfig.dragonsAreScary && !living.hasEffect(DSEffects.ANIMAL_PEACE) && DragonStateProvider.isDragon(living), 20.0F, 1.3F, 1.5F, s -> true));
-        }
-    }
+	/**
+	 * Adds dragon avoidance goal
+	 */
+	@SubscribeEvent
+	public static void onJoin(EntityJoinLevelEvent joinWorldEvent) {
+		if (joinWorldEvent.getEntity() instanceof Animal animal && !animal.getType().is(DSEntityTypeTags.ANIMAL_AVOID_BLACKLIST)) {
+			animal.goalSelector.addGoal(5, new AvoidEntityGoal<>(animal, Player.class, living -> ServerConfig.dragonsAreScary && !living.hasEffect(DSEffects.ANIMAL_PEACE) && DragonStateProvider.isDragon(living), 20.0F, 1.3F, 1.5F, s -> true));
+		}
+	}
 }

@@ -17,7 +17,7 @@ import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
 
 public class Bolas extends AbstractArrow {
-	public Bolas(Level world){
+	public Bolas(Level world) {
 		super(DSEntities.BOLAS_ENTITY.get(), world);
 	}
 
@@ -29,25 +29,25 @@ public class Bolas extends AbstractArrow {
 			ItemStack pPickupItemStack,
 			@Nullable ItemStack pFiredFromWeapon
 	) {
-        super(DSEntities.BOLAS_ENTITY.value(), pX, pY, pZ, pLevel, pPickupItemStack, pFiredFromWeapon);
-    }
+		super(DSEntities.BOLAS_ENTITY.value(), pX, pY, pZ, pLevel, pPickupItemStack, pFiredFromWeapon);
+	}
 	//@Override
 	//protected Item getDefaultItem(){
 	//	return DSItems.HUNTING_NET.value();
 	//}
 
 	@Override
-	protected void onHit(HitResult result){
+	protected void onHit(HitResult result) {
 		super.onHit(result);
-		if(!level().isClientSide()){
+		if (!level().isClientSide()) {
 			remove(RemovalReason.DISCARDED);
 		}
 	}
 
-	protected void onHitEntity(EntityHitResult entityHitResult){
+	protected void onHitEntity(EntityHitResult entityHitResult) {
 		Entity entity = entityHitResult.getEntity();
-		if(!entity.level().isClientSide()) {
-			if(entity instanceof LivingEntity living){
+		if (!entity.level().isClientSide()) {
+			if (entity instanceof LivingEntity living) {
 				living.hurt(this.damageSources().arrow(this, this.getOwner()), 1.0f);
 				living.addEffect(new MobEffectInstance(DSEffects.TRAPPED, Functions.secondsToTicks(ServerConfig.hunterTrappedDebuffDuration), 0, false, false));
 			}

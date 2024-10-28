@@ -20,8 +20,8 @@ import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class DSParticles{
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+public class DSParticles {
 	public static final DeferredRegister<ParticleType<?>> DS_PARTICLES = DeferredRegister.create(
 			BuiltInRegistries.PARTICLE_TYPE,
 			DragonSurvivalMod.MODID
@@ -82,8 +82,8 @@ public class DSParticles{
 			() -> BeaconParticle.PeaceData.TYPE
 	);
 
-	@SubscribeEvent( priority = EventPriority.LOWEST)
-	public static void registerParticles(RegisterParticleProvidersEvent event){
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public static void registerParticles(RegisterParticleProvidersEvent event) {
 		event.registerSpriteSet(DSParticles.FIRE.get(), SmallFireParticle.Factory::new);
 		event.registerSpriteSet(DSParticles.LARGE_FIRE.get(), LargeFireParticle.Factory::new);
 		event.registerSpriteSet(DSParticles.POISON.get(), SmallPoisonParticle.Factory::new);

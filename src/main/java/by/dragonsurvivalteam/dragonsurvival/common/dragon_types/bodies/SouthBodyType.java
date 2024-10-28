@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import net.minecraft.nbt.CompoundTag;
 
 public class SouthBodyType extends AbstractDragonBody {
-	
+
 	@ConfigRange(min = -1.0, max = 100)
 	@ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southJumpBonus", comment = "The jump bonus given to South-type dragons. It's a very sensitive parameter.")
 	public static Double southJumpBonus = 0.2;
@@ -70,11 +70,12 @@ public class SouthBodyType extends AbstractDragonBody {
 
 	@Override
 	public CompoundTag writeNBT() {
-        return new CompoundTag();
+		return new CompoundTag();
 	}
 
 	@Override
-	public void readNBT(CompoundTag base) {}
+	public void readNBT(CompoundTag base) {
+	}
 
 	@Override
 	public String getBodyName() {
@@ -82,53 +83,69 @@ public class SouthBodyType extends AbstractDragonBody {
 	}
 
 	@Override
-	public void onPlayerUpdate() {}
+	public void onPlayerUpdate() {
+	}
 
 	@Override
-	public void onPlayerDeath() {}
+	public void onPlayerDeath() {
+	}
 
 	public Double getJumpBonus() {
 		return southJumpBonus;
 	}
+
 	public Double getStepBonus() {
 		return southStepBonus;
 	}
+
 	public Double getDamageBonus() {
 		return southDamageBonus;
 	}
+
 	public Double getArmorBonus() {
 		return southArmorBonus;
 	}
+
 	public Double getManaBonus() {
 		return southManaBonus;
 	}
+
 	public Double getSwimSpeedBonus() {
 		return southSwimSpeedBonus;
 	}
+
 	public Double getHealthBonus() {
 		return southHealthBonus;
 	}
+
 	public Double getKnockbackBonus() {
 		return southKnockbackBonus;
 	}
+
 	public Double getRunMult() {
 		return southRunMult;
 	}
+
 	public Double getDamageMult() {
 		return southDamageMult;
 	}
+
 	public Double getExpMult() {
 		return southExpMult;
 	}
+
 	public Double getFlightMult() {
 		return southFlightMult;
 	}
+
 	public Double getFlightStaminaMult() {
 		return southFlightStaminaMult;
 	}
+
 	public Double getHealthMult() {
 		return southHealthMult;
 	}
+
 	public Double getGravityMult() {
 		return southGravityMult;
 	}

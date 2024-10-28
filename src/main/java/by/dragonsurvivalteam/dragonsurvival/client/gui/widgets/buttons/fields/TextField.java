@@ -15,7 +15,7 @@ public class TextField extends EditBox /*implements TooltipAccessor*/ {
 	private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
 	public List<FormattedCharSequence> tooltip;
 
-	public TextField(int pX, int pY, int pWidth, int pHeight, Component pMessage){
+	public TextField(int pX, int pY, int pWidth, int pHeight, Component pMessage) {
 		super(Minecraft.getInstance().font, pX, pY, pWidth, pHeight, pMessage);
 		setBordered(false);
 	}

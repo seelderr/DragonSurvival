@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

@@ -19,12 +19,12 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 	public boolean visible;
 
 	public DropdownList(int x, int y, int xSize, int ySize, int itemHeight) {
-		super(Minecraft.getInstance(), 0, 0, 0,  itemHeight);
+		super(Minecraft.getInstance(), 0, 0, 0, itemHeight);
 		listWidth = xSize;
 		reposition(x, y, xSize, ySize);
 	}
 
-	public void reposition(int x, int y, int xSize, int ySize){
+	public void reposition(int x, int y, int xSize, int ySize) {
 		setX(x);
 		setY(y);
 
@@ -64,7 +64,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		guiGraphics.blitWithBorder(BACKGROUND_TEXTURE, getX(), getY() - 3, 0, 0, width, height + 6, 32, 32, 10, 10, 10, 10);
 
 		if (!children().isEmpty()) {
-			RenderSystem.enableScissor((int)(getX() * Minecraft.getInstance().getWindow().getGuiScale()), (int)(Minecraft.getInstance().getWindow().getScreenHeight() - (getHeight() + getY() - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int)(width * Minecraft.getInstance().getWindow().getGuiScale()), (int)((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
+			RenderSystem.enableScissor((int) (getX() * Minecraft.getInstance().getWindow().getGuiScale()), (int) (Minecraft.getInstance().getWindow().getScreenHeight() - (getHeight() + getY() - 3) * Minecraft.getInstance().getWindow().getGuiScale()), (int) (width * Minecraft.getInstance().getWindow().getGuiScale()), (int) ((height - 6) * Minecraft.getInstance().getWindow().getGuiScale()));
 		}
 	}
 
@@ -98,7 +98,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
 		// Render the scroll bar (see AbstractSelectionList#renderWidget)
 		if (scrollbarVisible()) {
 			int position = this.getScrollbarPosition();
-			int scrollBarHeight = Mth.clamp((int) ((float)(this.height * this.height) / (float) this.getMaxPosition()), 32, this.height - 8);
+			int scrollBarHeight = Mth.clamp((int) ((float) (this.height * this.height) / (float) this.getMaxPosition()), 32, this.height - 8);
 			scrollBarHeight = Mth.clamp(scrollBarHeight, 32, this.height - 8);
 			int scrollAmount = (int) this.getScrollAmount() * (this.height - scrollBarHeight) / this.getMaxScroll() + this.getY();
 

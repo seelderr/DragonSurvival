@@ -30,11 +30,11 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	public boolean hasHit = false;
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public DragonBallEntity(EntityType<? extends Fireball> entityType, double x, double y, double z, Vec3 velocity, Level level){
+	public DragonBallEntity(EntityType<? extends Fireball> entityType, double x, double y, double z, Vec3 velocity, Level level) {
 		super(entityType, x, y, z, velocity, level);
 	}
 
-	public DragonBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_){
+	public DragonBallEntity(EntityType<? extends Fireball> p_i50166_1_, Level p_i50166_2_) {
 		super(p_i50166_1_, p_i50166_2_);
 	}
 
@@ -42,16 +42,16 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 		return entityData.get(SKILL_LEVEL);
 	}
 
-	public float getExplosivePower(){
+	public float getExplosivePower() {
 		return getSkillLevel();
 	}
 
-	public void setLevel(int level){
+	public void setLevel(int level) {
 		entityData.set(SKILL_LEVEL, level);
 	}
 
 	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
 		super.defineSynchedData(pBuilder);
 		pBuilder.define(SKILL_LEVEL, 1);
 		pBuilder.define(MOVE_DISTANCE, 0f);
@@ -59,19 +59,19 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	}
 
 	@Override
-	protected boolean canHitEntity(Entity p_230298_1_){
+	protected boolean canHitEntity(Entity p_230298_1_) {
 		return true;
 	}
 
-	protected boolean canSelfDamage(){
+	protected boolean canSelfDamage() {
 		return true;
 	}
 
 	@Override
 	public void tick() {
 		super.tick();
-		if(!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
-			entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float)getDeltaMovement().length());
+		if (!this.level().isClientSide || (getOwner() == null || !getOwner().isRemoved()) && this.level().hasChunkAt(this.blockPosition())) {
+			entityData.set(MOVE_DISTANCE, entityData.get(MOVE_DISTANCE) + (float) getDeltaMovement().length());
 			entityData.set(LIFESPAN, entityData.get(LIFESPAN) + 1);
 		}
 		if (entityData.get(MOVE_DISTANCE) > DRAGON_BALL_DISTANCE || entityData.get(LIFESPAN) > MAX_LIFESPAN) {
@@ -82,22 +82,22 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	}
 
 	@Override
-	protected void onHitEntity(@NotNull EntityHitResult hitResult){
+	protected void onHitEntity(@NotNull EntityHitResult hitResult) {
 		super.onHitEntity(hitResult);
 		onHitCommon();
 	}
 
 	@Override
-	protected void onHitBlock(@NotNull BlockHitResult hitResult){
+	protected void onHitBlock(@NotNull BlockHitResult hitResult) {
 		super.onHitBlock(hitResult);
 		onHitCommon();
 	}
 
-	public void onHitCommon(){
+	public void onHitCommon() {
 		hasHit = true;
 	}
 
-	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity){
+	protected DamageSource getDamageSource(Fireball pFireball, @Nullable Entity pIndirectEntity) {
 		return pFireball.damageSources().fireball(this, pIndirectEntity);
 	}
 
@@ -108,7 +108,7 @@ public abstract class DragonBallEntity extends Fireball implements GeoEntity {
 	}
 
 	@Override
-	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar){
+	public void registerControllers(final AnimatableManager.ControllerRegistrar registrar) {
 		registrar.add(new AnimationController<>(this, "everything", this::predicate));
 	}
 

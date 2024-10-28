@@ -26,7 +26,7 @@ public class BackgroundColorButton extends ExtendedButton {
 	private Renderable renderButton;
 
 
-	public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, OnPress handler, DragonEditorScreen dragonEditorScreen){
+	public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, OnPress handler, DragonEditorScreen dragonEditorScreen) {
 		super(xPos, yPos, width, height, displayString, handler);
 		xSize = width;
 		ySize = height;
@@ -35,16 +35,16 @@ public class BackgroundColorButton extends ExtendedButton {
 	}
 
 	@Override
-	public void onPress(){
-		if(!toggled){
-			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null){
+	public void onPress() {
+		if (!toggled) {
+			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), null) {
 				@Override
-				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_){
+				public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
 					active = visible = false;
 
-					if(colorComponent != null){
+					if (colorComponent != null) {
 						colorComponent.visible = BackgroundColorButton.this.visible;
-						if(colorComponent.visible){
+						if (colorComponent.visible) {
 							colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
 						}
 					}
@@ -55,8 +55,8 @@ public class BackgroundColorButton extends ExtendedButton {
 
 			colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
 			screen.renderables.add(renderButton);
-			colorComponent.children().forEach(listener -> ((AccessorScreen)screen).children().add(listener));
-		}else{
+			colorComponent.children().forEach(listener -> ((AccessorScreen) screen).children().add(listener));
+		} else {
 			colorComponent.children().forEach(component -> screen.children().removeIf(other -> component == other));
 			screen.children().removeIf(listener -> listener == colorComponent);
 			screen.renderables.removeIf(renderable -> renderable == renderButton);
@@ -66,10 +66,10 @@ public class BackgroundColorButton extends ExtendedButton {
 	}
 
 	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial){
+	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
 		active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 
-		if(toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))){
+		if (toggled && (!visible || !isMouseOver(mouseX, mouseY) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))) {
 			toggled = false;
 			Screen screen = Minecraft.getInstance().screen;
 			colorComponent.children().forEach(component -> screen.children().removeIf(other -> component == other));
@@ -77,7 +77,7 @@ public class BackgroundColorButton extends ExtendedButton {
 			screen.renderables.removeIf(s -> s == renderButton);
 		}
 
-		if(visible){
+		if (visible) {
 			guiGraphics.blit(BUTTON_TEXTURE, getX() + 3, getY() + 3, 0, 0, width - 6, height - 6, width - 6, height - 6);
 		}
 	}

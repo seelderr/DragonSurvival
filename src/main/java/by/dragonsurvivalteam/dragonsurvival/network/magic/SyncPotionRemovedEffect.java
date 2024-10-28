@@ -20,11 +20,11 @@ public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect
 		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_removed_effect"));
 
 		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::playerId,
-			ByteBufCodecs.VAR_INT,
-			Data::effectId,
-			Data::new
+				ByteBufCodecs.VAR_INT,
+				Data::playerId,
+				ByteBufCodecs.VAR_INT,
+				Data::effectId,
+				Data::new
 		);
 
 		@Override

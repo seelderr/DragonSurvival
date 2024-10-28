@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,7 +28,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.util.Color;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
-	@ConfigOption( side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering" )
+	@ConfigOption(side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering")
 	public static boolean renderHeldItem = true;
 
 	public ResourceLocation glowTexture = null;
@@ -35,10 +36,13 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 	public boolean shouldRenderLayers = true;
 	public boolean isRenderLayers = false;
 
-	/** Used when rendering dyeable armor pieces in {@link ClientDragonRenderer#renderArmorPiece} */
+	/**
+	 * Used when rendering dyeable armor pieces in {@link ClientDragonRenderer#renderArmorPiece}
+	 */
 	public Color renderColor = Color.ofRGB(255, 255, 255); // FIXME :: is this still needed with the armor render layer which handles color itself?
 
 	private static final HashSet<String> magicAnimations = new HashSet<>();
+
 	static {
 		magicAnimations.add("cast_mass_buff");
 		magicAnimations.add("mass_buff");
@@ -56,9 +60,9 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		getRenderLayers().add(new ClawsAndTeethRenderLayer(this));
 		getRenderLayers().add(new DragonArmorRenderLayer(this));
 		getRenderLayers().add(new DragonItemRenderLayer(this, (bone, animatable) -> {
-			if(bone.getName().equals(ClientDragonRenderer.renderItemsInMouth ? "RightItem_jaw" : "RightItem")) {
+			if (bone.getName().equals(ClientDragonRenderer.renderItemsInMouth ? "RightItem_jaw" : "RightItem")) {
 				return animatable.getMainHandItem();
-			} else if(bone.getName().equals(ClientDragonRenderer.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem")) {
+			} else if (bone.getName().equals(ClientDragonRenderer.renderItemsInMouth ? "LeftItem_jaw" : "LeftItem")) {
 				return animatable.getOffhandItem();
 			}
 			return null;
@@ -99,12 +103,12 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 		if (leftWing != null)
 			leftWing.setHidden(!hasWings);
 
-		if(rightWing != null)
+		if (rightWing != null)
 			rightWing.setHidden(!hasWings);
-		
+
 		if (smallLeftWing != null)
 			smallLeftWing.setHidden(!hasWings);
-		
+
 		if (smallRightWing != null)
 			smallRightWing.setHidden(!hasWings);
 

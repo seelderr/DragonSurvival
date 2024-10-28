@@ -9,7 +9,7 @@ import java.util.Map;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 
-public class SkinCap extends SubCap{
+public class SkinCap extends SubCap {
 	public static final String defaultSkinValue = "None";
 	public boolean renderNewborn;
 	public boolean renderYoung;
@@ -21,18 +21,18 @@ public class SkinCap extends SubCap{
 	public Map<DragonLevel, Boolean> isCompiled = new HashMap<>();
 
 	public void compileSkin() {
-		for(DragonLevel level : DragonLevel.values()){
+		for (DragonLevel level : DragonLevel.values()) {
 			recompileSkin.put(level, true);
 		}
 	}
 
-	public SkinCap(DragonStateHandler handler){
+	public SkinCap(DragonStateHandler handler) {
 		super(handler);
-		for(String value : DragonTypes.getTypes()){
+		for (String value : DragonTypes.getTypes()) {
 			skinPreset.initDefaults(DragonTypes.getStatic(value));
 		}
 
-		for(DragonLevel level : DragonLevel.values()){
+		for (DragonLevel level : DragonLevel.values()) {
 			recompileSkin.put(level, true);
 			isCompiled.put(level, false);
 		}
@@ -52,7 +52,7 @@ public class SkinCap extends SubCap{
 	}
 
 	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag){
+	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
 		renderNewborn = tag.getBoolean("renderNewborn");
 		renderYoung = tag.getBoolean("renderYoung");
 		renderAdult = tag.getBoolean("renderAdult");

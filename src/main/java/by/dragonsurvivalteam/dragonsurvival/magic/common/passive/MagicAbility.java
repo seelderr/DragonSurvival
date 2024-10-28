@@ -10,7 +10,7 @@ import net.minecraft.util.Mth;
 
 public abstract class MagicAbility extends PassiveDragonAbility {
 	@Override
-	public Component getDescription(){
+	public Component getDescription() {
 		AbstractDragonBody body = DragonUtils.getDragonBody(getPlayer());
 		int level = Math.max(0, (Math.min(50, getPlayer().experienceLevel) - 5) / 5);
 		String points = getLevel() > 0 ? "+" + getLevel() : "0";
@@ -25,21 +25,21 @@ public abstract class MagicAbility extends PassiveDragonAbility {
 	}
 
 	@Override
-	public int getMaxLevel(){
+	public int getMaxLevel() {
 		return 10;
 	}
 
 	@Override
-	public int getMinLevel(){
+	public int getMinLevel() {
 		return 0;
 	}
 
-	public int getMana(){
+	public int getMana() {
 		return getLevel();
 	}
 
 	@Override
-	public ResourceLocation getIcon(){
+	public ResourceLocation getIcon() {
 		return getPlayer() == null ? super.getIcon() : getSkillTextures()[Mth.clamp(getLevel() + Math.max(0, (Math.min(50, getPlayer().experienceLevel) - 5) / 5), 0, getSkillTextures().length - 1)];
 	}
 }

@@ -11,7 +11,9 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-/** Synchronizes dragon level and size */
+/**
+ * Synchronizes dragon level and size
+ */
 public class SyncSize implements IMessage<SyncSize.Data> {
 	public static void handleClient(final SyncSize.Data message, final IPayloadContext context) {
 		context.enqueueWork(() -> ClientProxy.handleSyncSize(message));

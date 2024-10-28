@@ -19,8 +19,12 @@ import com.mojang.blaze3d.platform.GlConst;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.BufferUploader;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Pair;
+
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
@@ -42,23 +46,23 @@ import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.jetbrains.annotations.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-public class DragonEditorHandler{
+public class DragonEditorHandler {
 	private static ShaderInstance skinGenerationShader;
 
-	private static ResourceLocation getSkinTextureResourceLocation(Player player, EnumSkinLayer layer, String key, AbstractDragonType type){
-		if(Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA){
+	private static ResourceLocation getSkinTextureResourceLocation(Player player, EnumSkinLayer layer, String key, AbstractDragonType type) {
+		if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
 			return getSkinTextureResourceLocation(player, EnumSkinLayer.EXTRA, key, type);
 		}
 
-		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
+		if (layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))) {
 			DragonStateHandler handler = DragonStateProvider.getData(player);
 			return getSkinTextureResourceLocation(player, layer, type.getSubtypeNameLowerCase() + "_base_" + handler.getLevel().ordinal(), type);
 		}
 
 		DragonTextureMetadata[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layer, new DragonTextureMetadata[0]);
 
-		for(DragonTextureMetadata texture : texts){
-			if(Objects.equals(texture.key, key)){
+		for (DragonTextureMetadata texture : texts) {
+			if (Objects.equals(texture.key, key)) {
 				return ResourceLocation.parse(texture.texture);
 			}
 		}
@@ -66,19 +70,19 @@ public class DragonEditorHandler{
 		return null;
 	}
 
-	public static DragonTextureMetadata getSkinTextureMetadata(Player player, EnumSkinLayer layer, String key, AbstractDragonType type){
-		if(Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA){
+	public static DragonTextureMetadata getSkinTextureMetadata(Player player, EnumSkinLayer layer, String key, AbstractDragonType type) {
+		if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
 			return getSkinTextureMetadata(player, EnumSkinLayer.EXTRA, key, type);
 		}
 
-		if(layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))){
+		if (layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))) {
 			return getSkinTextureMetadata(player, layer, type.getTypeNameLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
 		}
 
 		DragonTextureMetadata[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layer, new DragonTextureMetadata[0]);
 
-		for(DragonTextureMetadata texture : texts){
-			if(Objects.equals(texture.key, key)){
+		for (DragonTextureMetadata texture : texts) {
+			if (Objects.equals(texture.key, key)) {
 				return texture;
 			}
 		}
@@ -86,15 +90,15 @@ public class DragonEditorHandler{
 		return null;
 	}
 
-	public static ArrayList<String> getKeys(AbstractDragonType type, AbstractDragonBody body, EnumSkinLayer layers){
-		if(Objects.equals(layers.name, "Extra") && layers != EnumSkinLayer.EXTRA){
+	public static ArrayList<String> getKeys(AbstractDragonType type, AbstractDragonBody body, EnumSkinLayer layers) {
+		if (Objects.equals(layers.name, "Extra") && layers != EnumSkinLayer.EXTRA) {
 			return getKeys(type, body, EnumSkinLayer.EXTRA);
 		}
 
 		ArrayList<String> list = new ArrayList<>();
 
 		DragonTextureMetadata[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layers, new DragonTextureMetadata[0]);
-		for(DragonTextureMetadata texture : texts){
+		for (DragonTextureMetadata texture : texts) {
 			if (texture.bodies == null || Arrays.asList(texture.bodies).contains(body.toString())) {
 				list.add(texture.key);
 			}
@@ -103,7 +107,7 @@ public class DragonEditorHandler{
 		return list;
 	}
 
-	public static ArrayList<String> getKeys(Player player, EnumSkinLayer layers){
+	public static ArrayList<String> getKeys(Player player, EnumSkinLayer layers) {
 		return getKeys(DragonUtils.getDragonType(player), DragonUtils.getDragonBody(player), layers);
 	}
 
@@ -160,7 +164,7 @@ public class DragonEditorHandler{
 					ResourceLocation textureLocation = getSkinTextureResourceLocation(player, layer, selectedSkin, handler.getType());
 					AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(textureLocation);
 
-					if(settings.glowing) {
+					if (settings.glowing) {
 						glowTarget.bindWrite(true);
 					} else {
 						normalTarget.bindWrite(true);
@@ -186,7 +190,7 @@ public class DragonEditorHandler{
 					bufferbuilder.addVertex(0.0F, 1.0F, 0.0F);
 					BufferUploader.draw(bufferbuilder.buildOrThrow());
 
-					if(settings.glowing && layer == EnumSkinLayer.BASE) {
+					if (settings.glowing && layer == EnumSkinLayer.BASE) {
 						normalTarget.bindWrite(true);
 						bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
 						bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
@@ -198,7 +202,7 @@ public class DragonEditorHandler{
 					}
 
 					skinGenerationShader.clear();
-					if(settings.glowing) {
+					if (settings.glowing) {
 						glowTarget.unbindWrite();
 					} else {
 						normalTarget.unbindWrite();
@@ -280,20 +284,21 @@ public class DragonEditorHandler{
 		return texturesToRegister;
 	}
 
-	@Nullable private static Color getHueAdjustedColor(boolean glowing, boolean colorable, float hue, float saturation, float brightness, Color baseColor){
-		if(!colorable) {
+    @Nullable
+    private static Color getHueAdjustedColor(boolean glowing, boolean colorable, float hue, float saturation, float brightness, Color baseColor) {
+		if (!colorable) {
 			return baseColor;
 		}
 
 		float[] hsb = new float[3];
 		Color.RGBtoHSB(baseColor.getRed(), baseColor.getGreen(), baseColor.getBlue(), hsb);
 
-		if(glowing && hsb[0] == 0.5f && hsb[1] == 0.5f){
+		if (glowing && hsb[0] == 0.5f && hsb[1] == 0.5f) {
 			return null;
 		}
 
 		hsb[0] = hsb[0] - hue;
-		hsb[1] = Mth.lerp(Math.abs(saturation - 0.5f) * 2.0f , hsb[1], saturation > 0.5f ? 1.0f : 0.0f);
+		hsb[1] = Mth.lerp(Math.abs(saturation - 0.5f) * 2.0f, hsb[1], saturation > 0.5f ? 1.0f : 0.0f);
 		hsb[2] = Mth.lerp(Math.abs(brightness - 0.5f) * 2.0f, hsb[2], brightness > 0.5f ? 1.0f : 0.0f);
 
 		Color adjustedColor = new Color(Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]));
