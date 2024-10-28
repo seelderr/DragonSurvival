@@ -12,6 +12,8 @@ public @interface ConfigOption {
 
     String key();
 
+    Validation validation() default Validation.DEFAULT;
+
     /**
      * The category the option will be found in - the array defines a path (e.g. {"a", "b", "c"} results in the path a.b.c.key)
      */

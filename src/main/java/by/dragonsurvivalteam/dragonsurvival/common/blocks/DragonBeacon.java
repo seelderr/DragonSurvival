@@ -136,71 +136,71 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
             }
         }
 
-		if(this == DSBlocks.FIRE_DRAGON_BEACON.get()){
-		DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-		if(item == Items.GOLD_BLOCK){
-			pLevel.setBlockAndUpdate(pPos, DSBlocks.PEACE_DRAGON_BEACON.get().defaultBlockState());
-			DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-			dragonBeaconEntity.type = DragonBeaconTileEntity.Type.PEACE;
-			dragonBeaconEntity.tick = old.tick;
-			itemStack.shrink(1);
-			pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-			return ItemInteractionResult.SUCCESS;
-		}else if(item == Items.DIAMOND_BLOCK){
-			pLevel.setBlockAndUpdate(pPos, DSBlocks.MAGIC_DRAGON_BEACON.get().defaultBlockState());
-			DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-			dragonBeaconEntity.type = DragonBeaconTileEntity.Type.MAGIC;
-			dragonBeaconEntity.tick = old.tick;
-			itemStack.shrink(1);
-			pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-			return ItemInteractionResult.SUCCESS;
-			}
-		}
+        if(this == DSBlocks.FIRE_DRAGON_BEACON.get()){
+        DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+        if(item == Items.GOLD_BLOCK){
+            pLevel.setBlockAndUpdate(pPos, DSBlocks.PEACE_DRAGON_BEACON.get().defaultBlockState());
+            DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+            dragonBeaconEntity.type = DragonBeaconTileEntity.Type.PEACE;
+            dragonBeaconEntity.tick = old.tick;
+            itemStack.shrink(1);
+            pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+            return ItemInteractionResult.SUCCESS;
+        }else if(item == Items.DIAMOND_BLOCK){
+            pLevel.setBlockAndUpdate(pPos, DSBlocks.MAGIC_DRAGON_BEACON.get().defaultBlockState());
+            DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+            dragonBeaconEntity.type = DragonBeaconTileEntity.Type.MAGIC;
+            dragonBeaconEntity.tick = old.tick;
+            itemStack.shrink(1);
+            pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+            return ItemInteractionResult.SUCCESS;
+            }
+        }
 
-		if(this == DSBlocks.PEACE_DRAGON_BEACON.get()){
-			DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-			if(item == Items.NETHERITE_INGOT){
-				pLevel.setBlockAndUpdate(pPos, DSBlocks.FIRE_DRAGON_BEACON.get().defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.FIRE;
-				dragonBeaconEntity.tick = old.tick;
-				itemStack.shrink(1);
-				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-				return ItemInteractionResult.SUCCESS;
-			}else if(item == Items.DIAMOND_BLOCK){
-				pLevel.setBlockAndUpdate(pPos, DSBlocks.MAGIC_DRAGON_BEACON.get().defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.MAGIC;
-				dragonBeaconEntity.tick = old.tick;
-				itemStack.shrink(1);
-				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-				return ItemInteractionResult.SUCCESS;
-			}
-		}
+        if(this == DSBlocks.PEACE_DRAGON_BEACON.get()){
+            DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+            if(item == Items.NETHERITE_INGOT){
+                pLevel.setBlockAndUpdate(pPos, DSBlocks.FIRE_DRAGON_BEACON.get().defaultBlockState());
+                DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+                dragonBeaconEntity.type = DragonBeaconTileEntity.Type.FIRE;
+                dragonBeaconEntity.tick = old.tick;
+                itemStack.shrink(1);
+                pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+                return ItemInteractionResult.SUCCESS;
+            }else if(item == Items.DIAMOND_BLOCK){
+                pLevel.setBlockAndUpdate(pPos, DSBlocks.MAGIC_DRAGON_BEACON.get().defaultBlockState());
+                DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+                dragonBeaconEntity.type = DragonBeaconTileEntity.Type.MAGIC;
+                dragonBeaconEntity.tick = old.tick;
+                itemStack.shrink(1);
+                pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+                return ItemInteractionResult.SUCCESS;
+            }
+        }
 
-		if(this == DSBlocks.MAGIC_DRAGON_BEACON.get()){
-			DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-			if(item == Items.GOLD_BLOCK){
-				pLevel.setBlockAndUpdate(pPos, DSBlocks.PEACE_DRAGON_BEACON.get().defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.PEACE;
-				dragonBeaconEntity.tick = old.tick;
-				itemStack.shrink(1);
-				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-				return ItemInteractionResult.SUCCESS;
-			}else if(item == Items.NETHERITE_INGOT){
-				pLevel.setBlockAndUpdate(pPos, DSBlocks.FIRE_DRAGON_BEACON.get().defaultBlockState());
-				DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
-				dragonBeaconEntity.type = DragonBeaconTileEntity.Type.FIRE;
-				dragonBeaconEntity.tick = old.tick;
-				itemStack.shrink(1);
-				pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-				return ItemInteractionResult.SUCCESS;
-			}
-		}
+        if(this == DSBlocks.MAGIC_DRAGON_BEACON.get()){
+            DragonBeaconTileEntity old = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+            if(item == Items.GOLD_BLOCK){
+                pLevel.setBlockAndUpdate(pPos, DSBlocks.PEACE_DRAGON_BEACON.get().defaultBlockState());
+                DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+                dragonBeaconEntity.type = DragonBeaconTileEntity.Type.PEACE;
+                dragonBeaconEntity.tick = old.tick;
+                itemStack.shrink(1);
+                pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+                return ItemInteractionResult.SUCCESS;
+            }else if(item == Items.NETHERITE_INGOT){
+                pLevel.setBlockAndUpdate(pPos, DSBlocks.FIRE_DRAGON_BEACON.get().defaultBlockState());
+                DragonBeaconTileEntity dragonBeaconEntity = (DragonBeaconTileEntity)pLevel.getBlockEntity(pPos);
+                dragonBeaconEntity.type = DragonBeaconTileEntity.Type.FIRE;
+                dragonBeaconEntity.tick = old.tick;
+                itemStack.shrink(1);
+                pLevel.playSound(pPlayer, pPos, DSSounds.UPGRADE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+                return ItemInteractionResult.SUCCESS;
+            }
+        }
 
-		return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-	}
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
 
     @Override
     public boolean triggerEvent(BlockState pState, Level pLevel, BlockPos pPos, int pId, int pParam) {

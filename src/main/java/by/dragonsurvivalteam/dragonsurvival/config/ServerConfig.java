@@ -1,10 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.AmbusherEntity;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -111,15 +108,15 @@ public class ServerConfig {
     public static Double largeBlockBreakRadiusScalar = 0.0;
 
     @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growNewborn", comment = "List of items to grow newborn dragon. Format: item/modid:id")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growNewborn", validation = Validation.RESOURCE_LOCATION, comment = "List of items to grow newborn dragon. Format: item/modid:id")
     public static List<String> growNewborn = List.of("dragonsurvival:heart_element", "dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
 
     @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growYoung", comment = "List of items to grow young dragon. Format: item/modid:id")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growYoung", validation = Validation.RESOURCE_LOCATION, comment = "List of items to grow young dragon. Format: item/modid:id")
     public static List<String> growYoung = List.of("dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
 
     @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growAdult", comment = "List of items to grow adult dragon. Format: item/modid:id")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growAdult", validation = Validation.RESOURCE_LOCATION, comment = "List of items to grow adult dragon. Format: item/modid:id")
     public static List<String> growAdult = List.of("dragonsurvival:elder_dragon_heart");
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "alternateGrowing", comment = "If true, dragons will grow without the use of catalyst grow items. Does not broker the use of items. Just an additional type of growth.")
@@ -189,15 +186,15 @@ public class ServerConfig {
     public static Double elderDragonHeartChance = 0.01;
 
     @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragonHeartEntityList", comment = "Decide which entities can drop dragon hearts")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragonHeartEntityList", validation = Validation.RESOURCE_LOCATION, comment = "Decide which entities can drop dragon hearts")
     public static List<String> dragonHeartEntityList = List.of();
 
     @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartEntityList", comment = "Decide which entities can drop weak dragon hearts")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartEntityList", validation = Validation.RESOURCE_LOCATION, comment = "Decide which entities can drop weak dragon hearts")
     public static List<String> weakDragonHeartEntityList = List.of();
 
     @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartEntityList", comment = "Decide which entities can drop elder dragon hearts")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartEntityList", validation = Validation.RESOURCE_LOCATION, comment = "Decide which entities can drop elder dragon hearts")
     public static List<String> elderDragonHeartEntityList = List.of();
 
     @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragonHeartWhiteList", comment = "Should the dragonHeartEntityList be treated as an allowlist rather than a block list?")
@@ -246,10 +243,6 @@ public class ServerConfig {
     @ConfigRange(min = 1, max = 10000)
     @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonHeartTime", comment = "How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
     public static Integer elderDragonHeartTime = 1010;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "debuffsUnaffectedByEnchantments", comment = "Debuffs that should not be affected by Unbreakable Spirit or Overwhelming Might")
-    public static List<String> debuffsUnaffectedByEnchantments = List.of();
-    //It is used?
 
     @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "disableDragonSuffocation", comment = "Should suffocation damage be disabled for dragon players?")
     public static Boolean disableDragonSuffocation = true;
@@ -371,7 +364,7 @@ public class ServerConfig {
     public static Boolean limitedRiding = true;
 
     @ConfigType(Item.class) // FIXME :: handle with tag
-    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", validation = Validation.RESOURCE_LOCATION, comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
     public static List<String> blacklistedItems = List.of(
             "c:tools/shield",
             "c:tools/bow",
@@ -570,13 +563,13 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore.")
     public static Double dragonOreBoneChance = 0.01;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> caveDragonHurtfulItems = Arrays.asList("minecraft:potion:2", "minecraft:water_bottle:2", "minecraft:milk_bucket:2");
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> seaDragonHurtfulItems = Collections.emptyList();
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> forestDragonHurtfulItems = Collections.emptyList();
 
     @ConfigRange(min = 0, max = 10000)
@@ -647,7 +640,7 @@ public class ServerConfig {
     public static Integer pillageXPGain = 4;
 
     @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterOmenStatusGivers", comment = "Entities which give 'Hunter Omen' status on death in addition to villagers.")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterOmenStatusGivers", validation = Validation.RESOURCE_LOCATION, comment = "Entities which give 'Hunter Omen' status on death in addition to villagers.")
     public static List<String> hunterOmenStatusGivers = List.of("minecraft:iron_golem");
 
     @ConfigRange(min = 10d, max = 80d)
@@ -785,14 +778,14 @@ public class ServerConfig {
     //Please help me to fix this config. It doesn't work for buying in exchange for experience in beacon. My fix doesn't help, so I think the problem is deeper than I can solve it.
 
     @ConfigType(MobEffect.class)
-    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Peace beacon" )
     public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
 
     @ConfigType(MobEffect.class)
-    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Magic beacon" )
     public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
     @ConfigType(MobEffect.class)
-    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Fire beacon" )
     public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
 }

@@ -270,11 +270,7 @@ public class ConfigHandler {
     }
 
     public static boolean checkConfig(final ConfigOption configOption, final Object configValue) {
-        return checkConfig(configOption.key(), configValue);
-    }
-
-    public static boolean checkConfig(final String key, final Object configValue) {
-        return checkSpecific(key, configValue);
+        return checkSpecific(configOption, configValue);
     }
 
     public static String getDefaultListValueForConfig(final String key) {
@@ -297,7 +293,60 @@ public class ConfigHandler {
     /**
      * More specific checks depending on the config type
      */
-    public static boolean checkSpecific(final String configKey, final Object configValue) {
+    public static boolean checkSpecific(final ConfigOption configOption, final Object configValue) {
+        switch (configOption.validation()) {
+            case RESOURCE_LOCATION -> {
+                return ResourceLocation.tryParse((String) configValue) != null;
+            }
+            case RESOURCE_LOCATION_NUMBER -> {
+                String[] split = ((String) configValue).split(":");
+
+                if (split.length != 3) {
+                    return false;
+                }
+
+                if (ResourceLocation.tryParse(split[0] + ":" + split[1]) == null) {
+                    return false;
+                }
+
+                return isInteger(split[2]);
+            }
+            case RESOURCE_LOCATION_OPTIONAL_NUMBER -> {
+                String[] split = ((String) configValue).split(":");
+
+                if (split.length < 2) {
+                    return false;
+                }
+
+                if (ResourceLocation.tryParse(split[0] + ":" + split[1]) == null) {
+                    return false;
+                }
+
+                if (split.length == 3) {
+                    return isInteger(split[2]);
+                }
+
+                return split.length == 2;
+            }
+            case RESOURCE_LOCATION_2_OPTIONAL_NUMBERS -> {
+                String[] split = ((String) configValue).split(":");
+
+                if (split.length < 2) {
+                    return false;
+                }
+
+                if (ResourceLocation.tryParse(split[0] + ":" + split[1]) == null) {
+                    return false;
+                }
+
+                if (split.length == 4) {
+                    return isInteger(split[2]) && isDouble(split[3]);
+                }
+            }
+        }
+
+        String configKey = configOption.key();
+
         // Food options
         switch (configKey) {
             case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> {
@@ -352,18 +401,22 @@ public class ConfigHandler {
             }
         }
 
-        String string = String.valueOf(configValue);
-
-        if (string.split(":").length == 2) {
-            return ResourceLocation.tryParse(string) != null;
-        }
-
-        return false;
+        // Would most likely only relevant for numeric or string lists?
+        return true;
     }
 
     private static boolean isInteger(final String string) {
         try {
-            Integer.parseInt(String.valueOf(string));
+            Integer.parseInt(string);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static boolean isDouble(final String string) {
+        try {
+            Double.parseDouble(string);
             return true;
         } catch (NumberFormatException e) {
             return false;
