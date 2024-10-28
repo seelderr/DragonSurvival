@@ -13,18 +13,18 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 @JeiPlugin
 @SuppressWarnings("unused")
 public class JEIPlugin implements IModPlugin {
-	@Override
-	public @NotNull ResourceLocation getPluginUid() {
-		return ResourceLocation.fromNamespaceAndPath(MODID, "fix");
-	}
+    @Override
+    public @NotNull ResourceLocation getPluginUid() {
+        return ResourceLocation.fromNamespaceAndPath(MODID, "fix");
+    }
 
-	@Override
-	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
-		registration.addRecipeTransferHandler(new DragonInventoryGUIHandler());
-	}
+    @Override
+    public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+        registration.addRecipeTransferHandler(new DragonInventoryGUIHandler());
+    }
 
-	@Override
-	public void registerGuiHandlers(IGuiHandlerRegistration registration) {
-		registration.addGuiContainerHandler(DragonInventoryScreen.class, new DragonInventoryGUIHandler());
-	}
+    @Override
+    public void registerGuiHandlers(IGuiHandlerRegistration registration) {
+        registration.addGuiContainerHandler(DragonInventoryScreen.class, new DragonInventoryGUIHandler());
+    }
 }

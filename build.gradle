@@ -168,5 +168,7 @@ spotless {
 
 		// fixes formatting of type annotations
 		formatAnnotations()
+
+		indentWithSpaces()
 	}
 }

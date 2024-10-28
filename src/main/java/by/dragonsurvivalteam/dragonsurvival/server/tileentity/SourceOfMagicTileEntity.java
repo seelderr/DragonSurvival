@@ -35,109 +35,109 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.HashMap;
 
 public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, GeoBlockEntity {
-	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
-	public static HashMap<Item, Integer> consumables = new HashMap<>();
-	public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
-	private int ticks;
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    public static HashMap<Item, Integer> consumables = new HashMap<>();
+    public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
+    private int ticks;
 
-	static {
-		consumables.put(DSItems.ELDER_DRAGON_DUST.value(), Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
-		consumables.put(DSItems.ELDER_DRAGON_BONE.value(), Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
-		consumables.put(DSItems.DRAGON_HEART_SHARD.value(), Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
-		consumables.put(DSItems.WEAK_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
-		consumables.put(DSItems.ELDER_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
-	}
+    static {
+        consumables.put(DSItems.ELDER_DRAGON_DUST.value(), Functions.secondsToTicks(ServerConfig.elderDragonDustTime));
+        consumables.put(DSItems.ELDER_DRAGON_BONE.value(), Functions.secondsToTicks(ServerConfig.elderDragonBoneTime));
+        consumables.put(DSItems.DRAGON_HEART_SHARD.value(), Functions.secondsToTicks(ServerConfig.weakHeartShardTime));
+        consumables.put(DSItems.WEAK_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.weakDragonHeartTime));
+        consumables.put(DSItems.ELDER_DRAGON_HEART.value(), Functions.secondsToTicks(ServerConfig.elderDragonHeartTime));
+    }
 
-	public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-		super(DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), pWorldPosition, pBlockState);
-	}
+    public SourceOfMagicTileEntity(BlockPos pWorldPosition, BlockState pBlockState) {
+        super(DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), pWorldPosition, pBlockState);
+    }
 
-	public static void serverTick(Level level, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity) {
-		if (!pState.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()) {
-			level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, true));
-		} else if (pState.getValue(SourceOfMagicBlock.FILLED) && pBlockEntity.isEmpty()) {
-			level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, false));
-		}
+    public static void serverTick(Level level, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity) {
+        if (!pState.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()) {
+            level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, true));
+        } else if (pState.getValue(SourceOfMagicBlock.FILLED) && pBlockEntity.isEmpty()) {
+            level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, false));
+        }
 
-		if (!pBlockEntity.isEmpty() && pBlockEntity.ticks % 120 == 0) {
-			level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.value() ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
-		}
+        if (!pBlockEntity.isEmpty() && pBlockEntity.ticks % 120 == 0) {
+            level.playLocalSound(pPos.getX(), pPos.getY(), pPos.getZ(), pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.value() ? SoundEvents.LAVA_AMBIENT : SoundEvents.WATER_AMBIENT, SoundSource.BLOCKS, 0.5f, 1f, true);
+        }
 
-		pBlockEntity.ticks += 1;
-	}
+        pBlockEntity.ticks += 1;
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return stacks.isEmpty() || getItem(0).isEmpty();
-	}
+    @Override
+    public boolean isEmpty() {
+        return stacks.isEmpty() || getItem(0).isEmpty();
+    }
 
-	@Override
-	public @NotNull ItemStack getItem(int i) {
-		return stacks.get(i);
-	}
+    @Override
+    public @NotNull ItemStack getItem(int i) {
+        return stacks.get(i);
+    }
 
-	@Override
-	public @NotNull ItemStack removeItem(int index, int amount) {
-		return ContainerHelper.removeItem(stacks, index, amount);
-	}
+    @Override
+    public @NotNull ItemStack removeItem(int index, int amount) {
+        return ContainerHelper.removeItem(stacks, index, amount);
+    }
 
-	@Override
-	public @NotNull ItemStack removeItemNoUpdate(int i) {
-		return ContainerHelper.takeItem(stacks, 0);
-	}
+    @Override
+    public @NotNull ItemStack removeItemNoUpdate(int i) {
+        return ContainerHelper.takeItem(stacks, 0);
+    }
 
-	@Override
-	public void setItem(int i, @NotNull ItemStack itemStack) {
-		if (i >= 0 && i < stacks.size()) {
-			stacks.set(i, itemStack);
-		}
-	}
+    @Override
+    public void setItem(int i, @NotNull ItemStack itemStack) {
+        if (i >= 0 && i < stacks.size()) {
+            stacks.set(i, itemStack);
+        }
+    }
 
-	@Override
-	public boolean stillValid(@NotNull Player playerEntity) {
-		return true;
-	}
+    @Override
+    public boolean stillValid(@NotNull Player playerEntity) {
+        return true;
+    }
 
-	@Override
-	public void loadAdditional(@NotNull CompoundTag pTag, @NotNull HolderLookup.Provider pRegistries) {
-		stacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
-		ContainerHelper.loadAllItems(pTag, stacks, pRegistries);
-	}
+    @Override
+    public void loadAdditional(@NotNull CompoundTag pTag, @NotNull HolderLookup.Provider pRegistries) {
+        stacks = NonNullList.withSize(getContainerSize(), ItemStack.EMPTY);
+        ContainerHelper.loadAllItems(pTag, stacks, pRegistries);
+    }
 
-	@Override
-	public void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
-		ContainerHelper.saveAllItems(pTag, stacks, pRegistries);
-	}
+    @Override
+    public void saveAdditional(@NotNull CompoundTag pTag, HolderLookup.@NotNull Provider pRegistries) {
+        ContainerHelper.saveAllItems(pTag, stacks, pRegistries);
+    }
 
-	@Override
-	public int getContainerSize() {
-		return 1;
-	}
+    @Override
+    public int getContainerSize() {
+        return 1;
+    }
 
-	@Override
-	public @NotNull Component getDisplayName() {
-		return Component.empty().append("Source Of Magic");
-	}
+    @Override
+    public @NotNull Component getDisplayName() {
+        return Component.empty().append("Source Of Magic");
+    }
 
-	@Override
-	public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player player) {
-		FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
-		buffer.writeBlockPos(worldPosition);
-		return new SourceOfMagicContainer(containerId, inventory, buffer);
-	}
+    @Override
+    public AbstractContainerMenu createMenu(int containerId, @NotNull Inventory inventory, @NotNull Player player) {
+        FriendlyByteBuf buffer = new FriendlyByteBuf(Unpooled.buffer());
+        buffer.writeBlockPos(worldPosition);
+        return new SourceOfMagicContainer(containerId, inventory, buffer);
+    }
 
-	@Override
-	public void clearContent() {
-		stacks.clear();
-	}
+    @Override
+    public void clearContent() {
+        stacks.clear();
+    }
 
-	@Override
-	public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
 
-	}
+    }
 
-	@Override
-	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return cache;
-	}
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
 }

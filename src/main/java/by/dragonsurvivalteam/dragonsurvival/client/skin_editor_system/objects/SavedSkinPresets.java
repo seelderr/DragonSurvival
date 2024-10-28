@@ -5,7 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.HashMap;
 
 public class SavedSkinPresets {
-	public HashMap<String, HashMap<Integer, SkinPreset>> skinPresets = new HashMap<>();
-	public HashMap<String, HashMap<DragonLevel, Integer>> current = new HashMap<>();
-	public int version = 0;
+    public HashMap<String, HashMap<Integer, SkinPreset>> skinPresets = new HashMap<>();
+    public HashMap<String, HashMap<DragonLevel, Integer>> current = new HashMap<>();
+    public int version = 0;
 }

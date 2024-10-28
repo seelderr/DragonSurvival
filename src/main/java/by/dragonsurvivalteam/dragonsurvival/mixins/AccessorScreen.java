@@ -9,6 +9,6 @@ import java.util.List;
 
 @Mixin(Screen.class)
 public interface AccessorScreen {
-	@Accessor("children")
-	List<GuiEventListener> children();
+    @Accessor("children")
+    List<GuiEventListener> children();
 }

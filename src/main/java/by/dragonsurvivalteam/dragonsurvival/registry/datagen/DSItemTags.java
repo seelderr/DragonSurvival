@@ -17,32 +17,32 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSItemTags extends ItemTagsProvider {
-	public static final TagKey<Item> KEEP_EFFECTS = createKey("keep_effects");
+    public static final TagKey<Item> KEEP_EFFECTS = createKey("keep_effects");
 
-	public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
-		super(output, provider, blockTags, DragonSurvivalMod.MODID, helper);
-	}
+    public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
+        super(output, provider, blockTags, DragonSurvivalMod.MODID, helper);
+    }
 
-	@Override
-	protected void addTags(@NotNull final HolderLookup.Provider provider) {
-		tag(createKey("charred_food")).add(DSItems.CHARGED_COAL.value(), DSItems.CHARGED_SOUP.value(), DSItems.CHARRED_MEAT.value(), DSItems.CHARRED_MUSHROOM.value(), DSItems.CHARRED_SEAFOOD.value(), DSItems.CHARRED_VEGETABLE.value());
+    @Override
+    protected void addTags(@NotNull final HolderLookup.Provider provider) {
+        tag(createKey("charred_food")).add(DSItems.CHARGED_COAL.value(), DSItems.CHARGED_SOUP.value(), DSItems.CHARRED_MEAT.value(), DSItems.CHARRED_MUSHROOM.value(), DSItems.CHARRED_SEAFOOD.value(), DSItems.CHARRED_VEGETABLE.value());
 
-		tag(KEEP_EFFECTS)
-				.addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_speed"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_health"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_mental_cleansing"));
+        tag(KEEP_EFFECTS)
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_speed"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_health"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_mental_cleansing"));
 
-		copy(DataBlockTagProvider.DRAGON_ALTARS, createKey("dragon_altars"));
-		copy(DataBlockTagProvider.DRAGON_TREASURES, createKey("dragon_treasures"));
-		copy(DataBlockTagProvider.WOODEN_DRAGON_DOORS, createKey("wooden_dragon_doors"));
-	}
+        copy(DataBlockTagProvider.DRAGON_ALTARS, createKey("dragon_altars"));
+        copy(DataBlockTagProvider.DRAGON_TREASURES, createKey("dragon_treasures"));
+        copy(DataBlockTagProvider.WOODEN_DRAGON_DOORS, createKey("wooden_dragon_doors"));
+    }
 
-	private static TagKey<Item> createKey(@NotNull final String name) {
-		return ItemTags.create(DragonSurvivalMod.res(name));
-	}
+    private static TagKey<Item> createKey(@NotNull final String name) {
+        return ItemTags.create(DragonSurvivalMod.res(name));
+    }
 
-	@Override
-	public @NotNull String getName() {
-		return "Dragon Survival Item tags";
-	}
+    @Override
+    public @NotNull String getName() {
+        return "Dragon Survival Item tags";
+    }
 }

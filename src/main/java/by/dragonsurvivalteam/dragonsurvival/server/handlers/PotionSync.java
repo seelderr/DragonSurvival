@@ -19,38 +19,38 @@ import java.util.List;
 @EventBusSubscriber
 public class PotionSync {
 
-	private static final List<Holder<MobEffect>> effectsToSync = new ArrayList<>(
-			List.of(DSEffects.DRAIN,
-					DSEffects.CHARGED,
-					DSEffects.BURN,
-					DSEffects.BLOOD_SIPHON,
-					DSEffects.REGEN_DELAY,
-					DSEffects.TRAPPED)
-	);
+    private static final List<Holder<MobEffect>> effectsToSync = new ArrayList<>(
+            List.of(DSEffects.DRAIN,
+                    DSEffects.CHARGED,
+                    DSEffects.BURN,
+                    DSEffects.BLOOD_SIPHON,
+                    DSEffects.REGEN_DELAY,
+                    DSEffects.TRAPPED)
+    );
 
-	@SubscribeEvent
-	public static void potionAdded(MobEffectEvent.Added event) {
-		if (!effectsToSync.contains(event.getEffectInstance().getEffect())) {
-			return;
-		}
+    @SubscribeEvent
+    public static void potionAdded(MobEffectEvent.Added event) {
+        if (!effectsToSync.contains(event.getEffectInstance().getEffect())) {
+            return;
+        }
 
-		LivingEntity entity = event.getEntity();
+        LivingEntity entity = event.getEntity();
 
-		if (!entity.level().isClientSide()) {
-			PacketDistributor.sendToPlayersTrackingEntity(entity, new SyncPotionAddedEffect.Data(entity.getId(), BuiltInRegistries.MOB_EFFECT.getId(event.getEffectInstance().getEffect().value()), event.getEffectInstance().getDuration(), event.getEffectInstance().getAmplifier()));
-		}
-	}
+        if (!entity.level().isClientSide()) {
+            PacketDistributor.sendToPlayersTrackingEntity(entity, new SyncPotionAddedEffect.Data(entity.getId(), BuiltInRegistries.MOB_EFFECT.getId(event.getEffectInstance().getEffect().value()), event.getEffectInstance().getDuration(), event.getEffectInstance().getAmplifier()));
+        }
+    }
 
-	@SubscribeEvent
-	public static void potionRemoved(MobEffectEvent.Expired event) {
-		if (!effectsToSync.contains(event.getEffectInstance().getEffect())) {
-			return;
-		}
+    @SubscribeEvent
+    public static void potionRemoved(MobEffectEvent.Expired event) {
+        if (!effectsToSync.contains(event.getEffectInstance().getEffect())) {
+            return;
+        }
 
-		LivingEntity entity = event.getEntity();
+        LivingEntity entity = event.getEntity();
 
-		if (!entity.level().isClientSide()) {
-			PacketDistributor.sendToPlayersTrackingEntity(entity, new SyncPotionRemovedEffect.Data(entity.getId(), BuiltInRegistries.MOB_EFFECT.getId(event.getEffectInstance().getEffect().value())));
-		}
-	}
+        if (!entity.level().isClientSide()) {
+            PacketDistributor.sendToPlayersTrackingEntity(entity, new SyncPotionRemovedEffect.Data(entity.getId(), BuiltInRegistries.MOB_EFFECT.getId(event.getEffectInstance().getEffect().value())));
+        }
+    }
 }

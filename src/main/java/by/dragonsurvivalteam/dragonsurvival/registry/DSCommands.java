@@ -14,13 +14,13 @@ import static net.neoforged.neoforgespi.ILaunchContext.LOGGER;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class DSCommands {
-	@SubscribeEvent
-	public static void serverRegisterCommandsEvent(RegisterCommandsEvent event) {
-		CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
-		DragonCommand.register(commandDispatcher);
-		DragonEditorCommand.register(commandDispatcher);
-		DragonAltarCommand.register(commandDispatcher);
-		DragonSizeCommand.register(commandDispatcher);
-		LOGGER.info("Registered commands");
-	}
+    @SubscribeEvent
+    public static void serverRegisterCommandsEvent(RegisterCommandsEvent event) {
+        CommandDispatcher<CommandSourceStack> commandDispatcher = event.getDispatcher();
+        DragonCommand.register(commandDispatcher);
+        DragonEditorCommand.register(commandDispatcher);
+        DragonAltarCommand.register(commandDispatcher);
+        DragonSizeCommand.register(commandDispatcher);
+        LOGGER.info("Registered commands");
+    }
 }

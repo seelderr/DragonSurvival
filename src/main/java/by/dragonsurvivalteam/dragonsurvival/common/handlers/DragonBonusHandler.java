@@ -29,109 +29,109 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class DragonBonusHandler {
-	@SubscribeEvent
-	public static void dragonDamageImmunities(final LivingIncomingDamageEvent event) {
-		LivingEntity living = event.getEntity();
-		DamageSource damageSource = event.getSource();
+    @SubscribeEvent
+    public static void dragonDamageImmunities(final LivingIncomingDamageEvent event) {
+        LivingEntity living = event.getEntity();
+        DamageSource damageSource = event.getSource();
 
-		DragonStateProvider.getOptional(living).ifPresent(handler -> {
-			if (handler.isDragon()) {
-				if (ServerConfig.bonusesEnabled) {
-					if (ServerConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
-						event.setCanceled(true);
-					} else if (ServerConfig.forestBushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
-						event.setCanceled(true);
-					} else if (ServerConfig.forestCactiImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().cactus()) {
-						event.setCanceled(true);
-					}
-				}
+        DragonStateProvider.getOptional(living).ifPresent(handler -> {
+            if (handler.isDragon()) {
+                if (ServerConfig.bonusesEnabled) {
+                    if (ServerConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
+                        event.setCanceled(true);
+                    } else if (ServerConfig.forestBushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
+                        event.setCanceled(true);
+                    } else if (ServerConfig.forestCactiImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().cactus()) {
+                        event.setCanceled(true);
+                    }
+                }
 
-				if (ServerConfig.caveSplashDamage != 0) {
-					if (DragonUtils.isDragonType(handler, DragonTypes.CAVE) && !living.hasEffect(DSEffects.FIRE)) {
-						if (damageSource.getDirectEntity() instanceof Snowball) {
-							living.hurt(living.damageSources().generic(), ServerConfig.caveSplashDamage.floatValue());
-						}
-					}
-				}
-			}
-		});
-	}
+                if (ServerConfig.caveSplashDamage != 0) {
+                    if (DragonUtils.isDragonType(handler, DragonTypes.CAVE) && !living.hasEffect(DSEffects.FIRE)) {
+                        if (damageSource.getDirectEntity() instanceof Snowball) {
+                            living.hurt(living.damageSources().generic(), ServerConfig.caveSplashDamage.floatValue());
+                        }
+                    }
+                }
+            }
+        });
+    }
 
-	@SubscribeEvent
-	public static void removeLavaFootsteps(PlayLevelSoundEvent.AtEntity event) {
-		if (!(event.getEntity() instanceof Player player)) {
-			return;
-		}
+    @SubscribeEvent
+    public static void removeLavaFootsteps(PlayLevelSoundEvent.AtEntity event) {
+        if (!(event.getEntity() instanceof Player player)) {
+            return;
+        }
 
-		if (event.getSound() != null) {
-			boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
+        if (event.getSound() != null) {
+            boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
 
-			if (isRelevant && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming) {
-				if (DragonUtils.isDragonType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
-					event.setCanceled(true);
-				}
-			}
-		}
-	}
+            if (isRelevant && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming) {
+                if (DragonUtils.isDragonType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
+                    event.setCanceled(true);
+                }
+            }
+        }
+    }
 
-	// TODO: This can be completely removed and have these events utilize Attributes.SAFE_FALL_DISTANCE
-	@SubscribeEvent
-	public static void reduceFallDistance(LivingFallEvent livingFallEvent) {
-		LivingEntity living = livingFallEvent.getEntity();
+    // TODO: This can be completely removed and have these events utilize Attributes.SAFE_FALL_DISTANCE
+    @SubscribeEvent
+    public static void reduceFallDistance(LivingFallEvent livingFallEvent) {
+        LivingEntity living = livingFallEvent.getEntity();
 
-		if (!(living instanceof Player player)) {
-			return;
-		}
+        if (!(living instanceof Player player)) {
+            return;
+        }
 
-		DragonStateHandler data = DragonStateProvider.getData(player);
+        DragonStateHandler data = DragonStateProvider.getData(player);
 
-		if (data.isDragon()) {
-			float distance = livingFallEvent.getDistance();
+        if (data.isDragon()) {
+            float distance = livingFallEvent.getDistance();
 
-			if (DragonUtils.isDragonType(data, DragonTypes.FOREST)) {
-				if (ServerConfig.bonusesEnabled) {
-					distance -= ServerConfig.forestFallReduction.floatValue();
-				}
+            if (DragonUtils.isDragonType(data, DragonTypes.FOREST)) {
+                if (ServerConfig.bonusesEnabled) {
+                    distance -= ServerConfig.forestFallReduction.floatValue();
+                }
 
-				CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
-				distance -= ability.getHeight();
-			}
+                CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
+                distance -= ability.getHeight();
+            }
 
-			livingFallEvent.setDistance(distance);
-		}
-	}
+            livingFallEvent.setDistance(distance);
+        }
+    }
 
-	@SubscribeEvent
-	public static void onJump(LivingEvent.LivingJumpEvent jumpEvent) {
-		final LivingEntity living = jumpEvent.getEntity();
+    @SubscribeEvent
+    public static void onJump(LivingEvent.LivingJumpEvent jumpEvent) {
+        final LivingEntity living = jumpEvent.getEntity();
 
 
-		if (living.getEffect(DSEffects.TRAPPED) != null) {
-			Vec3 deltaMovement = living.getDeltaMovement();
-			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
-			living.setJumping(false);
-			return;
-		}
+        if (living.getEffect(DSEffects.TRAPPED) != null) {
+            Vec3 deltaMovement = living.getDeltaMovement();
+            living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
+            living.setJumping(false);
+            return;
+        }
 
-		DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
-			if (dragonStateHandler.isDragon()) {
-				if (living instanceof ServerPlayer) {
-					PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
-				}
-			}
-		});
-	}
+        DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
+            if (dragonStateHandler.isDragon()) {
+                if (living instanceof ServerPlayer) {
+                    PacketDistributor.sendToAllPlayers(new SyncPlayerJump.Data(living.getId(), 10));
+                }
+            }
+        });
+    }
 
-	@SubscribeEvent
-	public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
-		if (dropsEvent.getBreaker() == null) return;
-		if (DragonUtils.isDragonType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
-			dropsEvent.getDrops().replaceAll(itemEntity -> new ItemEntity(itemEntity.level(), itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
-				@Override
-				public boolean fireImmune() {
-					return true;
-				}
-			});
-		}
-	}
+    @SubscribeEvent
+    public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
+        if (dropsEvent.getBreaker() == null) return;
+        if (DragonUtils.isDragonType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
+            dropsEvent.getDrops().replaceAll(itemEntity -> new ItemEntity(itemEntity.level(), itemEntity.getX(), itemEntity.getY(), itemEntity.getZ(), itemEntity.getItem()) {
+                @Override
+                public boolean fireImmune() {
+                    return true;
+                }
+            });
+        }
+    }
 }

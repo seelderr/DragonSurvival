@@ -12,28 +12,28 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class AllowOpenDragonAltar implements IMessage<AllowOpenDragonAltar.Data> {
 
-	public static void handleClient(final Data message, final IPayloadContext context) {
-		context.enqueueWork(ClientProxy::handleOpenDragonAltar);
-	}
+    public static void handleClient(final Data message, final IPayloadContext context) {
+        context.enqueueWork(ClientProxy::handleOpenDragonAltar);
+    }
 
-	public record Data() implements CustomPacketPayload {
+    public record Data() implements CustomPacketPayload {
 
-		public static final Type<AllowOpenDragonAltar.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_altar"));
+        public static final Type<AllowOpenDragonAltar.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_altar"));
 
-		public static final StreamCodec<ByteBuf, AllowOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>() {
-			@Override
-			public void encode(ByteBuf pBuffer, AllowOpenDragonAltar.Data pValue) {
-			}
+        public static final StreamCodec<ByteBuf, AllowOpenDragonAltar.Data> STREAM_CODEC = new StreamCodec<>() {
+            @Override
+            public void encode(ByteBuf pBuffer, AllowOpenDragonAltar.Data pValue) {
+            }
 
-			@Override
-			public AllowOpenDragonAltar.Data decode(ByteBuf pBuffer) {
-				return new AllowOpenDragonAltar.Data();
-			}
-		};
+            @Override
+            public AllowOpenDragonAltar.Data decode(ByteBuf pBuffer) {
+                return new AllowOpenDragonAltar.Data();
+            }
+        };
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

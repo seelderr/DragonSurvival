@@ -16,24 +16,24 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
  */
 public class SyncPlayerJump implements IMessage<SyncPlayerJump.Data> {
 
-	public static void handleClient(final Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handlePlayerJumpSync(message));
-	}
+    public static void handleClient(final Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handlePlayerJumpSync(message));
+    }
 
-	public record Data(int playerId, int ticks) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "player_jump"));
+    public record Data(int playerId, int ticks) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "player_jump"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.VAR_INT,
-				Data::ticks,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.VAR_INT,
+                Data::ticks,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

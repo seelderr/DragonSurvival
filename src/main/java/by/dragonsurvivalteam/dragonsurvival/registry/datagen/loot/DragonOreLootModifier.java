@@ -31,72 +31,72 @@ import java.util.function.Supplier;
 
 public class DragonOreLootModifier extends LootModifier {
 
-	// No codec at the moment. This is just a formality.
-	public static final Supplier<MapCodec<DragonOreLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, DragonOreLootModifier::new)));
+    // No codec at the moment. This is just a formality.
+    public static final Supplier<MapCodec<DragonOreLootModifier>> CODEC = Suppliers.memoize(() -> RecordCodecBuilder.mapCodec(inst -> codecStart(inst).apply(inst, DragonOreLootModifier::new)));
 
-	TagKey<Block> ores = BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores"));
+    TagKey<Block> ores = BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "ores"));
 
-	public DragonOreLootModifier(LootItemCondition[] conditionsIn) {
-		super(conditionsIn);
-	}
+    public DragonOreLootModifier(LootItemCondition[] conditionsIn) {
+        super(conditionsIn);
+    }
 
-	@Override
-	protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
-		if (context.hasParam(LootContextParams.BLOCK_STATE)) {
-			BlockState blockState = context.getParamOrNull(LootContextParams.BLOCK_STATE);
-			if (blockState != null) {
-				if (blockState.is(ores)) {
-					Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
-					if (entity instanceof Player player) {
-						Vec3 breakPos = context.getParamOrNull(LootContextParams.ORIGIN);
-						if (breakPos != null) {
-							ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
-							int fortuneLevel = 0;
+    @Override
+    protected @NotNull ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
+        if (context.hasParam(LootContextParams.BLOCK_STATE)) {
+            BlockState blockState = context.getParamOrNull(LootContextParams.BLOCK_STATE);
+            if (blockState != null) {
+                if (blockState.is(ores)) {
+                    Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
+                    if (entity instanceof Player player) {
+                        Vec3 breakPos = context.getParamOrNull(LootContextParams.ORIGIN);
+                        if (breakPos != null) {
+                            ItemStack tool = context.getParamOrNull(LootContextParams.TOOL);
+                            int fortuneLevel = 0;
 
-							if (tool != null) {
-								if (EnchantmentUtils.getLevel(player.level(), Enchantments.SILK_TOUCH, tool) != 0) {
-									return generatedLoot;
-								}
+                            if (tool != null) {
+                                if (EnchantmentUtils.getLevel(player.level(), Enchantments.SILK_TOUCH, tool) != 0) {
+                                    return generatedLoot;
+                                }
 
-								fortuneLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.FORTUNE, tool);
-							}
+                                fortuneLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.FORTUNE, tool);
+                            }
 
-							BlockPos blockPos = new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
-							int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
+                            BlockPos blockPos = new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
+                            int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
 
-							if (expDrop > 0) {
-								DragonStateHandler handler = DragonStateProvider.getData(player);
-								int fortuneRoll = 1;
-								if (fortuneLevel >= 1)
-									fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
-								if (handler.isDragon()) {
-									if (context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance) {
-										generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
-									}
+                            if (expDrop > 0) {
+                                DragonStateHandler handler = DragonStateProvider.getData(player);
+                                int fortuneRoll = 1;
+                                if (fortuneLevel >= 1)
+                                    fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
+                                if (handler.isDragon()) {
+                                    if (context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance) {
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
+                                    }
 
-									if (context.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance) {
-										generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
-									}
-								} else {
-									if (context.getRandom().nextDouble() < ServerConfig.humanOreDustChance) {
-										generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
-									}
+                                    if (context.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance) {
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
+                                    }
+                                } else {
+                                    if (context.getRandom().nextDouble() < ServerConfig.humanOreDustChance) {
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
+                                    }
 
-									if (context.getRandom().nextDouble() < ServerConfig.humanOreBoneChance) {
-										generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-		return generatedLoot;
-	}
+                                    if (context.getRandom().nextDouble() < ServerConfig.humanOreBoneChance) {
+                                        generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return generatedLoot;
+    }
 
-	@Override
-	public MapCodec<? extends IGlobalLootModifier> codec() {
-		return CODEC.get();
-	}
+    @Override
+    public MapCodec<? extends IGlobalLootModifier> codec() {
+        return CODEC.get();
+    }
 }

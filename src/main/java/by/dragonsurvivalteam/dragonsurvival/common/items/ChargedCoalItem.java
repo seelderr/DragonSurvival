@@ -14,20 +14,20 @@ import java.util.List;
 import java.util.function.Consumer;
 
 public class ChargedCoalItem extends DragonFoodItem {
-	public ChargedCoalItem(Properties properties, AbstractDragonType dragonType, Consumer<LivingEntity> onEat) {
-		super(properties, dragonType, onEat);
-	}
+    public ChargedCoalItem(Properties properties, AbstractDragonType dragonType, Consumer<LivingEntity> onEat) {
+        super(properties, dragonType, onEat);
+    }
 
 
-	@Override
-	public int getBurnTime(@NotNull ItemStack itemStack, RecipeType<?> recipeType) {
-		return 4000;
-	}
+    @Override
+    public int getBurnTime(@NotNull ItemStack itemStack, RecipeType<?> recipeType) {
+        return 4000;
+    }
 
-	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
 
-		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-		pTooltipComponents.add(Component.translatable("ds.description.chargedCoal"));
-	}
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+        pTooltipComponents.add(Component.translatable("ds.description.chargedCoal"));
+    }
 }

@@ -10,23 +10,23 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class CaveDragonInfoAbility extends InnateDragonAbility {
-	@Override
-	public String getName() {
-		return "cave_dragon";
-	}
+    @Override
+    public String getName() {
+        return "cave_dragon";
+    }
 
-	@Override
-	public AbstractDragonType getDragonType() {
-		return DragonTypes.CAVE;
-	}
+    @Override
+    public AbstractDragonType getDragonType() {
+        return DragonTypes.CAVE;
+    }
 
-	@Override
-	public ResourceLocation[] getSkillTextures() {
-		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_dragon_1.png")};
-	}
+    @Override
+    public ResourceLocation[] getSkillTextures() {
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_dragon_1.png")};
+    }
 
-	@Override
-	public int getSortOrder() {
-		return 3;
-	}
+    @Override
+    public int getSortOrder() {
+        return 3;
+    }
 }

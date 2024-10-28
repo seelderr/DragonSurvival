@@ -12,24 +12,24 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncPotionRemovedEffect implements IMessage<SyncPotionRemovedEffect.Data> {
-	public static void handleClient(final SyncPotionRemovedEffect.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
-	}
+    public static void handleClient(final SyncPotionRemovedEffect.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
+    }
 
-	public record Data(int playerId, int effectId) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_removed_effect"));
+    public record Data(int playerId, int effectId) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_removed_effect"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.VAR_INT,
-				Data::effectId,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.VAR_INT,
+                Data::effectId,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

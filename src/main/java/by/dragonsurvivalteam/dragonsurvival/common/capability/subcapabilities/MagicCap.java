@@ -20,233 +20,233 @@ import java.util.Map.Entry;
 import java.util.Objects;
 
 public class MagicCap extends SubCap {
-	public static final Integer activeAbilitySlots = 4;
-	public static final Integer passiveAbilitySlots = 4;
-	public static final Integer innateAbilitySlots = 4;
+    public static final Integer activeAbilitySlots = 4;
+    public static final Integer passiveAbilitySlots = 4;
+    public static final Integer innateAbilitySlots = 4;
 
-	public final HashMap<Integer, String> passiveDragonAbilities = new HashMap<>();
-	public final HashMap<Integer, String> activeDragonAbilities = new HashMap<>();
-	public final HashMap<Integer, String> innateDragonAbilities = new HashMap<>();
+    public final HashMap<Integer, String> passiveDragonAbilities = new HashMap<>();
+    public final HashMap<Integer, String> activeDragonAbilities = new HashMap<>();
+    public final HashMap<Integer, String> innateDragonAbilities = new HashMap<>();
 
-	public final HashMap<String, DragonAbility> abilities = new HashMap<>();
-	private int selectedAbilitySlot = 0;
+    public final HashMap<String, DragonAbility> abilities = new HashMap<>();
+    private int selectedAbilitySlot = 0;
 
-	public boolean isCasting = false;
-	private int currentMana = 0;
+    public boolean isCasting = false;
+    private int currentMana = 0;
 
-	public boolean onMagicSource = false;
-	public int magicSourceTimer = 0;
+    public boolean onMagicSource = false;
+    public int magicSourceTimer = 0;
 
-	private boolean renderAbilities = true;
+    private boolean renderAbilities = true;
 
-	public MagicCap(DragonStateHandler handler) {
-		super(handler);
-		initAbilities(handler.getType());
-	}
+    public MagicCap(DragonStateHandler handler) {
+        super(handler);
+        initAbilities(handler.getType());
+    }
 
-	public void initAbilities(AbstractDragonType type) {
-		activeDragonAbilities.clear();
-		passiveDragonAbilities.clear();
-		innateDragonAbilities.clear();
-
-
-		if (!ServerConfig.saveAllAbilities)
-			abilities.clear();
-
-		if (type != null) {
-			for (DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getSubtypeName(), new ArrayList<>())) {
-				if (!abilities.containsKey(dragonAbility.getName())) {
-					try {
-						DragonAbility ability = dragonAbility.getClass().newInstance();
-						abilities.put(ability.getName(), ability);
-					} catch (InstantiationException | IllegalAccessException e) {
-						DragonSurvivalMod.LOGGER.error(e);
-					}
-				}
-
-				if (dragonAbility instanceof ActiveDragonAbility && activeDragonAbilities.size() < activeAbilitySlots) {
-					activeDragonAbilities.put(activeDragonAbilities.size(), dragonAbility.getName());
-				}
-
-				if (dragonAbility instanceof PassiveDragonAbility && passiveDragonAbilities.size() < passiveAbilitySlots) {
-					passiveDragonAbilities.put(passiveDragonAbilities.size(), dragonAbility.getName());
-				}
-
-				if (dragonAbility instanceof InnateDragonAbility) {
-					innateDragonAbilities.put(innateDragonAbilities.size(), dragonAbility.getName());
-				}
-			}
-		}
-	}
+    public void initAbilities(AbstractDragonType type) {
+        activeDragonAbilities.clear();
+        passiveDragonAbilities.clear();
+        innateDragonAbilities.clear();
 
 
-	public int getCurrentMana() {
-		return currentMana;
-	}
+        if (!ServerConfig.saveAllAbilities)
+            abilities.clear();
+
+        if (type != null) {
+            for (DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getSubtypeName(), new ArrayList<>())) {
+                if (!abilities.containsKey(dragonAbility.getName())) {
+                    try {
+                        DragonAbility ability = dragonAbility.getClass().newInstance();
+                        abilities.put(ability.getName(), ability);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        DragonSurvivalMod.LOGGER.error(e);
+                    }
+                }
+
+                if (dragonAbility instanceof ActiveDragonAbility && activeDragonAbilities.size() < activeAbilitySlots) {
+                    activeDragonAbilities.put(activeDragonAbilities.size(), dragonAbility.getName());
+                }
+
+                if (dragonAbility instanceof PassiveDragonAbility && passiveDragonAbilities.size() < passiveAbilitySlots) {
+                    passiveDragonAbilities.put(passiveDragonAbilities.size(), dragonAbility.getName());
+                }
+
+                if (dragonAbility instanceof InnateDragonAbility) {
+                    innateDragonAbilities.put(innateDragonAbilities.size(), dragonAbility.getName());
+                }
+            }
+        }
+    }
 
 
-	public void setCurrentMana(int currentMana) {
-		this.currentMana = currentMana;
-	}
-
-	public void setSelectedAbilitySlot(int newSlot) {
-		selectedAbilitySlot = newSlot;
-	}
-
-	public int getSelectedAbilitySlot() {
-		return selectedAbilitySlot;
-	}
-
-	public InnateDragonAbility getInnateAbilityFromSlot(int slot) {
-		if (innateDragonAbilities.containsKey(slot)) {
-			String key = innateDragonAbilities.get(slot);
-			if (abilities.containsKey(key)) {
-				return (InnateDragonAbility) abilities.get(key);
-			}
-		}
-		return null;
-	}
-
-	public PassiveDragonAbility getPassiveAbilityFromSlot(int slot) {
-		if (passiveDragonAbilities.containsKey(slot)) {
-			String key = passiveDragonAbilities.get(slot);
-			if (abilities.containsKey(key))
-				return (PassiveDragonAbility) abilities.get(key);
-		}
-		return null;
-	}
-
-	public ActiveDragonAbility getCurrentlyCasting() {
-		return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
-	}
-
-	public void setCurrentlyCasting() {
-		isCasting = true;
-	}
-
-	public void stopCasting() {
-		isCasting = false;
-		getCurrentlyCasting().onKeyReleased(getCurrentlyCasting().player);
-	}
-
-	public List<ActiveDragonAbility> getActiveAbilities() {
-		if (abilities.isEmpty()) initAbilities(handler.getType());
-		return abilities.values().stream().filter(ActiveDragonAbility.class::isInstance).filter(s -> DragonUtils.isDragonType(handler, s.getDragonType())).map(ActiveDragonAbility.class::cast).toList();
-	}
-
-	public List<PassiveDragonAbility> getPassiveAbilities() {
-		if (abilities.isEmpty()) initAbilities(handler.getType());
-		return abilities.values().stream().filter(PassiveDragonAbility.class::isInstance).filter(s -> DragonUtils.isDragonType(handler, s.getDragonType())).map(PassiveDragonAbility.class::cast).toList();
-	}
-
-	public ActiveDragonAbility getAbilityFromSlot(int slot) {
-		if (abilities.isEmpty() || activeDragonAbilities.isEmpty()) initAbilities(handler.getType());
-
-		if (activeDragonAbilities.containsKey(slot)) {
-			String key = activeDragonAbilities.get(slot);
-			if (abilities.containsKey(key))
-				return (ActiveDragonAbility) abilities.get(key);
-		}
-
-		return null;
-	}
+    public int getCurrentMana() {
+        return currentMana;
+    }
 
 
-	public CompoundTag saveAbilities() {
-		CompoundTag tag = new CompoundTag();
+    public void setCurrentMana(int currentMana) {
+        this.currentMana = currentMana;
+    }
 
-		for (Entry<String, DragonAbility> entry : abilities.entrySet()) {
-			tag.put(entry.getKey(), entry.getValue().saveNBT());
-		}
+    public void setSelectedAbilitySlot(int newSlot) {
+        selectedAbilitySlot = newSlot;
+    }
 
-		for (int i = 0; i < activeAbilitySlots; i++) {
-			if (activeDragonAbilities.containsKey(i))
-				tag.putString("active_" + i, activeDragonAbilities.get(i));
-		}
+    public int getSelectedAbilitySlot() {
+        return selectedAbilitySlot;
+    }
 
-		for (int i = 0; i < passiveAbilitySlots; i++) {
-			if (passiveDragonAbilities.containsKey(i))
-				tag.putString("passive_" + i, passiveDragonAbilities.get(i));
-		}
+    public InnateDragonAbility getInnateAbilityFromSlot(int slot) {
+        if (innateDragonAbilities.containsKey(slot)) {
+            String key = innateDragonAbilities.get(slot);
+            if (abilities.containsKey(key)) {
+                return (InnateDragonAbility) abilities.get(key);
+            }
+        }
+        return null;
+    }
 
-		for (int i = 0; i < innateAbilitySlots; i++) {
-			if (innateDragonAbilities.containsKey(i))
-				tag.putString("innate_" + i, innateDragonAbilities.get(i));
-		}
+    public PassiveDragonAbility getPassiveAbilityFromSlot(int slot) {
+        if (passiveDragonAbilities.containsKey(slot)) {
+            String key = passiveDragonAbilities.get(slot);
+            if (abilities.containsKey(key))
+                return (PassiveDragonAbility) abilities.get(key);
+        }
+        return null;
+    }
 
-		return tag;
-	}
+    public ActiveDragonAbility getCurrentlyCasting() {
+        return isCasting ? getAbilityFromSlot(getSelectedAbilitySlot()) : null;
+    }
 
-	public void loadAbilities(CompoundTag tag) {
-		for (Entry<String, ArrayList<DragonAbility>> entry : DragonAbilities.ABILITIES.entrySet()) {
-			if (!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getSubtypeName())) continue;
+    public void setCurrentlyCasting() {
+        isCasting = true;
+    }
 
-			for (DragonAbility ability : entry.getValue()) {
-				if (tag.contains(ability.getName())) {
-					try {
-						DragonAbility ab = ability.getClass().newInstance();
-						ab.loadNBT(tag.getCompound(ability.getName()));
-						abilities.put(ab.getName(), ab);
-					} catch (InstantiationException | IllegalAccessException e) {
-						DragonSurvivalMod.LOGGER.error(e);
-					}
-				}
-			}
-		}
+    public void stopCasting() {
+        isCasting = false;
+        getCurrentlyCasting().onKeyReleased(getCurrentlyCasting().player);
+    }
 
-		for (int i = 0; i < activeAbilitySlots; i++) {
-			if (tag.contains("active_" + i)) {
-				activeDragonAbilities.put(i, tag.getString("active_" + i));
-			}
-		}
+    public List<ActiveDragonAbility> getActiveAbilities() {
+        if (abilities.isEmpty()) initAbilities(handler.getType());
+        return abilities.values().stream().filter(ActiveDragonAbility.class::isInstance).filter(s -> DragonUtils.isDragonType(handler, s.getDragonType())).map(ActiveDragonAbility.class::cast).toList();
+    }
 
-		for (int i = 0; i < passiveAbilitySlots; i++) {
-			if (tag.contains("passive_" + i)) {
-				passiveDragonAbilities.put(i, tag.getString("passive_" + i));
-			}
-		}
+    public List<PassiveDragonAbility> getPassiveAbilities() {
+        if (abilities.isEmpty()) initAbilities(handler.getType());
+        return abilities.values().stream().filter(PassiveDragonAbility.class::isInstance).filter(s -> DragonUtils.isDragonType(handler, s.getDragonType())).map(PassiveDragonAbility.class::cast).toList();
+    }
 
-		for (int i = 0; i < innateAbilitySlots; i++) {
-			if (tag.contains("innate_" + i)) {
-				innateDragonAbilities.put(i, tag.getString("innate_" + i));
-			}
-		}
-	}
+    public ActiveDragonAbility getAbilityFromSlot(int slot) {
+        if (abilities.isEmpty() || activeDragonAbilities.isEmpty()) initAbilities(handler.getType());
 
-	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-		CompoundTag tag = new CompoundTag();
+        if (activeDragonAbilities.containsKey(slot)) {
+            String key = activeDragonAbilities.get(slot);
+            if (abilities.containsKey(key))
+                return (ActiveDragonAbility) abilities.get(key);
+        }
 
-		tag.putBoolean("renderSkills", renderAbilities);
-		tag.putInt("selectedAbilitySlot", selectedAbilitySlot);
+        return null;
+    }
 
-		tag.putBoolean("onMagicSource", onMagicSource);
-		tag.putInt("magicSourceTimer", magicSourceTimer);
 
-		tag.putInt("mana", getCurrentMana());
-		tag.put("abilityData", saveAbilities());
-		return tag;
-	}
+    public CompoundTag saveAbilities() {
+        CompoundTag tag = new CompoundTag();
 
-	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-		onMagicSource = tag.getBoolean("onMagicSource");
-		magicSourceTimer = tag.getInt("magicSourceTimer");
+        for (Entry<String, DragonAbility> entry : abilities.entrySet()) {
+            tag.put(entry.getKey(), entry.getValue().saveNBT());
+        }
 
-		renderAbilities = tag.getBoolean("renderSkills");
+        for (int i = 0; i < activeAbilitySlots; i++) {
+            if (activeDragonAbilities.containsKey(i))
+                tag.putString("active_" + i, activeDragonAbilities.get(i));
+        }
 
-		setSelectedAbilitySlot(tag.getInt("selectedAbilitySlot"));
-		setCurrentMana(tag.getInt("mana"));
+        for (int i = 0; i < passiveAbilitySlots; i++) {
+            if (passiveDragonAbilities.containsKey(i))
+                tag.putString("passive_" + i, passiveDragonAbilities.get(i));
+        }
 
-		if (tag.contains("abilityData"))
-			loadAbilities(tag.getCompound("abilityData"));
-	}
+        for (int i = 0; i < innateAbilitySlots; i++) {
+            if (innateDragonAbilities.containsKey(i))
+                tag.putString("innate_" + i, innateDragonAbilities.get(i));
+        }
 
-	public void setRenderAbilities(boolean renderAbilities) {
-		this.renderAbilities = renderAbilities;
-	}
+        return tag;
+    }
 
-	public boolean shouldRenderAbilities() {
-		return renderAbilities;
-	}
+    public void loadAbilities(CompoundTag tag) {
+        for (Entry<String, ArrayList<DragonAbility>> entry : DragonAbilities.ABILITIES.entrySet()) {
+            if (!ServerConfig.saveAllAbilities && !Objects.equals(entry.getKey(), handler.getSubtypeName())) continue;
+
+            for (DragonAbility ability : entry.getValue()) {
+                if (tag.contains(ability.getName())) {
+                    try {
+                        DragonAbility ab = ability.getClass().newInstance();
+                        ab.loadNBT(tag.getCompound(ability.getName()));
+                        abilities.put(ab.getName(), ab);
+                    } catch (InstantiationException | IllegalAccessException e) {
+                        DragonSurvivalMod.LOGGER.error(e);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < activeAbilitySlots; i++) {
+            if (tag.contains("active_" + i)) {
+                activeDragonAbilities.put(i, tag.getString("active_" + i));
+            }
+        }
+
+        for (int i = 0; i < passiveAbilitySlots; i++) {
+            if (tag.contains("passive_" + i)) {
+                passiveDragonAbilities.put(i, tag.getString("passive_" + i));
+            }
+        }
+
+        for (int i = 0; i < innateAbilitySlots; i++) {
+            if (tag.contains("innate_" + i)) {
+                innateDragonAbilities.put(i, tag.getString("innate_" + i));
+            }
+        }
+    }
+
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
+
+        tag.putBoolean("renderSkills", renderAbilities);
+        tag.putInt("selectedAbilitySlot", selectedAbilitySlot);
+
+        tag.putBoolean("onMagicSource", onMagicSource);
+        tag.putInt("magicSourceTimer", magicSourceTimer);
+
+        tag.putInt("mana", getCurrentMana());
+        tag.put("abilityData", saveAbilities());
+        return tag;
+    }
+
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        onMagicSource = tag.getBoolean("onMagicSource");
+        magicSourceTimer = tag.getInt("magicSourceTimer");
+
+        renderAbilities = tag.getBoolean("renderSkills");
+
+        setSelectedAbilitySlot(tag.getInt("selectedAbilitySlot"));
+        setCurrentMana(tag.getInt("mana"));
+
+        if (tag.contains("abilityData"))
+            loadAbilities(tag.getCompound("abilityData"));
+    }
+
+    public void setRenderAbilities(boolean renderAbilities) {
+        this.renderAbilities = renderAbilities;
+    }
+
+    public boolean shouldRenderAbilities() {
+        return renderAbilities;
+    }
 }

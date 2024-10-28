@@ -12,22 +12,22 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncGrowthState implements IMessage<SyncGrowthState.Data> {
-	public static void handleClient(final SyncGrowthState.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncGrowthState(message));
-	}
+    public static void handleClient(final SyncGrowthState.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncGrowthState(message));
+    }
 
-	public record Data(boolean growing) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "growth_state"));
+    public record Data(boolean growing) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "growth_state"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.BOOL,
-				Data::growing,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL,
+                Data::growing,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

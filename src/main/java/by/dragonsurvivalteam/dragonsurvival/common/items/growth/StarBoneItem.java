@@ -21,41 +21,41 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class StarBoneItem extends Item {
-	public StarBoneItem(Properties p_i48487_1_) {
-		super(p_i48487_1_);
-	}
+    public StarBoneItem(Properties p_i48487_1_) {
+        super(p_i48487_1_);
+    }
 
-	@Override
-	public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, @NotNull Player playerIn, @NotNull InteractionHand handIn) {
-		DragonStateHandler handler = DragonStateProvider.getData(playerIn);
+    @Override
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, @NotNull Player playerIn, @NotNull InteractionHand handIn) {
+        DragonStateHandler handler = DragonStateProvider.getData(playerIn);
 
-		if (handler.isDragon()) {
-			double size = handler.getSize();
-			if (size > 14) {
-				size -= 2;
-				size = Math.max(size, DragonLevel.NEWBORN.size);
-				handler.setSize(size, playerIn);
+        if (handler.isDragon()) {
+            double size = handler.getSize();
+            if (size > 14) {
+                size -= 2;
+                size = Math.max(size, DragonLevel.NEWBORN.size);
+                handler.setSize(size, playerIn);
 
-				if (!playerIn.isCreative()) {
-					playerIn.getItemInHand(handIn).shrink(1);
-				}
+                if (!playerIn.isCreative()) {
+                    playerIn.getItemInHand(handIn).shrink(1);
+                }
 
-				if (!worldIn.isClientSide) {
-					PacketDistributor.sendToPlayersTrackingEntityAndSelf(playerIn, new SyncSize.Data(playerIn.getId(), size));
-					DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) playerIn, handler.getSize(), handler.getTypeName());
-				}
+                if (!worldIn.isClientSide) {
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(playerIn, new SyncSize.Data(playerIn.getId(), size));
+                    DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) playerIn, handler.getSize(), handler.getTypeName());
+                }
 
-				playerIn.refreshDimensions();
-				return InteractionResultHolder.consume(playerIn.getItemInHand(handIn));
-			}
-		}
+                playerIn.refreshDimensions();
+                return InteractionResultHolder.consume(playerIn.getItemInHand(handIn));
+            }
+        }
 
-		return super.use(worldIn, playerIn, handIn);
-	}
+        return super.use(worldIn, playerIn, handIn);
+    }
 
-	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
-		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-		pTooltipComponents.add(Component.translatable("ds.description.starBone"));
-	}
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+        pTooltipComponents.add(Component.translatable("ds.description.starBone"));
+    }
 }

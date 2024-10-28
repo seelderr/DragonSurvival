@@ -15,13 +15,13 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class ChargedSoupItem extends Item {
-	public ChargedSoupItem(Properties properties) {
-		super(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.4F).alwaysEdible().effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F).effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(ServerConfig.chargedSoupBuffDuration), 0), 1.0F).build()));
-	}
+    public ChargedSoupItem(Properties properties) {
+        super(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.4F).alwaysEdible().effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F).effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(ServerConfig.chargedSoupBuffDuration), 0), 1.0F).build()));
+    }
 
-	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
-		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-		pTooltipComponents.add(Component.translatable("ds.description.chargedSoup"));
-	}
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+        pTooltipComponents.add(Component.translatable("ds.description.chargedSoup"));
+    }
 }

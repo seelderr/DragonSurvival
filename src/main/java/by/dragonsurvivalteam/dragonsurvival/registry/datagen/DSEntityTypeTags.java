@@ -16,28 +16,28 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.CompletableFuture;
 
 public class DSEntityTypeTags extends EntityTypeTagsProvider {
-	public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("animal_avoid_blacklist"));
-	public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("vehicle_whitelist"));
+    public static final TagKey<EntityType<?>> ANIMAL_AVOID_BLACKLIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("animal_avoid_blacklist"));
+    public static final TagKey<EntityType<?>> VEHICLE_WHITELIST = TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res("vehicle_whitelist"));
 
-	public DSEntityTypeTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
-		super(output, provider, DragonSurvivalMod.MODID, helper);
-	}
+    public DSEntityTypeTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
+        super(output, provider, DragonSurvivalMod.MODID, helper);
+    }
 
-	@Override
-	protected void addTags(@NotNull final HolderLookup.Provider provider) {
-		tag(ANIMAL_AVOID_BLACKLIST)
-				.add(EntityType.WOLF)
-				.add(EntityType.HOGLIN);
+    @Override
+    protected void addTags(@NotNull final HolderLookup.Provider provider) {
+        tag(ANIMAL_AVOID_BLACKLIST)
+                .add(EntityType.WOLF)
+                .add(EntityType.HOGLIN);
 
-		tag(VEHICLE_WHITELIST)
-				.addTag(Tags.EntityTypes.BOATS)
-				.addTag(Tags.EntityTypes.MINECARTS)
-				.addOptional(ResourceLocation.fromNamespaceAndPath("littlelogistics", "seater_barge"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("create", "seat"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("create", "contraption"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("create", "gantry_contraption"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("create", "stationary_contraption"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("hexerei", "broom"))
-				.addOptional(ResourceLocation.fromNamespaceAndPath("botania", "player_mover"));
-	}
+        tag(VEHICLE_WHITELIST)
+                .addTag(Tags.EntityTypes.BOATS)
+                .addTag(Tags.EntityTypes.MINECARTS)
+                .addOptional(ResourceLocation.fromNamespaceAndPath("littlelogistics", "seater_barge"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("create", "seat"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("create", "contraption"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("create", "gantry_contraption"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("create", "stationary_contraption"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("hexerei", "broom"))
+                .addOptional(ResourceLocation.fromNamespaceAndPath("botania", "player_mover"));
+    }
 }

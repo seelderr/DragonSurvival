@@ -23,27 +23,27 @@ import java.util.function.Supplier;
 @Mixin(ClientLevel.class)
 public abstract class MixinClientWorld extends Level {
 
-	protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates) {
-		super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
-	}
+    protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates) {
+        super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
+    }
 
-	@ModifyArg(method = "destroyBlockProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V"), index = 1)
-	private BlockPos modifyDestroyBlockProgress(BlockPos pos) {
-		BlockState state = getBlockState(pos);
+    @ModifyArg(method = "destroyBlockProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V"), index = 1)
+    private BlockPos modifyDestroyBlockProgress(BlockPos pos) {
+        BlockState state = getBlockState(pos);
 
-		if (state.getBlock() instanceof SourceOfMagicBlock) {
-			if (!state.getValue(SourceOfMagicBlock.PRIMARY_BLOCK)) {
-				BlockEntity blockEntity = getBlockEntity(pos);
-				BlockPos pos1 = pos;
+        if (state.getBlock() instanceof SourceOfMagicBlock) {
+            if (!state.getValue(SourceOfMagicBlock.PRIMARY_BLOCK)) {
+                BlockEntity blockEntity = getBlockEntity(pos);
+                BlockPos pos1 = pos;
 
-				if (blockEntity instanceof SourceOfMagicPlaceholder) {
-					pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
-				}
+                if (blockEntity instanceof SourceOfMagicPlaceholder) {
+                    pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
+                }
 
-				return pos1;
-			}
-		}
+                return pos1;
+            }
+        }
 
-		return pos;
-	}
+        return pos;
+    }
 }

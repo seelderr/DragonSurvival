@@ -15,12 +15,12 @@ import org.spongepowered.asm.mixin.injection.At;
  */
 @Mixin(ItemBlockRenderTypes.class)
 public class ItemBlockRenderTypesMixin {
-	@ModifyReturnValue(method = "getRenderLayer", at = @At(value = "RETURN"))
-	private static RenderType dragonSurvival$handleLavaVision(RenderType renderType, @Local(argsOnly = true) FluidState fluidState) {
-		if (VisionHandler.hasLavaVision() && fluidState.is(FluidTags.LAVA)) {
-			return RenderType.translucent();
-		}
+    @ModifyReturnValue(method = "getRenderLayer", at = @At(value = "RETURN"))
+    private static RenderType dragonSurvival$handleLavaVision(RenderType renderType, @Local(argsOnly = true) FluidState fluidState) {
+        if (VisionHandler.hasLavaVision() && fluidState.is(FluidTags.LAVA)) {
+            return RenderType.translucent();
+        }
 
-		return renderType;
-	}
+        return renderType;
+    }
 }

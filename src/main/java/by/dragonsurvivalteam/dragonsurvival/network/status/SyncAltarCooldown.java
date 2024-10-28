@@ -16,33 +16,33 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 // TODO: Maybe remove? Only needed in situations when we are calling SyncComplete anyways
 public class SyncAltarCooldown implements IMessage<SyncAltarCooldown.Data> {
 
-	public static void handleClient(final Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncAltarCooldown(message));
-	}
+    public static void handleClient(final Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncAltarCooldown(message));
+    }
 
-	public static void handleServer(final Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
-					cap.altarCooldown = message.cooldown;
-					cap.hasUsedAltar = true;
-					cap.isInAltar = false;
-				})
-		).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
-	}
+    public static void handleServer(final Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> DragonStateProvider.getOptional(context.player()).ifPresent(cap -> {
+                    cap.altarCooldown = message.cooldown;
+                    cap.hasUsedAltar = true;
+                    cap.isInAltar = false;
+                })
+        ).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
+    }
 
-	public record Data(int playerId, int cooldown) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "altar_cooldown"));
+    public record Data(int playerId, int cooldown) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "altar_cooldown"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.VAR_INT,
-				Data::cooldown,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.VAR_INT,
+                Data::cooldown,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

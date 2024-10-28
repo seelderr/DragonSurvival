@@ -9,14 +9,14 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
 public class DragonHunterWeapon extends SwordItem implements PermanentEnchantmentItem {
-	public ItemEnchantments getDefaultEnchantments() {
-		ItemEnchantments.Mutable e = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
-		Holder<Enchantment> dragonsbane = EnchantmentUtils.getHolder(DSEnchantments.DRAGONSBANE);
-		if (dragonsbane != null) e.set(dragonsbane, 3);
-		return e.toImmutable();
-	}
+    public ItemEnchantments getDefaultEnchantments() {
+        ItemEnchantments.Mutable e = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
+        Holder<Enchantment> dragonsbane = EnchantmentUtils.getHolder(DSEnchantments.DRAGONSBANE);
+        if (dragonsbane != null) e.set(dragonsbane, 3);
+        return e.toImmutable();
+    }
 
-	public DragonHunterWeapon(Tier pTier, Properties pProperties) {
-		super(pTier, pProperties);
-	}
+    public DragonHunterWeapon(Tier pTier, Properties pProperties) {
+        super(pTier, pProperties);
+    }
 }

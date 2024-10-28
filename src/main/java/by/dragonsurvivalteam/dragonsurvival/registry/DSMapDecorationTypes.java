@@ -11,9 +11,9 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @SuppressWarnings("unused")
 public class DSMapDecorationTypes {
-	public static final DeferredRegister<MapDecorationType> DS_MAP_DECORATIONS = DeferredRegister.create(BuiltInRegistries.MAP_DECORATION_TYPE, MODID);
+    public static final DeferredRegister<MapDecorationType> DS_MAP_DECORATIONS = DeferredRegister.create(BuiltInRegistries.MAP_DECORATION_TYPE, MODID);
 
-	public static final Holder<MapDecorationType> DRAGON_HUNTER = DS_MAP_DECORATIONS.register("dragon_hunter", () -> new MapDecorationType(
-			ResourceLocation.fromNamespaceAndPath(MODID, "dragon_hunter"), true, MapColor.COLOR_RED.col, true, true
-	));
+    public static final Holder<MapDecorationType> DRAGON_HUNTER = DS_MAP_DECORATIONS.register("dragon_hunter", () -> new MapDecorationType(
+            ResourceLocation.fromNamespaceAndPath(MODID, "dragon_hunter"), true, MapColor.COLOR_RED.col, true, true
+    ));
 }

@@ -13,24 +13,24 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDragonType implements IMessage<SyncDragonType.Data> {
-	public static void handleClient(final Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncDragonTypeData(message));
-	}
+    public static void handleClient(final Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncDragonTypeData(message));
+    }
 
-	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_type"));
+    public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_type"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.COMPOUND_TAG,
-				Data::nbt,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.COMPOUND_TAG,
+                Data::nbt,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

@@ -10,24 +10,24 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class CaveWingsAbility extends DragonWingAbility {
-	@Override
-	public String getName() {
-		return "cave_wings";
-	}
+    @Override
+    public String getName() {
+        return "cave_wings";
+    }
 
-	@Override
-	public AbstractDragonType getDragonType() {
-		return DragonTypes.CAVE;
-	}
+    @Override
+    public AbstractDragonType getDragonType() {
+        return DragonTypes.CAVE;
+    }
 
-	@Override
-	public ResourceLocation[] getSkillTextures() {
-		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_0.png"),
-				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_1.png")};
-	}
+    @Override
+    public ResourceLocation[] getSkillTextures() {
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_0.png"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_wings_1.png")};
+    }
 
-	@Override
-	public int getSortOrder() {
-		return 2;
-	}
+    @Override
+    public int getSortOrder() {
+        return 2;
+    }
 }

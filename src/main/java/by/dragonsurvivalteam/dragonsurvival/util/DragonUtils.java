@@ -16,77 +16,77 @@ import javax.annotation.Nullable;
 
 public class DragonUtils {
 
-	public static AbstractDragonType getDragonType(Player entity) {
-		return DragonStateProvider.getData(entity).getType();
-	}
+    public static AbstractDragonType getDragonType(Player entity) {
+        return DragonStateProvider.getData(entity).getType();
+    }
 
-	public static AbstractDragonType getDragonType(DragonStateHandler handler) {
-		return handler.getType();
-	}
+    public static AbstractDragonType getDragonType(DragonStateHandler handler) {
+        return handler.getType();
+    }
 
-	public static AbstractDragonBody getDragonBody(Player entity) {
-		return DragonStateProvider.getData(entity).getBody();
-	}
+    public static AbstractDragonBody getDragonBody(Player entity) {
+        return DragonStateProvider.getData(entity).getBody();
+    }
 
-	public static AbstractDragonBody getDragonBody(DragonStateHandler handler) {
-		return handler.getBody();
-	}
+    public static AbstractDragonBody getDragonBody(DragonStateHandler handler) {
+        return handler.getBody();
+    }
 
-	public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
-		if (!(entity instanceof Player player)) {
-			return false;
-		}
+    public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
+        if (!(entity instanceof Player player)) {
+            return false;
+        }
 
-		return isDragonType(DragonStateProvider.getData(player), typeToCheck);
-	}
+        return isDragonType(DragonStateProvider.getData(player), typeToCheck);
+    }
 
-	public static boolean isDragonType(final DragonStateHandler playerHandler, final AbstractDragonType typeToCheck) {
-		if (playerHandler == null || typeToCheck == null || playerHandler.getType() == null) {
-			return false;
-		}
+    public static boolean isDragonType(final DragonStateHandler playerHandler, final AbstractDragonType typeToCheck) {
+        if (playerHandler == null || typeToCheck == null || playerHandler.getType() == null) {
+            return false;
+        }
 
-		return Objects.equal(playerHandler.getType().getTypeName(), typeToCheck.getTypeName());
-	}
+        return Objects.equal(playerHandler.getType().getTypeName(), typeToCheck.getTypeName());
+    }
 
-	public static boolean isDragonType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
-		if (playerType == null || typeToCheck == null) {
-			return false;
-		}
+    public static boolean isDragonType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
+        if (playerType == null || typeToCheck == null) {
+            return false;
+        }
 
-		return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
-	}
+        return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
+    }
 
-	public static DragonLevel getDragonLevel(Player entity) {
-		return DragonStateProvider.getData(entity).getLevel();
-	}
+    public static DragonLevel getDragonLevel(Player entity) {
+        return DragonStateProvider.getData(entity).getLevel();
+    }
 
-	public static boolean isNearbyDragonPlayerToEntity(double detectionRadius, Level level, Entity entity) {
-		List<Player> players = level.getEntitiesOfClass(Player.class, entity.getBoundingBox().inflate(detectionRadius));
+    public static boolean isNearbyDragonPlayerToEntity(double detectionRadius, Level level, Entity entity) {
+        List<Player> players = level.getEntitiesOfClass(Player.class, entity.getBoundingBox().inflate(detectionRadius));
 
-		for (Player player : players) {
-			if (DragonStateProvider.isDragon(player)) {
-				return true;
-			}
-		}
-		return false;
-	}
+        for (Player player : players) {
+            if (DragonStateProvider.isDragon(player)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Converts the supplied harvest level to a corresponding vanilla tier
-	 */
-	public static @Nullable Tier levelToVanillaTier(int level) {
-		if (level < 0) {
-			return null;
-		} else if (level == 0) {
-			return Tiers.WOOD;
-		} else if (level == 1) {
-			return Tiers.STONE;
-		} else if (level == 2) {
-			return Tiers.IRON;
-		} else if (level == 3) {
-			return Tiers.DIAMOND;
-		}
+    /**
+     * Converts the supplied harvest level to a corresponding vanilla tier
+     */
+    public static @Nullable Tier levelToVanillaTier(int level) {
+        if (level < 0) {
+            return null;
+        } else if (level == 0) {
+            return Tiers.WOOD;
+        } else if (level == 1) {
+            return Tiers.STONE;
+        } else if (level == 2) {
+            return Tiers.IRON;
+        } else if (level == 3) {
+            return Tiers.DIAMOND;
+        }
 
-		return Tiers.NETHERITE;
-	}
+        return Tiers.NETHERITE;
+    }
 }

@@ -20,30 +20,30 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class StarHeartItem extends Item {
-	public StarHeartItem(Properties p_i48487_1_) {
-		super(p_i48487_1_);
-	}
+    public StarHeartItem(Properties p_i48487_1_) {
+        super(p_i48487_1_);
+    }
 
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_) {
-		if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-			DSAdvancementTriggers.USE_STAR_HEART.get().trigger(serverPlayer);
-			DragonStateHandler handler = DragonStateProvider.getData(player);
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level world, Player player, InteractionHand p_77659_3_) {
+        if (!world.isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            DSAdvancementTriggers.USE_STAR_HEART.get().trigger(serverPlayer);
+            DragonStateHandler handler = DragonStateProvider.getData(player);
 
-			if (handler.isDragon()) {
-				handler.growing = !handler.growing;
-				player.sendSystemMessage(Component.translatable(handler.growing ? "ds.growth.now_growing" : "ds.growth.no_growth"));
-				PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(handler.growing));
-				return InteractionResultHolder.success(player.getItemInHand(p_77659_3_));
-			}
-		}
+            if (handler.isDragon()) {
+                handler.growing = !handler.growing;
+                player.sendSystemMessage(Component.translatable(handler.growing ? "ds.growth.now_growing" : "ds.growth.no_growth"));
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(handler.growing));
+                return InteractionResultHolder.success(player.getItemInHand(p_77659_3_));
+            }
+        }
 
-		return super.use(world, player, p_77659_3_);
-	}
+        return super.use(world, player, p_77659_3_);
+    }
 
-	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
-		super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-		pTooltipComponents.add(Component.translatable("ds.description.starHeart"));
-	}
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
+        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
+        pTooltipComponents.add(Component.translatable("ds.description.starHeart"));
+    }
 }

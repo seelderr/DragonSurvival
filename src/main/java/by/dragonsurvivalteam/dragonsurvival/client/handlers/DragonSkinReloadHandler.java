@@ -9,8 +9,8 @@ import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
 @EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
 public class DragonSkinReloadHandler {
-	@SubscribeEvent
-	public static void onReloadEvent(AddReloadListenerEvent reloadEvent) {
-		DragonSkins.init(true);
-	}
+    @SubscribeEvent
+    public static void onReloadEvent(AddReloadListenerEvent reloadEvent) {
+        DragonSkins.init(true);
+    }
 }

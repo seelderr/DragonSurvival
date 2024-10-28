@@ -15,33 +15,33 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDragonPassengerID implements IMessage<SyncDragonPassengerID.Data> {
-	public static void handleClient(final Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncPassengerID(message));
-	}
+    public static void handleClient(final Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncPassengerID(message));
+    }
 
-	public static void handleServer(final Data message, final IPayloadContext context) {
-		Entity entity = context.player();
-		context.enqueueWork(() -> {
-			DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-				handler.setPassengerId(message.passengerId);
-			});
-		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
-	}
+    public static void handleServer(final Data message, final IPayloadContext context) {
+        Entity entity = context.player();
+        context.enqueueWork(() -> {
+            DragonStateProvider.getOptional(entity).ifPresent(handler -> {
+                handler.setPassengerId(message.passengerId);
+            });
+        }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
+    }
 
-	public record Data(int playerId, int passengerId) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_passenger_id"));
+    public record Data(int playerId, int passengerId) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_passenger_id"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.VAR_INT,
-				Data::passengerId,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.VAR_INT,
+                Data::passengerId,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

@@ -14,19 +14,19 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @OnlyIn(Dist.CLIENT)
 public class BallLightningRenderer extends GeoEntityRenderer<BallLightningEntity> {
-	private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/lightning_texture.png");
+    private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/lightning_texture.png");
 
-	public BallLightningRenderer(EntityRendererProvider.Context renderManager, GeoModel<BallLightningEntity> modelProvider) {
-		super(renderManager, modelProvider);
-	}
+    public BallLightningRenderer(EntityRendererProvider.Context renderManager, GeoModel<BallLightningEntity> modelProvider) {
+        super(renderManager, modelProvider);
+    }
 
-	@Override
-	protected int getBlockLightLevel(@NotNull final BallLightningEntity entity, @NotNull final BlockPos position) {
-		return 15;
-	}
+    @Override
+    protected int getBlockLightLevel(@NotNull final BallLightningEntity entity, @NotNull final BlockPos position) {
+        return 15;
+    }
 
-	@Override
-	public @NotNull ResourceLocation getTextureLocation(@NotNull final BallLightningEntity entity) {
-		return TEXTURE_LOCATION;
-	}
+    @Override
+    public @NotNull ResourceLocation getTextureLocation(@NotNull final BallLightningEntity entity) {
+        return TEXTURE_LOCATION;
+    }
 }

@@ -12,9 +12,9 @@ import java.util.List;
 
 @Mixin(LivingEntityRenderer.class)
 public interface AccessorLivingRenderer {
-	@Accessor("layers")
-	List<RenderLayer> dragonsurvival$getRenderLayers();
+    @Accessor("layers")
+    List<RenderLayer> dragonsurvival$getRenderLayers();
 
-	@Invoker("shouldShowName")
-	boolean dragonsurvival$callShouldShowName(LivingEntity p_177070_1_);
+    @Invoker("shouldShowName")
+    boolean dragonsurvival$callShouldShowName(LivingEntity p_177070_1_);
 }

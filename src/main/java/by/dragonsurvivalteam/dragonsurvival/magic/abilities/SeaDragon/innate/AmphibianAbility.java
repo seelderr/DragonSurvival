@@ -15,40 +15,40 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class AmphibianAbility extends InnateDragonAbility {
-	@Override
-	public Component getDescription() {
-		return Component.translatable("ds.skill.description." + getName(), ServerConfig.seaDehydrationDamage, 2);
-	}
+    @Override
+    public Component getDescription() {
+        return Component.translatable("ds.skill.description." + getName(), ServerConfig.seaDehydrationDamage, 2);
+    }
 
-	@Override
-	public int getSortOrder() {
-		return 4;
-	}
+    @Override
+    public int getSortOrder() {
+        return 4;
+    }
 
-	@Override
-	public String getName() {
-		return "amphibian";
-	}
+    @Override
+    public String getName() {
+        return "amphibian";
+    }
 
-	@Override
-	public AbstractDragonType getDragonType() {
-		return DragonTypes.SEA;
-	}
+    @Override
+    public AbstractDragonType getDragonType() {
+        return DragonTypes.SEA;
+    }
 
-	@Override
-	public ResourceLocation[] getSkillTextures() {
-		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/amphibian_0.png"),
-				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/amphibian_1.png")};
-	}
+    @Override
+    public ResourceLocation[] getSkillTextures() {
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/amphibian_0.png"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/amphibian_1.png")};
+    }
 
-	@Override
-	public int getLevel() {
-		return ServerConfig.penaltiesEnabled && ServerConfig.seaTicksWithoutWater != 0.0 ? 1 : 0;
-	}
+    @Override
+    public int getLevel() {
+        return ServerConfig.penaltiesEnabled && ServerConfig.seaTicksWithoutWater != 0.0 ? 1 : 0;
+    }
 
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public boolean isDisabled() {
-		return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0.0;
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public boolean isDisabled() {
+        return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0.0;
+    }
 }

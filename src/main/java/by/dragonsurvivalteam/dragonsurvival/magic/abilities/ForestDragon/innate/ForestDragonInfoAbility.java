@@ -10,23 +10,23 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class ForestDragonInfoAbility extends InnateDragonAbility {
-	@Override
-	public String getName() {
-		return "forest_dragon";
-	}
+    @Override
+    public String getName() {
+        return "forest_dragon";
+    }
 
-	@Override
-	public AbstractDragonType getDragonType() {
-		return DragonTypes.FOREST;
-	}
+    @Override
+    public AbstractDragonType getDragonType() {
+        return DragonTypes.FOREST;
+    }
 
-	@Override
-	public ResourceLocation[] getSkillTextures() {
-		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_dragon_1.png")};
-	}
+    @Override
+    public ResourceLocation[] getSkillTextures() {
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_dragon_1.png")};
+    }
 
-	@Override
-	public int getSortOrder() {
-		return 3;
-	}
+    @Override
+    public int getSortOrder() {
+        return 3;
+    }
 }

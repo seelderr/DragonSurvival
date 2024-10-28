@@ -6,25 +6,25 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.HashMap;
 
 public class DragonEditorObject {
-	public HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaults = new HashMap<>();
+    public HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaults = new HashMap<>();
 
-	public Dragon sea_dragon;
-	public Dragon forest_dragon;
-	public Dragon cave_dragon;
+    public Dragon sea_dragon;
+    public Dragon forest_dragon;
+    public Dragon cave_dragon;
 
-	public static class Dragon {
-		public HashMap<EnumSkinLayer, DragonTextureMetadata[]> layers;
-	}
+    public static class Dragon {
+        public HashMap<EnumSkinLayer, DragonTextureMetadata[]> layers;
+    }
 
-	public static class DragonTextureMetadata {
-		public String key;
-		public String texture;
-		public String[] bodies;
-		public boolean colorable = true;
-		public String defaultColor;
-		public Float average_hue;
+    public static class DragonTextureMetadata {
+        public String key;
+        public String texture;
+        public String[] bodies;
+        public boolean colorable = true;
+        public String defaultColor;
+        public Float average_hue;
 
-		public boolean random = true;
-		public boolean randomHue = true;
-	}
+        public boolean random = true;
+        public boolean randomHue = true;
+    }
 }

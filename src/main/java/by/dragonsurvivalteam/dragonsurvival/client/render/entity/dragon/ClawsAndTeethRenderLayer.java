@@ -22,110 +22,110 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
-	private final GeoEntityRenderer<DragonEntity> renderer;
+    private final GeoEntityRenderer<DragonEntity> renderer;
 
-	public ClawsAndTeethRenderLayer(final GeoEntityRenderer<DragonEntity> renderer) {
-		super(renderer);
-		this.renderer = renderer;
-	}
+    public ClawsAndTeethRenderLayer(final GeoEntityRenderer<DragonEntity> renderer) {
+        super(renderer);
+        this.renderer = renderer;
+    }
 
-	private static String getMaterial(String texture, ItemStack clawItem) {
-		if (clawItem.getItem() instanceof TieredItem item) {
-			Tier tier = item.getTier();
+    private static String getMaterial(String texture, ItemStack clawItem) {
+        if (clawItem.getItem() instanceof TieredItem item) {
+            Tier tier = item.getTier();
 
-			switch (tier) {
-				case Tiers.NETHERITE -> texture += "netherite_";
-				case Tiers.DIAMOND -> texture += "diamond_";
-				case Tiers.IRON -> texture += "iron_";
-				case Tiers.GOLD -> texture += "gold_";
-				case Tiers.STONE -> texture += "stone_";
-				case Tiers.WOOD -> texture += "wooden_";
-				default -> texture += "modded_";
-			}
+            switch (tier) {
+                case Tiers.NETHERITE -> texture += "netherite_";
+                case Tiers.DIAMOND -> texture += "diamond_";
+                case Tiers.IRON -> texture += "iron_";
+                case Tiers.GOLD -> texture += "gold_";
+                case Tiers.STONE -> texture += "stone_";
+                case Tiers.WOOD -> texture += "wooden_";
+                default -> texture += "modded_";
+            }
 
-			return texture;
-		}
+            return texture;
+        }
 
-		return texture + "modded_";
-	}
+        return texture + "modded_";
+    }
 
-	@Override
-	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		if (!((DragonRenderer) renderer).shouldRenderLayers) {
-			return;
-		}
+    @Override
+    public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        if (!((DragonRenderer) renderer).shouldRenderLayers) {
+            return;
+        }
 
-		if (animatable.hasEffect(MobEffects.INVISIBILITY)) {
-			return;
-		}
+        if (animatable.hasEffect(MobEffects.INVISIBILITY)) {
+            return;
+        }
 
-		Player player = animatable.getPlayer();
+        Player player = animatable.getPlayer();
 
-		if (player == null) {
-			return;
-		}
+        if (player == null) {
+            return;
+        }
 
-		DragonStateHandler handler = DragonStateProvider.getData(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
-		if (!handler.getClawToolData().shouldRenderClaws) {
-			return;
-		}
+        if (!handler.getClawToolData().shouldRenderClaws) {
+            return;
+        }
 
-		String clawTexture = constructClaws(player);
+        String clawTexture = constructClaws(player);
 
-		if (clawTexture != null) {
-			ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, clawTexture);
+        if (clawTexture != null) {
+            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, clawTexture);
 
-			((DragonRenderer) renderer).isRenderLayers = true;
-			renderToolLayer(poseStack, animatable, bakedModel, bufferSource, texture, partialTick, packedLight);
-			((DragonRenderer) renderer).isRenderLayers = false;
-		}
+            ((DragonRenderer) renderer).isRenderLayers = true;
+            renderToolLayer(poseStack, animatable, bakedModel, bufferSource, texture, partialTick, packedLight);
+            ((DragonRenderer) renderer).isRenderLayers = false;
+        }
 
-		String teethTexture = constructTeethTexture(player);
+        String teethTexture = constructTeethTexture(player);
 
-		if (teethTexture != null) {
-			ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, teethTexture);
+        if (teethTexture != null) {
+            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, teethTexture);
 
-			((DragonRenderer) renderer).isRenderLayers = true;
-			renderToolLayer(poseStack, animatable, bakedModel, bufferSource, texture, partialTick, packedLight);
-			((DragonRenderer) renderer).isRenderLayers = false;
-		}
-	}
+            ((DragonRenderer) renderer).isRenderLayers = true;
+            renderToolLayer(poseStack, animatable, bakedModel, bufferSource, texture, partialTick, packedLight);
+            ((DragonRenderer) renderer).isRenderLayers = false;
+        }
+    }
 
-	private void renderToolLayer(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, final ResourceLocation texture, float partialTick, int packedLight) {
-		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
-		VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-		renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
-	}
+    private void renderToolLayer(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final MultiBufferSource bufferSource, final ResourceLocation texture, float partialTick, int packedLight) {
+        RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
+        VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+        renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+    }
 
-	public String constructClaws(final Player player) {
-		String texturePath = "textures/armor/";
-		DragonStateHandler handler = DragonStateProvider.getData(player);
-		if (handler.getType() == null) {
-			return null;
-		}
+    public String constructClaws(final Player player) {
+        String texturePath = "textures/armor/";
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+        if (handler.getType() == null) {
+            return null;
+        }
 
-		ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().slotForBonus);
+        ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().slotForBonus);
 
-		if (!clawItem.isEmpty()) {
-			texturePath = getMaterial(texturePath, clawItem);
-		} else {
-			return null;
-		}
+        if (!clawItem.isEmpty()) {
+            texturePath = getMaterial(texturePath, clawItem);
+        } else {
+            return null;
+        }
 
-		return texturePath + "dragon_claws.png";
-	}
+        return texturePath + "dragon_claws.png";
+    }
 
-	public String constructTeethTexture(final Player player) {
-		String texturePath = "textures/armor/";
-		ItemStack swordItem = DragonStateProvider.getData(player).getClawToolData().getClawsInventory().getItem(0);
+    public String constructTeethTexture(final Player player) {
+        String texturePath = "textures/armor/";
+        ItemStack swordItem = DragonStateProvider.getData(player).getClawToolData().getClawsInventory().getItem(0);
 
-		if (!swordItem.isEmpty()) {
-			texturePath = getMaterial(texturePath, swordItem);
-		} else {
-			return null;
-		}
+        if (!swordItem.isEmpty()) {
+            texturePath = getMaterial(texturePath, swordItem);
+        } else {
+            return null;
+        }
 
-		return texturePath + "dragon_teeth.png";
-	}
+        return texturePath + "dragon_teeth.png";
+    }
 }

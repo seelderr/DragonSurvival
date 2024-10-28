@@ -10,24 +10,24 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @RegisterDragonAbility
 public class SeaWingsAbility extends DragonWingAbility {
-	@Override
-	public String getName() {
-		return "sea_wings";
-	}
+    @Override
+    public String getName() {
+        return "sea_wings";
+    }
 
-	@Override
-	public AbstractDragonType getDragonType() {
-		return DragonTypes.SEA;
-	}
+    @Override
+    public AbstractDragonType getDragonType() {
+        return DragonTypes.SEA;
+    }
 
-	@Override
-	public ResourceLocation[] getSkillTextures() {
-		return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_0.png"),
-				ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_1.png")};
-	}
+    @Override
+    public ResourceLocation[] getSkillTextures() {
+        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_0.png"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_wings_1.png")};
+    }
 
-	@Override
-	public int getSortOrder() {
-		return 2;
-	}
+    @Override
+    public int getSortOrder() {
+        return 2;
+    }
 }

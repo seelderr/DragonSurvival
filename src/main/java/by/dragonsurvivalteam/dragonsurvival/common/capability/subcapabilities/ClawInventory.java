@@ -9,87 +9,87 @@ import net.minecraft.world.item.ItemStack;
 import java.util.Optional;
 
 public class ClawInventory extends SubCap {
-	public enum Slot {
-		SWORD,
-		PICKAXE,
-		AXE,
-		SHOVEL;
+    public enum Slot {
+        SWORD,
+        PICKAXE,
+        AXE,
+        SHOVEL;
 
-		/**
-		 * Equivalent to the container size
-		 */
-		public static int size() {
-			return values().length;
-		}
-	}
+        /**
+         * Equivalent to the container size
+         */
+        public static int size() {
+            return values().length;
+        }
+    }
 
-	private final SimpleContainer clawsInventory = new SimpleContainer(4);
+    private final SimpleContainer clawsInventory = new SimpleContainer(4);
 
-	public boolean shouldRenderClaws = true;
+    public boolean shouldRenderClaws = true;
 
-	private boolean isMenuOpen;
+    private boolean isMenuOpen;
 
-	public ClawInventory(final DragonStateHandler handler) {
-		super(handler);
-	}
+    public ClawInventory(final DragonStateHandler handler) {
+        super(handler);
+    }
 
-	@Override
-	public CompoundTag serializeNBT(HolderLookup.Provider provider) {
-		CompoundTag tag = new CompoundTag();
+    @Override
+    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+        CompoundTag tag = new CompoundTag();
 
-		tag.putBoolean("clawsMenu", isMenuOpen);
-		for (Slot slot : Slot.values()) {
-			if (clawsInventory.getItem(slot.ordinal()).isEmpty()) continue;
-			tag.put(slot.name(), clawsInventory.getItem(slot.ordinal()).save(provider));
-		}
-		tag.putBoolean("renderClaws", shouldRenderClaws);
+        tag.putBoolean("clawsMenu", isMenuOpen);
+        for (Slot slot : Slot.values()) {
+            if (clawsInventory.getItem(slot.ordinal()).isEmpty()) continue;
+            tag.put(slot.name(), clawsInventory.getItem(slot.ordinal()).save(provider));
+        }
+        tag.putBoolean("renderClaws", shouldRenderClaws);
 
-		return tag;
-	}
+        return tag;
+    }
 
-	@Override
-	public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
-		setMenuOpen(tag.getBoolean("clawsMenu"));
-		shouldRenderClaws = tag.getBoolean("renderClaws");
+    @Override
+    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+        setMenuOpen(tag.getBoolean("clawsMenu"));
+        shouldRenderClaws = tag.getBoolean("renderClaws");
 
-		for (Slot slot : Slot.values()) {
-			CompoundTag slotTag = tag.getCompound(slot.name());
-			if (slotTag.isEmpty()) continue;
-			Optional<ItemStack> stack = ItemStack.parse(provider, slotTag);
-			if (stack.isEmpty()) continue;
-			clawsInventory.setItem(slot.ordinal(), stack.get());
-		}
-	}
+        for (Slot slot : Slot.values()) {
+            CompoundTag slotTag = tag.getCompound(slot.name());
+            if (slotTag.isEmpty()) continue;
+            Optional<ItemStack> stack = ItemStack.parse(provider, slotTag);
+            if (stack.isEmpty()) continue;
+            clawsInventory.setItem(slot.ordinal(), stack.get());
+        }
+    }
 
-	public ItemStack get(final Slot slot) {
-		return clawsInventory.getItem(slot.ordinal());
-	}
+    public ItemStack get(final Slot slot) {
+        return clawsInventory.getItem(slot.ordinal());
+    }
 
-	public ItemStack getSword() {
-		return clawsInventory.getItem(Slot.SWORD.ordinal());
-	}
+    public ItemStack getSword() {
+        return clawsInventory.getItem(Slot.SWORD.ordinal());
+    }
 
-	public ItemStack getPickaxe() {
-		return clawsInventory.getItem(Slot.PICKAXE.ordinal());
-	}
+    public ItemStack getPickaxe() {
+        return clawsInventory.getItem(Slot.PICKAXE.ordinal());
+    }
 
-	public ItemStack getAxe() {
-		return clawsInventory.getItem(Slot.AXE.ordinal());
-	}
+    public ItemStack getAxe() {
+        return clawsInventory.getItem(Slot.AXE.ordinal());
+    }
 
-	public ItemStack getShovel() {
-		return clawsInventory.getItem(Slot.SHOVEL.ordinal());
-	}
+    public ItemStack getShovel() {
+        return clawsInventory.getItem(Slot.SHOVEL.ordinal());
+    }
 
-	public void setMenuOpen(boolean isMenuOpen) {
-		this.isMenuOpen = isMenuOpen;
-	}
+    public void setMenuOpen(boolean isMenuOpen) {
+        this.isMenuOpen = isMenuOpen;
+    }
 
-	public SimpleContainer getClawsInventory() {
-		return clawsInventory;
-	}
+    public SimpleContainer getClawsInventory() {
+        return clawsInventory;
+    }
 
-	public boolean isMenuOpen() {
-		return isMenuOpen;
-	}
+    public boolean isMenuOpen() {
+        return isMenuOpen;
+    }
 }

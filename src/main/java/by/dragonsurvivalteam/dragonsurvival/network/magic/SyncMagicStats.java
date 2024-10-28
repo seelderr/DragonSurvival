@@ -13,29 +13,29 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncMagicStats implements IMessage<SyncMagicStats.Data> {
 
-	public static void handleClient(final SyncMagicStats.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncMagicstats(message));
-	}
+    public static void handleClient(final SyncMagicStats.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncMagicstats(message));
+    }
 
-	public record Data(int playerid, int selectedSlot, int currentMana,
-					   boolean renderHotbar) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_stats"));
+    public record Data(int playerid, int selectedSlot, int currentMana,
+                    boolean renderHotbar) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "magic_stats"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerid,
-				ByteBufCodecs.VAR_INT,
-				Data::selectedSlot,
-				ByteBufCodecs.VAR_INT,
-				Data::currentMana,
-				ByteBufCodecs.BOOL,
-				Data::renderHotbar,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerid,
+                ByteBufCodecs.VAR_INT,
+                Data::selectedSlot,
+                ByteBufCodecs.VAR_INT,
+                Data::currentMana,
+                ByteBufCodecs.BOOL,
+                Data::renderHotbar,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

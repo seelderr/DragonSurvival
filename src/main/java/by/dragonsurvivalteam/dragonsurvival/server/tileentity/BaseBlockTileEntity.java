@@ -14,37 +14,37 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 
 public class BaseBlockTileEntity extends BlockEntity {
-	public BaseBlockTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
-		super(pType, pWorldPosition, pBlockState);
-	}
+    public BaseBlockTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
+        super(pType, pWorldPosition, pBlockState);
+    }
 
-	@Nullable @Override
-	public Packet<ClientGamePacketListener> getUpdatePacket() {
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
+    @Nullable @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
 
-	@Override
-	public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
-		CompoundTag parentTag = super.getUpdateTag(pRegistries);
-		saveAdditional(parentTag, pRegistries);
-		return parentTag;
-	}
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
+        CompoundTag parentTag = super.getUpdateTag(pRegistries);
+        saveAdditional(parentTag, pRegistries);
+        return parentTag;
+    }
 
-	@Override
-	public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider pRegistries) {
-		super.handleUpdateTag(tag, pRegistries);
-		loadAdditional(tag, pRegistries);
-	}
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider pRegistries) {
+        super.handleUpdateTag(tag, pRegistries);
+        loadAdditional(tag, pRegistries);
+    }
 
-	public int getX() {
-		return getBlockPos().getX();
-	}
+    public int getX() {
+        return getBlockPos().getX();
+    }
 
-	public int getY() {
-		return getBlockPos().getY();
-	}
+    public int getY() {
+        return getBlockPos().getY();
+    }
 
-	public int getZ() {
-		return getBlockPos().getZ();
-	}
+    public int getZ() {
+        return getBlockPos().getZ();
+    }
 }

@@ -13,19 +13,19 @@ import static net.minecraft.commands.Commands.literal;
 
 
 public class DragonEditorCommand {
-	public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
-		RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
-		LiteralCommandNode<CommandSourceStack> dragon = literal("dragon-editor").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
-			return runCommand(context.getSource().getPlayerOrException());
-		}).build();
+    public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
+        RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
+        LiteralCommandNode<CommandSourceStack> dragon = literal("dragon-editor").requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
+            return runCommand(context.getSource().getPlayerOrException());
+        }).build();
 
-		rootCommandNode.addChild(dragon);
-	}
+        rootCommandNode.addChild(dragon);
+    }
 
-	private static int runCommand(ServerPlayer serverPlayer) {
-		if (DragonStateProvider.isDragon(serverPlayer)) {
-			PacketDistributor.sendToPlayer(serverPlayer, new RequestOpenDragonEditor.Data());
-		}
-		return 1;
-	}
+    private static int runCommand(ServerPlayer serverPlayer) {
+        if (DragonStateProvider.isDragon(serverPlayer)) {
+            PacketDistributor.sendToPlayer(serverPlayer, new RequestOpenDragonEditor.Data());
+        }
+        return 1;
+    }
 }

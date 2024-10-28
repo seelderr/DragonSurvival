@@ -15,42 +15,42 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDragonSkinSettings implements IMessage<SyncDragonSkinSettings.Data> {
-	public static void handleClient(final SyncDragonSkinSettings.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncDragonSkinSettings(message));
-	}
+    public static void handleClient(final SyncDragonSkinSettings.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncDragonSkinSettings(message));
+    }
 
-	public static void handleServer(final SyncDragonSkinSettings.Data message, final IPayloadContext context) {
-		Player sender = context.player();
+    public static void handleServer(final SyncDragonSkinSettings.Data message, final IPayloadContext context) {
+        Player sender = context.player();
 
-		context.enqueueWork(() ->
-				DragonStateProvider.getOptional(sender).ifPresent(handler -> {
-					handler.getSkinData().renderNewborn = message.newborn();
-					handler.getSkinData().renderYoung = message.young();
-					handler.getSkinData().renderAdult = message.adult();
-				})
-		).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
+        context.enqueueWork(() ->
+                DragonStateProvider.getOptional(sender).ifPresent(handler -> {
+                    handler.getSkinData().renderNewborn = message.newborn();
+                    handler.getSkinData().renderYoung = message.young();
+                    handler.getSkinData().renderAdult = message.adult();
+                })
+        ).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
 
-	}
+    }
 
-	public record Data(int playerId, boolean newborn, boolean young, boolean adult) implements CustomPacketPayload {
+    public record Data(int playerId, boolean newborn, boolean young, boolean adult) implements CustomPacketPayload {
 
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_skin_settings"));
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_skin_settings"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.BOOL,
-				Data::newborn,
-				ByteBufCodecs.BOOL,
-				Data::young,
-				ByteBufCodecs.BOOL,
-				Data::adult,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.BOOL,
+                Data::newborn,
+                ByteBufCodecs.BOOL,
+                Data::young,
+                ByteBufCodecs.BOOL,
+                Data::adult,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

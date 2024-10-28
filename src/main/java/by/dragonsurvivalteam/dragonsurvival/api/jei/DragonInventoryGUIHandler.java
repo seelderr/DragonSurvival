@@ -17,34 +17,34 @@ import java.util.Optional;
 
 // TODO: This might not work? Test JEI integration
 public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonContainer, RecipeHolder<CraftingRecipe>>, IGuiContainerHandler<DragonInventoryScreen> {
-	@Override
-	public @NotNull Class<? extends DragonContainer> getContainerClass() {
-		return DragonContainer.class;
-	}
+    @Override
+    public @NotNull Class<? extends DragonContainer> getContainerClass() {
+        return DragonContainer.class;
+    }
 
-	@Override
-	public @NotNull Optional<MenuType<DragonContainer>> getMenuType() {
-		return Optional.empty();
-	}
+    @Override
+    public @NotNull Optional<MenuType<DragonContainer>> getMenuType() {
+        return Optional.empty();
+    }
 
-	@Override
-	public @NotNull RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
-		return RecipeTypes.CRAFTING;
-	}
+    @Override
+    public @NotNull RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
+        return RecipeTypes.CRAFTING;
+    }
 
 
-	@Override
-	public boolean canHandle(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
-		return true;
-	}
+    @Override
+    public boolean canHandle(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
+        return true;
+    }
 
-	@Override
-	public @NotNull List<Slot> getRecipeSlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
-		return container.craftingSlots;
-	}
+    @Override
+    public @NotNull List<Slot> getRecipeSlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
+        return container.craftingSlots;
+    }
 
-	@Override
-	public @NotNull List<Slot> getInventorySlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
-		return container.inventorySlots;
-	}
+    @Override
+    public @NotNull List<Slot> getInventorySlots(@NotNull DragonContainer container, @NotNull RecipeHolder<CraftingRecipe> recipe) {
+        return container.inventorySlots;
+    }
 }

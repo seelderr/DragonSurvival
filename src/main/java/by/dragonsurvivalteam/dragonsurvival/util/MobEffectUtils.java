@@ -6,7 +6,7 @@ import net.minecraft.world.effect.MobEffect;
 
 public class MobEffectUtils {
 
-	public static Holder<MobEffect> getHolder(MobEffect effect) {
-		return BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getKey(effect)).get();
-	}
+    public static Holder<MobEffect> getHolder(MobEffect effect) {
+        return BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getKey(effect)).get();
+    }
 }

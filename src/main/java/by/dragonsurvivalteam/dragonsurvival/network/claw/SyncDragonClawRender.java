@@ -17,33 +17,33 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDragonClawRender implements IMessage<SyncDragonClawRender.Data> {
 
-	public static void handleClient(final SyncDragonClawRender.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncDragonClawRender(message));
-	}
+    public static void handleClient(final SyncDragonClawRender.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncDragonClawRender(message));
+    }
 
-	public static void handleServer(final SyncDragonClawRender.Data message, final IPayloadContext context) {
-		if (ServerConfig.syncClawRender) {
-			Player sender = context.player();
-			context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler ->
-					handler.getClawToolData().shouldRenderClaws = message.state
-			)).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
-		}
-	}
+    public static void handleServer(final SyncDragonClawRender.Data message, final IPayloadContext context) {
+        if (ServerConfig.syncClawRender) {
+            Player sender = context.player();
+            context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler ->
+                    handler.getClawToolData().shouldRenderClaws = message.state
+            )).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
+        }
+    }
 
-	public record Data(int playerId, boolean state) implements CustomPacketPayload {
-		public static final Type<SyncDragonClawRender.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_claw_render"));
+    public record Data(int playerId, boolean state) implements CustomPacketPayload {
+        public static final Type<SyncDragonClawRender.Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_claw_render"));
 
-		public static final StreamCodec<FriendlyByteBuf, SyncDragonClawRender.Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.BOOL,
-				Data::state,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, SyncDragonClawRender.Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.BOOL,
+                Data::state,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

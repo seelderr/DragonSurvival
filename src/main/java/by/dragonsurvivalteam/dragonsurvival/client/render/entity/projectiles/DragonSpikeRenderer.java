@@ -12,12 +12,12 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @OnlyIn(Dist.CLIENT)
 public class DragonSpikeRenderer extends ArrowRenderer<DragonSpikeEntity> {
-	public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_) {
-		super(p_i46179_1_);
-	}
+    public DragonSpikeRenderer(EntityRendererProvider.Context p_i46179_1_) {
+        super(p_i46179_1_);
+    }
 
-	@Override
-	public ResourceLocation getTextureLocation(DragonSpikeEntity entity) {
-		return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
-	}
+    @Override
+    public ResourceLocation getTextureLocation(DragonSpikeEntity entity) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/dragon_spike_" + entity.getArrow_level() + ".png");
+    }
 }

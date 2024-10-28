@@ -16,57 +16,57 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IncreaseLevelButton extends ArrowButton {
-	private PassiveDragonAbility ability;
+    private PassiveDragonAbility ability;
 
-	public int skillCost;
-	private final int slot;
+    public int skillCost;
+    private final int slot;
 
-	public IncreaseLevelButton(int x, int y, int slot) {
-		super(x, y, 16, 16, true, Button::onPress);
+    public IncreaseLevelButton(int x, int y, int slot) {
+        super(x, y, 16, 16, true, Button::onPress);
 
-		this.slot = slot;
-	}
+        this.slot = slot;
+    }
 
-	@Override
-	public void onPress() {
-		DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
-			ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
+    @Override
+    public void onPress() {
+        DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
+            ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
-			if (ability != null) {
-				int newLevel = ability.getLevel() + 1;
+            if (ability != null) {
+                int newLevel = ability.getLevel() + 1;
 
-				if (newLevel <= ability.getMaxLevel()) {
-					if (Minecraft.getInstance().player.experienceLevel >= ability.getLevelCost(1) || Minecraft.getInstance().player.isCreative()) {
-						PacketDistributor.sendToServer(new SyncSkillLevelChangeCost.Data(newLevel, ability.getName(), 1));
-						DragonAbilities.setAbilityLevel(Minecraft.getInstance().player, ability.getClass(), newLevel);
-					}
-				}
-			}
-		});
-	}
+                if (newLevel <= ability.getMaxLevel()) {
+                    if (Minecraft.getInstance().player.experienceLevel >= ability.getLevelCost(1) || Minecraft.getInstance().player.isCreative()) {
+                        PacketDistributor.sendToServer(new SyncSkillLevelChangeCost.Data(newLevel, ability.getName(), 1));
+                        DragonAbilities.setAbilityLevel(Minecraft.getInstance().player, ability.getClass(), newLevel);
+                    }
+                }
+            }
+        });
+    }
 
-	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-		super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
+    @Override
+    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+        super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
 
-		if (isHovered()) {
-			DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
-				ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
+        if (isHovered()) {
+            DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
+                ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
-				if (ability != null) {
-					ArrayList<Component> description = new ArrayList<>(List.of(Component.translatable("ds.skill.level.up", skillCost)));
+                if (ability != null) {
+                    ArrayList<Component> description = new ArrayList<>(List.of(Component.translatable("ds.skill.level.up", skillCost)));
 
-					if (!ability.getLevelUpInfo().isEmpty()) {
-						description.add(Component.empty());
-						description.addAll(ability.getLevelUpInfo());
-					}
+                    if (!ability.getLevelUpInfo().isEmpty()) {
+                        description.add(Component.empty());
+                        description.addAll(ability.getLevelUpInfo());
+                    }
 
-					if (ability.getLevel() < ability.getMaxLevel()) {
-						skillCost = ability.getLevelCost(1);
-						guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, pMouseX, pMouseY);
-					}
-				}
-			});
-		}
-	}
+                    if (ability.getLevel() < ability.getMaxLevel()) {
+                        skillCost = ability.getLevelCost(1);
+                        guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, pMouseX, pMouseY);
+                    }
+                }
+            });
+        }
+    }
 }
