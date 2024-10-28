@@ -292,21 +292,25 @@ public class ClientDragonRenderer {
 
                         poseStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
 
-                        Vec3 vector3d1 = new Vec3(0, 0, 0);
-                        Vec3 vector3d = new Vec3(0, 0, 0);
+                        Vec3 deltaVel;
+                        Vec3 viewDir;
                         if (isPlayerGliding) {
-                            vector3d1 = player.getDeltaMovement();
-                            vector3d = player.getViewVector(1f);
+                            deltaVel = player.getDeltaMovement();
+                            viewDir = player.getViewVector(1f);
                         } else {
-                            vector3d1 = playerVehicle.getDeltaMovement();
-                            vector3d = playerVehicle.getViewVector(1f);
+                            deltaVel = playerVehicle.getDeltaMovement();
+                            viewDir = playerVehicle.getViewVector(1f);
                         }
-                        double d0 = vector3d1.horizontalDistanceSqr();
-                        double d1 = vector3d.horizontalDistanceSqr();
-                        double d2 = (vector3d1.x * vector3d.x + vector3d1.z * vector3d.z) / Math.sqrt(d0 * d1);
-                        double d3 = vector3d1.x * vector3d.z - vector3d1.z * vector3d.x;
+                        double d0 = deltaVel.horizontalDistanceSqr();
+                        double d1 = viewDir.horizontalDistanceSqr();
+                        double d2 = (deltaVel.x * viewDir.x + deltaVel.z * viewDir.z) / Math.sqrt(d0 * d1);
+                        double d3 = deltaVel.x * viewDir.z - deltaVel.z * viewDir.x;
 
                         float rot = Mth.clamp((float) (Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
+
+                        if (player instanceof LocalPlayer localPlayer) {
+                            localPlayer.sendSystemMessage(Component.literal("rot sign: %f".formatted(Math.signum(rot))));
+                        }
 
                         dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
 
