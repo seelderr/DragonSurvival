@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -14,12 +15,14 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+
 public class DSDamageTypeTags extends DamageTypeTagsProvider {
     public static TagKey<DamageType> DRAGON_BREATH = key("dragon_breath");
     public static TagKey<DamageType> DRAGON_MAGIC = key("dragon_magic");
 
     public DSDamageTypeTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pLookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pOutput, pLookupProvider, MODID, existingFileHelper);
+        super(pOutput, pLookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
     }
 
     @Override
@@ -70,6 +73,6 @@ public class DSDamageTypeTags extends DamageTypeTagsProvider {
     }
 
     private static TagKey<DamageType> key(@NotNull final String name) {
-        return TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(MODID, name));
+        return TagKey.create(Registries.DAMAGE_TYPE, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, name));
     }
 }

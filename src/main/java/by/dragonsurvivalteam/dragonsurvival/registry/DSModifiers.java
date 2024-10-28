@@ -8,6 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;

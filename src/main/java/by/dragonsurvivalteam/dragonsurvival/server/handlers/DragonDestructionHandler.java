@@ -30,8 +30,6 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_DESTRUCTIBLE_BLOCKS;
-
 @EventBusSubscriber
 public class DragonDestructionHandler {
 

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -15,7 +16,7 @@ public class SyncVisualEffectAdded implements IMessage<SyncVisualEffectAdded.Dat
 	}
 
     public record Data(int entityId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
-        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_added_effect"));
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "potion_added_effect"));
 
         public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
                 ByteBufCodecs.VAR_INT, Data::entityId,

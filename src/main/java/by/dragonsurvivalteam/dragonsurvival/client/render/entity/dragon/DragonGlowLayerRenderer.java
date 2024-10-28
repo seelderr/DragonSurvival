@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
@@ -58,7 +59,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         }
 
         if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
 
             if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
                 glowTexture = location;
@@ -72,7 +73,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
 			dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
 		} else {
-			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 
 			if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
 				RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);
