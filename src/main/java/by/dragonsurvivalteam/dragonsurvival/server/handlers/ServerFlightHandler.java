@@ -56,7 +56,7 @@ public class ServerFlightHandler {
     public static Integer flightHungerThreshold = 6;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
     public static Integer foldWingsThreshold = 0;
 
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Whether fall damage in flight is included. If true dragon will take damage from the fall.")

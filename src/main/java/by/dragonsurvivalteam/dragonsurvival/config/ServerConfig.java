@@ -21,7 +21,7 @@ public class ServerConfig {
     public static final Double DEFAULT_MAX_GROWTH_SIZE = 60.0;
 
     ServerConfig(ModConfigSpec.Builder builder) {
-        ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
+        ConfigHandler.createConfigEntries(builder, ConfigSide.SERVER);
     }
 
     @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "forceStateUpdatingOnVaults", comment = "Debug only config. Forces the state updating to resume on vaults always.")
@@ -78,7 +78,7 @@ public class ServerConfig {
     public static Double crushingDamageScalar = 0.05;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushingSize", comment = "The amount of ticks before entities can be crushed again after they were already crushed.")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushingTickDelay", comment = "The amount of ticks before entities can be crushed again after they were already crushed.")
     public static Integer crushingTickDelay = 20;
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeScaling", comment = "Allow a dragon's max health, damage, reach, step height, and jump height to continue to scale with growth beyond its normal limits.")
@@ -104,7 +104,7 @@ public class ServerConfig {
     public static Double largeStepHeightScalar = 1.0;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeStepHeightScalar", comment = "The bonus jump height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeJumpHeightScalar", comment = "The bonus jump height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
     public static Double largeJumpHeightScalar = 0.05;
 
     @ConfigRange(min = 0.0, max = 10.0)
@@ -578,15 +578,12 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore.")
     public static Double dragonOreBoneChance = 0.01;
 
-    @ConfigType(Item.class)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "hurtfulToCaveDragon", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> caveDragonHurtfulItems = Arrays.asList("minecraft:potion:2", "minecraft:water_bottle:2", "minecraft:milk_bucket:2");
 
-    @ConfigType(Item.class)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "hurtfulToSeaDragon", comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> seaDragonHurtfulItems = Collections.emptyList();
 
-    @ConfigType(Item.class)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "hurtfulToForestDragon", comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> forestDragonHurtfulItems = Collections.emptyList();
 

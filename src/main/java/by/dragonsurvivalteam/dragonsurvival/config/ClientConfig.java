@@ -6,12 +6,12 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class ClientConfig {
+    ClientConfig(ModConfigSpec.Builder builder) {
+        ConfigHandler.createConfigEntries(builder, ConfigSide.CLIENT);
+    }
+
     @ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "alternateCastMode", comment = "Should the cast mode where you click the keybind to cast be used?")
     public static Boolean alternateCastMode = false;
-
-    ClientConfig(ModConfigSpec.Builder builder) {
-        ConfigHandler.addConfigs(builder, ConfigSide.CLIENT);
-    }
 
     @ConfigOption(side = ConfigSide.CLIENT, category = "misc", key = "renderBreathRange", comment = "Whether the range of the breath should be rendered (while hitboxes are shown)")
     public static Boolean renderBreathRange = true;
@@ -32,7 +32,7 @@ public class ClientConfig {
     public static Double movementAnimationSpeedFactor = 1.0;
 
     @ConfigRange(min = 0.0, max = 10.0)
-    @ConfigOption(side = ConfigSide.CLIENT, category = "animation", key = "movementAnimationSpeedFactor", comment = "The maximum value that the speed factor can add to the base animation speed.")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "animation", key = "maxAnimationSpeedFactor", comment = "The maximum value that the speed factor can add to the base animation speed.")
     public static Double maxAnimationSpeedFactor = 5.0;
 
     @ConfigRange(min = 1.0, max = 5.0)

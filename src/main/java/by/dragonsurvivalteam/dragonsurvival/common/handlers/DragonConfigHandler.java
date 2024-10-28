@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -9,15 +8,11 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DragonConfigHandler{
     public static HashSet<Item> DRAGON_BLACKLISTED_ITEMS = new HashSet<>();
     public static HashSet<Block> SEA_DRAGON_HYDRATION_BLOCKS = new HashSet<>();
@@ -26,20 +21,6 @@ public class DragonConfigHandler{
 
     public static Map<String, HashSet<Block>> DRAGON_BREATH_BLOCKS;
     public static Map<String, HashSet<Block>> DRAGON_MANA_BLOCKS;
-
-    @SuppressWarnings("unused")
-    @SubscribeEvent
-    public static void onConfigLoad(final ModConfigEvent event) {
-        if (event.getConfig().getSpec() == ConfigHandler.serverSpec) {
-            DragonSurvivalMod.LOGGER.info("Rebuilding configuration...");
-
-            rebuildSeaDragonConfigs();
-            rebuildBreathBlocks();
-            rebuildManaBlocks();
-            rebuildForestDragonConfigs();
-            rebuildBlacklistedItems();
-        }
-    }
 
     public static void rebuildBreathBlocks(){
         HashMap<String, HashSet<Block>> breathMap = new HashMap<>();
