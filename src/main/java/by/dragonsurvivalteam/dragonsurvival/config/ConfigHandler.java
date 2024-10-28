@@ -70,8 +70,8 @@ public class ConfigHandler {
 
     private static final HashMap<Class<?>, Registry<?>> REGISTRY_MAP = new HashMap<>();
 
-    @ConfigOption(side = ConfigSide.SERVER, key = "test_config", comment = "some comment") // TODO :: might not need to be optional
-    public static List<Optional<BlockStateConfig>> testConfig = List.of(BlockStateConfig.of("#minecraft:campfires:lit=true"), BlockStateConfig.of("#minecraft:others:lit=false,my_state=true,c=1"));
+    @ConfigOption(side = ConfigSide.SERVER, key = "test_config", comment = "some comment")
+    public static List<BlockStateConfig> testConfig = List.of(BlockStateConfig.of("#minecraft:campfires:lit=true"), BlockStateConfig.of("#minecraft:others:lit=false,my_state=true,c=1"));
 
     public static void initTypes() {
         REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
@@ -206,6 +206,7 @@ public class ConfigHandler {
                     ModConfigSpec.BooleanValue value = builder.define(configOption.key(), (boolean) boolValue);
                     CONFIG_VALUES.put(key, value);
                 } else if (field.getType().isEnum()) {
+                    //noinspection unchecked,rawtypes -> ignored
                     ModConfigSpec.EnumValue<?> value = builder.defineEnum(configOption.key(), (Enum) defaultValues, ((Enum<?>) defaultValues).getClass().getEnumConstants());
                     CONFIG_VALUES.put(key, value);
                 } else if (defaultValues instanceof List<?> list) {
@@ -216,20 +217,19 @@ public class ConfigHandler {
                     boolean handledList = false;
 
                     // Convert custom config list to a string-based list for the 'ModConfig$ConfigValue' field
-                    // The first type parameter is for the list, which will be List<Optional<CustomConfig>>, the second one is for the optional which will be Optional<CustomConfig>
-                    if (field.getGenericType() instanceof ParameterizedType listParameter && listParameter.getActualTypeArguments()[0] instanceof ParameterizedType optionalParameter) {
-                        String className = optionalParameter.getActualTypeArguments()[0].getTypeName();
+                    if (field.getGenericType() instanceof ParameterizedType listParameter) { // Get the type parameter from List<CustomConfig>
+                        String className = listParameter.getActualTypeArguments()[0].getTypeName();
 
                         try {
                             Class<?> customConfigType = Class.forName(className);
 
                             if (CustomConfig.class.isAssignableFrom(customConfigType)) {
-                                //noinspection unchecked -> ignore
-                                List<Optional<?>> customList = (List<Optional<?>>) list;
+                                //noinspection unchecked -> ignore, type is safe
+                                List<CustomConfig> customList = (List<CustomConfig>) list;
 
                                 configList = builder.defineList(
                                         List.of(configOption.key()),
-                                        () -> customList.stream().filter(Optional::isPresent).map(entry -> ((CustomConfig) entry.get()).convert()).toList(),
+                                        () -> customList.stream().map(CustomConfig::convert).toList(),
                                         () -> getDefaultListValueForConfig(configOption.key()),
                                         configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || CustomConfig.validate(customConfigType, configValue),
                                         sizeRange
@@ -449,6 +449,19 @@ public class ConfigHandler {
      */
     @SuppressWarnings({"unchecked", "rawtypes"}) // should be fine
     private static @Nullable Object convertToFieldValue(final Field field, final Object value, @Nullable final Class<?> registryType) {
+        if (field.getGenericType() instanceof ParameterizedType listParameter) {
+            try {
+                Class<?> classType = Class.forName(listParameter.getActualTypeArguments()[0].getTypeName());
+
+                // Check for string since the list itself goes through here as well
+                if (CustomConfig.class.isAssignableFrom(classType) && value instanceof String string) {
+                    return CustomConfig.parse(classType, string);
+                }
+            } catch (ClassNotFoundException exception) {
+                DragonSurvivalMod.LOGGER.error("A problem occurred while trying to parse a custom config entry: {}", value);
+            }
+        }
+
         if (value instanceof String string) {
             if (field.getType().isEnum()) {
                 Class<? extends Enum> cs = (Class<? extends Enum<?>>) field.getType();
@@ -640,20 +653,12 @@ public class ConfigHandler {
             Collection<?> collection = (Collection<?>) configValue;
             ArrayList<Object> resultList = new ArrayList<>();
 
-            if (field.getGenericType() instanceof ParameterizedType parameterized && parameterized.getTypeName().equals(CustomConfig.class.getName())) {
-                try {
-                    resultList.add(CustomConfig.parse(Class.forName(parameterized.getTypeName()), (String) configValue));
-                } catch (ClassNotFoundException exception) {
-                    DragonSurvivalMod.LOGGER.error("A problem occured while trying to parse a custom config entry for [{}]", configKey);
-                }
-            } else {
-                for (Object listValue : collection) {
-                    Object value = convertToFieldValue(field, listValue, registryType);
+            for (Object listValue : collection) {
+                Object value = convertToFieldValue(field, listValue, registryType);
 
-                    // Could be null if the registry entry is not present (e.g. certain mod is not loaded)
-                    if (value != null) {
-                        resultList.add(value);
-                    }
+                // Could be null if the registry entry is not present (e.g. certain mod is not loaded)
+                if (value != null) {
+                    resultList.add(value);
                 }
             }
 

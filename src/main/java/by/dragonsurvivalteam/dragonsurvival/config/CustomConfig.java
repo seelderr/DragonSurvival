@@ -15,7 +15,7 @@ public interface CustomConfig {
         return false;
     }
 
-    static Optional<?> parse(final Class<?> classType, final String data) {
+    static CustomConfig parse(final Class<?> classType, final String data) {
         if (classType == BlockStateConfig.class) {
             return BlockStateConfig.of(data);
         }

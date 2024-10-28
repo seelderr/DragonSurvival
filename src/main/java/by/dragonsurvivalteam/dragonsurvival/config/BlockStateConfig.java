@@ -9,11 +9,11 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Predicate;
 
 public class BlockStateConfig implements CustomConfig {
@@ -60,7 +60,7 @@ public class BlockStateConfig implements CustomConfig {
         return false;
     }
 
-    public static Optional<BlockStateConfig> of(final String data) {
+    public static @NotNull BlockStateConfig of(final String data) {
         String[] splitData = data.split(":");
         boolean isTag = splitData[NAMESPACE].startsWith("#");
 
@@ -74,12 +74,6 @@ public class BlockStateConfig implements CustomConfig {
         } else {
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(splitData[NAMESPACE], splitData[PATH]);
             Block block = BuiltInRegistries.BLOCK.get(location);
-
-            // Default return value of the registry
-            if (block == Blocks.AIR) {
-                return Optional.empty();
-            }
-
             blockPredicate = state -> state.is(block);
         }
 
@@ -91,7 +85,7 @@ public class BlockStateConfig implements CustomConfig {
             properties.put(split[0], split[1]);
         }
 
-        return Optional.of(new BlockStateConfig(blockPredicate, properties, data));
+        return new BlockStateConfig(blockPredicate, properties, data);
     }
 
     public static boolean validate(final String data) {
