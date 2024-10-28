@@ -75,6 +75,10 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
                 .add(DSEntities.HUNTER_KNIGHT.value())
                 .add(DSEntities.HUNTER_LEADER.value())
                 .add(DSEntities.HUNTER_SPEARMAN.value());
+
+        // TODO :: currently unused
+        tag(key("other_dragons"))
+                .add(EntityType.ENDER_DRAGON);
     }
 
     private static TagKey<EntityType<?>> key(@NotNull final String path) {

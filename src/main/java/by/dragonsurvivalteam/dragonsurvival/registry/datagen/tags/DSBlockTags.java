@@ -33,8 +33,8 @@ public class DSBlockTags extends BlockTagsProvider {
     public static final TagKey<Block> REGENERATES_FOREST_DRAGON_MANA = key("regenerates_forest_dragon_mana");
 
     public static final TagKey<Block> NETHER_BREATH_DESTRUCTIBLE = key("nether_breath_destructible");
-    public static final TagKey<Block> STORM_BREATH_DESTRUCTIBLE = key("sea_dragon_speed_up_blocks");
-    public static final TagKey<Block> FOREST_BREATH_DESTRUCTIBLE = key("forest_dragon_speed_up_blocks");
+    public static final TagKey<Block> STORM_BREATH_DESTRUCTIBLE = key("storm_breath_destructible");
+    public static final TagKey<Block> FOREST_BREATH_DESTRUCTIBLE = key("forest_breath_destructible");
 
     public static final TagKey<Block> HYDRATES_SEA_DRAGON = key("hydrates_sea_dragon");
     public static final TagKey<Block> FOREST_BREATH_GROW_BLACKLIST = key("forest_breath_grow_blacklist");
@@ -67,6 +67,7 @@ public class DSBlockTags extends BlockTagsProvider {
             }
         });
 
+        // FIXME :: give cave dragon it's own tag
         // Blocks that hydrate sea dragons (or damage cave dragons) when standing on them
         tag(HYDRATES_SEA_DRAGON)
                 .addTag(REGENERATES_SEA_DRAGON_MANA)
