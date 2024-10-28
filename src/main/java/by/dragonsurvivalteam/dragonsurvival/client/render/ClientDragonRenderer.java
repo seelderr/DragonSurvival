@@ -355,28 +355,14 @@ public class ClientDragonRenderer {
                             targetRollNormalized = 0;
                         }
 
-                        double d0 = deltaVel.horizontalDistanceSqr();
-                        double d1 = viewDir.horizontalDistanceSqr();
-                        double d2 = (deltaVel.x * viewDir.x + deltaVel.z * viewDir.z) / Math.sqrt(d0 * d1);
-                        double d3 = deltaVel.x * viewDir.z - deltaVel.z * viewDir.x; // a * d - b * c
-
-                        float rot = Mth.clamp((float) (Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
-
-                        if (player instanceof LocalPlayer localPlayer) {
-                            localPlayer.sendSystemMessage(Component.literal("velocity: %.2f".formatted(deltaVel.lengthSqr())));
-                            localPlayer.sendSystemMessage(Component.literal("d2: %.2f".formatted(d2)));
-                            localPlayer.sendSystemMessage(Component.literal("d3: %.2f".formatted(d3)));
-                            localPlayer.sendSystemMessage(Component.literal("rot: %.2f".formatted(rot * Mth.RAD_TO_DEG)));
-                        }
-
                         float targetRollDeg = targetRollNormalized * ROLL_MAX_DEG * Mth.DEG_TO_RAD;
 
                         // NaN/Inf prevention - snap directly
                         if (!Double.isFinite(dummyDragon.prevZRot)) {
                             dummyDragon.prevZRot = targetRollDeg;
+                        } else {
+                            dummyDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, dummyDragon.prevZRot, targetRollDeg);
                         }
-
-                        dummyDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, dummyDragon.prevZRot, targetRollDeg);
 
                         handler.getMovementData().prevXRot = dummyDragon.prevXRot;
                         handler.getMovementData().prevZRot = dummyDragon.prevZRot;
