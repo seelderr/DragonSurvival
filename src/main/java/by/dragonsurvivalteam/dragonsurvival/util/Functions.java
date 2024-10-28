@@ -126,6 +126,42 @@ public class Functions {
         return Mth.wrapDegrees(start + diff * t);
     }
 
+    /**
+     * Inverse of lerp - the `t` from lerp(t, start, end). Not clamped.
+     * @param value Input value
+     * @param start Range start
+     * @param end Range end
+     * @return Normalized position of value between start and end, not clamped (extrapolated). 0 at start, 1 at end.
+     * Divides by zero when start == end - will return an infinity or NaN.
+     */
+    public static double inverseLerp(double value, double start, double end) {
+        return (value - start) / (end - start);
+    }
+    /**
+     * Inverse of lerp - the `t` from lerp(t, start, end). Clamped to 0..1.
+     * @param value Input value
+     * @param start Range start
+     * @param end Range end
+     * @return Normalized position of value between start and end, clamped to 0..1.
+     * Divides by zero when start == end - will return an infinity or NaN.
+     */
+    public static double inverseLerpClamped(double value, double start, double end) {
+        return Math.clamp(inverseLerp(value, start, end), 0, 1);
+    }
+
+    /**
+     * Inverse of lerp - the `t` from lerp(t, start, end). Clamped to 0..1. Returns 0 if start == end.
+     * @param value Input value
+     * @param start Range start
+     * @param end Range end
+     * @return Normalized position of value between start and end, clamped to 0..1.
+     * Does NOT divide by zero when start == end, and falls back to 0.
+     */
+    public static double inverseLerpClampedSafe(double value, double start, double end) {
+        // We specifically care about the difference being 0, as that's relevant for the division here
+        // Floats are weird, this might not be the same as start == end; hopefully this works
+        return start - end == 0 ? 0 : inverseLerpClamped(value, start, end);
+    }
 
     public static ListTag newDoubleList(double... pNumbers) {
         ListTag listtag = new ListTag();
