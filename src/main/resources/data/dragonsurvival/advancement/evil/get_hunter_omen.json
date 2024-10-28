@@ -9,12 +9,8 @@
         }
       }
     },
-    "title": {
-      "translate": "ds.advancements.get_hunter_omen.title"
-    },
-    "description": {
-      "translate": "ds.advancements.get_hunter_omen.description"
-    },
+    "title": { "translate": "ds.advancements.get_hunter_omen.title" },
+    "description": { "translate": "ds.advancements.get_hunter_omen.description" },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

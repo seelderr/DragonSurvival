@@ -4,11 +4,11 @@
       "structure": "dragonsurvival:dragon_skeleton_cave",
       "weight": 1
     },
-    {
+	{
       "structure": "dragonsurvival:dragon_skeleton_forest",
       "weight": 1
     },
-    {
+	{
       "structure": "dragonsurvival:dragon_skeleton_sea",
       "weight": 1
     }

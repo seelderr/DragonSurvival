@@ -44,18 +44,10 @@
     }
   },
   "requirements": [
-    [
-      "burn"
-    ],
-    [
-      "cave_athletics"
-    ],
-    [
-      "contrast_shower"
-    ],
-    [
-      "cave_magic"
-    ]
+    ["burn"],
+    ["cave_athletics"],
+    ["contrast_shower"],
+    ["cave_magic"]
   ],
   "rewards": {
     "experience": 90

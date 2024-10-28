@@ -1,7 +1,7 @@
 {
-  "values": [
-    "dragonsurvival:good_dragon_boots",
-    "dragonsurvival:evil_dragon_boots"
-  ],
-  "replace": false
+    "values": [
+        "dragonsurvival:good_dragon_boots",
+        "dragonsurvival:evil_dragon_boots"
+    ],
+    "replace": false
 }

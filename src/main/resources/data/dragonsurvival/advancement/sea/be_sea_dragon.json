@@ -3,16 +3,10 @@
   "display": {
     "icon": {
       "id": "dragonsurvival:dragon_soul",
-      "components": {
-        "minecraft:custom_model_data": 3
-      }
+      "components": { "minecraft:custom_model_data": 3 }
     },
-    "title": {
-      "translate": "ds.advancements.be_sea_dragon.title"
-    },
-    "description": {
-      "translate": "ds.advancements.be_sea_dragon.description"
-    },
+    "title": { "translate": "ds.advancements.be_sea_dragon.title" },
+    "description": { "translate": "ds.advancements.be_sea_dragon.description" },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

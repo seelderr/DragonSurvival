@@ -4,12 +4,8 @@
     "icon": {
       "id": "dragonsurvival:evil_dragon_key"
     },
-    "title": {
-      "translate": "ds.advancements.collect_evil_key.title"
-    },
-    "description": {
-      "translate": "ds.advancements.collect_evil_key.description"
-    },
+    "title": { "translate": "ds.advancements.collect_evil_key.title" },
+    "description": { "translate": "ds.advancements.collect_evil_key.description" },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

@@ -1,7 +1,7 @@
 {
-  "values": [
-    "dragonsurvival:good_dragon_leggings",
-    "dragonsurvival:evil_dragon_leggings"
-  ],
-  "replace": false
+    "values": [
+        "dragonsurvival:good_dragon_leggings",
+        "dragonsurvival:evil_dragon_leggings"
+    ],
+    "replace": false
 }
