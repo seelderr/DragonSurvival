@@ -333,14 +333,14 @@ public class ClientDragonRenderer {
 
                             // Raw target roll, normalized
                             targetRollNormalized = (float) Functions.deadzoneNormalized(viewToVelDeltaDeg, ROLL_MIN_DELTA_DEG, ROLL_MAX_DELTA_DEG);
-                            if (player instanceof LocalPlayer localPlayer) {
-                                localPlayer.sendSystemMessage(Component.literal("Raw target angle: %.2f".formatted(targetRollNormalized)));
-                            }
+//                            if (player instanceof LocalPlayer localPlayer) {
+//                                localPlayer.sendSystemMessage(Component.literal("Raw target angle: %.2f".formatted(targetRollNormalized)));
+//                            }
                             // Scale via exponent (still normalized)
                             targetRollNormalized = Math.copySign((float) Math.pow(Math.abs(targetRollNormalized), ROLL_EXP), targetRollNormalized);
-                            if (player instanceof LocalPlayer localPlayer) {
-                                localPlayer.sendSystemMessage(Component.literal("Scaled via exponent: %.2f".formatted(targetRollNormalized)));
-                            }
+//                            if (player instanceof LocalPlayer localPlayer) {
+//                                localPlayer.sendSystemMessage(Component.literal("Scaled via exponent: %.2f".formatted(targetRollNormalized)));
+//                            }
                             // Scale by velocity influence
                             float velInfluence = (float) Functions.inverseLerpClamped(
                                     deltaVel.horizontalDistance(),
@@ -348,9 +348,9 @@ public class ClientDragonRenderer {
                                     ROLL_VEL_INFLUENCE_MAX
                             );
                             targetRollNormalized *= velInfluence;
-                            if (player instanceof LocalPlayer localPlayer) {
-                                localPlayer.sendSystemMessage(Component.literal("Scaled by velocity: %.2f".formatted(targetRollNormalized)));
-                            }
+//                            if (player instanceof LocalPlayer localPlayer) {
+//                                localPlayer.sendSystemMessage(Component.literal("Scaled by velocity: %.2f".formatted(targetRollNormalized)));
+//                            }
                         } else {
                             targetRollNormalized = 0;
                         }
