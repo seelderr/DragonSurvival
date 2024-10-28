@@ -1,0 +1,79 @@
+{
+  "parent": "dragonsurvival:change_beacon",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:elder_dragon_dust"
+    },
+    "title": {
+      "translate": "ds.advancements.get_all_beacons.title"
+    },
+    "description": {
+      "translate": "ds.advancements.get_all_beacons.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "peace": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "effects": {
+                "dragonsurvival:peace": {
+                  "duration": {
+                    "min": 400
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+	"fire": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "effects": {
+                "dragonsurvival:fire": {
+                  "duration": {
+                    "min": 400
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+	"magic": {
+      "trigger": "minecraft:tick",
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "effects": {
+                "dragonsurvival:magic": {
+                  "duration": {
+                    "min": 400
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

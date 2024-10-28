@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:be_dragon",
+  "parent": "dragonsurvival:collect_dust",
   "display": {
     "icon": {
       "id": "minecraft:gold_nugget"

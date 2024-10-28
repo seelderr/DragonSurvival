@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.prevent_darkness_penalty.description"
     },
-    "frame": "challenge",
     "hidden": false
   },
   "criteria": {

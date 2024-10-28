@@ -1,34 +1,34 @@
 {
-  "parent": "dragonsurvival:good/collect_good_key",
+  "parent": "dragonsurvival:collect_dust",
   "display": {
     "icon": {
-      "id": "dragonsurvival:dragon_vault_friendly"
+      "id": "dragonsurvival:dragon_memory_block"
     },
     "title": {
-      "translate": "ds.advancements.open_good_vault.title"
+      "translate": "ds.advancements.use_memory_block.title"
     },
     "description": {
-      "translate": "ds.advancements.open_good_vault.description"
+      "translate": "ds.advancements.use_memory_block.description"
     },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
   },
   "criteria": {
-    "use_on_good_vault": {
+    "dragon_memory_place": {
       "trigger": "minecraft:item_used_on_block",
       "conditions": {
         "player": [],
         "location": [
           {
             "condition": "minecraft:block_state_property",
-            "block": "dragonsurvival:dragon_vault_friendly",
+            "block": "dragonsurvival:dragon_memory_block",
             "properties": {}
           },
           {
             "condition": "minecraft:match_tool",
             "predicate": {
-              "items": "dragonsurvival:good_dragon_key"
+              "items": "#dragonsurvival:dragon_beacons"
             }
           }
         ]

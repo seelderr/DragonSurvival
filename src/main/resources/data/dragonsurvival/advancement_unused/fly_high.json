@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.fly_high.description"
     },
-    "frame": "goal",
     "hidden": false
   },
   "criteria": {

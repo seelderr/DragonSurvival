@@ -2,7 +2,7 @@
   "parent": "dragonsurvival:dragon_survival_root",
   "display": {
     "icon": {
-      "id": "dragonsurvival:elder_dragon_dust"
+      "id": "minecraft:coal_ore"
     },
     "title": { "translate": "ds.advancements.collect_dust.title" },
     "description": { "translate": "ds.advancements.collect_dust.description" },

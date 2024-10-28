@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.transplant_chorus_fruit.description"
     },
-    "frame": "goal",
     "hidden": false
   },
   "criteria": {

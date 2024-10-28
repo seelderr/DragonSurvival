@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:evil/collect_evil_key",
+  "parent": "dragonsurvival:path_choice",
   "display": {
     "icon": {
       "id": "minecraft:player_head",

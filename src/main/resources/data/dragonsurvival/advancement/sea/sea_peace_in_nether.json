@@ -1,8 +1,8 @@
 {
-  "parent": "dragonsurvival:sea/rain_dancing",
+  "parent": "dragonsurvival:sea/enter_snow_in_nether",
   "display": {
     "icon": {
-      "id": "dragonsurvival:beacon_magic_1"
+      "id": "minecraft:cauldron"
     },
     "title": {
       "translate": "ds.advancements.sea_peace_in_nether.title"
@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.sea_peace_in_nether.description"
     },
-    "frame": "challenge",
     "hidden": false
   },
   "criteria": {

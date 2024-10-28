@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.diamonds_in_lava.description"
     },
-    "frame": "goal",
     "hidden": false
   },
   "criteria": {

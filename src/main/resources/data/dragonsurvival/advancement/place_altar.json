@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:collect_dust",
+  "parent": "dragonsurvival:dragon_survival_root",
   "display": {
     "icon": {
       "id": "dragonsurvival:dragon_altar_stone"
@@ -11,6 +11,7 @@
     "hidden": false
   },
   "criteria": {
+	"placed_dragon_altars": {
     "requirement": {
       "trigger": "minecraft:placed_block",
       "conditions": {
@@ -23,8 +24,12 @@
               }
             }
           }
-        ]
-      }
+         ]
+        }
+	   }
+	  },
+    "be_dragon": {
+      "trigger": "dragonsurvival:be_dragon"
     }
   },
   "rewards": {

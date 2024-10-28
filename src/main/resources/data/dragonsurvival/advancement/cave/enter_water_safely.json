@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.enter_water_safely.description"
     },
-    "frame": "challenge",
     "hidden": false
   },
   "criteria": {

@@ -8,14 +8,13 @@
     "description": { "translate": "ds.advancements.sleep_on_hoard.description" },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "goal",
     "hidden": false
   },
   "criteria": {
     "sleep": {
       "trigger": "dragonsurvival:sleep_on_treasure",
       "conditions": {
-        "count": 200
+        "count": 100
       }
     }
   },

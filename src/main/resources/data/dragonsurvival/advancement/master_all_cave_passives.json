@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:cave/be_old_cave_dragon",
+  "parent": "dragonsurvival:be_old_cave_dragon",
   "display": {
     "icon": {
       "id": "dragonsurvival:cave_source_of_magic"
@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.master_all_cave_passives.description"
     },
-    "frame": "challenge",
     "hidden": false
   },
   "criteria": {
@@ -44,10 +43,18 @@
     }
   },
   "requirements": [
-    ["burn"],
-    ["cave_athletics"],
-    ["contrast_shower"],
-    ["cave_magic"]
+    [
+      "burn"
+    ],
+    [
+      "cave_athletics"
+    ],
+    [
+      "contrast_shower"
+    ],
+    [
+      "cave_magic"
+    ]
   ],
   "rewards": {
     "experience": 90

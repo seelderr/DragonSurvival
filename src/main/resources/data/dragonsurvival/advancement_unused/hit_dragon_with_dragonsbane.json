@@ -9,8 +9,7 @@
     },
     "description": {
       "translate": "ds.advancements.hit_dragon_with_dragonsbane.description"
-    },
-    "frame": "goal"
+    }
   },
   "criteria": {
     "murderer": {

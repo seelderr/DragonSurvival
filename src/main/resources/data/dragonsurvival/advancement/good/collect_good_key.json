@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:collect_key",
+  "parent": "dragonsurvival:good/rider_workbench",
   "display": {
     "icon": {
       "id": "dragonsurvival:good_dragon_key"
