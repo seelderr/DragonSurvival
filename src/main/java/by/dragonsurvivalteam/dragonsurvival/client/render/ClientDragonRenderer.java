@@ -292,41 +292,63 @@ public class ClientDragonRenderer {
 
                         poseStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
 
+                        float yRot;
                         Vec3 deltaVel;
                         Vec3 viewDir;
                         if (isPlayerGliding) {
+                            yRot = player.getViewYRot(1f);
                             deltaVel = player.getDeltaMovement();
                             viewDir = player.getViewVector(1f);
                         } else {
+                            yRot = playerVehicle.getViewYRot(1f);
                             deltaVel = playerVehicle.getDeltaMovement();
                             viewDir = playerVehicle.getViewVector(1f);
                         }
+
+                        final float ROLL_VEL_LERP_FACTOR = 0.1F;
+                        final double ROLL_VEL_INFLUENCE_MIN = 0.5D;
+                        final double ROLL_VEL_INFLUENCE_MAX = 2.0D;
+                        final double ROLL_VEL_EXP = 0.5;
+
+                        float targetRollDeg;
+
+                        // Note that we're working with the HORIZONTAL move delta
+                        if (deltaVel.horizontalDistanceSqr() > ROLL_VEL_INFLUENCE_MIN * ROLL_VEL_INFLUENCE_MIN) {
+                            float influence = (float) Functions.inverseLerpClamped(
+                                    deltaVel.horizontalDistance(),
+                                    ROLL_VEL_INFLUENCE_MIN,
+                                    ROLL_VEL_INFLUENCE_MAX
+                            );
+                            float velAngle = (float) Math.atan2(-deltaVel.x, deltaVel.z) * Mth.RAD_TO_DEG;
+                            float viewToVelDelta = Mth.degreesDifference(velAngle, yRot);
+
+                            targetRollDeg = (float) Functions.limitAngleDelta(viewToVelDelta * 2, 0, 1 * Mth.RAD_TO_DEG);
+                            targetRollDeg *= influence;
+                            if (player instanceof LocalPlayer localPlayer) {
+                                localPlayer.sendSystemMessage(Component.literal("targetRollDeg: %.2f".formatted(targetRollDeg)));
+                            }
+                        } else {
+                            targetRollDeg = 0;
+                        }
+
                         double d0 = deltaVel.horizontalDistanceSqr();
                         double d1 = viewDir.horizontalDistanceSqr();
                         double d2 = (deltaVel.x * viewDir.x + deltaVel.z * viewDir.z) / Math.sqrt(d0 * d1);
-                        double d3 = deltaVel.x * viewDir.z - deltaVel.z * viewDir.x;
+                        double d3 = deltaVel.x * viewDir.z - deltaVel.z * viewDir.x; // a * d - b * c
 
                         float rot = Mth.clamp((float) (Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
 
                         if (player instanceof LocalPlayer localPlayer) {
-                            localPlayer.sendSystemMessage(Component.literal("rot sign: %f".formatted(Math.signum(rot))));
+                            localPlayer.sendSystemMessage(Component.literal("velocity: %.2f".formatted(deltaVel.lengthSqr())));
+                            localPlayer.sendSystemMessage(Component.literal("d2: %.2f".formatted(d2)));
+                            localPlayer.sendSystemMessage(Component.literal("d3: %.2f".formatted(d3)));
+                            localPlayer.sendSystemMessage(Component.literal("rot: %.2f".formatted(rot * Mth.RAD_TO_DEG)));
                         }
 
-                        dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
-
-                        handler.getMovementData().prevZRot = dummyDragon.prevZRot;
-                        dummyDragon.prevZRot = Mth.clamp(dummyDragon.prevZRot, -1, 1);
-
-                        if (Float.isNaN(dummyDragon.prevZRot)) {
-                            dummyDragon.prevZRot = rot;
-                        }
-
-                        if (Float.isNaN(dummyDragon.prevZRot)) {
-                            dummyDragon.prevZRot = 0;
-                        }
+                        dummyDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, dummyDragon.prevZRot, targetRollDeg * Mth.DEG_TO_RAD);
 
                         handler.getMovementData().prevXRot = dummyDragon.prevXRot;
-                        handler.getMovementData().prevZRot = rot;
+                        handler.getMovementData().prevZRot = dummyDragon.prevZRot;
 
                         poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
                     } else {
