@@ -163,6 +163,22 @@ public class Functions {
         return start - end == 0 ? 0 : inverseLerpClamped(value, start, end);
     }
 
+    /**
+     * Adds a deadzone to value, normalizing it within ranges -maxRange..-deadzone and deadzone..maxRange.
+     * <br/>
+     * When value is between -deadzone..deadzone, the output is 0.
+     * When within the negative or positive range from deadzone to maxRange, the output is an inverse lerp
+     * between -1..0 and 0..1 respectively.
+     * The result is clamped to -1..1
+     * @param value Input value
+     * @param deadzone Minimum in both directions - deadzone
+     * @param maxRange Maximum in both directions
+     * @return Clamped inverse lerp of value between -maxRange..maxRange, with 0 offset by deadzone.
+     */
+    public static double deadzoneNormalized(double value, double deadzone, double maxRange) {
+        return Math.copySign(inverseLerpClamped(Math.abs(value), deadzone, maxRange), value);
+    }
+
     public static ListTag newDoubleList(double... pNumbers) {
         ListTag listtag = new ListTag();
 
