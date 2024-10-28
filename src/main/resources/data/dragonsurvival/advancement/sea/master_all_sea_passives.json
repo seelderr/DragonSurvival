@@ -44,10 +44,18 @@
     }
   },
   "requirements": [
-    ["spectral_impact"],
-    ["sea_athletics"],
-    ["water"],
-    ["sea_magic"]
+    [
+      "spectral_impact"
+    ],
+    [
+      "sea_athletics"
+    ],
+    [
+      "water"
+    ],
+    [
+      "sea_magic"
+    ]
   ],
   "rewards": {
     "experience": 150

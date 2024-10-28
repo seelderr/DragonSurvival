@@ -20,18 +20,23 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+import java.util.Arrays;
+import java.util.Objects;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_FALLING;
+
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
 	protected PlayerMixin(EntityType<? extends LivingEntity> type, Level level) {
 		super(type, level);
 	}
 
-	@Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
-	public void isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> callback) {
-		if (ServerConfig.disableSuffocation && source == damageSources().inWall() && DragonStateProvider.isDragon(this)) {
-			callback.setReturnValue(true);
-		}
-	}
+    @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
+    public void isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> callback) {
+        if (ServerConfig.disableSuffocation && source == damageSources().inWall() && DragonStateProvider.isDragon(this)) {
+            callback.setReturnValue(true);
+        }
+    }
 
 	/** Disables the mining speed penalty for not being on the ground (for sea dragons that are in the water) */
 	@WrapOperation(method = "getDigSpeed", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;onGround()Z"))
@@ -51,20 +56,20 @@ public abstract class PlayerMixin extends LivingEntity {
 	private void castMovement(CallbackInfoReturnable<Boolean> callback) {
 		DragonStateHandler handler = DragonStateProvider.getData((Player) (Object) this);
 
-		if (!isDeadOrDying() && !isSleeping()) {
-			if (!ServerConfig.canMoveWhileCasting) {
-				ActiveDragonAbility casting = handler.getMagicData().getCurrentlyCasting();
+        if (!isDeadOrDying() && !isSleeping()) {
+            if (!ServerConfig.canMoveWhileCasting) {
+                ActiveDragonAbility casting = handler.getMagicData().getCurrentlyCasting();
 
-				if (casting != null && casting.requiresStationaryCasting()) {
-					callback.setReturnValue(true);
-				}
-			}
+                if (casting != null && casting.requiresStationaryCasting()) {
+                    callback.setReturnValue(true);
+                }
+            }
 
-			if (!ServerConfig.canMoveInEmote && Arrays.stream(handler.getEmoteData().currentEmotes).noneMatch(Objects::nonNull)) {
-				callback.setReturnValue(true);
-			}
-		}
-	}
+            if (!ServerConfig.canMoveInEmote && Arrays.stream(handler.getEmoteData().currentEmotes).noneMatch(Objects::nonNull)) {
+                callback.setReturnValue(true);
+            }
+        }
+    }
 
 	/** Allow treasure blocks to trigger sleep logic */
 	@Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
@@ -75,4 +80,16 @@ public abstract class PlayerMixin extends LivingEntity {
 			}
 		});
 	}
+
+    /**
+     * Make sure dragon hitboxes are considered here
+     */
+    @ModifyReturnValue(method = "canPlayerFitWithinBlocksAndEntitiesWhen", at = @At("RETURN"))
+    private boolean considerDragonPosesInCanPlayerFit(boolean returnValue, @Local(argsOnly = true) Pose pose) {
+        if (DragonStateProvider.isDragon(this)) {
+            return DragonSizeHandler.canPoseFit(this, pose);
+        } else {
+            return returnValue;
+        }
+    }
 }

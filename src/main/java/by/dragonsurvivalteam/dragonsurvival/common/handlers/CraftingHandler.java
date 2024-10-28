@@ -16,33 +16,33 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 @EventBusSubscriber
 public class CraftingHandler {
     @SubscribeEvent
-    public static void returnBeacon(PlayerEvent.ItemCraftedEvent craftedEvent){
+    public static void returnBeacon(PlayerEvent.ItemCraftedEvent craftedEvent) {
         Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
         int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.PASSIVE_FIRE_BEACON)
                 || item.is(DSItems.PASSIVE_MAGIC_BEACON)
                 || item.is(DSItems.PASSIVE_PEACE_BEACON), 1, true);
-        if(rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.get().asItem()){
+        if (rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.get().asItem()) {
             craftedEvent.getEntity().addItem(new ItemStack(Items.BEACON));
         }
     }
 
     @SubscribeEvent
-    public static void returnNetherStarHeart(PlayerEvent.ItemCraftedEvent craftedEvent){
+    public static void returnNetherStarHeart(PlayerEvent.ItemCraftedEvent craftedEvent) {
         Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
         int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.STAR_HEART), 1, true);
-        if(rem == 0 && result.is(DSItems.STAR_HEART)) {
+        if (rem == 0 && result.is(DSItems.STAR_HEART)) {
             craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
         }
     }
 
     @SubscribeEvent
-    public static void returnNetherStarBone(PlayerEvent.ItemCraftedEvent craftedEvent){
+    public static void returnNetherStarBone(PlayerEvent.ItemCraftedEvent craftedEvent) {
         Container inventory = craftedEvent.getInventory();
         ItemStack result = craftedEvent.getCrafting();
         int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.STAR_BONE), 1, true);
-        if(rem == 0 && result.is(DSItems.STAR_BONE)) {
+        if (rem == 0 && result.is(DSItems.STAR_BONE)) {
             craftedEvent.getEntity().addItem(new ItemStack(Items.NETHER_STAR));
         }
     }

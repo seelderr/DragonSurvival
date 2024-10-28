@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import static net.minecraft.commands.Commands.argument;
-import static net.minecraft.commands.Commands.literal;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -19,8 +16,11 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import static net.minecraft.commands.Commands.argument;
+import static net.minecraft.commands.Commands.literal;
+
 public class DragonSizeCommand {
-    public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher){
+    public static void register(CommandDispatcher<CommandSourceStack> commandDispatcher) {
         RootCommandNode<CommandSourceStack> rootCommandNode = commandDispatcher.getRoot();
 
         LiteralCommandNode<CommandSourceStack> dragonSetSize = literal("dragon-set-size").requires(commandSource -> commandSource.hasPermission(2)).build();
@@ -30,7 +30,7 @@ public class DragonSizeCommand {
             double size = Mth.clamp(context.getArgument("dragon_size", Double.TYPE), 1.0, ServerConfig.maxGrowthSize);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             DragonStateHandler cap = DragonStateProvider.getData(serverPlayer);
-            if(cap.isDragon()) {
+            if (cap.isDragon()) {
                 cap.setSize(size, serverPlayer);
                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize.Data(serverPlayer.getId(), size));
                 DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, cap.getSize(), cap.getTypeName());

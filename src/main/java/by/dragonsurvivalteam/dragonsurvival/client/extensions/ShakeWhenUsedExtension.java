@@ -14,10 +14,8 @@ public class ShakeWhenUsedExtension implements IClientItemExtensions {
 
     @Override
     public boolean applyForgeHandTransform(@NotNull PoseStack poseStack, @NotNull LocalPlayer player, @NotNull HumanoidArm arm, @NotNull ItemStack itemInHand, float partialTick, float equipProcess, float swingProcess) {
-        if(player.getUseItemRemainingTicks() > 0)
-        {
-            if(startTime == 0.0F)
-            {
+        if (player.getUseItemRemainingTicks() > 0) {
+            if (startTime == 0.0F) {
                 startTime = Blaze3D.getTime();
             }
 

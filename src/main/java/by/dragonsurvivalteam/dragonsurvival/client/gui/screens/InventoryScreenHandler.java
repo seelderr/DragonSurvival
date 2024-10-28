@@ -1,8 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
-
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -30,58 +27,61 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory.SendOpenDragonInventoryAndMaintainCursorPosition;
+
 @EventBusSubscriber(Dist.CLIENT)
 public class InventoryScreenHandler {
     public static final ResourceLocation DS_LOGO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ds_logo.png");
     public static ExtendedButton altarOpenButton;
     public static ExtendedButton creativeModeDragonInventoryButton;
-    @ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "dragonInventory", comment = "Should the default inventory be replaced as a dragon?" )
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragonInventory", comment = "Should the default inventory be replaced as a dragon?")
     public static Boolean dragonInventory = true;
-    @ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "dragonTabs", comment = "Should dragon tabs be added to the default player inventory?" )
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragonTabs", comment = "Should dragon tabs be added to the default player inventory?")
     public static Boolean dragonTabs = true;
-    @ConfigOption( side = ConfigSide.CLIENT, category = "inventory", key = "inventoryToggle", comment = "Should the buttons for toggling between dragon and normal inventory be added?" )
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "inventoryToggle", comment = "Should the buttons for toggling between dragon and normal inventory be added?")
     public static Boolean inventoryToggle = true;
 
     @SubscribeEvent
-    public static void onOpenScreen(ScreenEvent.Opening openEvent){
+    public static void onOpenScreen(ScreenEvent.Opening openEvent) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if(!dragonInventory){
+        if (!dragonInventory) {
             return;
         }
-        if(Minecraft.getInstance().screen != null){
+        if (Minecraft.getInstance().screen != null) {
             return;
         }
-        if(player == null || player.isCreative() || !DragonStateProvider.isDragon(player)){
+        if (player == null || player.isCreative() || !DragonStateProvider.isDragon(player)) {
             return;
         }
 
-        if(openEvent.getScreen() instanceof InventoryScreen){
+        if (openEvent.getScreen() instanceof InventoryScreen) {
             openEvent.setCanceled(true);
             PacketDistributor.sendToServer(new RequestOpenDragonInventory.Data());
         }
     }
 
     @SubscribeEvent
-    public static void removeCraftingButtonInOtherCreativeModeTabs(ScreenEvent.Render.Pre renderEvent){
-        if(renderEvent.getScreen() instanceof CreativeModeInventoryScreen screen){
-            if(creativeModeDragonInventoryButton != null) {
+    public static void removeCraftingButtonInOtherCreativeModeTabs(ScreenEvent.Render.Pre renderEvent) {
+        if (renderEvent.getScreen() instanceof CreativeModeInventoryScreen screen) {
+            if (creativeModeDragonInventoryButton != null) {
                 creativeModeDragonInventoryButton.visible = screen.isInventoryOpen();
             }
         }
     }
 
     @SubscribeEvent
-    public static void hideOrShowAltarButton(ScreenEvent.Render.Pre renderEvent){
+    public static void hideOrShowAltarButton(ScreenEvent.Render.Pre renderEvent) {
         Screen screen = renderEvent.getScreen();
-        if(screen instanceof InventoryScreen inventoryScreen){
+        if (screen instanceof InventoryScreen inventoryScreen) {
             Player player = Minecraft.getInstance().player;
             DragonStateProvider.getOptional(player).ifPresentOrElse(cap -> {
-                if(altarOpenButton != null) {
+                if (altarOpenButton != null) {
                     altarOpenButton.visible = !cap.hasUsedAltar;
                 }
             }, () -> {
-                if(altarOpenButton != null) {
+                if (altarOpenButton != null) {
                     altarOpenButton.visible = true;
                 }
             });
@@ -89,14 +89,14 @@ public class InventoryScreenHandler {
     }
 
     @SubscribeEvent
-    public static void addCraftingButton(ScreenEvent.Init.Post initGuiEvent){
+    public static void addCraftingButton(ScreenEvent.Init.Post initGuiEvent) {
         Screen sc = initGuiEvent.getScreen();
 
-        if(sc instanceof InventoryScreen screen) {
-            if(ServerConfig.allowDragonChoiceFromInventory) {
+        if (sc instanceof InventoryScreen screen) {
+            if (ServerConfig.allowDragonChoiceFromInventory) {
                 altarOpenButton = new ExtendedButton(screen.getGuiLeft() + 150, screen.height / 2 - 22, 20, 18, Component.empty(), p_onPress_1_ -> {
                     ClientProxy.handleOpenDragonAltar();
-                }){
+                }) {
                     @Override
                     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                         guiGraphics.blit(DS_LOGO, getX(), getY(), 0, 0, 20, 20, 20, 20);
@@ -107,13 +107,13 @@ public class InventoryScreenHandler {
             }
         }
 
-        if(!DragonStateProvider.isDragon(Minecraft.getInstance().player)){
+        if (!DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
             return;
         }
 
         // Dragon only UI
-        if(sc instanceof InventoryScreen screen){
-            if(dragonTabs){
+        if (sc instanceof InventoryScreen screen) {
+            if (dragonTabs) {
                 initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, TabButton.TabType.INVENTORY, screen));
 
                 initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, TabButton.TabType.ABILITY, screen));
@@ -123,10 +123,10 @@ public class InventoryScreenHandler {
                 initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, TabButton.TabType.SKINS, screen));
             }
 
-            if(inventoryToggle){
+            if (inventoryToggle) {
                 ExtendedButton inventoryToggle = new ExtendedButton(screen.getGuiLeft() + 128, screen.height / 2 - 22, 20, 18, Component.empty(), p_onPress_1_ -> {
                     SendOpenDragonInventoryAndMaintainCursorPosition();
-                }){
+                }) {
                     @Override
                     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                         float u = 21f;
@@ -143,7 +143,7 @@ public class InventoryScreenHandler {
             if (inventoryToggle) {
                 creativeModeDragonInventoryButton = new ExtendedButton(screen.getGuiLeft() + 128 + 20, screen.height / 2 - 50, 20, 18, Component.empty(), p_onPress_1_ -> {
                     SendOpenDragonInventoryAndMaintainCursorPosition();
-                }){
+                }) {
                     @Override
                     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                         float u = 21f;

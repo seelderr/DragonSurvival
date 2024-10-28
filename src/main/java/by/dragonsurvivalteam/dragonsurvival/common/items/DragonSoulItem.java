@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.PlayerLoginHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -31,14 +30,16 @@ import net.minecraft.world.item.component.CustomModelData;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class DragonSoulItem extends Item {
     public DragonSoulItem(Properties properties) {
         super(properties);
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, @NotNull Player playerIn, @NotNull InteractionHand handIn){
-        if(DragonStateProvider.isDragon(playerIn) || playerIn.getItemInHand(handIn).has(DataComponents.CUSTOM_DATA)) {
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, @NotNull Player playerIn, @NotNull InteractionHand handIn) {
+        if (DragonStateProvider.isDragon(playerIn) || playerIn.getItemInHand(handIn).has(DataComponents.CUSTOM_DATA)) {
             playerIn.startUsingItem(handIn);
             return InteractionResultHolder.success(playerIn.getItemInHand(handIn));
         } else {
@@ -50,7 +51,7 @@ public class DragonSoulItem extends Item {
         AbstractDragonType dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
         int customModelData = 0;
-        if(dragonType != null) {
+        if (dragonType != null) {
             customModelData = switch (dragonType.toString()) {
                 case "forest" -> 1;
                 case "cave" -> 2;
@@ -65,13 +66,13 @@ public class DragonSoulItem extends Item {
     @Override
     public @NotNull ItemStack finishUsingItem(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull LivingEntity pLivingEntity) {
         // Store the player's dragon data in the item's NBT
-        if(pLivingEntity instanceof Player playerIn) {
+        if (pLivingEntity instanceof Player playerIn) {
             if (playerIn instanceof ServerPlayer serverPlayer) {
                 DSAdvancementTriggers.USE_DRAGON_SOUL.get().trigger(serverPlayer);
             }
             DragonStateHandler handler = DragonStateProvider.getData(playerIn);
-            if(pStack.has(DataComponents.CUSTOM_DATA)) {
-                if(handler.isDragon()) {
+            if (pStack.has(DataComponents.CUSTOM_DATA)) {
+                if (handler.isDragon()) {
                     // Swap the player's dragon data with the item's NBT
                     CompoundTag storedDragonData = pStack.get(DataComponents.CUSTOM_DATA).copyTag();
                     CompoundTag currentDragonData = handler.serializeNBT(pLevel.registryAccess(), true);
@@ -87,7 +88,7 @@ public class DragonSoulItem extends Item {
                     pStack.set(DataComponents.CUSTOM_MODEL_DATA, null);
                 }
             } else {
-                if(handler.isDragon()) {
+                if (handler.isDragon()) {
                     CompoundTag currentDragonData = handler.serializeNBT(pLevel.registryAccess(), true);
                     pStack.set(DataComponents.CUSTOM_DATA, CustomData.of(currentDragonData));
                     pStack.set(DataComponents.CUSTOM_MODEL_DATA, new CustomModelData(getCustomModelData(currentDragonData)));
@@ -99,25 +100,25 @@ public class DragonSoulItem extends Item {
             pLevel.playSound(null, pLivingEntity.getX(), pLivingEntity.getY(), pLivingEntity.getZ(), SoundEvents.ENDER_DRAGON_GROWL, pLivingEntity.getSoundSource(), 1.0F, 1.0F);
 
             // Add a bunch of random poof particles
-            for(int i = 0; i < 10; i++) {
+            for (int i = 0; i < 10; i++) {
                 pLevel.addParticle(ParticleTypes.POOF, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLivingEntity.getY() + (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
             }
 
             // If we transformed into a dragon, spawn particles based off of the dragon's type
-            if(handler.isDragon()) {
-                switch(handler.getType().toString()) {
+            if (handler.isDragon()) {
+                switch (handler.getType().toString()) {
                     case "forest" -> {
-                        for(int i = 0; i < 30; i++) {
+                        for (int i = 0; i < 30; i++) {
                             pLevel.addParticle(ParticleTypes.HAPPY_VILLAGER, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 2D, pLivingEntity.getY() + pLevel.random.nextDouble() * 2D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 2D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
                         }
                     }
                     case "cave" -> {
-                        for(int i = 0; i < 30; i++) {
+                        for (int i = 0; i < 30; i++) {
                             pLevel.addParticle(ParticleTypes.SMOKE, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 2D, pLivingEntity.getY() + pLevel.random.nextDouble() * 2D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 2D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
                         }
                     }
                     case "sea" -> {
-                        for(int i = 0; i < 30; i++) {
+                        for (int i = 0; i < 30; i++) {
                             pLevel.addParticle(ParticleTypes.FALLING_WATER, pLivingEntity.getX() + (pLevel.random.nextDouble() - 0.5D) * 2D, pLivingEntity.getY() + pLevel.random.nextDouble() * 2D, pLivingEntity.getZ() + (pLevel.random.nextDouble() - 0.5D) * 2D, (pLevel.random.nextDouble() - 0.5D) * 0.5D, pLevel.random.nextDouble() * 0.5D, (pLevel.random.nextDouble() - 0.5D) * 0.5D);
                         }
                     }
@@ -142,7 +143,7 @@ public class DragonSoulItem extends Item {
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag){
+    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
         super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
         if (pStack.has(DataComponents.CUSTOM_DATA)) {
             CompoundTag tag = pStack.get(DataComponents.CUSTOM_DATA).copyTag();
@@ -150,7 +151,7 @@ public class DragonSoulItem extends Item {
             AbstractDragonType dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
             MutableComponent dragonName;
-            if(dragonType != null) {
+            if (dragonType != null) {
                 dragonName = switch (dragonType.toString()) {
                     case "forest" -> Component.translatable("ds.skill.forest_dragon");
                     case "cave" -> Component.translatable("ds.skill.cave_dragon");
@@ -171,11 +172,11 @@ public class DragonSoulItem extends Item {
 
             pTooltipComponents.add(Component.translatable("ds.description.dragon_soul_info", dragonName, dragonGrowthStage, String.format("%.0f", size)));
 
-            if(tag.getBoolean("spinLearned")) {
+            if (tag.getBoolean("spinLearned")) {
                 pTooltipComponents.add(Component.translatable("ds.description.dragon_soul_has_spin"));
             }
 
-            if(tag.getBoolean("hasWings")) {
+            if (tag.getBoolean("hasWings")) {
                 pTooltipComponents.add(Component.translatable("ds.description.dragon_soul_has_fly"));
             }
         } else {
@@ -228,9 +229,9 @@ public class DragonSoulItem extends Item {
 
     @Override
     public @NotNull String getDescriptionId(@NotNull ItemStack pStack) {
-        if(pStack.has(DataComponents.CUSTOM_DATA)) {
+        if (pStack.has(DataComponents.CUSTOM_DATA)) {
             AbstractDragonType dragonType = DragonTypes.newDragonTypeInstance(pStack.get(DataComponents.CUSTOM_DATA).copyTag().getString("type"));
-            switch(dragonType.toString()) {
+            switch (dragonType.toString()) {
                 case "forest" -> {
                     return "item.dragonsurvival.forest_dragon_soul";
                 }

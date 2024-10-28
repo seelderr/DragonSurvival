@@ -22,9 +22,9 @@ public class SmithingScreenMixin {
     @Unique private DragonEntity dragonSurvival$dragon;
     @Unique private Player dragonSurvival$player;
 
-    @Inject(method="subInit", at=@At("HEAD"))
-    private void addDragonToInit(CallbackInfo ci){
-        dragonSurvival$player = ((SmithingScreen)(Object)this).getMinecraft().player;
+    @Inject(method = "subInit", at = @At("HEAD"))
+    private void addDragonToInit(CallbackInfo ci) {
+        dragonSurvival$player = ((SmithingScreen) (Object) this).getMinecraft().player;
         if (DragonStateProvider.isDragon(dragonSurvival$player)) {
             DragonStateHandler handler = DragonStateProvider.getData(dragonSurvival$player);
             dragonSurvival$dragon = FakeClientPlayerUtils.getFakeDragon(1, handler);
@@ -35,8 +35,8 @@ public class SmithingScreenMixin {
         }
     }
 
-    @Inject(method="updateArmorStandPreview", at=@At("HEAD"))
-    private void dragonSurvival$updateFakeDragon(ItemStack pStack, CallbackInfo ci){
+    @Inject(method = "updateArmorStandPreview", at = @At("HEAD"))
+    private void dragonSurvival$updateFakeDragon(ItemStack pStack, CallbackInfo ci) {
         if (dragonSurvival$dragon != null) {
             for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
                 dragonSurvival$dragon.setItemSlot(equipmentslot, dragonSurvival$player.getItemBySlot(equipmentslot));
@@ -53,9 +53,9 @@ public class SmithingScreenMixin {
         }
     }
 
-    @ModifyArg(method="renderBg", index = 7, at=@At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
-    private LivingEntity dragonSurvival$renderBg(LivingEntity pEntity){
-        if (DragonStateProvider.isDragon(((SmithingScreen)(Object)this).getMinecraft().player)) {
+    @ModifyArg(method = "renderBg", index = 7, at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/inventory/InventoryScreen;renderEntityInInventory(Lnet/minecraft/client/gui/GuiGraphics;FFFLorg/joml/Vector3f;Lorg/joml/Quaternionf;Lorg/joml/Quaternionf;Lnet/minecraft/world/entity/LivingEntity;)V"))
+    private LivingEntity dragonSurvival$renderBg(LivingEntity pEntity) {
+        if (DragonStateProvider.isDragon(((SmithingScreen) (Object) this).getMinecraft().player)) {
             return dragonSurvival$dragon;
         }
         return pEntity;

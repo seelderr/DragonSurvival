@@ -1,8 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import java.util.function.Predicate;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.FollowMobGoal;
+
+import java.util.function.Predicate;
 
 public class FollowSpecificMobGoal extends FollowMobGoal {
     /**

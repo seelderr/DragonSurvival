@@ -4,8 +4,12 @@
     "icon": {
       "id": "dragonsurvival:star_heart"
     },
-    "title": { "translate": "ds.advancements.use_star_heart.title" },
-    "description": { "translate": "ds.advancements.use_star_heart.description" },
+    "title": {
+      "translate": "ds.advancements.use_star_heart.title"
+    },
+    "description": {
+      "translate": "ds.advancements.use_star_heart.description"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "frame": "goal"

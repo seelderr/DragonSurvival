@@ -10,149 +10,151 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.ArrayList;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 
-public abstract class ActiveDragonAbility extends DragonAbility{
-	private int currentCooldown;
+import java.util.ArrayList;
 
-	public abstract int getManaCost();
+public abstract class ActiveDragonAbility extends DragonAbility {
+    private int currentCooldown;
 
-	public void startCooldown(){
-		currentCooldown = getSkillCooldown();
-	}
+    public abstract int getManaCost();
 
-	@Override
-	public CompoundTag saveNBT(){
-		return super.saveNBT(); // Client is the only tracker of cooldown state and doesn't need to overwrite its own cooldowns
-	}
+    public void startCooldown() {
+        currentCooldown = getSkillCooldown();
+    }
 
-	@Override
-	public void loadNBT(CompoundTag nbt){
-		super.loadNBT(nbt);
-		//currentCooldown = nbt.getInt("cooldown");
-	}
+    @Override
+    public CompoundTag saveNBT() {
+        return super.saveNBT(); // Client is the only tracker of cooldown state and doesn't need to overwrite its own cooldowns
+    }
 
-	public abstract Integer[] getRequiredLevels();
-	public abstract int getSkillCooldown();
+    @Override
+    public void loadNBT(CompoundTag nbt) {
+        super.loadNBT(nbt);
+        //currentCooldown = nbt.getInt("cooldown");
+    }
 
-	public int getNextRequiredLevel(){
-		if(getLevel() <= getMaxLevel())
-			if(getRequiredLevels().length > getLevel() && getLevel() > 0)
-				return getRequiredLevels()[getLevel()];
+    public abstract Integer[] getRequiredLevels();
 
-		return 0;
-	}
+    public abstract int getSkillCooldown();
 
-	@Override
-	public int getLevel(){
-		if(isDisabled())
-			return 0;
+    public int getNextRequiredLevel() {
+        if (getLevel() <= getMaxLevel())
+            if (getRequiredLevels().length > getLevel() && getLevel() > 0)
+                return getRequiredLevels()[getLevel()];
 
-		if(getRequiredLevels() != null && getPlayer() != null){
-			int level = 0;
+        return 0;
+    }
 
-			for(int req : getRequiredLevels())
-				if(getPlayer().experienceLevel >= req || ServerConfig.noEXPRequirements)
-					level++;
+    @Override
+    public int getLevel() {
+        if (isDisabled())
+            return 0;
 
-			return level;
-		}
-		return super.getLevel();
-	}
+        if (getRequiredLevels() != null && getPlayer() != null) {
+            int level = 0;
 
-	public int getCurrentRequiredLevel(){
-		if(getRequiredLevels().length >= getLevel() && getLevel() > 0)
-			return getRequiredLevels()[getLevel() - 1];
+            for (int req : getRequiredLevels())
+                if (getPlayer().experienceLevel >= req || ServerConfig.noEXPRequirements)
+                    level++;
 
-		return 0;
-	}
+            return level;
+        }
+        return super.getLevel();
+    }
 
-	public int getLevelCost(){
-		return 1 + (int)(0.75 * getLevel());
-	}
+    public int getCurrentRequiredLevel() {
+        if (getRequiredLevels().length >= getLevel() && getLevel() > 0)
+            return getRequiredLevels()[getLevel() - 1];
 
-	public boolean canCastSkill(Player player){
-		if(player.isCreative())
-			return true;
+        return 0;
+    }
 
-		DragonStateHandler handler = DragonStateProvider.getData(player);
+    public int getLevelCost() {
+        return 1 + (int) (0.75 * getLevel());
+    }
 
-		if(hasCastDisablingEffect(player)){
-			return false;
-		}
+    public boolean canCastSkill(Player player) {
+        if (player.isCreative())
+            return true;
 
-		if(!canConsumeMana(player)){
-			MagicHUD.castingError(Component.translatable("ds.skill_mana_check_failure"));
-			return false;
-		}
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
-		if(getCurrentCooldown() != 0){
-			MagicHUD.castingError(Component.translatable("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
-			return false;
-		}
+        if (hasCastDisablingEffect(player)) {
+            return false;
+        }
 
-		if(requiresStationaryCasting() || ServerFlightHandler.isGliding(player)){
-			if(handler.isWingsSpread() && player.isFallFlying() || !player.onGround() && player.fallDistance > 0.15F){
-				MagicHUD.castingError(Component.translatable("ds.skill.nofly"));
-				return false;
-			}
-		}
+        if (!canConsumeMana(player)) {
+            MagicHUD.castingError(Component.translatable("ds.skill_mana_check_failure"));
+            return false;
+        }
 
-		return !player.isSpectator();
-	}
+        if (getCurrentCooldown() != 0) {
+            MagicHUD.castingError(Component.translatable("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
+            return false;
+        }
 
-	public boolean hasCastDisablingEffect(Player player) {
-		return player.hasEffect(DSEffects.MAGIC_DISABLED);
-	}
+        if (requiresStationaryCasting() || ServerFlightHandler.isGliding(player)) {
+            if (handler.isWingsSpread() && player.isFallFlying() || !player.onGround() && player.fallDistance > 0.15F) {
+                MagicHUD.castingError(Component.translatable("ds.skill.nofly"));
+                return false;
+            }
+        }
 
-	public boolean canConsumeMana(Player player){
-		return ManaHandler.canConsumeMana(player, getManaCost());
-	}
+        return !player.isSpectator();
+    }
 
-	public void tickCooldown(){
-		if(getCurrentCooldown() > 0)
-			setCurrentCooldown(getCurrentCooldown()-1);
-		else if (getCurrentCooldown() < 0)
-			setCurrentCooldown(0);
-	}
+    public boolean hasCastDisablingEffect(Player player) {
+        return player.hasEffect(DSEffects.MAGIC_DISABLED);
+    }
 
-	public boolean requiresStationaryCasting(){
-		return true;
-	}
+    public boolean canConsumeMana(Player player) {
+        return ManaHandler.canConsumeMana(player, getManaCost());
+    }
 
-	public AbilityAnimation getStartingAnimation(){
-		return null;
-	}
+    public void tickCooldown() {
+        if (getCurrentCooldown() > 0)
+            setCurrentCooldown(getCurrentCooldown() - 1);
+        else if (getCurrentCooldown() < 0)
+            setCurrentCooldown(0);
+    }
 
-	public AbilityAnimation getLoopingAnimation(){
-		return null;
-	}
+    public boolean requiresStationaryCasting() {
+        return true;
+    }
 
-	public AbilityAnimation getStoppingAnimation(){
-		return null;
-	}
+    public AbilityAnimation getStartingAnimation() {
+        return null;
+    }
 
-	@Override
-	public ArrayList<Component> getInfo(){
-		ArrayList<Component> components = super.getInfo();
+    public AbilityAnimation getLoopingAnimation() {
+        return null;
+    }
 
-		components.add(Component.translatable("ds.skill.mana_cost", getManaCost()));
+    public AbilityAnimation getStoppingAnimation() {
+        return null;
+    }
 
-		if(getSkillCooldown() > 0)
-			components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
+    @Override
+    public ArrayList<Component> getInfo() {
+        ArrayList<Component> components = super.getInfo();
 
-		return components;
-	}
+        components.add(Component.translatable("ds.skill.mana_cost", getManaCost()));
 
-	public void setCurrentCooldown(int currentCooldown) {
-		this.currentCooldown = currentCooldown;
-	}
+        if (getSkillCooldown() > 0)
+            components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
 
-	public int getCurrentCooldown() {
-		return currentCooldown;
-	}
+        return components;
+    }
+
+    public void setCurrentCooldown(int currentCooldown) {
+        this.currentCooldown = currentCooldown;
+    }
+
+    public int getCurrentCooldown() {
+        return currentCooldown;
+    }
 }

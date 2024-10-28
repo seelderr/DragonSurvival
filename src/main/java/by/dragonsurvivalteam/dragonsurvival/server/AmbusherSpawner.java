@@ -72,7 +72,7 @@ public class AmbusherSpawner implements CustomSpawner {
                                     return 0;
                                 } else {
                                     int j1 = 0;
-                                    int k1 = (int)Math.ceil((double)pLevel.getCurrentDifficultyAt(blockpos$mutableblockpos).getEffectiveDifficulty()) + 1;
+                                    int k1 = (int) Math.ceil(pLevel.getCurrentDifficultyAt(blockpos$mutableblockpos).getEffectiveDifficulty()) + 1;
 
                                     for (int l1 = 0; l1 < k1; l1++) {
                                         j1++;
@@ -102,7 +102,7 @@ public class AmbusherSpawner implements CustomSpawner {
     }
 
     private boolean spawnPatrolMember(ServerLevel pLevel, BlockPos pPos, RandomSource pRandom, boolean pLeader) {
-        if(!pLeader) {
+        if (!pLeader) {
             return false;
         }
 

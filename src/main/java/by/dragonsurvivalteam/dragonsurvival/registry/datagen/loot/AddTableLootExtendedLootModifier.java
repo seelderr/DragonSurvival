@@ -4,8 +4,6 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import java.util.HashSet;
-import java.util.List;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -15,6 +13,9 @@ import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
+
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A loot modifier that adds loot from a table to the current loot table if the current loot table is in a list of tables to apply to.
@@ -26,11 +27,11 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 public class AddTableLootExtendedLootModifier extends LootModifier {
 
     public static final MapCodec<AddTableLootExtendedLootModifier> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
-            IGlobalLootModifier.LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(glm -> glm.conditions),
-            ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("table").forGetter(AddTableLootExtendedLootModifier::table),
-            Codec.STRING.listOf().fieldOf("tables_to_apply").forGetter(AddTableLootExtendedLootModifier::tablesToApply),
-            Codec.BOOL.optionalFieldOf("blacklist", false).forGetter(AddTableLootExtendedLootModifier::blacklist))
-                    .apply(instance, AddTableLootExtendedLootModifier::new));
+                    IGlobalLootModifier.LOOT_CONDITIONS_CODEC.fieldOf("conditions").forGetter(glm -> glm.conditions),
+                    ResourceKey.codec(Registries.LOOT_TABLE).fieldOf("table").forGetter(AddTableLootExtendedLootModifier::table),
+                    Codec.STRING.listOf().fieldOf("tables_to_apply").forGetter(AddTableLootExtendedLootModifier::tablesToApply),
+                    Codec.BOOL.optionalFieldOf("blacklist", false).forGetter(AddTableLootExtendedLootModifier::blacklist))
+            .apply(instance, AddTableLootExtendedLootModifier::new));
 
     private final ResourceKey<LootTable> table;
     private final List<String> tablesToApply;
@@ -60,17 +61,17 @@ public class AddTableLootExtendedLootModifier extends LootModifier {
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         // Generate the resolved tables list if we haven't already
-        if(!hasResolvedTables) {
-            for(String table : this.tablesToApply) {
+        if (!hasResolvedTables) {
+            for (String table : this.tablesToApply) {
                 ResourceLocation parsedTable = ResourceLocation.tryParse(table);
-                if(parsedTable != null) {
+                if (parsedTable != null) {
                     resolvedTables.add(ResourceKey.create(Registries.LOOT_TABLE, parsedTable));
                 } else {
                     // Try regex if we don't have a valid key
                     context.getLevel().getServer().reloadableRegistries().get().registryOrThrow(Registries.LOOT_TABLE).registryKeySet().forEach(
                             key -> {
                                 String path = key.location().toString();
-                                if(path.matches(table) && !path.equals(this.table.location().toString())) {
+                                if (path.matches(table) && !path.equals(this.table.location().toString())) {
                                     resolvedTables.add(key);
                                 }
                             }
@@ -83,7 +84,7 @@ public class AddTableLootExtendedLootModifier extends LootModifier {
         ResourceKey<LootTable> queriedKey = ResourceKey.create(Registries.LOOT_TABLE, context.getQueriedLootTableId());
         boolean shouldApply = resolvedTables.contains(queriedKey);
 
-        if(shouldApply == blacklist) {
+        if (shouldApply == blacklist) {
             return generatedLoot;
         }
 

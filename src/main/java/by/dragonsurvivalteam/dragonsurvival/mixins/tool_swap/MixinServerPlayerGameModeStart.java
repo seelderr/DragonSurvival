@@ -20,5 +20,7 @@ public class MixinServerPlayerGameModeStart {
         ToolUtils.swapStart(player, player.level().getBlockState(blockPosition));
     }
 
-    @Shadow @Final protected ServerPlayer player;
+    @Shadow
+    @Final
+    protected ServerPlayer player;
 }

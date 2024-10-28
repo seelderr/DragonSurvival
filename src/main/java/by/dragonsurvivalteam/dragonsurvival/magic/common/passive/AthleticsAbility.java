@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonT
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.ArrayList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -19,25 +18,27 @@ import net.minecraft.world.level.block.Block;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.util.ArrayList;
+
 public abstract class AthleticsAbility extends TickablePassiveAbility {
-	@Override
-	public Component getDescription(){
-		return Component.translatable("ds.skill.description." + getName(), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
-	}
+    @Override
+    public Component getDescription() {
+        return Component.translatable("ds.skill.description." + getName(), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
+    }
 
-	public int getDuration(){
-		return getLevel();
-	}
+    public int getDuration() {
+        return getLevel();
+    }
 
-	@Override
-	public int getMaxLevel(){
-		return 5;
-	}
+    @Override
+    public int getMaxLevel() {
+        return 5;
+    }
 
-	@Override
-	public int getMinLevel(){
-		return 0;
-	}
+    @Override
+    public int getMinLevel() {
+        return 0;
+    }
 
 	@Override
 	public void onTick(Player player) {
@@ -63,11 +64,11 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 		}
 	}
 
-	@Override
-	@OnlyIn( Dist.CLIENT )
-	public ArrayList<Component> getLevelUpInfo(){
-		ArrayList<Component> list = super.getLevelUpInfo();
-		list.add(Component.translatable("ds.skill.duration.seconds", "+1"));
-		return list;
-	}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public ArrayList<Component> getLevelUpInfo() {
+        ArrayList<Component> list = super.getLevelUpInfo();
+        list.add(Component.translatable("ds.skill.duration.seconds", "+1"));
+        return list;
+    }
 }

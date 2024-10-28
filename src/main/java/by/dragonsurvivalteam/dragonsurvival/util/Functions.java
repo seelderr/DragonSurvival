@@ -84,12 +84,13 @@ public class Functions {
 
     /**
      * Instead of strictly limiting the angle, this enforces a soft spring-like limit.
-     * @see Functions#limitAngleDelta(double, double, double)
+     *
      * @param value     Input angle
      * @param center    Center angle of the range arc
      * @param halfRange Half of the range arc. <= 0 always returns center, >= 180 always returns value (wrapped).
      * @param pullCoeff Pull coefficient. Clamped to 0..1 (no limit..hard limit)
      * @return Value, limited to be within +-halfRange of center.
+     * @see Functions#limitAngleDelta(double, double, double)
      */
     public static double limitAngleDeltaSoft(double value, double center, double halfRange, double pullCoeff) {
         pullCoeff = Math.clamp(pullCoeff, 0, 1);

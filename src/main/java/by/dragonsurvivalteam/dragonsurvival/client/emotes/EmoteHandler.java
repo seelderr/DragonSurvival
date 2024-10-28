@@ -1,13 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.emotes;
 
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.EMOTE_NO_MOVE;
-import static net.minecraft.client.CameraType.THIRD_PERSON_BACK;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
-import java.util.Arrays;
-import java.util.Objects;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +19,12 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.Arrays;
+import java.util.Objects;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.EMOTE_NO_MOVE;
+import static net.minecraft.client.CameraType.THIRD_PERSON_BACK;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class EmoteHandler {

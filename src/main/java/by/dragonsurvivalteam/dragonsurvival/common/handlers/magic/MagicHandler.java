@@ -23,8 +23,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
@@ -47,6 +45,9 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.Objects;
+import java.util.Optional;
 
 @SuppressWarnings("unused")
 @EventBusSubscriber
@@ -92,73 +93,73 @@ public class MagicHandler {
 		if(event.getEntity() instanceof LivingEntity entity) {
 			EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
 
-			if(entity.hasEffect(DSEffects.BURN)){
-				if(entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()){
-					entity.removeEffect(DSEffects.BURN);
-				}
-			}
+            if (entity.hasEffect(DSEffects.BURN)) {
+                if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
+                    entity.removeEffect(DSEffects.BURN);
+                }
+            }
 
-			if(entity.tickCount % 20 == 0){
-				MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
+            if (entity.tickCount % 20 == 0) {
+                MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
 
-				if (drainEffect != null) {
-					if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
-						Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
+                if (drainEffect != null) {
+                    if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
+                        Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
 
-						if (player != null) {
-							TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN), player), drainEffect.getAmplifier() + 1), entity);
-						} else {
-							entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
-						}
-					}
-				}
+                        if (player != null) {
+                            TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.FOREST_DRAGON_DRAIN), player), drainEffect.getAmplifier() + 1), entity);
+                        } else {
+                            entity.hurt(entity.damageSources().magic(), drainEffect.getAmplifier() + 1);
+                        }
+                    }
+                }
 
-				MobEffectInstance chargedEffect = entity.getEffect(DSEffects.CHARGED);
+                MobEffectInstance chargedEffect = entity.getEffect(DSEffects.CHARGED);
 
-				if (chargedEffect != null) {
-					Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
-					if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
-						StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
-					}
-				}
+                if (chargedEffect != null) {
+                    Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
+                    if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
+                        StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
+                    }
+                }
 
-				MobEffectInstance burnEffect = entity.getEffect(DSEffects.BURN);
+                MobEffectInstance burnEffect = entity.getEffect(DSEffects.BURN);
 
-				if (burnEffect != null) {
-					if (!entity.fireImmune()) {
-						if (data.lastPos != null) {
-							double distance = entity.distanceToSqr(data.lastPos);
-							float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
+                if (burnEffect != null) {
+                    if (!entity.fireImmune()) {
+                        if (data.lastPos != null) {
+                            double distance = entity.distanceToSqr(data.lastPos);
+                            float damage = (burnEffect.getAmplifier() + 1) * Mth.clamp((float) distance, 0, 10);
 
-							if (damage > 0) {
-								if (!entity.isOnFire()) {
-									// Short enough fire duration to not cause fire damage but still drop cooked items
-									entity.setRemainingFireTicks(1);
-								}
-								Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
-								if (player != null) {
-									TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CAVE_DRAGON_BURN), player), damage), entity);
-								} else {
-									entity.hurt(entity.damageSources().onFire(), damage);
-								}
-							}
-						}
-					}
-				}
+                            if (damage > 0) {
+                                if (!entity.isOnFire()) {
+                                    // Short enough fire duration to not cause fire damage but still drop cooked items
+                                    entity.setRemainingFireTicks(1);
+                                }
+                                Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
+                                if (player != null) {
+                                    TargetingFunctions.attackTargets(player, ent -> ent.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CAVE_DRAGON_BURN), player), damage), entity);
+                                } else {
+                                    entity.hurt(entity.damageSources().onFire(), damage);
+                                }
+                            }
+                        }
+                    }
+                }
 
-				data.lastPos = entity.position();
-			}
-		}
-	}
+                data.lastPos = entity.position();
+            }
+        }
+    }
 
-	@SubscribeEvent
-	public static void playerStruckByLightning(EntityStruckByLightningEvent event){
-		if(event.getEntity() instanceof Player player){
-			
-			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
-					return;
-				}
+    @SubscribeEvent
+    public static void playerStruckByLightning(EntityStruckByLightningEvent event) {
+        if (event.getEntity() instanceof Player player) {
+
+            DragonStateProvider.getOptional(player).ifPresent(cap -> {
+                if (!cap.isDragon()) {
+                    return;
+                }
 
 				if(DragonUtils.isDragonType(cap, DragonTypes.SEA)){
 					event.setCanceled(true);
@@ -172,32 +173,32 @@ public class MagicHandler {
 			return instance;
 		}
 
-		int amplifier = instance.getAmplifier();
+        int amplifier = instance.getAmplifier();
 
-		if (instance.getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
-			if (applier instanceof LivingEntity livingApplier && !instance.getEffect().is(DSEffectTags.OVERWHELMING_MIGHT_BLACKLIST)) {
-				amplifier += EnchantmentUtils.getLevel(livingApplier, DSEnchantments.OVERWHELMING_MIGHT);
-			}
+        if (instance.getEffect().value().getCategory().equals(MobEffectCategory.HARMFUL)) {
+            if (applier instanceof LivingEntity livingApplier && !instance.getEffect().is(DSEffectTags.OVERWHELMING_MIGHT_BLACKLIST)) {
+                amplifier += EnchantmentUtils.getLevel(livingApplier, DSEnchantments.OVERWHELMING_MIGHT);
+            }
 
-			if (!instance.getEffect().is(DSEffectTags.UNBREAKABLE_SPIRIT_BLACKLIST)) {
-				amplifier -= EnchantmentUtils.getLevel(affected, DSEnchantments.UNBREAKABLE_SPIRIT);
-			}
+            if (!instance.getEffect().is(DSEffectTags.UNBREAKABLE_SPIRIT_BLACKLIST)) {
+                amplifier -= EnchantmentUtils.getLevel(affected, DSEnchantments.UNBREAKABLE_SPIRIT);
+            }
 
-			amplifier = Mth.clamp(amplifier, 0, 255);
+            amplifier = Mth.clamp(amplifier, 0, 255);
 
-			if (amplifier != instance.getAmplifier()) {
-				MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier);
+            if (amplifier != instance.getAmplifier()) {
+                MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier);
 
-				if (affected.hasEffect(instance.getEffect())) {
-					affected.removeEffect(instance.getEffect());
-				}
+                if (affected.hasEffect(instance.getEffect())) {
+                    affected.removeEffect(instance.getEffect());
+                }
 
-				return modifiedInstance;
-			}
-		}
+                return modifiedInstance;
+            }
+        }
 
-		return instance;
-	}
+        return instance;
+    }
 
 	@SubscribeEvent
 	public static void livingHurt(final LivingIncomingDamageEvent event) {
@@ -227,20 +228,20 @@ public class MagicHandler {
 			return;
 		}
 
-		if (event.getSource().getEntity() instanceof Player player) {
-			DragonStateProvider.getOptional(player).ifPresent(handler -> {
-				if (!handler.isDragon()) {
-					return;
-				}
+        if (event.getSource().getEntity() instanceof Player player) {
+            DragonStateProvider.getOptional(player).ifPresent(handler -> {
+                if (!handler.isDragon()) {
+                    return;
+                }
 
 				if (DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
 					SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
 					boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
 
-					if (hit) {
-						event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
-						double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
-						double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
+                    if (hit) {
+                        event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
+                        double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
+                        double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 
 						if (player.level() instanceof ServerLevel serverLevel) {
 							serverLevel.sendParticles(new SeaSweepParticle.Data(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
@@ -250,39 +251,39 @@ public class MagicHandler {
 					BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 					boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
-					if (hit) {
-						event.getEntity().getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player.getId();
+                    if (hit) {
+                        event.getEntity().getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {
-							event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));
-						}
-					}
-				}
-			});
-		}
-	}
+                            event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));
+                        }
+                    }
+                }
+            });
+        }
+    }
 
-	@SubscribeEvent
-	public static void experienceDrop(LivingExperienceDropEvent event){
-		Player player = event.getAttackingPlayer();
+    @SubscribeEvent
+    public static void experienceDrop(LivingExperienceDropEvent event) {
+        Player player = event.getAttackingPlayer();
 
-		if(player != null){
-			DragonStateProvider.getOptional(player).ifPresent(cap -> {
-				if(!cap.isDragon()){
-					return;
-				}
-				
-				double expMult = 1.0;
-				AbstractDragonBody body = DragonUtils.getDragonBody(player);
-				if (body != null) {
-					expMult = body.getExpMult();
-				}
+        if (player != null) {
+            DragonStateProvider.getOptional(player).ifPresent(cap -> {
+                if (!cap.isDragon()) {
+                    return;
+                }
 
-				if(player.hasEffect(DSEffects.REVEALING_THE_SOUL)){
-					int extra = (int)Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
-					event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
-				}
-			});
-		}
-	}
+                double expMult = 1.0;
+                AbstractDragonBody body = DragonUtils.getDragonBody(player);
+                if (body != null) {
+                    expMult = body.getExpMult();
+                }
+
+                if (player.hasEffect(DSEffects.REVEALING_THE_SOUL)) {
+                    int extra = (int) Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
+                    event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
+                }
+            });
+        }
+    }
 }

@@ -19,7 +19,9 @@ import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
 import net.minecraft.world.entity.ai.goal.RangedAttackGoal;
 import net.minecraft.world.entity.monster.RangedAttackMob;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
@@ -50,7 +52,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     @Override
     protected void registerGoals() {
         super.registerGoals();
-        this.goalSelector.addGoal(3, new RangedAttackGoal(this, 1, ServerConfig.ambusherAttackInterval, 5.f){
+        this.goalSelector.addGoal(3, new RangedAttackGoal(this, 1, ServerConfig.ambusherAttackInterval, 5.f) {
             @Override
             public boolean canUse() {
                 // Don't go after the player whilst calling reinforcements
@@ -64,52 +66,52 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     public void tick() {
         super.tick();
 
-        if(!this.level().isClientSide()) {
-            if(isAggro() && !hasReleasedGriffin()) {
+        if (!this.level().isClientSide()) {
+            if (isAggro() && !hasReleasedGriffin()) {
                 setHasReleasedGriffin(true);
                 summonGriffin();
-                if(this.getTarget().hasEffect(DSEffects.HUNTER_OMEN)) {
+                if (this.getTarget().hasEffect(DSEffects.HUNTER_OMEN)) {
                     beginSummonReinforcements();
                 } else {
                     beginGriffinReleaseReloadTimer();
                 }
             }
 
-            if(getRangedAttackTimer() == CROSSBOW_ATTACK_START_TIME) {
+            if (getRangedAttackTimer() == CROSSBOW_ATTACK_START_TIME) {
                 fireArrow();
             }
-            if(getRangedAttackTimer() == CROSSBOW_RELOAD_CHARGE_SOUND_TIME) {
+            if (getRangedAttackTimer() == CROSSBOW_RELOAD_CHARGE_SOUND_TIME) {
                 this.playSound(SoundEvents.CROSSBOW_LOADING_MIDDLE.value(), 1.0F, 1.0F);
             }
 
-            if(getRangedAttackTimer() == CROSSBOW_RELOAD_ARROW_PLACE_SOUND_TIME) {
+            if (getRangedAttackTimer() == CROSSBOW_RELOAD_ARROW_PLACE_SOUND_TIME) {
                 this.playSound(SoundEvents.CROSSBOW_LOADING_END.value(), 1.0F, 1.0F);
             }
 
-            if(getRangedAttackTimer() < ServerConfig.ambusherAttackInterval && getRangedAttackTimer() >= 0){
+            if (getRangedAttackTimer() < ServerConfig.ambusherAttackInterval && getRangedAttackTimer() >= 0) {
                 setRangedAttackTimer(getRangedAttackTimer() + 1);
             } else {
                 setRangedAttackTimer(-1);
             }
 
-            if(getAmbushHornTimer() == AMBUSH_HORN_SOUND_START_TIME) {
+            if (getAmbushHornTimer() == AMBUSH_HORN_SOUND_START_TIME) {
                 this.playSound(SoundEvents.GOAT_HORN_SOUND_VARIANTS.getFirst().value(), 1.0F, 1.0F);
             }
 
-            if(getAmbushHornTimer() == AMBUSH_ARROW_PLACE_SOUND_TIME) {
+            if (getAmbushHornTimer() == AMBUSH_ARROW_PLACE_SOUND_TIME) {
                 this.playSound(SoundEvents.CROSSBOW_LOADING_END.value(), 1.0F, 1.0F);
             }
 
-            if(getAmbushHornTimer() < AMBUSH_ANIM_DURATION && getAmbushHornTimer() >= 0) {
+            if (getAmbushHornTimer() < AMBUSH_ANIM_DURATION && getAmbushHornTimer() >= 0) {
                 setAmbushHornTimer(getAmbushHornTimer() + 1);
             } else {
-                if(hasCalledReinforcements() && !hasSummonedReinforcements()) {
+                if (hasCalledReinforcements() && !hasSummonedReinforcements()) {
                     summonReinforcements();
                 }
                 setAmbushHornTimer(-1);
             }
 
-            if(getGriffinReleaseReloadTimer() < GRIFFIN_RELEASE_ANIM_DURATION && getGriffinReleaseReloadTimer() >= 0) {
+            if (getGriffinReleaseReloadTimer() < GRIFFIN_RELEASE_ANIM_DURATION && getGriffinReleaseReloadTimer() >= 0) {
                 setGriffinReleaseReloadTimer(getGriffinReleaseReloadTimer() + 1);
             } else {
                 setGriffinReleaseReloadTimer(-1);
@@ -117,7 +119,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
 
             setNearbyDragonPlayer(DragonUtils.isNearbyDragonPlayerToEntity(8.0, this.level(), this));
         } else {
-            if(isFirstClientTick) {
+            if (isFirstClientTick) {
                 // Sync up with the server's data to prevent animations from playing that shouldn't when the entity is loaded
                 hasPlayedReleaseAnimation = hasReleasedGriffin();
                 hasPlayedReinforcementsAnimation = hasCalledReinforcements();
@@ -128,14 +130,14 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
 
     @Override
     public void performRangedAttack(@NotNull LivingEntity pTarget, float pVelocity) {
-        if(getGriffinReleaseReloadTimer() == -1 && getAmbushHornTimer() == -1) {
+        if (getGriffinReleaseReloadTimer() == -1 && getAmbushHornTimer() == -1) {
             setRangedAttackTimer(0);
             nextArrowVelocity = pVelocity;
         }
     }
 
     private void fireArrow() {
-        CrossbowItem tempCrossbowitem = (CrossbowItem)Items.CROSSBOW;
+        CrossbowItem tempCrossbowitem = (CrossbowItem) Items.CROSSBOW;
         ItemStack tempCrossbowItemStack = new ItemStack(tempCrossbowitem, 1);
         CrossbowItem.tryLoadProjectiles(this, tempCrossbowItemStack);
         tempCrossbowitem.setDamage(tempCrossbowItemStack, ServerConfig.ambusherDamage);
@@ -157,13 +159,13 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     private void summonReinforcements() {
-        for(int i = 0; i < ServerConfig.ambusherSpearmanReinforcementCount; i++) {
+        for (int i = 0; i < ServerConfig.ambusherSpearmanReinforcementCount; i++) {
             Mob mob = DSEntities.HUNTER_SPEARMAN.get().create(this.level());
             SpawningUtils.spawn(mob, this.position(), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
             mob.setTarget(this.getTarget());
         }
 
-        for(int i = 0; i < ServerConfig.ambusherHoundReinforcementCount; i++) {
+        for (int i = 0; i < ServerConfig.ambusherHoundReinforcementCount; i++) {
             Mob mob = DSEntities.HUNTER_HOUND.get().create(this.level());
             SpawningUtils.spawn(mob, this.position(), this.level(), MobSpawnType.MOB_SUMMONED, 20, 3.0f, true);
             mob.setTarget(this.getTarget());
@@ -195,7 +197,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+    public void addAdditionalSaveData(@NotNull CompoundTag compoundNBT) {
         super.addAdditionalSaveData(compoundNBT);
         compoundNBT.putBoolean("HasReleasedGriffin", hasReleasedGriffin());
         compoundNBT.putBoolean("HasCalledReinforcements", hasCalledReinforcements());
@@ -203,7 +205,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compoundNBT){
+    public void readAdditionalSaveData(@NotNull CompoundTag compoundNBT) {
         super.readAdditionalSaveData(compoundNBT);
         setHasReleasedGriffin(compoundNBT.getBoolean("HasReleasedGriffin"));
         setHasCalledReinforcements(compoundNBT.getBoolean("HasCalledReinforcements"));
@@ -288,8 +290,8 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     public PlayState fullPredicate(final AnimationState<Hunter> state) {
         double movement = AnimationUtils.getMovementSpeed(this);
         boolean isCurrentlyIdlingRandomly = false;
-        if(hasReleasedGriffin() && !hasPlayedReleaseAnimation && !hasPlayedReinforcementsAnimation) {
-            if(hasCalledReinforcements()) {
+        if (hasReleasedGriffin() && !hasPlayedReleaseAnimation && !hasPlayedReinforcementsAnimation) {
+            if (hasCalledReinforcements()) {
                 hasPlayedReinforcementsAnimation = true;
                 ambusherTimer.putAnimation(AMBUSH_AND_GRIFFIN_RELEASE, (double) AMBUSH_ANIM_DURATION);
                 state.setAndContinue(AMBUSH_AND_GRIFFIN_RELEASE);
@@ -302,8 +304,8 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             // Let release animation conclude
             return PlayState.CONTINUE;
         } else {
-            if(isInWater()) {
-                if(hasReleasedGriffin()) {
+            if (isInWater()) {
+                if (hasReleasedGriffin()) {
                     state.setAndContinue(SWIM_NO_GRIFFIN);
                 } else {
                     state.setAndContinue(SWIM);
@@ -315,16 +317,16 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
                     state.setAndContinue(RUN);
                 }
             } else if (movement > getWalkThreshold()) {
-                if(hasReleasedGriffin()) {
+                if (hasReleasedGriffin()) {
                     state.setAndContinue(WALK_NO_GRIFFIN);
                 } else {
                     state.setAndContinue(WALK);
                 }
             } else {
-                if(hasReleasedGriffin()) {
+                if (hasReleasedGriffin()) {
                     state.setAndContinue(IDLE_NO_GRIFFIN);
                 } else {
-                    if(hasNearbyDragonPlayer()) {
+                    if (hasNearbyDragonPlayer()) {
                         state.setAndContinue(IDLE_AGGRESSIVE);
                     } else {
                         isCurrentlyIdlingRandomly = true;
@@ -334,7 +336,7 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
             }
         }
 
-        if(!isCurrentlyIdlingRandomly && isRandomIdleAnimSet) {
+        if (!isCurrentlyIdlingRandomly && isRandomIdleAnimSet) {
             isRandomIdleAnimSet = false;
         }
 
@@ -344,10 +346,10 @@ public class AmbusherEntity extends Hunter implements RangedAttackMob {
     public PlayState armsPredicate(final AnimationState<Hunter> state) {
         if (hasReleasedGriffin() && getGriffinReleaseReloadTimer() == -1 && getAmbushHornTimer() == -1) {
             // We check at 1 because the first client tick already sees the value incremented by 1 (we start at 0)
-            if(getRangedAttackTimer() == 1) {
+            if (getRangedAttackTimer() == 1) {
                 ambusherTimer.putAnimation(CROSSBOW_SHOOT_AND_RELOAD_BLEND, (double) CROSSBOW_SHOOT_AND_RELOAD_TIME);
                 return state.setAndContinue(CROSSBOW_SHOOT_AND_RELOAD_BLEND);
-            } else if(ambusherTimer.getDuration(CROSSBOW_SHOOT_AND_RELOAD_BLEND) > 0) {
+            } else if (ambusherTimer.getDuration(CROSSBOW_SHOOT_AND_RELOAD_BLEND) > 0) {
                 // Always let the reload animation conclude
                 return PlayState.CONTINUE;
             } else {

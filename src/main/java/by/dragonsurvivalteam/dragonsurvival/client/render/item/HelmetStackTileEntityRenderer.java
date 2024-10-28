@@ -11,19 +11,19 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
 
-public class HelmetStackTileEntityRenderer extends BlockEntityWithoutLevelRenderer{
-	public HelmetStackTileEntityRenderer(){
-		super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
-	}
+public class HelmetStackTileEntityRenderer extends BlockEntityWithoutLevelRenderer {
+    public HelmetStackTileEntityRenderer() {
+        super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+    }
 
-	@Override
-	public void renderByItem(ItemStack pStack, ItemDisplayContext displayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay){
-		if(displayContext == ItemDisplayContext.GUI){
-			pPoseStack.translate(0.5, -0.15, 0);
-			pPoseStack.mulPose(Axis.XP.rotationDegrees(45));
-			pPoseStack.mulPose(Axis.YP.rotationDegrees(135));
-		}
-		BlockItem blockItem = (BlockItem)pStack.getItem();
-		HelmetEntityRenderer.renderHelmet(null, 0, blockItem.getBlock(), 0, pPoseStack, pBuffer, pPackedLight);
-	}
+    @Override
+    public void renderByItem(ItemStack pStack, ItemDisplayContext displayContext, PoseStack pPoseStack, MultiBufferSource pBuffer, int pPackedLight, int pPackedOverlay) {
+        if (displayContext == ItemDisplayContext.GUI) {
+            pPoseStack.translate(0.5, -0.15, 0);
+            pPoseStack.mulPose(Axis.XP.rotationDegrees(45));
+            pPoseStack.mulPose(Axis.YP.rotationDegrees(135));
+        }
+        BlockItem blockItem = (BlockItem) pStack.getItem();
+        HelmetEntityRenderer.renderHelmet(null, 0, blockItem.getBlock(), 0, pPoseStack, pBuffer, pPackedLight);
+    }
 }

@@ -14,64 +14,78 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Objects;
+
 public abstract class DragonAbility {
-	protected static NumberFormat nf = NumberFormat.getInstance();
+    protected static NumberFormat nf = NumberFormat.getInstance();
 
-	public Player player;
-	public int level;
+    public Player player;
+    public int level;
 
-	static {
-		nf.setMaximumFractionDigits(1);
-	}
+    static {
+        nf.setMaximumFractionDigits(1);
+    }
 
-	public void onKeyPressed(Player player, Runnable onFinish, long castStartTime, long clientTime){}
-	public void onKeyReleased(Player player){}
+    public void onKeyPressed(Player player, Runnable onFinish, long castStartTime, long clientTime) {
+    }
 
-	public Player getPlayer(){
-		return player;
-	}
+    public void onKeyReleased(Player player) {
+    }
 
-	@OnlyIn( Dist.CLIENT )
-	public Component getTitle(){
-		return Component.translatable("ds.skill." + getName());
-	}
-	@OnlyIn( Dist.CLIENT )
-	public Component getDescription(){
-		return Component.translatable("ds.skill.description." + getName());
-	}
+    public Player getPlayer() {
+        return player;
+    }
 
-	public abstract String getName();
-	public abstract AbstractDragonType getDragonType();
+    @OnlyIn(Dist.CLIENT)
+    public Component getTitle() {
+        return Component.translatable("ds.skill." + getName());
+    }
 
-	@OnlyIn(Dist.CLIENT)
-	public abstract ResourceLocation[] getSkillTextures();
+    @OnlyIn(Dist.CLIENT)
+    public Component getDescription() {
+        return Component.translatable("ds.skill.description." + getName());
+    }
 
-	public ResourceLocation getIcon(){
-		return getSkillTextures()[Mth.clamp(getLevel(), 0, getSkillTextures().length-1)];
-	}
+    public abstract String getName();
 
-	public int getSortOrder(){
-		return 0;
-	}
+    public abstract AbstractDragonType getDragonType();
 
-	@OnlyIn( Dist.CLIENT )
-	public ArrayList<Component> getInfo(){ return new ArrayList<>(); }
+    @OnlyIn(Dist.CLIENT)
+    public abstract ResourceLocation[] getSkillTextures();
 
-	@OnlyIn( Dist.CLIENT )
-	public ArrayList<Component> getLevelUpInfo(){ return new ArrayList<>(); }
+    public ResourceLocation getIcon() {
+        return getSkillTextures()[Mth.clamp(getLevel(), 0, getSkillTextures().length - 1)];
+    }
 
-	public CompoundTag saveNBT(){
-		CompoundTag nbt = new CompoundTag();
-		nbt.putInt("level", level);
-		return nbt;
-	}
+    public int getSortOrder() {
+        return 0;
+    }
 
-	public void loadNBT(CompoundTag nbt){
-		level = nbt.getInt("level");
-	}
+    @OnlyIn(Dist.CLIENT)
+    public ArrayList<Component> getInfo() {
+        return new ArrayList<>();
+    }
 
-	public abstract int getMaxLevel();
-	public abstract int getMinLevel();
+    @OnlyIn(Dist.CLIENT)
+    public ArrayList<Component> getLevelUpInfo() {
+        return new ArrayList<>();
+    }
+
+    public CompoundTag saveNBT() {
+        CompoundTag nbt = new CompoundTag();
+        nbt.putInt("level", level);
+        return nbt;
+    }
+
+    public void loadNBT(CompoundTag nbt) {
+        level = nbt.getInt("level");
+    }
+
+    public abstract int getMaxLevel();
+
+    public abstract int getMinLevel();
 
 	public boolean isDisabled(){
 		if(!ServerConfig.dragonAbilities){
@@ -86,14 +100,14 @@ public abstract class DragonAbility {
 		return DragonUtils.isDragonType(getDragonType(), DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
 	}
 
-	public int getLevel(){
-		if(isDisabled())
-			return 0;
+    public int getLevel() {
+        if (isDisabled())
+            return 0;
 
-		return level;
-	}
+        return level;
+    }
 
-	public void setLevel(int level){
-		this.level = Mth.clamp(level, getMinLevel(), getMaxLevel());
-	}
+    public void setLevel(int level) {
+        this.level = Mth.clamp(level, getMinLevel(), getMaxLevel());
+    }
 }

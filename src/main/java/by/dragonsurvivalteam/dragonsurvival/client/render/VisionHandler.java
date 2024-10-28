@@ -12,7 +12,9 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
-/** Handles water and lava vision effects */
+/**
+ * Handles water and lava vision effects
+ */
 @EventBusSubscriber(Dist.CLIENT)
 public class VisionHandler {
     private static boolean hadLavaVision;
@@ -27,7 +29,9 @@ public class VisionHandler {
         }
     }
 
-    /** The alpha change in {@link LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered */
+    /**
+     * The alpha change in {@link LiquidBlockRendererMixin} requires the drawn blocks to be uncached and be re-rendered
+     */
     @SubscribeEvent
     public static void onRenderWorldLastEvent(RenderLevelStageEvent event) {
         if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_PARTICLES) {

@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSStructurePlacementTypes;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Optional;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.RegistryCodecs;
@@ -22,7 +21,11 @@ import net.minecraft.world.level.levelgen.structure.placement.StructurePlacement
 import net.minecraft.world.level.levelgen.structure.placement.StructurePlacementType;
 import org.jetbrains.annotations.NotNull;
 
-/** <a href="https://github.com/TelepathicGrunt/RepurposedStructures/blob/1.21-Arch/common/src/main/java/com/telepathicgrunt/repurposedstructures/world/structures/placements/AdvancedRandomSpread.java">Source</a> */
+import java.util.Optional;
+
+/**
+ * <a href="https://github.com/TelepathicGrunt/RepurposedStructures/blob/1.21-Arch/common/src/main/java/com/telepathicgrunt/repurposedstructures/world/structures/placements/AdvancedRandomSpread.java">Source</a>
+ */
 public class AdvancedRandomSpread extends RandomSpreadStructurePlacement {
     public static final MapCodec<AdvancedRandomSpread> CODEC = RecordCodecBuilder.mapCodec((instance) -> instance.group(
             Vec3i.offsetCodec(16).optionalFieldOf("locate_offset", Vec3i.ZERO).forGetter(AdvancedRandomSpread::locateOffset),
@@ -63,11 +66,11 @@ public class AdvancedRandomSpread extends RandomSpreadStructurePlacement {
 
         if (spacing <= separation) {
             throw new RuntimeException("""
-                Dragon Survival: Spacing cannot be less or equal to separation.
-                Please correct this error as there's no way to spawn this structure properly
-                    Spacing: %s
-                    Separation: %s.
-            """.formatted(spacing, separation));
+                        Dragon Survival: Spacing cannot be less or equal to separation.
+                        Please correct this error as there's no way to spawn this structure properly
+                            Spacing: %s
+                            Separation: %s.
+                    """.formatted(spacing, separation));
         }
     }
 
@@ -98,8 +101,7 @@ public class AdvancedRandomSpread extends RandomSpreadStructurePlacement {
     public boolean isStructureChunk(@NotNull ChunkGeneratorStructureState chunkGeneratorStructureState, int i, int j) {
         if (!super.isStructureChunk(chunkGeneratorStructureState, i, j)) {
             return false;
-        }
-        else {
+        } else {
             return this.superExclusionZone.isEmpty() || !this.superExclusionZone.get().isPlacementForbidden(chunkGeneratorStructureState, i, j);
         }
     }
@@ -121,9 +123,8 @@ public class AdvancedRandomSpread extends RandomSpreadStructurePlacement {
         if (minDistanceFromWorldOrigin.isPresent()) {
             int xBlockPos = x * 16;
             int zBlockPos = z * 16;
-            if((xBlockPos * xBlockPos) + (zBlockPos * zBlockPos) <
-                    (minDistanceFromWorldOrigin.get() * minDistanceFromWorldOrigin.get()))
-            {
+            if ((xBlockPos * xBlockPos) + (zBlockPos * zBlockPos) <
+                    (minDistanceFromWorldOrigin.get() * minDistanceFromWorldOrigin.get())) {
                 return false;
             }
         }
@@ -137,7 +138,8 @@ public class AdvancedRandomSpread extends RandomSpreadStructurePlacement {
         return DSStructurePlacementTypes.ADVANCED_RANDOM_SPREAD.get();
     }
 
-    public record SuperExclusionZone(HolderSet<StructureSet> otherSet, int chunkCount, Optional<Integer> allowedChunkCount) {
+    public record SuperExclusionZone(HolderSet<StructureSet> otherSet, int chunkCount,
+                                    Optional<Integer> allowedChunkCount) {
         public static final Codec<AdvancedRandomSpread.SuperExclusionZone> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                 RegistryCodecs.homogeneousList(Registries.STRUCTURE_SET, StructureSet.DIRECT_CODEC).fieldOf("other_set").forGetter(AdvancedRandomSpread.SuperExclusionZone::otherSet),
                 Codec.intRange(1, Integer.MAX_VALUE).fieldOf("chunk_count").forGetter(AdvancedRandomSpread.SuperExclusionZone::chunkCount),

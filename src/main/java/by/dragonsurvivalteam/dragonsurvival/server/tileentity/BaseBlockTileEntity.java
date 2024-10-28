@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.server.tileentity;
 
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
@@ -12,37 +11,40 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class BaseBlockTileEntity extends BlockEntity{
-	public BaseBlockTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState){
-		super(pType, pWorldPosition, pBlockState);
-	}
+import javax.annotation.Nullable;
 
-	@Nullable @Override
-	public Packet<ClientGamePacketListener> getUpdatePacket(){
-		return ClientboundBlockEntityDataPacket.create(this);
-	}
+public class BaseBlockTileEntity extends BlockEntity {
+    public BaseBlockTileEntity(BlockEntityType<?> pType, BlockPos pWorldPosition, BlockState pBlockState) {
+        super(pType, pWorldPosition, pBlockState);
+    }
 
-	@Override
-	public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries){
-		CompoundTag parentTag = super.getUpdateTag(pRegistries);
-		saveAdditional(parentTag, pRegistries);
-		return parentTag;
-	}
-	@Override
-	public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider pRegistries) {
-		super.handleUpdateTag(tag, pRegistries);
+    @Nullable @Override
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
+    }
+
+    @Override
+    public @NotNull CompoundTag getUpdateTag(HolderLookup.@NotNull Provider pRegistries) {
+        CompoundTag parentTag = super.getUpdateTag(pRegistries);
+        saveAdditional(parentTag, pRegistries);
+        return parentTag;
+    }
+
+    @Override
+    public void handleUpdateTag(CompoundTag tag, HolderLookup.@NotNull Provider pRegistries) {
+        super.handleUpdateTag(tag, pRegistries);
         loadAdditional(tag, pRegistries);
     }
 
-	public int getX(){
-		return getBlockPos().getX();
-	}
+    public int getX() {
+        return getBlockPos().getX();
+    }
 
-	public int getY(){
-		return getBlockPos().getY();
-	}
+    public int getY() {
+        return getBlockPos().getY();
+    }
 
-	public int getZ(){
-		return getBlockPos().getZ();
-	}
+    public int getZ() {
+        return getBlockPos().getZ();
+    }
 }

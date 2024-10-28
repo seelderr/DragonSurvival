@@ -3,8 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.Entity;
@@ -25,103 +23,106 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
-public class DragonPressurePlates extends PressurePlateBlock implements SimpleWaterloggedBlock{
-	public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
-	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+import java.util.List;
+import javax.annotation.Nullable;
 
-	public PressurePlateType type;
+public class DragonPressurePlates extends PressurePlateBlock implements SimpleWaterloggedBlock {
+    public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
-	public enum PressurePlateType{
-		DRAGON,
-		HUMAN,
-		SEA,
-		CAVE,
-		FOREST
-	}
+    public PressurePlateType type;
 
-	public DragonPressurePlates(Properties properties, PressurePlateType type){
-		super(BlockSetType.WARPED, properties);
-		registerDefaultState(stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
+    public enum PressurePlateType {
+        DRAGON,
+        HUMAN,
+        SEA,
+        CAVE,
+        FOREST
+    }
 
-		this.type = type;
-	}
+    public DragonPressurePlates(Properties properties, PressurePlateType type) {
+        super(BlockSetType.WARPED, properties);
+        registerDefaultState(stateDefinition.any().setValue(POWERED, false).setValue(WATERLOGGED, false));
 
-	@Override
-	public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext){
-		return PRESSED_AABB;
-	}
+        this.type = type;
+    }
 
-	@Override
-	public BlockState updateShape(BlockState state, Direction dir, BlockState state2, LevelAccessor level, BlockPos pos, BlockPos pos2){
-		if(state.getValue(WATERLOGGED)){
-			level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
-		}
-		return super.updateShape(state, dir, state2, level, pos, pos2);
-	}
+    @Override
+    public VoxelShape getShape(BlockState pState, BlockGetter pLevel, BlockPos pPos, CollisionContext pContext) {
+        return PRESSED_AABB;
+    }
 
-	@Override
-	protected int getSignalStrength(Level pLevel, BlockPos pPos){
-		net.minecraft.world.phys.AABB axisalignedbb = TOUCH_AABB.move(pPos);
-		List<? extends Entity> list = pLevel.getEntities(null, axisalignedbb);
+    @Override
+    public BlockState updateShape(BlockState state, Direction dir, BlockState state2, LevelAccessor level, BlockPos pos, BlockPos pos2) {
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+        }
+        return super.updateShape(state, dir, state2, level, pos, pos2);
+    }
 
-		if(!list.isEmpty()){
-			for(Entity entity : list){
-				if(!entity.isIgnoringBlockTriggers()){
-					return switch (type) {
-						case DRAGON -> DragonStateProvider.isDragon(entity) ? 15 : 0;
-						case HUMAN -> !DragonStateProvider.isDragon(entity) ? 15 : 0;
-						case SEA -> DragonUtils.isDragonType(entity, DragonTypes.SEA) ? 15 : 0;
-						case FOREST -> DragonUtils.isDragonType(entity, DragonTypes.FOREST) ? 15 : 0;
-						case CAVE -> DragonUtils.isDragonType(entity, DragonTypes.CAVE) ? 15 : 0;
-					};
-				}
-			}
-		}
-		return 0;
-	}
+    @Override
+    protected int getSignalStrength(Level pLevel, BlockPos pPos) {
+        net.minecraft.world.phys.AABB axisalignedbb = TOUCH_AABB.move(pPos);
+        List<? extends Entity> list = pLevel.getEntities(null, axisalignedbb);
 
-	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder){
-		super.createBlockStateDefinition(pBuilder);
-		pBuilder.add(FACING);
-		pBuilder.add(WATERLOGGED);
-	}
+        if (!list.isEmpty()) {
+            for (Entity entity : list) {
+                if (!entity.isIgnoringBlockTriggers()) {
+                    return switch (type) {
+                        case DRAGON -> DragonStateProvider.isDragon(entity) ? 15 : 0;
+                        case HUMAN -> !DragonStateProvider.isDragon(entity) ? 15 : 0;
+                        case SEA -> DragonUtils.isDragonType(entity, DragonTypes.SEA) ? 15 : 0;
+                        case FOREST -> DragonUtils.isDragonType(entity, DragonTypes.FOREST) ? 15 : 0;
+                        case CAVE -> DragonUtils.isDragonType(entity, DragonTypes.CAVE) ? 15 : 0;
+                    };
+                }
+            }
+        }
+        return 0;
+    }
 
-	@Override
-	public @Nullable BlockState getStateForPlacement(@NotNull final BlockPlaceContext context) {
-		BlockState state = super.getStateForPlacement(context);
+    @Override
+    protected void createBlockStateDefinition(Builder<Block, BlockState> pBuilder) {
+        super.createBlockStateDefinition(pBuilder);
+        pBuilder.add(FACING);
+        pBuilder.add(WATERLOGGED);
+    }
 
-		if (state == null) {
-			return null;
-		}
+    @Override
+    public @Nullable BlockState getStateForPlacement(@NotNull final BlockPlaceContext context) {
+        BlockState state = super.getStateForPlacement(context);
 
-		if (state.hasProperty(FACING)) {
-			state = state.setValue(FACING, context.getHorizontalDirection());
-		}
+        if (state == null) {
+            return null;
+        }
 
-		return state.setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
-	}
+        if (state.hasProperty(FACING)) {
+            state = state.setValue(FACING, context.getHorizontalDirection());
+        }
 
-	@Override
-	public FluidState getFluidState(BlockState state){
-		return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
-	}
+        return state.setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
+    }
 
-	@Override
-	public @NotNull BlockState rotate(final BlockState state, @NotNull final Rotation rotation) {
-		if (state.hasProperty(FACING)) {
-			return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
-		}
+    @Override
+    public FluidState getFluidState(BlockState state) {
+        return state.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
+    }
 
-		return state;
-	}
+    @Override
+    public @NotNull BlockState rotate(final BlockState state, @NotNull final Rotation rotation) {
+        if (state.hasProperty(FACING)) {
+            return state.setValue(FACING, rotation.rotate(state.getValue(FACING)));
+        }
 
-	@Override
-	public @NotNull BlockState mirror(final BlockState state, @NotNull final Mirror mirror) {
-		if (state.hasProperty(FACING)) {
-			return state.rotate(mirror.getRotation(state.getValue(FACING)));
-		}
+        return state;
+    }
 
-		return state;
-	}
+    @Override
+    public @NotNull BlockState mirror(final BlockState state, @NotNull final Mirror mirror) {
+        if (state.hasProperty(FACING)) {
+            return state.rotate(mirror.getRotation(state.getValue(FACING)));
+        }
+
+        return state;
+    }
 }

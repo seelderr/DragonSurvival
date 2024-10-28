@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.LeaderEntity;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -11,19 +9,21 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class LeaderModel extends GeoModel<LeaderEntity> {
     @Override
-    public ResourceLocation getModelResource(LeaderEntity object){
+    public ResourceLocation getModelResource(LeaderEntity object) {
         return ResourceLocation.fromNamespaceAndPath(MODID, "geo/hunter_leader.geo.json");
     }
 
     @Override
-    public ResourceLocation getTextureResource(LeaderEntity object){
+    public ResourceLocation getTextureResource(LeaderEntity object) {
         return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/leader.png");
     }
 
     @Override
-    public ResourceLocation getAnimationResource(LeaderEntity animatable){
+    public ResourceLocation getAnimationResource(LeaderEntity animatable) {
         return ResourceLocation.fromNamespaceAndPath(MODID, "animations/hunter_leader.animation.json");
     }
 

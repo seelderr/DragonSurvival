@@ -21,22 +21,24 @@ import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
+import javax.annotation.Nullable;
+
 public abstract class Hunter extends PathfinderMob implements GeoEntity, DragonHunter {
 	private static final EntityDataAccessor<Boolean> IS_AGGRO = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public Hunter(EntityType<? extends PathfinderMob> entityType, Level world){
-		super(entityType, world);
-	}
+    public Hunter(EntityType<? extends PathfinderMob> entityType, Level world) {
+        super(entityType, world);
+    }
 
-	@Override
-	public void tick(){
-		updateSwingTime();
-		super.tick();
-	}
+    @Override
+    public void tick() {
+        updateSwingTime();
+        super.tick();
+    }
 
-	protected void registerGoals() {
-		super.registerGoals();
+    protected void registerGoals() {
+        super.registerGoals();
 
 		// The Hunter.class in the constructor refers to the mobs that are ignored when the mob is hurt by them (we don't want hunters attacking each other!)
 		this.targetSelector.addGoal(1, new HurtByTargetGoalExtended(this, Hunter.class).setHeeders(Hunter.class).setAlertOthers());
@@ -47,28 +49,28 @@ public abstract class Hunter extends PathfinderMob implements GeoEntity, DragonH
 		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
 	}
 
-	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
-		super.defineSynchedData(pBuilder);
-		pBuilder.define(IS_AGGRO, false);
-	}
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+        super.defineSynchedData(pBuilder);
+        pBuilder.define(IS_AGGRO, false);
+    }
 
-	@Override
-	public void setTarget(@Nullable LivingEntity target) {
-		super.setTarget(target);
+    @Override
+    public void setTarget(@Nullable LivingEntity target) {
+        super.setTarget(target);
         this.setAggro(target != null);
-	}
+    }
 
-	public void setAggro(boolean aggro) {
-		this.entityData.set(IS_AGGRO, aggro);
-	}
+    public void setAggro(boolean aggro) {
+        this.entityData.set(IS_AGGRO, aggro);
+    }
 
-	public boolean isAggro() {
-		return this.entityData.get(IS_AGGRO);
-	}
+    public boolean isAggro() {
+        return this.entityData.get(IS_AGGRO);
+    }
 
-	@Override
-	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return cache;
-	}
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
 }

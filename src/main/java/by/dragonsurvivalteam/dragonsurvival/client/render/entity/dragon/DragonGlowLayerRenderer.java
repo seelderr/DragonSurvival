@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
@@ -23,22 +21,22 @@ import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 // TODO :: geckolib has an 'AutoGlowingGeoLayer' class, could that help here?
 // FIXME :: glow layer doesn't like translucency much (it goes dark once the alpha changes)
 public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
-	private final GeoEntityRenderer<DragonEntity> renderer;
+    private final GeoEntityRenderer<DragonEntity> renderer;
 
-	public DragonGlowLayerRenderer(final GeoEntityRenderer<DragonEntity> renderer) {
-		super(renderer);
-		this.renderer = renderer;
-	}
+    public DragonGlowLayerRenderer(final GeoEntityRenderer<DragonEntity> renderer) {
+        super(renderer);
+        this.renderer = renderer;
+    }
 
-	@Override
-	public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
-		if (!(renderer instanceof DragonRenderer dragonRenderer)) {
-			return;
-		}
+    @Override
+    public void render(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel bakedModel, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, float partialTick, int packedLight, int packedOverlay) {
+        if (!(renderer instanceof DragonRenderer dragonRenderer)) {
+            return;
+        }
 
-		if (!dragonRenderer.shouldRenderLayers) {
-			return;
-		}
+        if (!dragonRenderer.shouldRenderLayers) {
+            return;
+        }
 
 		Player player = animatable.getPlayer();
 
@@ -46,26 +44,26 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			return;
 		}
 
-		DragonStateHandler handler = DragonStateProvider.getData(player);
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
-		SkinPreset preset = handler.getSkinData().skinPreset;
-		SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel()).get();
+        SkinPreset preset = handler.getSkinData().skinPreset;
+        SkinAgeGroup ageGroup = preset.skinAges.get(handler.getLevel()).get();
 
-		ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
+        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel());
 
-		if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {
-			if (dragonRenderer.glowTexture != null) {
-				glowTexture = dragonRenderer.glowTexture;
-			}
-		}
+        if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {
+            if (dragonRenderer.glowTexture != null) {
+                glowTexture = dragonRenderer.glowTexture;
+            }
+        }
 
-		if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
-			ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
+        if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
 
-			if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
-				glowTexture = location;
-			}
-		}
+            if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
+                glowTexture = location;
+            }
+        }
 
 		dragonRenderer.isRenderLayers = true;
 
@@ -83,6 +81,6 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 			}
 		}
 
-		dragonRenderer.isRenderLayers = false;
-	}
+        dragonRenderer.isRenderLayers = false;
+    }
 }

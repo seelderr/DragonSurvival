@@ -13,9 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(AbstractContainerEventHandler.class)
 public abstract class MixinAbstractContainerEventHandler {
     /**
-     Avoid gaining focus (e.g. tab- or arrow-navigation)<br>
-     Otherwise the user will no longer be able to type in the chat box until re-opening the chat window
-    */
+     * Avoid gaining focus (e.g. tab- or arrow-navigation)<br>
+     * Otherwise the user will no longer be able to type in the chat box until re-opening the chat window
+     */
     @Inject(method = "setFocused", at = @At("HEAD"), cancellable = true)
     private void skipFocus(final GuiEventListener listener, final CallbackInfo callback) {
         if ((Object) this instanceof ChatScreen chatScreen) {

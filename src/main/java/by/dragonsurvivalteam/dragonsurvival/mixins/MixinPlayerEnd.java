@@ -13,7 +13,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Player.class, /* Make sure it happens at the end */ priority = 10_000)
 public class MixinPlayerEnd {
-    /** Put the switched-out items (dragon claw tool and main hand item) back to their original places */
+    /**
+     * Put the switched-out items (dragon claw tool and main hand item) back to their original places
+     */
     @Inject(method = "attack", at = @At("RETURN"))
     public void switchEnd(Entity target, CallbackInfo ci) {
         Object self = this;

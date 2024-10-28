@@ -13,11 +13,11 @@ public class HunterProjectileImpactHandler {
 
     @SubscribeEvent
     public static void onHunterProjectileImpact(ProjectileImpactEvent event) {
-        if(event.getProjectile() instanceof AbstractArrow arrow) {
-            if(arrow.getOwner() instanceof DragonHunter) {
+        if (event.getProjectile() instanceof AbstractArrow arrow) {
+            if (arrow.getOwner() instanceof DragonHunter) {
                 if (event.getRayTraceResult() instanceof EntityHitResult result) {
                     Entity entity = result.getEntity();
-                    if(entity instanceof DragonHunter) {
+                    if (entity instanceof DragonHunter) {
                         event.setCanceled(true);
                     }
                 }

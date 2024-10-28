@@ -17,55 +17,56 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTileEntity>{
+public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTileEntity> {
 
-	public DragonBeaconRenderer(BlockEntityRendererProvider.Context pContext){}
+    public DragonBeaconRenderer(BlockEntityRendererProvider.Context pContext) {
+    }
 
-	@Override
-	public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, PoseStack PoseStack, MultiBufferSource iRenderTypeBuffer, int light, int overlay){
-		dragonBeaconEntity.tick += 0.5f;
-		PoseStack.pushPose();
-		DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
+    @Override
+    public void render(DragonBeaconTileEntity dragonBeaconEntity, float v, PoseStack PoseStack, MultiBufferSource iRenderTypeBuffer, int light, int overlay) {
+        dragonBeaconEntity.tick += 0.5f;
+        PoseStack.pushPose();
+        DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
 
-		Item item = DSBlocks.DRAGON_BEACON.get().asItem();
+        Item item = DSBlocks.DRAGON_BEACON.get().asItem();
 
-		ClientLevel clientWorld = (ClientLevel)dragonBeaconEntity.getLevel();
-		Minecraft minecraft = Minecraft.getInstance();
-		RandomSource random = clientWorld.random;
-		double x = 0.25 + random.nextInt(5) / 10d;
-		double z = 0.25 + random.nextInt(5) / 10d;
+        ClientLevel clientWorld = (ClientLevel) dragonBeaconEntity.getLevel();
+        Minecraft minecraft = Minecraft.getInstance();
+        RandomSource random = clientWorld.random;
+        double x = 0.25 + random.nextInt(5) / 10d;
+        double z = 0.25 + random.nextInt(5) / 10d;
 
-		boolean hasMemoryBlock = dragonBeaconEntity.getLevel().getBlockState(dragonBeaconEntity.getBlockPos().below()).is(DSBlocks.DRAGON_MEMORY_BLOCK);
+        boolean hasMemoryBlock = dragonBeaconEntity.getLevel().getBlockState(dragonBeaconEntity.getBlockPos().below()).is(DSBlocks.DRAGON_MEMORY_BLOCK);
 
-		switch(type){
-			case PEACE -> {
-				item = hasMemoryBlock ? DSItems.PASSIVE_PEACE_BEACON.getDelegate().value() : DSItems.INACTIVE_PEACE_DRAGON_BEACON.getDelegate().value();
+        switch (type) {
+            case PEACE -> {
+                item = hasMemoryBlock ? DSItems.PASSIVE_PEACE_BEACON.getDelegate().value() : DSItems.INACTIVE_PEACE_DRAGON_BEACON.getDelegate().value();
 
-				if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock){
-					clientWorld.addParticle(new BeaconParticle.PeaceData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
-				}
-			}
-			case MAGIC -> {
-				item = hasMemoryBlock ? DSItems.PASSIVE_MAGIC_BEACON.getDelegate().value() : DSItems.INACTIVE_MAGIC_DRAGON_BEACON.getDelegate().value();
+                if (!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock) {
+                    clientWorld.addParticle(new BeaconParticle.PeaceData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
+                }
+            }
+            case MAGIC -> {
+                item = hasMemoryBlock ? DSItems.PASSIVE_MAGIC_BEACON.getDelegate().value() : DSItems.INACTIVE_MAGIC_DRAGON_BEACON.getDelegate().value();
 
-				if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock){
-					clientWorld.addParticle(new BeaconParticle.MagicData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
-				}
-			}
-			case FIRE -> {
-				item = hasMemoryBlock ? DSItems.PASSIVE_FIRE_BEACON.getDelegate().value() : DSItems.INACTIVE_FIRE_DRAGON_BEACON.getDelegate().value();
+                if (!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock) {
+                    clientWorld.addParticle(new BeaconParticle.MagicData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
+                }
+            }
+            case FIRE -> {
+                item = hasMemoryBlock ? DSItems.PASSIVE_FIRE_BEACON.getDelegate().value() : DSItems.INACTIVE_FIRE_DRAGON_BEACON.getDelegate().value();
 
-				if(!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock){
-					clientWorld.addParticle(new BeaconParticle.FireData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
-				}
-			}
-		}
+                if (!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock) {
+                    clientWorld.addParticle(new BeaconParticle.FireData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
+                }
+            }
+        }
 
-		float f1 = Mth.sin((dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
-		PoseStack.translate(0.5, 0.25 + f1 / 2f, 0.5);
-		PoseStack.mulPose(Axis.YP.rotationDegrees(dragonBeaconEntity.tick));
-		PoseStack.scale(2, 2, 2);
-		Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), ItemDisplayContext.GROUND, light, overlay, PoseStack, iRenderTypeBuffer, clientWorld, 0);
-		PoseStack.popPose();
-	}
+        float f1 = Mth.sin((dragonBeaconEntity.tick + v) / 20.0F + dragonBeaconEntity.bobOffs) * 0.1F + 0.1F;
+        PoseStack.translate(0.5, 0.25 + f1 / 2f, 0.5);
+        PoseStack.mulPose(Axis.YP.rotationDegrees(dragonBeaconEntity.tick));
+        PoseStack.scale(2, 2, 2);
+        Minecraft.getInstance().getItemRenderer().renderStatic(new ItemStack(item), ItemDisplayContext.GROUND, light, overlay, PoseStack, iRenderTypeBuffer, clientWorld, 0);
+        PoseStack.popPose();
+    }
 }

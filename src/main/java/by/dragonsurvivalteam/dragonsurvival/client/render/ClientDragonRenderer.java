@@ -31,8 +31,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicReference;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.player.Input;
@@ -62,6 +60,9 @@ import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 import software.bernie.geckolib.util.RenderUtil;
+
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicReference;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientDragonRenderer {
@@ -142,29 +143,31 @@ public class ClientDragonRenderer {
 
             LevelRenderer.renderLineBox(poseStack, buffer, DragonAbilities.calculateBreathArea(localPlayer, handler, range), red, green, blue, 1);
 
-			/* Draw the area which will affect blocks
-			Pair<BlockPos, Direction> data = DragonAbilities.breathStartPosition(localPlayer, red == 1 ? new NetherBreathAbility() : green == 1 ? new ForestBreathAbility() : new StormBreathAbility(), range);
-			BlockPos startPosition = data.getFirst();
+            /* Draw the area which will affect blocks
+            Pair<BlockPos, Direction> data = DragonAbilities.breathStartPosition(localPlayer, red == 1 ? new NetherBreathAbility() : green == 1 ? new ForestBreathAbility() : new StormBreathAbility(), range);
+            BlockPos startPosition = data.getFirst();
 
-			if (startPosition != null) {
-				AABB blockRange = new AABB(
-						startPosition.getX() - (double) range / 2,
-						startPosition.getY() - (double) range / 2,
-						startPosition.getZ() - (double) range / 2,
-						startPosition.getX() + (double) range / 2,
-						startPosition.getY() + (double) range / 2,
-						startPosition.getZ() + (double) range / 2
-				);
+            if (startPosition != null) {
+                AABB blockRange = new AABB(
+                        startPosition.getX() - (double) range / 2,
+                        startPosition.getY() - (double) range / 2,
+                        startPosition.getZ() - (double) range / 2,
+                        startPosition.getX() + (double) range / 2,
+                        startPosition.getY() + (double) range / 2,
+                        startPosition.getZ() + (double) range / 2
+                );
 
-				LevelRenderer.renderLineBox(poseStack, buffer, blockRange, 1, 1, 1, 1);
-			}
-			*/
+                LevelRenderer.renderLineBox(poseStack, buffer, blockRange, 1, 1, 1, 1);
+            }
+            */
 
             poseStack.popPose();
         }
     }
 
-    /** Amount of client ticks the player model will not be rendered if the player was recently a dragon (to avoid player model pop-up after respawning) */
+    /**
+     * Amount of client ticks the player model will not be rendered if the player was recently a dragon (to avoid player model pop-up after respawning)
+     */
     private static final int MAX_DELAY = 10;
     private static int renderDelay;
 
@@ -176,7 +179,9 @@ public class ClientDragonRenderer {
         }
     }
 
-    /** Called for every player */
+    /**
+     * Called for every player
+     */
     @SubscribeEvent
     public static void thirdPersonPreRender(final RenderPlayerEvent.Pre renderPlayerEvent) {
         if (!(renderPlayerEvent.getEntity() instanceof AbstractClientPlayer player)) {
@@ -440,7 +445,9 @@ public class ClientDragonRenderer {
         }
     }
 
-    /** Don't render fire overlay for cave dragons */
+    /**
+     * Don't render fire overlay for cave dragons
+     */
     @SubscribeEvent
     public static void removeFireOverlay(RenderBlockScreenEffectEvent event) {
         if (event.getOverlayType() != RenderBlockScreenEffectEvent.OverlayType.FIRE) {

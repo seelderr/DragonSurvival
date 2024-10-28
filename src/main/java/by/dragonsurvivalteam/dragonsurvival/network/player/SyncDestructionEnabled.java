@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.player;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -14,6 +12,8 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDestructionEnabled implements IMessage<SyncDestructionEnabled.Data> {
     public static void handleClient(final Data message, final IPayloadContext context) {
@@ -29,8 +29,7 @@ public class SyncDestructionEnabled implements IMessage<SyncDestructionEnabled.D
         }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntity(entity, message));
     }
 
-    public record Data(int playerId, boolean destructionEnabled) implements CustomPacketPayload
-    {
+    public record Data(int playerId, boolean destructionEnabled) implements CustomPacketPayload {
         public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "dragon_destruction_enabled"));
 
         public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(

@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.KnightEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -13,6 +12,8 @@ import software.bernie.geckolib.animatable.GeoAnimatable;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
+
+import javax.annotation.Nullable;
 
 public class CustomBlockAndItemGeoLayer<T extends GeoAnimatable> extends BlockAndItemGeoLayer<T> {
     public CustomBlockAndItemGeoLayer(final GeoRenderer<T> renderer) {

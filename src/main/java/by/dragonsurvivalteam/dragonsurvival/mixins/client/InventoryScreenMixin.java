@@ -40,7 +40,7 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
     private static void dragon_survival$dragonScreenEntityRender(final Runnable runnable, @Local(argsOnly = true) LivingEntity entity) {
         LivingEntity newEntity;
 
-		if (entity instanceof DragonEntity de) {
+        if (entity instanceof DragonEntity de) {
             newEntity = de.getPlayer();
         } else {
             newEntity = entity;

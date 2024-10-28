@@ -22,6 +22,10 @@ import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 @SuppressWarnings("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NeoForgedDataGen {
@@ -37,11 +41,11 @@ public class NeoForgedDataGen {
 		generator.addProvider(event.includeClient(), new DataItemModelProvider(packOutput, existingFileHelper));
 		generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(packOutput, lookupProvider, existingFileHelper));
 
-		// Server
-		LootTableProvider.SubProviderEntry blockLootTableSubProvider = new LootTableProvider.SubProviderEntry(
-				BlockLootTableSubProvider::new,
-				LootContextParamSets.BLOCK);
-		generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) output -> new LootTableProvider(output, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
+        // Server
+        LootTableProvider.SubProviderEntry blockLootTableSubProvider = new LootTableProvider.SubProviderEntry(
+                BlockLootTableSubProvider::new,
+                LootContextParamSets.BLOCK);
+        generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) output -> new LootTableProvider(output, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
 
 		DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(
 				packOutput,

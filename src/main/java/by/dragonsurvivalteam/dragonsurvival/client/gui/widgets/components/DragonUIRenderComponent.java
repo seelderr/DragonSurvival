@@ -19,87 +19,87 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
 
 public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Renderable {
-	private final Screen screen;
-	private final Supplier<DragonEntity> getter;
-	public float yRot = 0, xRot = 0;
-	public float xOffset = 0, yOffset = 0;
-	public float zoom = 0;
-	public int x, y, width, height;
+    private final Screen screen;
+    private final Supplier<DragonEntity> getter;
+    public float yRot = 0, xRot = 0;
+    public float xOffset = 0, yOffset = 0;
+    public float zoom = 0;
+    public int x, y, width, height;
 
-	public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter){
-		this.screen = screen;
-		this.x = x;
-		this.y = y;
-		width = xSize;
-		height = ySize;
-		getter = dragonGetter;
-	}
+    public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter) {
+        this.screen = screen;
+        this.x = x;
+        this.y = y;
+        width = xSize;
+        height = ySize;
+        getter = dragonGetter;
+    }
 
-	@Override
-	public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks){
-		if(isMouseOver(pMouseX, pMouseY)){
-			screen.setFocused(this);
-		}
+    @Override
+    public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
+        if (isMouseOver(pMouseX, pMouseY)) {
+            screen.setFocused(this);
+        }
 
-		final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
+        final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
 
-		if(neckandHead != null){
-			neckandHead.setHidden(false);
-		}
+        if (neckandHead != null) {
+            neckandHead.setHidden(false);
+        }
 
-		float scale = zoom;
+        float scale = zoom;
 
-		// We need to translate this backwards with the poseStack as renderEntityInInventory pushes the poseStack forward
-		guiGraphics.pose().pushPose();
-		guiGraphics.pose().translate(0, 0, -200); // We chose -200 here as the background is translated -300 and we don't want to clip with it
+        // We need to translate this backwards with the poseStack as renderEntityInInventory pushes the poseStack forward
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, -200); // We chose -200 here as the background is translated -300 and we don't want to clip with it
 
-		Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
-		quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
-		quaternion.rotateY((float)Math.toRadians(180 - xRot * 10));
-		InventoryScreen.renderEntityInInventory(guiGraphics, x + (float) width / 2 + xOffset, y + height - 30 + yOffset, (int)scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
+        Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
+        quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
+        quaternion.rotateY((float) Math.toRadians(180 - xRot * 10));
+        InventoryScreen.renderEntityInInventory(guiGraphics, x + (float) width / 2 + xOffset, y + height - 30 + yOffset, (int) scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
 
-		guiGraphics.pose().popPose();
-	}
+        guiGraphics.pose().popPose();
+    }
 
-	@Override
-	public boolean isMouseOver(double pMouseX, double pMouseY){
-		return pMouseX >= x && pMouseX <= x + width && pMouseY >= y && pMouseY <= y + height;
-	}
+    @Override
+    public boolean isMouseOver(double pMouseX, double pMouseY) {
+        return pMouseX >= x && pMouseX <= x + width && pMouseY >= y && pMouseY <= y + height;
+    }
 
-	@Override
-	public List<? extends GuiEventListener> children(){
-		return ImmutableList.of();
-	}
+    @Override
+    public List<? extends GuiEventListener> children() {
+        return ImmutableList.of();
+    }
 
-	@Override
-	public boolean mouseDragged(double x1, double y1, int rightClick, double x2, double y2){
-		if(isMouseOver(x1, y1)){
-			if(rightClick == 0){
-				xRot -= (float) (x2 / 5.0);
-				yRot -= (float) (y2 / 5.0);
-			}else if(rightClick == 1){
-				xOffset += (float) (x2);
-				yOffset += (float) (y2);
+    @Override
+    public boolean mouseDragged(double x1, double y1, int rightClick, double x2, double y2) {
+        if (isMouseOver(x1, y1)) {
+            if (rightClick == 0) {
+                xRot -= (float) (x2 / 5.0);
+                yRot -= (float) (y2 / 5.0);
+            } else if (rightClick == 1) {
+                xOffset += (float) (x2);
+                yOffset += (float) (y2);
 
-				xOffset = Mth.clamp(xOffset, -((float) width / 2.f), (float) width / 2.f);
-				yOffset = Mth.clamp(yOffset, -((float) height / 2.f), (float) height / 2.f);
-			}
+                xOffset = Mth.clamp(xOffset, -((float) width / 2.f), (float) width / 2.f);
+                yOffset = Mth.clamp(yOffset, -((float) height / 2.f), (float) height / 2.f);
+            }
 
-			return true;
-		}else{
-			setDragging(false);
-		}
+            return true;
+        } else {
+            setDragging(false);
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY){
-		if(isMouseOver(pMouseX, pMouseY)){
-			zoom += (float)pScrollY * 2;
-			zoom = Mth.clamp(zoom, 10, 100);
-			return true;
-		}
-		return super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
-	}
+    @Override
+    public boolean mouseScrolled(double pMouseX, double pMouseY, double pScrollX, double pScrollY) {
+        if (isMouseOver(pMouseX, pMouseY)) {
+            zoom += (float) pScrollY * 2;
+            zoom = Mth.clamp(zoom, 10, 100);
+            return true;
+        }
+        return super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
+    }
 }

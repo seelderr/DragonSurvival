@@ -3,8 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.items;
 import by.dragonsurvivalteam.dragonsurvival.client.render.item.RotatingKeyRenderer;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDataComponents;
 import com.mojang.datafixers.util.Pair;
-import java.util.Optional;
-import java.util.function.Consumer;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -28,8 +26,14 @@ import software.bernie.geckolib.animatable.GeoItem;
 import software.bernie.geckolib.animatable.SingletonGeoAnimatable;
 import software.bernie.geckolib.animatable.client.GeoRenderProvider;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
-import software.bernie.geckolib.animation.*;
+import software.bernie.geckolib.animation.AnimatableManager;
+import software.bernie.geckolib.animation.AnimationController;
+import software.bernie.geckolib.animation.PlayState;
+import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.Optional;
+import java.util.function.Consumer;
 
 public class RotatingKeyItem extends Item implements GeoItem {
     public final ResourceLocation texture, model;
@@ -88,8 +92,8 @@ public class RotatingKeyItem extends Item implements GeoItem {
     @Override
     public void inventoryTick(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull Entity pEntity, int pSlotId, boolean pIsSelected) {
         super.inventoryTick(pStack, pLevel, pEntity, pSlotId, pIsSelected);
-        if(pEntity instanceof Player player) {
-            if(player.getMainHandItem() == pStack || player.getOffhandItem() == pStack) {
+        if (pEntity instanceof Player player) {
+            if (player.getMainHandItem() == pStack || player.getOffhandItem() == pStack) {
                 if (pLevel instanceof ServerLevel serverLevel) {
                     if (serverLevel.getGameTime() % 20 == 0) {
                         Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
@@ -108,9 +112,7 @@ public class RotatingKeyItem extends Item implements GeoItem {
                         }
                         pStack.set(DSDataComponents.TARGET_POSITION, fake_target);
                         triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
-                    }
-                    else
-                    {
+                    } else {
                         playerHoldingItem = player;
                         currentTarget = pStack.get(DSDataComponents.TARGET_POSITION);
                         if (currentTarget == fake_target || currentTarget == null || currentTarget.length() < 0.1) {

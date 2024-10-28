@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -16,24 +14,20 @@ public class SyncVisualEffectAdded implements IMessage<SyncVisualEffectAdded.Dat
 		context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
 	}
 
-	public record Data(int entityId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_added_effect"));
+    public record Data(int entityId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "potion_added_effect"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT,
-			Data::entityId,
-			ByteBufCodecs.VAR_INT,
-			Data::effectId,
-			ByteBufCodecs.VAR_INT,
-			Data::duration,
-			ByteBufCodecs.VAR_INT,
-			Data::amplifier,
-			Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT, Data::entityId,
+                ByteBufCodecs.VAR_INT, Data::effectId,
+                ByteBufCodecs.VAR_INT, Data::duration,
+                ByteBufCodecs.VAR_INT, Data::amplifier,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

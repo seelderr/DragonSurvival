@@ -4,8 +4,12 @@
     "icon": {
       "id": "dragonsurvival:dragon_altar_stone"
     },
-    "title": { "translate": "ds.advancements.place_altar.title" },
-    "description": { "translate": "ds.advancements.place_altar.description" },
+    "title": {
+      "translate": "ds.advancements.place_altar.title"
+    },
+    "description": {
+      "translate": "ds.advancements.place_altar.description"
+    },
     "show_toast": false,
     "announce_to_chat": false,
     "hidden": false

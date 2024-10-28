@@ -14,29 +14,30 @@ import software.bernie.geckolib.animation.RawAnimation;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class StormBreathEntity extends Entity implements GeoEntity {
-	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-	public StormBreathEntity(final EntityType<?> type, final Level level) {
-		super(type, level);
-	}
+    public StormBreathEntity(final EntityType<?> type, final Level level) {
+        super(type, level);
+    }
 
-	@Override
-	protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {}
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
+    }
 
-	@Override
+    @Override
 
-	protected void readAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
+    protected void readAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
 
-	@Override
-	protected void addAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
+    @Override
+    protected void addAdditionalSaveData(@NotNull final CompoundTag compoundTag) { /* Nothing to do here */ }
 
-	@Override
-	public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
-		controllers.add(new AnimationController<>(this, "idle", state -> state.setAndContinue(RawAnimation.begin().thenLoop("idle"))));
-	}
+    @Override
+    public void registerControllers(final AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "idle", state -> state.setAndContinue(RawAnimation.begin().thenLoop("idle"))));
+    }
 
-	@Override
-	public AnimatableInstanceCache getAnimatableInstanceCache() {
-		return cache;
-	}
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return cache;
+    }
 }

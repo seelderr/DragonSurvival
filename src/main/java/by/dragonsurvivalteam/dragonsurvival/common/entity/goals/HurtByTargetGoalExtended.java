@@ -1,14 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.goals;
 
-import java.util.Iterator;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.world.entity.EntitySelector;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.phys.AABB;
+
+import java.util.Iterator;
+import java.util.List;
+import javax.annotation.Nullable;
 
 public class HurtByTargetGoalExtended extends HurtByTargetGoal {
     @Nullable private Class<? extends Mob>[] toHeedAlert;
@@ -25,7 +26,7 @@ public class HurtByTargetGoalExtended extends HurtByTargetGoal {
 
     @Override
     protected void alertOthers() {
-        if(this.toHeedAlert != null) {
+        if (this.toHeedAlert != null) {
             for (Class<? extends Mob> oclass : this.toHeedAlert) {
                 this.alertOthers(oclass);
             }
@@ -47,10 +48,10 @@ public class HurtByTargetGoalExtended extends HurtByTargetGoal {
                     return;
                 }
 
-                mob = (Mob)iterator.next();
+                mob = (Mob) iterator.next();
                 if (this.mob != mob
                         && mob.getTarget() == null
-                        && (!(this.mob instanceof TamableAnimal) || ((TamableAnimal)this.mob).getOwner() == ((TamableAnimal)mob).getOwner())
+                        && (!(this.mob instanceof TamableAnimal) || ((TamableAnimal) this.mob).getOwner() == ((TamableAnimal) mob).getOwner())
                         && !mob.isAlliedTo(this.mob.getLastHurtByMob())) {
                     if (this.toIgnoreAlert == null) {
                         break;

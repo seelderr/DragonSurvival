@@ -41,7 +41,7 @@ public class WindupMeleeAttackGoal extends MeleeAttackGoal {
             }
 
             if (this.ticksUntilDamage <= 0 && !hasPerformedAttack) {
-                if(this.canPerformAttack(pTarget)) {
+                if (this.canPerformAttack(pTarget)) {
                     this.mob.doHurtTarget(pTarget);
                 }
                 hasPerformedAttack = true;

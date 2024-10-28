@@ -20,5 +20,7 @@ public class MixinServerPlayerGameModeEnd {
         ToolUtils.swapFinish(player);
     }
 
-    @Shadow @Final protected ServerPlayer player;
+    @Shadow
+    @Final
+    protected ServerPlayer player;
 }

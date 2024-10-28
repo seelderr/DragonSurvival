@@ -12,48 +12,48 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DragonStateProvider implements ICapabilityProvider<Player, Void, DragonStateHandler> {
-	@Override
-	public @Nullable DragonStateHandler getCapability(@NotNull Player player, @Nullable Void context) {
-		return getData(player);
-	}
+    @Override
+    public @Nullable DragonStateHandler getCapability(@NotNull Player player, @Nullable Void context) {
+        return getData(player);
+    }
 
-	public static @NotNull DragonStateHandler getData(@NotNull final Player player) {
-		DragonStateHandler fakeData = getFakePlayerHandler(player);
+    public static @NotNull DragonStateHandler getData(@NotNull final Player player) {
+        DragonStateHandler fakeData = getFakePlayerHandler(player);
 
-		if (fakeData != null) {
-			return fakeData;
-		}
+        if (fakeData != null) {
+            return fakeData;
+        }
 
-		return player.getData(DRAGON_HANDLER);
-	}
+        return player.getData(DRAGON_HANDLER);
+    }
 
-	public static Optional<DragonStateHandler> getOptional(@Nullable final Entity entity) {
-		if (entity == null) {
-			return Optional.empty();
-		}
+    public static Optional<DragonStateHandler> getOptional(@Nullable final Entity entity) {
+        if (entity == null) {
+            return Optional.empty();
+        }
 
-		return Optional.ofNullable(entity.getCapability(DRAGON_CAPABILITY));
-	}
+        return Optional.ofNullable(entity.getCapability(DRAGON_CAPABILITY));
+    }
 
-	public static boolean isDragon(@Nullable Entity entity){
-		if (!(entity instanceof Player)) {
-			return false;
-		}
+    public static boolean isDragon(@Nullable Entity entity) {
+        if (!(entity instanceof Player)) {
+            return false;
+        }
 
-		return getOptional(entity).filter(DragonStateHandler::isDragon).isPresent();
-	}
+        return getOptional(entity).filter(DragonStateHandler::isDragon).isPresent();
+    }
 
-	private static DragonStateHandler getFakePlayerHandler(@NotNull Entity entity) {
-		if (!entity.level().isClientSide()) {
-			return null;
-		}
+    private static DragonStateHandler getFakePlayerHandler(@NotNull Entity entity) {
+        if (!entity.level().isClientSide()) {
+            return null;
+        }
 
-		if (entity instanceof FakeClientPlayer fakeClientPlayer) {
-			if (fakeClientPlayer.handler != null) {
-				return fakeClientPlayer.handler;
-			}
-		}
+        if (entity instanceof FakeClientPlayer fakeClientPlayer) {
+            if (fakeClientPlayer.handler != null) {
+                return fakeClientPlayer.handler;
+            }
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

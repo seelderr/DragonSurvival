@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -14,7 +12,10 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.*;
+import by.dragonsurvivalteam.dragonsurvival.util.ActionWithTimedCooldown;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import by.dragonsurvivalteam.dragonsurvival.util.TickedCooldown;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -41,11 +42,16 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 /**
  * Used in pair with {@link ServerFlightHandler}
@@ -58,7 +64,7 @@ public class ClientFlightHandler {
         if (localPlayer == null) return;
         localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
     });
-    ///region Config
+    /// region Config
     @ConfigRange(min = 0, max = 60)
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
     public static Integer levitationAfterEffect = 3;
@@ -70,7 +76,7 @@ public class ClientFlightHandler {
     public static Boolean flightZoomEffect = true;
     @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flightCameraMovement", comment = "Should the camera movement while gliding as a dragon be enabled")
     public static Boolean flightCameraMovement = true;
-    ///endregion
+    /// endregion
     @ConfigRange(min = -1000, max = 1000)
     @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownXOffset", comment = "Offset the x position of the spin cooldown indicator in relation to its normal position")
     public static Integer spinCooldownXOffset = 0;
@@ -93,7 +99,7 @@ public class ClientFlightHandler {
     private static final TickedCooldown jumpFlyCooldown = new TickedCooldown(7);
     private static boolean lastJumpInputState; // We need to track the rising edge manually
 
-    ///region Flight Control
+    /// region Flight Control
     @SubscribeEvent
     public static void flightCamera(CalculateDetachedCameraDistanceEvent event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -206,10 +212,10 @@ public class ClientFlightHandler {
                 if (handler.getMovementData().spinAttack > 0) {
 
                     // TODO: Removed because I don't think it does anything. Prove me wrong!
-					/*if(player.tickCount - lastSync >= 20){
-						//Request the server to resync the status of a spin if it is has been too long since the last update
-						NetworkHandler.CHANNEL.sendToServer(new RequestSpinResync());
-					}*/
+                    /*if(player.tickCount - lastSync >= 20){
+                        //Request the server to resync the status of a spin if it is has been too long since the last update
+                        NetworkHandler.CHANNEL.sendToServer(new RequestSpinResync());
+                    }*/
 
                     if (ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)) {
                         spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);
@@ -250,11 +256,11 @@ public class ClientFlightHandler {
 
         if (player != null && !player.isPassenger() && !Minecraft.getInstance().isPaused()) {
             if (player.hasEffect(MobEffects.LEVITATION)) {
-				/* TODO
-				To make fall damage work you'd have to:
-					- call `player.resetFallDistance()` when the levitation effect is applied (MobEffectEvent.Added)
-					- add a check in ServerFlightHandler#changeFallDistance
-				*/
+                /* TODO
+                To make fall damage work you'd have to:
+                    - call `player.resetFallDistance()` when the levitation effect is applied (MobEffectEvent.Added)
+                    - add a check in ServerFlightHandler#changeFallDistance
+                */
                 levitationLeft = Functions.secondsToTicks(levitationAfterEffect);
             } else if (levitationLeft > 0) {
                 // TODO :: Set to 0 once ground is reached?
@@ -467,7 +473,8 @@ public class ClientFlightHandler {
             }
         }
     }
-    ///endregion
+
+    /// endregion
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -497,7 +504,7 @@ public class ClientFlightHandler {
         }
     }
 
-    ///region Spin
+    /// region Spin
     private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
         if (ServerFlightHandler.isSpin(player)) return;
         if (handler.getMovementData().spinCooldown > 0) return;
@@ -686,7 +693,7 @@ public class ClientFlightHandler {
     }
     ///endregion
 
-    ///region Helpers
+    /// region Helpers
     private static boolean hasWingDisablingEffect(LivingEntity entity) {
         return entity.hasEffect(DSEffects.TRAPPED) || entity.hasEffect(DSEffects.WINGS_BROKEN);
     }

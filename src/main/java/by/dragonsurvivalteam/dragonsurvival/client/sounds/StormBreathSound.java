@@ -8,34 +8,34 @@ import net.minecraft.sounds.SoundSource;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
-@OnlyIn( Dist.CLIENT )
-public class StormBreathSound extends AbstractTickableSoundInstance{
-	private final StormBreathAbility ability;
+@OnlyIn(Dist.CLIENT)
+public class StormBreathSound extends AbstractTickableSoundInstance {
+    private final StormBreathAbility ability;
 
-	public StormBreathSound(StormBreathAbility ability){
-		super(DSSounds.STORM_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
+    public StormBreathSound(StormBreathAbility ability) {
+        super(DSSounds.STORM_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
 
-		looping = true;
+        looping = true;
 
-		this.x = ability.getPlayer().getX();
-		this.y = ability.getPlayer().getY();
-		this.z = ability.getPlayer().getZ();
+        this.x = ability.getPlayer().getX();
+        this.y = ability.getPlayer().getY();
+        this.z = ability.getPlayer().getZ();
 
-		this.ability = ability;
-	}
+        this.ability = ability;
+    }
 
-	@Override
-	public void tick(){
-		if(ability.getPlayer() == null || ability.chargeTime == 0)
-			stop();
+    @Override
+    public void tick() {
+        if (ability.getPlayer() == null || ability.chargeTime == 0)
+            stop();
 
-		this.x = ability.getPlayer().getX();
-		this.y = ability.getPlayer().getY();
-		this.z = ability.getPlayer().getZ();
-	}
+        this.x = ability.getPlayer().getX();
+        this.y = ability.getPlayer().getY();
+        this.z = ability.getPlayer().getZ();
+    }
 
-	@Override
-	public boolean canStartSilent(){
-		return true;
-	}
+    @Override
+    public boolean canStartSilent() {
+        return true;
+    }
 }

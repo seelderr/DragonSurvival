@@ -1,12 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.util;
 
+import software.bernie.geckolib.animation.RawAnimation;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import software.bernie.geckolib.animation.RawAnimation;
 
 public class RandomAnimationPicker {
-    public record WeightedAnimation(RawAnimation animation, float weight) {}
+    public record WeightedAnimation(RawAnimation animation, float weight) {
+    }
 
     private final List<WeightedAnimation> weightedAnimations = new ArrayList<>();
     private final float totalWeight;

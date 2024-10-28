@@ -18,9 +18,9 @@ public class RotatingKeyRenderer extends GeoItemRenderer<RotatingKeyItem> {
 
     @Override
     public void preRender(PoseStack poseStack, RotatingKeyItem animatable, BakedGeoModel model, @Nullable MultiBufferSource bufferSource, @Nullable VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int colour) {
-        super.preRender(poseStack, animatable, model,bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, colour);
 
-        if(animatable.playerHoldingItem == null) {
+        if (animatable.playerHoldingItem == null) {
             return;
         }
 

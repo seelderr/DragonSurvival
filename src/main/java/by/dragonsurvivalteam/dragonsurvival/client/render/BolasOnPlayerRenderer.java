@@ -46,7 +46,7 @@ public class BolasOnPlayerRenderer {
         }
     }
 
-    public static void renderBolas(int light, int overlayCoords, MultiBufferSource buffers, PoseStack matrixStack, float eyeHeight){
+    public static void renderBolas(int light, int overlayCoords, MultiBufferSource buffers, PoseStack matrixStack, float eyeHeight) {
         matrixStack.pushPose();
         matrixStack.translate(0, 0.9f + eyeHeight / 8.f, 0);
         matrixStack.scale(1.6f + eyeHeight / 8.f, 1.6f + eyeHeight / 8.f, 1.6f + eyeHeight / 8.f);

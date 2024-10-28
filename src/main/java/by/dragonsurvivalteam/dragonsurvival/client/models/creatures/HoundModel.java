@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.HoundEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class HoundModel extends GeoModel<HoundEntity> {
     @Override
@@ -25,7 +25,7 @@ public class HoundModel extends GeoModel<HoundEntity> {
             case 7 -> "hound_8";
             default -> "hound_hector";
         };
-        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/"+houndName+".png");
+        return ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/hunters/hounds/" + houndName + ".png");
     }
 
     @Override

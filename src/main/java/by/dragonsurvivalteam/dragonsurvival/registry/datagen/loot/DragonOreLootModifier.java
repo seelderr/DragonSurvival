@@ -9,7 +9,6 @@ import com.google.common.base.Suppliers;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
-import java.util.function.Supplier;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
@@ -27,6 +26,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.common.loot.LootModifier;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Supplier;
 
 public class DragonOreLootModifier extends LootModifier {
 
@@ -60,28 +61,28 @@ public class DragonOreLootModifier extends LootModifier {
                                 fortuneLevel = EnchantmentUtils.getLevel(player.level(), Enchantments.FORTUNE, tool);
                             }
 
-                            BlockPos blockPos =  new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
+                            BlockPos blockPos = new BlockPos((int) breakPos.x, (int) breakPos.y, (int) breakPos.z);
                             int expDrop = blockState.getExpDrop(context.getLevel(), blockPos, null, null, ItemStack.EMPTY);
 
-                            if(expDrop > 0) {
+                            if (expDrop > 0) {
                                 DragonStateHandler handler = DragonStateProvider.getData(player);
                                 int fortuneRoll = 1;
                                 if (fortuneLevel >= 1)
                                     fortuneRoll = context.getRandom().nextInt(fortuneLevel) + 1;
-                                if(handler.isDragon()) {
-                                    if(context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance){
+                                if (handler.isDragon()) {
+                                    if (context.getRandom().nextDouble() < ServerConfig.dragonOreDustChance) {
                                         generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
 
-                                    if(context.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance){
+                                    if (context.getRandom().nextDouble() < ServerConfig.dragonOreBoneChance) {
                                         generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
                                 } else {
-                                    if(context.getRandom().nextDouble() < ServerConfig.humanOreDustChance){
+                                    if (context.getRandom().nextDouble() < ServerConfig.humanOreDustChance) {
                                         generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
 
-                                    if(context.getRandom().nextDouble() < ServerConfig.humanOreBoneChance){
+                                    if (context.getRandom().nextDouble() < ServerConfig.humanOreBoneChance) {
                                         generatedLoot.add(new ItemStack(DSItems.ELDER_DRAGON_DUST, fortuneRoll));
                                     }
                                 }

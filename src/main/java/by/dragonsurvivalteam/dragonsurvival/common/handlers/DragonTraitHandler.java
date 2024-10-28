@@ -13,55 +13,55 @@ import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 @EventBusSubscriber
-public class DragonTraitHandler{
-	@SubscribeEvent
-	public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent){
-		Player player = playerTickEvent.getEntity();
-		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				for(DragonAbility passiveAbility : dragonStateHandler.getMagicData().abilities.values()){
-					if(passiveAbility instanceof TickablePassiveAbility tickablePassiveAbility){
-						if(tickablePassiveAbility.getLevel() > 0){
-							tickablePassiveAbility.onTick(player);
-						}
-					}
-				}
+public class DragonTraitHandler {
+    @SubscribeEvent
+    public static void onPlayerTick(PlayerTickEvent.Post playerTickEvent) {
+        Player player = playerTickEvent.getEntity();
+        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+            if (dragonStateHandler.isDragon()) {
+                for (DragonAbility passiveAbility : dragonStateHandler.getMagicData().abilities.values()) {
+                    if (passiveAbility instanceof TickablePassiveAbility tickablePassiveAbility) {
+                        if (tickablePassiveAbility.getLevel() > 0) {
+                            tickablePassiveAbility.onTick(player);
+                        }
+                    }
+                }
 
-				dragonStateHandler.getType().onPlayerUpdate(player, dragonStateHandler);
-			}
-		});
-	}
+                dragonStateHandler.getType().onPlayerUpdate(player, dragonStateHandler);
+            }
+        });
+    }
 
-	@SubscribeEvent
-	public static void onDeath(LivingDeathEvent event){
-		if(event.getEntity() instanceof Player player) {
-			DragonStateHandler handler = DragonStateProvider.getData(player);
-			if(handler.isDragon()){
-				handler.getType().onPlayerDeath();
-			}
-		}
-	}
+    @SubscribeEvent
+    public static void onDeath(LivingDeathEvent event) {
+        if (event.getEntity() instanceof Player player) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+            if (handler.isDragon()) {
+                handler.getType().onPlayerDeath();
+            }
+        }
+    }
 
-	public static boolean isInCauldron(BlockState feetBlock, BlockState blockUnder){
-		//Because it is used for both cave and sea dragon it is added here
-		boolean isInCauldron = false;
-		if(blockUnder.getBlock() instanceof LayeredCauldronBlock){
-			if(blockUnder.hasProperty(LayeredCauldronBlock.LEVEL)){
-				int level = blockUnder.getValue(LayeredCauldronBlock.LEVEL);
+    public static boolean isInCauldron(BlockState feetBlock, BlockState blockUnder) {
+        //Because it is used for both cave and sea dragon it is added here
+        boolean isInCauldron = false;
+        if (blockUnder.getBlock() instanceof LayeredCauldronBlock) {
+            if (blockUnder.hasProperty(LayeredCauldronBlock.LEVEL)) {
+                int level = blockUnder.getValue(LayeredCauldronBlock.LEVEL);
 
-				if(level > 0){
-					isInCauldron = true;
-				}
-			}
-		}else if(feetBlock.getBlock() instanceof LayeredCauldronBlock){
-			if(feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)){
-				int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
+                if (level > 0) {
+                    isInCauldron = true;
+                }
+            }
+        } else if (feetBlock.getBlock() instanceof LayeredCauldronBlock) {
+            if (feetBlock.hasProperty(LayeredCauldronBlock.LEVEL)) {
+                int level = feetBlock.getValue(LayeredCauldronBlock.LEVEL);
 
-				if(level > 0){
-					isInCauldron = true;
-				}
-			}
-		}
-		return isInCauldron;
-	}
+                if (level > 0) {
+                    isInCauldron = true;
+                }
+            }
+        }
+        return isInCauldron;
+    }
 }

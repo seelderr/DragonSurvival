@@ -1,12 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.*;
-
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -14,6 +9,12 @@ import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.registries.DeferredRegister;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
+
+import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
 @SuppressWarnings("unused")
 public class DSCreativeTabs {
@@ -44,7 +45,7 @@ public class DSCreativeTabs {
     static CreativeModeTab.DisplayItemsGenerator displayItemsGenerator = (parameters, output) -> Stream.of(DSItems.DS_ITEMS).forEach(
             holder -> holder.getEntries().forEach(
                     entry -> {
-                        if(entry.get() instanceof PermanentEnchantmentItem || !(hiddenCreativeModeItems.contains(entry) || entry.get().toString().contains("skeleton"))) {
+                        if (entry.get() instanceof PermanentEnchantmentItem || !(hiddenCreativeModeItems.contains(entry) || entry.get().toString().contains("skeleton"))) {
                             output.accept(entry.get());
                         }
                     }

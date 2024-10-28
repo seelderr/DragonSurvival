@@ -27,7 +27,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, DragonStateHandler> {
-    /** Correctly position the passenger when riding a player dragon */
+    /**
+     * Correctly position the passenger when riding a player dragon
+     */
     @Inject(method = "positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$positionRider(Entity entity, Entity.MoveFunction move, CallbackInfo callback) {
         if (!((Entity) (Object) this instanceof Player player) || !(entity instanceof Player passenger) || !hasPassenger(passenger)) {
@@ -93,7 +95,9 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         });
     }
 
-    /** Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory */
+    /**
+     * Don't show fire animation (when burning) when being a cave dragon when rendered in the inventory
+     */
     @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
         Entity entity = (Entity) (Object) this;

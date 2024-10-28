@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.Mixin;
 public class MixinAttributes {
     static {
         // smol
-        ((RangedAttribute)Attributes.SCALE.value()).minValue = 0.018;
+        ((RangedAttribute) Attributes.SCALE.value()).minValue = 0.018;
         // beeg
-        ((RangedAttribute)Attributes.SCALE.value()).maxValue = 160;
+        ((RangedAttribute) Attributes.SCALE.value()).maxValue = 160;
     }
 }

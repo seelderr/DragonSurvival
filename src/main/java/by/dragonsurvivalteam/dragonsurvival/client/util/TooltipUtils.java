@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
-import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Tooltip;
@@ -9,6 +8,8 @@ import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+
+import java.util.List;
 
 public class TooltipUtils {
     private static final String EMPTY = Component.empty().getString();

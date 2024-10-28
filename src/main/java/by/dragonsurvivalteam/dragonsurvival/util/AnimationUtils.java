@@ -23,12 +23,12 @@ public class AnimationUtils {
 
     public static <E extends GeoAnimatable> void setAnimationSpeed(double speed, double currentAnimationTick, AnimationController<E> controller) {
 
-        if(speed == controller.getAnimationSpeed()) {
+        if (speed == controller.getAnimationSpeed()) {
             return;
         }
 
-        if(controller.getCurrentAnimation() != null) {
-            double distance = currentAnimationTick - ((AccessorAnimationController)controller).getTickOffset();
+        if (controller.getCurrentAnimation() != null) {
+            double distance = currentAnimationTick - ((AccessorAnimationController) controller).getTickOffset();
             ((AccessorAnimationController) controller).setTickOffset(currentAnimationTick - distance * (controller.getAnimationSpeed() / speed));
             controller.setAnimationSpeed(speed);
         }
@@ -39,7 +39,7 @@ public class AnimationUtils {
         return controller.getCurrentAnimation() != null && controller.getCurrentAnimation().animation().name().equals(animationName);
     }
 
-    public static double getMovementSpeed(LivingEntity of){
+    public static double getMovementSpeed(LivingEntity of) {
         return Math.sqrt(Math.pow(of.getX() - of.xo, 2) + Math.pow(of.getZ() - of.zo, 2));
     }
 }

@@ -6,9 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import net.neoforged.neoforge.common.util.Lazy;
+
 import java.util.HashMap;
 import java.util.Locale;
-import net.neoforged.neoforge.common.util.Lazy;
 
 public class SkinPortingSystem {
     public static SavedSkinPresets upgrade(SavedSkinPresets presets) {
@@ -21,8 +22,8 @@ public class SkinPortingSystem {
     public static void upgrade0to3(SavedSkinPresets presets) {
         for (String type : presets.skinPresets.keySet()) {
             for (int age : presets.skinPresets.get(type).keySet()) {
-                for(DragonLevel level : DragonLevel.values()){
-                    SkinPreset.SkinAgeGroup sag = presets.skinPresets.get(type).get(age).skinAges.getOrDefault(level, Lazy.of(()->new SkinPreset.SkinAgeGroup(level))).get();
+                for (DragonLevel level : DragonLevel.values()) {
+                    SkinPreset.SkinAgeGroup sag = presets.skinPresets.get(type).get(age).skinAges.getOrDefault(level, Lazy.of(() -> new SkinPreset.SkinAgeGroup(level))).get();
                     for (EnumSkinLayer layer : sag.layerSettings.keySet()) {
                         LayerSettings settings = sag.layerSettings.get(layer).get();
 
@@ -35,8 +36,11 @@ public class SkinPortingSystem {
                                 for (DragonEditorObject.DragonTextureMetadata text : texts) {
                                     if (text.key.equals(part)) {
                                         settings.hue = settings.modifiedColor ? text.average_hue - settings.hue - 0.5f : text.average_hue;
-                                        if (settings.hue > 1) { settings.hue -= 1; }
-                                        else if (settings.hue < 0) { settings.hue += 1; }
+                                        if (settings.hue > 1) {
+                                            settings.hue -= 1;
+                                        } else if (settings.hue < 0) {
+                                            settings.hue += 1;
+                                        }
                                         break;
                                     }
                                 }

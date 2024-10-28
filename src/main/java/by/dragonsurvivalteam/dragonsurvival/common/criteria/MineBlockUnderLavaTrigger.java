@@ -23,7 +23,8 @@ public class MineBlockUnderLavaTrigger extends SimpleCriterionTrigger<MineBlockU
         return MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance.CODEC;
     }
 
-    public record MineBlockUnderLavaInstance(Optional<ContextAwarePredicate> player, Optional<Holder<Block>> block) implements SimpleCriterionTrigger.SimpleInstance {
+    public record MineBlockUnderLavaInstance(Optional<ContextAwarePredicate> player,
+                                            Optional<Holder<Block>> block) implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance::player),
                 BuiltInRegistries.BLOCK.holderByNameCodec().optionalFieldOf("block").forGetter(MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance::block)

@@ -27,7 +27,7 @@ public class HUDHandler {
     public static void onRenderOverlay(final RenderGuiLayerEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
 
-        if (event.isCanceled() || minecraft.options.hideGui){
+        if (event.isCanceled() || minecraft.options.hideGui) {
             return;
         }
 

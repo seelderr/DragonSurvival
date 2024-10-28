@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowSpecificMo
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,6 +18,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
+
+import javax.annotation.Nullable;
 
 public class HoundEntity extends Hunter {
     private RawAnimation currentIdleAnim;
@@ -52,30 +53,30 @@ public class HoundEntity extends Hunter {
     }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
         super.defineSynchedData(pBuilder);
         pBuilder.define(VARIETY, 0);
         pBuilder.define(DID_SLOWDOWN_ATTACK, false);
     }
 
-    public int getVariety(){
+    public int getVariety() {
         return entityData.get(VARIETY);
     }
 
     @Override
-    public void addAdditionalSaveData(CompoundTag compoundNBT){
+    public void addAdditionalSaveData(CompoundTag compoundNBT) {
         super.addAdditionalSaveData(compoundNBT);
         compoundNBT.putInt("Variety", entityData.get(VARIETY));
     }
 
     @Override
-    public void readAdditionalSaveData(CompoundTag compoundNBT){
+    public void readAdditionalSaveData(CompoundTag compoundNBT) {
         super.readAdditionalSaveData(compoundNBT);
         entityData.set(VARIETY, compoundNBT.getInt("Variety"));
     }
 
     @Override
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor pLevel, @NotNull DifficultyInstance pDifficulty, @NotNull MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData){
+    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor pLevel, @NotNull DifficultyInstance pDifficulty, @NotNull MobSpawnType pSpawnType, @Nullable SpawnGroupData pSpawnGroupData) {
         entityData.set(VARIETY, random.nextInt(8));
         return super.finalizeSpawn(pLevel, pDifficulty, pSpawnType, pSpawnGroupData);
     }
@@ -91,10 +92,10 @@ public class HoundEntity extends Hunter {
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity entity){
-        if(ServerConfig.houndSlowdownChance != 0 && entity instanceof LivingEntity){
-            if(random.nextDouble() > ServerConfig.houndSlowdownChance) {
-                ((LivingEntity)entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200));
+    public boolean doHurtTarget(@NotNull Entity entity) {
+        if (ServerConfig.houndSlowdownChance != 0 && entity instanceof LivingEntity) {
+            if (random.nextDouble() > ServerConfig.houndSlowdownChance) {
+                ((LivingEntity) entity).addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200));
                 entityData.set(DID_SLOWDOWN_ATTACK, true);
             } else {
                 entityData.set(DID_SLOWDOWN_ATTACK, false);
@@ -106,12 +107,12 @@ public class HoundEntity extends Hunter {
     public PlayState fullPredicate(AnimationState<HoundEntity> state) {
         double movement = AnimationUtils.getMovementSpeed(this);
 
-        if(isIdleAnimSet) {
+        if (isIdleAnimSet) {
             isIdleAnimSet = !isNotIdle();
         }
 
         if (swingTime > 0) {
-            if(entityData.get(DID_SLOWDOWN_ATTACK)) {
+            if (entityData.get(DID_SLOWDOWN_ATTACK)) {
                 return state.setAndContinue(SPECIAL_ATTACK);
             } else {
                 return state.setAndContinue(ATTACK);

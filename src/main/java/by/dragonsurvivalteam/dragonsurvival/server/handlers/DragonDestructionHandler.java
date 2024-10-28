@@ -30,6 +30,8 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_DESTRUCTIBLE_BLOCKS;
+
 @EventBusSubscriber
 public class DragonDestructionHandler {
 
@@ -38,11 +40,11 @@ public class DragonDestructionHandler {
     public static float boundingBoxSizeRatioForCrushing = 4.0f;
 
     private static void checkAndDestroyCollidingBlocks(DragonStateHandler dragonStateHandler, PlayerTickEvent event, AABB boundingBox) {
-        if(!ServerConfig.allowLargeBlockDestruction) {
+        if (!ServerConfig.allowLargeBlockDestruction) {
             return;
         }
 
-        if(ServerConfig.largeBlockDestructionSize > dragonStateHandler.getSize()) {
+        if (ServerConfig.largeBlockDestructionSize > dragonStateHandler.getSize()) {
             return;
         }
 
@@ -86,58 +88,57 @@ public class DragonDestructionHandler {
     }
 
     private static void checkAndDamageCrushedEntities(DragonStateHandler dragonStateHandler, ServerPlayer player, AABB boundingBox) {
-        if(!ServerConfig.allowCrushing) {
+        if (!ServerConfig.allowCrushing) {
             return;
         }
 
-        if(ServerConfig.crushingSize > dragonStateHandler.getSize()) {
+        if (ServerConfig.crushingSize > dragonStateHandler.getSize()) {
             return;
         }
 
-        if(--crushTickCounter > 0) {
+        if (--crushTickCounter > 0) {
             return;
         }
 
         // Get only the bounding box of the player's feet (estimate by using only the bottom 1/3 of the bounding box)
         AABB feetBoundingBox = new AABB(boundingBox.minX, boundingBox.minY, boundingBox.minZ, boundingBox.maxX, boundingBox.maxY - (boundingBox.maxY - boundingBox.minY) / 3.0, boundingBox.maxZ);
 
-        for(var entity : player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, player, feetBoundingBox)){
+        for (var entity : player.level().getNearbyEntities(LivingEntity.class, TargetingConditions.DEFAULT, player, feetBoundingBox)) {
             // If the entity being crushed is too big, don't damage it.
-            if(entity.getBoundingBox().getSize() > boundingBox.getSize() / boundingBoxSizeRatioForCrushing) {
+            if (entity.getBoundingBox().getSize() > boundingBox.getSize() / boundingBoxSizeRatioForCrushing) {
                 continue;
             }
 
-            entity.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CRUSHED), player), (float)(dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
+            entity.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.CRUSHED), player), (float) (dragonStateHandler.getSize() * ServerConfig.crushingDamageScalar));
             crushTickCounter = ServerConfig.crushingTickDelay;
         }
     }
 
     @SubscribeEvent
-    public static void destroyBlocksInRadius(BlockEvent.BreakEvent event)
-    {
-        if(isBreakingMultipleBlocks) {
+    public static void destroyBlocksInRadius(BlockEvent.BreakEvent event) {
+        if (isBreakingMultipleBlocks) {
             return;
         }
 
-        if(!ServerConfig.allowLargeScaling) {
+        if (!ServerConfig.allowLargeScaling) {
             return;
         }
 
-        if(ServerConfig.largeBlockBreakRadiusScalar <= 0.0f) {
+        if (ServerConfig.largeBlockBreakRadiusScalar <= 0.0f) {
             return;
         }
 
-        if(!(event.getPlayer() instanceof ServerPlayer player)){
+        if (!(event.getPlayer() instanceof ServerPlayer player)) {
             return;
         }
 
-        if(player.isCrouching()) {
+        if (player.isCrouching()) {
             return;
         }
 
         DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-            if(dragonStateHandler.isDragon()) {
-                if(dragonStateHandler.getSize() < ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+            if (dragonStateHandler.isDragon()) {
+                if (dragonStateHandler.getSize() < ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
                     return;
                 }
 
@@ -148,9 +149,9 @@ public class DragonDestructionHandler {
                 // Break the blocks in a radius around the broken block
                 int radius = (int) Math.floor((dragonStateHandler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / 60.f * ServerConfig.largeBlockBreakRadiusScalar);
                 BlockPos pos = event.getPos();
-                for(int x = -radius; x <= radius; x++) {
-                    for(int y = -radius; y <= radius; y++) {
-                        for(int z = -radius; z <= radius; z++) {
+                for (int x = -radius; x <= radius; x++) {
+                    for (int y = -radius; y <= radius; y++) {
+                        for (int z = -radius; z <= radius; z++) {
                             BlockPos newPos = pos.offset(x, y, z);
                             player.gameMode.destroyBlock(newPos);
                         }
@@ -165,7 +166,7 @@ public class DragonDestructionHandler {
     @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void toggleDestructionEnabled(ClientTickEvent.Pre event) {
-        if(!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
+        if (!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
 
@@ -173,7 +174,7 @@ public class DragonDestructionHandler {
         if (player != null) {
             DragonStateProvider.getOptional(player).ifPresent(playerStateHandler -> {
                 if (playerStateHandler.isDragon()) {
-                    if(Keybind.DISABLE_DESTRUCTION.consumeClick()) {
+                    if (Keybind.DISABLE_DESTRUCTION.consumeClick()) {
                         playerStateHandler.setDestructionEnabled(!playerStateHandler.getDestructionEnabled());
                         PacketDistributor.sendToServer(new SyncDestructionEnabled.Data(player.getId(), playerStateHandler.getDestructionEnabled()));
 
@@ -187,27 +188,27 @@ public class DragonDestructionHandler {
 
     @SubscribeEvent
     public static void checkAndDestroyCollidingBlocksAndCrushedEntities(PlayerTickEvent.Post event) {
-        if(!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
+        if (!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
 
-        if(!(event.getEntity() instanceof ServerPlayer player)){
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
 
         DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-            if(dragonStateHandler.isDragon()) {
+            if (dragonStateHandler.isDragon()) {
 
-                if(!dragonStateHandler.getDestructionEnabled()) {
+                if (!dragonStateHandler.getDestructionEnabled()) {
                     return;
                 }
 
-                if(player.isCrouching()) {
+                if (player.isCrouching()) {
                     return;
                 }
 
-                Vec2 deltaXZ = new Vec2((float)player.getDeltaMovement().x, (float)player.getDeltaMovement().z);
-                if(deltaXZ.length() < 0.05f && Math.abs(player.getDeltaMovement().y) < 0.25f) {
+                Vec2 deltaXZ = new Vec2((float) player.getDeltaMovement().x, (float) player.getDeltaMovement().z);
+                if (deltaXZ.length() < 0.05f && Math.abs(player.getDeltaMovement().y) < 0.25f) {
                     return;
                 }
 

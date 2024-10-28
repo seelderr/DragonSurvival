@@ -79,10 +79,11 @@ public class GriffinEntity extends Hunter {
     }
 
     @Override
-    protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {}
+    protected void checkFallDamage(double pY, boolean pOnGround, @NotNull BlockState pState, @NotNull BlockPos pPos) {
+    }
 
     @Override
-    protected void defineSynchedData(SynchedEntityData.Builder pBuilder){
+    protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {
         super.defineSynchedData(pBuilder);
         pBuilder.define(CURRENT_ATTACK, 0);
     }
@@ -103,11 +104,11 @@ public class GriffinEntity extends Hunter {
     @Override
     public void swing(@NotNull InteractionHand pHand) {
         super.swing(pHand);
-        if(this.swinging) {
+        if (this.swinging) {
             double randomRoll = random.nextDouble();
-            if(randomRoll > 0.75) {
+            if (randomRoll > 0.75) {
                 setCurrentAttack(GriffinAttackTypes.SLASH_WINGS);
-            } else if(randomRoll > 0.5) {
+            } else if (randomRoll > 0.5) {
                 setCurrentAttack(GriffinAttackTypes.BLINDNESS);
             } else {
                 setCurrentAttack(GriffinAttackTypes.NORMAL);
@@ -116,12 +117,12 @@ public class GriffinEntity extends Hunter {
     }
 
     @Override
-    public boolean doHurtTarget(@NotNull Entity entity){
-        if(entity instanceof LivingEntity target) {
-            if(getCurrentAttack() == GriffinAttackTypes.BLINDNESS) {
+    public boolean doHurtTarget(@NotNull Entity entity) {
+        if (entity instanceof LivingEntity target) {
+            if (getCurrentAttack() == GriffinAttackTypes.BLINDNESS) {
                 target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 100, 0));
-            } else if(getCurrentAttack() == GriffinAttackTypes.SLASH_WINGS) {
-                if(DragonStateProvider.isDragon(target)) {
+            } else if (getCurrentAttack() == GriffinAttackTypes.SLASH_WINGS) {
+                if (DragonStateProvider.isDragon(target)) {
                     target.addEffect(new MobEffectInstance(DSEffects.WINGS_BROKEN, 100, 0));
                 }
             }
@@ -137,17 +138,17 @@ public class GriffinEntity extends Hunter {
     public PlayState fullPredicate(final AnimationState<GriffinEntity> state) {
         double movement = AnimationUtils.getMovementSpeed(this);
 
-        if(swingTime > 0) {
+        if (swingTime > 0) {
             return state.setAndContinue(getAttackAnim());
         } else {
-            if(movement > 0.01) {
-                if(isAggro()) {
+            if (movement > 0.01) {
+                if (isAggro()) {
                     return state.setAndContinue(FLY_AGGRESSIVE);
                 } else {
                     return state.setAndContinue(FLY);
                 }
             } else {
-                if(!onGround()) {
+                if (!onGround()) {
                     return state.setAndContinue(IDLE_FLY);
                 } else {
                     return state.setAndContinue(IDLE);

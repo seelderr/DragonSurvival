@@ -15,20 +15,20 @@ import net.neoforged.neoforge.common.extensions.IMenuTypeExtension;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@EventBusSubscriber( bus = EventBusSubscriber.Bus.MOD )
-public class DSContainers{
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+public class DSContainers {
 
-	public static final DeferredRegister<MenuType<?>> DS_CONTAINERS = DeferredRegister.create(
-			BuiltInRegistries.MENU,
-			DragonSurvivalMod.MODID
-	);
+    public static final DeferredRegister<MenuType<?>> DS_CONTAINERS = DeferredRegister.create(
+            BuiltInRegistries.MENU,
+            DragonSurvivalMod.MODID
+    );
 
-	public static final DeferredHolder<MenuType<?>, MenuType<SourceOfMagicContainer>> SOURCE_OF_MAGIC_CONTAINER = DS_CONTAINERS.register("dragon_nest", () -> IMenuTypeExtension.create(SourceOfMagicContainer::new));
-	public static final DeferredHolder<MenuType<?>, MenuType<DragonContainer>> DRAGON_CONTAINER = DS_CONTAINERS.register("dragon_container", () -> new MenuType<>(DragonContainer::new, FeatureFlags.DEFAULT_FLAGS));
+    public static final DeferredHolder<MenuType<?>, MenuType<SourceOfMagicContainer>> SOURCE_OF_MAGIC_CONTAINER = DS_CONTAINERS.register("dragon_nest", () -> IMenuTypeExtension.create(SourceOfMagicContainer::new));
+    public static final DeferredHolder<MenuType<?>, MenuType<DragonContainer>> DRAGON_CONTAINER = DS_CONTAINERS.register("dragon_container", () -> new MenuType<>(DragonContainer::new, FeatureFlags.DEFAULT_FLAGS));
 
-	@SubscribeEvent
-	public static void registerScreens(RegisterMenuScreensEvent event) {
-		event.register(SOURCE_OF_MAGIC_CONTAINER.get(), SourceOfMagicScreen::new);
-		event.register(DRAGON_CONTAINER.get(), DragonInventoryScreen::new);
-	}
+    @SubscribeEvent
+    public static void registerScreens(RegisterMenuScreensEvent event) {
+        event.register(SOURCE_OF_MAGIC_CONTAINER.get(), SourceOfMagicScreen::new);
+        event.register(DRAGON_CONTAINER.get(), DragonInventoryScreen::new);
+    }
 }

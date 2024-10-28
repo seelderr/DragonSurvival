@@ -12,31 +12,31 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
-public class MiningTickHandler{
-	@SubscribeEvent
-	public static void updateMiningTick(PlayerTickEvent.Post playerTickEvent){
-		Player player = playerTickEvent.getEntity();
-		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				if(player instanceof ServerPlayer){
-					ServerPlayerGameMode interactionManager = ((ServerPlayer)player).gameMode;
-					boolean isMining = interactionManager.isDestroyingBlock && player.swinging;
+public class MiningTickHandler {
+    @SubscribeEvent
+    public static void updateMiningTick(PlayerTickEvent.Post playerTickEvent) {
+        Player player = playerTickEvent.getEntity();
+        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+            if (dragonStateHandler.isDragon()) {
+                if (player instanceof ServerPlayer) {
+                    ServerPlayerGameMode interactionManager = ((ServerPlayer) player).gameMode;
+                    boolean isMining = interactionManager.isDestroyingBlock && player.swinging;
 
-					if(isMining != dragonStateHandler.getMovementData().dig){
-						dragonStateHandler.getMovementData().dig = isMining;
-						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDiggingStatus.Data(player.getId(), isMining));
-					}
+                    if (isMining != dragonStateHandler.getMovementData().dig) {
+                        dragonStateHandler.getMovementData().dig = isMining;
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDiggingStatus.Data(player.getId(), isMining));
+                    }
 
-					if(dragonStateHandler.treasureResting && isMining) {
-						dragonStateHandler.treasureResting = false;
-						PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
-					}
+                    if (dragonStateHandler.treasureResting && isMining) {
+                        dragonStateHandler.treasureResting = false;
+                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncTreasureRestStatus.Data(player.getId(), false));
+                    }
 
-					if(dragonStateHandler.getMagicData().onMagicSource && isMining){
-						SourceOfMagicHandler.cancelSourceOfMagicServer(player);
-					}
-				}
-			}
-		});
-	}
+                    if (dragonStateHandler.getMagicData().onMagicSource && isMining) {
+                        SourceOfMagicHandler.cancelSourceOfMagicServer(player);
+                    }
+                }
+            }
+        });
+    }
 }

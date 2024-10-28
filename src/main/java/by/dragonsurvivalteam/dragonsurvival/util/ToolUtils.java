@@ -51,11 +51,11 @@ public class ToolUtils {
     }
 
     /**
-     Puts the relevant claw tool in the main hand and stores said main hand in the dragon state handler<br>
-     This way modded enchantments etc. which check the currently held item will be directly compatible<br>
-     <br>
-     When using this make sure you call {@link ToolUtils#swapFinish(Player)} to restore the initial state
-    */
+     * Puts the relevant claw tool in the main hand and stores said main hand in the dragon state handler<br>
+     * This way modded enchantments etc. which check the currently held item will be directly compatible<br>
+     * <br>
+     * When using this make sure you call {@link ToolUtils#swapFinish(Player)} to restore the initial state
+     */
     public static void swapStart(@Nullable final Player player, final BlockState blockState) {
         if (player == null || player.isCreative() || player.isSpectator()) {
             return;
@@ -85,7 +85,9 @@ public class ToolUtils {
         handler.toolSwapLayer++;
     }
 
-    /** Puts the stored main hand back into the main hand and the claw tool into its slot */
+    /**
+     * Puts the stored main hand back into the main hand and the claw tool into its slot
+     */
     public static void swapFinish(@Nullable final Player player) {
         if (player == null || player.isCreative() || player.isSpectator()) {
             return;

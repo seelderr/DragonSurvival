@@ -26,7 +26,7 @@ public class DataBlockModelProvider extends BlockModelProvider {
                         .texture("south", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_south"))
                         .texture("up", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_top"))
                         .texture("west", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_west"));
-            } else if(holder.get() instanceof HelmetBlock) {
+            } else if (holder.get() instanceof HelmetBlock) {
                 withExistingParent(holder.getId().getPath(), BLOCK_FOLDER + "/" + "skull")
                         .texture("all", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "block/" + holder.getId().getPath()));
             }

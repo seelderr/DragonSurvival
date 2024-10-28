@@ -4,8 +4,12 @@
     "icon": {
       "id": "dragonsurvival:partisan"
     },
-    "title": { "translate": "ds.advancements.fear_me.title" },
-    "description": { "translate": "ds.advancements.fear_me.description" },
+    "title": {
+      "translate": "ds.advancements.fear_me.title"
+    },
+    "description": {
+      "translate": "ds.advancements.fear_me.description"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false
