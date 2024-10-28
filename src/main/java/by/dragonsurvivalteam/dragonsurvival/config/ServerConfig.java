@@ -596,7 +596,7 @@ public class ServerConfig {
     public static List<BlockStateConfig> seaConditionalManaBlocks = List.of();
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "forest_conditional_mana_blocks", comment = "Blocks that restore mana for forest dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
-    public static List<BlockStateConfg> forestConditionalManaBlocks = List.of();
+    public static List<BlockStateConfig> forestConditionalManaBlocks = List.of();
 
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "dragonAbilities", comment = "Whether dragon abilities should be enabled")
@@ -604,7 +604,7 @@ public class ServerConfig {
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon"}, key = "caveDragonAbilities", comment = "Whether cave dragon abilities should be enabled")
     public static Boolean caveDragonAbilities = true;
-    i
+
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon"}, key = "forestDragonAbilities", comment = "Whether forest dragon abilities should be enabled")
     public static Boolean forestDragonAbilities = true;
 
