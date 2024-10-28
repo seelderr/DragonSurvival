@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.open_good_vault.description"
     },
-    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

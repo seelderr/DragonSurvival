@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:forest/be_old_forest_dragon",
+  "parent": "dragonsurvival:be_old_forest_dragon",
   "display": {
     "icon": {
       "id": "dragonsurvival:forest_source_of_magic"
@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.master_all_forest_passives.description"
     },
-    "frame": "challenge",
     "hidden": false
   },
   "criteria": {

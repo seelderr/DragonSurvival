@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:forest/be_forest_dragon",
+  "parent": "dragonsurvival:forest/get_poison_potato",
   "display": {
     "icon": {
       "id": "dragonsurvival:meat_wild_berries"

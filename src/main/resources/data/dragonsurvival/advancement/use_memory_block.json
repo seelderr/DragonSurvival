@@ -1,0 +1,41 @@
+{
+  "parent": "dragonsurvival:collect_dust",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:dragon_memory_block"
+    },
+    "title": {
+      "translate": "ds.advancements.use_memory_block.title"
+    },
+    "description": {
+      "translate": "ds.advancements.use_memory_block.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "dragon_memory_place": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "player": [],
+        "location": [
+          {
+            "condition": "minecraft:block_state_property",
+            "block": "dragonsurvival:dragon_memory_block",
+            "properties": {}
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "#dragonsurvival:dragon_beacons"
+            }
+          }
+        ]
+      }
+    }
+  },
+  "rewards": {
+    "experience": 10
+  }
+}

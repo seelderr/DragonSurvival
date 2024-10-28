@@ -87,8 +87,8 @@ public class ForestBreathAbility extends BreathAbility {
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "dirtTransformationBlocks", comment = "Blocks which dirt can be transformed into. Formatting: mod_id:block_id:chance (e.g. minecraft:podzol:7) (The chance is x out of 100)")
     public static List<String> dirtTransformationBlocks = List.of(
             "minecraft:moss_block:3",
-            "minecraft:podzol:7",
-            "minecraft:mycelium:7",
+            "minecraft:podzol:5",
+            "minecraft:mycelium:1",
             "minecraft:grass_block:25"
     );
 

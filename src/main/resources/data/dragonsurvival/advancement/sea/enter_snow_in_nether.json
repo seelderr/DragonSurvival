@@ -10,7 +10,6 @@
     "description": {
       "translate": "ds.advancements.enter_snow_in_nether.description"
     },
-    "frame": "goal",
     "hidden": false
   },
   "criteria": {

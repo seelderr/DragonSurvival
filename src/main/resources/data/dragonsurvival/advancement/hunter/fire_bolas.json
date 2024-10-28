@@ -9,8 +9,7 @@
     },
     "description": {
       "translate": "ds.advancements.fire_bolas.description"
-    },
-    "frame": "goal"
+    }
   },
   "criteria": {
     "murderer": {

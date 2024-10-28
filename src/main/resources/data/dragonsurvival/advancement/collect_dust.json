@@ -2,14 +2,10 @@
   "parent": "dragonsurvival:dragon_survival_root",
   "display": {
     "icon": {
-      "id": "dragonsurvival:elder_dragon_dust"
+      "id": "minecraft:coal_ore"
     },
-    "title": {
-      "translate": "ds.advancements.collect_dust.title"
-    },
-    "description": {
-      "translate": "ds.advancements.collect_dust.description"
-    },
+    "title": { "translate": "ds.advancements.collect_dust.title" },
+    "description": { "translate": "ds.advancements.collect_dust.description" },
     "show_toast": false,
     "announce_to_chat": false,
     "hidden": false
@@ -24,9 +20,9 @@
           }
         ]
       }
-    },
-    "rewards": {
-      "experience": 6
-    }
+  },
+  "rewards": {
+    "experience": 6
   }
+}
 }

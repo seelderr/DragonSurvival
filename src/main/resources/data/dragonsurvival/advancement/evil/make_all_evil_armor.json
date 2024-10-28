@@ -4,15 +4,10 @@
     "icon": {
       "id": "dragonsurvival:evil_dragon_chestplate"
     },
-    "title": {
-      "translate": "ds.advancements.make_all_evil_armor.title"
-    },
-    "description": {
-      "translate": "ds.advancements.make_all_evil_armor.description"
-    },
+    "title": { "translate": "ds.advancements.make_all_evil_armor.title" },
+    "description": { "translate": "ds.advancements.make_all_evil_armor.description" },
     "show_toast": true,
     "announce_to_chat": true,
-    "frame": "challenge",
     "hidden": false
   },
   "criteria": {
@@ -58,17 +53,9 @@
     }
   },
   "requirements": [
-    [
-      "helmet"
-    ],
-    [
-      "chestplate"
-    ],
-    [
-      "leggings"
-    ],
-    [
-      "boots"
-    ]
+    ["helmet"],
+    ["chestplate"],
+    ["leggings"],
+    ["boots"]
   ]
 }

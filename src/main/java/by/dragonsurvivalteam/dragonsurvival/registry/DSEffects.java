@@ -48,13 +48,13 @@ public class DSEffects {
 
                 if (food.getSaturationLevel() > 0) {
                     int oldFood = food.getFoodLevel();
-                    food.eat(1, (float) ((-0.5F * food.getSaturationLevel()) * ServerConfig.stressExhaustion));
+                    food.eat(1, (float) ((-0.5F * food.getSaturationLevel()) * ServerConfig.forestStressExhaustion));
                     if (oldFood != 20) {
-                        food.setFoodLevel((int) (food.getFoodLevel() - 1 * ServerConfig.stressExhaustion));
+                        food.setFoodLevel((int) (food.getFoodLevel() - 1 * ServerConfig.forestStressExhaustion));
                     }
                 }
 
-                player.causeFoodExhaustion((float) (1.0f * ServerConfig.stressExhaustion));
+                player.causeFoodExhaustion((float) (1.0f * ServerConfig.forestStressExhaustion));
 
                 return true;
             }

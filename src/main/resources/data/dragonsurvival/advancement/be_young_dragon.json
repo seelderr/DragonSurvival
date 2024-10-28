@@ -1,18 +1,13 @@
 {
-  "parent": "dragonsurvival:be_dragon",
+  "parent": "dragonsurvival:collect_dust",
   "display": {
     "icon": {
       "id": "dragonsurvival:heart_element"
     },
-    "title": {
-      "translate": "ds.advancements.be_young_dragon.title"
-    },
-    "description": {
-      "translate": "ds.advancements.be_young_dragon.description"
-    },
+    "title": { "translate": "ds.advancements.be_young_dragon.title" },
+    "description": { "translate": "ds.advancements.be_young_dragon.description" },
     "show_toast": true,
-    "announce_to_chat": true,
-    "frame": "goal"
+    "announce_to_chat": true
   },
   "criteria": {
     "be_dragon": {
