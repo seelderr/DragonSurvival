@@ -96,14 +96,14 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
             return;
         }
 
-		ClientDragonRenderer.dragonModel.setOverrideTexture(texture);
-		RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
+        ClientDragonRenderer.dragonModel.setOverrideTexture(texture);
+        RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
 
-		if (type != null) {
-			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-			renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
-		}
-	}
+        if (type != null) {
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+            renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
+        }
+    }
 
     private static Optional<ResourceLocation> constructTrimmedDragonArmorTexture(final Player pPlayer) {
         String armorUUID = buildUniqueArmorUUID(pPlayer);

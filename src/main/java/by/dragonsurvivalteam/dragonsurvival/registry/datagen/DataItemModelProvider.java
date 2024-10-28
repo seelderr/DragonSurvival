@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
-import java.util.List;
-import java.util.Objects;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -19,9 +17,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class DataItemModelProvider extends ItemModelProvider {
-	public DataItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
-		super(output, DragonSurvivalMod.MODID, existingFileHelper);
-	}
+    public DataItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
+        super(output, DragonSurvivalMod.MODID, existingFileHelper);
+    }
 
     private static final List<String> blockItemsThatShouldBeBasicInstead = List.of(
             "door",

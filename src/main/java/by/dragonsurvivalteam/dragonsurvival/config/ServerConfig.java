@@ -52,8 +52,8 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "allowDragonChoiceFromInventory", comment = "Should the dragon altar be accessible from the vanilla inventory if the player has not made a choice yet?")
     public static Boolean allowDragonChoiceFromInventory = true;
 
-	@ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
-	public static Boolean useBlacklistForDestructibleBlocks = false;
+    @ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
+    public static Boolean useBlacklistForDestructibleBlocks = false;
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeBlockDestruction", comment = "Allow a dragon to instantly destroy certain colliding blocks if they are above a certain size.")
     public static Boolean allowLargeBlockDestruction = false;
@@ -360,9 +360,9 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "waterBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air.")
     public static Boolean seaSwimmingBonuses = true;
 
-	//Dragon Penalties
-	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties." )
-	public static Boolean penaltiesEnabled = true;
+    //Dragon Penalties
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties." )
+    public static Boolean penaltiesEnabled = true;
 
     @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "dragonsAreScary", comment = "Whether dragons are scary or not.")
     public static Boolean dragonsAreScary = true;
@@ -370,142 +370,142 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride")
     public static Boolean ridingBlacklist = true;
 
-	@ConfigType(Item.class) // FIXME :: handle with tag
-	@ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
-	public static List<String> blacklistedItems = List.of(
-			"c:tools/shield",
-			"c:tools/bow",
-			"c:tools/crossbow",
-			"minecraft:trident",
-			"minecraft:elytra",
-			"quark:flamerang",
-			"quark:pickarang",
-			"mowziesmobs:wrought_axe",
-			"nethers_exoticism:rambutan_shield",
-			"aquaculture:neptunium_bow",
-			"endermanoverhaul:corrupted_shield",
-			"upgradednetherite:echo_upgraded_netherite_shield",
-			"upgradednetherite:corrupt_upgraded_netherite_shield",
-			"upgradednetherite:feather_upgraded_netherite_shield",
-			"upgradednetherite:phantom_upgraded_netherite_shield",
-			"upgradednetherite:poison_upgraded_netherite_shield",
-			"upgradednetherite:wither_upgraded_netherite_shield",
-			"upgradednetherite:water_upgraded_netherite_shield",
-			"upgradednetherite:ender_upgraded_netherite_shield",
-			"magistuarmory:bronze_ellipticalshield",
-			"magistuarmory:wood_roundshield",
-			"magistuarmory:stone_roundshield",
-			"magistuarmory:iron_roundshield",
-			"magistuarmory:gold_roundshield",
-			"magistuarmory:diamond_roundshield",
-			"magistuarmory:netherite_roundshield",
-			"magistuarmory:copper_roundshield",
-			"magistuarmory:steel_roundshield",
-			"magistuarmory:silver_roundshield",
-			"magistuarmory:tin_roundshield",
-			"magistuarmory:bronze_roundshield",
-			"magistuarmory:wood_kiteshield",
-			"magistuarmory:stone_kiteshield",
-			"magistuarmory:iron_kiteshield",
-			"magistuarmory:gold_kiteshield",
-			"magistuarmory:diamond_kiteshield",
-			"magistuarmory:netherite_kiteshield",
-			"magistuarmory:steel_kiteshield",
-			"magistuarmory:copper_kiteshield",
-			"magistuarmory:silver_kiteshield",
-			"magistuarmory:tin_kiteshield",
-			"magistuarmory:bronze_kiteshield",
-			"unusualend:blob_shield",
-			"upgradednetherite:netherite_shield",
-			"upgradednetherite:gold_upgraded_netherite_shield",
-			"upgradednetherite:fire_upgraded_netherite_shield",
-			"magistuarmory:stone_ellipticalshield",
-			"magistuarmory:iron_ellipticalshield",
-			"magistuarmory:diamond_ellipticalshield",
-			"magistuarmory:gold_ellipticalshield",
-			"infernalexp:glowsilk_bow",
-			"magistuarmory:tin_ellipticalshield",
-			"upgradednetherite:gold_upgraded_netherite_bow",
-			"upgradednetherite:fire_upgraded_netherite_bow",
-			"upgradednetherite:ender_upgraded_netherite_bow",
-			"magistuarmory:silver_ellipticalshield",
-			"magistuarmory:steel_ellipticalshield",
-			"magistuarmory:copper_ellipticalshield",
-			"magistuarmory:netherite_ellipticalshield",
-			"upgradednetherite:netherite_crossbow",
-			"upgradednetherite:gold_upgraded_netherite_crossbow",
-			"upgradednetherite:fire_upgraded_netherite_crossbow",
-			"upgradednetherite:ender_upgraded_netherite_crossbow",
-			"upgradednetherite:water_upgraded_netherite_crossbow",
-			"upgradednetherite:wither_upgraded_netherite_crossbow",
-			"upgradednetherite:poison_upgraded_netherite_crossbow",
-			"upgradednetherite:phantom_upgraded_netherite_crossbow",
-			"upgradednetherite:feather_upgraded_netherite_crossbow",
-			"upgradednetherite:corrupt_upgraded_netherite_crossbow",
-			"upgradednetherite:echo_upgraded_netherite_crossbow",
-			"magistuarmory:wood_heatershield", "magistuarmory:stone_heatershield",
-			"magistuarmory:iron_heatershield", "magistuarmory:gold_heatershield",
-			"magistuarmory:diamond_heatershield", "magistuarmory:netherite_heatershield",
-			"magistuarmory:copper_heatershield", "magistuarmory:steel_heatershield",
-			"magistuarmory:silver_heatershield", "magistuarmory:tin_heatershield",
-			"magistuarmory:bronze_heatershield", "magistuarmory:wood_ellipticalshield",
-			"magistuarmory:silver_target", "magistuarmory:steel_target",
-			"magistuarmory:copper_target", "magistuarmory:netherite_target",
-			"magistuarmory:diamond_target",
-			"magistuarmory:gold_target",
-			"magistuarmory:iron_target",
-			"magistuarmory:stone_target",
-			"aquaculture:neptunium_bow",
-			"magistuarmory:gold_pavese",
-			"magistuarmory:iron_pavese",
-			"magistuarmory:wood_pavese",
-			"magistuarmory:tin_tartsche",
-			"magistuarmory:silver_tartsche",
-			"magistuarmory:steel_tartsche",
-			"magistuarmory:copper_tartsche",
-			"magistuarmory:diamond_tartsche",
-			"magistuarmory:iron_tartsche",
-			"magistuarmory:stone_tartsche",
-			"magistuarmory:wood_tartsche",
-			"magistuarmory:bronze_rondache",
-			"magistuarmory:tin_rondache",
-			"magistuarmory:netherite_rondache",
-			"magistuarmory:diamond_rondache",
-			"magistuarmory:gold_rondache",
-			"magistuarmory:iron_rondache",
-			"magistuarmory:wood_rondache",
-			"magistuarmory:tin_buckler",
-			"magistuarmory:steel_buckler",
-			"magistuarmory:copper_buckler",
-			"magistuarmory:netherite_buckler",
-			"magistuarmory:diamond_buckler",
-			"magistuarmory:gold_buckler",
-			"magistuarmory:iron_buckler",
-			"magistuarmory:stone_buckler",
-			"magistuarmory:tin_target",
-			"magistuarmory:diamond_pavese",
-			"magistuarmory:netherite_pavese",
-			"magistuarmory:copper_pavese",
-			"magistuarmory:steel_pavese",
-			"magistuarmory:tin_pavese",
-			"endermanoverhaul:corrupted_shield",
-			"upgradednetherite:wither_upgraded_netherite_bow",
-			"upgradednetherite:water_upgraded_netherite_bow",
-			"upgradednetherite:poison_upgraded_netherite_bow",
-			"upgradednetherite:phantom_upgraded_netherite_bow",
-			"upgradednetherite:feather_upgraded_netherite_bow",
-			"upgradednetherite:corrupt_upgraded_netherite_bow",
-			"upgradednetherite:echo_upgraded_netherite_bow",
-			"cataclysm:ignitium_elytra_chestplate",
-			"revised_phantoms:phantom_wings_chestplate",
-			"deeperdarker:soul_elytra",
-			"born_in_chaos_v1:staffof_magic_arrows",
-			"magistuarmory:heavy_crossbow",
-			"spartanweaponry:boomerang_.*",
-			"spartanshields:shield_.*",
-			"spartanweaponry:heavy_crossbow_.*",
-			"spartanweaponry:longbow_.*"
-	);
+    @ConfigType(Item.class) // FIXME :: handle with tag
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
+    public static List<String> blacklistedItems = List.of(
+            "c:tools/shield",
+            "c:tools/bow",
+            "c:tools/crossbow",
+            "minecraft:trident",
+            "minecraft:elytra",
+            "quark:flamerang",
+            "quark:pickarang",
+            "mowziesmobs:wrought_axe",
+            "nethers_exoticism:rambutan_shield",
+            "aquaculture:neptunium_bow",
+            "endermanoverhaul:corrupted_shield",
+            "upgradednetherite:echo_upgraded_netherite_shield",
+            "upgradednetherite:corrupt_upgraded_netherite_shield",
+            "upgradednetherite:feather_upgraded_netherite_shield",
+            "upgradednetherite:phantom_upgraded_netherite_shield",
+            "upgradednetherite:poison_upgraded_netherite_shield",
+            "upgradednetherite:wither_upgraded_netherite_shield",
+            "upgradednetherite:water_upgraded_netherite_shield",
+            "upgradednetherite:ender_upgraded_netherite_shield",
+            "magistuarmory:bronze_ellipticalshield",
+            "magistuarmory:wood_roundshield",
+            "magistuarmory:stone_roundshield",
+            "magistuarmory:iron_roundshield",
+            "magistuarmory:gold_roundshield",
+            "magistuarmory:diamond_roundshield",
+            "magistuarmory:netherite_roundshield",
+            "magistuarmory:copper_roundshield",
+            "magistuarmory:steel_roundshield",
+            "magistuarmory:silver_roundshield",
+            "magistuarmory:tin_roundshield",
+            "magistuarmory:bronze_roundshield",
+            "magistuarmory:wood_kiteshield",
+            "magistuarmory:stone_kiteshield",
+            "magistuarmory:iron_kiteshield",
+            "magistuarmory:gold_kiteshield",
+            "magistuarmory:diamond_kiteshield",
+            "magistuarmory:netherite_kiteshield",
+            "magistuarmory:steel_kiteshield",
+            "magistuarmory:copper_kiteshield",
+            "magistuarmory:silver_kiteshield",
+            "magistuarmory:tin_kiteshield",
+            "magistuarmory:bronze_kiteshield",
+            "unusualend:blob_shield",
+            "upgradednetherite:netherite_shield",
+            "upgradednetherite:gold_upgraded_netherite_shield",
+            "upgradednetherite:fire_upgraded_netherite_shield",
+            "magistuarmory:stone_ellipticalshield",
+            "magistuarmory:iron_ellipticalshield",
+            "magistuarmory:diamond_ellipticalshield",
+            "magistuarmory:gold_ellipticalshield",
+            "infernalexp:glowsilk_bow",
+            "magistuarmory:tin_ellipticalshield",
+            "upgradednetherite:gold_upgraded_netherite_bow",
+            "upgradednetherite:fire_upgraded_netherite_bow",
+            "upgradednetherite:ender_upgraded_netherite_bow",
+            "magistuarmory:silver_ellipticalshield",
+            "magistuarmory:steel_ellipticalshield",
+            "magistuarmory:copper_ellipticalshield",
+            "magistuarmory:netherite_ellipticalshield",
+            "upgradednetherite:netherite_crossbow",
+            "upgradednetherite:gold_upgraded_netherite_crossbow",
+            "upgradednetherite:fire_upgraded_netherite_crossbow",
+            "upgradednetherite:ender_upgraded_netherite_crossbow",
+            "upgradednetherite:water_upgraded_netherite_crossbow",
+            "upgradednetherite:wither_upgraded_netherite_crossbow",
+            "upgradednetherite:poison_upgraded_netherite_crossbow",
+            "upgradednetherite:phantom_upgraded_netherite_crossbow",
+            "upgradednetherite:feather_upgraded_netherite_crossbow",
+            "upgradednetherite:corrupt_upgraded_netherite_crossbow",
+            "upgradednetherite:echo_upgraded_netherite_crossbow",
+            "magistuarmory:wood_heatershield", "magistuarmory:stone_heatershield",
+            "magistuarmory:iron_heatershield", "magistuarmory:gold_heatershield",
+            "magistuarmory:diamond_heatershield", "magistuarmory:netherite_heatershield",
+            "magistuarmory:copper_heatershield", "magistuarmory:steel_heatershield",
+            "magistuarmory:silver_heatershield", "magistuarmory:tin_heatershield",
+            "magistuarmory:bronze_heatershield", "magistuarmory:wood_ellipticalshield",
+            "magistuarmory:silver_target", "magistuarmory:steel_target",
+            "magistuarmory:copper_target", "magistuarmory:netherite_target",
+            "magistuarmory:diamond_target",
+            "magistuarmory:gold_target",
+            "magistuarmory:iron_target",
+            "magistuarmory:stone_target",
+            "aquaculture:neptunium_bow",
+            "magistuarmory:gold_pavese",
+            "magistuarmory:iron_pavese",
+            "magistuarmory:wood_pavese",
+            "magistuarmory:tin_tartsche",
+            "magistuarmory:silver_tartsche",
+            "magistuarmory:steel_tartsche",
+            "magistuarmory:copper_tartsche",
+            "magistuarmory:diamond_tartsche",
+            "magistuarmory:iron_tartsche",
+            "magistuarmory:stone_tartsche",
+            "magistuarmory:wood_tartsche",
+            "magistuarmory:bronze_rondache",
+            "magistuarmory:tin_rondache",
+            "magistuarmory:netherite_rondache",
+            "magistuarmory:diamond_rondache",
+            "magistuarmory:gold_rondache",
+            "magistuarmory:iron_rondache",
+            "magistuarmory:wood_rondache",
+            "magistuarmory:tin_buckler",
+            "magistuarmory:steel_buckler",
+            "magistuarmory:copper_buckler",
+            "magistuarmory:netherite_buckler",
+            "magistuarmory:diamond_buckler",
+            "magistuarmory:gold_buckler",
+            "magistuarmory:iron_buckler",
+            "magistuarmory:stone_buckler",
+            "magistuarmory:tin_target",
+            "magistuarmory:diamond_pavese",
+            "magistuarmory:netherite_pavese",
+            "magistuarmory:copper_pavese",
+            "magistuarmory:steel_pavese",
+            "magistuarmory:tin_pavese",
+            "endermanoverhaul:corrupted_shield",
+            "upgradednetherite:wither_upgraded_netherite_bow",
+            "upgradednetherite:water_upgraded_netherite_bow",
+            "upgradednetherite:poison_upgraded_netherite_bow",
+            "upgradednetherite:phantom_upgraded_netherite_bow",
+            "upgradednetherite:feather_upgraded_netherite_bow",
+            "upgradednetherite:corrupt_upgraded_netherite_bow",
+            "upgradednetherite:echo_upgraded_netherite_bow",
+            "cataclysm:ignitium_elytra_chestplate",
+            "revised_phantoms:phantom_wings_chestplate",
+            "deeperdarker:soul_elytra",
+            "born_in_chaos_v1:staffof_magic_arrows",
+            "magistuarmory:heavy_crossbow",
+            "spartanweaponry:boomerang_.*",
+            "spartanshields:shield_.*",
+            "spartanweaponry:heavy_crossbow_.*",
+            "spartanweaponry:longbow_.*"
+    );
 
     // Cave Dragon Penalties
     @ConfigRange(min = 0.0, max = 100.0)
@@ -791,15 +791,15 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "temporaryEffect", comment = "Duration of effect given in exchange for experience in minutes")
     public static Integer minutesOfDragonEffect = 10;
 
-	@ConfigType(MobEffect.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
-	public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
+    @ConfigType(MobEffect.class)
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
+    public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
 
-	@ConfigType(MobEffect.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
-	public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
+    @ConfigType(MobEffect.class)
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
+    public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
-	@ConfigType(MobEffect.class)
-	@ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
-	public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
+    @ConfigType(MobEffect.class)
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
+    public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
 }

@@ -105,12 +105,12 @@ public class DragonBonusHandler {
     public static void onJump(LivingEvent.LivingJumpEvent jumpEvent) {
         final LivingEntity living = jumpEvent.getEntity();
 
-		if(living.getEffect(DSEffects.TRAPPED) != null){
-			Vec3 deltaMovement = living.getDeltaMovement();
-			living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
-			living.setJumping(false);
-			return;
-		}
+        if(living.getEffect(DSEffects.TRAPPED) != null){
+            Vec3 deltaMovement = living.getDeltaMovement();
+            living.setDeltaMovement(deltaMovement.x, deltaMovement.y < 0 ? deltaMovement.y : 0, deltaMovement.z);
+            living.setJumping(false);
+            return;
+        }
 
         DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
             if (dragonStateHandler.isDragon()) {
@@ -121,13 +121,13 @@ public class DragonBonusHandler {
         });
     }
 
-	@SubscribeEvent
-	public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
-		if (dropsEvent.getBreaker() == null) return;
+    @SubscribeEvent
+    public static void addFireProtectionToCaveDragonDrops(BlockDropsEvent dropsEvent) {
+        if (dropsEvent.getBreaker() == null) return;
 
-		// TODO :: also handle experience? would need a hook in 'CommonHooks#handleBlockDrops' to store some context and then modify the experience orb in 'ExperienceOrb#award'
-		if (DragonUtils.isDragonType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
-			dropsEvent.getDrops().forEach(drop -> drop.getData(DragonSurvivalMod.ENTITY_HANDLER).isFireImmune = true);
-		}
-	}
+        // TODO :: also handle experience? would need a hook in 'CommonHooks#handleBlockDrops' to store some context and then modify the experience orb in 'ExperienceOrb#award'
+        if (DragonUtils.isDragonType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
+            dropsEvent.getDrops().forEach(drop -> drop.getData(DragonSurvivalMod.ENTITY_HANDLER).isFireImmune = true);
+        }
+    }
 }

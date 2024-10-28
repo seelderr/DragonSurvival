@@ -19,13 +19,13 @@ import java.util.Map;
 
 @EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DragonConfigHandler{
-	public static HashSet<Item> DRAGON_BLACKLISTED_ITEMS = new HashSet<>();
-	public static HashSet<Block> SEA_DRAGON_HYDRATION_BLOCKS = new HashSet<>();
-	public static HashSet<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = new HashSet<>();
-	public static HashSet<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = new HashSet<>();
+    public static HashSet<Item> DRAGON_BLACKLISTED_ITEMS = new HashSet<>();
+    public static HashSet<Block> SEA_DRAGON_HYDRATION_BLOCKS = new HashSet<>();
+    public static HashSet<Item> SEA_DRAGON_HYDRATION_USE_ALTERNATIVES = new HashSet<>();
+    public static HashSet<Block> FOREST_DRAGON_BREATH_GROW_BLACKLIST = new HashSet<>();
 
-	public static Map<String, HashSet<Block>> DRAGON_BREATH_BLOCKS;
-	public static Map<String, HashSet<Block>> DRAGON_MANA_BLOCKS;
+    public static Map<String, HashSet<Block>> DRAGON_BREATH_BLOCKS;
+    public static Map<String, HashSet<Block>> DRAGON_MANA_BLOCKS;
 
     @SuppressWarnings("unused")
     @SubscribeEvent
@@ -33,21 +33,21 @@ public class DragonConfigHandler{
         if (event.getConfig().getSpec() == ConfigHandler.serverSpec) {
             DragonSurvivalMod.LOGGER.info("Rebuilding configuration...");
 
-			rebuildSeaDragonConfigs();
-			rebuildBreathBlocks();
-			rebuildManaBlocks();
-			rebuildForestDragonConfigs();
-			rebuildBlacklistedItems();
-		}
-	}
+            rebuildSeaDragonConfigs();
+            rebuildBreathBlocks();
+            rebuildManaBlocks();
+            rebuildForestDragonConfigs();
+            rebuildBlacklistedItems();
+        }
+    }
 
-	public static void rebuildBreathBlocks(){
-		HashMap<String, HashSet<Block>> breathMap = new HashMap<>();
-		breathMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
-		breathMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
-		breathMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.getResourceElements(Block.class, StormBreathAbility.stormBreathBlockBreaks));
-		DRAGON_BREATH_BLOCKS = breathMap;
-	}
+    public static void rebuildBreathBlocks(){
+        HashMap<String, HashSet<Block>> breathMap = new HashMap<>();
+        breathMap.put(DragonTypes.CAVE.getTypeName(), ConfigHandler.getResourceElements(Block.class, NetherBreathAbility.fireBreathBlockBreaks));
+        breathMap.put(DragonTypes.FOREST.getTypeName(), ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathBlockBreaks));
+        breathMap.put(DragonTypes.SEA.getTypeName(), ConfigHandler.getResourceElements(Block.class, StormBreathAbility.stormBreathBlockBreaks));
+        DRAGON_BREATH_BLOCKS = breathMap;
+    }
 
     public static void rebuildManaBlocks() {
         HashMap<String, HashSet<Block>> map = new HashMap<>();
@@ -66,7 +66,7 @@ public class DragonConfigHandler{
         FOREST_DRAGON_BREATH_GROW_BLACKLIST = ConfigHandler.getResourceElements(Block.class, ForestBreathAbility.forestBreathGrowBlacklist);
     }
 
-	public static void rebuildBlacklistedItems(){
-		DRAGON_BLACKLISTED_ITEMS = ConfigHandler.getResourceElements(Item.class, ServerConfig.blacklistedItems);
-	}
+    public static void rebuildBlacklistedItems(){
+        DRAGON_BLACKLISTED_ITEMS = ConfigHandler.getResourceElements(Item.class, ServerConfig.blacklistedItems);
+    }
 }

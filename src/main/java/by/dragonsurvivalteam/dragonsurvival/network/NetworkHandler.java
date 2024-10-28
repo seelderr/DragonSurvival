@@ -66,17 +66,17 @@ public class NetworkHandler {
         registrar.playBidirectional(SyncDragonClawsMenuToggle.Data.TYPE, SyncDragonClawsMenuToggle.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncDragonClawsMenuToggle::handleClient, SyncDragonClawsMenuToggle::handleServer));
         registrar.playToClient(SyncDragonClawsMenu.Data.TYPE, SyncDragonClawsMenu.Data.STREAM_CODEC, SyncDragonClawsMenu::handleClient);
 
-		// Ability packets
-		registrar.playToClient(SyncMagicStats.Data.TYPE, SyncMagicStats.Data.STREAM_CODEC, SyncMagicStats::handleClient);
-		registrar.playToClient(SyncHunterStacksRemoval.TYPE, SyncHunterStacksRemoval.STREAM_CODEC, SyncHunterStacksRemoval::handleClient);
-		registrar.playBidirectional(SyncMagicCap.Data.TYPE, SyncMagicCap.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncMagicCap::handleClient, SyncMagicCap::handleServer));
-		registrar.playToServer(SyncDragonAbilitySlot.Data.TYPE, SyncDragonAbilitySlot.Data.STREAM_CODEC, SyncDragonAbilitySlot::handleServer);
-		registrar.playBidirectional(SyncAbilityCasting.Data.TYPE, SyncAbilityCasting.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAbilityCasting::handleClient, SyncAbilityCasting::handleServer));
-		registrar.playToServer(SyncSkillLevelChangeCost.Data.TYPE, SyncSkillLevelChangeCost.Data.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
+        // Ability packets
+        registrar.playToClient(SyncMagicStats.Data.TYPE, SyncMagicStats.Data.STREAM_CODEC, SyncMagicStats::handleClient);
+        registrar.playToClient(SyncHunterStacksRemoval.TYPE, SyncHunterStacksRemoval.STREAM_CODEC, SyncHunterStacksRemoval::handleClient);
+        registrar.playBidirectional(SyncMagicCap.Data.TYPE, SyncMagicCap.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncMagicCap::handleClient, SyncMagicCap::handleServer));
+        registrar.playToServer(SyncDragonAbilitySlot.Data.TYPE, SyncDragonAbilitySlot.Data.STREAM_CODEC, SyncDragonAbilitySlot::handleServer);
+        registrar.playBidirectional(SyncAbilityCasting.Data.TYPE, SyncAbilityCasting.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncAbilityCasting::handleClient, SyncAbilityCasting::handleServer));
+        registrar.playToServer(SyncSkillLevelChangeCost.Data.TYPE, SyncSkillLevelChangeCost.Data.STREAM_CODEC, SyncSkillLevelChangeCost::handleServer);
 
-		// Potion sync
-		registrar.playToClient(SyncVisualEffectRemoved.Data.TYPE, SyncVisualEffectRemoved.Data.STREAM_CODEC, SyncVisualEffectRemoved::handleClient);
-		registrar.playToClient(SyncVisualEffectAdded.Data.TYPE, SyncVisualEffectAdded.Data.STREAM_CODEC, SyncVisualEffectAdded::handleClient);
+        // Potion sync
+        registrar.playToClient(SyncVisualEffectRemoved.Data.TYPE, SyncVisualEffectRemoved.Data.STREAM_CODEC, SyncVisualEffectRemoved::handleClient);
+        registrar.playToClient(SyncVisualEffectAdded.Data.TYPE, SyncVisualEffectAdded.Data.STREAM_CODEC, SyncVisualEffectAdded::handleClient);
 
         // Emote packets
         registrar.playBidirectional(SyncEmote.Data.TYPE, SyncEmote.Data.STREAM_CODEC, new DirectionalPayloadHandler<>(SyncEmote::handleClient, SyncEmote::handleServer));

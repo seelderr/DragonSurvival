@@ -52,46 +52,46 @@ import java.util.Optional;
 @SuppressWarnings("unused")
 @EventBusSubscriber
 public class MagicHandler {
-	@SubscribeEvent // TODO :: is this needed?
-	public static void setPlayerForAbilities(PlayerTickEvent.Pre event) {
-		Player player = event.getEntity();
+    @SubscribeEvent // TODO :: is this needed?
+    public static void setPlayerForAbilities(PlayerTickEvent.Pre event) {
+        Player player = event.getEntity();
 
-		DragonStateProvider.getOptional(player).ifPresent(data -> {
-			if (!data.isDragon()) {
-				return;
-			}
+        DragonStateProvider.getOptional(player).ifPresent(data -> {
+            if (!data.isDragon()) {
+                return;
+            }
 
-			for (DragonAbility ability : data.getMagicData().abilities.values()) {
-				ability.player = player;
-			}
-		});
-	}
+            for (DragonAbility ability : data.getMagicData().abilities.values()) {
+                ability.player = player;
+            }
+        });
+    }
 
-	@SubscribeEvent
-	public static void magicUpdate(PlayerTickEvent.Post event) {
-		DragonStateProvider.getOptional(event.getEntity()).ifPresent(data -> {
-			if (!data.isDragon()) {
-				return;
-			}
+    @SubscribeEvent
+    public static void magicUpdate(PlayerTickEvent.Post event) {
+        DragonStateProvider.getOptional(event.getEntity()).ifPresent(data -> {
+            if (!data.isDragon()) {
+                return;
+            }
 
-			if (data.getMagicData().abilities.isEmpty() || data.getMagicData().innateDragonAbilities.isEmpty() || data.getMagicData().activeDragonAbilities.isEmpty()) {
-				data.getMagicData().initAbilities(data.getType());
-			}
+            if (data.getMagicData().abilities.isEmpty() || data.getMagicData().innateDragonAbilities.isEmpty() || data.getMagicData().activeDragonAbilities.isEmpty()) {
+                data.getMagicData().initAbilities(data.getType());
+            }
 
-			for (int i = 0; i < MagicCap.activeAbilitySlots; i++) {
-				ActiveDragonAbility ability = data.getMagicData().getAbilityFromSlot(i);
+            for (int i = 0; i < MagicCap.activeAbilitySlots; i++) {
+                ActiveDragonAbility ability = data.getMagicData().getAbilityFromSlot(i);
 
-				if (ability != null) {
-					ability.tickCooldown();
-				}
-			}
-		});
-	}
+                if (ability != null) {
+                    ability.tickCooldown();
+                }
+            }
+        });
+    }
 
-	@SubscribeEvent
-	public static void livingTick(EntityTickEvent.Post event){
-		if(event.getEntity() instanceof LivingEntity entity) {
-			EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
+    @SubscribeEvent
+    public static void livingTick(EntityTickEvent.Post event){
+        if(event.getEntity() instanceof LivingEntity entity) {
+            EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
 
             if (entity.hasEffect(DSEffects.BURN)) {
                 if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
@@ -161,17 +161,17 @@ public class MagicHandler {
                     return;
                 }
 
-				if(DragonUtils.isDragonType(cap, DragonTypes.SEA)){
-					event.setCanceled(true);
-				}
-			});
-		}
-	}
+                if(DragonUtils.isDragonType(cap, DragonTypes.SEA)){
+                    event.setCanceled(true);
+                }
+            });
+        }
+    }
 
-	public static MobEffectInstance modifyEffect(final Player affected, final MobEffectInstance instance, @Nullable final Entity applier) {
-		if (instance == null || Objects.equals(affected, applier)) {
-			return instance;
-		}
+    public static MobEffectInstance modifyEffect(final Player affected, final MobEffectInstance instance, @Nullable final Entity applier) {
+        if (instance == null || Objects.equals(affected, applier)) {
+            return instance;
+        }
 
         int amplifier = instance.getAmplifier();
 
@@ -200,33 +200,33 @@ public class MagicHandler {
         return instance;
     }
 
-	@SubscribeEvent
-	public static void livingHurt(final LivingIncomingDamageEvent event) {
-		if (event.getEntity() instanceof LivingEntity entity) {
-			if (event.getSource().getEntity() instanceof LivingEntity source) {
-				if (entity.hasEffect(DSEffects.BLOOD_SIPHON)) {
-					source.heal(event.getAmount() * 0.1f);
-				}
-				if (event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
-					Registry<Enchantment> enchantments = event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).get();
-					if (event.getSource().is(DSDamageTypeTags.DRAGON_MAGIC)) {
-						Optional<Holder.Reference<Enchantment>> draconicSuperiority = enchantments.getHolder(DSEnchantments.DRACONIC_SUPERIORITY);
-						if (draconicSuperiority.isPresent()) {
-							EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source);
-							event.setAmount(event.getAmount() * 1.2f + (0.08f * EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source)));
-						}
-					}
-					if (event.getEntity().getHealth() == event.getEntity().getMaxHealth()) {
-						Optional<Holder.Reference<Enchantment>> murderersCunning = enchantments.getHolder(DSEnchantments.MURDERERS_CUNNING);
-						murderersCunning.ifPresent(enchantmentReference -> event.setAmount(event.getAmount() * 1.4f + (0.2f * EnchantmentHelper.getEnchantmentLevel(enchantmentReference, source))));
-					}
-				}
-			}
-		}
+    @SubscribeEvent
+    public static void livingHurt(final LivingIncomingDamageEvent event) {
+        if (event.getEntity() instanceof LivingEntity entity) {
+            if (event.getSource().getEntity() instanceof LivingEntity source) {
+                if (entity.hasEffect(DSEffects.BLOOD_SIPHON)) {
+                    source.heal(event.getAmount() * 0.1f);
+                }
+                if (event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).isPresent()) {
+                    Registry<Enchantment> enchantments = event.getEntity().level().registryAccess().registry(Registries.ENCHANTMENT).get();
+                    if (event.getSource().is(DSDamageTypeTags.DRAGON_MAGIC)) {
+                        Optional<Holder.Reference<Enchantment>> draconicSuperiority = enchantments.getHolder(DSEnchantments.DRACONIC_SUPERIORITY);
+                        if (draconicSuperiority.isPresent()) {
+                            EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source);
+                            event.setAmount(event.getAmount() * 1.2f + (0.08f * EnchantmentHelper.getEnchantmentLevel(draconicSuperiority.get(), source)));
+                        }
+                    }
+                    if (event.getEntity().getHealth() == event.getEntity().getMaxHealth()) {
+                        Optional<Holder.Reference<Enchantment>> murderersCunning = enchantments.getHolder(DSEnchantments.MURDERERS_CUNNING);
+                        murderersCunning.ifPresent(enchantmentReference -> event.setAmount(event.getAmount() * 1.4f + (0.2f * EnchantmentHelper.getEnchantmentLevel(enchantmentReference, source))));
+                    }
+                }
+            }
+        }
 
-		if (event.getSource().is(DSDamageTypeTags.DRAGON_BREATH)) {
-			return;
-		}
+        if (event.getSource().is(DSDamageTypeTags.DRAGON_BREATH)) {
+            return;
+        }
 
         if (event.getSource().getEntity() instanceof Player player) {
             DragonStateProvider.getOptional(player).ifPresent(handler -> {
@@ -234,22 +234,22 @@ public class MagicHandler {
                     return;
                 }
 
-				if (DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
-					SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
-					boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
+                if (DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
+                    SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
+                    boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
 
                     if (hit) {
                         event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
                         double d0 = -Mth.sin(player.getYRot() * ((float) Math.PI / 180F));
                         double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 
-						if (player.level() instanceof ServerLevel serverLevel) {
-							serverLevel.sendParticles(new SeaSweepParticle.Data(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
-						}
-					}
-				} else if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
-					BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
-					boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
+                        if (player.level() instanceof ServerLevel serverLevel) {
+                            serverLevel.sendParticles(new SeaSweepParticle.Data(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+                        }
+                    }
+                } else if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+                    BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
+                    boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
                     if (hit) {
                         event.getEntity().getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player.getId();

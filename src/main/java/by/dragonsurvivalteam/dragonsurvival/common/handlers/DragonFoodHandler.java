@@ -265,13 +265,13 @@ public class DragonFoodHandler {
             }
         }
 
-		if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD == null) {
-			FOREST_DRAGON_FOOD = foods;
-		} else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
-			CAVE_DRAGON_FOOD = foods;
-		} else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
-			SEA_DRAGON_FOOD = foods;
-		}
+        if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD == null) {
+            FOREST_DRAGON_FOOD = foods;
+        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
+            CAVE_DRAGON_FOOD = foods;
+        } else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
+            SEA_DRAGON_FOOD = foods;
+        }
 
         return foods;
     }

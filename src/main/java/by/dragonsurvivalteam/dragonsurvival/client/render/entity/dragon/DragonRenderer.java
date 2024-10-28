@@ -36,7 +36,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public boolean shouldRenderLayers = true;
     public boolean isRenderLayers = false;
 
-	private static final Color RENDER_COLOR = Color.ofRGB(255, 255, 255);
+    private static final Color RENDER_COLOR = Color.ofRGB(255, 255, 255);
 
     private static final HashSet<String> magicAnimations = new HashSet<>();
 
@@ -82,9 +82,9 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
         Player player = animatable.getPlayer();
 
-		if (player == null || player.isInvisible()) {
-			return;
-		}
+        if (player == null || player.isInvisible()) {
+            return;
+        }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
 
@@ -144,8 +144,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
     }
 
-	@Override // Also used by the layers
-	public Color getRenderColor(final DragonEntity animatable, float partialTick, int packedLight) {
-		return HunterHandler.modifyAlpha(animatable.getPlayer(), RENDER_COLOR);
-	}
+    @Override // Also used by the layers
+    public Color getRenderColor(final DragonEntity animatable, float partialTick, int packedLight) {
+        return HunterHandler.modifyAlpha(animatable.getPlayer(), RENDER_COLOR);
+    }
 }

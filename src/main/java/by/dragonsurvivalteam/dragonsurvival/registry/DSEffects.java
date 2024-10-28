@@ -1,9 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.SLOW_MOVEMENT;
-import static by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers.TOUGH_SKIN;
-
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -117,23 +113,23 @@ public class DSEffects {
             () -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0x0, true)
     );
 
-	private static class ModifiableMobEffect extends MobEffect {
-		private final boolean incurable;
+    private static class ModifiableMobEffect extends MobEffect {
+        private final boolean incurable;
 
-		protected ModifiableMobEffect(MobEffectCategory type, int color, boolean incurable) {
-			super(type, color);
-			this.incurable = incurable;
-		}
+        protected ModifiableMobEffect(MobEffectCategory type, int color, boolean incurable) {
+            super(type, color);
+            this.incurable = incurable;
+        }
 
-		@Override
-		public void fillEffectCures(@NotNull Set<EffectCure> cures, @NotNull MobEffectInstance effectInstance) {
-			if (incurable) {
-				cures.clear();
-			} else {
-				super.fillEffectCures(cures, effectInstance);
-			}
-		}
-	}
+        @Override
+        public void fillEffectCures(@NotNull Set<EffectCure> cures, @NotNull MobEffectInstance effectInstance) {
+            if (incurable) {
+                cures.clear();
+            } else {
+                super.fillEffectCures(cures, effectInstance);
+            }
+        }
+    }
 
     public static Holder<MobEffect> MAGIC_DISABLED = DS_MOB_EFFECTS.register(
             "magic_disabled",
@@ -203,12 +199,12 @@ public class DSEffects {
             () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
     );
 
-	public static Holder<MobEffect> HUNTER = DS_MOB_EFFECTS.register(
-		"hunter",
-		() -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
-				// Same value as vanilla speed effect
-				.addAttributeModifier(Attributes.MOVEMENT_SPEED, DragonSurvivalMod.res("hunter_speed_multiplier"), 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
-	);
+    public static Holder<MobEffect> HUNTER = DS_MOB_EFFECTS.register(
+        "hunter",
+        () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+                // Same value as vanilla speed effect
+                .addAttributeModifier(Attributes.MOVEMENT_SPEED, DragonSurvivalMod.res("hunter_speed_multiplier"), 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+    );
 
     public static Holder<MobEffect> REVEALING_THE_SOUL = DS_MOB_EFFECTS.register(
             "revealing_the_soul",

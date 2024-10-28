@@ -10,10 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -35,7 +31,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_BLACKLISTED_ITEMS;
@@ -67,17 +62,17 @@ public class DragonPenaltyHandler {
                     continue;
                 }
 
-				DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-					if(dragonStateHandler.isDragon()){
-						if(dragonStateHandler.getType() == null || !DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE)){
-							return;
-						}
-						player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveSplashDamage.floatValue());
-					}
-				});
-			}
-		}
-	}
+                DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+                    if(dragonStateHandler.isDragon()){
+                        if(dragonStateHandler.getType() == null || !DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE)){
+                            return;
+                        }
+                        player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveSplashDamage.floatValue());
+                    }
+                });
+            }
+        }
+    }
 
     @SubscribeEvent
     public static void consumeHurtfulItem(LivingEntityUseItemEvent.Finish destroyItemEvent) {
@@ -87,10 +82,10 @@ public class DragonPenaltyHandler {
 
         ItemStack itemStack = destroyItemEvent.getItem();
 
-		DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-			if(dragonStateHandler.isDragon()){
-				List<String> hurtfulItems = new ArrayList<>(
-						DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
+        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+            if(dragonStateHandler.isDragon()){
+                List<String> hurtfulItems = new ArrayList<>(
+                        DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
 
                 for (String item : hurtfulItems) {
                     if (item.replace("item:", "").replace("tag:", "").startsWith(ResourceHelper.getKey(itemStack.getItem()) + ":")) {

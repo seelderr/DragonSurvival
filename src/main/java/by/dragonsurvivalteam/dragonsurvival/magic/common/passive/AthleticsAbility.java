@@ -40,29 +40,29 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
         return 0;
     }
 
-	@Override
-	public void onTick(Player player) {
-		if (player.level().isClientSide()) {
-			return;
-		}
+    @Override
+    public void onTick(Player player) {
+        if (player.level().isClientSide()) {
+            return;
+        }
 
-		AbstractDragonType type = DragonStateProvider.getData(player).getType();
+        AbstractDragonType type = DragonStateProvider.getData(player).getType();
 
-		TagKey<Block> speedUpBlockTag = switch (type) {
-			case CaveDragonType ignored -> DSBlockTags.CAVE_DRAGON_SPEED_UP_BLOCKS;
-			case SeaDragonType ignored -> DSBlockTags.SEA_DRAGON_SPEED_UP_BLOCKS;
-			case ForestDragonType ignored -> DSBlockTags.FOREST_DRAGON_SPEED_UP_BLOCKS;
+        TagKey<Block> speedUpBlockTag = switch (type) {
+            case CaveDragonType ignored -> DSBlockTags.CAVE_DRAGON_SPEED_UP_BLOCKS;
+            case SeaDragonType ignored -> DSBlockTags.SEA_DRAGON_SPEED_UP_BLOCKS;
+            case ForestDragonType ignored -> DSBlockTags.FOREST_DRAGON_SPEED_UP_BLOCKS;
             default -> throw new IllegalStateException("Not a valid dragon type: " + type);
-		};
+        };
 
-		boolean isSpeedBlock = player.getBlockStateOn().is(speedUpBlockTag);
+        boolean isSpeedBlock = player.getBlockStateOn().is(speedUpBlockTag);
 
-		if (ServerConfig.bonusesEnabled && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock) {
-			if (getDuration() > 0) {
-				player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), ServerConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
-			}
-		}
-	}
+        if (ServerConfig.bonusesEnabled && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock) {
+            if (getDuration() > 0) {
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), ServerConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
+            }
+        }
+    }
 
     @Override
     @OnlyIn(Dist.CLIENT)

@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.creatures;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.HurtByTargetGoalExtended;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
-import javax.annotation.Nullable;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,8 +23,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import javax.annotation.Nullable;
 
 public abstract class Hunter extends PathfinderMob implements GeoEntity, DragonHunter {
-	private static final EntityDataAccessor<Boolean> IS_AGGRO = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
-	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private static final EntityDataAccessor<Boolean> IS_AGGRO = SynchedEntityData.defineId(Hunter.class, EntityDataSerializers.BOOLEAN);
+    private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
     public Hunter(EntityType<? extends PathfinderMob> entityType, Level world) {
         super(entityType, world);
@@ -40,14 +39,14 @@ public abstract class Hunter extends PathfinderMob implements GeoEntity, DragonH
     protected void registerGoals() {
         super.registerGoals();
 
-		// The Hunter.class in the constructor refers to the mobs that are ignored when the mob is hurt by them (we don't want hunters attacking each other!)
-		this.targetSelector.addGoal(1, new HurtByTargetGoalExtended(this, Hunter.class).setHeeders(Hunter.class).setAlertOthers());
-		this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> living.hasEffect(DSEffects.HUNTER_OMEN)));
-		this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 0,false, false, living -> living.getType().is(DSEntityTypeTags.HUNTER_TARGETS)));
-		this.goalSelector.addGoal(0, new FloatGoal(this));
-		this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8));
-		this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
-	}
+        // The Hunter.class in the constructor refers to the mobs that are ignored when the mob is hurt by them (we don't want hunters attacking each other!)
+        this.targetSelector.addGoal(1, new HurtByTargetGoalExtended(this, Hunter.class).setHeeders(Hunter.class).setAlertOthers());
+        this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, 0, true, false, living -> living.hasEffect(DSEffects.HUNTER_OMEN)));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Monster.class, 0,false, false, living -> living.getType().is(DSEntityTypeTags.HUNTER_TARGETS)));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8));
+        this.goalSelector.addGoal(8, new WaterAvoidingRandomStrollGoal(this, 0.6));
+    }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder pBuilder) {

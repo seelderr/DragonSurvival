@@ -12,22 +12,22 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public class SyncVisualEffectRemoved implements IMessage<SyncVisualEffectRemoved.Data> {
-	public static void handleClient(final SyncVisualEffectRemoved.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
-	}
+    public static void handleClient(final SyncVisualEffectRemoved.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncPotionRemovedEffect(message));
+    }
 
     public record Data(int playerId, int effectId) implements CustomPacketPayload {
         public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "potion_removed_effect"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-			ByteBufCodecs.VAR_INT, Data::playerId,
-			ByteBufCodecs.VAR_INT, Data::effectId,
-			Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+            ByteBufCodecs.VAR_INT, Data::playerId,
+            ByteBufCodecs.VAR_INT, Data::effectId,
+            Data::new
+        );
 
-		@Override
-		public @NotNull Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public @NotNull Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

@@ -111,21 +111,21 @@ public class ClientDragonRenderer {
     @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "dragonNameTags", comment = "Show name tags for dragons.")
     public static Boolean dragonNameTags = false;
 
-	/** Show breath hit range when hitboxes are being rendered */
-	@SubscribeEvent
-	public static void renderBreathHitBox(final RenderLevelStageEvent event) {
-		if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
-			LocalPlayer localPlayer = Minecraft.getInstance().player;
+    /** Show breath hit range when hitboxes are being rendered */
+    @SubscribeEvent
+    public static void renderBreathHitBox(final RenderLevelStageEvent event) {
+        if (ClientConfig.renderBreathRange && event.getStage() == RenderLevelStageEvent.Stage.AFTER_SOLID_BLOCKS && Minecraft.getInstance().getEntityRenderDispatcher().shouldRenderHitBoxes()) {
+            LocalPlayer localPlayer = Minecraft.getInstance().player;
 
-			if (localPlayer == null) {
-				return;
-			}
+            if (localPlayer == null) {
+                return;
+            }
 
-			DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
+            DragonStateHandler handler = DragonStateProvider.getData(localPlayer);
 
-			if (!handler.isDragon()) {
-				return;
-			}
+            if (!handler.isDragon()) {
+                return;
+            }
 
             VertexConsumer buffer = Minecraft.getInstance().renderBuffers().bufferSource().getBuffer(RenderType.LINES);
             Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();

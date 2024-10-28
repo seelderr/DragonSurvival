@@ -117,10 +117,10 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock {
         level.playSound(entity, blockPosition, getSound(blockState, isOpening), SoundSource.BLOCKS, 1, level.getRandom().nextFloat() * 0.1F + 0.9F);
     }
 
-	private SoundEvent getSound(final BlockState blockState, boolean isOpening) {
-		if (blockState.is(DSBlockTags.WOODEN_DRAGON_DOORS)) {
-			return isOpening ? SoundEvents.WOODEN_DOOR_OPEN : SoundEvents.WOODEN_DOOR_CLOSE;
-		}
+    private SoundEvent getSound(final BlockState blockState, boolean isOpening) {
+        if (blockState.is(DSBlockTags.WOODEN_DRAGON_DOORS)) {
+            return isOpening ? SoundEvents.WOODEN_DOOR_OPEN : SoundEvents.WOODEN_DOOR_CLOSE;
+        }
 
         return isOpening ? SoundEvents.IRON_DOOR_OPEN : SoundEvents.IRON_DOOR_CLOSE;
     }

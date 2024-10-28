@@ -36,18 +36,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
-	@Shadow protected boolean jumping;
-	@Shadow protected ItemStack useItem;
+    @Shadow protected boolean jumping;
+    @Shadow protected ItemStack useItem;
 
     public LivingEntityMixin(EntityType<?> type, Level level) {
         super(type, level);
     }
 
-	/** Slightly apply lava swim speed to other entities as well (doesn't include up or down movement) */
-	@ModifyArg(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;moveRelative(FLnet/minecraft/world/phys/Vec3;)V", ordinal = 1))
-	private float dragonSurvival$modifyLavaSwimSpeed(float original) {
-		return (float) (original * getAttributeValue(DSAttributes.LAVA_SWIM_SPEED));
-	}
+    /** Slightly apply lava swim speed to other entities as well (doesn't include up or down movement) */
+    @ModifyArg(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;moveRelative(FLnet/minecraft/world/phys/Vec3;)V", ordinal = 1))
+    private float dragonSurvival$modifyLavaSwimSpeed(float original) {
+        return (float) (original * getAttributeValue(DSAttributes.LAVA_SWIM_SPEED));
+    }
 
     @SuppressWarnings("ConstantValue") // both checks in the if statement are valid
     @Redirect(method = "collectEquipmentChanges", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getItemBySlot(Lnet/minecraft/world/entity/EquipmentSlot;)Lnet/minecraft/world/item/ItemStack;"))
@@ -162,97 +162,97 @@ public abstract class LivingEntityMixin extends Entity {
             return MagicHandler.modifyEffect(affected, instance, applier);
         }
 
-		return instance;
-	}
+        return instance;
+    }
 
-	/** Enable cave dragons to properly swim in lava and also enables properly swimming up or down (for water and lava) */
-	@Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;", shift = At.Shift.BY, by = 2), cancellable = true)
-	private void dragonSurvival$handleDragonSwimming(final Vec3 travelVector, final CallbackInfo callback, @Local double gravity, @Local final FluidState fluidState) {
+    /** Enable cave dragons to properly swim in lava and also enables properly swimming up or down (for water and lava) */
+    @Inject(method = "travel", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;getFluidState(Lnet/minecraft/core/BlockPos;)Lnet/minecraft/world/level/material/FluidState;", shift = At.Shift.BY, by = 2), cancellable = true)
+    private void dragonSurvival$handleDragonSwimming(final Vec3 travelVector, final CallbackInfo callback, @Local double gravity, @Local final FluidState fluidState) {
         //noinspection ConstantValue -> it's not always true
         if (!((Object) this instanceof Player player)) {
-			return;
-		}
+            return;
+        }
 
-		DragonStateHandler data = DragonStateProvider.getData(player);
+        DragonStateHandler data = DragonStateProvider.getData(player);
 
-		if (!data.isDragon()) {
-			return;
-		}
+        if (!data.isDragon()) {
+            return;
+        }
 
-		boolean isInLava = ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(data, DragonTypes.CAVE) && isInLava();
+        boolean isInLava = ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(data, DragonTypes.CAVE) && isInLava();
 
-		if (!isInLava && !isInWater()) {
-			return;
-		}
+        if (!isInLava && !isInWater()) {
+            return;
+        }
 
-		if (!player.isAffectedByFluids() || player.canStandOnFluid(fluidState)) {
-			return;
-		}
+        if (!player.isAffectedByFluids() || player.canStandOnFluid(fluidState)) {
+            return;
+        }
 
-		// Don't move the player up or down if they're not currently moving
-		if (travelVector.horizontalDistance() > 0.05) {
-			// This y-related movement logic is copied from 'Player#travel' (it doesn't get called when swimming in lava)
-			Vec3 deltaMovement = getDeltaMovement();
-			float lookY = (float) getLookAngle().y;
+        // Don't move the player up or down if they're not currently moving
+        if (travelVector.horizontalDistance() > 0.05) {
+            // This y-related movement logic is copied from 'Player#travel' (it doesn't get called when swimming in lava)
+            Vec3 deltaMovement = getDeltaMovement();
+            float lookY = (float) getLookAngle().y;
 
-			float minSpeed = 0.04f;
-			float maxSpeed = 0.12f;
+            float minSpeed = 0.04f;
+            float maxSpeed = 0.12f;
 
-			// Speed increase depending on how much the player looks up or down
-			float yModifier = minSpeed + (maxSpeed - minSpeed) * Mth.abs(Math.clamp(lookY, -1, 1));
+            // Speed increase depending on how much the player looks up or down
+            float yModifier = minSpeed + (maxSpeed - minSpeed) * Mth.abs(Math.clamp(lookY, -1, 1));
 
-			if (isSprinting()) {
-				yModifier *= 1.2f;
-			}
+            if (isSprinting()) {
+                yModifier *= 1.2f;
+            }
 
-			if (Math.abs(lookY) > 0.1 || jumping) {
-				// Move the player up or down, depending on where they look
-				setDeltaMovement(deltaMovement.add(0, (lookY - deltaMovement.y) * Mth.abs(yModifier), 0));
-			}
-		}
+            if (Math.abs(lookY) > 0.1 || jumping) {
+                // Move the player up or down, depending on where they look
+                setDeltaMovement(deltaMovement.add(0, (lookY - deltaMovement.y) * Mth.abs(yModifier), 0));
+            }
+        }
 
-		if (isInLava) {
-			double oldY = getY();
-			float speedModifier = isSprinting() ? 0.9f : getWaterSlowDown();
-			float swimSpeed = 0.05f;
-			float swimSpeedModifier = 1;
+        if (isInLava) {
+            double oldY = getY();
+            float speedModifier = isSprinting() ? 0.9f : getWaterSlowDown();
+            float swimSpeed = 0.05f;
+            float swimSpeedModifier = 1;
 
-			if (!onGround()) {
-				swimSpeedModifier *= 0.5f;
-			}
+            if (!onGround()) {
+                swimSpeedModifier *= 0.5f;
+            }
 
-			if (swimSpeedModifier > 0) {
-				speedModifier += (0.54600006f - speedModifier) * swimSpeedModifier;
-				swimSpeed += (player.getSpeed() - swimSpeed) * swimSpeedModifier;
-			}
+            if (swimSpeedModifier > 0) {
+                speedModifier += (0.54600006f - speedModifier) * swimSpeedModifier;
+                swimSpeed += (player.getSpeed() - swimSpeed) * swimSpeedModifier;
+            }
 
-			if (player.hasEffect(MobEffects.DOLPHINS_GRACE)) {
-				speedModifier = 0.96f;
-			}
+            if (player.hasEffect(MobEffects.DOLPHINS_GRACE)) {
+                speedModifier = 0.96f;
+            }
 
-			swimSpeed *= (float) player.getAttributeValue(DSAttributes.LAVA_SWIM_SPEED);
-			moveRelative(swimSpeed, travelVector);
-			move(MoverType.SELF, getDeltaMovement());
-			Vec3 newMovement = getDeltaMovement();
+            swimSpeed *= (float) player.getAttributeValue(DSAttributes.LAVA_SWIM_SPEED);
+            moveRelative(swimSpeed, travelVector);
+            move(MoverType.SELF, getDeltaMovement());
+            Vec3 newMovement = getDeltaMovement();
 
-			if (horizontalCollision && player.onClimbable()) {
-				newMovement = new Vec3(newMovement.x, 0.2, newMovement.z);
-			}
+            if (horizontalCollision && player.onClimbable()) {
+                newMovement = new Vec3(newMovement.x, 0.2, newMovement.z);
+            }
 
-			setDeltaMovement(newMovement.multiply(speedModifier, 0.8, speedModifier));
-			Vec3 adjustedMovement = player.getFluidFallingAdjustedMovement(gravity, player.isFallFlying(), getDeltaMovement());
-			setDeltaMovement(adjustedMovement);
+            setDeltaMovement(newMovement.multiply(speedModifier, 0.8, speedModifier));
+            Vec3 adjustedMovement = player.getFluidFallingAdjustedMovement(gravity, player.isFallFlying(), getDeltaMovement());
+            setDeltaMovement(adjustedMovement);
 
-			if (horizontalCollision && isFree(adjustedMovement.x, adjustedMovement.y + 0.6 - getY() + oldY, adjustedMovement.z)) {
-				setDeltaMovement(adjustedMovement.x, 0.3, adjustedMovement.z);
-			}
+            if (horizontalCollision && isFree(adjustedMovement.x, adjustedMovement.y + 0.6 - getY() + oldY, adjustedMovement.z)) {
+                setDeltaMovement(adjustedMovement.x, 0.3, adjustedMovement.z);
+            }
 
-			player.calculateEntityAnimation(false);
-			callback.cancel();
-		}
-	}
+            player.calculateEntityAnimation(false);
+            callback.cancel();
+        }
+    }
 
-	@Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
-	@Shadow public abstract double getAttributeValue(Holder<Attribute> attribute);
-	@Shadow protected abstract float getWaterSlowDown();
+    @Shadow public abstract ItemStack getItemBySlot(EquipmentSlot pSlot);
+    @Shadow public abstract double getAttributeValue(Holder<Attribute> attribute);
+    @Shadow protected abstract float getWaterSlowDown();
 }

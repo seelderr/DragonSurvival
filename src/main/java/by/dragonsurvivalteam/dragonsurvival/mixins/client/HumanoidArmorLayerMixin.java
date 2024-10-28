@@ -9,7 +9,6 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import java.util.function.Function;
 import net.minecraft.Util;
 import net.minecraft.client.model.Model;
 import net.minecraft.client.renderer.RenderStateShard;
@@ -24,6 +23,8 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+
+import java.util.function.Function;
 
 /** Apply hunter stack alpha change to armor pieces (for human players) */
 @Mixin(HumanoidArmorLayer.class)

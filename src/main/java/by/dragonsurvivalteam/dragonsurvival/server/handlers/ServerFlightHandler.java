@@ -12,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -32,7 +31,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Used in pair with {@link ClientFlightHandler}
@@ -260,11 +258,11 @@ public class ServerFlightHandler {
         return false;
     }
 
-	public static boolean canSwimSpin(Player player){
-		DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
-		boolean validSwim = (DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) || DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE);
-		return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
-	}
+    public static boolean canSwimSpin(Player player){
+        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
+        boolean validSwim = (DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) || DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE);
+        return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
+    }
 
     @ConfigRange(min = 1, max = 60 * 60 * 20)
     @ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "wings", comment = "How many ticks it takes for one hunger point to be drained while flying, this is based on hover flight.")

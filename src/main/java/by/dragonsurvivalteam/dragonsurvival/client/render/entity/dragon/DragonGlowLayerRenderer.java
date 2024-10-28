@@ -39,11 +39,11 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             return;
         }
 
-		Player player = animatable.getPlayer();
+        Player player = animatable.getPlayer();
 
-		if (player == null) {
-			return;
-		}
+        if (player == null) {
+            return;
+        }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
 
@@ -66,21 +66,21 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             }
         }
 
-		dragonRenderer.isRenderLayers = true;
+        dragonRenderer.isRenderLayers = true;
 
-		if (glowTexture != null) {
-			RenderType type = RenderType.EYES.apply(glowTexture, RenderType.LIGHTNING_TRANSPARENCY);
-			VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-			dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
-		} else {
-			ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
+        if (glowTexture != null) {
+            RenderType type = RenderType.EYES.apply(glowTexture, RenderType.LIGHTNING_TRANSPARENCY);
+            VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+            dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
+        } else {
+            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 
-			if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
-				RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);
-				VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-				dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
-			}
-		}
+            if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
+                RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);
+                VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
+                dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
+            }
+        }
 
         dragonRenderer.isRenderLayers = false;
     }

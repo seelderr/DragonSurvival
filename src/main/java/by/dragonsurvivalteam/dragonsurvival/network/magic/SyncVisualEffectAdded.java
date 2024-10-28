@@ -11,9 +11,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 public class SyncVisualEffectAdded implements IMessage<SyncVisualEffectAdded.Data> {
-	public static void handleClient(final SyncVisualEffectAdded.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
-	}
+    public static void handleClient(final SyncVisualEffectAdded.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncPotionAddedEffect(message));
+    }
 
     public record Data(int entityId, int effectId, int duration, int amplifier) implements CustomPacketPayload {
         public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "potion_added_effect"));

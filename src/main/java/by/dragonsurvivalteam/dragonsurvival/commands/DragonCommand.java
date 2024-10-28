@@ -108,30 +108,30 @@ public class DragonCommand {
         giveFlight.addChild(target);
     }
 
-	// TODO :: add proper argument types
-	private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player){
-		DragonStateHandler cap = DragonStateProvider.getData(player);
-		AbstractDragonType dragonType = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
-		AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
+    // TODO :: add proper argument types
+    private static int runCommand(String type, String body, int stage, boolean flight, ServerPlayer player){
+        DragonStateHandler cap = DragonStateProvider.getData(player);
+        AbstractDragonType dragonType = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
+        AbstractDragonBody dragonBody = body.equalsIgnoreCase("none") ? null : DragonBodies.getStatic(body);
 
-		if (dragonType != null && dragonBody == null) {
-			// TODO :: setting a null dragon body causes issue (when building modifiers e.g.), not sure why it's an option here
-			return 0;
-		}
+        if (dragonType != null && dragonBody == null) {
+            // TODO :: setting a null dragon body causes issue (when building modifiers e.g.), not sure why it's an option here
+            return 0;
+        }
 
-		if(dragonType == null && cap.getType() != null){
-			reInsertClawTools(player, cap);
-		}
+        if(dragonType == null && cap.getType() != null){
+            reInsertClawTools(player, cap);
+        }
 
-		cap.setType(dragonType, player);
-		cap.setBody(dragonBody, player);
-		cap.setHasFlight(flight);
-		cap.getMovementData().spinLearned = flight;
-		DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
-		float size = stage == 4 ? 40f : dragonLevel.size;
-		cap.setSize(size, player);
-		cap.setPassengerId(-1);
-		cap.growing = true;
+        cap.setType(dragonType, player);
+        cap.setBody(dragonBody, player);
+        cap.setHasFlight(flight);
+        cap.getMovementData().spinLearned = flight;
+        DragonLevel dragonLevel = DragonLevel.values()[Mth.clamp(stage - 1, 0, DragonLevel.values().length-1)];
+        float size = stage == 4 ? 40f : dragonLevel.size;
+        cap.setSize(size, player);
+        cap.setPassengerId(-1);
+        cap.growing = true;
 
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
         player.refreshDimensions();
