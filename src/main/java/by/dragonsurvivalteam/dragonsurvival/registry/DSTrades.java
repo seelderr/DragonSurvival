@@ -206,34 +206,31 @@ public class DSTrades {
         if (event.getType() == DSTrades.DRAGON_RIDER_PROFESSION.value()) {
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
-            trades.get(1).add(
-                    new EnchantBookForEmeralds(10, DSEnchantments.COMBAT_RECOVERY)
-            );
+			trades.get(1).add(
+					new EnchantBookForEmeralds(10, DSEnchantments.UNBREAKABLE_SPIRIT)
+			);
 
-            trades.get(2).add(
-                    new EnchantBookForEmeralds(35, DSEnchantments.UNBREAKABLE_SPIRIT)
-            );
+			trades.get(2).add(
+					new EnchantBookForEmeralds(20, DSEnchantments.COMBAT_RECOVERY)
+			);
 
-            trades.get(2).add(
-                    new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.PARTISAN, 1), 12, 35)
-            );
+			trades.get(3).add(
+					new EnchantBookForEmeralds(20, DSEnchantments.AERODYNAMIC_MASTERY)
+			);
 
-            trades.get(3).add(
-                    new EnchantBookForEmeralds(35, DSEnchantments.AERODYNAMIC_MASTERY)
-            );
-
-            trades.get(4).add(
-                    new EnchantBookForEmeralds(35, DSEnchantments.SACRED_SCALES)
-            );
+			trades.get(4).add(
+					new EnchantBookForEmeralds(20, DSEnchantments.SACRED_SCALES)
+			);
 
             trades.get(5).add(
                     new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.GOOD_DRAGON_KEY, 1), 12, 35)
             );
 
-            // Declare the leader trades in here, since this event only fires once and if we do it statically it might try to initialize in cases where we don't actually have a minecraft instance yet.
-            final List<ItemListing> LEADER_TRADES_LEVEL_1 = Lists.newArrayList(
-                    new ItemTrade(new ItemStack(DSItems.DRAGON_HEART_SHARD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 5)
-            );
+			// Declare the leader trades in here, since this event only fires once and if we do it statically it might try to initialize in cases where we don't actually have a minecraft instance yet.
+			final List<ItemListing> LEADER_TRADES_LEVEL_1 = Lists.newArrayList(
+					new ItemTrade(new ItemStack(DSItems.DRAGON_HEART_SHARD, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 5),
+					new ItemTrade(new ItemStack(Items.EMERALD, 12), new ItemStack(DSItems.PARTISAN, 1), 1, 1, 5)
+			);
 
             final List<ItemListing> LEADER_TRADES_LEVEL_2 = Lists.newArrayList(
                     new ItemTrade(new ItemStack(DSItems.WEAK_DRAGON_HEART, 1), new ItemStack(Items.EMERALD, 1), 16, 1, 10)

@@ -5,7 +5,8 @@
             "item": "minecraft:paper"
         },
         {
-            "item": "dragonsurvival:weak_dragon_heart"
+            "item": "minecraft:emerald_block",
+        "count": 3
         }
     ],
     "result": {
