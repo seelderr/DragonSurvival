@@ -19,98 +19,98 @@ import net.neoforged.neoforge.network.PacketDistributor;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
 public class PlayerLoginHandler {
 
-	public static void syncCompleteSingle(Entity tracker, Entity tracked) {
-		if (tracker instanceof ServerPlayer) {
-			if (tracked instanceof ServerPlayer) {
-				DragonStateProvider.getOptional(tracked).ifPresent(dragonStateHandler -> {
-					PacketDistributor.sendToPlayer((ServerPlayer) tracker, new SyncComplete.Data(tracked.getId(), dragonStateHandler.serializeNBT(tracked.registryAccess())));
-				});
-			}
-		}
-	}
+    public static void syncCompleteSingle(Entity tracker, Entity tracked) {
+        if (tracker instanceof ServerPlayer) {
+            if (tracked instanceof ServerPlayer) {
+                DragonStateProvider.getOptional(tracked).ifPresent(dragonStateHandler -> {
+                    PacketDistributor.sendToPlayer((ServerPlayer) tracker, new SyncComplete.Data(tracked.getId(), dragonStateHandler.serializeNBT(tracked.registryAccess())));
+                });
+            }
+        }
+    }
 
-	public static void syncCompleteSingle(Entity entity) {
-		if (entity instanceof ServerPlayer player) {
-			DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-				SyncComplete.handleDragonSync(player);
-				PacketDistributor.sendToPlayer(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
-			});
-		}
-	}
+    public static void syncCompleteSingle(Entity entity) {
+        if (entity instanceof ServerPlayer player) {
+            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+                SyncComplete.handleDragonSync(player);
+                PacketDistributor.sendToPlayer(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
+            });
+        }
+    }
 
-	public static void syncCompleteAll(Entity entity) {
-		if (entity instanceof ServerPlayer player) {
-			DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-				SyncComplete.handleDragonSync(player);
-				PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
-			});
-		}
-	}
+    public static void syncCompleteAll(Entity entity) {
+        if (entity instanceof ServerPlayer player) {
+            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+                SyncComplete.handleDragonSync(player);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
+            });
+        }
+    }
 
 
-	@SubscribeEvent
-	public static void onTrackingStart(PlayerEvent.StartTracking startTracking) {
-		Entity tracker = startTracking.getEntity();
-		Entity tracked = startTracking.getTarget();
-		syncCompleteSingle(tracker, tracked);
-	}
+    @SubscribeEvent
+    public static void onTrackingStart(PlayerEvent.StartTracking startTracking) {
+        Entity tracker = startTracking.getEntity();
+        Entity tracked = startTracking.getTarget();
+        syncCompleteSingle(tracker, tracked);
+    }
 
-	@SubscribeEvent
-	public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		syncCompleteSingle(event.getEntity());
-	}
+    @SubscribeEvent
+    public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
+        syncCompleteSingle(event.getEntity());
+    }
 
-	@SubscribeEvent
-	public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
-			DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-				AbstractDragonType type = dragonStateHandler.getType();
+    @SubscribeEvent
+    public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
+                AbstractDragonType type = dragonStateHandler.getType();
 
-				if (type instanceof CaveDragonType cave) {
-					cave.timeInRain = 0;
-					cave.lavaAirSupply = ServerConfig.caveLavaSwimmingTicks;
-				}
+                if (type instanceof CaveDragonType cave) {
+                    cave.timeInRain = 0;
+                    cave.lavaAirSupply = ServerConfig.caveLavaSwimmingTicks;
+                }
 
-				if (type instanceof SeaDragonType sea) {
-					sea.timeWithoutWater = 0;
-				}
+                if (type instanceof SeaDragonType sea) {
+                    sea.timeWithoutWater = 0;
+                }
 
-				if (type instanceof ForestDragonType forest) {
-					forest.timeInDarkness = 0;
-				}
+                if (type instanceof ForestDragonType forest) {
+                    forest.timeInDarkness = 0;
+                }
 
-				SyncComplete.handleDragonSync(player);
-				PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
-			});
-		}
-		syncCompleteSingle(event.getEntity());
-	}
+                SyncComplete.handleDragonSync(player);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncComplete.Data(player.getId(), dragonStateHandler.serializeNBT(player.registryAccess())));
+            });
+        }
+        syncCompleteSingle(event.getEntity());
+    }
 
-	@SubscribeEvent
-	public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
-		syncCompleteSingle(event.getEntity());
-	}
+    @SubscribeEvent
+    public static void onChangeDimension(PlayerEvent.PlayerChangedDimensionEvent event) {
+        syncCompleteSingle(event.getEntity());
+    }
 
-	@SubscribeEvent
-	public static void startWithDragonChoice(PlayerTickEvent.Post event) {
-		if (!ServerConfig.startWithDragonChoice) return;
-		if (event.getEntity().level().isClientSide()) return;
+    @SubscribeEvent
+    public static void startWithDragonChoice(PlayerTickEvent.Post event) {
+        if (!ServerConfig.startWithDragonChoice) return;
+        if (event.getEntity().level().isClientSide()) return;
 
-		if (event.getEntity() instanceof ServerPlayer player) {
-			if (player.isDeadOrDying()) return;
+        if (event.getEntity() instanceof ServerPlayer player) {
+            if (player.isDeadOrDying()) return;
 
-			if (player.tickCount > 5 * 20) {
-				DragonStateProvider.getOptional(player).ifPresent(cap -> {
-					if (!cap.hasUsedAltar && !cap.isInAltar && !DragonStateProvider.isDragon(player)) {
-						PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
-						cap.isInAltar = true;
-					}
+            if (player.tickCount > 5 * 20) {
+                DragonStateProvider.getOptional(player).ifPresent(cap -> {
+                    if (!cap.hasUsedAltar && !cap.isInAltar && !DragonStateProvider.isDragon(player)) {
+                        PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
+                        cap.isInAltar = true;
+                    }
 
-					if (cap.altarCooldown > 0) {
-						cap.altarCooldown--;
-					}
-				});
-			}
-		}
-	}
+                    if (cap.altarCooldown > 0) {
+                        cap.altarCooldown--;
+                    }
+                });
+            }
+        }
+    }
 }

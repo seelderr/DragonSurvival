@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -16,42 +14,44 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
 
-	public static void handleClient(final SyncBrokenTool.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> {
-			Player player = ClientProxy.getLocalPlayer();
+    public static void handleClient(final SyncBrokenTool.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> {
+            Player player = ClientProxy.getLocalPlayer();
 
-			if (player != null) {
-				Entity entity = player.level().getEntity(message.playerId);
+            if (player != null) {
+                Entity entity = player.level().getEntity(message.playerId);
 
-				if (entity instanceof Player) {
-					DragonStateProvider.getOptional(entity).ifPresent(handler -> {
-						if (handler.switchedTool || handler.switchedWeapon) {
-							player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
-						} else {
-							handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
-						}
-					});
-				}
-			}
-		});
-	}
+                if (entity instanceof Player) {
+                    DragonStateProvider.getOptional(entity).ifPresent(handler -> {
+                        if (handler.switchedTool || handler.switchedWeapon) {
+                            player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+                        } else {
+                            handler.getClawToolData().getClawsInventory().setItem(message.slot, ItemStack.EMPTY);
+                        }
+                    });
+                }
+            }
+        });
+    }
 
-	public record Data(int playerId, int slot) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "broken_tool"));
+    public record Data(int playerId, int slot) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "broken_tool"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.INT,
-				Data::playerId,
-				ByteBufCodecs.INT,
-				Data::slot,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.INT,
+                Data::playerId,
+                ByteBufCodecs.INT,
+                Data::slot,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

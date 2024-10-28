@@ -13,10 +13,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  */
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
-	@Inject(method = "getNightVisionScale", at = @At(value = "HEAD"), cancellable = true)
-	private static void modifyNightVisionScale(final LivingEntity entity, float nanoTime, final CallbackInfoReturnable<Float> callback) {
-		if (entity.isUnderWater() && VisionHandler.hasWaterVision()) {
-			callback.setReturnValue(1f);
-		}
-	}
+    @Inject(method = "getNightVisionScale", at = @At(value = "HEAD"), cancellable = true)
+    private static void modifyNightVisionScale(final LivingEntity entity, float nanoTime, final CallbackInfoReturnable<Float> callback) {
+        if (entity.isUnderWater() && VisionHandler.hasWaterVision()) {
+            callback.setReturnValue(1f);
+        }
+    }
 }

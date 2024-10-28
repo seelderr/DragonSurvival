@@ -9,8 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
-
-import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
@@ -28,117 +26,119 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.List;
+
 public class ForestDragonType extends AbstractDragonType {
-	public int timeInDarkness;
+    public int timeInDarkness;
 
-	public ForestDragonType() {
-		slotForBonus = 2;
-	}
+    public ForestDragonType() {
+        slotForBonus = 2;
+    }
 
-	@Override
-	public CompoundTag writeNBT() {
-		CompoundTag tag = new CompoundTag();
-		tag.putInt("timeInDarkness", timeInDarkness);
-		return tag;
-	}
+    @Override
+    public CompoundTag writeNBT() {
+        CompoundTag tag = new CompoundTag();
+        tag.putInt("timeInDarkness", timeInDarkness);
+        return tag;
+    }
 
-	@Override
-	public void readNBT(CompoundTag base) {
-		timeInDarkness = base.getInt("timeInDarkness");
-	}
+    @Override
+    public void readNBT(CompoundTag base) {
+        timeInDarkness = base.getInt("timeInDarkness");
+    }
 
-	@Override
-	public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
-		Level world = player.level();
-		BlockState feetBlock = player.getBlockStateOn();
-		BlockState blockUnder = world.getBlockState(player.blockPosition().below());
-		Block block = blockUnder.getBlock();
-		Biome biome = world.getBiome(player.blockPosition()).value();
+    @Override
+    public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
+        Level world = player.level();
+        BlockState feetBlock = player.getBlockStateOn();
+        BlockState blockUnder = world.getBlockState(player.blockPosition().below());
+        Block block = blockUnder.getBlock();
+        Biome biome = world.getBiome(player.blockPosition()).value();
 
-		int maxStressTicks = ServerConfig.forestStressTicks;
-		LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
+        int maxStressTicks = ServerConfig.forestStressTicks;
+        LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
 
-		if (lightInDarkness != null) {
-			maxStressTicks += Functions.secondsToTicks(lightInDarkness.getDuration());
-		}
+        if (lightInDarkness != null) {
+            maxStressTicks += Functions.secondsToTicks(lightInDarkness.getDuration());
+        }
 
-		double oldDarknessTime = timeInDarkness;
+        double oldDarknessTime = timeInDarkness;
 
-		if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.MAGIC)
-				&& ServerConfig.forestStressTicks > 0
-				&& !player.isCreative() &&
-				!player.isSpectator()) {
-			if (!world.isClientSide()) {
-				LevelLightEngine lightManager = world.getChunkSource().getLightEngine();
-				if (lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(
-						player.blockPosition().above()) < 3) {
-					if (timeInDarkness < maxStressTicks) {
-						timeInDarkness++;
-					}
+        if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.MAGIC)
+                && ServerConfig.forestStressTicks > 0
+                && !player.isCreative() &&
+                !player.isSpectator()) {
+            if (!world.isClientSide()) {
+                LevelLightEngine lightManager = world.getChunkSource().getLightEngine();
+                if (lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(
+                        player.blockPosition().above()) < 3) {
+                    if (timeInDarkness < maxStressTicks) {
+                        timeInDarkness++;
+                    }
 
-				} else {
-					timeInDarkness = Math.max(timeInDarkness - (int) Math.ceil(maxStressTicks * 0.02F), 0);
-				}
+                } else {
+                    timeInDarkness = Math.max(timeInDarkness - (int) Math.ceil(maxStressTicks * 0.02F), 0);
+                }
 
-				timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
+                timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
 
-				if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
-					player.addEffect(new MobEffectInstance(DSEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
-				}
+                if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
+                    player.addEffect(new MobEffectInstance(DSEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
+                }
 
 
-				if (timeInDarkness != oldDarknessTime) {
-					PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
-				}
-			}
+                if (timeInDarkness != oldDarknessTime) {
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
+                }
+            }
 
-			if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
-				if (!player.hasEffect(DSEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
-					world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
-				}
-			}
-		}
-	}
+            if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
+                if (!player.hasEffect(DSEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
+                    world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean isInManaCondition(Player player, DragonStateHandler cap) {
+    @Override
+    public boolean isInManaCondition(Player player, DragonStateHandler cap) {
 //		BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
 //		BlockState feetBlock = player.getFeetBlockState();
 
-		if (player.level().canSeeSky(player.blockPosition())) {
-			int light = player.level().getBrightness(LightLayer.SKY, player.blockPosition()) - player.level().getSkyDarken();
-			float f = player.level().getSunAngle(1.0F);
+        if (player.level().canSeeSky(player.blockPosition())) {
+            int light = player.level().getBrightness(LightLayer.SKY, player.blockPosition()) - player.level().getSkyDarken();
+            float f = player.level().getSunAngle(1.0F);
 
-			float f1 = f < (float) Math.PI ? 0.0F : (float) Math.PI * 2F;
-			f = f + (f1 - f) * 0.2F;
-			light = Math.round((float) light * Mth.cos(f));
-			light = Mth.clamp(light, 0, 15);
+            float f1 = f < (float) Math.PI ? 0.0F : (float) Math.PI * 2F;
+            f = f + (f1 - f) * 0.2F;
+            light = Math.round((float) light * Mth.cos(f));
+            light = Mth.clamp(light, 0, 15);
 
-			if (light >= 10) {
-				return true;
-			}
-		}
+            if (light >= 10) {
+                return true;
+            }
+        }
 
-		return player.hasEffect(DSEffects.DRAIN) || player.hasEffect(DSEffects.MAGIC);
-	}
+        return player.hasEffect(DSEffects.DRAIN) || player.hasEffect(DSEffects.MAGIC);
+    }
 
-	@Override
-	public void onPlayerDeath() {
-		timeInDarkness = 0;
-	}
+    @Override
+    public void onPlayerDeath() {
+        timeInDarkness = 0;
+    }
 
-	@Override
-	public List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler) {
-		return null;
-	}
+    @Override
+    public List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler) {
+        return null;
+    }
 
-	@Override
-	public String getTypeName() {
-		return "forest";
-	}
+    @Override
+    public String getTypeName() {
+        return "forest";
+    }
 
-	@Override
-	public List<TagKey<Block>> mineableBlocks() {
-		return List.of(BlockTags.MINEABLE_WITH_AXE);
-	}
+    @Override
+    public List<TagKey<Block>> mineableBlocks() {
+        return List.of(BlockTags.MINEABLE_WITH_AXE);
+    }
 }

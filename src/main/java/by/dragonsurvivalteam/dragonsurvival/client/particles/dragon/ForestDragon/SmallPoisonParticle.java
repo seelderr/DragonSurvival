@@ -22,76 +22,76 @@ import org.jetbrains.annotations.NotNull;
 
 public class SmallPoisonParticle extends DragonParticle {
 
-	protected SmallPoisonParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, double duration, boolean swirls, SpriteSet sprite) {
-		super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, duration, swirls, sprite);
-	}
+    protected SmallPoisonParticle(ClientLevel pLevel, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed, double duration, boolean swirls, SpriteSet sprite) {
+        super(pLevel, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed, duration, swirls, sprite);
+    }
 
-	@Override
-	public void remove() {
-		level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
-		super.remove();
-	}
+    @Override
+    public void remove() {
+        level.addParticle(ParticleTypes.DRAGON_BREATH, x, y, z, 0, 0.01, 0);
+        super.remove();
+    }
 
-	public static class Type extends ParticleType<Data> {
-		protected Type(boolean pOverrideLimitter) {
-			super(pOverrideLimitter);
-		}
+    public static class Type extends ParticleType<Data> {
+        protected Type(boolean pOverrideLimitter) {
+            super(pOverrideLimitter);
+        }
 
-		@Override
-		public @NotNull MapCodec<Data> codec() {
-			return Data.CODEC;
-		}
+        @Override
+        public @NotNull MapCodec<Data> codec() {
+            return Data.CODEC;
+        }
 
-		@Override
-		public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, Data> streamCodec() {
-			return Data.STREAM_CODEC;
-		}
-	}
+        @Override
+        public @NotNull StreamCodec<? super RegistryFriendlyByteBuf, Data> streamCodec() {
+            return Data.STREAM_CODEC;
+        }
+    }
 
-	public record Data(float duration, boolean swirls) implements ParticleOptions {
-		public static MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(codecBuilder -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(Data::duration), Codec.BOOL.fieldOf("swirls").forGetter(Data::swirls)).apply(codecBuilder, Data::new));
+    public record Data(float duration, boolean swirls) implements ParticleOptions {
+        public static MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(codecBuilder -> codecBuilder.group(Codec.FLOAT.fieldOf("duration").forGetter(Data::duration), Codec.BOOL.fieldOf("swirls").forGetter(Data::swirls)).apply(codecBuilder, Data::new));
 
-		public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.FLOAT,
-				Data::duration,
-				ByteBufCodecs.BOOL,
-				Data::swirls,
-				Data::new
-		);
+        public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.FLOAT,
+                Data::duration,
+                ByteBufCodecs.BOOL,
+                Data::swirls,
+                Data::new
+        );
 
-		public static final ParticleType<Data> TYPE = new Type(false);
+        public static final ParticleType<Data> TYPE = new Type(false);
 
-		@Override
-		public float duration() {
-			return duration;
-		}
+        @Override
+        public float duration() {
+            return duration;
+        }
 
-		@Override
-		public boolean swirls() {
-			return swirls;
-		}
+        @Override
+        public boolean swirls() {
+            return swirls;
+        }
 
-		@Override
-		public @NotNull ParticleType<?> getType() {
-			return TYPE;
-		}
-	}
+        @Override
+        public @NotNull ParticleType<?> getType() {
+            return TYPE;
+        }
+    }
 
-	@OnlyIn(Dist.CLIENT)
-	public static final class Factory implements ParticleProvider<Data> {
-		private final SpriteSet spriteSet;
+    @OnlyIn(Dist.CLIENT)
+    public static final class Factory implements ParticleProvider<Data> {
+        private final SpriteSet spriteSet;
 
-		public Factory(SpriteSet sprite) {
+        public Factory(SpriteSet sprite) {
 
-			spriteSet = sprite;
-		}
+            spriteSet = sprite;
+        }
 
-		@Override
+        @Override
 
-		public Particle createParticle(Data typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-			SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.duration(), typeIn.swirls(), spriteSet);
-			particle.setSpriteFromAge(spriteSet);
-			return particle;
-		}
-	}
+        public Particle createParticle(Data typeIn, ClientLevel worldIn, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+            SmallPoisonParticle particle = new SmallPoisonParticle(worldIn, x, y, z, xSpeed, ySpeed, zSpeed, typeIn.duration(), typeIn.swirls(), spriteSet);
+            particle.setSpriteFromAge(spriteSet);
+            return particle;
+        }
+    }
 }

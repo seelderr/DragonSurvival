@@ -11,27 +11,27 @@ import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.level.block.Block;
 
 public class ResourceHelper {
-	public static ResourceLocation getKey(Block object) {
-		return BuiltInRegistries.BLOCK.getKey(object);
-	}
+    public static ResourceLocation getKey(Block object) {
+        return BuiltInRegistries.BLOCK.getKey(object);
+    }
 
-	public static ResourceLocation getKey(Item object) {
-		return BuiltInRegistries.ITEM.getKey(object);
-	}
+    public static ResourceLocation getKey(Item object) {
+        return BuiltInRegistries.ITEM.getKey(object);
+    }
 
-	public static ResourceLocation getKey(EntityType<?> object) {
-		return BuiltInRegistries.ENTITY_TYPE.getKey(object);
-	}
+    public static ResourceLocation getKey(EntityType<?> object) {
+        return BuiltInRegistries.ENTITY_TYPE.getKey(object);
+    }
 
-	public static ResourceLocation getKey(Entity object) {
-		return getKey(object.getType());
-	}
+    public static ResourceLocation getKey(Entity object) {
+        return getKey(object.getType());
+    }
 
-	public static ResourceLocation getKey(SoundEvent event) {
-		return BuiltInRegistries.SOUND_EVENT.getKey(event);
-	}
+    public static ResourceLocation getKey(SoundEvent event) {
+        return BuiltInRegistries.SOUND_EVENT.getKey(event);
+    }
 
-	public static Potion getPotionFromItem(Item item) {
-		return BuiltInRegistries.POTION.getHolder(PotionItem.getId(item)).get().value();
-	}
+    public static Potion getPotionFromItem(Item item) {
+        return BuiltInRegistries.POTION.getHolder(PotionItem.getId(item)).get().value();
+    }
 }

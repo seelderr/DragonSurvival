@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import java.util.List;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -31,58 +30,60 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 
 public class DragonAltarBlock extends Block {
-	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
-	private final VoxelShape SHAPE = Shapes.block();
+    public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+    private final VoxelShape SHAPE = Shapes.block();
 
 
-	public DragonAltarBlock(Properties properties) {
-		super(properties);
-		registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
-	}
+    public DragonAltarBlock(Properties properties) {
+        super(properties);
+        registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH));
+    }
 
-	@Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
-	}
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection());
+    }
 
-	@Override
-	protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-		builder.add(FACING);
-	}
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
+        builder.add(FACING);
+    }
 
-	@Override
-	public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag) {
-		super.appendHoverText(pStack, pContext, pTootipComponents, pTooltipFlag);
-		pTootipComponents.add(Component.translatable("ds.description.dragonAltar"));
-	}
+    @Override
+    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag) {
+        super.appendHoverText(pStack, pContext, pTootipComponents, pTooltipFlag);
+        pTootipComponents.add(Component.translatable("ds.description.dragonAltar"));
+    }
 
-	@Override
-	public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
-		DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
+    @Override
+    public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
+        DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
 
-		if (!pLevel.isClientSide()) {
-			if (handler.altarCooldown > 0) {
-				//Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
-				int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
-				int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
-				pPlayer.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
-				return InteractionResult.FAIL;
-			} else {
-				PacketDistributor.sendToPlayer((ServerPlayer) pPlayer, new AllowOpenDragonAltar.Data());
-				handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
-				handler.hasUsedAltar = true;
-				handler.isInAltar = true;
-				return InteractionResult.CONSUME;
-			}
-		}
+        if (!pLevel.isClientSide()) {
+            if (handler.altarCooldown > 0) {
+                //Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
+                int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
+                int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
+                pPlayer.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
+                return InteractionResult.FAIL;
+            } else {
+                PacketDistributor.sendToPlayer((ServerPlayer) pPlayer, new AllowOpenDragonAltar.Data());
+                handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+                handler.hasUsedAltar = true;
+                handler.isInAltar = true;
+                return InteractionResult.CONSUME;
+            }
+        }
 
-		return InteractionResult.SUCCESS;
-	}
+        return InteractionResult.SUCCESS;
+    }
 
-	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return SHAPE;
-	}
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        return SHAPE;
+    }
 }

@@ -2,12 +2,12 @@
   "name": "dragonsurvival:treasure_angry_forest_spawn_pool",
   "fallback": "minecraft:empty",
   "elements": [
-	{	
+    {
       "weight": 1,
       "element": {
         "location": "dragonsurvival:treasure_end/treasure_end",
         "processors": "dragonsurvival:obsidian_replace_forest",
-		"projection": "rigid",
+        "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     }

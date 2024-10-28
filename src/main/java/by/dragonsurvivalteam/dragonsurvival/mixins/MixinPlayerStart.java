@@ -14,25 +14,25 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Player.class, /* Make sure it happens at the start */ priority = 1)
 public class MixinPlayerStart {
-	@Inject(method = "attack", at = @At("HEAD"))
-	public void switchStart(Entity target, CallbackInfo ci) {
-		Object self = this;
-		Player player = (Player) self;
+    @Inject(method = "attack", at = @At("HEAD"))
+    public void switchStart(Entity target, CallbackInfo ci) {
+        Object self = this;
+        Player player = (Player) self;
 
-		if (!DragonStateProvider.isDragon(player)) {
-			return;
-		}
+        if (!DragonStateProvider.isDragon(player)) {
+            return;
+        }
 
-		ItemStack toolSlot = ClawToolHandler.getDragonSword(player);
-		ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
+        ItemStack toolSlot = ClawToolHandler.getDragonSword(player);
+        ItemStack mainHand = player.getItemInHand(InteractionHand.MAIN_HAND);
 
-		if (toolSlot != ItemStack.EMPTY) {
-			player.setItemInHand(InteractionHand.MAIN_HAND, toolSlot);
+        if (toolSlot != ItemStack.EMPTY) {
+            player.setItemInHand(InteractionHand.MAIN_HAND, toolSlot);
 
-			DragonStateHandler handler = DragonStateProvider.getData(player);
-			handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY);
-			handler.storedMainHandWeapon = mainHand;
-			handler.switchedWeapon = true;
-		}
-	}
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+            handler.getClawToolData().getClawsInventory().setItem(0, ItemStack.EMPTY);
+            handler.storedMainHandWeapon = mainHand;
+            handler.switchedWeapon = true;
+        }
+    }
 }

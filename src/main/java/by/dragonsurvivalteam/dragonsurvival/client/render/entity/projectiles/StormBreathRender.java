@@ -9,7 +9,7 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
 @OnlyIn(Dist.CLIENT) // TODO :: Unused?
 public class StormBreathRender extends GeoEntityRenderer<StormBreathEntity> {
-	public StormBreathRender(final EntityRendererProvider.Context context, final GeoModel<StormBreathEntity> model) {
-		super(context, model);
-	}
+    public StormBreathRender(final EntityRendererProvider.Context context, final GeoModel<StormBreathEntity> model) {
+        super(context, model);
+    }
 }

@@ -10,9 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Sk
 import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
-
-import java.util.List;
-import java.util.Objects;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
@@ -22,116 +19,119 @@ import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+import java.util.Objects;
+
 public class DragonEditorDropdownButton extends DropDownButton {
-	private final DragonEditorScreen dragonEditorScreen;
-	private final EnumSkinLayer layers;
+    private final DragonEditorScreen dragonEditorScreen;
+    private final EnumSkinLayer layers;
 
-	public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers) {
-		super(x, y, xSize, ySize, current, values, selected -> {
-			dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonPartSelectAction, new Pair<>(layers, selected)));
-		});
-		this.dragonEditorScreen = dragonEditorScreen;
-		this.layers = layers;
-	}
+    public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers) {
+        super(x, y, xSize, ySize, current, values, selected -> {
+            dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonPartSelectAction, new Pair<>(layers, selected)));
+        });
+        this.dragonEditorScreen = dragonEditorScreen;
+        this.layers = layers;
+    }
 
-	@Override
-	public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks) {
-		active = visible = dragonEditorScreen.showUi;
-		super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
-		String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
+    @Override
+    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks) {
+        active = visible = dragonEditorScreen.showUi;
+        super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
+        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
 
-		if (!Objects.equals(currentValue, current)) {
-			current = DragonEditorScreen.partToTranslation(currentValue);
-			updateMessage();
-		}
+        if (!Objects.equals(currentValue, current)) {
+            current = DragonEditorScreen.partToTranslation(currentValue);
+            updateMessage();
+        }
 
-		List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, dragonEditorScreen.dragonBody, layers);
+        List<String> valueList = DragonEditorHandler.getKeys(dragonEditorScreen.dragonType, dragonEditorScreen.dragonBody, layers);
 
-		if (layers != EnumSkinLayer.BASE) {
-			valueList.addFirst(SkinCap.defaultSkinValue);
-		}
+        if (layers != EnumSkinLayer.BASE) {
+            valueList.addFirst(SkinCap.defaultSkinValue);
+        }
 
-		valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
+        valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
 
-		values = valueList.toArray(new String[0]);
-		active = !dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().defaultSkin;
-	}
+        values = valueList.toArray(new String[0]);
+        active = !dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().defaultSkin;
+    }
 
-	@Override
-	public void onPress() {
-		Screen screen = Minecraft.getInstance().screen;
+    @Override
+    public void onPress() {
+        Screen screen = Minecraft.getInstance().screen;
 
-		if (screen == null) {
-			return;
-		}
+        if (screen == null) {
+            return;
+        }
 
-		if (!toggled) {
-			int offset = screen.height - (getY() + height + 80);
-			list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int) (Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
-			DropdownEntry center = null;
+        if (!toggled) {
+            int offset = screen.height - (getY() + height + 80);
+            list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int) (Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
+            DropdownEntry center = null;
 
-			for (int i = 0; i < values.length; i++) {
-				String val = values[i];
-				DropdownEntry ent = createEntry(i, val, val);
-				list.addEntry(ent);
+            for (int i = 0; i < values.length; i++) {
+                String val = values[i];
+                DropdownEntry ent = createEntry(i, val, val);
+                list.addEntry(ent);
 
-				if (Objects.equals(val, current))
-					center = ent;
-			}
+                if (Objects.equals(val, current))
+                    center = ent;
+            }
 
-			if (center != null)
-				list.centerScrollOn(center);
+            if (center != null)
+                list.centerScrollOn(center);
 
-			boolean hasBorder = false;
-			if (!screen.children().isEmpty()) {
-				screen.renderables.addFirst(list);
-				screen.renderables.add(list);
+            boolean hasBorder = false;
+            if (!screen.children().isEmpty()) {
+                screen.renderables.addFirst(list);
+                screen.renderables.add(list);
 
-				((AccessorScreen) screen).children().addFirst(list);
-				((AccessorScreen) screen).children().add(list);
+                ((AccessorScreen) screen).children().addFirst(list);
+                ((AccessorScreen) screen).children().add(list);
 
-				for (GuiEventListener child : screen.children())
-					if (child instanceof ContainerObjectSelectionList) {
-						if (((ContainerObjectSelectionList<?>) child).visible) {
-							hasBorder = true;
-							break;
-						}
-					}
-			} else {
-				((AccessorScreen) screen).children().add(list);
-				screen.renderables.add(list);
-			}
+                for (GuiEventListener child : screen.children())
+                    if (child instanceof ContainerObjectSelectionList) {
+                        if (((ContainerObjectSelectionList<?>) child).visible) {
+                            hasBorder = true;
+                            break;
+                        }
+                    }
+            } else {
+                ((AccessorScreen) screen).children().add(list);
+                screen.renderables.add(list);
+            }
 
-			boolean finalHasBorder = hasBorder;
-			renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {
-			}) {
-				@Override
-				public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
-					active = visible = false;
-					list.visible = DragonEditorDropdownButton.this.visible;
+            boolean finalHasBorder = hasBorder;
+            renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {
+            }) {
+                @Override
+                public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+                    active = visible = false;
+                    list.visible = DragonEditorDropdownButton.this.visible;
 
-					if (finalHasBorder)
-						RenderSystem.enableScissor(0, (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
+                    if (finalHasBorder)
+                        RenderSystem.enableScissor(0, (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
 
-					if (list.visible)
-						list.render(graphics, mouseX, mouseY, partialTick);
+                    if (list.visible)
+                        list.render(graphics, mouseX, mouseY, partialTick);
 
-					if (finalHasBorder)
-						RenderSystem.disableScissor();
-				}
-			};
-			((AccessorScreen) screen).children().add(renderButton);
-			screen.renderables.add(renderButton);
-		} else {
-			screen.children().removeIf(s -> s == list || s == renderButton);
-			screen.renderables.removeIf(s -> s == list || s == renderButton);
-		}
+                    if (finalHasBorder)
+                        RenderSystem.disableScissor();
+                }
+            };
+            ((AccessorScreen) screen).children().add(renderButton);
+            screen.renderables.add(renderButton);
+        } else {
+            screen.children().removeIf(s -> s == list || s == renderButton);
+            screen.renderables.removeIf(s -> s == list || s == renderButton);
+        }
 
-		toggled = !toggled;
-		updateMessage();
-	}
+        toggled = !toggled;
+        updateMessage();
+    }
 
-	public DropdownEntry createEntry(int pos, String val, String localeString) {
-		return new DragonDropdownValueEntry(this, pos, val, localeString, setter);
-	}
+    public DropdownEntry createEntry(int pos, String val, String localeString) {
+        return new DragonDropdownValueEntry(this, pos, val, localeString, setter);
+    }
 }

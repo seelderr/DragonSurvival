@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -13,21 +11,23 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.concurrent.CompletableFuture;
+
 public class DSEffectTags extends TagsProvider<MobEffect> {
-	public static final TagKey<MobEffect> OVERWHELMING_MIGHT_BLACKLIST = createKey("overwhelming_might_blacklist");
-	public static final TagKey<MobEffect> UNBREAKABLE_SPIRIT_BLACKLIST = createKey("unbreakable_spirit_blacklist");
+    public static final TagKey<MobEffect> OVERWHELMING_MIGHT_BLACKLIST = createKey("overwhelming_might_blacklist");
+    public static final TagKey<MobEffect> UNBREAKABLE_SPIRIT_BLACKLIST = createKey("unbreakable_spirit_blacklist");
 
-	public DSEffectTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
-		super(output, Registries.MOB_EFFECT, provider, DragonSurvivalMod.MODID, helper);
-	}
+    public DSEffectTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
+        super(output, Registries.MOB_EFFECT, provider, DragonSurvivalMod.MODID, helper);
+    }
 
-	@Override
-	protected void addTags(@NotNull final HolderLookup.Provider provider) {
-		tag(OVERWHELMING_MIGHT_BLACKLIST);
-		tag(UNBREAKABLE_SPIRIT_BLACKLIST);
-	}
+    @Override
+    protected void addTags(@NotNull final HolderLookup.Provider provider) {
+        tag(OVERWHELMING_MIGHT_BLACKLIST);
+        tag(UNBREAKABLE_SPIRIT_BLACKLIST);
+    }
 
-	private static TagKey<MobEffect> createKey(@NotNull final String path) {
-		return TagKey.create(Registries.MOB_EFFECT, DragonSurvivalMod.res(path));
-	}
+    private static TagKey<MobEffect> createKey(@NotNull final String path) {
+        return TagKey.create(Registries.MOB_EFFECT, DragonSurvivalMod.res(path));
+    }
 }

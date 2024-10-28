@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.player;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.network.FriendlyByteBuf;
@@ -11,23 +9,25 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class SyncGrowthState implements IMessage<SyncGrowthState.Data> {
-	public static void handleClient(final SyncGrowthState.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncGrowthState(message));
-	}
+    public static void handleClient(final SyncGrowthState.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncGrowthState(message));
+    }
 
-	public record Data(boolean growing) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "growth_state"));
+    public record Data(boolean growing) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "growth_state"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.BOOL,
-				Data::growing,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.BOOL,
+                Data::growing,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

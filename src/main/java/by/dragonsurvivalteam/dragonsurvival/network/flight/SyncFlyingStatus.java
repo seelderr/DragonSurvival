@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.flight;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -14,32 +12,34 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class SyncFlyingStatus implements IMessage<SyncFlyingStatus.Data> {
 
-	public static void handleClient(final SyncFlyingStatus.Data message, final IPayloadContext context) {
-		context.enqueueWork(() -> ClientProxy.handleSyncFlyingStatus(message));
-	}
+    public static void handleClient(final SyncFlyingStatus.Data message, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.handleSyncFlyingStatus(message));
+    }
 
-	public static void handleServer(final SyncFlyingStatus.Data message, final IPayloadContext context) {
-		Player sender = context.player();
-		context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.setWingsSpread(message.state)))
-				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
-	}
+    public static void handleServer(final SyncFlyingStatus.Data message, final IPayloadContext context) {
+        Player sender = context.player();
+        context.enqueueWork(() -> DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.setWingsSpread(message.state)))
+                .thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(sender, message));
+    }
 
-	public record Data(int playerId, boolean state) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "flying_status"));
+    public record Data(int playerId, boolean state) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "flying_status"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.BOOL,
-				Data::state,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.BOOL,
+                Data::state,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

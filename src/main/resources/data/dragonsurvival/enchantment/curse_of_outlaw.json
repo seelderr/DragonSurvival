@@ -17,7 +17,6 @@
       }
     ]
   },
-
   "exclusive_set": "#dragonsurvival:exclusive_set/good_dragon",
   "max_cost": {
     "base": 21,

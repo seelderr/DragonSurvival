@@ -8,9 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-
-import java.util.List;
-import java.util.Random;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -24,83 +21,86 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 
+import java.util.List;
+import java.util.Random;
+
 public class DragonBeaconTileEntity extends BaseBlockTileEntity {
-	public Type type = Type.NONE;
-	public float tick;
+    public Type type = Type.NONE;
+    public float tick;
 
-	public final float bobOffs;
+    public final float bobOffs;
 
-	public enum Type {
-		PEACE,
-		MAGIC,
-		FIRE,
-		NONE
-	}
+    public enum Type {
+        PEACE,
+        MAGIC,
+        FIRE,
+        NONE
+    }
 
-	public DragonBeaconTileEntity(BlockPos pWorldPosition, BlockState pBlockState) {
-		super(DSTileEntities.DRAGON_BEACON.get(), pWorldPosition, pBlockState);
-		setType(this, pBlockState.getBlock());
-		bobOffs = new Random().nextFloat() * (float) Math.PI * 2.0F;
-	}
+    public DragonBeaconTileEntity(BlockPos pWorldPosition, BlockState pBlockState) {
+        super(DSTileEntities.DRAGON_BEACON.get(), pWorldPosition, pBlockState);
+        setType(this, pBlockState.getBlock());
+        bobOffs = new Random().nextFloat() * (float) Math.PI * 2.0F;
+    }
 
-	public static void serverTick(Level level, BlockPos position, BlockState state, DragonBeaconTileEntity beacon) {
-		BlockState below = level.getBlockState(position.below());
+    public static void serverTick(Level level, BlockPos position, BlockState state, DragonBeaconTileEntity beacon) {
+        BlockState below = level.getBlockState(position.below());
 
-		if (below.getBlock() == DSBlocks.DRAGON_MEMORY_BLOCK.get() && beacon.type != Type.NONE) {
-			if (!state.getValue(DragonBeacon.LIT)) {
-				level.setBlockAndUpdate(position, state.cycle(DragonBeacon.LIT));
-				level.playSound(null, position, DSSounds.ACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-			}
+        if (below.getBlock() == DSBlocks.DRAGON_MEMORY_BLOCK.get() && beacon.type != Type.NONE) {
+            if (!state.getValue(DragonBeacon.LIT)) {
+                level.setBlockAndUpdate(position, state.cycle(DragonBeacon.LIT));
+                level.playSound(null, position, DSSounds.ACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+            }
 
-			List<Player> dragons = level.getEntitiesOfClass(Player.class, new AABB(position).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
+            List<Player> dragons = level.getEntitiesOfClass(Player.class, new AABB(position).inflate(50).expandTowards(0, level.getMaxBuildHeight(), 0), DragonStateProvider::isDragon);
 
-			switch (beacon.type) {
-				case PEACE ->
-						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
-							if (effect != null) {
-								player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
-							}
-						}));
-				case MAGIC ->
-						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
-							if (effect != null) {
-								player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
-							}
-						}));
-				case FIRE ->
-						dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
-							if (effect != null) {
-								player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
-							}
-						}));
-			}
-		} else {
-			if (state.getValue(DragonBeacon.LIT)) {
-				level.setBlockAndUpdate(position, state.cycle(DragonBeacon.LIT));
-				level.playSound(null, position, DSSounds.DEACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
-			}
-		}
-	}
+            switch (beacon.type) {
+                case PEACE ->
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+                            if (effect != null) {
+                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                            }
+                        }));
+                case MAGIC ->
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+                            if (effect != null) {
+                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                            }
+                        }));
+                case FIRE ->
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+                            if (effect != null) {
+                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                            }
+                        }));
+            }
+        } else {
+            if (state.getValue(DragonBeacon.LIT)) {
+                level.setBlockAndUpdate(position, state.cycle(DragonBeacon.LIT));
+                level.playSound(null, position, DSSounds.DEACTIVATE_BEACON.get(), SoundSource.BLOCKS, 1, 1);
+            }
+        }
+    }
 
-	private static void setType(final DragonBeaconTileEntity beaconTileEntity, final Block beacon) {
-		if (beaconTileEntity.type == Type.NONE) {
-			if (beacon == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
-				beaconTileEntity.type = Type.MAGIC;
-			} else if (beacon == DSBlocks.PEACE_DRAGON_BEACON.get()) {
-				beaconTileEntity.type = Type.PEACE;
-			} else if (beacon == DSBlocks.FIRE_DRAGON_BEACON.get()) {
-				beaconTileEntity.type = Type.FIRE;
-			}
-		}
-	}
+    private static void setType(final DragonBeaconTileEntity beaconTileEntity, final Block beacon) {
+        if (beaconTileEntity.type == Type.NONE) {
+            if (beacon == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
+                beaconTileEntity.type = Type.MAGIC;
+            } else if (beacon == DSBlocks.PEACE_DRAGON_BEACON.get()) {
+                beaconTileEntity.type = Type.PEACE;
+            } else if (beacon == DSBlocks.FIRE_DRAGON_BEACON.get()) {
+                beaconTileEntity.type = Type.FIRE;
+            }
+        }
+    }
 
-	@Override
-	public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-		type = Type.valueOf(pTag.getString("Type"));
-	}
+    @Override
+    public void loadAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+        type = Type.valueOf(pTag.getString("Type"));
+    }
 
-	@Override
-	public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
-		pTag.putString("Type", type.name());
-	}
+    @Override
+    public void saveAdditional(CompoundTag pTag, HolderLookup.Provider pRegistries) {
+        pTag.putString("Type", type.name());
+    }
 }

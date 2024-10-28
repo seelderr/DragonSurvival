@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.emotes;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.nbt.CompoundTag;
@@ -15,40 +13,42 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 public class SyncEmote implements IMessage<SyncEmote.Data> {
 
-	public static void handleServer(final SyncEmote.Data message, final IPayloadContext context) {
-		Entity sender = context.player();
-		context.enqueueWork(() -> {
-			context.enqueueWork(() -> {
-				DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.getEmoteData().deserializeNBT(sender.registryAccess(), message.nbt));
-			});
-		}).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
-	}
+    public static void handleServer(final SyncEmote.Data message, final IPayloadContext context) {
+        Entity sender = context.player();
+        context.enqueueWork(() -> {
+            context.enqueueWork(() -> {
+                DragonStateProvider.getOptional(sender).ifPresent(handler -> handler.getEmoteData().deserializeNBT(sender.registryAccess(), message.nbt));
+            });
+        }).thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(context.player(), message));
+    }
 
-	public static void handleClient(final SyncEmote.Data message, final IPayloadContext context) {
-		Entity sender = context.player().level().getEntity(message.playerId);
-		if (sender instanceof Player player) {
-			context.enqueueWork(() -> {
-				DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getEmoteData().deserializeNBT(player.registryAccess(), message.nbt));
-			});
-		}
-	}
+    public static void handleClient(final SyncEmote.Data message, final IPayloadContext context) {
+        Entity sender = context.player().level().getEntity(message.playerId);
+        if (sender instanceof Player player) {
+            context.enqueueWork(() -> {
+                DragonStateProvider.getOptional(player).ifPresent(handler -> handler.getEmoteData().deserializeNBT(player.registryAccess(), message.nbt));
+            });
+        }
+    }
 
-	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "emote"));
+    public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "emote"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.COMPOUND_TAG,
-				Data::nbt,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.COMPOUND_TAG,
+                Data::nbt,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

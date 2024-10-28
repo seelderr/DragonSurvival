@@ -11,20 +11,20 @@ import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.specialty.DynamicGeoEntityRenderer;
 
 public class KnightRenderer extends DynamicGeoEntityRenderer<KnightEntity> {
-	public KnightRenderer(final EntityRendererProvider.Context context, final GeoModel<KnightEntity> model) {
-		super(context, model);
-		getRenderLayers().add(new CustomBlockAndItemGeoLayer<>(this));
-	}
+    public KnightRenderer(final EntityRendererProvider.Context context, final GeoModel<KnightEntity> model) {
+        super(context, model);
+        getRenderLayers().add(new CustomBlockAndItemGeoLayer<>(this));
+    }
 
-	@Override
-	public void preRender(final PoseStack poseStack, final KnightEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
-		Minecraft.getInstance().getProfiler().push("knight");
-		super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
-	}
+    @Override
+    public void preRender(final PoseStack poseStack, final KnightEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
+        Minecraft.getInstance().getProfiler().push("knight");
+        super.preRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
+    }
 
-	@Override
-	public void postRender(final PoseStack poseStack, final KnightEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
-		super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
-		Minecraft.getInstance().getProfiler().pop();
-	}
+    @Override
+    public void postRender(final PoseStack poseStack, final KnightEntity animatable, final BakedGeoModel model, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
+        super.postRender(poseStack, animatable, model, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
+        Minecraft.getInstance().getProfiler().pop();
+    }
 }

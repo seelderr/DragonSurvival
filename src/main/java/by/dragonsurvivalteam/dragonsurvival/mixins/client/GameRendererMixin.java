@@ -8,8 +8,8 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(GameRenderer.class)
 public abstract class GameRendererMixin {
-	@ModifyReturnValue(method = "getNightVisionScale", at = @At(value = "RETURN"))
-	private static float modifyNightVisionScale(float original) {
-		return ClientConfig.stableNightVision ? 1f : original;
-	}
+    @ModifyReturnValue(method = "getNightVisionScale", at = @At(value = "RETURN"))
+    private static float modifyNightVisionScale(float original) {
+        return ClientConfig.stableNightVision ? 1f : original;
+    }
 }

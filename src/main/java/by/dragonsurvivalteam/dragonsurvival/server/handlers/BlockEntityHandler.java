@@ -9,10 +9,10 @@ import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 @SuppressWarnings("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class BlockEntityHandler {
-	@SubscribeEvent
-	public static void addToBlockEntityType(BlockEntityTypeAddBlocksEvent e) {
-		e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_FRIENDLY.get());
-		e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_ANGRY.get());
-		e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_HUNTER.get());
-	}
+    @SubscribeEvent
+    public static void addToBlockEntityType(BlockEntityTypeAddBlocksEvent e) {
+        e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_FRIENDLY.get());
+        e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_ANGRY.get());
+        e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_HUNTER.get());
+    }
 }

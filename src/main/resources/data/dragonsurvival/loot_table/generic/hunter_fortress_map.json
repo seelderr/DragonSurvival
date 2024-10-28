@@ -9,7 +9,7 @@
           "functions": [
             {
               "decoration": "dragonsurvival:dragon_hunter",
-              "function" : "minecraft:exploration_map",
+              "function": "minecraft:exploration_map",
               "destination": "dragonsurvival:on_dragon_hunter_maps",
               "skip_existing_chunks": true
             },

@@ -13,7 +13,6 @@ import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileE
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.SpawningUtils;
 import com.mojang.serialization.MapCodec;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -58,396 +57,396 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements SimpleWaterloggedBlock, EntityBlock {
-	public static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.25, 1);
-	public static final VoxelShape OUTLINE = Shapes.box(0, 0, 0, 1, 0.5, 1);
-	public static final VoxelShape FULL_OUTLINE = Shapes.box(0, 0, 0, 1, 0.99, 1);
+    public static final VoxelShape SHAPE = Shapes.box(0, 0, 0, 1, 0.25, 1);
+    public static final VoxelShape OUTLINE = Shapes.box(0, 0, 0, 1, 0.5, 1);
+    public static final VoxelShape FULL_OUTLINE = Shapes.box(0, 0, 0, 1, 0.99, 1);
 
-	public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
-	public static final BooleanProperty PRIMARY_BLOCK = BooleanProperty.create("primary");
-	public static final BooleanProperty FILLED = BooleanProperty.create("filled");
-	static final BooleanProperty BACK_BLOCK = BooleanProperty.create("back");
-	static final BooleanProperty TOP_BLOCK = BooleanProperty.create("top");
+    public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
+    public static final BooleanProperty PRIMARY_BLOCK = BooleanProperty.create("primary");
+    public static final BooleanProperty FILLED = BooleanProperty.create("filled");
+    static final BooleanProperty BACK_BLOCK = BooleanProperty.create("back");
+    static final BooleanProperty TOP_BLOCK = BooleanProperty.create("top");
 
-	public SourceOfMagicBlock(Properties properties) {
-		super(properties);
-		registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(PRIMARY_BLOCK, true).setValue(BACK_BLOCK, false).setValue(TOP_BLOCK, false).setValue(FILLED, false));
-	}
+    public SourceOfMagicBlock(Properties properties) {
+        super(properties);
+        registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(PRIMARY_BLOCK, true).setValue(BACK_BLOCK, false).setValue(TOP_BLOCK, false).setValue(FILLED, false));
+    }
 
-	// TODO: Is it fine to use a unit codec here?
-	@Override
-	protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
-		return MapCodec.unit(this);
-	}
-
-	private static void breakBlock(Level world, BlockPos pos) {
-		world.destroyBlock(pos, !(world.getBlockEntity(pos) instanceof SourceOfMagicPlaceholder));
-		world.removeBlockEntity(pos);
-	}
-
-	@Override
-	@OnlyIn(Dist.CLIENT)
-	public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
-		if (blockState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
-			if (level.getFluidState(blockPos).is(FluidTags.WATER)) {
-				double d0 = blockPos.getX();
-				double d1 = blockPos.getY();
-				double d2 = blockPos.getZ();
-				level.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
-				level.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + (double) randomSource.nextFloat(), d1 + (double) randomSource.nextFloat(), d2 + (double) randomSource.nextFloat(), 0.0D, 0.04D, 0.0D);
-			} else {
-				if (blockState.getValue(FILLED)) {
-					double d0 = blockPos.getX();
-					double d1 = blockPos.getY();
-					double d2 = blockPos.getZ();
-					//  p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.DRIPPING_LAVA, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
-					level.addAlwaysVisibleParticle(ParticleTypes.LAVA, d0 + (double) randomSource.nextFloat(), d1 + (double) randomSource.nextFloat(), d2 + (double) randomSource.nextFloat(), 0.0D, 0.04D, 0.0D);
-				}
-			}
-		}
-	}
-
-    @Nullable
+    // TODO: Is it fine to use a unit codec here?
     @Override
-	public BlockState getStateForPlacement(BlockPlaceContext context) {
-		BlockState superState = null;
-		BlockPos blockPos = context.getClickedPos();
-		Level world = context.getLevel();
-		Player playerEntity = context.getPlayer();
-		Direction direction = playerEntity.getDirection();
+    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+        return MapCodec.unit(this);
+    }
 
-		if (SpawningUtils.isAirOrFluid(blockPos.relative(direction), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getCounterClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).relative(direction.getCounterClockWise()), world, context)) {
-			superState = super.getStateForPlacement(context).setValue(FACING, direction.getOpposite());
-		}
+    private static void breakBlock(Level world, BlockPos pos) {
+        world.destroyBlock(pos, !(world.getBlockEntity(pos) instanceof SourceOfMagicPlaceholder));
+        world.removeBlockEntity(pos);
+    }
 
-		if (superState != null) {
-			if (SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above(), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getCounterClockWise()), world, context)) {
-				return superState;
-			}
+    @Override
+    @OnlyIn(Dist.CLIENT)
+    public void animateTick(BlockState blockState, Level level, BlockPos blockPos, RandomSource randomSource) {
+        if (blockState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
+            if (level.getFluidState(blockPos).is(FluidTags.WATER)) {
+                double d0 = blockPos.getX();
+                double d1 = blockPos.getY();
+                double d2 = blockPos.getZ();
+                level.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
+                level.addAlwaysVisibleParticle(ParticleTypes.BUBBLE_COLUMN_UP, d0 + (double) randomSource.nextFloat(), d1 + (double) randomSource.nextFloat(), d2 + (double) randomSource.nextFloat(), 0.0D, 0.04D, 0.0D);
+            } else {
+                if (blockState.getValue(FILLED)) {
+                    double d0 = blockPos.getX();
+                    double d1 = blockPos.getY();
+                    double d2 = blockPos.getZ();
+                    //  p_180655_2_.addAlwaysVisibleParticle(ParticleTypes.DRIPPING_LAVA, d0 + 0.5D, d1, d2 + 0.5D, 0.0D, 0.04D, 0.0D);
+                    level.addAlwaysVisibleParticle(ParticleTypes.LAVA, d0 + (double) randomSource.nextFloat(), d1 + (double) randomSource.nextFloat(), d2 + (double) randomSource.nextFloat(), 0.0D, 0.04D, 0.0D);
+                }
+            }
+        }
+    }
 
-			if (world.isClientSide()) {
-				playerEntity.sendSystemMessage(Component.translatable("ds.space.occupied"));
-			}
-		}
+    @Nullable @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        BlockState superState = null;
+        BlockPos blockPos = context.getClickedPos();
+        Level world = context.getLevel();
+        Player playerEntity = context.getPlayer();
+        Direction direction = playerEntity.getDirection();
 
-		return null;
-	}
+        if (SpawningUtils.isAirOrFluid(blockPos.relative(direction), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getCounterClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).relative(direction.getCounterClockWise()), world, context)) {
+            superState = super.getStateForPlacement(context).setValue(FACING, direction.getOpposite());
+        }
 
-	@Override
-	public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state,
-							@Nullable LivingEntity placer, ItemStack stack) {
-		super.setPlacedBy(worldIn, pos, state, placer, stack);
+        if (superState != null) {
+            if (SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction.getOpposite()).relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above(), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getClockWise()), world, context) && SpawningUtils.isAirOrFluid(blockPos.relative(direction).above().relative(direction.getCounterClockWise()), world, context)) {
+                return superState;
+            }
 
-		if (placer != null) {
-			Direction direction = placer.getDirection();
-			setPlaceholder(worldIn, state, pos, pos.relative(direction.getOpposite()));
-			setPlaceholder(worldIn, state.setValue(BACK_BLOCK, true), pos, pos.relative(direction));
+            if (world.isClientSide()) {
+                playerEntity.sendSystemMessage(Component.translatable("ds.space.occupied"));
+            }
+        }
 
-			setPlaceholder(worldIn, state, pos, pos.relative(direction.getClockWise()));
-			setPlaceholder(worldIn, state, pos, pos.relative(direction.getCounterClockWise()));
+        return null;
+    }
 
-			setPlaceholder(worldIn, state.setValue(BACK_BLOCK, true), pos, pos.relative(direction).relative(direction.getClockWise()));
-			setPlaceholder(worldIn, state.setValue(BACK_BLOCK, true), pos, pos.relative(direction).relative(direction.getCounterClockWise()));
+    @Override
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state,
+                            @Nullable LivingEntity placer, ItemStack stack) {
+        super.setPlacedBy(worldIn, pos, state, placer, stack);
 
-			setPlaceholder(worldIn, state, pos, pos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()));
-			setPlaceholder(worldIn, state, pos, pos.relative(direction.getOpposite()).relative(direction.getClockWise()));
+        if (placer != null) {
+            Direction direction = placer.getDirection();
+            setPlaceholder(worldIn, state, pos, pos.relative(direction.getOpposite()));
+            setPlaceholder(worldIn, state.setValue(BACK_BLOCK, true), pos, pos.relative(direction));
 
-			setPlaceholder(worldIn, state.setValue(TOP_BLOCK, true), pos, pos.above().relative(direction));
-			setPlaceholder(worldIn, state, pos, pos.above().relative(direction).relative(direction.getCounterClockWise()));
-			setPlaceholder(worldIn, state, pos, pos.above().relative(direction).relative(direction.getClockWise()));
-		}
-	}
+            setPlaceholder(worldIn, state, pos, pos.relative(direction.getClockWise()));
+            setPlaceholder(worldIn, state, pos, pos.relative(direction.getCounterClockWise()));
 
-	@Override
-	protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
-		super.createBlockStateDefinition(builder);
-		builder.add(FACING, WATERLOGGED, PRIMARY_BLOCK, BACK_BLOCK, TOP_BLOCK, FILLED);
-	}
+            setPlaceholder(worldIn, state.setValue(BACK_BLOCK, true), pos, pos.relative(direction).relative(direction.getClockWise()));
+            setPlaceholder(worldIn, state.setValue(BACK_BLOCK, true), pos, pos.relative(direction).relative(direction.getCounterClockWise()));
 
-	private static void setPlaceholder(Level world, BlockState state, BlockPos root, BlockPos newPos) {
-		world.setBlockAndUpdate(newPos, state.setValue(PRIMARY_BLOCK, false));
-		SourceOfMagicPlaceholder placeHolder6 = (SourceOfMagicPlaceholder) world.getBlockEntity(newPos);
-		placeHolder6.rootPos = root;
-	}
+            setPlaceholder(worldIn, state, pos, pos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()));
+            setPlaceholder(worldIn, state, pos, pos.relative(direction.getOpposite()).relative(direction.getClockWise()));
 
-	@Override
-	public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState1, LevelAccessor world, BlockPos blockPos, BlockPos blockPos1) {
-		if (blockState.getValue(WATERLOGGED)) {
-			world.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
-		}
-		return super.updateShape(blockState, direction, blockState1, world, blockPos, blockPos1);
-	}
+            setPlaceholder(worldIn, state.setValue(TOP_BLOCK, true), pos, pos.above().relative(direction));
+            setPlaceholder(worldIn, state, pos, pos.above().relative(direction).relative(direction.getCounterClockWise()));
+            setPlaceholder(worldIn, state, pos, pos.above().relative(direction).relative(direction.getClockWise()));
+        }
+    }
 
-	@Override
-	public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (!(newState.getBlock() instanceof SourceOfMagicBlock)) {
-			if (state.getValue(PRIMARY_BLOCK)) {
-				BlockEntity tileentity = worldIn.getBlockEntity(pos);
-				if (tileentity instanceof Container) {
-					Containers.dropContents(worldIn, pos, (Container) tileentity);
-					worldIn.updateNeighbourForOutputSignal(pos, this);
-				}
+    @Override
+    protected void createBlockStateDefinition(Builder<Block, BlockState> builder) {
+        super.createBlockStateDefinition(builder);
+        builder.add(FACING, WATERLOGGED, PRIMARY_BLOCK, BACK_BLOCK, TOP_BLOCK, FILLED);
+    }
 
-				super.onRemove(state, worldIn, pos, newState, isMoving);
+    private static void setPlaceholder(Level world, BlockState state, BlockPos root, BlockPos newPos) {
+        world.setBlockAndUpdate(newPos, state.setValue(PRIMARY_BLOCK, false));
+        SourceOfMagicPlaceholder placeHolder6 = (SourceOfMagicPlaceholder) world.getBlockEntity(newPos);
+        placeHolder6.rootPos = root;
+    }
 
-				Direction direction = state.getValue(FACING).getOpposite();
+    @Override
+    public BlockState updateShape(BlockState blockState, Direction direction, BlockState blockState1, LevelAccessor world, BlockPos blockPos, BlockPos blockPos1) {
+        if (blockState.getValue(WATERLOGGED)) {
+            world.scheduleTick(blockPos, Fluids.WATER, Fluids.WATER.getTickDelay(world));
+        }
+        return super.updateShape(blockState, direction, blockState1, world, blockPos, blockPos1);
+    }
 
-				breakBlock(worldIn, pos);
+    @Override
+    public void onRemove(BlockState state, Level worldIn, BlockPos pos, BlockState newState, boolean isMoving) {
+        if (!(newState.getBlock() instanceof SourceOfMagicBlock)) {
+            if (state.getValue(PRIMARY_BLOCK)) {
+                BlockEntity tileentity = worldIn.getBlockEntity(pos);
+                if (tileentity instanceof Container) {
+                    Containers.dropContents(worldIn, pos, (Container) tileentity);
+                    worldIn.updateNeighbourForOutputSignal(pos, this);
+                }
 
-				breakBlock(worldIn, pos.relative(direction.getOpposite()));
-				breakBlock(worldIn, pos.relative(direction));
+                super.onRemove(state, worldIn, pos, newState, isMoving);
 
-				breakBlock(worldIn, pos.relative(direction.getClockWise()));
-				breakBlock(worldIn, pos.relative(direction.getCounterClockWise()));
+                Direction direction = state.getValue(FACING).getOpposite();
 
-				breakBlock(worldIn, pos.relative(direction).relative(direction.getClockWise()));
-				breakBlock(worldIn, pos.relative(direction).relative(direction.getCounterClockWise()));
+                breakBlock(worldIn, pos);
 
-				breakBlock(worldIn, pos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()));
-				breakBlock(worldIn, pos.relative(direction.getOpposite()).relative(direction.getClockWise()));
+                breakBlock(worldIn, pos.relative(direction.getOpposite()));
+                breakBlock(worldIn, pos.relative(direction));
 
-				breakBlock(worldIn, pos.above().relative(direction));
-				breakBlock(worldIn, pos.above().relative(direction).relative(direction.getCounterClockWise()));
-				breakBlock(worldIn, pos.above().relative(direction).relative(direction.getClockWise()));
-			} else {
-				BlockEntity tile = worldIn.getBlockEntity(pos);
-				if (tile instanceof SourceOfMagicPlaceholder placeholder) {
-					BlockPos rootPos = placeholder.rootPos;
+                breakBlock(worldIn, pos.relative(direction.getClockWise()));
+                breakBlock(worldIn, pos.relative(direction.getCounterClockWise()));
 
-					if (worldIn.getBlockEntity(rootPos) instanceof SourceOfMagicTileEntity) {
-						onRemove(worldIn.getBlockState(rootPos), worldIn, rootPos, Blocks.BUBBLE_COLUMN.defaultBlockState(), isMoving);
-					}
-				}
-			}
-		}
-	}
+                breakBlock(worldIn, pos.relative(direction).relative(direction.getClockWise()));
+                breakBlock(worldIn, pos.relative(direction).relative(direction.getCounterClockWise()));
 
-	@Override
-	public InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player, BlockHitResult hit) {
-		BlockEntity blockEntity = worldIn.getBlockEntity(pos);
-		BlockPos pos1 = pos;
+                breakBlock(worldIn, pos.relative(direction.getOpposite()).relative(direction.getCounterClockWise()));
+                breakBlock(worldIn, pos.relative(direction.getOpposite()).relative(direction.getClockWise()));
 
-		if (blockEntity instanceof SourceOfMagicPlaceholder) {
-			pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
-		}
+                breakBlock(worldIn, pos.above().relative(direction));
+                breakBlock(worldIn, pos.above().relative(direction).relative(direction.getCounterClockWise()));
+                breakBlock(worldIn, pos.above().relative(direction).relative(direction.getClockWise()));
+            } else {
+                BlockEntity tile = worldIn.getBlockEntity(pos);
+                if (tile instanceof SourceOfMagicPlaceholder placeholder) {
+                    BlockPos rootPos = placeholder.rootPos;
 
-		if (!player.isCrouching()) {
-			if (player instanceof ServerPlayer serverPlayer) {
-				BlockPos finalPos = pos1;
-				BlockEntity blockEntity1 = getBlockEntity(worldIn, pos1);
-				serverPlayer.openMenu((MenuProvider) blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
-			}
-		} else {
-			if (DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
-				if (player.getBlockStateOn().getBlock() == state.getBlock()) {
-					DragonStateHandler handler = DragonStateProvider.getData(player);
+                    if (worldIn.getBlockEntity(rootPos) instanceof SourceOfMagicTileEntity) {
+                        onRemove(worldIn.getBlockState(rootPos), worldIn, rootPos, Blocks.BUBBLE_COLUMN.defaultBlockState(), isMoving);
+                    }
+                }
+            }
+        }
+    }
 
-					if (!handler.getMagicData().onMagicSource) {
-						SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
+    @Override
+    public InteractionResult useWithoutItem(BlockState state, Level worldIn, BlockPos pos, Player player, BlockHitResult hit) {
+        BlockEntity blockEntity = worldIn.getBlockEntity(pos);
+        BlockPos pos1 = pos;
 
-						if (source != null && !source.isEmpty()) {
-							if (!worldIn.isClientSide()) {
-								handler.getMagicData().magicSourceTimer = 0;
-								handler.getMagicData().onMagicSource = true;
-								PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicSourceStatus.Data(player.getId(), true, 0));
-							}
-						}
-					}
-				}
-			}
-		}
-		return InteractionResult.SUCCESS;
-	}
+        if (blockEntity instanceof SourceOfMagicPlaceholder) {
+            pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
+        }
 
-	@Override
-	public boolean triggerEvent(BlockState pState, Level pLevel, BlockPos pPos, int pId, int pParam) {
-		super.triggerEvent(pState, pLevel, pPos, pId, pParam);
-		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-		return blockentity != null && blockentity.triggerEvent(pId, pParam);
-	}
+        if (!player.isCrouching()) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                BlockPos finalPos = pos1;
+                BlockEntity blockEntity1 = getBlockEntity(worldIn, pos1);
+                serverPlayer.openMenu((MenuProvider) blockEntity1, packetBuffer -> packetBuffer.writeBlockPos(finalPos));
+            }
+        } else {
+            if (DragonStateProvider.isDragon(player) && player.getMainHandItem().isEmpty()) {
+                if (player.getBlockStateOn().getBlock() == state.getBlock()) {
+                    DragonStateHandler handler = DragonStateProvider.getData(player);
 
-	@Override
-	public RenderShape getRenderShape(BlockState state) {
-		return state.getValue(PRIMARY_BLOCK) ? RenderShape.MODEL : RenderShape.INVISIBLE;
-	}
+                    if (!handler.getMagicData().onMagicSource) {
+                        SourceOfMagicTileEntity source = getBlockEntity(worldIn, pos1);
 
-	@Override
-	public FluidState getFluidState(BlockState blockState) {
-		return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
-	}
+                        if (source != null && !source.isEmpty()) {
+                            if (!worldIn.isClientSide()) {
+                                handler.getMagicData().magicSourceTimer = 0;
+                                handler.getMagicData().onMagicSource = true;
+                                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncMagicSourceStatus.Data(player.getId(), true, 0));
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return InteractionResult.SUCCESS;
+    }
 
-	@Override
-    @Nullable
-    public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
-		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
-		return blockentity instanceof MenuProvider ? (MenuProvider) blockentity : null;
-	}
+    @Override
+    public boolean triggerEvent(BlockState pState, Level pLevel, BlockPos pPos, int pId, int pParam) {
+        super.triggerEvent(pState, pLevel, pPos, pId, pParam);
+        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
+        return blockentity != null && blockentity.triggerEvent(pId, pParam);
+    }
 
-	@Override
-	public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return state.getValue(TOP_BLOCK) || state.getValue(BACK_BLOCK) ? FULL_OUTLINE : OUTLINE;
-	}
+    @Override
+    public RenderShape getRenderShape(BlockState state) {
+        return state.getValue(PRIMARY_BLOCK) ? RenderShape.MODEL : RenderShape.INVISIBLE;
+    }
 
-	@Override
-	public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-		return state.getValue(TOP_BLOCK) ? FULL_OUTLINE : SHAPE;
-	}
+    @Override
+    public FluidState getFluidState(BlockState blockState) {
+        return blockState.getValue(WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(blockState);
+    }
 
-	@Override
-	public void randomTick(BlockState p_225542_1_, ServerLevel world, BlockPos pos, RandomSource p_225542_4_) {
-		BlockPos blockpos = pos.above();
-		if (world.getFluidState(pos).is(FluidTags.WATER)) {
-			world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
-			world.sendParticles(ParticleTypes.LARGE_SMOKE, (double) blockpos.getX() + 0.5D, (double) blockpos.getY() + 0.25D, (double) blockpos.getZ() + 0.5D, 8, 0.5D, 0.25D, 0.5D, 0.0D);
-		}
-	}
+    @Override
+    @Nullable public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
+        BlockEntity blockentity = pLevel.getBlockEntity(pPos);
+        return blockentity instanceof MenuProvider ? (MenuProvider) blockentity : null;
+    }
 
-	@Override
-	public void entityInside(BlockState pState, Level world, BlockPos pos, Entity entity) {
-		BlockEntity blockEntity = world.getBlockEntity(pos);
-		BlockPos pos1 = pos;
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        return state.getValue(TOP_BLOCK) || state.getValue(BACK_BLOCK) ? FULL_OUTLINE : OUTLINE;
+    }
 
-		if (blockEntity instanceof SourceOfMagicPlaceholder) {
-			pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
-		}
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+        return state.getValue(TOP_BLOCK) ? FULL_OUTLINE : SHAPE;
+    }
 
-		SourceOfMagicTileEntity source = getBlockEntity(world, pos1);
+    @Override
+    public void randomTick(BlockState p_225542_1_, ServerLevel world, BlockPos pos, RandomSource p_225542_4_) {
+        BlockPos blockpos = pos.above();
+        if (world.getFluidState(pos).is(FluidTags.WATER)) {
+            world.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.5F, 2.6F + (world.random.nextFloat() - world.random.nextFloat()) * 0.8F);
+            world.sendParticles(ParticleTypes.LARGE_SMOKE, (double) blockpos.getX() + 0.5D, (double) blockpos.getY() + 0.25D, (double) blockpos.getZ() + 0.5D, 8, 0.5D, 0.25D, 0.5D, 0.0D);
+        }
+    }
 
-		if (source != null) {
-			if (shouldHarmPlayer(pState, entity)) {
-				if (entity instanceof ItemEntity itemE) {
-					ItemStack stack = itemE.getItem();
-					ItemStack tileStack = source.getItem(0);
-					if (SourceOfMagicTileEntity.consumables.containsKey(stack.getItem())) {
-						if (source.isEmpty()) {
-							source.setItem(0, stack);
-							itemE.kill();
-						} else if (ItemStack.isSameItem(tileStack, stack) && tileStack.getCount() < tileStack.getMaxStackSize()) {
-							int left = tileStack.getMaxStackSize() - tileStack.getCount();
-							int toAdd = Math.min(stack.getCount(), left);
-							itemE.getItem().shrink(toAdd);
-							tileStack.setCount(tileStack.getCount() + toAdd);
-						}
-						return;
-					}
-				}
+    @Override
+    public void entityInside(BlockState pState, Level world, BlockPos pos, Entity entity) {
+        BlockEntity blockEntity = world.getBlockEntity(pos);
+        BlockPos pos1 = pos;
 
-				if (ServerConfig.damageWrongSourceOfMagic) {
-					entity.hurt(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get() ? entity.damageSources().hotFloor() : pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() ? entity.damageSources().drown() : entity.damageSources().cactus(), 1F);
-				}
-			}
-		}
-		super.entityInside(pState, world, pos, entity);
-	}
+        if (blockEntity instanceof SourceOfMagicPlaceholder) {
+            pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
+        }
 
-	public static boolean shouldHarmPlayer(BlockState state, Entity entity) {
-		if (!(entity instanceof Player player)) {
-			return false;
-		}
+        SourceOfMagicTileEntity source = getBlockEntity(world, pos1);
 
-		DragonStateHandler handler = DragonStateProvider.getData(player);
-		Block block = state.getBlock();
+        if (source != null) {
+            if (shouldHarmPlayer(pState, entity)) {
+                if (entity instanceof ItemEntity itemE) {
+                    ItemStack stack = itemE.getItem();
+                    ItemStack tileStack = source.getItem(0);
+                    if (SourceOfMagicTileEntity.consumables.containsKey(stack.getItem())) {
+                        if (source.isEmpty()) {
+                            source.setItem(0, stack);
+                            itemE.kill();
+                        } else if (ItemStack.isSameItem(tileStack, stack) && tileStack.getCount() < tileStack.getMaxStackSize()) {
+                            int left = tileStack.getMaxStackSize() - tileStack.getCount();
+                            int toAdd = Math.min(stack.getCount(), left);
+                            itemE.getItem().shrink(toAdd);
+                            tileStack.setCount(tileStack.getCount() + toAdd);
+                        }
+                        return;
+                    }
+                }
 
-		if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
-			return true;
-		}
+                if (ServerConfig.damageWrongSourceOfMagic) {
+                    entity.hurt(pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get() ? entity.damageSources().hotFloor() : pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() ? entity.damageSources().drown() : entity.damageSources().cactus(), 1F);
+                }
+            }
+        }
+        super.entityInside(pState, world, pos, entity);
+    }
 
-		if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
-			return true;
-		}
+    public static boolean shouldHarmPlayer(BlockState state, Entity entity) {
+        if (!(entity instanceof Player player)) {
+            return false;
+        }
 
-		return block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.FOREST);
-	}
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+        Block block = state.getBlock();
 
-	public SourceOfMagicTileEntity getBlockEntity(Level world, BlockPos pos) {
-		BlockEntity entity = world.getBlockEntity(pos);
-		return entity instanceof SourceOfMagicTileEntity ? (SourceOfMagicTileEntity) entity : null;
-	}
+        if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+            return true;
+        }
 
-	@Override
-	public boolean placeLiquid(@NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state, @NotNull final FluidState fluidState) {
-		if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
-			if (!level.isClientSide()) {
-				level.setBlock(position, state.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE), Block.UPDATE_ALL);
-				level.scheduleTick(position, fluidState.getType(), fluidState.getType().getTickDelay(level));
-			}
+        if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
+            return true;
+        }
 
-			return true;
-		} else {
-			return false;
-		}
-	}
+        return block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get() && !DragonUtils.isDragonType(handler, DragonTypes.FOREST);
+    }
 
-	@Override
-	public @NotNull ItemStack pickupBlock(@Nullable final Player player, @NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state) {
-		BlockEntity entity = level.getBlockEntity(position);
-		BlockPos rootPosition = null;
+    public SourceOfMagicTileEntity getBlockEntity(Level world, BlockPos pos) {
+        BlockEntity entity = world.getBlockEntity(pos);
+        return entity instanceof SourceOfMagicTileEntity ? (SourceOfMagicTileEntity) entity : null;
+    }
 
-		if (state.getValue(BlockStateProperties.WATERLOGGED)) {
-			level.setBlock(position, state.setValue(BlockStateProperties.WATERLOGGED, false), Block.UPDATE_ALL);
-			return Items.WATER_BUCKET.getDefaultInstance();
-		}
+    @Override
+    public boolean placeLiquid(@NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state, @NotNull final FluidState fluidState) {
+        if (!state.getValue(BlockStateProperties.WATERLOGGED) && fluidState.getType() == Fluids.WATER) {
+            if (!level.isClientSide()) {
+                level.setBlock(position, state.setValue(BlockStateProperties.WATERLOGGED, Boolean.TRUE), Block.UPDATE_ALL);
+                level.scheduleTick(position, fluidState.getType(), fluidState.getType().getTickDelay(level));
+            }
 
-		if (entity instanceof SourceOfMagicPlaceholder placeholder) {
-			rootPosition = placeholder.rootPos;
-		} else if (entity instanceof SourceOfMagicTileEntity source) {
-			return updateAndTakeLiquid(level, position, state, source);
-		}
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-		if (rootPosition != null && level.getBlockEntity(rootPosition) instanceof SourceOfMagicTileEntity source) {
-			return updateAndTakeLiquid(level, rootPosition, level.getBlockState(rootPosition), source);
-		}
+    @Override
+    public @NotNull ItemStack pickupBlock(@Nullable final Player player, @NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state) {
+        BlockEntity entity = level.getBlockEntity(position);
+        BlockPos rootPosition = null;
 
-		return ItemStack.EMPTY;
-	}
+        if (state.getValue(BlockStateProperties.WATERLOGGED)) {
+            level.setBlock(position, state.setValue(BlockStateProperties.WATERLOGGED, false), Block.UPDATE_ALL);
+            return Items.WATER_BUCKET.getDefaultInstance();
+        }
 
-	private ItemStack updateAndTakeLiquid(final LevelAccessor level, final BlockPos position, final BlockState state, final SourceOfMagicTileEntity source) {
-		if (!state.getValue(SourceOfMagicBlock.FILLED)) {
-			return ItemStack.EMPTY;
-		}
+        if (entity instanceof SourceOfMagicPlaceholder placeholder) {
+            rootPosition = placeholder.rootPos;
+        } else if (entity instanceof SourceOfMagicTileEntity source) {
+            return updateAndTakeLiquid(level, position, state, source);
+        }
 
-		level.setBlock(position, state.setValue(SourceOfMagicBlock.FILLED, false), Block.UPDATE_ALL);
-		Item item = source.getItem(0).getItem();
-		Block block = state.getBlock();
+        if (rootPosition != null && level.getBlockEntity(rootPosition) instanceof SourceOfMagicTileEntity source) {
+            return updateAndTakeLiquid(level, rootPosition, level.getBlockState(rootPosition), source);
+        }
 
-		boolean decrementStack = false;
+        return ItemStack.EMPTY;
+    }
 
-		if (item == DSItems.ELDER_DRAGON_DUST.value()) {
-			decrementStack = true;
-		} else if (item == DSItems.ELDER_DRAGON_BONE.value()) {
-			decrementStack = level.getRandom().nextInt(3) == 0;
-		} else if (item == DSItems.DRAGON_HEART_SHARD.value()) {
-			decrementStack = level.getRandom().nextInt(5) == 0;
-		} else if (item == DSItems.WEAK_DRAGON_HEART.value()) {
-			decrementStack = level.getRandom().nextInt(15) == 0;
-		} else if (item == DSItems.ELDER_DRAGON_HEART.value()) {
-			decrementStack = level.getRandom().nextInt(50) == 0;
-		}
+    private ItemStack updateAndTakeLiquid(final LevelAccessor level, final BlockPos position, final BlockState state, final SourceOfMagicTileEntity source) {
+        if (!state.getValue(SourceOfMagicBlock.FILLED)) {
+            return ItemStack.EMPTY;
+        }
 
-		if (decrementStack) {
-			source.removeItem(0, 1);
-		}
+        level.setBlock(position, state.setValue(SourceOfMagicBlock.FILLED, false), Block.UPDATE_ALL);
+        Item item = source.getItem(0).getItem();
+        Block block = state.getBlock();
 
-		if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
-			return Items.LAVA_BUCKET.getDefaultInstance();
-		} else if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) {
-			return Items.WATER_BUCKET.getDefaultInstance();
-		}
+        boolean decrementStack = false;
 
-		return ItemStack.EMPTY;
-	}
+        if (item == DSItems.ELDER_DRAGON_DUST.value()) {
+            decrementStack = true;
+        } else if (item == DSItems.ELDER_DRAGON_BONE.value()) {
+            decrementStack = level.getRandom().nextInt(3) == 0;
+        } else if (item == DSItems.DRAGON_HEART_SHARD.value()) {
+            decrementStack = level.getRandom().nextInt(5) == 0;
+        } else if (item == DSItems.WEAK_DRAGON_HEART.value()) {
+            decrementStack = level.getRandom().nextInt(15) == 0;
+        } else if (item == DSItems.ELDER_DRAGON_HEART.value()) {
+            decrementStack = level.getRandom().nextInt(50) == 0;
+        }
 
-	@Override
-	public BlockEntity newBlockEntity(@NotNull BlockPos pPos, BlockState pState) {
-		if (!pState.getValue(PRIMARY_BLOCK)) {
-			return DSTileEntities.SOURCE_OF_MAGIC_PLACEHOLDER.get().create(pPos, pState);
-		}
+        if (decrementStack) {
+            source.removeItem(0, 1);
+        }
 
-		return DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get().create(pPos, pState);
-	}
+        if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
+            return Items.LAVA_BUCKET.getDefaultInstance();
+        } else if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) {
+            return Items.WATER_BUCKET.getDefaultInstance();
+        }
 
-	@Override
-	public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) {
-		return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);
-	}
+        return ItemStack.EMPTY;
+    }
+
+    @Override
+    public BlockEntity newBlockEntity(@NotNull BlockPos pPos, BlockState pState) {
+        if (!pState.getValue(PRIMARY_BLOCK)) {
+            return DSTileEntities.SOURCE_OF_MAGIC_PLACEHOLDER.get().create(pPos, pState);
+        }
+
+        return DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get().create(pPos, pState);
+    }
+
+    @Override
+    public <T extends BlockEntity> @Nullable BlockEntityTicker<T> getTicker(Level pLevel, @NotNull BlockState pState, @NotNull BlockEntityType<T> pBlockEntityType) {
+        return pLevel.isClientSide ? null : BaseEntityBlock.createTickerHelper(pBlockEntityType, DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), SourceOfMagicTileEntity::serverTick);
+    }
 }

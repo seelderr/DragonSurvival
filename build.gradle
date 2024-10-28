@@ -157,11 +157,18 @@ spotless {
 	java {
 		target 'src/*/java/**/*.java'
 
-		// Use the default importOrder configuration
-		importOrder()
+		// note: '' is for all other imports \\# is a prefix for static
+		// There's an empty line between all groups; use | to join without empty lines
+		importOrder(
+				'',
+				'java|javax',
+				'\\#'
+		)
 		removeUnusedImports()
 
 		// fixes formatting of type annotations
 		formatAnnotations()
+
+		indentWithSpaces()
 	}
 }

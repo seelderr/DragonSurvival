@@ -6,10 +6,10 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(Attributes.class)
 public class MixinAttributes {
-	static {
-		// smol
-		((RangedAttribute) Attributes.SCALE.value()).minValue = 0.018;
-		// beeg
-		((RangedAttribute) Attributes.SCALE.value()).maxValue = 160;
-	}
+    static {
+        // smol
+        ((RangedAttribute) Attributes.SCALE.value()).minValue = 0.018;
+        // beeg
+        ((RangedAttribute) Attributes.SCALE.value()).maxValue = 160;
+    }
 }

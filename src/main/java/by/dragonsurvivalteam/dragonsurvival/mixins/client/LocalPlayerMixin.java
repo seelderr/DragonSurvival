@@ -11,12 +11,12 @@ import org.spongepowered.asm.mixin.injection.At;
  */
 @Mixin(LocalPlayer.class)
 public abstract class LocalPlayerMixin {
-	@ModifyExpressionValue(method = "getWaterVision", at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/LocalPlayer;waterVisionTime:I", ordinal = 0))
-	private int dragonSurvival$handleWaterVision(int original) {
-		if (VisionHandler.hasWaterVision()) {
-			return 600;
-		}
+    @ModifyExpressionValue(method = "getWaterVision", at = @At(value = "FIELD", target = "Lnet/minecraft/client/player/LocalPlayer;waterVisionTime:I", ordinal = 0))
+    private int dragonSurvival$handleWaterVision(int original) {
+        if (VisionHandler.hasWaterVision()) {
+            return 600;
+        }
 
-		return original;
-	}
+        return original;
+    }
 }

@@ -9,31 +9,31 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 @OnlyIn(Dist.CLIENT)
 public class FireBreathSound extends AbstractTickableSoundInstance {
-	private final NetherBreathAbility ability;
+    private final NetherBreathAbility ability;
 
-	public FireBreathSound(NetherBreathAbility ability) {
-		super(DSSounds.FIRE_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
-		looping = true;
+    public FireBreathSound(NetherBreathAbility ability) {
+        super(DSSounds.FIRE_BREATH_LOOP.get(), SoundSource.PLAYERS, ability.getPlayer().getRandom());
+        looping = true;
 
-		this.x = ability.getPlayer().getX();
-		this.y = ability.getPlayer().getY();
-		this.z = ability.getPlayer().getZ();
+        this.x = ability.getPlayer().getX();
+        this.y = ability.getPlayer().getY();
+        this.z = ability.getPlayer().getZ();
 
-		this.ability = ability;
-	}
+        this.ability = ability;
+    }
 
-	@Override
-	public void tick() {
-		if (ability.getPlayer() == null || ability.chargeTime == 0)
-			stop();
+    @Override
+    public void tick() {
+        if (ability.getPlayer() == null || ability.chargeTime == 0)
+            stop();
 
-		this.x = ability.getPlayer().getX();
-		this.y = ability.getPlayer().getY();
-		this.z = ability.getPlayer().getZ();
-	}
+        this.x = ability.getPlayer().getX();
+        this.y = ability.getPlayer().getY();
+        this.z = ability.getPlayer().getZ();
+    }
 
-	@Override
-	public boolean canStartSilent() {
-		return true;
-	}
+    @Override
+    public boolean canStartSilent() {
+        return true;
+    }
 }

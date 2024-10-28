@@ -13,22 +13,22 @@ import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 
 public class EnchantmentUtils {
-	public static int getLevel(@NotNull final LivingEntity entity, @NotNull final ResourceKey<Enchantment> enchantment) {
-		return entity.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment).map(reference -> EnchantmentHelper.getEnchantmentLevel(reference, entity)).orElse(0);
-	}
+    public static int getLevel(@NotNull final LivingEntity entity, @NotNull final ResourceKey<Enchantment> enchantment) {
+        return entity.level().registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment).map(reference -> EnchantmentHelper.getEnchantmentLevel(reference, entity)).orElse(0);
+    }
 
-	public static int getLevel(@NotNull final Level level, @NotNull final ResourceKey<Enchantment> enchantment, @NotNull final ItemStack stack) {
-		return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment).map(stack::getEnchantmentLevel).orElse(0);
-	}
+    public static int getLevel(@NotNull final Level level, @NotNull final ResourceKey<Enchantment> enchantment, @NotNull final ItemStack stack) {
+        return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment).map(stack::getEnchantmentLevel).orElse(0);
+    }
 
-	public static Holder.Reference<Enchantment> getHolder(ResourceKey<Enchantment> resourceKey) {
-		var lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
-		return lookup == null ? null : lookup.getOrThrow(resourceKey);
-	}
+    public static Holder.Reference<Enchantment> getHolder(ResourceKey<Enchantment> resourceKey) {
+        var lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
+        return lookup == null ? null : lookup.getOrThrow(resourceKey);
+    }
 
-	public static void addEnchantment(ResourceKey<Enchantment> resourceKey, ItemEnchantments.Mutable temp, int level) {
-		Holder<Enchantment> holder = EnchantmentUtils.getHolder(resourceKey);
-		if (holder != null)
-			temp.set(holder, level);
-	}
+    public static void addEnchantment(ResourceKey<Enchantment> resourceKey, ItemEnchantments.Mutable temp, int level) {
+        Holder<Enchantment> holder = EnchantmentUtils.getHolder(resourceKey);
+        if (holder != null)
+            temp.set(holder, level);
+    }
 }

@@ -4,8 +4,12 @@
     "icon": {
       "id": "dragonsurvival:dragon_vault_angry"
     },
-    "title": { "translate": "ds.advancements.open_evil_vault.title" },
-    "description": { "translate": "ds.advancements.open_evil_vault.description" },
+    "title": {
+      "translate": "ds.advancements.open_evil_vault.title"
+    },
+    "description": {
+      "translate": "ds.advancements.open_evil_vault.description"
+    },
     "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,

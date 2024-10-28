@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.syncing;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
@@ -23,75 +21,77 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+
 // We getOrGenerateHandler here since we might not have created the handler when doing a SyncComplete (this happens when the player selects a dragon for the first time)
 public class SyncComplete implements IMessage<SyncComplete.Data> {
-	public static void handleClient(final Data message, final IPayloadContext context) {
-		Entity entity = context.player().level().getEntity(message.playerId);
-		if (entity instanceof Player player) {
-			context.enqueueWork(() -> {
-				DragonStateHandler handler = DragonStateProvider.getData(player);
-				handler.deserializeNBT(player.registryAccess(), message.nbt);
-				DSModifiers.updateAllModifiers(player);
-				player.refreshDimensions();
-			});
-		}
-	}
+    public static void handleClient(final Data message, final IPayloadContext context) {
+        Entity entity = context.player().level().getEntity(message.playerId);
+        if (entity instanceof Player player) {
+            context.enqueueWork(() -> {
+                DragonStateHandler handler = DragonStateProvider.getData(player);
+                handler.deserializeNBT(player.registryAccess(), message.nbt);
+                DSModifiers.updateAllModifiers(player);
+                player.refreshDimensions();
+            });
+        }
+    }
 
-	public static void dropAllItemsInList(Player player, NonNullList<ItemStack> items) {
-		items.forEach(stack -> {
-			if (DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
-				player.getInventory().removeItem(stack);
-				player.drop(stack, false);
-			}
-		});
-	}
+    public static void dropAllItemsInList(Player player, NonNullList<ItemStack> items) {
+        items.forEach(stack -> {
+            if (DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
+                player.getInventory().removeItem(stack);
+                player.drop(stack, false);
+            }
+        });
+    }
 
-	public static void handleDragonSync(Player player) {
-		DragonStateHandler handler = DragonStateProvider.getData(player);
-		DSModifiers.updateAllModifiers(player);
-		player.refreshDimensions();
+    public static void handleDragonSync(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+        DSModifiers.updateAllModifiers(player);
+        player.refreshDimensions();
 
-		// If we are a dragon, make sure to drop any blacklisted items equipped
-		if (handler.isDragon()) {
-			dropAllItemsInList(player, player.getInventory().armor);
-			dropAllItemsInList(player, player.getInventory().offhand);
-			ItemStack mainHandItem = player.getMainHandItem();
-			if (DragonPenaltyHandler.itemIsBlacklisted(mainHandItem.getItem())) {
-				player.getInventory().removeItem(mainHandItem);
-				player.drop(mainHandItem, false);
-			}
-			if (player instanceof ServerPlayer serverPlayer) {
-				DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, handler.getSize(), handler.getTypeName());
-			}
-		}
-	}
+        // If we are a dragon, make sure to drop any blacklisted items equipped
+        if (handler.isDragon()) {
+            dropAllItemsInList(player, player.getInventory().armor);
+            dropAllItemsInList(player, player.getInventory().offhand);
+            ItemStack mainHandItem = player.getMainHandItem();
+            if (DragonPenaltyHandler.itemIsBlacklisted(mainHandItem.getItem())) {
+                player.getInventory().removeItem(mainHandItem);
+                player.drop(mainHandItem, false);
+            }
+            if (player instanceof ServerPlayer serverPlayer) {
+                DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, handler.getSize(), handler.getTypeName());
+            }
+        }
+    }
 
-	public static void handleServer(final Data message, final IPayloadContext context) {
-		Player player = context.player();
-		context.enqueueWork(() -> {
-					DragonStateHandler handler = DragonStateProvider.getData(player);
-					handler.deserializeNBT(player.registryAccess(), message.nbt);
-					handleDragonSync(player);
-				})
-				.thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))
-				.thenAccept(v -> context.reply(new RequestClientData.Data()));
-	}
+    public static void handleServer(final Data message, final IPayloadContext context) {
+        Player player = context.player();
+        context.enqueueWork(() -> {
+                    DragonStateHandler handler = DragonStateProvider.getData(player);
+                    handler.deserializeNBT(player.registryAccess(), message.nbt);
+                    handleDragonSync(player);
+                })
+                .thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))
+                .thenAccept(v -> context.reply(new RequestClientData.Data()));
+    }
 
-	public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
+    public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
 
-		public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "complete_data"));
+        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "complete_data"));
 
-		public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-				ByteBufCodecs.VAR_INT,
-				Data::playerId,
-				ByteBufCodecs.COMPOUND_TAG,
-				Data::nbt,
-				Data::new
-		);
+        public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
+                ByteBufCodecs.VAR_INT,
+                Data::playerId,
+                ByteBufCodecs.COMPOUND_TAG,
+                Data::nbt,
+                Data::new
+        );
 
-		@Override
-		public Type<? extends CustomPacketPayload> type() {
-			return TYPE;
-		}
-	}
+        @Override
+        public Type<? extends CustomPacketPayload> type() {
+            return TYPE;
+        }
+    }
 }

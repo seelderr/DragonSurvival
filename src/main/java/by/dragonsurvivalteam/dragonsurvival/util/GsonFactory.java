@@ -5,17 +5,17 @@ import com.google.gson.GsonBuilder;
 import net.neoforged.neoforge.common.util.Lazy;
 
 final public class GsonFactory {
-	private static final Gson object;
+    private static final Gson object;
 
-	static {
-		object = newBuilder().create();
-	}
+    static {
+        object = newBuilder().create();
+    }
 
-	public static Gson getDefault() {
-		return object;
-	}
+    public static Gson getDefault() {
+        return object;
+    }
 
-	public static GsonBuilder newBuilder() {
-		return new GsonBuilder().registerTypeAdapter(Lazy.class, new LazyJsonAdapter());
-	}
+    public static GsonBuilder newBuilder() {
+        return new GsonBuilder().registerTypeAdapter(Lazy.class, new LazyJsonAdapter());
+    }
 }
