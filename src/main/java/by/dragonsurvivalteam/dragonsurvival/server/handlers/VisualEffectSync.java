@@ -33,7 +33,8 @@ public class VisualEffectSync {
         MobEffectInstance instance = event.getEffectInstance();
         LivingEntity entity = event.getEntity();
 
-        if (instance == null || entity instanceof ServerPlayer) {
+        // Client-side entry is likely our own packet
+        if (entity.level().isClientSide() || instance == null || entity instanceof ServerPlayer) {
             return;
         }
 
@@ -55,7 +56,8 @@ public class VisualEffectSync {
     }
 
     private static void handleEffectRemoval(MobEffectInstance instance, LivingEntity entity) {
-        if (instance == null || entity instanceof ServerPlayer) {
+        // Client-side entry is likely our own packet
+        if (entity.level().isClientSide() || instance == null || entity instanceof ServerPlayer) {
             return;
         }
 
