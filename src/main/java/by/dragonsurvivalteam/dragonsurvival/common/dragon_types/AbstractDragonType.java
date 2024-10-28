@@ -3,16 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import com.mojang.datafixers.util.Pair;
-
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 public abstract class AbstractDragonType implements NBTInterface, Comparable<AbstractDragonType> {
 	public int slotForBonus;

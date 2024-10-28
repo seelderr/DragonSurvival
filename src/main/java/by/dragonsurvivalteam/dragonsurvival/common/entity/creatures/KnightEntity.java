@@ -5,13 +5,14 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import java.util.List;
-import javax.annotation.Nullable;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.*;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.PathfinderMob;
+import net.minecraft.world.entity.SpawnGroupData;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -20,7 +21,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
-import software.bernie.geckolib.animation.AnimationState;
+
+import java.util.List;
+import javax.annotation.Nullable;
 
 public class KnightEntity extends Hunter {
 	public KnightEntity(final EntityType<? extends PathfinderMob> type, final Level level) {
@@ -133,8 +136,7 @@ public class KnightEntity extends Hunter {
 		return false;
 	}
 
-    @Nullable
-    public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverWorld, @NotNull DifficultyInstance difficultyInstance, @NotNull MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
+	@Nullable public SpawnGroupData finalizeSpawn(@NotNull ServerLevelAccessor serverWorld, @NotNull DifficultyInstance difficultyInstance, @NotNull MobSpawnType spawnReason, @Nullable SpawnGroupData entityData) {
 		populateDefaultEquipmentSlots(random, difficultyInstance);
 		return super.finalizeSpawn(serverWorld, difficultyInstance, spawnReason, entityData);
 	}

@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
@@ -24,13 +22,6 @@ import com.mojang.blaze3d.vertex.BufferUploader;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.datafixers.util.Pair;
-
-import java.awt.*;
-import java.io.IOException;
-import java.util.*;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Supplier;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
@@ -44,6 +35,15 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.GlStateBackup;
 import net.neoforged.neoforge.client.event.RegisterShadersEvent;
 import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.io.IOException;
+import java.util.*;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Supplier;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DragonEditorHandler {
@@ -284,8 +284,7 @@ public class DragonEditorHandler {
 		return texturesToRegister;
 	}
 
-    @Nullable
-    private static Color getHueAdjustedColor(boolean glowing, boolean colorable, float hue, float saturation, float brightness, Color baseColor) {
+	@Nullable private static Color getHueAdjustedColor(boolean glowing, boolean colorable, float hue, float saturation, float brightness, Color baseColor) {
 		if (!colorable) {
 			return baseColor;
 		}

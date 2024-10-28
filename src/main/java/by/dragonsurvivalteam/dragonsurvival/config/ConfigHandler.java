@@ -4,13 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import com.google.common.primitives.Primitives;
-
-import java.lang.annotation.ElementType;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -39,6 +32,13 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.Type;
+
+import java.lang.annotation.ElementType;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class ConfigHandler {
@@ -503,8 +503,7 @@ public class ConfigHandler {
 		});
 	}
 
-    @Nullable
-    private static Object convertToString(final Object object) {
+	@Nullable private static Object convertToString(final Object object) {
 		Object result;
 
 		if (object instanceof Collection<?> collection) {

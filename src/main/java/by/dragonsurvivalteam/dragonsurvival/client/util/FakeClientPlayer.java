@@ -3,10 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.util;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.authlib.GameProfile;
-
-import java.util.UUID;
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.core.BlockPos;
@@ -21,6 +17,10 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimationController;
+
+import java.util.UUID;
+import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 @OnlyIn(Dist.CLIENT)
 public class FakeClientPlayer extends AbstractClientPlayer {
@@ -101,8 +101,7 @@ public class FakeClientPlayer extends AbstractClientPlayer {
 	}
 
 	@Override
-    @Nullable
-    public MinecraftServer getServer() {
+	@Nullable public MinecraftServer getServer() {
 		return Minecraft.getInstance().getSingleplayerServer();
 	}
 

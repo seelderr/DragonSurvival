@@ -6,13 +6,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-
-import java.util.HashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.UnknownNullability;
+
+import java.util.HashMap;
 
 public class SkinPreset implements INBTSerializable<CompoundTag> {
 	public HashMap<DragonLevel, Lazy<SkinAgeGroup>> skinAges = new HashMap<>();

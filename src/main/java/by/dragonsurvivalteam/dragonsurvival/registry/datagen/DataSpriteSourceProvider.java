@@ -1,15 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.common.data.SpriteSourceProvider;
+
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DataSpriteSourceProvider extends SpriteSourceProvider {
 

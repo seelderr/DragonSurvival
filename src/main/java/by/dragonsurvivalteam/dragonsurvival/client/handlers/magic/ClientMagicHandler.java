@@ -10,9 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-
-import java.util.Arrays;
-import java.util.Objects;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,6 +20,9 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
 import net.neoforged.neoforge.event.tick.EntityTickEvent;
+
+import java.util.Arrays;
+import java.util.Objects;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler {

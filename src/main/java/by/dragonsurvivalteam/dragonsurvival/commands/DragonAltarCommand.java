@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import static net.minecraft.commands.Commands.literal;
-
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
@@ -9,6 +7,8 @@ import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import static net.minecraft.commands.Commands.literal;
 
 
 public class DragonAltarCommand {

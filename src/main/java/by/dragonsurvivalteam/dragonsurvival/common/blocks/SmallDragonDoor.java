@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -38,6 +37,8 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.Nullable;
+
 public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock {
 	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
 	public static final BooleanProperty OPEN = BlockStateProperties.OPEN;
@@ -57,8 +58,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-    @Nullable
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+	@Nullable public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockPos blockpos = context.getClickedPos();
 		if (blockpos.getY() < 255) {
 			Level world = context.getLevel();

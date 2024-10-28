@@ -1,9 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
-import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
-
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.AltarTypeButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
@@ -32,6 +28,10 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
+import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
 
 public class DragonAltarScreen extends Screen {
 	public static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");

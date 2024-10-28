@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.models.creatures;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.GriffinEntity;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class GriffinModel extends GeoModel<GriffinEntity> {
 	@Override

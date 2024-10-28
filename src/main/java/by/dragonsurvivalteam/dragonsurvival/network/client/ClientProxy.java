@@ -24,11 +24,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.*;
 import by.dragonsurvivalteam.dragonsurvival.network.player.*;
 import by.dragonsurvivalteam.dragonsurvival.network.status.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
-
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -44,6 +39,11 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nullable;
 
 
 /**

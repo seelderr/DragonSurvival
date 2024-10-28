@@ -2,9 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.api.jei;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
-
-import java.util.List;
-import java.util.Optional;
 import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.handlers.IGuiContainerHandler;
 import mezz.jei.api.recipe.RecipeType;
@@ -14,6 +11,9 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Optional;
 
 // TODO: This might not work? Test JEI integration
 public class DragonInventoryGUIHandler implements IRecipeTransferInfo<DragonContainer, RecipeHolder<CraftingRecipe>>, IGuiContainerHandler<DragonInventoryScreen> {

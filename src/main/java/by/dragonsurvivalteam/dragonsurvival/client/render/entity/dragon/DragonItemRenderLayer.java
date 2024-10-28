@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
-
-import java.util.function.BiFunction;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -13,6 +11,8 @@ import org.joml.Quaternionf;
 import software.bernie.geckolib.cache.object.GeoBone;
 import software.bernie.geckolib.renderer.GeoRenderer;
 import software.bernie.geckolib.renderer.layer.BlockAndItemGeoLayer;
+
+import java.util.function.BiFunction;
 
 public class DragonItemRenderLayer extends BlockAndItemGeoLayer<DragonEntity> {
 	public DragonItemRenderLayer(GeoRenderer<DragonEntity> renderer, BiFunction<GeoBone, DragonEntity, ItemStack> stackForBone, BiFunction<GeoBone, DragonEntity, BlockState> blockForBone) {

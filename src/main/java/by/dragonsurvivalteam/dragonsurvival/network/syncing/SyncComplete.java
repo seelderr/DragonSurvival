@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.syncing;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
@@ -22,6 +20,8 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 // We getOrGenerateHandler here since we might not have created the handler when doing a SyncComplete (this happens when the player selects a dragon for the first time)
 public class SyncComplete implements IMessage<SyncComplete.Data> {

@@ -4,8 +4,12 @@
     "icon": {
       "id": "minecraft:gold_ingot"
     },
-    "title": { "translate": "ds.advancements.sleep_on_hoard.title" },
-    "description": { "translate": "ds.advancements.sleep_on_hoard.description" },
+    "title": {
+      "translate": "ds.advancements.sleep_on_hoard.title"
+    },
+    "description": {
+      "translate": "ds.advancements.sleep_on_hoard.description"
+    },
     "show_toast": true,
     "announce_to_chat": true,
     "frame": "goal",

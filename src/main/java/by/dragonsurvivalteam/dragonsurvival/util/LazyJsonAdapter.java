@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
 import com.google.gson.*;
+import net.neoforged.neoforge.common.util.Lazy;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-
-import net.neoforged.neoforge.common.util.Lazy;
 
 public class LazyJsonAdapter implements JsonSerializer<Lazy<Object>>, JsonDeserializer<Lazy<Object>> {
 	@Override

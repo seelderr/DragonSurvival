@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
@@ -24,11 +22,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.math.Axis;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.*;
-import java.util.function.Supplier;
 import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
@@ -52,6 +45,13 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.GeoBone;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.*;
+import java.util.function.Supplier;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SkinsScreen extends Screen {
 	private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_interface.png");

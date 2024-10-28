@@ -26,10 +26,8 @@ public abstract class InventoryScreenMixin extends EffectRenderingInventoryScree
 		super(menu, inventory, component);
 	}
 
-    @Unique
-    private static float dragon_survival$storedXAngle = 0;
-    @Unique
-    private static float dragon_survival$storedYAngle = 0;
+	@Unique private static float dragon_survival$storedXAngle = 0;
+	@Unique private static float dragon_survival$storedYAngle = 0;
 
 	// This is to angle the dragon entity (including its head) to correctly follow the angle specified when rendering.
 	@Redirect(method = "renderEntityInInventory", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/systems/RenderSystem;runAsFancy(Ljava/lang/Runnable;)V"))

@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.network.container;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import io.netty.buffer.ByteBuf;
@@ -9,6 +7,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class RequestOpenDragonEditor implements IMessage<RequestOpenDragonEditor.Data> {
 	public static void handleClient(final RequestOpenDragonEditor.Data message, final IPayloadContext context) {

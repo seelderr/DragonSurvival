@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
@@ -12,11 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.La
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import com.google.common.collect.ImmutableList;
-
-import java.awt.*;
-import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
@@ -26,6 +19,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.client.gui.widget.ExtendedSlider;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
 	public static final ResourceLocation resetSettingsTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");

@@ -6,8 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import java.util.Locale;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundEvent;
@@ -39,6 +37,9 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Locale;
+import javax.annotation.Nullable;
 
 
 public class DragonDoor extends Block implements SimpleWaterloggedBlock {
@@ -204,8 +205,7 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock {
 	}
 
 	@Override
-    @Nullable
-    public BlockState getStateForPlacement(BlockPlaceContext context) {
+	@Nullable public BlockState getStateForPlacement(BlockPlaceContext context) {
 		BlockPos blockpos = context.getClickedPos();
 		if (blockpos.getY() < context.getLevel().getMaxBuildHeight() && context.getLevel().getBlockState(blockpos.above()).canBeReplaced(context) && context.getLevel().getBlockState(blockpos.above(2)).canBeReplaced(context)) {
 			Level world = context.getLevel();

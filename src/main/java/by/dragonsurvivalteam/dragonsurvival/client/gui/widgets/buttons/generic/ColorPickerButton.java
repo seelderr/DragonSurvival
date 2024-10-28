@@ -1,15 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-
-import java.awt.*;
-import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.sounds.SoundManager;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
+
+import java.awt.*;
+import java.util.function.Consumer;
 
 public class ColorPickerButton extends ExtendedButton {
 	public Color defaultColor;

@@ -2,12 +2,12 @@
   "name": "dragonsurvival:hunter_spearman_pool",
   "fallback": "minecraft:empty",
   "elements": [
-	{	
+    {
       "weight": 1,
       "element": {
         "location": "dragonsurvival:entity/hunter_spearman",
         "processors": "dragonsurvival:mossy_age",
-		"projection": "rigid",
+        "projection": "rigid",
         "element_type": "minecraft:single_pool_element"
       }
     }

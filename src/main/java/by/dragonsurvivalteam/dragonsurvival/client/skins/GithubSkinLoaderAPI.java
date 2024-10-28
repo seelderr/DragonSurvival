@@ -3,13 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.skins;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
+import org.apache.logging.log4j.Level;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
-
-import org.apache.logging.log4j.Level;
 
 public class GithubSkinLoaderAPI extends NetSkinLoader {
 	public static final String SKINS_LIST_LINK = "https://api.github.com/repositories/280658566/git/trees/6597d654e16568d2d9e2cdf0dc372041cb081c35?ref=master";

@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.server.containers;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.DSContainers;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
-
-import javax.annotation.Nonnull;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -12,6 +10,8 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.items.SlotItemHandler;
 import net.neoforged.neoforge.items.wrapper.InvWrapper;
+
+import javax.annotation.Nonnull;
 
 public class SourceOfMagicContainer extends AbstractContainerMenu {
 	public SourceOfMagicTileEntity nestEntity;

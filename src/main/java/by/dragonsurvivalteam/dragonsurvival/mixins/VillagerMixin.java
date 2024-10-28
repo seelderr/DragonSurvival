@@ -33,8 +33,7 @@ public abstract class VillagerMixin {
 	@Shadow
 	public abstract void setLastHurtByMob(@Nullable LivingEntity pLivingBase);
 
-	@Unique
-	private static final EntityDataAccessor<Integer> PILLAGED_TIMER = SynchedEntityData.defineId(Villager.class, EntityDataSerializers.INT);
+	@Unique private static final EntityDataAccessor<Integer> PILLAGED_TIMER = SynchedEntityData.defineId(Villager.class, EntityDataSerializers.INT);
 
 	@Inject(method = "startTrading", at = @At("HEAD"), cancellable = true)
 	private void preventTradingWithMarkedPlayers(Player pPlayer, CallbackInfo ci) {
@@ -77,13 +76,11 @@ public abstract class VillagerMixin {
 		pCompound.putInt("PillagedTimer", this.dragonSurvival$getPillagedTimer());
 	}
 
-	@Unique
-	private int dragonSurvival$getPillagedTimer() {
+	@Unique private int dragonSurvival$getPillagedTimer() {
 		return ((Villager) (Object) this).entityData.get(PILLAGED_TIMER);
 	}
 
-	@Unique
-	private void dragonSurvival$setPillagedTimer(int pPillagedTimer) {
+	@Unique private void dragonSurvival$setPillagedTimer(int pPillagedTimer) {
 		((Villager) (Object) this).entityData.set(PILLAGED_TIMER, pPillagedTimer);
 	}
 

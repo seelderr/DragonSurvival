@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -12,6 +10,8 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class SyncDragonAbilitySlot implements IMessage<SyncDragonAbilitySlot.Data> {
 	public static void handleServer(final SyncDragonAbilitySlot.Data message, final IPayloadContext context) {

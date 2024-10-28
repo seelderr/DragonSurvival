@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
@@ -11,6 +9,8 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @OnlyIn(Dist.CLIENT)
 public class BallLightningRenderer extends GeoEntityRenderer<BallLightningEntity> {

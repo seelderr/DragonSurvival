@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
-
-import java.util.List;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -20,10 +18,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.List;
+
 @Mixin(Item.class)
 public class ItemMixin {
-    @Unique
-    private static final List<ResourceKey<Enchantment>> dragonSurvival$enchantmentsToNotDisplayDescription = List.of(
+	@Unique private static final List<ResourceKey<Enchantment>> dragonSurvival$enchantmentsToNotDisplayDescription = List.of(
 			DSEnchantments.SHRINK,
 			DSEnchantments.DRAGONSBONK,
 			DSEnchantments.DRAGONSBOON

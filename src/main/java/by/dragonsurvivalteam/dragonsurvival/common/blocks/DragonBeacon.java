@@ -10,8 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.MobEffectUtils;
-import java.util.Optional;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.sounds.SoundSource;
@@ -40,6 +38,9 @@ import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 public class DragonBeacon extends Block implements SimpleWaterloggedBlock, EntityBlock {
 	public static BooleanProperty LIT = BlockStateProperties.LIT;
@@ -158,8 +159,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 	}
 
 	@Override
-    @Nullable
-    public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
+	@Nullable public MenuProvider getMenuProvider(BlockState pState, Level pLevel, BlockPos pPos) {
 		BlockEntity blockentity = pLevel.getBlockEntity(pPos);
 		return blockentity instanceof MenuProvider ? (MenuProvider) blockentity : null;
 	}
@@ -181,8 +181,7 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 	}
 
 	@Override
-    @Nullable
-    public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
+	@Nullable public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, @NotNull BlockState state, @NotNull BlockEntityType<T> type) {
 		return level.isClientSide ? null : BaseEntityBlock.createTickerHelper(type, DSTileEntities.DRAGON_BEACON.get(), DragonBeaconTileEntity::serverTick);
 	}
 }

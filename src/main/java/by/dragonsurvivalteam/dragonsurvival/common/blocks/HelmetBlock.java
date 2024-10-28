@@ -58,8 +58,7 @@ public class HelmetBlock extends Block implements EntityBlock {
 		stateBuilder.add(ROTATION);
 	}
 
-    @Nullable
-    @Override
+	@Nullable @Override
 	public BlockEntity newBlockEntity(BlockPos pPos, BlockState pState) {
 		return DSTileEntities.HELMET_TILE.value().create(pPos, pState);
 	}

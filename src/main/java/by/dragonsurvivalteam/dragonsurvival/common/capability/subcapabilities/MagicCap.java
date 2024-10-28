@@ -10,13 +10,14 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbil
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 
 public class MagicCap extends SubCap {
 	public static final Integer activeAbilitySlots = 4;

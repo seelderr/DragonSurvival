@@ -8,8 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.SourceOfMagicContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import io.netty.buffer.Unpooled;
-
-import java.util.HashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -33,6 +31,8 @@ import software.bernie.geckolib.animatable.GeoBlockEntity;
 import software.bernie.geckolib.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.animation.AnimatableManager;
 import software.bernie.geckolib.util.GeckoLibUtil;
+
+import java.util.HashMap;
 
 public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, GeoBlockEntity {
 	private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);

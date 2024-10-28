@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import java.util.function.UnaryOperator;
 import net.minecraft.core.Registry;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.util.ExtraCodecs;
 import org.joml.Vector3f;
+
+import java.util.function.UnaryOperator;
 
 public class DSDataComponents {
 	//public static DataComponentType<ExtraCodecs.TagOrElementLocation> VALID_VAULTS = register("valid_vaults", e -> e.persistent(ExtraCodecs.TAG_OR_ELEMENT_ID));

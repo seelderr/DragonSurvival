@@ -4,10 +4,11 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import java.util.HashMap;
-import java.util.Map;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class SkinCap extends SubCap {
 	public static final String defaultSkinValue = "None";

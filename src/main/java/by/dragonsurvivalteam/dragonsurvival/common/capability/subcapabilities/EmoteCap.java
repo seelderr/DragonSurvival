@@ -3,10 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
-import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+
+import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class EmoteCap extends SubCap {
 	public static final int MAX_EMOTES = 4;

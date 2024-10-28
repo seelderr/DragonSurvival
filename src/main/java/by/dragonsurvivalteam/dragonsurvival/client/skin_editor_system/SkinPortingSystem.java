@@ -6,10 +6,10 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import net.neoforged.neoforge.common.util.Lazy;
+
 import java.util.HashMap;
 import java.util.Locale;
-
-import net.neoforged.neoforge.common.util.Lazy;
 
 public class SkinPortingSystem {
 	public static SavedSkinPresets upgrade(SavedSkinPresets presets) {

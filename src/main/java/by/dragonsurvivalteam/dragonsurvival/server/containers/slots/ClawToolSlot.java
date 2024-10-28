@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.server.containers.slots;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
@@ -10,8 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenu;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.mojang.datafixers.util.Pair;
-
-import javax.annotation.Nullable;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.Container;
 import net.minecraft.world.inventory.InventoryMenu;
@@ -19,6 +15,10 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
+
+import javax.annotation.Nullable;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class ClawToolSlot extends Slot {
 	static final ResourceLocation AXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_axe");
@@ -51,8 +51,7 @@ public class ClawToolSlot extends Slot {
 		syncSlots();
 	}
 
-    @Nullable
-    @Override
+	@Nullable @Override
 	public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
 		return Pair.of(InventoryMenu.BLOCK_ATLAS, clawSlot == 0 ? SWORD_TEXTURE : clawSlot == 2 ? AXE_TEXTURE : clawSlot == 1 ? PICKAXE_TEXTURE : SHOVEL_TEXTURE);
 	}

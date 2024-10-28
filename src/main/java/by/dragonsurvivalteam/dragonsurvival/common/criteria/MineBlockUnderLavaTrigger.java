@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.criteria;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import java.util.Optional;
 import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
@@ -11,6 +10,8 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Optional;
 
 public class MineBlockUnderLavaTrigger extends SimpleCriterionTrigger<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> {
 	public void trigger(ServerPlayer player, Block block) {

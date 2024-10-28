@@ -2,13 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-
-import java.util.ArrayList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
+
+import java.util.ArrayList;
 
 public abstract class ChannelingCastAbility extends ActiveDragonAbility {
 	public int chargeTime = 0;

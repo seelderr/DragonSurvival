@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-
-import java.util.concurrent.CompletableFuture;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -12,6 +10,8 @@ import net.minecraft.world.effect.MobEffect;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.concurrent.CompletableFuture;
 
 public class DSEffectTags extends TagsProvider<MobEffect> {
 	public static final TagKey<MobEffect> OVERWHELMING_MIGHT_BLACKLIST = createKey("overwhelming_might_blacklist");

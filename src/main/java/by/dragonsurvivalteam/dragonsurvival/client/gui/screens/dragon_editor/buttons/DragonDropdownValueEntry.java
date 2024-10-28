@@ -3,13 +3,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
 import com.google.common.collect.ImmutableList;
-
-import java.util.List;
-import java.util.function.Consumer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+
+import java.util.List;
+import java.util.function.Consumer;
 
 public class DragonDropdownValueEntry extends DropdownValueEntry {
 	private final int num;

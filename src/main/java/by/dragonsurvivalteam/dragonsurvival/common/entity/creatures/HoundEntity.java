@@ -5,7 +5,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.FollowSpecificMo
 import by.dragonsurvivalteam.dragonsurvival.common.entity.goals.WindupMeleeAttackGoal;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
-import javax.annotation.Nullable;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -19,6 +18,8 @@ import net.minecraft.world.level.ServerLevelAccessor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.*;
 import software.bernie.geckolib.animation.AnimationState;
+
+import javax.annotation.Nullable;
 
 public class HoundEntity extends Hunter {
 	private RawAnimation currentIdleAnim;

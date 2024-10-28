@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.bodies.*;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;

@@ -6,10 +6,6 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
-
-import java.util.List;
-import java.util.Optional;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
@@ -45,6 +41,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
+import java.util.Optional;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class DSTrades {
@@ -106,8 +106,7 @@ public class DSTrades {
 			this.xp = xp;
 		}
 
-        @Nullable
-        @Override
+		@Nullable @Override
 		public MerchantOffer getOffer(@NotNull Entity entity, @NotNull RandomSource random) {
 			return new MerchantOffer(baseCostA, costB, result, maxUses, xp, priceMultiplier);
 		}
@@ -133,8 +132,7 @@ public class DSTrades {
 			this.villagerXp = pVillagerXp;
 		}
 
-        @Nullable
-        @Override
+		@Nullable @Override
 		public MerchantOffer getOffer(Entity pTrader, RandomSource pRandom) {
 			if (!(pTrader.level() instanceof ServerLevel serverlevel)) {
 				return null;

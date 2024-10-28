@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.Bolas;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -15,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class BolasEntityRenderer extends EntityRenderer<Bolas> {
 

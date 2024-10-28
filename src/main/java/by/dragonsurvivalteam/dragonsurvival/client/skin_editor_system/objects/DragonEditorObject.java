@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+
 import java.util.HashMap;
 
 public class DragonEditorObject {
