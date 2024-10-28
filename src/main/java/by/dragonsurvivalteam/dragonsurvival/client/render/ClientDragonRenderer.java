@@ -305,30 +305,54 @@ public class ClientDragonRenderer {
                             viewDir = playerVehicle.getViewVector(1f);
                         }
 
+                        // Factor for interpolating to the target bank angle
                         final float ROLL_VEL_LERP_FACTOR = 0.1F;
+                        // Minimum velocity to begin banking
                         final double ROLL_VEL_INFLUENCE_MIN = 0.5D;
+                        // Maximum velocity at which point the bank angle has full effect
                         final double ROLL_VEL_INFLUENCE_MAX = 2.0D;
-                        final double ROLL_VEL_EXP = 0.5;
 
-                        float targetRollDeg;
+                        // Minimum view-velocity delta to start rolling
+                        final float ROLL_MIN_DELTA_DEG = 5;
+                        // Equivalent maximum, after which the bank angle is maximized
+                        final float ROLL_MAX_DELTA_DEG = 90;
+                        // Maximum roll angle
+                        final float ROLL_MAX_DEG = 60;
+                        // Exponent for targetRollNormalized (applied after normalizing relative to ROLL_MAX_DEG)
+                        // > 1: soft, starts banking slowly, increases rapidly with higher delta
+                        // < 1: sensitive, starts banking even when the difference is tiny, softer towards the limits
+                        final double ROLL_EXP = 0.7;
+
+                        float targetRollNormalized;
 
                         // Note that we're working with the HORIZONTAL move delta
                         if (deltaVel.horizontalDistanceSqr() > ROLL_VEL_INFLUENCE_MIN * ROLL_VEL_INFLUENCE_MIN) {
-                            float influence = (float) Functions.inverseLerpClamped(
+                            float velAngle = (float) Math.atan2(-deltaVel.x, deltaVel.z) * Mth.RAD_TO_DEG;
+
+                            float viewToVelDeltaDeg = Mth.degreesDifference(velAngle, yRot);
+
+                            // Raw target roll, normalized
+                            targetRollNormalized = (float) Functions.deadzoneNormalized(viewToVelDeltaDeg, ROLL_MIN_DELTA_DEG, ROLL_MAX_DELTA_DEG);
+                            if (player instanceof LocalPlayer localPlayer) {
+                                localPlayer.sendSystemMessage(Component.literal("Raw target angle: %.2f".formatted(targetRollNormalized)));
+                            }
+                            // Scale via exponent (still normalized)
+                            targetRollNormalized = Math.copySign((float) Math.pow(Math.abs(targetRollNormalized), ROLL_EXP), targetRollNormalized);
+                            if (player instanceof LocalPlayer localPlayer) {
+                                localPlayer.sendSystemMessage(Component.literal("Scaled via exponent: %.2f".formatted(targetRollNormalized)));
+                            }
+                            // Scale by velocity influence
+                            float velInfluence = (float) Functions.inverseLerpClamped(
                                     deltaVel.horizontalDistance(),
                                     ROLL_VEL_INFLUENCE_MIN,
                                     ROLL_VEL_INFLUENCE_MAX
                             );
-                            float velAngle = (float) Math.atan2(-deltaVel.x, deltaVel.z) * Mth.RAD_TO_DEG;
-                            float viewToVelDelta = Mth.degreesDifference(velAngle, yRot);
-
-                            targetRollDeg = (float) Functions.limitAngleDelta(viewToVelDelta * 2, 0, 1 * Mth.RAD_TO_DEG);
-                            targetRollDeg *= influence;
+                            targetRollNormalized *= velInfluence;
                             if (player instanceof LocalPlayer localPlayer) {
-                                localPlayer.sendSystemMessage(Component.literal("targetRollDeg: %.2f".formatted(targetRollDeg)));
+                                localPlayer.sendSystemMessage(Component.literal("Scaled by velocity: %.2f".formatted(targetRollNormalized)));
                             }
                         } else {
-                            targetRollDeg = 0;
+                            targetRollNormalized = 0;
                         }
 
                         double d0 = deltaVel.horizontalDistanceSqr();
@@ -345,7 +369,14 @@ public class ClientDragonRenderer {
                             localPlayer.sendSystemMessage(Component.literal("rot: %.2f".formatted(rot * Mth.RAD_TO_DEG)));
                         }
 
-                        dummyDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, dummyDragon.prevZRot, targetRollDeg * Mth.DEG_TO_RAD);
+                        float targetRollDeg = targetRollNormalized * ROLL_MAX_DEG * Mth.DEG_TO_RAD;
+
+                        // NaN/Inf prevention - snap directly
+                        if (!Double.isFinite(dummyDragon.prevZRot)) {
+                            dummyDragon.prevZRot = targetRollDeg;
+                        }
+
+                        dummyDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, dummyDragon.prevZRot, targetRollDeg);
 
                         handler.getMovementData().prevXRot = dummyDragon.prevXRot;
                         handler.getMovementData().prevZRot = dummyDragon.prevZRot;
