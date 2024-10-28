@@ -627,10 +627,6 @@ public class ClientDragonRenderer {
                     targetAngle += 180;
                 }
 
-                if (player instanceof LocalPlayer localPlayer) {
-                    localPlayer.sendSystemMessage(Component.literal("Move input: to angle %f".formatted(targetAngle)));
-                }
-
                 var factor = player.onGround() ? MOVE_ALIGN_FACTOR : MOVE_ALIGN_FACTOR_AIR;
 
                 // In first person, force the body to turn away from the view direction if possible
