@@ -58,19 +58,19 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
                 case PEACE ->
                         dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
                             if (effect != null) {
-                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
                 case MAGIC ->
                         dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
                             if (effect != null) {
-                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
                 case FIRE ->
                         dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
                             if (effect != null) {
-                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect) + 5, 0, true, true));
+                                player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
             }
