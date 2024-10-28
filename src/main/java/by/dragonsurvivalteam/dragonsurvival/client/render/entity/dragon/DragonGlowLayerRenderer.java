@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
@@ -18,8 +19,8 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-
+// TODO :: geckolib has an 'AutoGlowingGeoLayer' class, could that help here?
+// FIXME :: glow layer doesn't like translucency much (it goes dark once the alpha changes)
 public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
     private final GeoEntityRenderer<DragonEntity> renderer;
 
@@ -39,6 +40,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         }
 
         Player player = animatable.getPlayer();
+
         if (player == null) {
             return;
         }
@@ -57,26 +59,26 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         }
 
         if (glowTexture == null && handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().defaultSkin) {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
+            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getRawName() + "_glow.png");
 
             if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {
                 glowTexture = location;
             }
         }
 
+        dragonRenderer.isRenderLayers = true;
+
         if (glowTexture != null) {
-            RenderType type = RenderType.eyes(glowTexture);
+            RenderType type = RenderType.EYES.apply(glowTexture, RenderType.LIGHTNING_TRANSPARENCY);
             VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-            dragonRenderer.isRenderLayers = true;
-            dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+            dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
         } else {
-            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
-            dragonRenderer.isRenderLayers = true;
+            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().name);
 
             if (ageGroup.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
-                RenderType type = RenderType.eyes(dynamicGlowKey);
+                RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);
                 VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-                dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, 0xFFFFFFFF);
+                dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
             }
         }
 

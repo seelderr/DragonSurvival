@@ -1,17 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSEntityTypeTags;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
@@ -56,10 +59,8 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         });
     }
 
-    /**
-     * Correctly rotate the passenger when riding a dragon
-     */
-    @SuppressWarnings("ConstantValue")
+    /** Correctly rotate the passenger when riding a dragon */
+    @SuppressWarnings("ConstantValue") // the if statement checks are valid
     @Inject(method = "onPassengerTurned(Lnet/minecraft/world/entity/Entity;)V", at = @At("HEAD"))
     private void dragonSurvival$onPassengerTurned(Entity entity, CallbackInfo callback) {
         if (!(entity instanceof Player passenger) || !((Entity) (Object) this instanceof Player vehicle) || !passenger.level().isClientSide()) {
@@ -99,7 +100,14 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
      */
     @Inject(method = "displayFireAnimation()Z", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$hideCaveDragonFireAnimation(CallbackInfoReturnable<Boolean> callback) {
-        DragonStateProvider.getOptional((Entity) (Object) this).ifPresent(handler -> {
+        Entity entity = (Entity) (Object) this;
+
+        // Disable fire texture
+        if (entity instanceof ItemEntity item && item.getData(DragonSurvivalMod.ENTITY_HANDLER).isFireImmune) {
+            callback.setReturnValue(false);
+        }
+
+        DragonStateProvider.getOptional(entity).ifPresent(handler -> {
             if (handler.isDragon() && DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
                 callback.setReturnValue(false);
             }
@@ -113,10 +121,8 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         }
     }
 
-    /**
-     * Prevent dragons from riding certain vehicles
-     */
-    @SuppressWarnings("ConstantValue")
+    /** Prevent dragons from riding certain vehicles */
+    @SuppressWarnings("ConstantValue") // the if statement checks are valid
     @ModifyReturnValue(method = "canRide", at = @At(value = "RETURN"))
     public boolean dragonSurvival$canRide(boolean original, @Local(argsOnly = true, ordinal = 0) Entity entity) {
         if (ServerConfig.limitedRiding && DragonStateProvider.isDragon((Entity) (Object) this) && /* Still allow riding dragons */ !DragonStateProvider.isDragon(entity)) {
@@ -124,6 +130,22 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         }
 
         return original;
+    }
+
+    /** To just skip rendering entirely instead of rendering with a 0 alpha value */
+    @SuppressWarnings("ConstantValue") // the if statement checks are valid
+    @ModifyReturnValue(method = "isInvisible", at = @At("RETURN"))
+    private boolean dragonSurvival$enableHunterStacksInvisibility(boolean isInvisible) {
+        if (isInvisible) {
+            return true;
+        }
+
+        if ((Object) this instanceof Player player && DragonStateProvider.getData(player).hasMaxHunterStacks()) {
+            // With max. stacks the visibility value is set to 0 anyway so this shouldn't affect actual gameplay features
+            return HunterHandler.calculateAlpha(player) == 0;
+        }
+
+        return false;
     }
 
     @Shadow

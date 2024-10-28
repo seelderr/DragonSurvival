@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class DataItemModelProvider extends ItemModelProvider {
-    public DataItemModelProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
-        super(output, modId, existingFileHelper);
+    public DataItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
+        super(output, DragonSurvivalMod.MODID, existingFileHelper);
     }
-
 
     private static final List<String> blockItemsThatShouldBeBasicInstead = List.of(
             "door",

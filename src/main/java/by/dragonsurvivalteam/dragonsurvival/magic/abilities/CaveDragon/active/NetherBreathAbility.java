@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigType;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
@@ -34,9 +33,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.alchemy.PotionContents;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.FireBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -44,7 +41,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
@@ -72,10 +68,6 @@ public class NetherBreathAbility extends BreathAbility {
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used")
     public static Boolean fireBreathSpreadsFire = true;
-
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathBlockBreaks", comment = "Blocks that have a chance to be broken by fire breath. Formatting: block/modid:id")
-    public static List<String> fireBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:crops", "minecraft:flowers", "minecraft:replaceable_plants", "minecraft:cobweb");
 
     @ConfigRange(min = 0.05, max = 10000.0)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in seconds of the fire breath ability")
@@ -147,18 +139,17 @@ public class NetherBreathAbility extends BreathAbility {
         if (!player.level().isClientSide) {
             if (fireBreathSpreadsFire) {
                 BlockPos firePosition = blockPosition.relative(direction);
+                Block block = blockState.getBlock();
 
-                if (FireBlock.canBePlacedAt(player.level(), firePosition, direction)) {
-                    if (player.getRandom().nextInt(100) < 50) {
-                        BlockState fireBlockState = FireBlock.getState(player.level(), firePosition);
-                        player.level().setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
-
-                        blockState.onCaughtFire(player.level(), blockPosition, direction, player);
-
-                        if (blockState.getBlock() == Blocks.TNT) {
-                            player.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
-                        }
-                    }
+                if (block instanceof TntBlock tnt) {
+                    tnt.onCaughtFire(blockState, player.level(), blockPosition, direction, player);
+                    player.level().setBlock(blockPosition, Blocks.AIR.defaultBlockState(), Block.UPDATE_ALL_IMMEDIATE);
+                } else if (block instanceof CampfireBlock && !blockState.getValue(CampfireBlock.LIT)) {
+                    player.level().setBlock(blockPosition, blockState.setValue(CampfireBlock.LIT, true), Block.UPDATE_ALL_IMMEDIATE);
+                } else if (FireBlock.canBePlacedAt(player.level(), firePosition, direction) && player.getRandom().nextInt(100) < 50) {
+                    BlockState fireBlockState = FireBlock.getState(player.level(), firePosition);
+                    player.level().setBlock(firePosition, fireBlockState, Block.UPDATE_ALL_IMMEDIATE);
+                    blockState.onCaughtFire(player.level(), blockPosition, direction, player);
                 }
             }
 

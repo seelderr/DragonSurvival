@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -16,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -80,14 +80,6 @@ public class ForestBreathAbility extends BreathAbility {
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in seconds, mana is consumed while using forest breath")
     public static Double forestBreathManaTicks = 2.0;
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathBlockBreaks", comment = "Blocks that have a chance to be broken by forest breath. Formatting: block/modid:id")
-    public static List<String> forestBreathBlockBreaks = List.of("minecraft:banners");
-
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathGrowBlacklist", comment = "Blocks that will not be grown by the forest breath. Formatting: block/modid:id")
-    public static List<String> forestBreathGrowBlacklist = List.of("minecraft:grass", "minecraft:grass_block");
-
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "allowDirtTransformation", comment = "Allow the forest breath to transform dirt into nature related blocks")
     public static Boolean allowDirtTransformation = true;
 
@@ -118,7 +110,6 @@ public class ForestBreathAbility extends BreathAbility {
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_3.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_4.png")};
     }
-
 
     @Override
     @OnlyIn(Dist.CLIENT)
@@ -173,19 +164,17 @@ public class ForestBreathAbility extends BreathAbility {
         }
 
         if (/* 50% */ player.getRandom().nextInt(100) < 50) {
-            if (blockState.getBlock() instanceof BonemealableBlock bonemealableBlock) {
-                if (!DragonConfigHandler.FOREST_DRAGON_BREATH_GROW_BLACKLIST.contains(bonemealableBlock)) {
-                    if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockPosition, blockState)) {
-                        if (bonemealableBlock.isBonemealSuccess(serverLevel, player.getRandom(), blockPosition, blockState)) {
-                            for (int i = 0; i < 3; i++) {
-                                if (bonemealableBlock instanceof DoublePlantBlock) {
-                                    if (!blockState.hasProperty(DoublePlantBlock.HALF)) {
-                                        continue;
-                                    }
+            if (!blockState.is(DSBlockTags.FOREST_BREATH_GROW_BLACKLIST) && blockState.getBlock() instanceof BonemealableBlock bonemealableBlock) {
+                if (bonemealableBlock.isValidBonemealTarget(serverLevel, blockPosition, blockState)) {
+                    if (bonemealableBlock.isBonemealSuccess(serverLevel, player.getRandom(), blockPosition, blockState)) {
+                        for (int i = 0; i < 3; i++) {
+                            if (bonemealableBlock instanceof DoublePlantBlock) {
+                                if (!blockState.hasProperty(DoublePlantBlock.HALF)) {
+                                    continue;
                                 }
-
-                                bonemealableBlock.performBonemeal(serverLevel, player.getRandom(), blockPosition, blockState);
                             }
+
+                            bonemealableBlock.performBonemeal(serverLevel, player.getRandom(), blockPosition, blockState);
                         }
                     }
                 }

@@ -2,15 +2,18 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active.NetherBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.ForestBreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -19,12 +22,14 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
@@ -193,7 +198,14 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
                         BlockState state = player.level().getBlockState(mutablePosition);
 
                         if (state.getBlock() != Blocks.AIR) {
-                            if (DragonConfigHandler.DRAGON_BREATH_BLOCKS != null && DragonConfigHandler.DRAGON_BREATH_BLOCKS.containsKey(getDragonType().getTypeName()) && DragonConfigHandler.DRAGON_BREATH_BLOCKS.get(getDragonType().getTypeName()).contains(state.getBlock())) {
+                            TagKey<Block> destructibleBlocks = switch (this) {
+                                case NetherBreathAbility ignored -> DSBlockTags.NETHER_BREATH_DESTRUCTIBLE;
+                                case StormBreathAbility ignored -> DSBlockTags.STORM_BREATH_DESTRUCTIBLE;
+                                case ForestBreathAbility ignored -> DSBlockTags.FOREST_BREATH_DESTRUCTIBLE;
+                                default -> throw new IllegalStateException("Invalid breath type [" + this.getClass().getName() + "]");
+                            };
+
+                            if (state.is(destructibleBlocks)) {
                                 if (!player.level().isClientSide()) {
                                     if (player.getRandom().nextFloat() * 100 <= blockBreakChance()) {
                                         player.level().destroyBlock(mutablePosition, false, player);

@@ -50,8 +50,24 @@ public class HunterAbility extends ChargeCastAbility {
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the hunter ability")
     public static Integer hunterManaCost = 1;
 
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "full_invisibility", comment = "Whether other players should appear fully invisible at maximum hunter stacks")
+    public static Boolean fullyInvisible = false;
+
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "translucent_items", comment = "Whether your held items should also appear translucent")
+    public static Boolean translucentItems = true;
+
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "fix_translucency", comment = "This enables the shader features of fabulous mode which are needed for translucency to work correctly")
+    public static Boolean fixTranslucency = true;
+
+    private static final Integer[] REQUIRED_LEVELS = new Integer[]{0, 25, 35, 55};
+
+    // currently not done for all abilities (not worth with future rework in mind)
+    public static int maxLevel() {
+        return REQUIRED_LEVELS.length;
+    }
+
     @Override
-    public int getSortOrder() {
+    public int getSortOrder(){
         return 4;
     }
 
@@ -93,8 +109,8 @@ public class HunterAbility extends ChargeCastAbility {
     }
 
     @Override
-    public Integer[] getRequiredLevels() {
-        return new Integer[]{0, 25, 35, 55};
+    public Integer[] getRequiredLevels(){
+        return REQUIRED_LEVELS; // .clone() to be safe for modifications? currently there are none
     }
 
     @Override

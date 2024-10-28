@@ -45,7 +45,6 @@ import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.ClipContext.Fluid;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -114,14 +113,6 @@ public class StormBreathAbility extends BreathAbility {
             "actives",
             "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in seconds, mana is consumed while using storm breath")
     public static Double stormBreathManaTicks = 2.0;
-
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathBlockBreaks", comment = "Blocks that have a chance to be broken by storm breath. Formatting: block/modid:id")
-    public static List<String> stormBreathBlockBreaks = List.of("minecraft:impermeable", "minecraft:flowers", "minecraft:replaceable_plants");
 
     @ConfigRange(min = 0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic",

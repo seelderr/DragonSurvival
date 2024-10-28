@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.Arrays;
@@ -21,7 +20,7 @@ public class ServerConfig {
     public static final Double DEFAULT_MAX_GROWTH_SIZE = 60.0;
 
     ServerConfig(ModConfigSpec.Builder builder) {
-        ConfigHandler.addConfigs(builder, ConfigSide.SERVER);
+        ConfigHandler.createConfigEntries(builder, ConfigSide.SERVER);
     }
 
     @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "forceStateUpdatingOnVaults", comment = "Debug only config. Forces the state updating to resume on vaults always.")
@@ -52,17 +51,7 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "allowDragonChoiceFromInventory", comment = "Should the dragon altar be accessible from the vanilla inventory if the player has not made a choice yet?")
     public static Boolean allowDragonChoiceFromInventory = true;
 
-    // Growth
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "destructibleBlocks", comment = "Blocks that are destructible when block destruction is enabled. Blocks that can be harvested with an axe are also destroyable by default on whitelist mode. Formatting: block/modid:id")
-    public static List<String> destructibleBlocks = List.of(
-            "minecraft:leaves",
-            "minecraft:mineable/axe",
-            "minecraft:flowers",
-            "minecraft:replaceable"
-    );
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
+    @ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
     public static Boolean useBlacklistForDestructibleBlocks = false;
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeBlockDestruction", comment = "Allow a dragon to instantly destroy certain colliding blocks if they are above a certain size.")
@@ -356,25 +345,6 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveLavaSwimmingTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava.")
     public static Integer caveLavaSwimmingTicks = 3600;
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveSpeedupBlocks", comment = "Blocks cave dragons gain speed when standing above. Formatting: block/modid:id")
-    public static List<String> caveSpeedupBlocks = List.of(
-            "minecraft:base_stone_nether",
-            "minecraft:base_stone_overworld",
-            "minecraft:stone_bricks",
-            "minecraft:beacon_base_blocks",
-            "c:cobblestone",
-            "c:sandstone/blocks",
-            "c:stones",
-            "c:ores",
-            "quark:deepslate",
-            "quark:deepslate_bricks",
-            "quark:cobbled_deepslate",
-            "minecraft:lava",
-            "minecraft:fire",
-            "minecraft:soul_fire"
-    );
-
 
     @ConfigRange(min = 0.0, max = 100.0)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestFallReduction", comment = "How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.")
@@ -386,29 +356,12 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestCactiImmunity", comment = "Whether forest dragons are immune to Cactus damage.")
     public static Boolean forestCactiImmunity = true;
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestSpeedupBlocks", comment = "Blocks forest dragons gain speed when standing above. Formatting: block/modid:id")
-    public static List<String> forestSpeedupBlocks = List.of(
-            "minecraft:logs",
-            "minecraft:leaves",
-            "minecraft:planks",
-            "minecraft:dirt",
-            "minecraft:grass",
-            "minecraft:dirt",
-            "minecraft:grass_block",
-            "minecraft:wooden_slab"
-    );
-
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "seaSwimmingBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air.")
     public static Boolean seaSwimmingBonuses = true;
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "seaSpeedupBlocks", comment = "Blocks sea dragons gain speed when standing above. Formatting: block/modid:id")
-    public static List<String> seaSpeedupBlocks = List.of("minecraft:ice", "minecraft:impermeable", "minecraft:sand", "minecraft:mud", "minecraft:coral_blocks", "c:sands", "minecraft:dirt_path", "minecraft:sandstone", "minecraft:cut_sandstone", "minecraft:chiseled_sandstone", "minecraft:smooth_sandstone", "minecraft:red_sandstone", "minecraft:cut_red_sandstone", "minecraft:chiseled_red_sandstone", "minecraft:smooth_red_sandstone", "minecraft:water", "quark:permafrost", "immersive_weathering:permafrost", "architects_palette:polished_packed_ice");
-
     //Dragon Penalties
-    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties.")
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties." )
     public static Boolean penaltiesEnabled = true;
 
     @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "dragonsAreScary", comment = "Whether dragons are scary for animals or not.")
@@ -417,8 +370,8 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride")
     public static Boolean limitedRiding = true;
 
-    @ConfigType(Item.class) // TODO :: Use tag
-    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id")
+    @ConfigType(Item.class) // FIXME :: handle with tag
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
     public static List<String> blacklistedItems = List.of(
             "c:tools/shield",
             "c:tools/bow",
@@ -581,7 +534,6 @@ public class ServerConfig {
     public static Double forestStressExhaustion = 1.0;
 
     // Sea Dragon Penalties
-
     @ConfigRange(min = 0, max = 100000)
     @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaTicksBasedOnTemperature", comment = "The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
     public static Integer seaTicksWithoutWater = 1000;
@@ -593,10 +545,6 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaDehydrationDamage", comment = "The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks).")
     public static Double seaDehydrationDamage = 1.0;
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaHydrationBlocks", comment = "When sea dragons stand on these blocks, hydration is restored. Format: block/modid:id")
-    public static List<String> seaHydrationBlocks = List.of("minecraft:ice", "minecraft:snow", "minecraft:powder_snow", "minecraft:snow_block", "minecraft:muddy_mangrove_roots", "minecraft:mud", "minecraft:wet_sponge", "dragonsurvival:sea_source_of_magic", "immersive_weathering:thin_ice", "immersive_weathering:cryosol", "immersive_weathering:permafrost", "immersive_weathering:frosty_grass", "immersive_weathering:frosty_fern", "ecologics:thin_ice", "ecologics:ice_bricks", "ecologics:ice_brick_stairs", "ecologics:ice_brick_slab", "ecologics:ice_brick_wall", "ecologics:snow_bricks", "ecologics:snow_brick_stairs", "ecologics:snow_brick_slab", "ecologics:snow_brick_wall", "architects_palette:poliched_packed_ice", "architects_palette:poliched_packed_ice_slab", "architects_palette:poliched_packed_ice_vertical_slab", "architects_palette:poliched_packed_ice_stairs", "architects_palette:poliched_packed_ice_wall", "architects_palette:chiseled_packed_ice", "architects_palette:packed_ice_pillar", "architects_palette:coarse_snow", "fantasyfurniture:decorations/snowballs", "immersive_weathering:icicle", "regions_unexplored:plains_mud", "regions_unexplored:silt_mud", "regions_unexplored:peat_mud", "regions_unexplored:forest_mud", "naturearchitect:snow_block_0", "naturearchitect:snow_block_2", "naturearchitect:snow_cover_1", "naturearchitect:snow_cover_2", "naturearchitect:snow_cover_3", "naturearchitect:snow_block_2", "immersive_weathering:snowy_stone_brick_wall", "immersive_weathering:snowy_stone_brick_stairs", "immersive_weathering:snowy_chiseled_stone_bricks", "immersive_weathering:snowy_stone_bricks", "immersive_weathering:snowy_cobblestone_wall", "immersive_weathering:snowy_cobblestone_slab", "immersive_weathering:snowy_cobblestone_stairs", "immersive_weathering:snowy_cobblestone", "immersive_weathering:snowy_stone_wall", "immersive_weathering:snowy_stone_slab", "immersive_weathering:snowy_stone_stairs", "immersive_weathering:snowy_stone", "immersive_weathering:snow_brick_wall", "immersive_weathering:snow_brick_slab", "immersive_weathering:snow_brick_stairs", "immersive_weathering:snow_bricks", "frozenup:compacted_snow_foundation", "frozenup:compacted_snow_brick_vertical_slab", "frozenup:compacted_snow_brick_slab", "frozenup:compacted_snow_brick_stairs", "frozenup:compacted_snow_bricks", "frozenup:compacted_snow_brick_stairs");
-
     @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaAllowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.")
     public static Boolean seaAllowWaterBottles = true;
 
@@ -604,9 +552,6 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaTicksWithoutWaterRestored", comment = "How many ticks do water restoration items restore when used. Set to 0 to disable.")
     public static Integer seaTicksWithoutWaterRestored = 5000;
 
-    @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaHydrationItems", comment = "Additional modded USEABLE items that restore water when used (called from LivingEntityUseItemEvent.Finish). Format: item/modid:id")
-    public static List<String> seaHydrationItems = List.of("immersive_weathering:icicle");
 
     // Ore Loot
     @ConfigRange(min = 0.0, max = 1.0)
@@ -625,15 +570,12 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore.")
     public static Double dragonOreBoneChance = 0.01;
 
-    @ConfigType(Item.class)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> caveDragonHurtfulItems = Arrays.asList("minecraft:potion:2", "minecraft:water_bottle:2", "minecraft:milk_bucket:2");
 
-    @ConfigType(Item.class)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> seaDragonHurtfulItems = Collections.emptyList();
 
-    @ConfigType(Item.class)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage")
     public static List<String> forestDragonHurtfulItems = Collections.emptyList();
 
@@ -641,17 +583,20 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "chargedSoupBuffDuration", comment = "How long in seconds should the cave fire effect from charged soup last. Set to 0 to disable.")
     public static Integer chargedSoupBuffDuration = 300;
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "seaDragonManaBlocks", comment = "Blocks that will restore mana quicker when a sea dragon is standing on it. Formatting: block/modid:blockid")
-    public static List<String> seaDragonManaBlocks = List.of("dragonsurvival:sea_source_of_magic", "minecraft:ice", "minecraft:snow", "minecraft:snow_block", "minecraft:powder_snow", "minecraft:water", "minecraft:wet_sponge", "minecraft:cauldron", "naturearchitect:snow_block_0", "naturearchitect:snow_block_2", "naturearchitect:snow_cover_1", "naturearchitect:snow_cover_2", "naturearchitect:snow_cover_3", "naturearchitect:snow_block_2", "immersive_weathering:snowy_stone_brick_wall", "immersive_weathering:snowy_stone_brick_stairs", "immersive_weathering:snowy_chiseled_stone_bricks", "immersive_weathering:snowy_stone_bricks", "immersive_weathering:snowy_cobblestone_wall", "immersive_weathering:snowy_cobblestone_slab", "immersive_weathering:snowy_cobblestone_stairs", "immersive_weathering:snowy_cobblestone", "immersive_weathering:snowy_stone_wall", "immersive_weathering:snowy_stone_slab", "immersive_weathering:snowy_stone_stairs", "immersive_weathering:snowy_stone", "immersive_weathering:snow_brick_wall", "immersive_weathering:snow_brick_slab", "immersive_weathering:snow_brick_stairs", "immersive_weathering:snow_bricks", "frozenup:compacted_snow_foundation", "frozenup:compacted_snow_brick_vertical_slab", "frozenup:compacted_snow_brick_slab", "frozenup:compacted_snow_brick_stairs", "frozenup:compacted_snow_bricks", "frozenup:compacted_snow_brick_stairs");
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "forestDragonManaBlocks", comment = "Blocks that will restore mana quicker when a forest dragon is standing on it. Formatting: block/modid:blockid")
-    public static List<String> forestDragonManaBlocks = List.of("dragonsurvival:forest_source_of_magic", "minecraft:grass_block", "minecraft:grass_block", "minecraft:small_flowers", "minecraft:flowers", "minecraft:tall_flowers", "minecraft:lily_pad", "minecraft:red_mushroom", "minecraft:brown_mushroom", "minecraft:sweet_berry_bush", "minecraft:oak_leaves", "naturearchitect:grass_cover_stairs", "naturearchitect:grass_cover_slab", "farmersdelight:brown_mushroom_colony", "farmersdelight:red_mushroom_colony", "gothic:black_mushroom", "gothic:tall_mushrooms", "gothic:cave_mushrooms", "naturearchitect:grass_carpet", "regions_unexplored:mycotoxic_mushrooms", "naturearchitect:moss_cover_3", "naturearchitect:moss_cover_2", "naturearchitect:moss_cover_1", "naturearchitect:mycelium_block_2", "naturearchitect:mycelium_cover_3", "naturearchitect:mycelium_cover_1", "naturearchitect:mycelium_cover_2", "naturearchitect:mycelium_block_1", "naturearchitect:moss_plant_1", "naturearchitect:moss_plant_2", "naturearchitect:moss_plant_3", "naturearchitect:moss_patch", "naturearchitect:moss_patch_dense", "regions_unexplored:spanish_moss", "minecraft:mycelium", "minecraft:moss_block", "minecraft:moss_carpet", "regions_unexplored:alpha_grass_block", "regions_unexplored:chalk_grass_block", "regions_unexplored:peat_grass_block", "regions_unexplored:silt_grass_block", "regions_unexplored:argillite_grass_block", "regions_unexplored:stone_grass_block", "regions_unexplored:deepslate_grass_block", "immersive_weathering:rooted_grass_block", "naturearchitect:grass_block", "naturearchitect:grass_cover", "naturearchitect:crimson_92", "naturearchitect:grass_1", "naturearchitect:grass_2", "naturearchitect:grass_3", "naturearchitect:grass_4", "naturearchitect:grass_windy", "naturearchitect:grass_stalk", "naturearchitect:grass_fern", "naturearchitect:grass_sapling", "phantasm:vivid_nihilium_grass", "vinery:grass_slab", "naturearchitect:grass_liana", "naturearchitect:grass_ivy", "naturearchitect:grass_bean_stalk");
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "cave_conditional_mana_blocks", comment = "Blocks that restore mana or cave dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
+    public static List<BlockStateConfig> caveConditionalManaBlocks = List.of(
+            BlockStateConfig.of("#minecraft:campfires:lit=true"),
+            BlockStateConfig.of("#c:player_workstations/furnaces:lit=true"),
+            BlockStateConfig.of("minecraft:smoker:lit=true"),
+            BlockStateConfig.of("minecraft:blast_furnace:lit=true")
+    );
 
-    @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "caveDragonManaBlocks", comment = "Blocks that will restore mana quicker when a cave dragon is standing on it. Formatting: block/modid:blockid")
-    public static List<String> caveDragonManaBlocks = List.of("dragonsurvival:cave_source_of_magic", "minecraft:fire", "minecraft:campfires", "minecraft:lava", "minecraft:smoker", "minecraft:furnace", "minecraft:magma_block", "minecraft:blast_furnace", "netherdepthsupgrade:wet_lava_sponge", "regions_unexplored:brimwood_log_magma", "infernalexp:magmatic_chiseled_basalt_bricks", "infernalexp:basaltic_magma", "regions_unexplored:brimwood_log_magma", "naturearchitect:magma_inactive", "naturearchitect:magma_cracks", "netherdepthsupgrade:lava_sponge");
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "sea_conditional_mana_blocks", comment = "Blocks that restore mana for sea dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
+    public static List<BlockStateConfig> seaConditionalManaBlocks = List.of();
+
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "forest_conditional_mana_blocks", comment = "Blocks that restore mana for forest dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
+    public static List<BlockStateConfig> forestConditionalManaBlocks = List.of();
 
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "dragonAbilities", comment = "Whether dragon abilities should be enabled")
@@ -840,14 +785,14 @@ public class ServerConfig {
     //Please help me to fix this config. It doesn't work for buying in exchange for experience in beacon. My fix doesn't help, so I think the problem is deeper than I can solve it.
 
     @ConfigType(MobEffect.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon")
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", comment = "Effects of Peace beacon" )
     public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
 
     @ConfigType(MobEffect.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon")
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", comment = "Effects of Magic beacon" )
     public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
     @ConfigType(MobEffect.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon")
+    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", comment = "Effects of Fire beacon" )
     public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
 }

@@ -96,13 +96,12 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
             return;
         }
 
-        Color armorColor = new Color(1f, 1f, 1f);
-
         ClientDragonRenderer.dragonModel.setOverrideTexture(texture);
         RenderType type = renderer.getRenderType(animatable, texture, bufferSource, partialTick);
+
         if (type != null) {
             VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
-            renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, armorColor.getRGB());
+            renderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
         }
     }
 

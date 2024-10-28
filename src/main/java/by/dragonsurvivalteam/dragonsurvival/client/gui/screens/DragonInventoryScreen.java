@@ -153,9 +153,8 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             boolean claws = !handler.getClawToolData().shouldRenderClaws;
 
             handler.getClawToolData().shouldRenderClaws = claws;
-            ConfigHandler.updateConfigValue("rendering/renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
-            PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws)
-            );
+            ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
+            PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws));
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {

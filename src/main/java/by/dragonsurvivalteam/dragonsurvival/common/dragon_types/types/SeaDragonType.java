@@ -2,8 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -11,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Wa
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
@@ -25,8 +24,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biome.Precipitation;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LayeredCauldronBlock;
-import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -58,15 +56,8 @@ public class SeaDragonType extends AbstractDragonType {
 
     @Override
     public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
-        Level world = player.level();
-        BlockState feetBlock = player.getBlockStateOn();
-        BlockState blockUnder = world.getBlockState(player.blockPosition().below());
-        Block block = blockUnder.getBlock();
-        Biome biome = world.getBiome(player.blockPosition()).value();
-
-        boolean isInCauldron = DragonTraitHandler.isInCauldron(feetBlock, blockUnder);
-        boolean isInSeaBlock = DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS != null && (DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(block) || DragonConfigHandler.SEA_DRAGON_HYDRATION_BLOCKS.contains(feetBlock.getBlock()) || isInCauldron);
-
+        Level level = player.level();
+        boolean isInSeaBlock = DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON);
         int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
         WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
 
@@ -76,20 +67,21 @@ public class SeaDragonType extends AbstractDragonType {
 
         double oldWaterTime = timeWithoutWater;
 
-        if (!world.isClientSide()) {
+        if (!level.isClientSide()) {
             if ((player.hasEffect(DSEffects.PEACE) || player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) && player.getAirSupply() < player.getMaxAirSupply()) {
                 player.setAirSupply(player.getMaxAirSupply());
             }
         }
 
         if (ServerConfig.penaltiesEnabled && maxTicksOutofWater > 0 && !player.isCreative() && !player.isSpectator()) {
-            if (!world.isClientSide()) {
+            if (!level.isClientSide()) {
                 if (player.hasEffect(DSEffects.PEACE)) {
                     timeWithoutWater = 0;
                 } else {
                     if (!player.isInWaterRainOrBubble() && !isInSeaBlock) {
+                        Biome biome = level.getBiome(player.blockPosition()).value();
                         boolean hotBiome = biome.getPrecipitationAt(player.blockPosition()) == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
-                        double timeIncrement = (world.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
+                        double timeIncrement = (level.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
                         timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
                     }
 
@@ -121,9 +113,9 @@ public class SeaDragonType extends AbstractDragonType {
                 }
             }
 
-            if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
+            if (level.isClientSide() && !player.isCreative() && !player.isSpectator()) {
                 if (!player.hasEffect(DSEffects.PEACE) && timeWithoutWater >= maxTicksOutofWater) {
-                    world.addParticle(ParticleTypes.WHITE_ASH, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
+                    level.addParticle(ParticleTypes.WHITE_ASH, player.getX() + level.random.nextDouble() * (level.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + level.random.nextDouble() * (level.random.nextBoolean() ? 1 : -1), 0, 0, 0);
                 }
             }
         }
@@ -132,35 +124,7 @@ public class SeaDragonType extends AbstractDragonType {
 
     @Override
     public boolean isInManaCondition(final Player player, final DragonStateHandler cap) {
-        BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-        BlockState blockAtFeet = player.getBlockStateOn();
-
-        if (player.isInWaterRainOrBubble() || player.hasEffect(DSEffects.CHARGED) || player.hasEffect(DSEffects.PEACE)) {
-            return true;
-        }
-
-        if (DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(DragonTypes.SEA.getTypeName())) {
-            boolean containsBlockAtFeet = DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA.getTypeName()).contains(blockAtFeet.getBlock());
-            boolean containsBlockBelow = DragonConfigHandler.DRAGON_MANA_BLOCKS.get(DragonTypes.SEA.getTypeName()).contains(blockBelow.getBlock());
-
-            if ((containsBlockAtFeet || containsBlockBelow) && DragonTraitHandler.isInCauldron(blockAtFeet, blockBelow)) {
-                if (blockBelow.hasProperty(LayeredCauldronBlock.LEVEL)) {
-                    int level = blockBelow.getValue(LayeredCauldronBlock.LEVEL);
-
-                    if (level > 0) {
-                        return true;
-                    }
-                }
-
-                if (blockAtFeet.hasProperty(LayeredCauldronBlock.LEVEL)) {
-                    int level = blockAtFeet.getValue(LayeredCauldronBlock.LEVEL);
-
-                    return level > 0;
-                }
-            }
-        }
-
-        return false;
+        return player.isInWaterRainOrBubble() || player.hasEffect(DSEffects.CHARGED) || player.hasEffect(DSEffects.PEACE);
     }
 
     @Override

@@ -1,4 +1,4 @@
-// 1.21.1	2024-08-25T10:55:46.4512112	Dragon Survival Item models
+// 1.21.1	2024-10-27T22:55:10.8774073	Dragon Survival Item models
 3103bf7bf2acab8c6053dd037bfd4f26275aad26 assets/dragonsurvival/models/item/acacia_dragon_door.json
 7cfb0ddb677d97f936450a90eabc99aba6044d86 assets/dragonsurvival/models/item/acacia_small_dragon_door.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets/dragonsurvival/models/item/ambusher_spawn_egg.json
@@ -40,7 +40,7 @@ e4535d17d71f75739a06b06c330de60a33d9ae5d assets/dragonsurvival/models/item/drago
 bdca543a58dbbf620d86f7ae85473582054544c8 assets/dragonsurvival/models/item/dragon_altar_red_sandstone.json
 30321e4f1b9be06cf14ef36db16799b69df51b4d assets/dragonsurvival/models/item/dragon_altar_sandstone.json
 ec1539ee05d3bd500b14a429c6c16d1c7fcdc890 assets/dragonsurvival/models/item/dragon_altar_stone.json
-b0ef3e018fad35052db8311da3c0b0ca8d83dfd5 assets/dragonsurvival/models/item/dragon_hunter_sword.json
+23757c1c4470224f02564a2b2f5bf40893425d03 assets/dragonsurvival/models/item/dragon_hunter_sword.json
 9148a919b75c9f7918c4e5561c1035457028e044 assets/dragonsurvival/models/item/dragon_memory_block.json
 c3a618581c4b88025c76d085620ea3d88a3b4b7e assets/dragonsurvival/models/item/dragon_pressure_plate.json
 823b61f744436a03bc0bc3f6fb344ad87ed7a9ca assets/dragonsurvival/models/item/dragon_rider_workbench.json

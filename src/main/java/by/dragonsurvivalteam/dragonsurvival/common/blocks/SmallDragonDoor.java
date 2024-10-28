@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DataBlockTagProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -154,7 +154,7 @@ public class SmallDragonDoor extends Block implements SimpleWaterloggedBlock {
     }
 
     private SoundEvent getSound(final BlockState blockState, boolean isOpening) {
-        if (blockState.is(DataBlockTagProvider.WOODEN_DRAGON_DOORS)) {
+        if (blockState.is(DSBlockTags.WOODEN_DRAGON_DOORS)) {
             return isOpening ? SoundEvents.WOODEN_DOOR_OPEN : SoundEvents.WOODEN_DOOR_CLOSE;
         }
 

@@ -151,7 +151,12 @@ public class DragonSurvivalMod {
         event.addPackFinders(res(folder), PackType.CLIENT_RESOURCES, name, PackSource.BUILT_IN, false, Pack.Position.TOP);
     }
 
-    public static ResourceLocation res(String name) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, name);
+    /** Creates a {@link ResourceLocation} with the dragon survival namespace */
+    public static ResourceLocation res(final String path) {
+        return location(DragonSurvivalMod.MODID, path);
+    }
+
+    public static ResourceLocation location(final String namespace, final String path) {
+        return ResourceLocation.fromNamespaceAndPath(namespace, path);
     }
 }

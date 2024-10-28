@@ -1,17 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.passive;
 
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 
@@ -39,14 +42,22 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 
     @Override
     public void onTick(Player player) {
-        BlockState blockUnder = player.getBlockStateOn();
-        Block block = blockUnder.getBlock();
+        if (player.level().isClientSide()) {
+            return;
+        }
 
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
+        AbstractDragonType type = DragonStateProvider.getData(player).getType();
 
-        boolean isSpeedBlock = DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS != null && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.containsKey(dragonStateHandler.getTypeName()) && DragonConfigHandler.DRAGON_SPEEDUP_BLOCKS.get(dragonStateHandler.getTypeName()).contains(block);
+        TagKey<Block> speedUpBlockTag = switch (type) {
+            case CaveDragonType ignored -> DSBlockTags.SPEEDS_UP_CAVE_DRAGON;
+            case SeaDragonType ignored -> DSBlockTags.SPEEDS_UP_SEA_DRAGON;
+            case ForestDragonType ignored -> DSBlockTags.SPEEDS_UP_FOREST_DRAGON;
+            default -> throw new IllegalStateException("Not a valid dragon type: " + type.getClass().getName());
+        };
 
-        if (!player.level().isClientSide() && ServerConfig.bonusesEnabled && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock) {
+        boolean isSpeedBlock = player.getBlockStateOn().is(speedUpBlockTag);
+
+        if (ServerConfig.bonusesEnabled && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock) {
             if (getDuration() > 0) {
                 player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), ServerConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
             }

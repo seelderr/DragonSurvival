@@ -270,7 +270,7 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncPotionAddedEffect(final SyncPotionAddedEffect.Data message) {
+    public static void handleSyncPotionAddedEffect(final SyncVisualEffectAdded.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
@@ -285,7 +285,7 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncPotionRemovedEffect(final SyncPotionRemovedEffect.Data message) {
+    public static void handleSyncPotionRemovedEffect(final SyncVisualEffectRemoved.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {

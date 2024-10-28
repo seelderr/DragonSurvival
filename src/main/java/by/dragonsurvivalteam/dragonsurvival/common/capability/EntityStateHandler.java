@@ -6,18 +6,21 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.common.util.INBTSerializable;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class EntityStateHandler implements INBTSerializable<CompoundTag> {
-    // Last entity this entity recieved a debuff from
+    // To handle the burn effect damage
+    public Vec3 lastPos;
+    // Last entity this entity received a debuff from
     public int lastAfflicted = -1;
     // Amount of times the last chain attack has chained
     public int chainCount;
-    // To handle the burn effect damage
-    public Vec3 lastPos;
+    // Currently only used for item entities
+    public boolean isFireImmune;
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public @UnknownNullability CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
         tag.putInt("lastAfflicted", lastAfflicted);
         tag.putInt("chainCount", chainCount);
@@ -30,7 +33,7 @@ public class EntityStateHandler implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
         lastAfflicted = tag.getInt("lastAfflicted");
         chainCount = tag.getInt("chainCount");
 

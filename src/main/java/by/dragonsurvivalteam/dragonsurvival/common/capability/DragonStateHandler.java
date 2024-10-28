@@ -7,13 +7,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -33,6 +33,7 @@ import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Locale;
@@ -43,23 +44,25 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
-
+    @SuppressWarnings("unchecked")
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
-    /**
-     * Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd}
-     */
+    // Weapon / tool swap data - START
+    /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
     public boolean switchedWeapon;
 
     public ItemStack storedMainHandTool = ItemStack.EMPTY;
     public boolean switchedTool;
     public int switchedToolSlot = -1;
-    /**
-     * Since {@link Player#hasCorrectToolForDrops(BlockState)} has its own swap<br>
-     * Which would close the swap of {@link net.minecraft.server.level.ServerPlayerGameMode#destroyBlock(BlockPos)}
-     */
-    public int toolSwapLayer = 0;
+    /** To track the state if a tool swap is triggered within a tool swap (should only swap back if the last tool swap finishes) */
+    public int toolSwapLayer;
+    // Weapon / tool swap data - END
+
+    /** Translucent rendering in the inventory screen leads to issues (invisible model) */
+    public boolean isBeingRenderedInInventory;
+    /** Only needs to be updated on effect removal (server -> client) */
+    private int hunterStacks;
 
     public boolean hasFlown;
     public boolean growing = true;
@@ -77,7 +80,6 @@ public class DragonStateHandler extends EntityStateHandler {
      * Last timestamp the server synchronized the player
      */
     public int lastSync = 0;
-
 
     private final DragonMovementData movementData = new DragonMovementData();
     private final ClawInventory clawToolData = new ClawInventory(this);
@@ -105,7 +107,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final ResourceLocation modifier) {
-        if (attribute != null && modifier != null && attribute.hasModifier(modifier)) {
+        if (attribute != null && modifier != null) {
             attribute.removeModifier(modifier);
         }
     }
@@ -620,7 +622,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public @UnknownNullability CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         return serializeNBT(provider, false);
     }
 
@@ -719,7 +721,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
         deserializeNBT(provider, tag, false);
     }
 
@@ -744,5 +746,27 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
         this.hasUsedAltar = true;
+    }
+
+    // --- Hunter handler --- //
+
+    public void modifyHunterStacks(int modification) {
+        hunterStacks = Math.clamp(hunterStacks + modification, 0, HunterHandler.MAX_HUNTER_STACKS);
+    }
+
+    public boolean hasMaxHunterStacks() {
+        return hunterStacks == HunterHandler.MAX_HUNTER_STACKS;
+    }
+
+    public boolean hasHunterStacks() {
+        return hunterStacks > 0;
+    }
+
+    public void clearHunterStacks() {
+        hunterStacks = 0;
+    }
+
+    public int getHunterStacks() {
+        return hunterStacks;
     }
 }

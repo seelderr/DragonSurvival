@@ -31,7 +31,6 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Used in pair with {@link ClientFlightHandler}
@@ -57,7 +56,7 @@ public class ServerFlightHandler {
     public static Integer flightHungerThreshold = 6;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
     public static Integer foldWingsThreshold = 0;
 
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Whether fall damage in flight is included. If true dragon will take damage from the fall.")
@@ -259,9 +258,9 @@ public class ServerFlightHandler {
         return false;
     }
 
-    public static boolean canSwimSpin(Player player) {
+    public static boolean canSwimSpin(Player player){
         DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
-        boolean validSwim = (Objects.equals(dragonStateHandler.getType(), DragonTypes.SEA) || Objects.equals(dragonStateHandler.getType(), DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && Objects.equals(dragonStateHandler.getType(), DragonTypes.CAVE);
+        boolean validSwim = (DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) || DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE);
         return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
     }
 

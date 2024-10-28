@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -13,7 +14,6 @@ import net.neoforged.api.distmarker.OnlyIn;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public abstract class DragonAbility {
     protected static NumberFormat nf = NumberFormat.getInstance();
@@ -84,17 +84,17 @@ public abstract class DragonAbility {
 
     public abstract int getMinLevel();
 
-    public boolean isDisabled() {
-        if (!ServerConfig.dragonAbilities) {
+    public boolean isDisabled(){
+        if(!ServerConfig.dragonAbilities){
             return true;
         }
-        if (Objects.equals(getDragonType(), DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities) {
+        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
             return true;
         }
-        if (Objects.equals(getDragonType(), DragonTypes.SEA) && !ServerConfig.seaDragonAbilities) {
+        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
             return true;
         }
-        return Objects.equals(getDragonType(), DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
+        return DragonUtils.isDragonType(getDragonType(), DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
     }
 
     public int getLevel() {

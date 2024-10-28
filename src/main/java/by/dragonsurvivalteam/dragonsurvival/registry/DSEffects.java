@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -11,6 +12,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
@@ -112,16 +114,16 @@ public class DSEffects {
     );
 
     private static class ModifiableMobEffect extends MobEffect {
-        private final boolean uncurable;
+        private final boolean incurable;
 
-        protected ModifiableMobEffect(MobEffectCategory type, int color, boolean uncurable) {
+        protected ModifiableMobEffect(MobEffectCategory type, int color, boolean incurable) {
             super(type, color);
-            this.uncurable = uncurable;
+            this.incurable = incurable;
         }
 
         @Override
-        public void fillEffectCures(Set<EffectCure> cures, MobEffectInstance effectInstance) {
-            if (uncurable) {
+        public void fillEffectCures(@NotNull Set<EffectCure> cures, @NotNull MobEffectInstance effectInstance) {
+            if (incurable) {
                 cures.clear();
             } else {
                 super.fillEffectCures(cures, effectInstance);
@@ -198,8 +200,10 @@ public class DSEffects {
     );
 
     public static Holder<MobEffect> HUNTER = DS_MOB_EFFECTS.register(
-            "hunter",
-            () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+        "hunter",
+        () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false)
+                // Same value as vanilla speed effect
+                .addAttributeModifier(Attributes.MOVEMENT_SPEED, DragonSurvivalMod.res("hunter_speed_multiplier"), 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
     );
 
     public static Holder<MobEffect> REVEALING_THE_SOUL = DS_MOB_EFFECTS.register(

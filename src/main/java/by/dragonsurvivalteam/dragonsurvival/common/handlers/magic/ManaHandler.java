@@ -1,25 +1,33 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
+import by.dragonsurvivalteam.dragonsurvival.config.BlockStateConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.AbstractCauldronBlock;
-import net.minecraft.world.level.block.AbstractFurnaceBlock;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 @EventBusSubscriber
 public class ManaHandler {
@@ -48,33 +56,48 @@ public class ManaHandler {
         });
     }
 
-    public static boolean isPlayerInGoodConditions(Player player) {
-        if (!DragonStateProvider.isDragon(player)) {
+    public static boolean isPlayerInGoodConditions(@NotNull Player player) {
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (!data.isDragon()) {
             return false;
-        }
-
-        BlockState blockBelow = player.level().getBlockState(player.blockPosition().below());
-        BlockState feetBlock = player.getBlockStateOn();
-
-        if (feetBlock.getBlock() instanceof TreasureBlock || blockBelow.getBlock() instanceof TreasureBlock) {
-            return true;
         }
 
         if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
             return true;
         }
 
-        return DragonStateProvider.getOptional(player).map(cap -> {
-            if (DragonConfigHandler.DRAGON_MANA_BLOCKS != null && DragonConfigHandler.DRAGON_MANA_BLOCKS.containsKey(cap.getTypeName())) {
-                if (DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getTypeName()).contains(blockBelow.getBlock()) || DragonConfigHandler.DRAGON_MANA_BLOCKS.get(cap.getTypeName()).contains(feetBlock.getBlock())) {
-                    if (!(blockBelow.getBlock() instanceof AbstractFurnaceBlock) && !(feetBlock.getBlock() instanceof AbstractFurnaceBlock) && !(blockBelow.getBlock() instanceof AbstractCauldronBlock) && !(feetBlock.getBlock() instanceof AbstractCauldronBlock)) {
-                        return true;
-                    }
-                }
-            }
+        BlockState state = player.getBlockStateOn();
+        List<BlockStateConfig> conditionalBlocks;
+        TagKey<Block> manaBlocks;
 
-            return cap.getType().isInManaCondition(player, cap);
-        }).orElse(false);
+        switch (data.getType()) {
+            case CaveDragonType ignored -> {
+                conditionalBlocks = ServerConfig.caveConditionalManaBlocks;
+                manaBlocks = DSBlockTags.REGENERATES_CAVE_DRAGON_MANA;
+            }
+            case SeaDragonType ignored -> {
+                conditionalBlocks = ServerConfig.seaConditionalManaBlocks;
+                manaBlocks = DSBlockTags.REGENERATES_SEA_DRAGON_MANA;
+            }
+            case ForestDragonType ignored -> {
+                conditionalBlocks = ServerConfig.forestConditionalManaBlocks;
+                manaBlocks = DSBlockTags.REGENERATES_FOREST_DRAGON_MANA;
+            }
+            default -> throw new IllegalStateException("Invalid dragon type: [" + data.getType().getClass().getName() + "]");
+        }
+
+        if (state.getBlock() instanceof TreasureBlock || state.is(manaBlocks)) {
+            return true;
+        }
+
+        for (BlockStateConfig config : conditionalBlocks) {
+            if (config.test(state)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public static int getMaxMana(Player entity) {

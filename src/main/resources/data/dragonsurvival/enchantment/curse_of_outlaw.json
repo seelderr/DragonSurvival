@@ -31,6 +31,6 @@
   "slots": [
     "armor"
   ],
-  "supported_items": "#dragonsurvival:enchantable/weapons_and_armor",
+  "supported_items": "#minecraft:enchantable/durability",
   "weight": 10
 }

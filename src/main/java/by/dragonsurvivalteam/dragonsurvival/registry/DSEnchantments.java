@@ -8,10 +8,6 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class DSEnchantments {
-    private static ResourceKey<Enchantment> register(String key) {
-        return ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(MODID, key));
-    }
-
     public static ResourceKey<Enchantment> BOLAS = register("bolas");
 
     public static ResourceKey<Enchantment> DRAGONSBANE = register("dragonsbane");
@@ -31,4 +27,8 @@ public class DSEnchantments {
 
     public static ResourceKey<Enchantment> CURSE_OF_OUTLAW = register("curse_of_outlaw");
     public static ResourceKey<Enchantment> CURSE_OF_KINDNESS = register("curse_of_kindness");
+
+    private static ResourceKey<Enchantment> register(String key) {
+        return ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(MODID, key));
+    }
 }

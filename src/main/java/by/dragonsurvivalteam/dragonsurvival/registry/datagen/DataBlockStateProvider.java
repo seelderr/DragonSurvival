@@ -22,8 +22,8 @@ import java.util.Locale;
 import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK_FOLDER;
 
 public class DataBlockStateProvider extends BlockStateProvider {
-    public DataBlockStateProvider(final PackOutput output, final String modId, final ExistingFileHelper existingFileHelper) {
-        super(output, modId, existingFileHelper);
+    public DataBlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
+        super(output, DragonSurvivalMod.MODID, existingFileHelper);
     }
 
     @Override

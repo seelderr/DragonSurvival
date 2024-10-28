@@ -1,0 +1,12 @@
+{
+  "values": [
+    "#minecraft:coral_blocks",
+    "#minecraft:impermeable",
+    "#minecraft:sand",
+    "#c:sandstone/blocks",
+    "#c:sands",
+    "#dragonsurvival:regenerates_sea_dragon_mana",
+    "minecraft:dirt_path",
+    "minecraft:mud"
+  ]
+}

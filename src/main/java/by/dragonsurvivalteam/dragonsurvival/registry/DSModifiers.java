@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
@@ -64,6 +64,7 @@ public class DSModifiers {
     public static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
     public static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
     public static final ResourceLocation DRAGON_SUBMERGED_MINING_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_submerged_mining_speed");
+    public static final ResourceLocation DRAGON_LAVA_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_lava_swim_speed_modifier");
 
     public static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
     public static final ResourceLocation DRAGON_BODY_HEALTH_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_bonus");
@@ -93,7 +94,8 @@ public class DSModifiers {
 
     public static final List<ModifierBuilder> TYPE_MODIFIER_BUILDERS = List.of(
             new ModifierBuilder(DRAGON_SWIM_SPEED_MODIFIER, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, DSModifiers::buildSwimSpeedMod),
-            new ModifierBuilder(DRAGON_SUBMERGED_MINING_SPEED, Attributes.SUBMERGED_MINING_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildSubmergedMiningSpeedMod)
+            new ModifierBuilder(DRAGON_SUBMERGED_MINING_SPEED, Attributes.SUBMERGED_MINING_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildSubmergedMiningSpeedMod),
+            new ModifierBuilder(DRAGON_LAVA_SWIM_SPEED_MODIFIER, DSAttributes.LAVA_SWIM_SPEED, Operation.ADD_VALUE, DSModifiers::buildLavaSwimSpeedMod)
     );
 
     public static final List<ModifierBuilder> SIZE_MODIFIER_BUILDERS = List.of(
@@ -156,7 +158,12 @@ public class DSModifiers {
     }
 
     public static double buildSwimSpeedMod(DragonStateHandler handler) {
-        return Objects.equals(handler.getType(), DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0;
+        return DragonUtils.isDragonType(handler, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0;
+    }
+
+    public static double buildLavaSwimSpeedMod(DragonStateHandler handler) {
+        // No extra config since it's basically already checked through 'ServerConfig#caveLavaSwimming'
+        return DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 1 : 0;
     }
 
     public static double buildStepHeightMod(DragonStateHandler handler) {
@@ -204,7 +211,7 @@ public class DSModifiers {
     }
 
     public static double buildSubmergedMiningSpeedMod(DragonStateHandler handler) {
-        return Objects.equals(handler.getType(), DragonTypes.SEA) ? 4.0 : 0.0;
+        return DragonUtils.isDragonType(handler, DragonTypes.SEA) ? (2 * (handler.getLevel().ordinal() + 1)) : 0;
     }
 
     public static void updateAllModifiers(Player player) {

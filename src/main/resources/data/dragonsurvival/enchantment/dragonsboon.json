@@ -104,7 +104,7 @@
         ]
     },
 
-    "exclusive_set": "#dragonsurvival:enchantable/anti_dragon",
+    "exclusive_set": "#dragonsurvival:exclusive_set/anti_dragon",
     "max_cost": {
         "base": 21,
         "per_level_above_first": 11
