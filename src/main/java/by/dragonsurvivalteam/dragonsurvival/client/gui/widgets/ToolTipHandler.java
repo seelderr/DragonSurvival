@@ -10,9 +10,11 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -25,6 +27,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderTooltipEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import org.joml.Vector2ic;
 
 import java.awt.*;
 import java.util.List;
@@ -34,8 +37,8 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler {
-    //private static final ResourceLocation tooltip_1 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
-    //private static final ResourceLocation tooltip_2 = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
+    private static final ResourceLocation TOOLTIP_BLINKING = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
+    private static final ResourceLocation TOOLTIP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
 
     @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?")
     public static Boolean tooltipChanges = true;
@@ -47,9 +50,6 @@ public class ToolTipHandler {
     public static Boolean dragonFoodTooltips = true;
 
     private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
-
-    //private static final boolean blink = false;
-    //private static final int tick = 0;
 
     @SubscribeEvent
     public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent) {
@@ -165,63 +165,51 @@ public class ToolTipHandler {
         }
     }
 
-    /**
-     * Renders the special border elements for the info tooltips
-     */
-    // TODO: This doesn't work properly
-    // Tooltips no longer strictly follow the mouse cursor, but this event was never updated to reflect that
-    // I'm not sure how to factor in the "nudge factor" on tooltips where they render slightly offset from
-    // the cursor depending on where your cursor is on the current UI element that has a tooltip component.
-    /*@SubscribeEvent
-    public static void onTooltipEvent(RenderTooltipEvent.Pre event){
+    private static boolean isBlinking;
+    private static int tick;
+
+    @SubscribeEvent
+    public static void renderHelpTextCornerElements(RenderTooltipEvent.Pre event) {
         boolean render = isHelpText();
 
-        if(!render){
+        if (!render) {
             return;
         }
 
-        if(!blink){
-            if(tick >= Functions.secondsToTicks(30)){
-                blink = true;
+        if (!isBlinking) {
+            if (tick >= Functions.secondsToTicks(30)) {
+                isBlinking = true;
                 tick = 0;
             }
-        }else{
-            if(tick >= Functions.secondsToTicks(5)){
-                blink = false;
+        } else {
+            if (tick >= Functions.secondsToTicks(5)) {
+                isBlinking = false;
                 tick = 0;
             }
         }
 
         tick++;
 
-        Screen screen = Minecraft.getInstance().screen;
-
-        int width = event.getComponents().stream().map(s -> s.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
+        int width = event.getComponents().stream().map(component -> component.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
         int height = event.getComponents().stream().map(ClientTooltipComponent::getHeight).reduce(Integer::sum).orElse(0);
+        Vector2ic tooltipPosition = event.getTooltipPositioner().positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), width, height);
 
-        int x = event.getX();
-        int y = event.getY();
-
-        if(x + width > screen.width){
-            x -= 28 + width;
-        }
-
-        if(y + height + 6 > screen.height){
-            y = screen.height - height - 6;
-        }
+        int x = tooltipPosition.x();
+        int y = tooltipPosition.y();
 
         int texWidth = 128;
         int texHeight = 128;
 
-        event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x - 8 - 6, y - 8 - 6, 400, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-        event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width - 8 + 6, y - 8 - 6, 400,texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x - 8 - 6, y - 8 - 6, 400, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width - 8 + 6, y - 8 - 6, 400, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
 
-        event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x - 8 - 6, y + height - 8 + 6, 400,1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-        event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width - 8 + 6, y + height - 8 + 6, 400,texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x - 8 - 6, y + height - 8 + 6, 400, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width - 8 + 6, y + height - 8 + 6, 400, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
 
-        event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y - 16, 400,16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-        event.getGraphics().blit(blink ? tooltip_2 : tooltip_1, x + width / 2 - 47, y + height, 400,16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
-    }*/
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width / 2 - 47, y - 16, 400, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width / 2 - 47, y + height, 400, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
+    }
+
     private static boolean isHelpText() {
         if (!tooltipChanges) {
             return false;
@@ -244,52 +232,49 @@ public class ToolTipHandler {
     }
 
     @SubscribeEvent
-    public static void onTooltipColorEvent(RenderTooltipEvent.Color event) {
+    public static void renderTooltipBorderInDragonColor(RenderTooltipEvent.Color event) {
         if (!tooltipChanges) {
             return;
         }
-        boolean render = isHelpText();
-        boolean screen = Minecraft.getInstance().screen instanceof AbilityScreen;
 
+        boolean isAbilityScreen = Minecraft.getInstance().screen instanceof AbilityScreen;
         ItemStack stack = event.getItemStack();
 
         boolean isSeaFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(stack.getItem());
         boolean isForestFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(stack.getItem());
         boolean isCaveFood = dragonFoodTooltips && !stack.isEmpty() && DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(stack.getItem());
-        int foodCount = (isSeaFood ? 1 : 0) + (isForestFood ? 1 : 0) + (isCaveFood ? 1 : 0);
 
-        boolean isFood = foodCount == 1;
+        boolean isDragonFood = isSeaFood || isForestFood || isCaveFood;
+        boolean isSkillProgressButtonHovered = false;
 
-        boolean button = false;
-
-        if (screen) {
+        if (isAbilityScreen) {
             for (GuiEventListener widget : ((AbilityScreen) Minecraft.getInstance().screen).widgetList()) {
                 if (widget instanceof SkillProgressButton && ((SkillProgressButton) widget).isHoveredOrFocused()) {
-                    button = true;
+                    isSkillProgressButtonHovered = true;
                     break;
                 }
             }
         }
 
-        if (render) {
+        if (isHelpText()) {
             int top = new Color(154, 132, 154).getRGB();
             int bottom = new Color(89, 68, 89).getRGB();
 
             event.setBorderStart(top);
             event.setBorderEnd(bottom);
-        } else if (screen || isFood) {
+        } else if (isAbilityScreen || isDragonFood) {
             AbstractDragonType type = DragonUtils.getDragonType(Minecraft.getInstance().player);
             Color topColor = null;
             Color bottomColor = null;
 
             if (type != null) {
-                if (Objects.equals(type, DragonTypes.SEA) && button || isSeaFood) {
+                if (Objects.equals(type, DragonTypes.SEA) && isSkillProgressButtonHovered || isSeaFood) {
                     topColor = new Color(93, 201, 255);
                     bottomColor = new Color(49, 109, 144);
-                } else if (Objects.equals(type, DragonTypes.FOREST) && button || isForestFood) {
+                } else if (Objects.equals(type, DragonTypes.FOREST) && isSkillProgressButtonHovered || isForestFood) {
                     topColor = new Color(0, 255, 148);
                     bottomColor = new Color(4, 130, 82);
-                } else if (Objects.equals(type, DragonTypes.CAVE) && button || isCaveFood) {
+                } else if (Objects.equals(type, DragonTypes.CAVE) && isSkillProgressButtonHovered || isCaveFood) {
                     topColor = new Color(255, 118, 133);
                     bottomColor = new Color(139, 66, 74);
                 }

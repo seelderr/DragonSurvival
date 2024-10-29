@@ -25,13 +25,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class DragonFoodHandler { // TODO :: create some tier-based tags for grouping, like 'light_cave_dragon_food' which has low nutrition values for easier config?
@@ -483,10 +483,9 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
     );
 
     // Tooltip maps
-    public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD;
-    public static CopyOnWriteArrayList<Item> FOREST_DRAGON_FOOD;
-    public static CopyOnWriteArrayList<Item> SEA_DRAGON_FOOD;
-    public static int rightHeight = 0;
+    public static CopyOnWriteArrayList<Item> CAVE_DRAGON_FOOD = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Item> FOREST_DRAGON_FOOD = new CopyOnWriteArrayList<>();
+    public static CopyOnWriteArrayList<Item> SEA_DRAGON_FOOD = new CopyOnWriteArrayList<>();
 
     private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS = new ConcurrentHashMap<>();
 
@@ -500,21 +499,11 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
         seaDragonFoods.clear();
         forestDragonFoods.clear();
 
-        clearTooltipMaps();
-    }
-
-    public static void clearTooltipMaps() {
-        if (CAVE_DRAGON_FOOD != null) {
-            CAVE_DRAGON_FOOD.clear();
-        }
-
-        if (FOREST_DRAGON_FOOD != null) {
-            FOREST_DRAGON_FOOD.clear();
-        }
-
-        if (SEA_DRAGON_FOOD != null) {
-            SEA_DRAGON_FOOD.clear();
-        }
+        // Clear tooltip maps
+        // TODO :: rebuild them here as well?
+        CAVE_DRAGON_FOOD.clear();
+        FOREST_DRAGON_FOOD.clear();
+        SEA_DRAGON_FOOD.clear();
     }
 
     private static ConcurrentHashMap<String, Map<Item, FoodProperties>> buildDragonFoodMap() {
@@ -525,7 +514,9 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
         return foodMap;
     }
 
-    /** Add the collected entries for the dragon type to the global food map (replacing previously added food properties for items if a better one (higher nutrition / saturation) was found) */
+    /**
+     * Add the collected entries for the dragon type to the global food map (replacing previously added food properties for items if a better one (higher nutrition / saturation) was found)
+     */
     private static void merge(final ConcurrentHashMap<String, Map<Item, FoodProperties>> foodMap, final List<FoodConfigCollector> collectors, final String type) {
         foodMap.put(type, new ConcurrentHashMap<>()); // The logic which comes after this needs at least an empty map per dragon type
 
@@ -583,11 +574,11 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
             return List.of();
         }
 
-        if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD != null && !FOREST_DRAGON_FOOD.isEmpty()) {
+        if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && !FOREST_DRAGON_FOOD.isEmpty()) {
             return FOREST_DRAGON_FOOD;
-        } else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD != null && !SEA_DRAGON_FOOD.isEmpty()) {
+        } else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && !SEA_DRAGON_FOOD.isEmpty()) {
             return SEA_DRAGON_FOOD;
-        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD != null && !CAVE_DRAGON_FOOD.isEmpty()) {
+        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && !CAVE_DRAGON_FOOD.isEmpty()) {
             return CAVE_DRAGON_FOOD;
         }
 
@@ -613,11 +604,11 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
             }
         }
 
-        if (DragonUtils.isDragonType(type, DragonTypes.FOREST) && FOREST_DRAGON_FOOD == null) {
+        if (DragonUtils.isDragonType(type, DragonTypes.FOREST)) {
             FOREST_DRAGON_FOOD = foods;
-        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE) && CAVE_DRAGON_FOOD == null) {
+        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE)) {
             CAVE_DRAGON_FOOD = foods;
-        } else if (DragonUtils.isDragonType(type, DragonTypes.SEA) && SEA_DRAGON_FOOD == null) {
+        } else if (DragonUtils.isDragonType(type, DragonTypes.SEA)) {
             SEA_DRAGON_FOOD = foods;
         }
 
@@ -663,7 +654,7 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
     }
 
     public static boolean isEdible(final ItemStack stack, final AbstractDragonType type) {
-        if (requireDragonFood && type != null && DRAGON_FOODS != null && DRAGON_FOODS.get(type.getTypeName()).containsKey(stack.getItem())) {
+        if (requireDragonFood && type != null && DRAGON_FOODS.get(type.getTypeName()).containsKey(stack.getItem())) {
             return true;
         }
 

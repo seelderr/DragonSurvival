@@ -38,12 +38,9 @@ public class FoodBar {
         Minecraft.getInstance().getProfiler().push("food");
         RenderSystem.enableBlend();
 
-        DragonFoodHandler.rightHeight = gui.rightHeight;
-        gui.rightHeight += 10;
-
         final int left = width / 2 + 91;
-        final int top = height - DragonFoodHandler.rightHeight;
-        DragonFoodHandler.rightHeight += 10;
+        final int top = height - gui.rightHeight;
+        gui.rightHeight += 10;
         final FoodData food = localPlayer.getFoodData();
         final int type = DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
         final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
