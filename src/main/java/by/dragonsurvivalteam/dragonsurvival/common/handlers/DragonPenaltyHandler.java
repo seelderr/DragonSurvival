@@ -121,7 +121,7 @@ public class DragonPenaltyHandler {
                     }
                 }
 
-                if (itemStack.is(DSItemTags.SEA_ADDITIONAL_WATER_USABLES) && !player.level().isClientSide()) {
+                if (itemStack.is(DSItemTags.SEA_DRAGON_HYDRATION) && !player.level().isClientSide()) {
                     seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
                 }
@@ -133,7 +133,7 @@ public class DragonPenaltyHandler {
         return DRAGON_BLACKLISTED_ITEMS.contains(item);
     }
 
-    @SubscribeEvent
+    @SubscribeEvent // Prevent the player from equipping blacklisted armor (or mix good and evil dragon armor)
     public static void preventEquipment(final ItemStackedOnOtherEvent event) {
         ItemStack stack = event.getStackedOnItem(); // FIXME :: this is probably a neoforge bug, this should be carried item -> might be changed in the future
         Player player = event.getPlayer();
@@ -154,14 +154,14 @@ public class DragonPenaltyHandler {
             }
         }
 
-        boolean isGoodDragonItem = stack.is(DSItemTags.IS_LIGHT_DRAGON);
+        boolean isGoodDragonItem = stack.is(DSItemTags.IS_GOOD_DRAGON);
 
         if (isGoodDragonItem && player.hasEffect(DSEffects.HUNTER_OMEN)) {
             event.setCanceled(true);
             return;
         }
 
-        boolean isEvilDragonItem = stack.is(DSItemTags.IS_DARK_DRAGON);
+        boolean isEvilDragonItem = stack.is(DSItemTags.IS_EVIL_DRAGON);
 
         for (ItemStack armor : player.getArmorSlots()) {
             if (armor.isEmpty()) {
@@ -170,9 +170,9 @@ public class DragonPenaltyHandler {
 
             boolean isActionInvalid = false;
 
-            if (isEvilDragonItem && armor.is(DSItemTags.IS_LIGHT_DRAGON)) {
+            if (isEvilDragonItem && armor.is(DSItemTags.IS_GOOD_DRAGON)) {
                 isActionInvalid = true;
-            } else if (isGoodDragonItem && (armor.is(DSItemTags.IS_DARK_DRAGON))) {
+            } else if (isGoodDragonItem && (armor.is(DSItemTags.IS_EVIL_DRAGON))) {
                 isActionInvalid = true;
             }
 
@@ -183,8 +183,8 @@ public class DragonPenaltyHandler {
         }
     }
 
-    @SubscribeEvent
-    public static void preventBlackListedItemsFromBeingEquipped(PlayerTickEvent.Pre event) {
+    @SubscribeEvent // Prevent the player from holding blacklisted items
+    public static void dropHeldItems(PlayerTickEvent.Pre event) {
         if (!ServerConfig.penaltiesEnabled) {
             return;
         }

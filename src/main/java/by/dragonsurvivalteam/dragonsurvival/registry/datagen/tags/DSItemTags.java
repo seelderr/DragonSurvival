@@ -23,10 +23,9 @@ import java.util.concurrent.CompletableFuture;
 
 public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> KEEP_EFFECTS = key("keep_effects");
-    public static final TagKey<Item> SEA_ADDITIONAL_WATER_USABLES = key("sea_additional_water_usables");
-    // FIXME :: is the official name light / dark or good / evil?
-    public static final TagKey<Item> IS_LIGHT_DRAGON = key("is_light_dragon");
-    public static final TagKey<Item> IS_DARK_DRAGON = key("is_dark_dragon");
+    public static final TagKey<Item> SEA_DRAGON_HYDRATION = key("sea_dragon_hydration");
+    public static final TagKey<Item> IS_GOOD_DRAGON = key("is_good_dragon");
+    public static final TagKey<Item> IS_EVIL_DRAGON = key("is_evil_dragon");
 
     public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
         super(output, provider, blockTags, DragonSurvivalMod.MODID, helper);
@@ -40,9 +39,9 @@ public class DSItemTags extends ItemTagsProvider {
             Item item = holder.value();
 
             if (item instanceof GoodDragonArmorItem) {
-                tag(IS_LIGHT_DRAGON).add(item);
+                tag(IS_GOOD_DRAGON).add(item);
             } else if (item instanceof EvilDragonArmorItem) {
-                tag(IS_DARK_DRAGON).add(item);
+                tag(IS_EVIL_DRAGON).add(item);
             }
         });
 
@@ -52,8 +51,8 @@ public class DSItemTags extends ItemTagsProvider {
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_health"))
                 .addOptional(ResourceLocation.fromNamespaceAndPath("gothic", "elixir_of_mental_cleansing"));
 
-        // Additional usable modded items which restore water when used
-        tag(SEA_ADDITIONAL_WATER_USABLES)
+        // Additional usable modded items which hydrate the sea dragon
+        tag(SEA_DRAGON_HYDRATION)
                 .addOptional(DragonSurvivalMod.location("immersive_weathering", "icicle"));
 
         // Used in recipes
