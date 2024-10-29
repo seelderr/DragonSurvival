@@ -45,9 +45,8 @@ public class DragonContainer extends AbstractContainerMenu {
     public Inventory playerInventory;
     public int menuStatus;
 
-
     private static final EquipmentSlot[] VALID_EQUIPMENT_SLOTS = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
-    private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = {InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_HELMET};
+    private static final ResourceLocation[] ARMOR_SLOT_TEXTURES = {InventoryMenu.EMPTY_ARMOR_SLOT_HELMET, InventoryMenu.EMPTY_ARMOR_SLOT_CHESTPLATE, InventoryMenu.EMPTY_ARMOR_SLOT_LEGGINGS, InventoryMenu.EMPTY_ARMOR_SLOT_BOOTS};
 
     private final int craftingResultIndex;
 
@@ -87,28 +86,7 @@ public class DragonContainer extends AbstractContainerMenu {
         addDataSlots(dataStatus);
 
         for (int i = 0; i < 4; i++) {
-            EquipmentSlot equipmentSlot = VALID_EQUIPMENT_SLOTS[i];
-
-            Slot s = new Slot(inventory, 39 - i, 8, 8 + i * 18) {
-                @Override
-                public boolean mayPlace(@NotNull final ItemStack itemStack) {
-                    return itemStack.canEquip(equipmentSlot, player);
-                }
-
-                @Override
-                @OnlyIn(Dist.CLIENT)
-                public Pair<ResourceLocation, ResourceLocation> getNoItemIcon() {
-                    return Pair.of(InventoryMenu.BLOCK_ATLAS, ARMOR_SLOT_TEXTURES[equipmentSlot.getIndex()]);
-                }
-
-                @Override
-                public boolean mayPickup(@NotNull final Player player) {
-                    ItemStack itemStack = getItem();
-                    Holder<Enchantment> bindingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.BINDING_CURSE);
-                    return (itemStack.isEmpty() || player.isCreative() || EnchantmentHelper.getTagEnchantmentLevel(bindingCurse, itemStack) == 0) && super.mayPickup(player);
-                }
-            };
-            addSlot(s);
+            addSlot(new ArmorSlot(inventory, player, VALID_EQUIPMENT_SLOTS[i], 39 - i, 8, 8 + i * 18, ARMOR_SLOT_TEXTURES[i]));
         }
 
         // Inventory slots

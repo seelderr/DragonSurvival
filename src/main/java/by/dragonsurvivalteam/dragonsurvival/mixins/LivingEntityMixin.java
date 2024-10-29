@@ -5,14 +5,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonPenaltyHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -35,7 +31,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(LivingEntity.class)
 public abstract class LivingEntityMixin extends Entity {
@@ -110,28 +105,6 @@ public abstract class LivingEntityMixin extends Entity {
         }
 
         return original;
-    }
-
-    @Inject(method = "getEquipmentSlotForItem", at = @At(value = "HEAD"), cancellable = true)
-    private void dragonSurvival$disallowBlackListedItemsFromBeingEquipped(ItemStack stack, CallbackInfoReturnable<EquipmentSlot> callback) {
-        LivingEntity entity = (LivingEntity) (Object) this;
-        if (DragonStateProvider.isDragon(entity)) {
-            if (DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
-                callback.setReturnValue(EquipmentSlot.MAINHAND);
-            }
-        }
-
-        if(entity instanceof Player) {
-            entity.getArmorSlots().forEach(
-                armor -> {
-                    if(armor.getItem() instanceof GoodDragonArmorItem && stack.getItem() instanceof EvilDragonArmorItem
-                    || armor.getItem() instanceof EvilDragonArmorItem && stack.getItem() instanceof GoodDragonArmorItem
-                    || stack.getItem() instanceof GoodDragonArmorItem && entity.hasEffect(DSEffects.HUNTER_OMEN)) {
-                        callback.setReturnValue(EquipmentSlot.MAINHAND);
-                    }
-                }
-            );
-        }
     }
 
     @Unique private int dragonSurvival$getHumanOrDragonUseDuration(int original) {

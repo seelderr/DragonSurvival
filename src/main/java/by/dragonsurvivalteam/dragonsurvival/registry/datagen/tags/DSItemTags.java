@@ -1,6 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -22,6 +24,9 @@ import java.util.concurrent.CompletableFuture;
 public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> KEEP_EFFECTS = key("keep_effects");
     public static final TagKey<Item> SEA_ADDITIONAL_WATER_USABLES = key("sea_additional_water_usables");
+    // FIXME :: is the official name light / dark or good / evil?
+    public static final TagKey<Item> IS_LIGHT_DRAGON = key("is_light_dragon");
+    public static final TagKey<Item> IS_DARK_DRAGON = key("is_dark_dragon");
 
     public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
         super(output, provider, blockTags, DragonSurvivalMod.MODID, helper);
@@ -30,6 +35,16 @@ public class DSItemTags extends ItemTagsProvider {
     @Override
     protected void addTags(@NotNull final HolderLookup.Provider provider) {
         addToVanillaTags();
+
+        DSItems.DS_ITEMS.getEntries().forEach(holder -> {
+            Item item = holder.value();
+
+            if (item instanceof GoodDragonArmorItem) {
+                tag(IS_LIGHT_DRAGON).add(item);
+            } else if (item instanceof EvilDragonArmorItem) {
+                tag(IS_DARK_DRAGON).add(item);
+            }
+        });
 
         // Effects from these items are kept even if they're not the correct food for the dragon
         tag(KEEP_EFFECTS)
