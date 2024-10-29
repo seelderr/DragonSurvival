@@ -29,7 +29,7 @@ public class ItemHurtConfig implements CustomConfig {
 
     public static ItemHurtConfig of(final String data) {
         String[] splitData = data.split(":");
-        Predicate<ItemStack> predicate = ConfigUtils.createItemPredicate(splitData);
+        Predicate<ItemStack> predicate = ConfigUtils.itemStackPredicate(splitData);
         float damage = Float.parseFloat(splitData[DAMAGE]);
         return new ItemHurtConfig(predicate, damage, data);
     }

@@ -55,7 +55,7 @@ public class BlockStateConfig implements CustomConfig {
 
     public static BlockStateConfig of(final String data) {
         String[] splitData = data.split(":");
-        Predicate<BlockState> predicate = ConfigUtils.createBlockPredicate(splitData);
+        Predicate<BlockState> predicate = ConfigUtils.blockStatePredicate(splitData);
 
         Map<String, String> properties = new HashMap<>();
         String[] states = splitData[BLOCK_STATES].split(",");

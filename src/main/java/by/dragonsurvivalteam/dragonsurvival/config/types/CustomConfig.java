@@ -9,6 +9,8 @@ public interface CustomConfig {
                 return BlockStateConfig.validate(data);
             } else if (classType == ItemHurtConfig.class) {
                 return ItemHurtConfig.validate(data);
+            } else if (classType == FoodConfig.class) {
+                return FoodConfig.validate(data);
             }
         }
 
@@ -20,6 +22,8 @@ public interface CustomConfig {
             return BlockStateConfig.of(data);
         } else if (classType == ItemHurtConfig.class) {
             return ItemHurtConfig.of(data);
+        } else if (classType == FoodConfig.class) {
+            return FoodConfig.of(data);
         }
 
         throw new IllegalArgumentException("Invalid custom config class [" + classType + "]");
