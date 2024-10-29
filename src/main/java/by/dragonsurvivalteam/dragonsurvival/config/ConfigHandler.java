@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
+import by.dragonsurvivalteam.dragonsurvival.config.types.CustomConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -56,21 +57,21 @@ public class ConfigHandler {
     public static ModConfigSpec serverSpec;
 
     /** Contains the default values (specified in-code) <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, Object> DEFAULT_CONFIG_VALUES = new HashMap<>();
+    private static final HashMap<String, Object> DEFAULT_CONFIG_VALUES = new HashMap<>();
     /** Contains the {@link ConfigType} variants <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, ConfigType> CONFIG_TYPES = new HashMap<>();
+    private static final HashMap<String, ConfigType> CONFIG_TYPES = new HashMap<>();
     /** Contains all {@link ConfigOption} entries <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, ConfigOption> CONFIG_OBJECTS = new HashMap<>();
+    private static final HashMap<String, ConfigOption> CONFIG_OBJECTS = new HashMap<>();
     /** Contains all fields which have an {@link ConfigOption} annotation <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, Field> CONFIG_FIELDS = new HashMap<>();
+    private static final HashMap<String, Field> CONFIG_FIELDS = new HashMap<>();
     /** Contains all config keys per side (i.e. client or server) */
-    public static final HashMap<ConfigSide, Set<String>> CONFIG_KEYS = new HashMap<>();
+    private static final HashMap<ConfigSide, Set<String>> CONFIG_KEYS = new HashMap<>();
     /** Contains all config values */
-    public static final HashMap<String, ModConfigSpec.ConfigValue<?>> CONFIG_VALUES = new HashMap<>();
-
+    private static final HashMap<String, ModConfigSpec.ConfigValue<?>> CONFIG_VALUES = new HashMap<>();
+    /** Mapping between from a registry entry like {@link Item} to its registry like {@link BuiltInRegistries#ITEM} */
     private static final HashMap<Class<?>, Registry<?>> REGISTRY_MAP = new HashMap<>();
 
-    public static void initTypes() {
+    public static void initRegistryMapping() {
         REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
         REGISTRY_MAP.put(Block.class, BuiltInRegistries.BLOCK);
         REGISTRY_MAP.put(EntityType.class, BuiltInRegistries.ENTITY_TYPE);
@@ -82,33 +83,35 @@ public class ConfigHandler {
 
     private static List<Field> getFields() {
         List<Field> instances = new ArrayList<>();
-
         Type annotationType = Type.getType(ConfigOption.class);
-        ModList.get().getAllScanData().forEach(s -> {
-            List<ModFileScanData.AnnotationData> ebsTargets = s.getAnnotations().stream().filter(s1 -> s1.targetType() == ElementType.FIELD).filter(annotationData -> annotationType.equals(annotationData.annotationType())).toList();
 
-            ebsTargets.forEach(ad -> {
-                ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder) ad.annotationData().get("side");
+        ModList.get().getAllScanData().forEach(scanData -> {
+            List<ModFileScanData.AnnotationData> targets = scanData.getAnnotations().stream()
+                    .filter(annotationData -> annotationData.targetType() == ElementType.FIELD && annotationType.equals(annotationData.annotationType()))
+                    .toList();
+
+            targets.forEach(annotationData -> {
+                ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder) annotationData.annotationData().get("side");
                 Dist side = Objects.equals(sidesValue.value(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
 
                 if (side == FMLEnvironment.dist || side == Dist.DEDICATED_SERVER) {
                     try {
-                        Class<?> c = Class.forName(ad.clazz().getClassName());
-                        Field fe = c.getDeclaredField(ad.memberName());
-                        instances.add(fe);
+                        Class<?> classType = Class.forName(annotationData.clazz().getClassName());
+                        Field field = classType.getDeclaredField(annotationData.memberName());
+                        instances.add(field);
                     } catch (Exception e) {
                         DragonSurvivalMod.LOGGER.error(e);
                     }
                 }
             });
         });
+
         return instances;
     }
 
     public static void initConfig() {
-        initTypes();
-
         List<String> duplicateKeys = new ArrayList<>();
+        initRegistryMapping();
 
         getFields().forEach(field -> {
             // There are no per-instance configs
@@ -309,7 +312,7 @@ public class ConfigHandler {
                     return false;
                 }
 
-                return isInteger(split[2]);
+                return ConfigUtils.validateInteger(split[2]);
             }
             case RESOURCE_LOCATION_OPTIONAL_NUMBER -> {
                 String[] split = ((String) configValue).split(":");
@@ -323,7 +326,7 @@ public class ConfigHandler {
                 }
 
                 if (split.length == 3) {
-                    return isInteger(split[2]);
+                    return ConfigUtils.validateInteger(split[2]);
                 }
 
                 return split.length == 2;
@@ -340,7 +343,7 @@ public class ConfigHandler {
                 }
 
                 if (split.length == 4) {
-                    return isInteger(split[2]) && isDouble(split[3]);
+                    return ConfigUtils.validateInteger(split[2]) && ConfigUtils.validateDouble(split[3]);
                 }
             }
         }
@@ -393,7 +396,7 @@ public class ConfigHandler {
                     String[] data = string.split(":");
 
                     if (data.length == 3) {
-                        return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
+                        return ConfigUtils.validateInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
                     }
 
                     return false;
@@ -403,24 +406,6 @@ public class ConfigHandler {
 
         // Would most likely only relevant for numeric or string lists?
         return true;
-    }
-
-    private static boolean isInteger(final String string) {
-        try {
-            Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private static boolean isDouble(final String string) {
-        try {
-            Double.parseDouble(string);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     /**

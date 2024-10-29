@@ -73,7 +73,7 @@
       }
     ]
   },
-  "exclusive_set": "#dragonsurvival:enchantable/size_changing",
+  "exclusive_set": "#dragonsurvival:exclusive_set/size_changing",
   "max_cost": {
     "base": 21,
     "per_level_above_first": 11

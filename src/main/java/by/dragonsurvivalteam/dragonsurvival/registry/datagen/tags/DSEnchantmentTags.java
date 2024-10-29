@@ -20,7 +20,7 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
     }
 
     @Override
-    protected void addTags(@NotNull HolderLookup.Provider provider) { // FIXME :: size_changing is wrongly defined in json, add tag
+    protected void addTags(@NotNull HolderLookup.Provider provider) {
         // Used in enchantments
         tag(exclusiveSet("anti_dragon"))
                 .add(DSEnchantments.DRAGONSBANE)
@@ -42,6 +42,10 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
                 .add(DSEnchantments.SACRED_SCALES)
                 .add(DSEnchantments.UNBREAKABLE_SPIRIT)
                 .add(DSEnchantments.CURSE_OF_KINDNESS);
+
+        // Used in enchantments
+        tag(exclusiveSet("size_changing"))
+                .add(DSEnchantments.SHRINK);
     }
 
     private static TagKey<Enchantment> exclusiveSet(@NotNull final String path) {

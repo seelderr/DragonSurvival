@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.config;
+package by.dragonsurvivalteam.dragonsurvival.config.types;
 
 public interface CustomConfig {
     String convert();
@@ -7,6 +7,8 @@ public interface CustomConfig {
         if (configValue instanceof String data) {
             if (classType == BlockStateConfig.class) {
                 return BlockStateConfig.validate(data);
+            } else if (classType == ItemHurtConfig.class) {
+                return ItemHurtConfig.validate(data);
             }
         }
 
@@ -16,6 +18,8 @@ public interface CustomConfig {
     static CustomConfig parse(final Class<?> classType, final String data) {
         if (classType == BlockStateConfig.class) {
             return BlockStateConfig.of(data);
+        } else if (classType == ItemHurtConfig.class) {
+            return ItemHurtConfig.of(data);
         }
 
         throw new IllegalArgumentException("Invalid custom config class [" + classType + "]");

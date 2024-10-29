@@ -1,31 +1,23 @@
-package by.dragonsurvivalteam.dragonsurvival.config;
+package by.dragonsurvivalteam.dragonsurvival.config.types;
 
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
+import by.dragonsurvivalteam.dragonsurvival.config.ConfigUtils;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.Property;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Predicate;
 
 public class BlockStateConfig implements CustomConfig {
-    private static final int NAMESPACE = 0;
-    private static final int PATH = 1;
     private static final int BLOCK_STATES = 2;
 
     private final Predicate<BlockState> predicate;
     private final Map<String, String> properties;
-
     private final String originalData;
 
-    private BlockStateConfig(final Predicate<BlockState> predicate, final Map<String, String> properties, @Nullable final String originalData) {
+    private BlockStateConfig(final Predicate<BlockState> predicate, final Map<String, String> properties, final String originalData) {
         this.predicate = predicate;
         this.properties = properties;
         this.originalData = originalData;
@@ -61,22 +53,9 @@ public class BlockStateConfig implements CustomConfig {
         return false;
     }
 
-    public static @NotNull BlockStateConfig of(final String data) {
+    public static BlockStateConfig of(final String data) {
         String[] splitData = data.split(":");
-        boolean isTag = splitData[NAMESPACE].startsWith("#");
-
-        Predicate<BlockState> blockPredicate;
-
-        if (isTag) {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(splitData[NAMESPACE].substring(1), splitData[PATH]);
-            TagKey<Block> tag = TagKey.create(Registries.BLOCK, location);
-            // Can't check if tag exists or not at this point in time
-            blockPredicate = state -> state.is(tag);
-        } else {
-            ResourceLocation location = ResourceLocation.fromNamespaceAndPath(splitData[NAMESPACE], splitData[PATH]);
-            Block block = BuiltInRegistries.BLOCK.get(location);
-            blockPredicate = state -> state.is(block);
-        }
+        Predicate<BlockState> predicate = ConfigUtils.createBlockPredicate(splitData);
 
         Map<String, String> properties = new HashMap<>();
         String[] states = splitData[BLOCK_STATES].split(",");
@@ -86,21 +65,13 @@ public class BlockStateConfig implements CustomConfig {
             properties.put(split[0], split[1]);
         }
 
-        return new BlockStateConfig(blockPredicate, properties, data);
+        return new BlockStateConfig(predicate, properties, data);
     }
 
     public static boolean validate(final String data) {
         String[] splitData = data.split(":");
 
-        if (splitData.length != 3) {
-            return false;
-        }
-
-        if (splitData[NAMESPACE].startsWith("#")) {
-            splitData[NAMESPACE] = splitData[NAMESPACE].substring(1);
-        }
-
-        if (ResourceLocation.tryParse(splitData[NAMESPACE] + ":" + splitData[PATH]) == null) {
+        if (!ConfigUtils.validateResourceLocation(splitData)) {
             return false;
         }
 
