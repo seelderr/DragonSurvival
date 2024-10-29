@@ -1,24 +1,17 @@
 {
-  "parent": "dragonsurvival:collect_dust",
+  "parent": "dragonsurvival:dragon_survival_root",
   "display": {
     "icon": {
       "id": "dragonsurvival:star_bone"
     },
     "title": { "translate": "ds.advancements.be_dragon.title" },
     "description": { "translate": "ds.advancements.be_dragon.description" },
-    "show_toast": true,
-    "announce_to_chat": true
+    "show_toast": false,
+    "announce_to_chat": false
   },
   "criteria": {
-    "requirement": {
-      "trigger": "minecraft:location",
-      "conditions": {
-        "player": {
-          "location": {
-            "structures": "#dragonsurvival:dragon_skeletons"
-          }
-        }
-      }
+    "be_dragon": {
+      "trigger": "dragonsurvival:be_dragon"
     }
   },
   "rewards": {
