@@ -178,10 +178,11 @@ public abstract class LivingEntityMixin extends Entity {
             return;
         }
 
+        boolean isCrouching = player.isCrouching();
+        boolean isFalling = getDeltaMovement().y <= 0;
+
         // Don't move the player up or down if they're not currently moving
-        if (travelVector.horizontalDistance() > 0.05) {
-            // This y-related movement logic is copied from 'Player#travel' (it doesn't get called when swimming in lava)
-            Vec3 deltaMovement = getDeltaMovement();
+        if (jumping || isCrouching || travelVector.horizontalDistance() > 0.05) {
             float lookY = (float) getLookAngle().y;
 
             float minSpeed = 0.04f;
@@ -194,8 +195,15 @@ public abstract class LivingEntityMixin extends Entity {
                 yModifier *= 1.2f;
             }
 
-            if (Math.abs(lookY) > 0.1 || jumping) {
+            if (jumping || isCrouching || Math.abs(lookY) > 0.1) {
+                // Jumping should always result in going up and crouching should always result in going down
+                if (jumping && lookY < 0 || isCrouching && lookY > 0) {
+                    lookY *= -1; // Reverse direction of movement
+                    yModifier = minSpeed; // Since we are moving in the opposite direction we're looking, use the minimum speed bonus
+                }
+
                 // Move the player up or down, depending on where they look
+                Vec3 deltaMovement = getDeltaMovement();
                 setDeltaMovement(deltaMovement.add(0, (lookY - deltaMovement.y) * Mth.abs(yModifier), 0));
             }
         }
@@ -203,9 +211,10 @@ public abstract class LivingEntityMixin extends Entity {
         if (isInLava) {
             double oldY = getY();
             float speedModifier = isSprinting() ? 0.9f : getWaterSlowDown();
-            float swimSpeed = 0.05f;
-            float swimSpeedModifier = 1;
+            float swimSpeed = 0.05f; // Vanilla swim speed for water is 0.02
+            float swimSpeedModifier = 1; // Max. value of 'WATER_MOVEMENT_EFFICIENCY' attribute
 
+            // The rest is mostly a copy of 'LivingEntity#travel' water swim logic
             if (!onGround()) {
                 swimSpeedModifier *= 0.5f;
             }
@@ -229,7 +238,7 @@ public abstract class LivingEntityMixin extends Entity {
             }
 
             setDeltaMovement(newMovement.multiply(speedModifier, 0.8, speedModifier));
-            Vec3 adjustedMovement = player.getFluidFallingAdjustedMovement(gravity, player.isFallFlying(), getDeltaMovement());
+            Vec3 adjustedMovement = player.getFluidFallingAdjustedMovement(gravity, isFalling, getDeltaMovement());
             setDeltaMovement(adjustedMovement);
 
             if (horizontalCollision && isFree(adjustedMovement.x, adjustedMovement.y + 0.6 - getY() + oldY, adjustedMovement.z)) {

@@ -10,7 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public class FoodConfig implements CustomConfig {
+public class FoodConfigPredicate implements CustomConfig {
     private static final int NUTRITION = 2;
     private static final int SATURATION = 3;
 
@@ -18,7 +18,7 @@ public class FoodConfig implements CustomConfig {
     private final @Nullable Pair<Integer, Float> foodData;
     private final String originalData;
 
-    private FoodConfig(final Predicate<Item> predicate, @Nullable final Pair<Integer, Float> foodData, final String originalData) {
+    private FoodConfigPredicate(final Predicate<Item> predicate, @Nullable final Pair<Integer, Float> foodData, final String originalData) {
         this.predicate = predicate;
         this.foodData = foodData;
         this.originalData = originalData;
@@ -71,22 +71,22 @@ public class FoodConfig implements CustomConfig {
         return Optional.of(builder.build());
     }
 
-    public static FoodConfig of(final String location, int nutrition, float saturation) {
+    public static FoodConfigPredicate of(final String location, int nutrition, float saturation) {
         Predicate<Item> predicate = ConfigUtils.itemPredicate(location.split(":"));
-        return new FoodConfig(predicate, Pair.of(nutrition, saturation), location + ":" + nutrition + ":" + saturation);
+        return new FoodConfigPredicate(predicate, Pair.of(nutrition, saturation), location + ":" + nutrition + ":" + saturation);
     }
 
-    public static FoodConfig of(final String data) {
+    public static FoodConfigPredicate of(final String data) {
         String[] splitData = data.split(":");
         Predicate<Item> predicate = ConfigUtils.itemPredicate(splitData);
 
         if (splitData.length == 4) {
             int nutrition = Integer.parseInt(splitData[NUTRITION]);
             float saturation = Float.parseFloat(splitData[SATURATION]);
-            return new FoodConfig(predicate, Pair.of(nutrition, saturation), data);
+            return new FoodConfigPredicate(predicate, Pair.of(nutrition, saturation), data);
         }
 
-        return new FoodConfig(predicate, null, data);
+        return new FoodConfigPredicate(predicate, null, data);
     }
 
     public static boolean validate(final String data) {

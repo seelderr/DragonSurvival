@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
@@ -12,7 +13,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
+import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 public class ConfigUtils {
     private static final int NAMESPACE = 0;
@@ -24,7 +27,6 @@ public class ConfigUtils {
         ResourceLocation location = getLocation(splitData, isTag);
         if (isTag) {
             TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
-            // Can't check if tag exists or not at this point in time
             return stack -> stack.is(tag);
         } else {
             Item item = BuiltInRegistries.ITEM.get(location);
@@ -38,7 +40,6 @@ public class ConfigUtils {
 
         if (isTag) {
             TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
-            // Can't check if tag exists or not at this point in time
             return item -> item.builtInRegistryHolder().is(tag);
         } else {
             Item itemToCheck = BuiltInRegistries.ITEM.get(location);
@@ -52,11 +53,29 @@ public class ConfigUtils {
 
         if (isTag) {
             TagKey<Block> tag = TagKey.create(Registries.BLOCK, location);
-            // Can't check if tag exists or not at this point in time
             return stack -> stack.is(tag);
         } else {
             Block block = BuiltInRegistries.BLOCK.get(location);
             return stack -> stack.is(block);
+        }
+    }
+
+    public static Supplier<HolderSet<Item>> itemSupplier(final String[] splitData) {
+        boolean isTag = splitData[NAMESPACE].startsWith("#");
+        ResourceLocation location = getLocation(splitData, isTag);
+
+        if (isTag) {
+            TagKey<Item> tag = TagKey.create(Registries.ITEM, location);
+
+            return () -> {
+                Optional<HolderSet.Named<Item>> optional = BuiltInRegistries.ITEM.getTag(tag);
+                return optional.isPresent() ? optional.get() : HolderSet.empty();
+            };
+        } else {
+            return () -> {
+                Optional<Holder.Reference<Item>> optional = BuiltInRegistries.ITEM.getHolder(location);
+                return optional.isPresent() ? HolderSet.direct(optional.get()) : HolderSet.empty();
+            };
         }
     }
 

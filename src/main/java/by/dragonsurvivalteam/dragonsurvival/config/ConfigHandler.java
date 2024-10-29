@@ -43,6 +43,7 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Parses the annotated classes to handle the config values <br>
@@ -231,7 +232,15 @@ public class ConfigHandler {
                                         List.of(configOption.key()),
                                         () -> customList.stream().map(CustomConfig::convert).toList(),
                                         () -> getDefaultListValueForConfig(configOption.key()),
-                                        configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || CustomConfig.validate(customConfigType, configValue),
+                                        configValue -> {
+                                            if (field.isAnnotationPresent(IgnoreConfigCheck.class) || CustomConfig.validate(customConfigType, configValue)) {
+                                                return true;
+                                            }
+
+                                            // To figure out which entry in the list has problems
+                                            DragonSurvivalMod.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
+                                            return false;
+                                        },
                                         sizeRange
                                 );
 
@@ -247,7 +256,15 @@ public class ConfigHandler {
                                 List.of(configOption.key()),
                                 () -> list,
                                 () -> getDefaultListValueForConfig(configOption.key()),
-                                configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue),
+                                configValue -> {
+                                    if (field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue)) {
+                                        return true;
+                                    }
+
+                                    // To figure out which entry in the list has problems
+                                    DragonSurvivalMod.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
+                                    return false;
+                                },
                                 sizeRange
                         );
                     }
@@ -300,6 +317,20 @@ public class ConfigHandler {
         switch (configOption.validation()) {
             case RESOURCE_LOCATION -> {
                 return ResourceLocation.tryParse((String) configValue) != null;
+            }
+            case RESOURCE_LOCATION_REGEX -> {
+                String[] data = ((String) configValue).split(":", 1);
+
+                if (!ResourceLocation.isValidNamespace(data[0])) {
+                    return false;
+                }
+
+                try {
+                    Pattern.compile(data[1]);
+                    return true;
+                } catch (PatternSyntaxException ignored) {
+                    return false;
+                }
             }
             case RESOURCE_LOCATION_NUMBER -> {
                 String[] split = ((String) configValue).split(":");

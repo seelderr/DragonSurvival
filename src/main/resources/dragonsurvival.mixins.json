@@ -11,6 +11,7 @@
     "EntityMixin",
     "FireworkRocketItemMixin",
     "IItemExtensionMixin",
+    "ILivingEntityExtensionMixin",
     "ItemEntityMixin",
     "ItemMixin",
     "ItemStackMixin",
