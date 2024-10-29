@@ -11,6 +11,9 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -31,10 +34,6 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_BLACKLISTED_ITEMS;
 
