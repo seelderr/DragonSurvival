@@ -150,6 +150,7 @@ public class DragonPenaltyHandler {
         if (DragonStateProvider.isDragon(player)) {
             if (DragonPenaltyHandler.itemIsBlacklisted(stack.getItem())) {
                 event.setCanceled(true);
+                return;
             }
         }
 
@@ -157,6 +158,7 @@ public class DragonPenaltyHandler {
 
         if (isGoodDragonItem && player.hasEffect(DSEffects.HUNTER_OMEN)) {
             event.setCanceled(true);
+            return;
         }
 
         boolean isEvilDragonItem = stack.is(DSItemTags.IS_DARK_DRAGON);
@@ -176,6 +178,7 @@ public class DragonPenaltyHandler {
 
             if (isActionInvalid) {
                 event.setCanceled(true);
+                return;
             }
         }
     }
