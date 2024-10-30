@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.gametests;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -8,7 +8,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
-@GameTestHolder(DragonSurvivalMod.MODID)
+@GameTestHolder(DragonSurvival.MODID)
 public class SanityGameTest {
     @PrefixGameTestTemplate(false)
     @GameTest(template = "test_templates/1x1air")
