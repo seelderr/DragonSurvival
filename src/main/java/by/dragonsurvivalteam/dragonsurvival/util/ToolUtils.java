@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
@@ -11,10 +12,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.common.ItemAbilities;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.event.level.BlockEvent;
 import org.jetbrains.annotations.Nullable;
 
 public class ToolUtils {
@@ -27,7 +25,7 @@ public class ToolUtils {
     }
 
     public static boolean isWeapon(final ItemStack itemStack) {
-        return itemStack.getItem() instanceof SwordItem || itemStack.canPerformAction(ItemAbilities.SWORD_DIG) || itemStack.canPerformAction(ItemAbilities.SWORD_SWEEP) || itemStack.is(ItemTags.SWORDS) || /* TODO :: Unsure if this is the correct check to make */ itemStack.canPerformAction(ItemAbilities.AXE_DIG);
+        return itemStack.getItem() instanceof SwordItem || itemStack.canPerformAction(ItemAbilities.SWORD_SWEEP) || itemStack.canPerformAction(ItemAbilities.SWORD_DIG) || itemStack.is(DSItemTags.CLAW_WEAPONS);
     }
 
     public static boolean isPickaxe(final ItemStack itemStack) {
@@ -117,27 +115,5 @@ public class ToolUtils {
             handler.switchedTool = false;
             handler.switchedToolSlot = -1;
         }
-    }
-
-    public static @Nullable Pair<Player, BlockState> getEventData(final Event event) {
-        Player player = null;
-        BlockState blockState = null;
-
-        if (event instanceof BlockEvent.BreakEvent breakEvent) {
-            player = breakEvent.getPlayer();
-            blockState = breakEvent.getState();
-        } else if (event instanceof PlayerEvent.BreakSpeed breakSpeed) {
-            player = breakSpeed.getEntity();
-            blockState = breakSpeed.getState();
-        } else if (event instanceof PlayerEvent.HarvestCheck harvestCheck) {
-            player = harvestCheck.getEntity();
-            blockState = harvestCheck.getTargetBlock();
-        }
-
-        if (player != null) {
-            return Pair.of(player, blockState);
-        }
-
-        return null;
     }
 }
