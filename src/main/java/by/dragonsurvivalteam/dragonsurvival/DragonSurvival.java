@@ -4,7 +4,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.WingObtainmentController;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootExtendedLootModifier;
@@ -21,16 +20,10 @@ import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
 import net.neoforged.bus.api.IEventBus;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.attachment.AttachmentType;
-import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
@@ -38,7 +31,6 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import software.bernie.geckolib.GeckoLibClient;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +55,6 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPE
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
 
 @Mod(DragonSurvival.MODID)
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DragonSurvival {
     public static final String MODID = "dragonsurvival";
     public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
@@ -87,16 +78,8 @@ public class DragonSurvival {
             () -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
     );
 
-    public DragonSurvival(IEventBus modEventBus, ModContainer modContainer) {
-        if (FMLLoader.getDist().isClient()) {
-            PROXY = new ClientProxy();
-            GeckoLibClient.init();
-
-            // Register the configuration screen
-            modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
-        } else {
-            PROXY = new ServerProxy();
-        }
+    public DragonSurvival(IEventBus bus, ModContainer container) {
+        PROXY = FMLLoader.getDist().isClient() ? new ClientProxy() : new ServerProxy();
 
         DragonTypes.registerTypes();
         DragonBodies.registerBodies();
@@ -104,40 +87,31 @@ public class DragonSurvival {
         ConfigHandler.initConfig();
         DragonAbilities.initAbilities();
 
-        modEventBus.addListener(this::commonSetup);
-        modEventBus.addListener(this::clientSetup);
+        bus.addListener(this::addPackFinders);
 
         // We need to register blocks before items, since otherwise the items will register before the item-blocks can be assigned
-        DS_ATTRIBUTES.register(modEventBus);
-        DS_ARMOR_MATERIALS.register(modEventBus);
-        DS_BLOCKS.register(modEventBus);
-        DS_ITEMS.register(modEventBus);
-        DS_ATTACHMENT_TYPES.register(modEventBus);
-        DS_MOB_EFFECTS.register(modEventBus);
-        DS_CONTAINERS.register(modEventBus);
-        DS_CREATIVE_MODE_TABS.register(modEventBus);
-        DS_PARTICLES.register(modEventBus);
-        DS_SOUNDS.register(modEventBus);
-        DS_POTIONS.register(modEventBus);
-        DS_TILE_ENTITIES.register(modEventBus);
-        DS_ENTITY_TYPES.register(modEventBus);
-        DS_MAP_DECORATIONS.register(modEventBus);
-        DS_POI_TYPES.register(modEventBus);
-        DS_VILLAGER_PROFESSIONS.register(modEventBus);
-        DS_STRUCTURE_PLACEMENT_TYPES.register(modEventBus);
-        DS_TRIGGERS.register(modEventBus);
-        GLM.register(modEventBus);
+        DS_ATTRIBUTES.register(bus);
+        DS_ARMOR_MATERIALS.register(bus);
+        DS_BLOCKS.register(bus);
+        DS_ITEMS.register(bus);
+        DS_ATTACHMENT_TYPES.register(bus);
+        DS_MOB_EFFECTS.register(bus);
+        DS_CONTAINERS.register(bus);
+        DS_CREATIVE_MODE_TABS.register(bus);
+        DS_PARTICLES.register(bus);
+        DS_SOUNDS.register(bus);
+        DS_POTIONS.register(bus);
+        DS_TILE_ENTITIES.register(bus);
+        DS_ENTITY_TYPES.register(bus);
+        DS_MAP_DECORATIONS.register(bus);
+        DS_POI_TYPES.register(bus);
+        DS_VILLAGER_PROFESSIONS.register(bus);
+        DS_STRUCTURE_PLACEMENT_TYPES.register(bus);
+        DS_TRIGGERS.register(bus);
+        GLM.register(bus);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event) {
-    }
-
-    private void clientSetup(final FMLClientSetupEvent event) {
-        WingObtainmentController.loadDragonPhrases();
-    }
-
-    @SubscribeEvent
-    public static void addPackFinders(AddPackFindersEvent event) {
+    private void addPackFinders(AddPackFindersEvent event) {
         if (event.getPackType() == PackType.CLIENT_RESOURCES) {
             HashMap<MutableComponent, String> resourcePacks = new HashMap<>();
             //resourcePacks.put(Component.literal("- Dragon East"), "resourcepacks/ds_east");

@@ -204,58 +204,60 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         int scissorX1 = leftPos + 101;
         int scissorX0 = leftPos + 25;
         int scissorY0 = topPos + 8;
-        // With a scale of 20 the smaller dragon sizes feel too small
-        int scale = (int) (20 + ((ServerConfig.maxGrowthSize - handler.getSize()) * 0.25));
+
+        // In order to scale up the smaller dragon sizes, since they are too small otherwise
+        int scale = (int) (20 + ((ServerConfig.DEFAULT_MAX_GROWTH_SIZE - handler.getSize()) * 0.25));
+        scale = Math.clamp(scale, 10, 40); // Very large dragon sizes (above the default max. size) will have a < 20 scale value
 
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, scale, 0, mouseX, mouseY, player);
 
-        if (clawsMenu) {
-            guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
+        if (!clawsMenu) {
+            return;
         }
 
-        if (clawsMenu) {
-            if (textures == null || textures.isEmpty()) {
-                initResources();
-            }
+        guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 
-            double curSize = handler.getSize();
-            float progress = 0;
-
-            if (handler.getLevel() == DragonLevel.NEWBORN) {
-                progress = (float) ((curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size));
-            } else if (handler.getLevel() == DragonLevel.YOUNG) {
-                progress = (float) ((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
-            } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
-                progress = (float) ((curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size));
-            } else if (handler.getLevel() == DragonLevel.ADULT) {
-                progress = (float) ((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
-            }
-
-            int size = 34;
-            int thickness = 5;
-            int circleX = leftPos - 58;
-            int circleY = topPos - 35;
-            int sides = 6;
-
-            int radius = size / 2;
-
-            Color c = new Color(99, 99, 99);
-
-            RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
-            RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, sides, 1, 0);
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-            RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "circle", "")));
-            RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
-
-            RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
-            RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
-
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
-            RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-            guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
+        if (textures == null || textures.isEmpty()) {
+            initResources();
         }
+
+        double curSize = handler.getSize();
+        float progress = 0;
+
+        if (handler.getLevel() == DragonLevel.NEWBORN) {
+            progress = (float) ((curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size));
+        } else if (handler.getLevel() == DragonLevel.YOUNG) {
+            progress = (float) ((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
+        } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
+            progress = (float) ((curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size));
+        } else if (handler.getLevel() == DragonLevel.ADULT) {
+            progress = (float) ((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
+        }
+
+        int size = 34;
+        int thickness = 5;
+        int circleX = leftPos - 58;
+        int circleY = topPos - 35;
+        int sides = 6;
+
+        int radius = size / 2;
+
+        Color c = new Color(99, 99, 99);
+
+        RenderSystem.setShaderColor(c.brighter().getRed() / 255.0f, c.brighter().getBlue() / 255.0f, c.brighter().getGreen() / 255.0f, 1.0f);
+        RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, sides, 1, 0);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
+        RenderSystem.setShaderTexture(0, textures.get(createTextureKey(handler.getType(), "circle", "")));
+        RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
+
+        RenderSystem.setShaderColor(c.getRed() / 255.0f, c.getBlue() / 255.0f, c.getGreen() / 255.0f, 1.0f);
+        RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
+
+        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
+        guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
     }
 
     @Override

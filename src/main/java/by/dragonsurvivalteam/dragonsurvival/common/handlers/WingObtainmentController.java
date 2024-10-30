@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -45,79 +44,85 @@ import java.util.concurrent.TimeUnit;
 
 @EventBusSubscriber
 public class WingObtainmentController {
-
-    private static final Map<String, Integer> dragonPhrases = new HashMap<>();
-
-    private static final UUID enderDragonUUID = UUID.fromString("426642b9-2e88-4350-afa8-f99f75af5479");
+    private static final Map<String, Integer> DRAGON_PHRASES = new HashMap<>();
+    private static final UUID ENDER_DRAGON_UUID = UUID.fromString("426642b9-2e88-4350-afa8-f99f75af5479");
+    private static final ScheduledExecutorService SERVICE = Executors.newScheduledThreadPool(1);
 
     @OnlyIn(Dist.CLIENT)
     public static void loadDragonPhrases() {
-
         try {
             List<String> langs = new ArrayList<>();
             InputStream stream = Thread.currentThread().getContextClassLoader().getResourceAsStream("assets/dragonsurvival/lang");
+
             if (stream == null) {
                 return;
             }
+
             BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
             String file;
+
             while ((file = reader.readLine()) != null) {
                 langs.add(file);
             }
+
             reader.close();
             Gson gson = GsonFactory.getDefault();
-            Type type = new TypeToken<Map<String, String>>() {
-            }.getType();
+            Type type = new TypeToken<Map<String, String>>() {}.getType();
+
             for (String langFile : langs) {
                 URL resource = Thread.currentThread().getContextClassLoader().getResource("assets/dragonsurvival/lang/" + langFile);
                 Map<String, String> langData = gson.fromJson(new String(Files.readAllBytes(Paths.get(resource.toURI()))), type);
                 int phraseCount = 0;
+
                 for (String key : langData.keySet()) {
                     if (key.contains("ds.endmessage")) {
                         phraseCount++;
                     }
                 }
+
                 if (phraseCount > 0) {
-                    dragonPhrases.put(langFile.replace(".json", ""), phraseCount);
+                    DRAGON_PHRASES.put(langFile.replace(".json", ""), phraseCount);
                 }
             }
-        } catch (Exception ex) {
-            DragonSurvival.LOGGER.error(ex);
+        } catch (Exception exception) {
+            DragonSurvival.LOGGER.error("An error occurred while trying to build the dragon phrases", exception);
         }
     }
 
-
-    private static final ScheduledExecutorService executorService = Executors.newScheduledThreadPool(1);
-
     @SubscribeEvent
-    public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent changedDimensionEvent) {
-        if (!(changedDimensionEvent.getEntity() instanceof ServerPlayer player))
+    public static void inTheEnd(PlayerEvent.PlayerChangedDimensionEvent event) {
+        if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
+        }
 
-        if (changedDimensionEvent.getTo() == Level.END) {
-            DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-                if (dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin) {
-                    executorService.schedule(() -> PacketDistributor.sendToPlayer(player, new SyncChatEvent.Data(enderDragonUUID.toString(), "ds.endmessage")), 3, TimeUnit.SECONDS);
+        if (event.getTo() == Level.END) {
+            DragonStateProvider.getOptional(player).ifPresent(data -> {
+                if (data.isDragon() && !data.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin) {
+                    SERVICE.schedule(() -> PacketDistributor.sendToPlayer(player, new SyncChatEvent.Data(ENDER_DRAGON_UUID.toString(), "ds.endmessage")), 3, TimeUnit.SECONDS);
                 }
             });
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
+    @OnlyIn(Dist.CLIENT) // FIXME :: move to its own class or wait for this system to be reworked
     public static void clientMessageRecieved(SyncChatEvent.Data event) {
         Player player = Minecraft.getInstance().player;
         if (player == null)
             return;
 
-        if (event.signerId().equals(enderDragonUUID.toString())) {
+        if (event.signerId().equals(ENDER_DRAGON_UUID.toString())) {
             Vec3 centerPoint = new Vec3(0D, 128D, 0D);
             List<EnderDragon> enderDragons = player.level().getEntitiesOfClass(EnderDragon.class, AABB.ofSize(centerPoint, 192, 192, 192));
-            if (enderDragons.isEmpty())
+
+            if (enderDragons.isEmpty()) {
                 return;
+            }
+
             String dragonName = "<" + enderDragons.get(0).getDisplayName().getString() + "> ";
+
             if (event.chatId().equals("ds.endmessage")) {
                 String language = Minecraft.getInstance().getLanguageManager().getSelected();
-                int messageId = player.getRandom().nextInt(dragonPhrases.getOrDefault(language, dragonPhrases.getOrDefault("en_us", 1))) + 1;
+                int messageId = player.getRandom().nextInt(DRAGON_PHRASES.getOrDefault(language, DRAGON_PHRASES.getOrDefault("en_us", 1))) + 1;
                 player.sendSystemMessage(Component.literal(dragonName).append(Component.translatable("ds.endmessage." + messageId, player.getDisplayName().getString())));
             } else if (event.chatId().equals("ds.dragon.grants.wings")) {
                 player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings"));
@@ -125,25 +130,23 @@ public class WingObtainmentController {
         }
     }
 
-
     @SubscribeEvent
     public static void serverChatEvent(ServerChatEvent chatEvent) {
-        Component message = chatEvent.getMessage();
         ServerPlayer player = chatEvent.getPlayer();
-        String lowercase = message.getString().toLowerCase();
-        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && !dragonStateHandler.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin) {
-                if (player.level().dimension() == Level.END) {
-                    if (!player.serverLevel().getDragons().isEmpty()) {
-                        if (!lowercase.isEmpty()) {
-                            executorService.schedule(() -> player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
 
-                            dragonStateHandler.setHasFlight(true);
-                            dragonStateHandler.getMovementData().spinLearned = true;
-                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), dragonStateHandler.getMovementData().spinAttack, dragonStateHandler.getMovementData().spinCooldown, dragonStateHandler.getMovementData().spinLearned));
-                            PacketDistributor.sendToAllPlayers(new SyncComplete.Data(player.getId(), DragonStateProvider.getData(player).serializeNBT(player.registryAccess())));
-                        }
-                    }
+        if (!ServerFlightHandler.enderDragonGrantsSpin || player.level().dimension() != Level.END) {
+            return;
+        }
+
+        DragonStateProvider.getOptional(player).ifPresent(data -> {
+            if (data.isDragon() && !data.getMovementData().spinLearned && /* Check if there is an ender dragon present */ !player.serverLevel().getDragons().isEmpty()) {
+                if (!chatEvent.getMessage().getString().isEmpty()) {
+                    SERVICE.schedule(() -> player.sendSystemMessage(Component.translatable("ds.dragon.grants.wings")), 2, TimeUnit.SECONDS);
+
+                    data.setHasFlight(true);
+                    data.getMovementData().spinLearned = true;
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), data.getMovementData().spinAttack, data.getMovementData().spinCooldown, data.getMovementData().spinLearned));
+                    PacketDistributor.sendToAllPlayers(new SyncComplete.Data(player.getId(), DragonStateProvider.getData(player).serializeNBT(player.registryAccess())));
                 }
             }
         });
@@ -154,15 +157,16 @@ public class WingObtainmentController {
         if (!ServerConfig.endVoidTeleport) {
             return;
         }
-        LivingEntity living = damageEvent.getEntity();
-        if (living instanceof Player) {
+
+        if (damageEvent.getEntity() instanceof Player player) {
             DamageSource damageSource = damageEvent.getSource();
-            if (living.level().dimension() == Level.END && damageSource == living.damageSources().fellOutOfWorld() && living.position().y < -60) {
-                DragonStateProvider.getOptional(living).ifPresent(dragonStateHandler -> {
+
+            if (player.level().dimension() == Level.END && damageSource == player.damageSources().fellOutOfWorld() && player.position().y < -60) {
+                DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
                     if (dragonStateHandler.isDragon()) {
-                        DimensionTransition transition = new DimensionTransition(living.level().getServer().overworld(), living, DimensionTransition.DO_NOTHING);
-                        living.changeDimension(transition);
-                        PacketDistributor.sendToAllPlayers(new RefreshDragon.Data(living.getId()));
+                        DimensionTransition transition = new DimensionTransition(player.level().getServer().overworld(), player, DimensionTransition.DO_NOTHING);
+                        player.changeDimension(transition);
+                        PacketDistributor.sendToAllPlayers(new RefreshDragon.Data(player.getId()));
                         damageEvent.setCanceled(true);
                     }
                 });
