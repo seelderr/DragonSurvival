@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.mixins;
+package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
@@ -9,12 +9,12 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import java.util.List;
 
-
 @Mixin(LivingEntityRenderer.class)
-public interface AccessorLivingRenderer {
+public interface LivingRendererAccessor {
     @Accessor("layers")
-    List<RenderLayer> dragonsurvival$getRenderLayers();
+    @SuppressWarnings("rawtypes") // ignore
+    List<RenderLayer> dragonSurvival$getRenderLayers();
 
     @Invoker("shouldShowName")
-    boolean dragonsurvival$callShouldShowName(LivingEntity p_177070_1_);
+    boolean dragonSurvival$callShouldShowName(LivingEntity entity);
 }

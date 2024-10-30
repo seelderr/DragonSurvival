@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.mixins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,15 +10,14 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+/**
+ * Undoes the switch from {@link PlayerStartMixin}
+ */
 @Mixin(value = Player.class, /* Make sure it happens at the end */ priority = 10_000)
-public class MixinPlayerEnd {
-    /**
-     * Put the switched-out items (dragon claw tool and main hand item) back to their original places
-     */
+public class PlayerEndMixin {
     @Inject(method = "attack", at = @At("RETURN"))
-    public void switchEnd(Entity target, CallbackInfo ci) {
-        Object self = this;
-        Player player = (Player) self;
+    public void switchEnd(CallbackInfo callback) {
+        Player player = (Player) (Object) this;
 
         if (!DragonStateProvider.isDragon(player)) {
             return;

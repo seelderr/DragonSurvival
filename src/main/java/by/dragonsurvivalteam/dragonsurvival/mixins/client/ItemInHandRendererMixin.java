@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.mixins;
+package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -22,24 +22,24 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ItemInHandRenderer.class)
-public class MixinItemInHandRenderer {
+public class ItemInHandRendererMixin {
+    @Shadow @Final private Minecraft minecraft;
 
-    @Shadow
-    @Final
-    private Minecraft minecraft;
-
+    /** In case the item cannot be naturally eaten, replace the animation with the eating animation if we consider it as food */
     @ModifyExpressionValue(method = "renderArmWithItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseAnimation()Lnet/minecraft/world/item/UseAnim;"))
-    private UseAnim dragonRenderArmWithItem(UseAnim original, AbstractClientPlayer pPlayer, float pPartialTicks, float pPitch, InteractionHand pHand, float pSwingProgress, ItemStack pStack, float pEquippedProgress, PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight) {
-        if (DragonStateProvider.isDragon(pPlayer)) {
-            DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
-            return DragonFoodHandler.isEdible(pStack, handler.getType()) ? UseAnim.EAT : original;
+    private UseAnim dragonSurvival$dragonRenderArmWithItem(UseAnim original, AbstractClientPlayer player, float partialTicks, float pitch, InteractionHand hand, float swingProgress, ItemStack stack, float equippedProgress, PoseStack poseStack, MultiBufferSource buffer, int combinedLight) {
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (data.isDragon()) {
+            return DragonFoodHandler.isEdible(stack, data.getType()) ? UseAnim.EAT : original;
         }
 
         return original;
     }
 
+    /** If we made an item edible wee need to supply the duration it takes to eat the item */
     @ModifyExpressionValue(method = "applyEatTransform", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;getUseDuration(Lnet/minecraft/world/entity/LivingEntity;)I"))
-    private int dragonUseDuration(int original, @Local(argsOnly = true) ItemStack stack) {
+    private int dragonSurvival$dragonUseDuration(int original, @Local(argsOnly = true) ItemStack stack) {
         if (DragonStateProvider.isDragon(minecraft.player)) {
             return DragonFoodHandler.getUseDuration(stack, minecraft.player);
         }
@@ -47,15 +47,17 @@ public class MixinItemInHandRenderer {
         return original;
     }
 
+    /** Don't render the actual hand ('RenderHandEvent' cannot be used since it would also hide the item) */
     @Inject(at = @At(value = "HEAD"), method = "renderPlayerArm", cancellable = true)
-    private void hideArmsForDragon(PoseStack pPoseStack, MultiBufferSource pBuffer, int pCombinedLight, float pEquippedProgress, float pSwingProgress, HumanoidArm pSide, CallbackInfo ci) {
+    private void dragonSurvival$skipRender(PoseStack poseStack, MultiBufferSource buffer, int combinedLight, float equippedProgress, float swingProgress, HumanoidArm side, CallbackInfo callback) {
         if (DragonStateProvider.isDragon(minecraft.player)) {
-            ci.cancel();
+            callback.cancel();
         }
     }
 
+    /** Don't render the actual hand ('RenderHandEvent' cannot be used since it would also hide the item) */
     @ModifyExpressionValue(method = "renderTwoHandedMap", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isInvisible()Z"))
-    private boolean hideArmsForDragonTwoHandedMap(boolean original) {
+    private boolean dragonSurvival$skipRenderWhenHoldingMaps(boolean original) {
         return DragonStateProvider.isDragon(minecraft.player) || original;
     }
 }

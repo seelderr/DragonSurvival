@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.mixins;
+package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
@@ -19,31 +19,27 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 import java.util.function.Supplier;
 
-
 @Mixin(ClientLevel.class)
-public abstract class MixinClientWorld extends Level {
-
-    protected MixinClientWorld(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates) {
+public abstract class ClientLevelMixin extends Level {
+    protected ClientLevelMixin(WritableLevelData pLevelData, ResourceKey<Level> pDimension, RegistryAccess pRegistryAccess, Holder<DimensionType> pDimensionTypeRegistration, Supplier<ProfilerFiller> pProfiler, boolean pIsClientSide, boolean pIsDebug, long pBiomeZoomSeed, int pMaxChainedNeighborUpdates) {
         super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
     }
 
+    /** Apply the destruction process to the root block */
     @ModifyArg(method = "destroyBlockProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V"), index = 1)
-    private BlockPos modifyDestroyBlockProgress(BlockPos pos) {
-        BlockState state = getBlockState(pos);
+    private BlockPos modifyDestroyBlockProgress(final BlockPos position) {
+        BlockState state = getBlockState(position);
 
         if (state.getBlock() instanceof SourceOfMagicBlock) {
             if (!state.getValue(SourceOfMagicBlock.PRIMARY_BLOCK)) {
-                BlockEntity blockEntity = getBlockEntity(pos);
-                BlockPos pos1 = pos;
+                BlockEntity blockEntity = getBlockEntity(position);
 
-                if (blockEntity instanceof SourceOfMagicPlaceholder) {
-                    pos1 = ((SourceOfMagicPlaceholder) blockEntity).rootPos;
+                if (blockEntity instanceof SourceOfMagicPlaceholder placeholder) {
+                    return placeholder.rootPos;
                 }
-
-                return pos1;
             }
         }
 
-        return pos;
+        return position;
     }
 }

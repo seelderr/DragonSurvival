@@ -170,11 +170,7 @@ public abstract class LivingEntityMixin extends Entity {
 
         boolean isInLava = ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && DragonUtils.isDragonType(data, DragonTypes.CAVE) && isInLava();
 
-        if (!isInLava && !isInWater()) {
-            return;
-        }
-
-        if (!player.isAffectedByFluids() || player.canStandOnFluid(fluidState)) {
+        if (!isInLava && !isInWater() || !player.isAffectedByFluids() || player.canStandOnFluid(fluidState)) {
             return;
         }
 

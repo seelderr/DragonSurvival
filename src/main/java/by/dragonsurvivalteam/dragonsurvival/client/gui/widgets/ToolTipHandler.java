@@ -15,13 +15,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.EnchantedBookItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -98,27 +103,34 @@ public class ToolTipHandler {
 
     @SubscribeEvent // Add certain descriptions to our items which use generic classes
     public static void addCustomItemDescriptions(ItemTooltipEvent event) {
-        if (event.getEntity() != null && event.getItemStack() != ItemStack.EMPTY) {
+        if (event.getEntity() != null && event.getEntity().level().isClientSide() && event.getItemStack() != ItemStack.EMPTY) {
             ResourceLocation location = event.getItemStack().getItem().builtInRegistryHolder().key().location();
+            String languageKey = "";
 
-            if (!location.getNamespace().equals(MODID)) {
-                // Currently we only add to our own items / blocks
-                return;
+            if (event.getItemStack().getItem() instanceof EnchantedBookItem) {
+                ItemEnchantments enchantments = event.getItemStack().get(DataComponents.STORED_ENCHANTMENTS);
+
+                // Only add it to single-entry enchanted books since the text is longer than usual enchantment descriptions
+                if (enchantments != null && enchantments.size() == 1) {
+                    Holder<Enchantment> holder = enchantments.entrySet().iterator().next().getKey();
+                    //noinspection DataFlowIssue -> would only be null for 'Holder$Direct' which shouldn't be used here
+                    languageKey = "ds.description." + holder.getKey().location().getPath();
+                }
+            } else if (location.getNamespace().equals(MODID)) {
+                /* TODO
+                    do this via mixin in 'ItemStack#getTooltipLines' at the point below?
+                    so that the tooltip behaves the same as a regular tooltip
+                    (above custom things like enchantments, attributes or the advanced tooltip)
+
+                if (!this.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)) {
+                    this.getItem().appendHoverText(this, tooltipContext, list, tooltipFlag);
+                }
+                */
+
+                languageKey = "ds.description.add." + location.getPath();
             }
 
-            /* TODO
-                do this via mixin in 'ItemStack#getTooltipLines' at the point below?
-                so that the tooltip behaves the same as a regular tooltip
-                (above custom things like enchantments, attributes or the advanced tooltip)
-
-            if (!this.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)) {
-                this.getItem().appendHoverText(this, tooltipContext, list, tooltipFlag);
-            }
-            */
-
-            String languageKey = "ds.description.add." + location.getPath();
-
-            if (I18n.exists(languageKey)) {
+            if (!languageKey.isEmpty() && I18n.exists(languageKey)) {
                 event.getToolTip().add(Component.translatable(languageKey));
             }
         }
