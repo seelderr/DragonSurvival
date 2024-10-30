@@ -13,11 +13,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-@Mixin(value = ServerPlayerGameMode.class, priority = 10_000)
-public class MixinServerPlayerGameModeEnd {
-    @Inject(method = "handleBlockBreakAction", at = @At("RETURN"))
-    private void finishSwap(final BlockPos blockPosition, final ServerboundPlayerActionPacket.Action action, final Direction face, int maxBuildHeight, int sequence, final CallbackInfo callback) {
-        ToolUtils.swapFinish(player);
+@Mixin(value = ServerPlayerGameMode.class, priority = 1)
+public class ServerPlayerGameModeStartMixin {
+    @Inject(method = "handleBlockBreakAction", at = @At("HEAD"))
+    private void startSwap(final BlockPos blockPosition, final ServerboundPlayerActionPacket.Action action, final Direction face, int maxBuildHeight, int sequence, final CallbackInfo callback) {
+        ToolUtils.swapStart(player, player.level().getBlockState(blockPosition));
     }
 
     @Shadow
