@@ -46,15 +46,13 @@ public class DragonModel extends GeoModel<DragonEntity> {
     @Override
     public void applyMolangQueries(final AnimationState<DragonEntity> animationState, double currentTick) {
         super.applyMolangQueries(animationState, currentTick);
-
         DragonEntity dragon = animationState.getAnimatable();
+        Player player = dragon.getPlayer();
 
-        // In case the Integer (id of the player) is null
-        if (dragon.playerId == null || dragon.getPlayer() == null) {
+        if (player == null) {
             return;
         }
 
-        Player player = dragon.getPlayer();
         DragonStateHandler handler = DragonStateProvider.getData(player);
         DragonMovementData md = handler.getMovementData();
 
@@ -62,7 +60,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         MathParser.setVariable("query.head_yaw", () -> md.headYaw);
         MathParser.setVariable("query.head_pitch", () -> md.headPitch);
 
-        double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
+        double gravity = player.getAttributeValue(Attributes.GRAVITY);
         MathParser.setVariable("query.gravity", () -> gravity);
 
         double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
@@ -119,6 +117,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         return model;
     }
 
+    @Override
     public ResourceLocation getTextureResource(final DragonEntity dragon) {
         if (overrideTexture != null) {
             return overrideTexture;
@@ -171,24 +170,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
         return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
     }
 
-    public void setOverrideTexture(final ResourceLocation overrideTexture) {
-        this.overrideTexture = overrideTexture;
-    }
-
     @Override
     public ResourceLocation getAnimationResource(final DragonEntity dragon) {
         Player player = dragon.getPlayer();
-
-        if (player != null) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
-            AbstractDragonBody body = handler.getBody();
-
-            if (body != null) {
-                return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));
-            }
-        }
-
-        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
+        return getAnimationResource(player);
     }
 
     @Override
@@ -199,11 +184,27 @@ public class DragonModel extends GeoModel<DragonEntity> {
             DragonStateHandler data = DragonStateProvider.getData(player);
 
             if (data.hasHunterStacks() && !data.isBeingRenderedInInventory) {
-                // Required type to make other entities and water visible through the translucent dragon
                 return RenderType.itemEntityTranslucentCull(texture);
             }
         }
 
         return RenderType.entityCutout(texture);
+    }
+
+    public void setOverrideTexture(final ResourceLocation overrideTexture) {
+        this.overrideTexture = overrideTexture;
+    }
+
+    public static ResourceLocation getAnimationResource(final Player player) {
+        if (player != null) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+            AbstractDragonBody body = handler.getBody();
+
+            if (body != null) {
+                return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));
+            }
+        }
+
+        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
     }
 }

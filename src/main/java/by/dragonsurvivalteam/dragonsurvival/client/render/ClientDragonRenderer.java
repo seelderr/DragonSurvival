@@ -58,6 +58,7 @@ import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -66,16 +67,12 @@ import java.util.concurrent.atomic.AtomicReference;
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientDragonRenderer {
     public static DragonModel dragonModel = new DragonModel();
-    /**
-     * First-person armor instance
-     */
-    public static DragonEntity dummyDragon;
     public static float deltaPartialTick;
 
-    // This used to ignore the pitch/yaw history and not update the movement data
-    // if we are overriding it for a specific render.
-    //
-    // Currently this is only used for showing the dragon in the inventory screen.
+    /**
+     * Used for inventory rendering - when set to true changed movement data will not be tracked <br>
+     * See {@link ClientDragonRenderer#setDragonMovementData(Player, float)} and {@link DragonModel#applyMolangQueries(AnimationState, double)}
+     */
     public static boolean isOverridingMovementData = false;
 
     /**
@@ -196,14 +193,7 @@ public class ClientDragonRenderer {
             playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
         }
 
-        if (dummyDragon == null) {
-            dummyDragon = DSEntities.DRAGON.get().create(player.level());
-            assert dummyDragon != null;
-            dummyDragon.playerId = player.getId();
-        }
-
         if (handler.isDragon()) {
-
             if (player == minecraft.player) {
                 renderDelay = MAX_DELAY;
             }
@@ -248,8 +238,8 @@ public class ClientDragonRenderer {
                 poseStack.scale(scale, scale, scale);
 
                 ((EntityRendererAccessor) renderPlayerEvent.getRenderer()).dragonSurvival$setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
-                DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
-                EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
+                DragonEntity playerAsDragon = playerDragonHashMap.get(player.getId()).get(); // What will be rendered in place of the human player model
+                EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(playerAsDragon);
                 dragonModel.setOverrideTexture(texture);
 
                 if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
@@ -269,27 +259,27 @@ public class ClientDragonRenderer {
                 }
                 if (!player.isInvisible()) {
                     if (ServerFlightHandler.isGliding(player) || (player.isPassenger() && DragonStateProvider.isDragon(player.getVehicle()) && ServerFlightHandler.isGliding((Player) player.getVehicle()))) {
-                        float upRot = 0;
+                        float upRot;
                         if (ServerFlightHandler.isGliding(player)) {
                             upRot = Mth.clamp((float) (player.getDeltaMovement().y * 20), -80, 80);
                         } else {
                             upRot = Mth.clamp((float) (player.getVehicle().getDeltaMovement().y * 20), -80, 80);
                         }
 
-                        dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
-                        dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
+                        playerAsDragon.prevXRot = Mth.lerp(0.1F, playerAsDragon.prevXRot, upRot);
+                        playerAsDragon.prevXRot = Mth.clamp(playerAsDragon.prevXRot, -80, 80);
 
-                        handler.getMovementData().prevXRot = dummyDragon.prevXRot;
+                        handler.getMovementData().prevXRot = playerAsDragon.prevXRot;
 
-                        if (Float.isNaN(dummyDragon.prevXRot)) {
-                            dummyDragon.prevXRot = upRot;
+                        if (Float.isNaN(playerAsDragon.prevXRot)) {
+                            playerAsDragon.prevXRot = upRot;
                         }
 
-                        if (Float.isNaN(dummyDragon.prevXRot)) {
-                            dummyDragon.prevXRot = 0;
+                        if (Float.isNaN(playerAsDragon.prevXRot)) {
+                            playerAsDragon.prevXRot = 0;
                         }
 
-                        poseStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
+                        poseStack.mulPose(Axis.XN.rotationDegrees(playerAsDragon.prevXRot));
 
                         Vec3 vector3d1 = new Vec3(0, 0, 0);
                         Vec3 vector3d = new Vec3(0, 0, 0);
@@ -307,29 +297,29 @@ public class ClientDragonRenderer {
 
                         float rot = Mth.clamp((float) (Math.signum(d3) * Math.acos(d2)) * 2, -1, 1);
 
-                        dummyDragon.prevZRot = Mth.lerp(0.1F, dummyDragon.prevZRot, rot);
+                        playerAsDragon.prevZRot = Mth.lerp(0.1F, playerAsDragon.prevZRot, rot);
 
-                        handler.getMovementData().prevZRot = dummyDragon.prevZRot;
-                        dummyDragon.prevZRot = Mth.clamp(dummyDragon.prevZRot, -1, 1);
+                        handler.getMovementData().prevZRot = playerAsDragon.prevZRot;
+                        playerAsDragon.prevZRot = Mth.clamp(playerAsDragon.prevZRot, -1, 1);
 
-                        if (Float.isNaN(dummyDragon.prevZRot)) {
-                            dummyDragon.prevZRot = rot;
+                        if (Float.isNaN(playerAsDragon.prevZRot)) {
+                            playerAsDragon.prevZRot = rot;
                         }
 
-                        if (Float.isNaN(dummyDragon.prevZRot)) {
-                            dummyDragon.prevZRot = 0;
+                        if (Float.isNaN(playerAsDragon.prevZRot)) {
+                            playerAsDragon.prevZRot = 0;
                         }
 
-                        handler.getMovementData().prevXRot = dummyDragon.prevXRot;
+                        handler.getMovementData().prevXRot = playerAsDragon.prevXRot;
                         handler.getMovementData().prevZRot = rot;
 
-                        poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
+                        poseStack.mulPose(Axis.ZP.rotation(playerAsDragon.prevZRot));
                     } else {
                         handler.getMovementData().prevZRot = 0;
                         handler.getMovementData().prevXRot = 0;
                     }
                     if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !ServerFlightHandler.isGliding(player) || renderFirstPersonFlight) {
-                        dragonRenderer.render(dummyDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
+                        dragonRenderer.render(playerAsDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
                     }
                 }
 

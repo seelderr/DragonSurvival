@@ -30,16 +30,16 @@ public abstract class ClientLevelMixin extends Level {
     }
 
     // TODO :: there is probably an event which could be used instead
-    /** Keep which block is currently being broken to render the overlay for additional blocks if needed */
+    /** Keep track of which block is currently being broken to render the overlay for additional blocks if needed */
     @SuppressWarnings("DataFlowIssue") // level should not be null
     @Inject(method = "destroyBlockProgress", at = @At("RETURN"))
-    private void test(int breakerId, BlockPos position, int progress, CallbackInfo callback) {
+    private void dragonSurvival$storeCenterOfDestruction(int breakerId, BlockPos position, int progress, CallbackInfo callback) {
         if (Minecraft.getInstance().level.getEntity(breakerId) == Minecraft.getInstance().player) {
             DragonDestructionHandler.centerOfDestruction = position;
         }
     }
 
-    /** Apply the destruction process to the root block */
+    /** Apply the destruction progress to the root block */
     @ModifyArg(method = "destroyBlockProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V"), index = 1)
     private BlockPos dragonSurvival$handleSourceOfMagicDestroyProgress(final BlockPos position) {
         BlockState state = getBlockState(position);

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity;
 
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
+import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.util.AnimationTimer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -162,11 +163,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             builder = renderAbility(state, currentCast);
         }
 
-        if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist("use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
+        if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item") && (player.isUsingItem() || (handler.getMovementData().bite || handler.getMovementData().dig) && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty()))) {
             // When the player is using an item
             handler.getMovementData().bite = false;
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist("eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_right") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
             // When the player is eating the main hand item
             if (animationTimer.getDuration("eat_item_right") <= 0) {
                 handler.getMovementData().bite = false;
@@ -174,7 +175,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_RIGHT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist("eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "eat_item_left") && player.isUsingItem() && DragonFoodHandler.isEdible(player.getMainHandItem(), handler.getType()) || animationTimer.getDuration("eat_item_right") > 0) {
             // When the player is eating the offhand item
             if (animationTimer.getDuration("eat_item_left") <= 0) {
                 handler.getMovementData().bite = false;
@@ -182,7 +183,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, EAT_ITEM_LEFT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist("use_item_right") && !player.getMainHandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_right") && !player.getMainHandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.RIGHT || animationTimer.getDuration("use_item_right") > 0) {
             // When the player is using the main hand item
             if (animationTimer.getDuration("use_item_right") <= 0) {
                 handler.getMovementData().bite = false;
@@ -190,7 +191,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             }
 
             return state.setAndContinue(AnimationUtils.createAnimation(builder, USE_ITEM_RIGHT));
-        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist("use_item_left") && !player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
+        } else if (!ClientDragonRenderer.renderItemsInMouth && doesAnimationExist(player, "use_item_left") && !player.getOffhandItem().isEmpty() && handler.getMovementData().bite && player.getMainArm() == HumanoidArm.LEFT || animationTimer.getDuration("use_item_left") > 0) {
             // When the player is using the offhand item
             if (animationTimer.getDuration("use_item_left") <= 0) {
                 handler.getMovementData().bite = false;
@@ -210,8 +211,8 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         return PlayState.STOP;
     }
 
-    private boolean doesAnimationExist(final String animation) {
-        return GeckoLibCache.getBakedAnimations().get(ClientDragonRenderer.dragonModel.getAnimationResource(ClientDragonRenderer.dummyDragon)).getAnimation(animation) != null;
+    private boolean doesAnimationExist(final Player player, final String animation) {
+        return GeckoLibCache.getBakedAnimations().get(DragonModel.getAnimationResource(player)).getAnimation(animation) != null;
     }
 
     private PlayState emotePredicate(final AnimationState<DragonEntity> state, int slot) {
