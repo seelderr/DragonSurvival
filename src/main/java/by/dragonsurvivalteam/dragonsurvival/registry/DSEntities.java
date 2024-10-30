@@ -24,8 +24,7 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@SuppressWarnings("rawtypes,unchecked")
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSEntities {
     public static final DeferredRegister<EntityType<?>> DS_ENTITY_TYPES = DeferredRegister.create(
             BuiltInRegistries.ENTITY_TYPE,

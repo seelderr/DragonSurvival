@@ -335,7 +335,6 @@ public class StormBreathAbility extends BreathAbility {
 
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
         list.add(Component.translatable("ds.skill.damage", "+" + stormBreathDamage));
@@ -513,7 +512,6 @@ public class StormBreathAbility extends BreathAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void castComplete(Player player) {
         stopSound();
     }

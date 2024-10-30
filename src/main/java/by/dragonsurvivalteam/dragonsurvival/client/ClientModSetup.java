@@ -22,7 +22,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
-@SuppressWarnings("unused")
 public class ClientModSetup {
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {

@@ -25,13 +25,13 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 
-import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class DragonFoodHandler { // TODO :: create some tier-based tags for grouping, like 'light_cave_dragon_food' which has low nutrition values for easier config?

@@ -15,7 +15,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
@@ -58,7 +57,6 @@ public class ClientMagicHandler {
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
     public static void livingTick(final EntityTickEvent.Post event) {
         if (event.getEntity() instanceof LivingEntity livingEntity) {
             if (!particlesOnDragons && DragonStateProvider.isDragon(livingEntity)) {

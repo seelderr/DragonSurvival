@@ -39,8 +39,6 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.util.Color;
@@ -145,7 +143,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         return 1.0F;
     }
@@ -271,7 +268,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public void animateTick(BlockState block, Level world, BlockPos pos, RandomSource random) {
         double d1 = random.nextDouble();
         double d2 = block.getValue(LAYERS) * (1.0 / 8) + .1;

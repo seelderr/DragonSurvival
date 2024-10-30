@@ -90,8 +90,7 @@ public class DragonTreasureHandler {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
-    @SubscribeEvent
+    @SubscribeEvent // FIXME :: use proxy
     public static void playerTick(ClientTickEvent.Post event) {
         Player player = Minecraft.getInstance().player;
 

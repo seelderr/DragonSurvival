@@ -61,7 +61,6 @@ import java.util.function.Supplier;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
 
-@SuppressWarnings("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSItems {
 
@@ -335,7 +334,7 @@ public class DSItems {
     public static final Holder<Item> INACTIVE_PEACE_DRAGON_BEACON = DS_ITEMS.register("beacon_peace_0", () -> new Item(new Item.Properties()));
     public static final Holder<Item> INACTIVE_FIRE_DRAGON_BEACON = DS_ITEMS.register("beacon_fire_0", () -> new Item(new Item.Properties()));
 
-    @SubscribeEvent
+    @SubscribeEvent // FIXME :: use proxy
     public static void registerItemExtensions(RegisterClientExtensionsEvent event) {
         event.registerItem(new ShakeWhenUsedExtension(), DRAGON_SOUL.value());
         event.registerItem(new IClientItemExtensions() {

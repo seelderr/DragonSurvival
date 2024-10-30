@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
+import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -48,7 +50,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
     // Weapon / tool swap data - START
-    /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
+    /** Used in {@link PlayerStartMixin} and {@link PlayerEndMixin} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
     public boolean switchedWeapon;
 

@@ -60,7 +60,6 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TI
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
 
-@SuppressWarnings("unused")
 @Mod(DragonSurvivalMod.MODID)
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DragonSurvivalMod {

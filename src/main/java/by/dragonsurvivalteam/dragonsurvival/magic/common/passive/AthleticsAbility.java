@@ -15,8 +15,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 
@@ -65,7 +63,6 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
         list.add(Component.translatable("ds.skill.duration.seconds", "+1"));

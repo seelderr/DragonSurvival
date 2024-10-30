@@ -39,7 +39,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
@@ -204,7 +203,6 @@ public class ClientFlightHandler {
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
     public static void flightParticles(PlayerTickEvent.Post playerTickEvent) {
         Player player = playerTickEvent.getEntity();
         DragonStateProvider.getOptional(player).ifPresent(handler -> {

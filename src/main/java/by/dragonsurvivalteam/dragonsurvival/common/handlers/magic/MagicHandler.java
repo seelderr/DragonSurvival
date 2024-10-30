@@ -49,7 +49,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 @EventBusSubscriber
 public class MagicHandler {
     @SubscribeEvent // TODO :: is this needed?

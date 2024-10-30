@@ -17,8 +17,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.EntityRendererAccessor;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.LivingRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
@@ -236,8 +236,8 @@ public class ClientDragonRenderer {
                     NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
                     // TODO: Test this, we might not need shouldShowName
-                    if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).dragonsurvival$callShouldShowName(player)) {
-                        ((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
+                    if (renderNameplateEvent.canRender().isTrue() && ((LivingRendererAccessor) playerRenderer).dragonSurvival$callShouldShowName(player)) {
+                        ((EntityRendererAccessor) playerRenderer).dragonSurvival$renderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
                     }
                 }
 
@@ -248,7 +248,7 @@ public class ClientDragonRenderer {
                 float scale = (float) (Math.max(size / 40.0D, 0.4D) * (attributeInstance != null ? attributeInstance.getValue() : 1.0D));
                 poseStack.scale(scale, scale, scale);
 
-                ((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
+                ((EntityRendererAccessor) renderPlayerEvent.getRenderer()).dragonSurvival$setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
                 DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
                 EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
                 dragonModel.setOverrideTexture(texture);
@@ -336,7 +336,7 @@ public class ClientDragonRenderer {
 
                 if (!player.isSpectator()) {
                     // Render the parrot on the players shoulder
-                    ((AccessorLivingRenderer) playerRenderer).dragonsurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+                    ((LivingRendererAccessor) playerRenderer).dragonSurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
                         poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
                         poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
                         double height = 1.3 * scale;
@@ -368,7 +368,7 @@ public class ClientDragonRenderer {
                 renderDelay--;
                 renderPlayerEvent.setCanceled(true);
             } else {
-                ((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+                ((EntityRendererAccessor) renderPlayerEvent.getRenderer()).dragonSurvival$setShadowRadius(0.5F);
             }
         }
         dragonModel.setOverrideTexture(null);

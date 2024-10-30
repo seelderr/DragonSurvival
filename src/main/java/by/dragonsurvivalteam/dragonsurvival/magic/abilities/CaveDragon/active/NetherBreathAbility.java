@@ -97,7 +97,6 @@ public class NetherBreathAbility extends BreathAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
         list.add(Component.translatable("ds.skill.damage", "+" + fireBreathDamage));

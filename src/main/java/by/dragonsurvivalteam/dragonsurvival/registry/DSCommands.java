@@ -12,7 +12,7 @@ import net.neoforged.neoforge.event.RegisterCommandsEvent;
 
 import static net.neoforged.neoforgespi.ILaunchContext.LOGGER;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber
 public class DSCommands {
     @SubscribeEvent
     public static void serverRegisterCommandsEvent(RegisterCommandsEvent event) {

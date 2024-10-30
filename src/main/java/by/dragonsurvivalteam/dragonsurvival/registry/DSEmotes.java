@@ -35,7 +35,7 @@ public class DSEmotes {
 
     private static boolean hasStarted = false;
 
-    @SubscribeEvent
+    @SubscribeEvent // FIXME :: use proxy
     public static void clientStart(FMLClientSetupEvent event) {
         if (FMLEnvironment.dist == Dist.CLIENT) {
             DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);

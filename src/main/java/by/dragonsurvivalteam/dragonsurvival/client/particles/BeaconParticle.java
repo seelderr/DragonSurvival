@@ -8,8 +8,6 @@ import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class BeaconParticle extends TextureSheetParticle {
@@ -168,7 +166,6 @@ public class BeaconParticle extends TextureSheetParticle {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class PeaceFactory implements ParticleProvider<PeaceData> {
         private final SpriteSet spriteSet;
 

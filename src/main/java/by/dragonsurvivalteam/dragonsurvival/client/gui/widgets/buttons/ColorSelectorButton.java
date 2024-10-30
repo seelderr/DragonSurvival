@@ -8,7 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -97,13 +97,13 @@ public class ColorSelectorButton extends ExtendedButton {
             if (text.defaultColor == null) {
                 int offset = screen.height - (getY() + 80);
                 hueComponent = new HueSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 90, layer);
-                ((AccessorScreen) screen).children().add(0, hueComponent);
-                ((AccessorScreen) screen).children().add(hueComponent);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(0, hueComponent);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(hueComponent);
             } else {
                 int offset = screen.height - (getY() + 80);
                 colorComponent = new ColorSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 90, layer);
-                ((AccessorScreen) screen).children().add(0, colorComponent);
-                ((AccessorScreen) screen).children().add(colorComponent);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(0, colorComponent);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(colorComponent);
             }
             screen.renderables.add(renderButton);
         } else {

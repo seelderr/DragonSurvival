@@ -26,7 +26,6 @@ import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("unused")
 @EventBusSubscriber
 public class EnchantmentEffectHandler {
     @SubscribeEvent

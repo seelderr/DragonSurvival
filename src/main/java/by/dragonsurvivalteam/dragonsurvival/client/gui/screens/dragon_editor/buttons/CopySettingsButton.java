@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.CopyEditorSettingsComponent;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -64,8 +64,8 @@ public class CopySettingsButton extends ExtendedButton {
 
             int offset = screen.height - (getY() + 80);
             component = new CopyEditorSettingsComponent(screen, this, getX() + width - 80, getY() + Math.min(offset, 0), 80, 70);
-            ((AccessorScreen) screen).children().add(0, component);
-            ((AccessorScreen) screen).children().add(component);
+            ((ScreenAccessor) screen).dragonSurvival$children().add(0, component);
+            ((ScreenAccessor) screen).dragonSurvival$children().add(component);
             screen.renderables.add(0, renderButton);
             screen.renderables.add(renderButton);
         } else {

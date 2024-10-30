@@ -11,8 +11,6 @@ import net.minecraft.core.particles.ParticleType;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.util.Mth;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 public class TreasureParticle extends TextureSheetParticle {
@@ -54,7 +52,6 @@ public class TreasureParticle extends TextureSheetParticle {
         return 240 | k << 16;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static class Factory implements ParticleProvider<TreasureParticle.Data> {
         private final SpriteSet sprites;
 

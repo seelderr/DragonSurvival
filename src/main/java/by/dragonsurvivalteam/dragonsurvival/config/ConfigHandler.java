@@ -50,7 +50,7 @@ import java.util.regex.PatternSyntaxException;
  * Normally it's a one way setting from the {@link ModConfigSpec.ConfigValue} fields to the class fields <br>
  * (The exception being {@link ConfigHandler#updateConfigValue(String, Object)})
  */
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ConfigHandler {
     public static ClientConfig CLIENT;
     public static ModConfigSpec clientSpec;

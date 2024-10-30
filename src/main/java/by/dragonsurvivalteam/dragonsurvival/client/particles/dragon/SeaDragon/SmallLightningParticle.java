@@ -15,8 +15,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 
@@ -84,7 +82,6 @@ public class SmallLightningParticle extends DragonParticle {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     public static final class Factory implements ParticleProvider<Data> {
         private final SpriteSet spriteSet;
 

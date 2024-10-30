@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.world.entity.Entity.RemovalReason;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -18,7 +17,6 @@ import software.bernie.geckolib.animation.RawAnimation;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-@OnlyIn(Dist.CLIENT)
 @EventBusSubscriber(Dist.CLIENT)
 public class FakeClientPlayerUtils {
     private static final ConcurrentHashMap<Integer, FakeClientPlayer> FAKE_PLAYERS = new ConcurrentHashMap<>();

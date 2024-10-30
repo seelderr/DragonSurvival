@@ -10,8 +10,6 @@ import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
@@ -19,12 +17,7 @@ import java.util.function.Consumer;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
 public class ExtendedCheckbox extends AbstractButton {
-
-    @OnlyIn(Dist.CLIENT)
     public interface OnValueChange {
-        ExtendedCheckbox.OnValueChange NOP = (p_309046_, p_309014_) -> {
-        };
-
         void onValueChange(ExtendedCheckbox pCheckbox, boolean pValue);
     }
 
