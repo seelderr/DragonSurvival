@@ -26,6 +26,9 @@ jobs:
         with:
           cache-read-only: false
 
+      - name: Build project
+        run: ./gradlew build
+
       - name: Run game tests with Gradle
         run: ./gradlew runGameTestServer
 
