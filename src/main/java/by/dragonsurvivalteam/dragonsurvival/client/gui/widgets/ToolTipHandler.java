@@ -8,13 +8,13 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
@@ -96,71 +96,30 @@ public class ToolTipHandler {
         return component.append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
     }
 
-    @SubscribeEvent
-    public static void itemDescriptions(ItemTooltipEvent event) {
-        if (event.getEntity() != null) {
-            Item item = event.getItemStack().getItem();
-            List<Component> toolTip = event.getToolTip();
+    @SubscribeEvent // Add certain descriptions to our items which use generic classes
+    public static void addCustomItemDescriptions(ItemTooltipEvent event) {
+        if (event.getEntity() != null && event.getItemStack() != ItemStack.EMPTY) {
+            ResourceLocation location = event.getItemStack().getItem().builtInRegistryHolder().key().location();
 
-            if (item == DSBlocks.FIRE_DRAGON_BEACON.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.passiveFireBeacon"));
+            if (!location.getNamespace().equals(MODID)) {
+                // Currently we only add to our own items / blocks
+                return;
             }
-            if (item == DSBlocks.MAGIC_DRAGON_BEACON.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.passiveMagicBeacon"));
+
+            /* TODO
+                do this via mixin in 'ItemStack#getTooltipLines' at the point below?
+                so that the tooltip behaves the same as a regular tooltip
+                (above custom things like enchantments, attributes or the advanced tooltip)
+
+            if (!this.has(DataComponents.HIDE_ADDITIONAL_TOOLTIP)) {
+                this.getItem().appendHoverText(this, tooltipContext, list, tooltipFlag);
             }
-            if (item == DSBlocks.PEACE_DRAGON_BEACON.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.passivePeaceBeacon"));
-            }
-            if (item == DSBlocks.CAVE_DRAGON_DOOR.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.caveDoor"));
-            }
-            if (item == DSBlocks.FOREST_DRAGON_DOOR.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.forestDoor"));
-            }
-            if (item == DSBlocks.SEA_DRAGON_DOOR.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.seaDoor"));
-            }
-            if (item == DSBlocks.LEGACY_DRAGON_DOOR.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.legacyDoor"));
-            }
-            if (item == DSBlocks.HELMET_BLOCK_1.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.grayHelmet"));
-            }
-            if (item == DSBlocks.HELMET_BLOCK_2.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.goldHelmet"));
-            }
-            if (item == DSBlocks.HELMET_BLOCK_3.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.blackHelmet"));
-            }
-            if (item == DSBlocks.DRAGON_BEACON.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.dragonBeacon"));
-            }
-            if (item == DSBlocks.DRAGON_MEMORY_BLOCK.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.dragonMemoryBlock"));
-            }
-            if (item == DSBlocks.SEA_SOURCE_OF_MAGIC.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.sea_source_of_magic"));
-            }
-            if (item == DSBlocks.FOREST_SOURCE_OF_MAGIC.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.forest_source_of_magic"));
-            }
-            if (item == DSBlocks.CAVE_SOURCE_OF_MAGIC.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.cave_source_of_magic"));
-            }
-            if (item == DSBlocks.DRAGON_PRESSURE_PLATE.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.dragon_pressure_plate"));
-            }
-            if (item == DSBlocks.HUMAN_PRESSURE_PLATE.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.human_pressure_plate"));
-            }
-            if (item == DSBlocks.SEA_PRESSURE_PLATE.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.sea_dragon_pressure_plate"));
-            }
-            if (item == DSBlocks.FOREST_PRESSURE_PLATE.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.forest_dragon_pressure_plate"));
-            }
-            if (item == DSBlocks.CAVE_PRESSURE_PLATE.get().asItem()) {
-                toolTip.add(Component.translatable("ds.description.cave_dragon_pressure_plate"));
+            */
+
+            String languageKey = "ds.description.add." + location.getPath();
+
+            if (I18n.exists(languageKey)) {
+                event.getToolTip().add(Component.translatable(languageKey));
             }
         }
     }
@@ -190,40 +149,51 @@ public class ToolTipHandler {
 
         tick++;
 
-        int width = event.getComponents().stream().map(component -> component.getWidth(Minecraft.getInstance().font)).max(Integer::compareTo).orElse(0);
-        int height = event.getComponents().stream().map(ClientTooltipComponent::getHeight).reduce(Integer::sum).orElse(0);
+        // Logic to determine width / height is from 'GuiGraphics#renderTooltipInternal'
+        int width = 0;
+        int height = event.getComponents().size() == 1 ? -2 : 0;
+
+        for (ClientTooltipComponent component : event.getComponents()) {
+            int componentWidth = component.getWidth(event.getFont());
+
+            if (componentWidth > width) {
+                width = componentWidth;
+            }
+
+            height += component.getHeight();
+        }
+
         Vector2ic tooltipPosition = event.getTooltipPositioner().positionTooltip(event.getScreenWidth(), event.getScreenHeight(), event.getX(), event.getY(), width, height);
 
         int x = tooltipPosition.x();
         int y = tooltipPosition.y();
 
-        int texWidth = 128;
-        int texHeight = 128;
+        int textureWidth = 128;
+        int textureHeight = 128;
 
-        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x - 8 - 6, y - 8 - 6, 400, 1, 1 % texHeight, 16, 16, texWidth, texHeight);
-        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width - 8 + 6, y - 8 - 6, 400, texWidth - 16 - 1, 1 % texHeight, 16, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x - 8 - 6, y - 8 - 6, 400, 1, 1 % textureHeight, 16, 16, textureWidth, textureHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width - 8 + 6, y - 8 - 6, 400, textureWidth - 16 - 1, 1 % textureHeight, 16, 16, textureWidth, textureHeight);
 
-        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x - 8 - 6, y + height - 8 + 6, 400, 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
-        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width - 8 + 6, y + height - 8 + 6, 400, texWidth - 16 - 1, 1 % texHeight + 16, 16, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x - 8 - 6, y + height - 8 + 6, 400, 1, 1 % textureHeight + 16, 16, 16, textureWidth, textureHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width - 8 + 6, y + height - 8 + 6, 400, textureWidth - 16 - 1, 1 % textureHeight + 16, 16, 16, textureWidth, textureHeight);
 
-        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width / 2 - 47, y - 16, 400, 16 + 2 * texWidth + 1, 1 % texHeight, 94, 16, texWidth, texHeight);
-        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width / 2 - 47, y + height, 400, 16 + 2 * texWidth + 1, 1 % texHeight + 16, 94, 16, texWidth, texHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width / 2 - 47, y - 16, 400, 16 + 2 * textureWidth + 1, 1 % textureHeight, 94, 16, textureWidth, textureHeight);
+        event.getGraphics().blit(isBlinking ? TOOLTIP_BLINKING : TOOLTIP, x + width / 2 - 47, y + height, 400, 16 + 2 * textureWidth + 1, 1 % textureHeight + 16, 94, 16, textureWidth, textureHeight);
     }
 
     private static boolean isHelpText() {
         if (!tooltipChanges) {
             return false;
         }
-        if (Minecraft.getInstance().level == null) {
+
+        Minecraft minecraft = Minecraft.getInstance();
+
+        if (minecraft.level == null || minecraft.screen == null) {
             return false;
         }
 
-        if (Minecraft.getInstance().screen == null) {
-            return false;
-        }
-
-        for (GuiEventListener btn : Minecraft.getInstance().screen.children()) {
-            if (btn instanceof HelpButton && ((HelpButton) btn).isHoveredOrFocused()) {
+        for (GuiEventListener element : minecraft.screen.children()) {
+            if (element instanceof HelpButton helpButton && helpButton.isHovered()) {
                 return true;
             }
         }
