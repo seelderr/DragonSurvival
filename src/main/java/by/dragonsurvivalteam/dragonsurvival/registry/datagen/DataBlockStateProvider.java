@@ -192,7 +192,10 @@ public class DataBlockStateProvider extends BlockStateProvider {
                         .forAllStates(state -> {
                             boolean isEmpty = !state.getValue(SourceOfMagicBlock.FILLED);
                             ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + name + (isEmpty ? "_empty" : "")));
-                            return ConfiguredModel.builder().modelFile(modelFile).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
+                            return ConfiguredModel.builder()
+                                    .modelFile(modelFile)
+                                    .rotationY((int) (state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) % 360)
+                                    .build();
                         });
             } else if (holder.get() instanceof RotatedPillarBlock) {
                 getVariantBuilder(holder.get())
