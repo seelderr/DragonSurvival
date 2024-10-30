@@ -16,6 +16,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.animation.AnimationState;
@@ -54,64 +55,42 @@ public class DragonModel extends GeoModel<DragonEntity> {
             return;
         }
 
+        float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         Player player = dragon.getPlayer();
         DragonStateHandler handler = DragonStateProvider.getData(player);
         DragonMovementData md = handler.getMovementData();
 
-        MathParser.setVariable("query.y_velocity", () -> md.deltaMovement.y);
         MathParser.setVariable("query.head_yaw", () -> md.headYaw);
         MathParser.setVariable("query.head_pitch", () -> md.headPitch);
 
         double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
         MathParser.setVariable("query.gravity", () -> gravity);
 
-        double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
+        double verticalVelocity = md.deltaMovement.y * 10;
 
-        double bodyYawAvg;
-        double headYawAvg;
-        double headPitchAvg;
-        double yAccelAvg;
+        double bodyYawTarget;
+        double headYawTarget;
+        double headPitchTarget;
         if (!ClientDragonRenderer.isOverridingMovementData) {
-            double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) * md.getTickFactor();
-            double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) * md.getTickFactor();
-            double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) * md.getTickFactor();
-
-            dragon.bodyYawHistory.add(bodyYawChange);
-            while (dragon.bodyYawHistory.size() > 10 * md.getTickFactor()) {
-                dragon.bodyYawHistory.removeFirst();
-            }
-
-            dragon.headYawHistory.add(headYawChange);
-            while (dragon.headYawHistory.size() > 10 * md.getTickFactor()) {
-                dragon.headYawHistory.removeFirst();
-            }
-
-            dragon.headPitchHistory.add(headPitchChange);
-            while (dragon.headPitchHistory.size() > 10 * md.getTickFactor()) {
-                dragon.headPitchHistory.removeFirst();
-            }
-
-            dragon.yAccelHistory.add(yAccel);
-            while (dragon.yAccelHistory.size() > 10 * md.getTickFactor()) {
-                dragon.yAccelHistory.removeFirst();
-            }
-
-            bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(a -> a).sum() / dragon.bodyYawHistory.size();
-            headYawAvg = dragon.headYawHistory.stream().mapToDouble(a -> a).sum() / dragon.headYawHistory.size();
-            headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(a -> a).sum() / dragon.headPitchHistory.size();
-            yAccelAvg = dragon.yAccelHistory.stream().mapToDouble(a -> a).sum() / dragon.yAccelHistory.size();
+            bodyYawTarget = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * 0.2;
+            headYawTarget = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * 0.2;
+            headPitchTarget = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * 0.2;
         } else {
-            bodyYawAvg = 0;
-            headYawAvg = 0;
-            headPitchAvg = 0;
-            yAccelAvg = 0;
+            bodyYawTarget = 0;
+            headYawTarget = 0;
+            headPitchTarget = 0;
         }
 
-        MathParser.setVariable("query.body_yaw_change", () -> bodyYawAvg);
-        MathParser.setVariable("query.head_yaw_change", () -> headYawAvg);
-        MathParser.setVariable("query.head_pitch_change", () -> headPitchAvg);
+        double currentBodyYawChange = MathParser.getVariableFor("query.body_yaw_change").get();
+        double currentHeadPitchChange = MathParser.getVariableFor("query.head_pitch_change").get();
+        double currentHeadYawChange = MathParser.getVariableFor("query.head_yaw_change").get();
+        double currentTailMotionUp = MathParser.getVariableFor("query.tail_motion_up").get();
 
-        MathParser.setVariable("query.y_accel", () -> yAccelAvg);
+        MathParser.setVariable("query.body_yaw_change", () -> Mth.lerp(deltaTick, currentBodyYawChange, bodyYawTarget));
+        MathParser.setVariable("query.head_yaw_change", () -> Mth.lerp(deltaTick, currentHeadPitchChange, headYawTarget));
+        MathParser.setVariable("query.head_pitch_change", () -> Mth.lerp(deltaTick, currentHeadYawChange, headPitchTarget));
+        // TODO: Why does this instantly snap?
+        MathParser.setVariable("query.tail_motion_up", () -> Mth.lerp(deltaTick * 0.1, -verticalVelocity, currentTailMotionUp));
     }
 
     @Override
