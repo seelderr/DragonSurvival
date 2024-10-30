@@ -19,7 +19,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.EntityRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LivingRendererAccessor;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -205,7 +204,7 @@ public class ClientDragonRenderer {
 
         if (handler.isDragon()) {
 
-            if (player == ClientProxy.getLocalPlayer()) {
+            if (player == minecraft.player) {
                 renderDelay = MAX_DELAY;
             }
 
@@ -231,7 +230,7 @@ public class ClientDragonRenderer {
                 int eventLight = renderPlayerEvent.getPackedLight();
                 final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 
-                if (dragonNameTags && player != ClientProxy.getLocalPlayer()) {
+                if (dragonNameTags && player != minecraft.player) {
                     RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, poseStack, renderTypeBuffer, eventLight, partialRenderTick);
                     NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
@@ -364,7 +363,7 @@ public class ClientDragonRenderer {
                 poseStack.popPose();
             }
         } else {
-            if (renderDelay > 0 && player == ClientProxy.getLocalPlayer()) {
+            if (renderDelay > 0 && player == minecraft.player) {
                 renderDelay--;
                 renderPlayerEvent.setCanceled(true);
             } else {

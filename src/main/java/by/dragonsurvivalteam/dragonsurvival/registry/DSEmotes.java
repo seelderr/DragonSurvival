@@ -14,8 +14,6 @@ import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,69 +26,55 @@ import java.util.List;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DSEmotes {
-    public static final ResourceLocation DS_CLIENT_EMOTES = ResourceLocation.fromNamespaceAndPath(MODID, "emotes.json");
     public static final ArrayList<Emote> EMOTES = new ArrayList<>();
+    private static final ResourceLocation DS_CLIENT_EMOTES = ResourceLocation.fromNamespaceAndPath(MODID, "emotes.json");
 
-    private static boolean hasStarted = false;
-
-    @SubscribeEvent // FIXME :: use proxy
+    @SubscribeEvent
     public static void clientStart(FMLClientSetupEvent event) {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
+        DSEmotes.reload(Minecraft.getInstance().getResourceManager());
 
-            if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
-                ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener) manager -> {
-                    DSEmotes.EMOTES.clear();
-                    DSEmotes.reload(Minecraft.getInstance().getResourceManager(), DSEmotes.DS_CLIENT_EMOTES);
-                });
-            }
+        if (Minecraft.getInstance().getResourceManager() instanceof ReloadableResourceManager) {
+            ((ReloadableResourceManager) Minecraft.getInstance().getResourceManager()).registerReloadListener((ResourceManagerReloadListener) manager -> {
+                DSEmotes.EMOTES.clear();
+                DSEmotes.reload(Minecraft.getInstance().getResourceManager());
+            });
         }
     }
 
-    protected static void reload(ResourceManager manager, ResourceLocation location) {
+    protected static void reload(ResourceManager manager) {
         try {
             Gson gson = GsonFactory.getDefault();
-            Resource resource = manager.getResource(location).orElse(null);
+            Resource resource = manager.getResource(DSEmotes.DS_CLIENT_EMOTES).orElse(null);
             if (resource == null)
-                throw new RuntimeException(String.format("Resource '%s' not found!", location.getPath()));
+                throw new RuntimeException(String.format("Resource '%s' not found!", DSEmotes.DS_CLIENT_EMOTES.getPath()));
             InputStream in = resource.open();
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-                EmoteRegistryClass je = gson.fromJson(reader, EmoteRegistryClass.class);
+                EmoteDataObject dataObject = gson.fromJson(reader, EmoteDataObject.class);
 
-                if (je != null) {
-                    List<Emote> emts = Arrays.asList(je.emotes);
+                if (dataObject != null) {
+                    List<Emote> emotes = Arrays.asList(dataObject.emotes);
                     HashMap<String, Integer> nameCount = new HashMap<>();
 
-                    for (Emote emt : emts) {
-                        nameCount.putIfAbsent(emt.name, 0);
-                        nameCount.put(emt.name, nameCount.get(emt.name) + 1);
-                        emt.id = emt.name + "_" + nameCount.get(emt.name);
+                    for (Emote emote : emotes) {
+                        nameCount.putIfAbsent(emote.name, 0);
+                        nameCount.put(emote.name, nameCount.get(emote.name) + 1);
+                        emote.id = emote.name + "_" + nameCount.get(emote.name);
                     }
 
-                    EMOTES.addAll(emts);
+                    EMOTES.addAll(emotes);
                 }
             } catch (IOException exception) {
                 DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvivalMod.LOGGER.error("Resource [" + location + "] could not be opened", exception);
+            DragonSurvivalMod.LOGGER.error("Resource [" + DSEmotes.DS_CLIENT_EMOTES + "] could not be opened", exception);
         }
     }
 
-    @EventBusSubscriber(Dist.CLIENT)
-    public static class StartHandler {
-        @SubscribeEvent
-        public static void clientStart(EntityJoinLevelEvent event) {
-            if (!hasStarted) {
-                hasStarted = true;
-            }
-        }
-    }
-
-    public static class EmoteRegistryClass {
+    public static class EmoteDataObject {
         public Emote[] emotes;
     }
 }

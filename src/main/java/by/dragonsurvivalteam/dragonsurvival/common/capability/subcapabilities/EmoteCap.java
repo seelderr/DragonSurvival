@@ -5,11 +5,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EmoteCap extends SubCap {
+public class EmoteCap extends SubCap { // FIXME :: likely doesn't sync correctly because emotes are only loaded on the client
     public static final int MAX_EMOTES = 4;
     public boolean emoteMenuOpen = false;
 
@@ -22,7 +23,7 @@ public class EmoteCap extends SubCap {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
 
         for (int i = 0; i < MAX_EMOTES; i++) {
@@ -45,7 +46,7 @@ public class EmoteCap extends SubCap {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, @NotNull CompoundTag tag) {
         for (int i = 0; i < MAX_EMOTES; i++) {
             String emoteId = tag.contains("emote_" + i) ? tag.getString("emote_" + i) : null;
             int emoteTick = tag.contains("emote_tick_" + i) ? tag.getInt("emote_tick_" + i) : 0;

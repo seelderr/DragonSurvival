@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -12,12 +13,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.Tiers;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.fml.loading.FMLEnvironment;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Locale;
-import javax.annotation.Nullable;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
     @Override
@@ -30,10 +30,10 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
         return 1;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @Override
     public ArrayList<Component> getInfo() {
-        DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
+        //noinspection DataFlowIssue -> player is present
+        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvivalMod.PROXY.getLocalPlayer());
 
         ArrayList<Component> components = super.getInfo();
         components.add(Component.translatable("ds.skill.tool_type." + getName()));
@@ -61,8 +61,8 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
         return FMLEnvironment.dist == Dist.CLIENT ? textureId : 0;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public @Nullable Pair<Tiers, Integer> getHarvestInfo() {
+        //noinspection DataFlowIssue -> player is present
         DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
         if (handler.getType() == null) {

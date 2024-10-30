@@ -493,9 +493,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void setHasFlight(boolean hasFlight) {
-        if (hasFlight != this.hasFlight) { // TODO :: Why this check?
-            this.hasFlight = hasFlight;
-        }
+        this.hasFlight = hasFlight;
     }
 
     public void setIsHiding(boolean isHiding) {

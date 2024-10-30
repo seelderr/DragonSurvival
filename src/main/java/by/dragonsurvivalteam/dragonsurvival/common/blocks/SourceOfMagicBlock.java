@@ -73,9 +73,8 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
         registerDefaultState(getStateDefinition().any().setValue(WATERLOGGED, false).setValue(PRIMARY_BLOCK, true).setValue(BACK_BLOCK, false).setValue(TOP_BLOCK, false).setValue(FILLED, false));
     }
 
-    // TODO: Is it fine to use a unit codec here?
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected @NotNull MapCodec<? extends HorizontalDirectionalBlock> codec() {
         return MapCodec.unit(this);
     }
 
@@ -131,8 +130,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
     }
 
     @Override
-    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state,
-                            @Nullable LivingEntity placer, ItemStack stack) {
+    public void setPlacedBy(Level worldIn, BlockPos pos, BlockState state, @Nullable LivingEntity placer, ItemStack stack) {
         super.setPlacedBy(worldIn, pos, state, placer, stack);
 
         if (placer != null) {
@@ -374,7 +372,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
         }
     }
 
-    @Override
+    @Override // Entrypoint for bucket interaction
     public @NotNull ItemStack pickupBlock(@Nullable final Player player, @NotNull final LevelAccessor level, @NotNull final BlockPos position, @NotNull final BlockState state) {
         BlockEntity entity = level.getBlockEntity(position);
         BlockPos rootPosition = null;
@@ -397,6 +395,11 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
         return ItemStack.EMPTY;
     }
 
+    /**
+     * If the block entity is filled ({@link SourceOfMagicBlock#FILLED}) it will return the appropriate liquid <br>
+     * If an item was present in the container (see {@link SourceOfMagicTileEntity#consumables} then said stack may be decremented <br> <br>
+     * This happens here because in {@link SourceOfMagicTileEntity#serverTick(Level, BlockPos, BlockState, SourceOfMagicTileEntity)} it will fill back up if an item is present
+     */
     private ItemStack updateAndTakeLiquid(final LevelAccessor level, final BlockPos position, final BlockState state, final SourceOfMagicTileEntity source) {
         if (!state.getValue(SourceOfMagicBlock.FILLED)) {
             return ItemStack.EMPTY;
@@ -424,6 +427,7 @@ public class SourceOfMagicBlock extends HorizontalDirectionalBlock implements Si
             source.removeItem(0, 1);
         }
 
+        // TODO :: add custom liquid (poison) for forest dragons? could possibly have various interactions
         if (block == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
             return Items.LAVA_BUCKET.getDefaultInstance();
         } else if (block == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || block == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) {

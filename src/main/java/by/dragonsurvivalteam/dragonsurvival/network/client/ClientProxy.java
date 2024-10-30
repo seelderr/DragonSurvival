@@ -35,29 +35,18 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nullable;
 
 
 /**
  * To avoid loading client classes on the server side
  */
 public class ClientProxy {
-    public static @Nullable Player getLocalPlayer() {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-            return Minecraft.getInstance().player;
-        }
-
-        return null;
-    }
-
     public static void handleSyncDragonClawRender(final SyncDragonClawRender.Data message) {
         Player player = Minecraft.getInstance().player;
 

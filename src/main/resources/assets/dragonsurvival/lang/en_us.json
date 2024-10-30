@@ -147,7 +147,7 @@
   "ds.wings.nohunger": "Hunger has exhausted you, and you can't fly.",
   "ds.you.have.no.wings": "You have §cno levitation skill§r. You need to talk to the Ender dragon, or use the Flight Grant special item.",
   "ds.dragon.grants.wings": "<Ender dragon> I bestow wings on you. Now leave, quickly!",
-  "ds.space.occupied": "You need a 3x3 area to place",
+  "ds.space.occupied": "You need a 3x3 area to place the [Source of Magic] block",
   "ds.cooldown.active": "The altar is on cooldown for: %s",
   "ds.invalid_grow_item": "§6You need another type of growth artifact:§r %1$s",
   "ds.gui.tab_button.0": "Inventory",

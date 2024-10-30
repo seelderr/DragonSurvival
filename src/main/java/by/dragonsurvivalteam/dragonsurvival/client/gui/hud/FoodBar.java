@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -22,7 +22,7 @@ public class FoodBar {
     private static final RandomSource RANDOM = RandomSource.create();
 
     public static boolean render(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
-        Player localPlayer = ClientProxy.getLocalPlayer();
+        Player localPlayer = DragonSurvivalMod.PROXY.getLocalPlayer();
 
         if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer()) {
             return false;

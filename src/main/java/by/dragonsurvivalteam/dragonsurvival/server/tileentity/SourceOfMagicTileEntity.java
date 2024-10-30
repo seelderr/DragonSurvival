@@ -36,6 +36,7 @@ import java.util.HashMap;
 
 public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Container, MenuProvider, GeoBlockEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    /** List of valid items that can be placed in the container */
     public static HashMap<Item, Integer> consumables = new HashMap<>();
     public NonNullList<ItemStack> stacks = NonNullList.withSize(1, ItemStack.EMPTY);
     private int ticks;
@@ -52,6 +53,7 @@ public class SourceOfMagicTileEntity extends BaseBlockTileEntity implements Cont
         super(DSTileEntities.SOURCE_OF_MAGIC_TILE_ENTITY.get(), pWorldPosition, pBlockState);
     }
 
+    /** Handle the {@link SourceOfMagicBlock#FILLED} state, setting it to true if a {@link SourceOfMagicTileEntity#consumables} is present */
     public static void serverTick(Level level, BlockPos pPos, BlockState pState, SourceOfMagicTileEntity pBlockEntity) {
         if (!pState.getValue(SourceOfMagicBlock.FILLED) && !pBlockEntity.isEmpty()) {
             level.setBlockAndUpdate(pPos, pState.setValue(SourceOfMagicBlock.FILLED, true));

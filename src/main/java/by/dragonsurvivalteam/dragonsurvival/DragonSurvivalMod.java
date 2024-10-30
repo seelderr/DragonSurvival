@@ -10,6 +10,9 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.AddTableLootExtendedLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonHeartLootModifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.loot.DragonOreLootModifier;
+import by.dragonsurvivalteam.dragonsurvival.util.proxy.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.util.proxy.Proxy;
+import by.dragonsurvivalteam.dragonsurvival.util.proxy.ServerProxy;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -17,7 +20,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.server.packs.repository.PackSource;
-import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModContainer;
@@ -25,7 +27,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -65,6 +67,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER
 public class DragonSurvivalMod {
     public static final String MODID = "dragonsurvival";
     public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
+    public static Proxy PROXY;
 
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
     private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonOreLootModifier>> DRAGON_ORE = DragonSurvivalMod.GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
@@ -85,11 +88,14 @@ public class DragonSurvivalMod {
     );
 
     public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer) {
-        if (FMLEnvironment.dist == Dist.CLIENT) {
+        if (FMLLoader.getDist().isClient()) {
+            PROXY = new ClientProxy();
             GeckoLibClient.init();
 
             // Register the configuration screen
             modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
+        } else {
+            PROXY = new ServerProxy();
         }
 
         DragonTypes.registerTypes();

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.SmallFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
@@ -8,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
@@ -87,7 +87,7 @@ public class ClientMagicHandler {
     }
 
     public static void renderEffectParticle(final LivingEntity entity, final ParticleOptions particle) {
-        Player localPlayer = ClientProxy.getLocalPlayer();
+        Player localPlayer = DragonSurvivalMod.PROXY.getLocalPlayer();
 
         if (localPlayer != null) {
             double d0 = (double) entity.getRandom().nextFloat() * entity.getBbWidth();

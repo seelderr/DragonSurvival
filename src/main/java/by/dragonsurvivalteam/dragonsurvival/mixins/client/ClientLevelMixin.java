@@ -1,7 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins.client;
 
+import by.dragonsurvivalteam.dragonsurvival.client.handlers.DragonDestructionHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -15,7 +17,9 @@ import net.minecraft.world.level.dimension.DimensionType;
 import net.minecraft.world.level.storage.WritableLevelData;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.function.Supplier;
 
@@ -25,9 +29,19 @@ public abstract class ClientLevelMixin extends Level {
         super(pLevelData, pDimension, pRegistryAccess, pDimensionTypeRegistration, pProfiler, pIsClientSide, pIsDebug, pBiomeZoomSeed, pMaxChainedNeighborUpdates);
     }
 
+    // TODO :: there is probably an event which could be used instead
+    /** Keep which block is currently being broken to render the overlay for additional blocks if needed */
+    @SuppressWarnings("DataFlowIssue") // level should not be null
+    @Inject(method = "destroyBlockProgress", at = @At("RETURN"))
+    private void test(int breakerId, BlockPos position, int progress, CallbackInfo callback) {
+        if (Minecraft.getInstance().level.getEntity(breakerId) == Minecraft.getInstance().player) {
+            DragonDestructionHandler.centerOfDestruction = position;
+        }
+    }
+
     /** Apply the destruction process to the root block */
     @ModifyArg(method = "destroyBlockProgress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/LevelRenderer;destroyBlockProgress(ILnet/minecraft/core/BlockPos;I)V"), index = 1)
-    private BlockPos modifyDestroyBlockProgress(final BlockPos position) {
+    private BlockPos dragonSurvival$handleSourceOfMagicDestroyProgress(final BlockPos position) {
         BlockState state = getBlockState(position);
 
         if (state.getBlock() instanceof SourceOfMagicBlock) {

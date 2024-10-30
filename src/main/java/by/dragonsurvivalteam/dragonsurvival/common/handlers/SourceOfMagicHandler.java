@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -11,7 +12,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -28,10 +28,8 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-
 @EventBusSubscriber
 public class SourceOfMagicHandler {
-
     public static void cancelSourceOfMagicServer(Player player) {
         DragonStateProvider.getOptional(player).ifPresent(cap -> {
             if (cap.getMagicData().onMagicSource) {
@@ -123,9 +121,9 @@ public class SourceOfMagicHandler {
         }
     }
 
-    @SubscribeEvent // FIXME :: use proxy
+    @SubscribeEvent
     public static void playerTick(ClientTickEvent.Post event) {
-        Player player = Minecraft.getInstance().player;
+        Player player = DragonSurvivalMod.PROXY.getLocalPlayer();
 
         if (DragonStateProvider.isDragon(player)) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
@@ -154,6 +152,4 @@ public class SourceOfMagicHandler {
             }
         }
     }
-
-    // There is a third case for mining as well. See MiningTickHandler.java
 }
