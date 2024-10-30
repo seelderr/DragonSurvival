@@ -26,18 +26,18 @@ runs {
 
 	client {
 		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-		programArguments '--username', 'Dev####'
+		arguments '--username', 'Dev'
 	}
 
 	client_static_username { // To be able to start a second client in parallel
 		runType 'client'
 		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-		programArguments '--username', 'Dev'
+		arguments '--username', 'Dev'
 	}
 
 	server {
 		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-		programArgument '--nogui'
+		arguments '--nogui'
 	}
 
 	gameTestServer {
@@ -45,7 +45,7 @@ runs {
 	}
 
 	data {
-		programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+		arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
 	}
 
 	junit {
