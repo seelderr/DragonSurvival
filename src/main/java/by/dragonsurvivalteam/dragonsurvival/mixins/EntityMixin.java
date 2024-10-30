@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
@@ -99,7 +99,7 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         Entity entity = (Entity) (Object) this;
 
         // Disable fire texture
-        if (entity instanceof ItemEntity item && item.getData(DragonSurvivalMod.ENTITY_HANDLER).isFireImmune) {
+        if (entity instanceof ItemEntity item && item.getData(DragonSurvival.ENTITY_HANDLER).isFireImmune) {
             callback.setReturnValue(false);
         }
 

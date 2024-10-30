@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import io.netty.buffer.ByteBuf;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncHunterStacksRemoval(int playerId) implements CustomPacketPayload {
-    public static final CustomPacketPayload.Type<SyncHunterStacksRemoval> TYPE = new CustomPacketPayload.Type<>(DragonSurvivalMod.res("sync_hunter_stacks_removal"));
+    public static final CustomPacketPayload.Type<SyncHunterStacksRemoval> TYPE = new CustomPacketPayload.Type<>(DragonSurvival.res("sync_hunter_stacks_removal"));
     public static final StreamCodec<ByteBuf, SyncHunterStacksRemoval> STREAM_CODEC = StreamCodec.composite(
             ByteBufCodecs.INT, SyncHunterStacksRemoval::playerId,
             SyncHunterStacksRemoval::new

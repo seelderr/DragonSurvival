@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -33,7 +33,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
     @Override
     public ArrayList<Component> getInfo() {
         //noinspection DataFlowIssue -> player is present
-        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvivalMod.PROXY.getLocalPlayer());
+        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
 
         ArrayList<Component> components = super.getInfo();
         components.add(Component.translatable("ds.skill.tool_type." + getName()));

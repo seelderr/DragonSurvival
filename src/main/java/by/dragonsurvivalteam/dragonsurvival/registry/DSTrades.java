@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -48,8 +48,8 @@ import javax.annotation.Nullable;
 
 @EventBusSubscriber
 public class DSTrades {
-    public static final DeferredRegister<PoiType> DS_POI_TYPES = DeferredRegister.create(BuiltInRegistries.POINT_OF_INTEREST_TYPE, DragonSurvivalMod.MODID);
-    public static final DeferredRegister<VillagerProfession> DS_VILLAGER_PROFESSIONS = DeferredRegister.create(BuiltInRegistries.VILLAGER_PROFESSION, DragonSurvivalMod.MODID);
+    public static final DeferredRegister<PoiType> DS_POI_TYPES = DeferredRegister.create(BuiltInRegistries.POINT_OF_INTEREST_TYPE, DragonSurvival.MODID);
+    public static final DeferredRegister<VillagerProfession> DS_VILLAGER_PROFESSIONS = DeferredRegister.create(BuiltInRegistries.VILLAGER_PROFESSION, DragonSurvival.MODID);
 
     // Custom POI for the Dragon Rider Villager
     public static final Holder<PoiType> DRAGON_RIDER_POI = DS_POI_TYPES.register(
@@ -198,7 +198,7 @@ public class DSTrades {
     public static final Int2ObjectMap<VillagerTrades.ItemListing[]> LEADER_TRADES = new Int2ObjectOpenHashMap<>();
 
     // Needed for map trade
-    public static final TagKey<Structure> ON_DRAGON_HUNTERS_CASTLE_MAPS = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "on_dragon_hunter_maps"));
+    public static final TagKey<Structure> ON_DRAGON_HUNTERS_CASTLE_MAPS = TagKey.create(Registries.STRUCTURE, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "on_dragon_hunter_maps"));
 
     // This is for adding trades to villagers that are within the vanilla framework. We only do this for the dragon rider, as the leader is a completely custom entity that extends Villager and does some special things.
     @SubscribeEvent

@@ -58,8 +58,8 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.res;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSItems {

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticle;
@@ -24,7 +24,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 public class DSParticles {
     public static final DeferredRegister<ParticleType<?>> DS_PARTICLES = DeferredRegister.create(
             BuiltInRegistries.PARTICLE_TYPE,
-            DragonSurvivalMod.MODID
+            DragonSurvival.MODID
     );
 
     public static final DeferredHolder<ParticleType<?>, ParticleType<SmallFireParticle.Data>> FIRE = DS_PARTICLES.register(

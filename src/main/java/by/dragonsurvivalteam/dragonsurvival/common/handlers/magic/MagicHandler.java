@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
@@ -90,7 +90,7 @@ public class MagicHandler {
     @SubscribeEvent
     public static void livingTick(EntityTickEvent.Post event){
         if(event.getEntity() instanceof LivingEntity entity) {
-            EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
+            EntityStateHandler data = entity.getData(DragonSurvival.ENTITY_HANDLER);
 
             if (entity.hasEffect(DSEffects.BURN)) {
                 if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
@@ -251,7 +251,7 @@ public class MagicHandler {
                     boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
                     if (hit) {
-                        event.getEntity().getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player.getId();
+                        event.getEntity().getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {
                             event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));

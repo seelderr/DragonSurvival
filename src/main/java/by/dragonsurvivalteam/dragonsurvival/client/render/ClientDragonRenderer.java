@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -348,7 +348,7 @@ public class ClientDragonRenderer {
                     }
                 }
             } catch (Throwable throwable) {
-                DragonSurvivalMod.LOGGER.error("A problem occurred while rendering a dragon in third person", throwable);
+                DragonSurvival.LOGGER.error("A problem occurred while rendering a dragon in third person", throwable);
             } finally {
                 poseStack.popPose();
             }

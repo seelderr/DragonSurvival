@@ -62,17 +62,17 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities.DS_TI
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_POI_TYPES;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSTrades.DS_VILLAGER_PROFESSIONS;
 
-@Mod(DragonSurvivalMod.MODID)
+@Mod(DragonSurvival.MODID)
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-public class DragonSurvivalMod {
+public class DragonSurvival {
     public static final String MODID = "dragonsurvival";
     public static final Logger LOGGER = LogManager.getLogger("Dragon Survival");
     public static Proxy PROXY;
 
     public static final DeferredRegister<MapCodec<? extends IGlobalLootModifier>> GLM = DeferredRegister.create(NeoForgeRegistries.Keys.GLOBAL_LOOT_MODIFIER_SERIALIZERS, MODID);
-    private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonOreLootModifier>> DRAGON_ORE = DragonSurvivalMod.GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
-    private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonHeartLootModifier>> DRAGON_HEART = DragonSurvivalMod.GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
-    private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<AddTableLootExtendedLootModifier>> ADD_TABLE_LOOT_EXTENDED = DragonSurvivalMod.GLM.register("add_table_loot_extended", () -> AddTableLootExtendedLootModifier.CODEC);
+    private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonOreLootModifier>> DRAGON_ORE = DragonSurvival.GLM.register("dragon_ore", DragonOreLootModifier.CODEC);
+    private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DragonHeartLootModifier>> DRAGON_HEART = DragonSurvival.GLM.register("dragon_heart", DragonHeartLootModifier.CODEC);
+    private static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<AddTableLootExtendedLootModifier>> ADD_TABLE_LOOT_EXTENDED = DragonSurvival.GLM.register("add_table_loot_extended", () -> AddTableLootExtendedLootModifier.CODEC);
 
     public static final DeferredRegister<AttachmentType<?>> DS_ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
 
@@ -87,7 +87,7 @@ public class DragonSurvivalMod {
             () -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
     );
 
-    public DragonSurvivalMod(IEventBus modEventBus, ModContainer modContainer) {
+    public DragonSurvival(IEventBus modEventBus, ModContainer modContainer) {
         if (FMLLoader.getDist().isClient()) {
             PROXY = new ClientProxy();
             GeckoLibClient.init();
@@ -158,7 +158,7 @@ public class DragonSurvivalMod {
 
     /** Creates a {@link ResourceLocation} with the dragon survival namespace */
     public static ResourceLocation res(final String path) {
-        return location(DragonSurvivalMod.MODID, path);
+        return location(DragonSurvival.MODID, path);
     }
 
     public static ResourceLocation location(final String namespace, final String path) {

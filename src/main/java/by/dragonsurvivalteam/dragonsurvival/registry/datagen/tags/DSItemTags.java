@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
@@ -30,7 +30,7 @@ public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> CLAW_WEAPONS = key("claw_weapons");
 
     public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
-        super(output, provider, blockTags, DragonSurvivalMod.MODID, helper);
+        super(output, provider, blockTags, DragonSurvival.MODID, helper);
     }
 
     @Override
@@ -55,7 +55,7 @@ public class DSItemTags extends ItemTagsProvider {
 
         // Additional usable modded items which hydrate the sea dragon
         tag(SEA_DRAGON_HYDRATION)
-                .addOptional(DragonSurvivalMod.location("immersive_weathering", "icicle"));
+                .addOptional(DragonSurvival.location("immersive_weathering", "icicle"));
 
         // Items that are considered weapons for the claw tool slot
         tag(CLAW_WEAPONS)
@@ -110,7 +110,7 @@ public class DSItemTags extends ItemTagsProvider {
     }
 
     private static TagKey<Item> key(@NotNull final String name) {
-        return ItemTags.create(DragonSurvivalMod.res(name));
+        return ItemTags.create(DragonSurvival.res(name));
     }
 
     @Override

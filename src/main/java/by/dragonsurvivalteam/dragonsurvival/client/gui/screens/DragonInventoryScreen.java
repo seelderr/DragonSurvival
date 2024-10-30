@@ -38,7 +38,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonInventoryScreen extends EffectRenderingInventoryScreen<DragonContainer> {
     public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/inventory_button.png");

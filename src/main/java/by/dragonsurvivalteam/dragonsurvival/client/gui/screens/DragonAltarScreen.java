@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static com.mojang.blaze3d.platform.GlConst.GL_ALWAYS;
 import static com.mojang.blaze3d.platform.GlConst.GL_LEQUAL;
 

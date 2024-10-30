@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
@@ -51,7 +51,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class SkinsScreen extends Screen {
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_interface.png");
@@ -293,7 +293,7 @@ public class SkinsScreen extends Screen {
                 clickedLink = new URI(DISCORD_URL);
                 minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, DISCORD_URL, false));
             } catch (URISyntaxException exception) {
-                DragonSurvivalMod.LOGGER.error(exception);
+                DragonSurvival.LOGGER.error(exception);
             }
         }, Supplier::get) {
             @Override
@@ -310,7 +310,7 @@ public class SkinsScreen extends Screen {
                 clickedLink = uri;
                 minecraft.setScreen(new ConfirmLinkScreen(this::confirmLink, WIKI_URL, false));
             } catch (URISyntaxException exception) {
-                DragonSurvivalMod.LOGGER.error(exception);
+                DragonSurvival.LOGGER.error(exception);
             }
         }, Supplier::get) {
             @Override

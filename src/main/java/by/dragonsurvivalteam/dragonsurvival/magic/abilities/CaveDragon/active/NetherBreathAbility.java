@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.LargeFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.SmallFireParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
@@ -42,7 +42,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 
 import java.util.ArrayList;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
 @RegisterDragonAbility
@@ -284,7 +284,7 @@ public class NetherBreathAbility extends BreathAbility {
             BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
             if (entityHit.getRandom().nextInt(100) < burnAbility.level * 15) {
-                entityHit.getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
+                entityHit.getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
                 entityHit.addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
             }
         }

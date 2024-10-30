@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.HunterOmenHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -52,12 +52,12 @@ public abstract class VillagerMixin {
 
     @Inject(method = "readAdditionalSaveData", at = @At("RETURN"))
     private void dragonSurvival$readPillagedTimer(final CompoundTag tag, final CallbackInfo callback) {
-        dragonSurvival$pillagedTimer = tag.getInt(DragonSurvivalMod.MODID + ".pillaged_timer");
+        dragonSurvival$pillagedTimer = tag.getInt(DragonSurvival.MODID + ".pillaged_timer");
     }
 
     @Inject(method = "addAdditionalSaveData", at = @At("RETURN"))
     private void dragonSurvival$savePillagedTimer(final CompoundTag tag, final CallbackInfo callback) {
-        tag.putInt(DragonSurvivalMod.MODID + ".pillaged_timer", dragonSurvival$pillagedTimer);
+        tag.putInt(DragonSurvival.MODID + ".pillaged_timer", dragonSurvival$pillagedTimer);
     }
 
     @Inject(method = "tick", at = @At("TAIL"))

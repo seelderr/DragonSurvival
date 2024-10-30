@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
@@ -29,7 +29,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Optional;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DragonEditorRegistry {
@@ -113,7 +113,7 @@ public class DragonEditorRegistry {
                 gson.toJson(savedCustomizations, writer);
                 writer.close();
             } catch (IOException e) {
-                DragonSurvivalMod.LOGGER.error(e);
+                DragonSurvival.LOGGER.error(e);
             }
         } else {
             try {
@@ -124,10 +124,10 @@ public class DragonEditorRegistry {
                     savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
                     SkinPortingSystem.upgrade(savedCustomizations);
                 } catch (IOException exception) {
-                    DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+                    DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
                 }
             } catch (FileNotFoundException exception) {
-                DragonSurvivalMod.LOGGER.error("Saved customization [" + savedFile.getName() + "] could not be found", exception);
+                DragonSurvival.LOGGER.error("Saved customization [" + savedFile.getName() + "] could not be found", exception);
             }
         }
 
@@ -154,10 +154,10 @@ public class DragonEditorRegistry {
 
                 defaultSkinValues = je.defaults;
             } catch (IOException exception) {
-                DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+                DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvivalMod.LOGGER.error("Resource [" + location + "] could not be opened", exception);
+            DragonSurvival.LOGGER.error("Resource [" + location + "] could not be opened", exception);
         }
     }
 

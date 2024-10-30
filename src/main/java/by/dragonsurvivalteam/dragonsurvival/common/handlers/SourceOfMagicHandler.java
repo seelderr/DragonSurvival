@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -123,7 +123,7 @@ public class SourceOfMagicHandler {
 
     @SubscribeEvent
     public static void playerTick(ClientTickEvent.Post event) {
-        Player player = DragonSurvivalMod.PROXY.getLocalPlayer();
+        Player player = DragonSurvival.PROXY.getLocalPlayer();
 
         if (DragonStateProvider.isDragon(player)) {
             DragonStateHandler handler = DragonStateProvider.getData(player);

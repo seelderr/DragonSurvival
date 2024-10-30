@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.emotes.Emote;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DSEmotes {
@@ -67,10 +67,10 @@ public class DSEmotes {
                     EMOTES.addAll(emotes);
                 }
             } catch (IOException exception) {
-                DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+                DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvivalMod.LOGGER.error("Resource [" + DSEmotes.DS_CLIENT_EMOTES + "] could not be opened", exception);
+            DragonSurvival.LOGGER.error("Resource [" + DSEmotes.DS_CLIENT_EMOTES + "] could not be opened", exception);
         }
     }
 

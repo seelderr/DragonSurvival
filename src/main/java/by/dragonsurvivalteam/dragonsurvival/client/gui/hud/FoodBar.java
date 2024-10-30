@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -15,14 +15,14 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class FoodBar {
     private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
     private static final RandomSource RANDOM = RandomSource.create();
 
     public static boolean render(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
-        Player localPlayer = DragonSurvivalMod.PROXY.getLocalPlayer();
+        Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
 
         if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer()) {
             return false;

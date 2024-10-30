@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
@@ -101,7 +101,7 @@ public class ConfigHandler {
                         Field field = classType.getDeclaredField(annotationData.memberName());
                         instances.add(field);
                     } catch (Exception e) {
-                        DragonSurvivalMod.LOGGER.error(e);
+                        DragonSurvival.LOGGER.error(e);
                     }
                 }
             });
@@ -126,7 +126,7 @@ public class ConfigHandler {
                 // null because it's a static access (i.e. no instance)
                 DEFAULT_CONFIG_VALUES.put(configOption.key(), field.get(null));
             } catch (IllegalAccessException e) {
-                DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
+                DragonSurvival.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
             }
 
             CONFIG_FIELDS.put(configOption.key(), field);
@@ -238,7 +238,7 @@ public class ConfigHandler {
                                             }
 
                                             // To figure out which entry in the list has problems
-                                            DragonSurvivalMod.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
+                                            DragonSurvival.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
                                             return false;
                                         },
                                         sizeRange
@@ -247,7 +247,7 @@ public class ConfigHandler {
                                 handledList = true;
                             }
                         } catch (ClassNotFoundException exception) {
-                            DragonSurvivalMod.LOGGER.error("A problem occurred while trying to handle the config [{}]", configOption.key(), exception);
+                            DragonSurvival.LOGGER.error("A problem occurred while trying to handle the config [{}]", configOption.key(), exception);
                         }
                     }
 
@@ -262,7 +262,7 @@ public class ConfigHandler {
                                     }
 
                                     // To figure out which entry in the list has problems
-                                    DragonSurvivalMod.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
+                                    DragonSurvival.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
                                     return false;
                                 },
                                 sizeRange
@@ -277,10 +277,10 @@ public class ConfigHandler {
                     // This will likely run into a 'com.electronwill.nightconfig.core.io.WritingException: Unsupported value type' exception
                     ModConfigSpec.ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
                     CONFIG_VALUES.put(key, value);
-                    DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
+                    DragonSurvival.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
                 }
             } catch (Exception e) {
-                DragonSurvivalMod.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
+                DragonSurvival.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
             }
 
             for (int i = 0; i < categories.length; i++) {
@@ -524,7 +524,7 @@ public class ConfigHandler {
                     return CustomConfig.parse(classType, string);
                 }
             } catch (ClassNotFoundException exception) {
-                DragonSurvivalMod.LOGGER.error("A problem occurred while trying to parse a custom config entry: {}", value);
+                DragonSurvival.LOGGER.error("A problem occurred while trying to parse a custom config entry: {}", value);
             }
         }
 
@@ -603,7 +603,7 @@ public class ConfigHandler {
                     }
                 }
             } catch (IllegalAccessException | IllegalArgumentException exception) {
-                DragonSurvivalMod.LOGGER.error("An error occurred while setting the config [{}]", configKey, exception);
+                DragonSurvival.LOGGER.error("An error occurred while setting the config [{}]", configKey, exception);
             }
         }
 
@@ -626,7 +626,7 @@ public class ConfigHandler {
         ModConfigSpec.ConfigValue valueHolder = CONFIG_VALUES.get(configKey);
 
         if (valueHolder == null) {
-            DragonSurvivalMod.LOGGER.error("Could not set the config value for [{}]", configKey);
+            DragonSurvival.LOGGER.error("Could not set the config value for [{}]", configKey);
             return;
         }
 
@@ -641,10 +641,10 @@ public class ConfigHandler {
             if (newValue != null) {
                 field.set(null, newValue);
             } else {
-                DragonSurvivalMod.LOGGER.error("Tried to update [{}] with a 'null' value", configKey);
+                DragonSurvival.LOGGER.error("Tried to update [{}] with a 'null' value", configKey);
             }
         } catch (IllegalAccessException | IllegalArgumentException | NullPointerException exception) {
-            DragonSurvivalMod.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", configKey, newValue, exception);
+            DragonSurvival.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", configKey, newValue, exception);
         }
     }
 

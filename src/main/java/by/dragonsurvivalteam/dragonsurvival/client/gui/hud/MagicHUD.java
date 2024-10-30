@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -26,7 +26,7 @@ import net.minecraft.world.entity.player.Player;
 
 import java.awt.*;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class MagicHUD {
     // 1.20.6 moved a whole bunch of widgets around, so to keep compatibiltiy with older versions, we need to use the old widgets texture
@@ -61,7 +61,7 @@ public class MagicHUD {
     public static Integer manabarYOffset = 0;
 
     public static boolean renderExperienceBar(GuiGraphics guiGraphics, int screenWidth) {
-        Player localPlayer = DragonSurvivalMod.PROXY.getLocalPlayer();
+        Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
 
         if (localPlayer == null || !Minecraft.getInstance().gameMode.canHurtPlayer() || !Minecraft.getInstance().gameMode.hasExperience()) {
             return false;

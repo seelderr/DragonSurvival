@@ -28,7 +28,7 @@ import software.bernie.geckolib.util.Color;
 import java.util.HashMap;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSItems.DS_ITEMS;
 
 @SuppressWarnings("unused")

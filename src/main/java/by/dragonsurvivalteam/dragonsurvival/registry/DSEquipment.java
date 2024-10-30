@@ -25,8 +25,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.EnumMap;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.res;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DSEquipment {

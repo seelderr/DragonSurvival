@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ToolTipHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -490,7 +490,7 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
     private static ConcurrentHashMap<String, Map<Item, FoodProperties>> DRAGON_FOODS = new ConcurrentHashMap<>();
 
     public static void rebuildFoodMap() {
-        DragonSurvivalMod.LOGGER.debug("Rebuilding food map...");
+        DragonSurvival.LOGGER.debug("Rebuilding food map...");
         DRAGON_FOODS = buildDragonFoodMap();
 
         // No need to keep them in-memory (they are rebuilt in 'ConfigHandler#handleConfigChange')

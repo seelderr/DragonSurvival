@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
@@ -25,7 +25,7 @@ public class DragonTreasureHandler {
 
     @SubscribeEvent
     public static void stopRestingIfActive(ClientTickEvent.Post event) {
-        Player player = DragonSurvivalMod.PROXY.getLocalPlayer();
+        Player player = DragonSurvival.PROXY.getLocalPlayer();
 
         if (player == null) {
             return;

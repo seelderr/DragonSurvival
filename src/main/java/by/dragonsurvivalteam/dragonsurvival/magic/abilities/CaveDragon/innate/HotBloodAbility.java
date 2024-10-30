@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbil
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class HotBloodAbility extends InnateDragonAbility {

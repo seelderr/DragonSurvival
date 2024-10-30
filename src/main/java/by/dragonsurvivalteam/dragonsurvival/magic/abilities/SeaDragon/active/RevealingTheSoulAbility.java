@@ -17,7 +17,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 
 import java.util.ArrayList;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class RevealingTheSoulAbility extends AoeBuffAbility {

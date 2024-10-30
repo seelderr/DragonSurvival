@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.network.claw;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import net.minecraft.network.FriendlyByteBuf;
@@ -14,13 +14,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class SyncBrokenTool implements IMessage<SyncBrokenTool.Data> {
 
     public static void handleClient(final SyncBrokenTool.Data message, final IPayloadContext context) {
         context.enqueueWork(() -> {
-            Player player = DragonSurvivalMod.PROXY.getLocalPlayer();
+            Player player = DragonSurvival.PROXY.getLocalPlayer();
 
             if (player != null) {
                 Entity entity = player.level().getEntity(message.playerId);

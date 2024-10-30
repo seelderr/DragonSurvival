@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.LargePoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
@@ -45,7 +45,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
 @RegisterDragonAbility
@@ -295,7 +295,7 @@ public class ForestBreathAbility extends BreathAbility {
 
         if (!entityHit.level().isClientSide()) {
             if (entityHit.getRandom().nextInt(100) < 30) {
-                entityHit.getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
+                entityHit.getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
                 entityHit.addEffect(new MobEffectInstance(DSEffects.DRAIN, Functions.secondsToTicks(10), 0, false, true));
             }
         }

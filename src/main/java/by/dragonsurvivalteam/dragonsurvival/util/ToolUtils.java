@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ClawToolHandler;
@@ -100,7 +100,7 @@ public class ToolUtils {
         handler.toolSwapLayer--;
 
         if (handler.toolSwapLayer < 0) {
-            DragonSurvivalMod.LOGGER.warn("Tool swap layer was lower than 0 - this should not happen");
+            DragonSurvival.LOGGER.warn("Tool swap layer was lower than 0 - this should not happen");
             handler.toolSwapLayer = 0;
         }
 

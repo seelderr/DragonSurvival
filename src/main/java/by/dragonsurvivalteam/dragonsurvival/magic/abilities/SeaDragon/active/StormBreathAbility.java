@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.SmallLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
@@ -51,7 +51,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import java.util.ArrayList;
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
 @RegisterDragonAbility
@@ -237,8 +237,8 @@ public class StormBreathAbility extends BreathAbility {
 
             if (!chargedSpreadBlacklist.contains(ResourceHelper.getKey(source).toString())) {
                 if (target != source) {
-                    EntityStateHandler sourceData = source.getData(DragonSurvivalMod.ENTITY_HANDLER);
-                    EntityStateHandler targetData = target.getData(DragonSurvivalMod.ENTITY_HANDLER);
+                    EntityStateHandler sourceData = source.getData(DragonSurvival.ENTITY_HANDLER);
+                    EntityStateHandler targetData = target.getData(DragonSurvival.ENTITY_HANDLER);
 
                     targetData.chainCount = sourceData.chainCount + 1;
 
@@ -299,7 +299,7 @@ public class StormBreathAbility extends BreathAbility {
         if (!entity.level().isClientSide()) {
             if (!chargedBlacklist.contains(ResourceHelper.getKey(entity).toString())) {
                 if (entity.getRandom().nextInt(100) < 40) {
-                    EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
+                    EntityStateHandler data = entity.getData(DragonSurvival.ENTITY_HANDLER);
                     data.lastAfflicted = player.getId();
                     data.chainCount = 1;
 

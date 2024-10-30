@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class DSEnchantmentTags extends EnchantmentTagsProvider {
     public DSEnchantmentTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
+        super(output, lookupProvider, DragonSurvival.MODID, existingFileHelper);
     }
 
     @Override
@@ -53,6 +53,6 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
     }
 
     private static TagKey<Enchantment> key(@NotNull final String path) {
-        return TagKey.create(Registries.ENCHANTMENT, DragonSurvivalMod.res(path));
+        return TagKey.create(Registries.ENCHANTMENT, DragonSurvival.res(path));
     }
 }

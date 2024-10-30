@@ -10,7 +10,7 @@ import net.neoforged.neoforge.common.data.SpriteSourceProvider;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DataSpriteSourceProvider extends SpriteSourceProvider {
 

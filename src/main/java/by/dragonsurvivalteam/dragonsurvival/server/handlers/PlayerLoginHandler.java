@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -37,7 +37,7 @@ public class PlayerLoginHandler {
                 if (handler.getType() != null && handler.getBody() == null) {
                     // Otherwise players won't be able to join the world
                     handler.setBody(DragonBodies.CENTER);
-                    DragonSurvivalMod.LOGGER.error("Player {} was a dragon but had an invalid dragon body type", player);
+                    DragonSurvival.LOGGER.error("Player {} was a dragon but had an invalid dragon body type", player);
                 }
 
                 SyncComplete.handleDragonSync(player);

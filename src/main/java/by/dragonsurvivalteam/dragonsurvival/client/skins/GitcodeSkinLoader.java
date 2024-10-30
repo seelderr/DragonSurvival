@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
 import org.apache.logging.log4j.Level;
@@ -50,7 +50,7 @@ public class GitcodeSkinLoader extends NetSkinLoader {
             }
             return result;
         } catch (IOException e) {
-            DragonSurvivalMod.LOGGER.log(Level.WARN, "Failed to get skin information in Gitcode.");
+            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in Gitcode.");
             return null;
         }
     }

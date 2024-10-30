@@ -14,7 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 
 import java.util.ArrayList;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class LightInDarknessAbility extends PassiveDragonAbility {

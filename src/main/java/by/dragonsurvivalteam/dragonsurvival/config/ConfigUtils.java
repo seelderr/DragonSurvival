@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -152,9 +152,9 @@ public class ConfigUtils {
 
     private static ResourceLocation getLocation(final String[] splitData, boolean isTag) {
         if (isTag) {
-            return DragonSurvivalMod.location(splitData[NAMESPACE].substring(1), splitData[PATH]);
+            return DragonSurvival.location(splitData[NAMESPACE].substring(1), splitData[PATH]);
         }
 
-        return DragonSurvivalMod.location(splitData[NAMESPACE], splitData[PATH]);
+        return DragonSurvival.location(splitData[NAMESPACE], splitData[PATH]);
     }
 }

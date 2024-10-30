@@ -25,7 +25,7 @@ import software.bernie.geckolib.model.GeoModel;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonModel extends GeoModel<DragonEntity> {
     private final ResourceLocation defaultTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/cave_newborn.png");

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -129,7 +129,7 @@ public class DragonAbilities {
                 T instance = constructor.newInstance();
                 instances.add(instance);
             } catch (ReflectiveOperationException | LinkageError e) {
-                DragonSurvivalMod.LOGGER.error(e);
+                DragonSurvival.LOGGER.error(e);
             }
         }
         return instances;

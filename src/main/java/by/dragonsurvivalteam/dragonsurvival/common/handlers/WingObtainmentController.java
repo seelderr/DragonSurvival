@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
@@ -82,7 +82,7 @@ public class WingObtainmentController {
                 }
             }
         } catch (Exception ex) {
-            DragonSurvivalMod.LOGGER.error(ex);
+            DragonSurvival.LOGGER.error(ex);
         }
     }
 
