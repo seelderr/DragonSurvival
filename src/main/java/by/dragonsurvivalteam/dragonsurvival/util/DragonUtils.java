@@ -15,7 +15,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class DragonUtils {
-
     public static AbstractDragonType getDragonType(Player entity) {
         return DragonStateProvider.getData(entity).getType();
     }
@@ -30,6 +29,14 @@ public class DragonUtils {
 
     public static AbstractDragonBody getDragonBody(DragonStateHandler handler) {
         return handler.getBody();
+    }
+
+    public static boolean isBodyType(final AbstractDragonBody playerType, final AbstractDragonBody typeToCheck) {
+        if (playerType == null || typeToCheck == null) {
+            return false;
+        }
+
+        return Objects.equal(playerType, typeToCheck) || playerType.getBodyName().equals(typeToCheck.getBodyName());
     }
 
     public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {

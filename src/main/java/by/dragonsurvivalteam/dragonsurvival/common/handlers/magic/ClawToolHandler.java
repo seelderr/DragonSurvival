@@ -292,7 +292,7 @@ public class ClawToolHandler {
         }
 
         for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
-            if (state.is(tagKey)) {
+            if (state.is(tagKey) && unlockedBonus > bonus) {
                 bonus = unlockedBonus;
                 break;
             }

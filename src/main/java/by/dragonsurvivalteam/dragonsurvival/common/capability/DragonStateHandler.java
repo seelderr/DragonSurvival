@@ -38,12 +38,11 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     @SuppressWarnings("unchecked")
@@ -214,46 +213,47 @@ public class DragonStateHandler extends EntityStateHandler {
     public void setType(final AbstractDragonType type, Player player) {
         AbstractDragonType oldType = dragonType;
         setType(type);
-        if (oldType != dragonType) {
+
+        if (!DragonUtils.isDragonType(oldType, dragonType)) {
             DSModifiers.updateTypeModifiers(player);
         }
     }
 
-    // Only call this version of setType if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
+    /** Only used for rendering related code - to properly set the type (and update modifiers) use {@link DragonStateHandler#setType(AbstractDragonType, Player)} */
     public void setType(final AbstractDragonType type) {
-        if (type != null && !Objects.equals(dragonType, type)) {
-            growing = true;
-            getMagicData().initAbilities(type);
-        }
-
-        if (type != null) {
-            if (Objects.equals(dragonType, type)) {
-                return;
-            }
-
-            dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
-        } else {
+        if (type == null) {
             dragonType = null;
+            return;
         }
+
+        if (DragonUtils.isDragonType(dragonType, type)) {
+            return;
+        }
+
+        growing = true;
+        getMagicData().initAbilities(type);
+        dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
     }
 
     public void setBody(final AbstractDragonBody body, Player player) {
         AbstractDragonBody oldBody = dragonBody;
         setBody(body);
-        if (oldBody != dragonBody) {
+
+        if (!DragonUtils.isBodyType(oldBody, dragonBody)) {
             DSModifiers.updateBodyModifiers(player);
         }
     }
 
-    // Only call this version of setBody if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
+    /** Only used for rendering related code - to properly set the body (and update modifiers) use {@link DragonStateHandler#setBody(AbstractDragonBody, Player)} */
     public void setBody(final AbstractDragonBody body) {
-        if (body != null) {
-            if (dragonBody == null || !body.getBodyName().equals(dragonBody.getBodyName())) {
-                dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
-                refreshBody = true;
-            }
-        } else {
-            dragonBody = null;
+        if (body == null) {
+            dragonType = null;
+            return;
+        }
+
+        if (dragonBody == null || !DragonUtils.isBodyType(body, dragonBody)) {
+            dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
+            refreshBody = true;
         }
     }
 

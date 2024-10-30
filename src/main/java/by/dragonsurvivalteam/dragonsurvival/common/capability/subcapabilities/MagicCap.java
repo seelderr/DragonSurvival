@@ -49,9 +49,9 @@ public class MagicCap extends SubCap {
         passiveDragonAbilities.clear();
         innateDragonAbilities.clear();
 
-
-        if (!ServerConfig.saveAllAbilities)
+        if (!ServerConfig.saveAllAbilities) {
             abilities.clear();
+        }
 
         if (type != null) {
             for (DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getSubtypeName(), new ArrayList<>())) {
@@ -79,11 +79,9 @@ public class MagicCap extends SubCap {
         }
     }
 
-
     public int getCurrentMana() {
         return currentMana;
     }
-
 
     public void setCurrentMana(int currentMana) {
         this.currentMana = currentMana;

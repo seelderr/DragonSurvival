@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -63,7 +62,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
     public @Nullable Pair<Tiers, Integer> getHarvestInfo() {
         //noinspection DataFlowIssue -> player is present
-        DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
+        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
 
         if (handler.getType() == null) {
             return null;

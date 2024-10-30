@@ -29,11 +29,11 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
-import javax.annotation.Nullable;
 
 public class DragonAbilities {
     public static HashMap<String, ArrayList<DragonAbility>> ABILITIES = new HashMap<>();
@@ -43,9 +43,9 @@ public class DragonAbilities {
     public static HashMap<String, DragonAbility> ABILITY_LOOKUP = new HashMap<>();
 
     public static void initAbilities() {
-        List<DragonAbility> abs = getInstances(RegisterDragonAbility.class, DragonAbility.class);
+        List<DragonAbility> abilities = getInstances(RegisterDragonAbility.class, DragonAbility.class);
 
-        for (DragonAbility ability : abs) {
+        for (DragonAbility ability : abilities) {
             if (ability == null) continue;
             ABILITY_LOOKUP.put(ability.getName(), ability);
 
@@ -109,30 +109,35 @@ public class DragonAbilities {
     @SuppressWarnings("SameParameterValue")
     private static <T> List<T> getInstances(Class<?> annotationClass, Class<T> instanceClass) {
         Type annotationType = Type.getType(annotationClass);
-        List<ModFileScanData> allScanData = ModList.get().getAllScanData();
-        Set<String> pluginClassNames = new LinkedHashSet<>();
-        for (ModFileScanData scanData : allScanData) {
-            Iterable<ModFileScanData.AnnotationData> annotations = scanData.getAnnotations();
-            for (ModFileScanData.AnnotationData a : annotations) {
-                if (Objects.equals(a.annotationType(), annotationType)) {
-                    String memberName = a.memberName();
-                    pluginClassNames.add(memberName);
+        Set<String> abilityClassNames = new LinkedHashSet<>();
+
+        for (ModFileScanData scanData : ModList.get().getAllScanData()) {
+            for (ModFileScanData.AnnotationData annotationData : scanData.getAnnotations()) {
+                if (Objects.equals(annotationData.annotationType(), annotationType)) {
+                    String memberName = annotationData.memberName();
+                    abilityClassNames.add(memberName);
                 }
             }
         }
-        List<T> instances = new ArrayList<>();
-        for (String className : pluginClassNames) {
+
+        List<T> abilityInstances = new ArrayList<>();
+
+        for (String className : abilityClassNames) {
             try {
                 Class<?> asmClass = Class.forName(className);
                 Class<? extends T> asmInstanceClass = asmClass.asSubclass(instanceClass);
                 Constructor<? extends T> constructor = asmInstanceClass.getDeclaredConstructor();
                 T instance = constructor.newInstance();
-                instances.add(instance);
-            } catch (ReflectiveOperationException | LinkageError e) {
-                DragonSurvival.LOGGER.error(e);
+                abilityInstances.add(instance);
+            } catch (ReflectiveOperationException | LinkageError exception) {
+                DragonSurvival.LOGGER.error(exception);
+            } catch (RuntimeException exception) {
+                DragonSurvival.LOGGER.error("Failed to process the ability of class [{}]", className, exception);
+                throw exception; // Don't want to start in this state
             }
         }
-        return instances;
+
+        return abilityInstances;
     }
 
     public static void addAbility(Player player, Class<? extends DragonAbility> c) {

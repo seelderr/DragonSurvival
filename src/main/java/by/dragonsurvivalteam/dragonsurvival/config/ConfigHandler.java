@@ -166,6 +166,16 @@ public class ConfigHandler {
         modContainer.registerConfig(ModConfig.Type.SERVER, serverSpec);
     }
 
+    public static Field getField(final String configKey) {
+        Field field = CONFIG_FIELDS.get(configKey);
+
+        if (field == null) {
+            throw new IllegalArgumentException("There is no field for the supplied config key [" + configKey + "]");
+        }
+
+        return field;
+    }
+
     public static void createConfigEntries(final ModConfigSpec.Builder builder, final ConfigSide side) {
         for (String key : CONFIG_KEYS.getOrDefault(side, Set.of())) {
             ConfigOption configOption = CONFIG_OBJECTS.get(key);
