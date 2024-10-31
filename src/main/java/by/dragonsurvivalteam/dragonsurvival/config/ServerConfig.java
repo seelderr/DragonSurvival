@@ -363,8 +363,8 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride")
     public static Boolean limitedRiding = true;
 
-    @ConfigType(Item.class) // FIXME :: handle with tag
-    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", validation = Validation.RESOURCE_LOCATION, comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
+    @ConfigType(Item.class) // FIXME :: handle with tag (and keep this config for regex-only)
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", validation = Validation.RESOURCE_LOCATION_REGEX, comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
     public static List<String> blacklistedItems = List.of(
             "c:tools/shield",
             "c:tools/bow",

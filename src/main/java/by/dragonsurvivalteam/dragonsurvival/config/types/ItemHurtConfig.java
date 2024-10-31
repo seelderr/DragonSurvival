@@ -37,6 +37,11 @@ public class ItemHurtConfig implements CustomConfig {
         return predicate.test(stack) ? damage : 0;
     }
 
+    public static ItemHurtConfig of(final String location, int damage) {
+        Predicate<ItemStack> predicate = ConfigUtils.itemStackPredicate(location.split(":"));
+        return new ItemHurtConfig(predicate, damage, location + ":" + damage);
+    }
+
     public static ItemHurtConfig of(final String data) {
         String[] splitData = data.split(":");
         Predicate<ItemStack> predicate = ConfigUtils.itemStackPredicate(splitData);

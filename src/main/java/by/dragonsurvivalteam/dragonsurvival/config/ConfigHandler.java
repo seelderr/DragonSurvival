@@ -338,18 +338,34 @@ public class ConfigHandler {
         };
     }
 
-    /**
-     * More specific checks depending on the config type
-     */
+    /** These are the regex meta characters that can start a valid regular expression */
+    private static final List<Character> VALID_REGEX_START = List.of('.', '^', '[', '(', '\\');
+
+    /** More specific checks depending on the config type */
     public static boolean checkSpecific(final ConfigOption configOption, final Object configValue) {
         switch (configOption.validation()) {
             case RESOURCE_LOCATION -> {
                 return ResourceLocation.tryParse((String) configValue) != null;
             }
             case RESOURCE_LOCATION_REGEX -> {
-                String[] data = ((String) configValue).split(":", 1);
+                String[] data = ((String) configValue).split(":", 2);
+
+                if (data.length != 2) {
+                    return false;
+                }
 
                 if (!ResourceLocation.isValidNamespace(data[0])) {
+                    return false;
+                }
+
+                if (ResourceLocation.isValidPath(data[1])) {
+                    return true;
+                }
+
+                char firstCharacter = data[1].charAt(0);
+
+                if (!ResourceLocation.isAllowedInResourceLocation(firstCharacter) && !VALID_REGEX_START.contains(firstCharacter)) {
+                    // If the regex starts with an invalid resource location character it needs to be a valid regex start character
                     return false;
                 }
 
@@ -481,7 +497,7 @@ public class ConfigHandler {
 
         if (resourceLocation == null) {
             // Only split the namespace from the (potential) regex path
-            String[] splitLocation = location.split(":", 1);
+            String[] splitLocation = location.split(":", 2);
 
             if (splitLocation.length < 2) {
                 return List.of();
