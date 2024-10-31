@@ -120,10 +120,10 @@ public class ConfigTests {
         List<ItemHurtConfig> configs = List.of(ItemHurtConfig.of(ConfigUtils.location(Items.POTION), damage));
         TestUtils.setAndCheckConfig(helper, "caveDragonHurtfulItems", configs);
 
-        float previousHealth = player.getHealth();
+        float expectedHealth = player.getHealth() - damage;
         onItemUseFinish(player, Items.POTION.getDefaultInstance(), 20, Items.GLASS_BOTTLE.getDefaultInstance());
         float currentHealth = player.getHealth();
-        helper.assertTrue(currentHealth == previousHealth - damage, String.format("Health is [%f] - expected [%f]", currentHealth, previousHealth));
+        helper.assertTrue(currentHealth == expectedHealth, String.format("Health is [%f] - expected [%f]", currentHealth, expectedHealth));
 
         helper.succeed();
     }
