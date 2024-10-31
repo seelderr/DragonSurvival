@@ -119,8 +119,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         MathParser.setVariable("query.body_yaw_change", () -> Mth.lerp(deltaTick, currentBodyYawChange, bodyYawAvg));
         MathParser.setVariable("query.head_yaw_change", () -> Mth.lerp(deltaTick, currentHeadPitchChange, headYawAvg));
         MathParser.setVariable("query.head_pitch_change", () -> Mth.lerp(deltaTick, currentHeadYawChange, headPitchAvg));
-        // TODO: Why does this instantly snap?
-        MathParser.setVariable("query.tail_motion_up", () -> Mth.lerp(deltaTick * 0.1, -verticalVelocityAvg, currentTailMotionUp));
+        MathParser.setVariable("query.tail_motion_up", () -> Mth.lerp(deltaTick, currentTailMotionUp, -verticalVelocityAvg));
     }
 
     @Override
