@@ -34,11 +34,14 @@ public class DragonModel extends GeoModel<DragonEntity> {
     private ResourceLocation overrideTexture;
     private CompletableFuture<Void> textureRegisterFuture = CompletableFuture.completedFuture(null);
 
-    /** Partial tick delta for 60 FPS */
-    private static final double FPS60_PARTIAL_TICK = 16.f / 50.f;
+    /** Time in MS of 1 frame for 60 FPS */
+    private static final float MS_FOR_60FPS = 1.f / 60.f * 1000.f;
 
     /** Factor to multiply the delta yaw and pitch by, needed for scaling for the animations */
     private static final double DELTA_YAW_PITCH_FACTOR = 0.2;
+
+    /** Factor to multiply the delta movement by, needed for scaling for the animations */
+    private static final double DELTA_MOVEMENT_FACTOR = 10;
 
     /**
      * TODO Body Types Update
@@ -82,25 +85,30 @@ public class DragonModel extends GeoModel<DragonEntity> {
             double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
             double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
             double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
-            double verticalVelocity = Mth.lerp(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), md.deltaMovementLastFrame.y, md.deltaMovement.y) * 10;
+            double verticalVelocity = Mth.lerp(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), md.deltaMovementLastFrame.y, md.deltaMovement.y) * DELTA_MOVEMENT_FACTOR;
+
+
+            // TODO: I want to get this data from DeltaTracker, but I can't seem to AT it properly
+            float msPerTick = 50.f;
+            float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
 
             // Accumulate them in the history
-            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
+            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.bodyYawHistory.removeFirst();
             }
             dragon.bodyYawHistory.add(bodyYawChange);
 
-            while(dragon.headYawHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
+            while(dragon.headYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.headYawHistory.removeFirst();
             }
             dragon.headYawHistory.add(headYawChange);
 
-            while(dragon.headPitchHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
+            while(dragon.headPitchHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.headPitchHistory.removeFirst();
             }
             dragon.headPitchHistory.add(headPitchChange);
 
-            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
+            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.verticalVelocityHistory.removeFirst();
             }
             dragon.verticalVelocityHistory.add(verticalVelocity);
