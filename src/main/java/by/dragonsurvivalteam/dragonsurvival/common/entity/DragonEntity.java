@@ -15,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -444,7 +445,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
     @SubscribeEvent
     public static void tickEntity(RenderFrameEvent.Pre event) {
-        globalTickCount += ClientDragonRenderer.deltaPartialTick;
+        globalTickCount += event.getPartialTick().getRealtimeDeltaTicks();
     }
 
     @Override
