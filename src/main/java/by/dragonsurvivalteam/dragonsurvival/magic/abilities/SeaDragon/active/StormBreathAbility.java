@@ -1,13 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.SmallLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.StormBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
@@ -192,7 +192,7 @@ public class StormBreathAbility extends BreathAbility {
                 double x = start.x + xDif * i;
                 double y = start.y + yDif * i + eyeHeight;
                 double z = start.z + zDif * i;
-                source.level().addParticle(new SmallLightningParticle.Data(37, true), x, y, z, xDif, yDif, zDif);
+                source.level().addParticle(new SmallLightningParticleOption(37, true), x, y, z, xDif, yDif, zDif);
             }
         }
     }
@@ -386,7 +386,7 @@ public class StormBreathAbility extends BreathAbility {
                 entity.setPotionContents(new PotionContents(STORM_BREATH));
                 entity.setDuration(Functions.secondsToTicks(2));
                 entity.setRadius(1);
-                entity.setParticle(new SmallLightningParticle.Data(37, false));
+                entity.setParticle(new SmallLightningParticleOption(37, false));
                 entity.setOwner(player);
                 serverLevel.addFreshEntity(entity);
             }
@@ -400,7 +400,7 @@ public class StormBreathAbility extends BreathAbility {
                 entity.setPotionContents(new PotionContents(STORM_BREATH));
                 entity.setDuration(Functions.secondsToTicks(2));
                 entity.setRadius(0.45f);
-                entity.setParticle(new SmallLightningParticle.Data(37, true));
+                entity.setParticle(new SmallLightningParticleOption(37, true));
                 entity.setOwner(player);
                 serverLevel.addFreshEntity(entity);
             }
@@ -456,14 +456,14 @@ public class StormBreathAbility extends BreathAbility {
                 double xSpeed = speed * 1f * xComp;
                 double ySpeed = speed * 1f * yComp;
                 double zSpeed = speed * 1f * zComp;
-                player.level().addParticle(new SmallLightningParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+                player.level().addParticle(new SmallLightningParticleOption(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
             }
 
             for (int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()) / 12; i++) {
                 double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
                 double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
                 double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
-                player.level().addParticle(new LargeLightningParticle.Data(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+                player.level().addParticle(new LargeLightningParticleOption(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
             }
         }
 

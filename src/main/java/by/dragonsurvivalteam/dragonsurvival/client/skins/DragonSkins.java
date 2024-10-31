@@ -71,7 +71,7 @@ public class DragonSkins {
 
         boolean renderStage = renderStage(player, dragonStage);
 
-        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && renderStage) {
+        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && renderStage) {
             if (playerSkinCache.containsKey(playerKey) && playerSkinCache.get(playerKey) != null) {
                 return playerSkinCache.get(playerKey);
             }
@@ -189,7 +189,7 @@ public class DragonSkins {
         boolean renderStage = renderStage(player, dragonStage);
 
 
-        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage) {
+        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && playerSkinCache.containsKey(playerKey) && renderStage) {
             if (playerGlowCache.containsKey(playerKey)) {
                 return playerGlowCache.get(playerKey);
             } else {

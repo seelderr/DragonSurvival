@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.LargePoisonParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.PoisonBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargePoisonParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallPoisonParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
@@ -144,7 +144,7 @@ public class ForestBreathAbility extends BreathAbility {
                 entity.setPotionContents(new PotionContents(FOREST_BREATH));
                 entity.setDuration(Functions.secondsToTicks(2));
                 entity.setRadius(1);
-                entity.setParticle(new LargePoisonParticle.Data(37, false));
+                entity.setParticle(new LargePoisonParticleOption(37, false));
                 entity.setOwner(player);
                 serverLevel.addFreshEntity(entity);
             }
@@ -230,14 +230,14 @@ public class ForestBreathAbility extends BreathAbility {
                 double xSpeed = speed * 1f * xComp;
                 double ySpeed = speed * 1f * yComp;
                 double zSpeed = speed * 1f * zComp;
-                player.level().addParticle(new LargePoisonParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+                player.level().addParticle(new LargePoisonParticleOption(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
             }
 
             for (int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()) / 2; i++) {
                 double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
                 double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
                 double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
-                player.level().addParticle(new SmallPoisonParticle.Data(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+                player.level().addParticle(new SmallPoisonParticleOption(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
             }
         }
 

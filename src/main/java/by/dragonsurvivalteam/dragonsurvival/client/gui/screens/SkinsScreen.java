@@ -140,7 +140,7 @@ public class SkinsScreen extends Screen {
             handler.getSkinData().skinPreset.initDefaults(handler);
 
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
-                handler.getSkinData().skinPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonStateProvider.getData(minecraft.player).getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
+                handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), DragonStateProvider.getData(minecraft.player).getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
             } else {
                 handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
             }

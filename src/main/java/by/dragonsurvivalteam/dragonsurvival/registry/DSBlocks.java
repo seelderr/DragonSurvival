@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.util.Color;
 
 import java.util.HashMap;
 import java.util.List;
@@ -770,7 +770,7 @@ public class DSBlocks {
 
     public static final DeferredHolder<Block, TreasureBlock> TREASURE_DEBRIS = DS_BLOCKS.register(
             "treasure_debris",
-            () -> new TreasureBlock(Color.ofRGB(148, 120, 114),
+            () -> new TreasureBlock(FastColor.ARGB32.color(255, 148, 120, 114),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_BROWN)
                             .noOcclusion()
@@ -785,7 +785,7 @@ public class DSBlocks {
 
     public static final DeferredHolder<Block, TreasureBlock> TREASURE_DIAMOND = DS_BLOCKS.register(
             "treasure_diamond",
-            () -> new TreasureBlock(Color.ofRGB(212, 255, 255),
+            () -> new TreasureBlock(FastColor.ARGB32.color(255, 212, 255, 255),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.DIAMOND)
                             .noOcclusion()
@@ -800,7 +800,7 @@ public class DSBlocks {
 
     public static final DeferredHolder<Block, TreasureBlock> TREASURE_EMERALD = DS_BLOCKS.register(
             "treasure_emerald",
-            () -> new TreasureBlock(Color.ofRGB(57, 240, 94),
+            () -> new TreasureBlock(FastColor.ARGB32.color(255, 57, 240, 94),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_GREEN)
                             .noOcclusion()
@@ -815,7 +815,7 @@ public class DSBlocks {
 
     public static final DeferredHolder<Block, TreasureBlock> TREASURE_COPPER = DS_BLOCKS.register(
             "treasure_copper",
-            () -> new TreasureBlock(Color.ofRGB(255, 255, 208),
+            () -> new TreasureBlock(FastColor.ARGB32.color(255, 255, 255, 208),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_ORANGE)
                             .instrument(NoteBlockInstrument.HAT)
@@ -831,7 +831,7 @@ public class DSBlocks {
 
     public static final DeferredHolder<Block, TreasureBlock> TREASURE_GOLD = DS_BLOCKS.register(
             "treasure_gold",
-            () -> new TreasureBlock(Color.ofRGB(255, 255, 243),
+            () -> new TreasureBlock(FastColor.ARGB32.color(255, 255, 255, 243),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.GOLD)
                             .noOcclusion()
@@ -846,7 +846,7 @@ public class DSBlocks {
 
     public static final DeferredHolder<Block, TreasureBlock> TREASURE_IRON = DS_BLOCKS.register(
             "treasure_iron",
-            () -> new TreasureBlock(Color.ofRGB(211, 211, 211),
+            () -> new TreasureBlock(FastColor.ARGB32.color(255, 211, 211, 211),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.METAL)
                             .noOcclusion()

@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -9,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -98,10 +98,10 @@ public class SourceOfMagicHandler {
                                 double x = -1 + random.nextDouble() * 2;
                                 double z = -1 + random.nextDouble() * 2;
 
-                                if (pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) {
-                                    player.level().addParticle(new BeaconParticle.MagicData(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+                                if (pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) { // TODO :: why do sea and forest use the same particle? forest has 'DSParticles.PEACE_BEACON_PARTICLE'
+                                    player.level().addParticle(DSParticles.MAGIC_BEACON_PARTICLE.value(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
                                 } else if (pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
-                                    player.level().addParticle(new BeaconParticle.FireData(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+                                    player.level().addParticle(DSParticles.FIRE_BEACON_PARTICLE.value(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
                                 }
 
                                 handler.getMagicData().magicSourceTimer++;

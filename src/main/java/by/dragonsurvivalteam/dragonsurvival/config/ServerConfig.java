@@ -792,4 +792,8 @@ public class ServerConfig {
     @ConfigType(MobEffect.class)
     @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Fire beacon" )
     public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
+
+    @ConfigRange(min = 0, max = 60)
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
+    public static Integer levitationAfterEffect = 3;
 }

@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.SmallFireParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallPoisonParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
@@ -64,21 +64,21 @@ public class ClientMagicHandler {
             }
 
             if (livingEntity.hasEffect(DSEffects.BURN)) {
-                ParticleOptions data = new SmallFireParticle.Data(37F, false);
+                ParticleOptions data = new SmallFireParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {
                     renderEffectParticle(livingEntity, data);
                 }
             }
 
             if (livingEntity.hasEffect(DSEffects.DRAIN)) {
-                ParticleOptions data = new SmallPoisonParticle.Data(37F, false);
+                ParticleOptions data = new SmallPoisonParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {
                     renderEffectParticle(livingEntity, data);
                 }
             }
 
             if (livingEntity.hasEffect(DSEffects.CHARGED)) {
-                ParticleOptions data = new LargeLightningParticle.Data(37F, false);
+                ParticleOptions data = new LargeLightningParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {
                     renderEffectParticle(livingEntity, data);
                 }

@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProgressButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
@@ -245,7 +246,7 @@ public class ToolTipHandler {
             event.setBorderStart(top);
             event.setBorderEnd(bottom);
         } else if (isAbilityScreen || isDragonFood) {
-            AbstractDragonType type = DragonUtils.getDragonType(Minecraft.getInstance().player);
+            AbstractDragonType type = DragonUtils.getDragonType(DragonSurvival.PROXY.getLocalPlayer());
             Color topColor = null;
             Color bottomColor = null;
 

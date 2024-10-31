@@ -106,7 +106,7 @@ public class WingObtainmentController {
 
     @OnlyIn(Dist.CLIENT) // FIXME :: move to its own class or wait for this system to be reworked
     public static void clientMessageRecieved(SyncChatEvent.Data event) {
-        Player player = Minecraft.getInstance().player;
+        Player player = DragonSurvival.PROXY.getLocalPlayer();
         if (player == null)
             return;
 

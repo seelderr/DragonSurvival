@@ -42,10 +42,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-
-/**
- * To avoid loading client classes on the server side
- */
+/** To avoid loading client classes on the server side */
 public class ClientProxy {
     public static void handleSyncDragonClawRender(final SyncDragonClawRender.Data message) {
         Player player = Minecraft.getInstance().player;
