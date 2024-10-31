@@ -71,7 +71,6 @@ public class ClientDragonRenderer {
      * First-person armor instance
      */
     public static DragonEntity dummyDragon;
-    public static float deltaPartialTick;
 
     // This used to ignore the pitch/yaw history and not update the movement data
     // if we are overriding it for a specific render.
@@ -211,7 +210,7 @@ public class ClientDragonRenderer {
 
             renderPlayerEvent.setCanceled(true);
             if (!isOverridingMovementData) {
-                setDragonMovementData(player, deltaPartialTick);
+                setDragonMovementData(player, Minecraft.getInstance().getTimer().getRealtimeDeltaTicks());
             }
             float partialRenderTick = renderPlayerEvent.getPartialTick();
             float yaw = player.getViewYRot(partialRenderTick);
@@ -504,11 +503,6 @@ public class ClientDragonRenderer {
                 event.setCanceled(true);
             }
         });
-    }
-
-    @SubscribeEvent
-    public static void calculateRealtimeDeltaTick(RenderFrameEvent.Pre event) {
-        deltaPartialTick = event.getPartialTick().getRealtimeDeltaTicks();
     }
 
     @SubscribeEvent
