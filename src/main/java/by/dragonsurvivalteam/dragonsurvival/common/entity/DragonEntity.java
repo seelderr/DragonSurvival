@@ -51,7 +51,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
     public final ArrayList<Double> bodyYawHistory = new ArrayList<>();
     public final ArrayList<Double> headYawHistory = new ArrayList<>();
     public final ArrayList<Double> headPitchHistory = new ArrayList<>();
-    public final ArrayList<Double> yAccelHistory = new ArrayList<>();
+    public final ArrayList<Double> verticalVelocityHistory = new ArrayList<>();
     /**
      * This reference must be updated whenever player is remade, for example, when changing dimensions
      */
@@ -445,7 +445,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
     @SubscribeEvent
     public static void tickEntity(RenderFrameEvent.Pre event) {
-        globalTickCount += ClientDragonRenderer.deltaPartialTick;
+        globalTickCount += event.getPartialTick().getRealtimeDeltaTicks();
     }
 
     @Override

@@ -210,7 +210,7 @@ public class DragonEditorScreen extends Screen {
     public final Function<Boolean, Boolean> checkWingsButtonAction = (selected) -> {
         boolean prevSelected = !wingsCheckbox.selected;
         wingsCheckbox.selected = selected;
-        HANDLER.setHasFlight(selected);
+        preset.skinAges.get(level).get().wings = selected;
         HANDLER.getSkinData().compileSkin();
         update();
         return prevSelected;

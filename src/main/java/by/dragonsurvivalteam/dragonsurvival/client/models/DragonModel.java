@@ -16,6 +16,7 @@ import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import software.bernie.geckolib.animation.AnimationState;
@@ -32,6 +33,15 @@ public class DragonModel extends GeoModel<DragonEntity> {
     private final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(MODID, "geo/dragon_model.geo.json");
     private ResourceLocation overrideTexture;
     private CompletableFuture<Void> textureRegisterFuture = CompletableFuture.completedFuture(null);
+
+    /** Time in MS of 1 frame for 60 FPS */
+    private static final float MS_FOR_60FPS = 1.f / 60.f * 1000.f;
+
+    /** Factor to multiply the delta yaw and pitch by, needed for scaling for the animations */
+    private static final double DELTA_YAW_PITCH_FACTOR = 0.2;
+
+    /** Factor to multiply the delta movement by, needed for scaling for the animations */
+    private static final double DELTA_MOVEMENT_FACTOR = 10;
 
     /**
      * TODO Body Types Update
@@ -53,63 +63,74 @@ public class DragonModel extends GeoModel<DragonEntity> {
             return;
         }
 
+        float deltaTickRaw = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
+        // At extremely low FPS (over 0.5 deltaTick) will cause molang to break
+        float deltaTick = Math.min(deltaTickRaw, 0.49f);
         DragonStateHandler handler = DragonStateProvider.getData(player);
         DragonMovementData md = handler.getMovementData();
 
-        MathParser.setVariable("query.y_velocity", () -> md.deltaMovement.y);
         MathParser.setVariable("query.head_yaw", () -> md.headYaw);
         MathParser.setVariable("query.head_pitch", () -> md.headPitch);
 
         double gravity = player.getAttributeValue(Attributes.GRAVITY);
         MathParser.setVariable("query.gravity", () -> gravity);
 
-        double yAccel = (md.deltaMovement.y - md.deltaMovementLastFrame.y) * md.getTickFactor();
-
         double bodyYawAvg;
         double headYawAvg;
         double headPitchAvg;
-        double yAccelAvg;
+        double verticalVelocityAvg;
         if (!ClientDragonRenderer.isOverridingMovementData) {
-            double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) * md.getTickFactor();
-            double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) * md.getTickFactor();
-            double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) * md.getTickFactor();
+            double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double verticalVelocity = Mth.lerp(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), md.deltaMovementLastFrame.y, md.deltaMovement.y) * DELTA_MOVEMENT_FACTOR;
 
-            dragon.bodyYawHistory.add(bodyYawChange);
-            while (dragon.bodyYawHistory.size() > 10 * md.getTickFactor()) {
+
+            // TODO: I want to get this data from DeltaTracker, but I can't seem to AT it properly
+            float msPerTick = 50.f;
+            float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
+
+            // Accumulate them in the history
+            while (dragon.bodyYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS)) {
                 dragon.bodyYawHistory.removeFirst();
             }
+            dragon.bodyYawHistory.add(bodyYawChange);
 
-            dragon.headYawHistory.add(headYawChange);
-            while (dragon.headYawHistory.size() > 10 * md.getTickFactor()) {
+            while (dragon.headYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS)) {
                 dragon.headYawHistory.removeFirst();
             }
+            dragon.headYawHistory.add(headYawChange);
 
-            dragon.headPitchHistory.add(headPitchChange);
-            while (dragon.headPitchHistory.size() > 10 * md.getTickFactor()) {
+            while (dragon.headPitchHistory.size() > 10 / (deltaTick / deltaTickFor60FPS)) {
                 dragon.headPitchHistory.removeFirst();
             }
+            dragon.headPitchHistory.add(headPitchChange);
 
-            dragon.yAccelHistory.add(yAccel);
-            while (dragon.yAccelHistory.size() > 10 * md.getTickFactor()) {
-                dragon.yAccelHistory.removeFirst();
+            while (dragon.verticalVelocityHistory.size() > 10 / (deltaTick / deltaTickFor60FPS)) {
+                dragon.verticalVelocityHistory.removeFirst();
             }
 
-            bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(a -> a).sum() / dragon.bodyYawHistory.size();
-            headYawAvg = dragon.headYawHistory.stream().mapToDouble(a -> a).sum() / dragon.headYawHistory.size();
-            headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(a -> a).sum() / dragon.headPitchHistory.size();
-            yAccelAvg = dragon.yAccelHistory.stream().mapToDouble(a -> a).sum() / dragon.yAccelHistory.size();
+            dragon.verticalVelocityHistory.add(verticalVelocity);
+            bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+            headYawAvg = dragon.headYawHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+            headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
+            verticalVelocityAvg = dragon.verticalVelocityHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
         } else {
             bodyYawAvg = 0;
             headYawAvg = 0;
             headPitchAvg = 0;
-            yAccelAvg = 0;
+            verticalVelocityAvg = 0;
         }
 
-        MathParser.setVariable("query.body_yaw_change", () -> bodyYawAvg);
-        MathParser.setVariable("query.head_yaw_change", () -> headYawAvg);
-        MathParser.setVariable("query.head_pitch_change", () -> headPitchAvg);
+        double currentBodyYawChange = MathParser.getVariableFor("query.body_yaw_change").get();
+        double currentHeadPitchChange = MathParser.getVariableFor("query.head_pitch_change").get();
+        double currentHeadYawChange = MathParser.getVariableFor("query.head_yaw_change").get();
+        double currentTailMotionUp = MathParser.getVariableFor("query.tail_motion_up").get();
 
-        MathParser.setVariable("query.y_accel", () -> yAccelAvg);
+        MathParser.setVariable("query.body_yaw_change", () -> Mth.lerp(deltaTick, currentBodyYawChange, bodyYawAvg));
+        MathParser.setVariable("query.head_yaw_change", () -> Mth.lerp(deltaTick, currentHeadPitchChange, headYawAvg));
+        MathParser.setVariable("query.head_pitch_change", () -> Mth.lerp(deltaTick, currentHeadYawChange, headPitchAvg));
+        MathParser.setVariable("query.tail_motion_up", () -> Mth.lerp(deltaTick, currentTailMotionUp, -verticalVelocityAvg));
     }
 
     @Override
