@@ -23,6 +23,16 @@ public class ItemHurtConfig implements CustomConfig {
         return originalData;
     }
 
+    @Override
+    public String toString() {
+        return convert();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return super.equals(object) || object instanceof ItemHurtConfig config && config.convert().equals(convert());
+    }
+
     public float getDamage(final ItemStack stack) {
         return predicate.test(stack) ? damage : 0;
     }

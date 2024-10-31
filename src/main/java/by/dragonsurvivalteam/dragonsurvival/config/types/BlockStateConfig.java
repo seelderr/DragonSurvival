@@ -28,6 +28,16 @@ public class BlockStateConfig implements CustomConfig {
         return originalData;
     }
 
+    @Override
+    public String toString() {
+        return convert();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return super.equals(object) || object instanceof BlockStateConfig config && config.convert().equals(convert());
+    }
+
     public boolean test(final BlockState state) {
         if (predicate.test(state)) {
             // Get known properties of the block

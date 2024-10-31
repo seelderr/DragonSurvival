@@ -38,11 +38,11 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
-import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     @SuppressWarnings("unchecked")
@@ -74,12 +74,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public int altarCooldown;
     public boolean hasUsedAltar;
-    public boolean isInAltar = false;
+    public boolean isInAltar;
     public boolean refreshBody;
 
-    /**
-     * Last timestamp the server synchronized the player
-     */
+    /** Last timestamp the server synchronized the player */
     public int lastSync = 0;
 
     private final DragonMovementData movementData = new DragonMovementData();
@@ -99,9 +97,7 @@ public class DragonStateHandler extends EntityStateHandler {
     private double size;
     private boolean destructionEnabled;
 
-    /**
-     * Sets the size, health and base damage
-     */
+    /** Sets the size, health and base damage */
     public void setSize(double size, Player player) {
         setSize(size);
         DSModifiers.updateSizeModifiers(player);
@@ -143,7 +139,7 @@ public class DragonStateHandler extends EntityStateHandler {
         movementData.realtimeDeltaTick = realTimeDeltaTick;
     }
 
-    // Only call this version of setSize if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
+    /** Only used for rendering related code - to properly set the size (and update modifiers) use {@link DragonStateHandler#setSize(double, Player)} */
     public void setSize(double size) {
         if (size != this.size) {
             DragonLevel oldLevel = getLevel();

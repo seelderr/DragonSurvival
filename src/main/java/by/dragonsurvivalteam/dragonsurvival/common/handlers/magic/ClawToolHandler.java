@@ -268,7 +268,6 @@ public class ClawToolHandler {
         }
 
         BlockState state = event.getState();
-        float originalSpeed = event.getOriginalSpeed();
 
         float bonus = 0;
         float unlockedBonus = 0;

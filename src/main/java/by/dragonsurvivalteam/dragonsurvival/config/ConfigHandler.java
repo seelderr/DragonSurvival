@@ -63,7 +63,7 @@ public class ConfigHandler {
     private static final HashMap<String, ConfigType> CONFIG_TYPES = new HashMap<>();
     /** Contains all {@link ConfigOption} entries <br> The key is {@link ConfigOption#key()} */
     private static final HashMap<String, ConfigOption> CONFIG_OBJECTS = new HashMap<>();
-    /** Contains all fields which have an {@link ConfigOption} annotation <br> The key is {@link ConfigOption#key()} */
+    /** Contains all fields which have a {@link ConfigOption} annotation <br> The key is {@link ConfigOption#key()} */
     private static final HashMap<String, Field> CONFIG_FIELDS = new HashMap<>();
     /** Contains all config keys per side (i.e. client or server) */
     private static final HashMap<ConfigSide, Set<String>> CONFIG_KEYS = new HashMap<>();
@@ -164,6 +164,24 @@ public class ConfigHandler {
         serverSpec = serverConfig.getRight();
 
         modContainer.registerConfig(ModConfig.Type.SERVER, serverSpec);
+    }
+
+    public static void resetConfigValues(final ConfigSide side) {
+        CONFIG_KEYS.get(side).forEach(ConfigHandler::resetConfigValue);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"}) // ignore
+    public static void resetConfigValue(final String configKey) {
+        ModConfigSpec.ConfigValue configValue = CONFIG_VALUES.get(configKey);
+        configValue.set(configValue.getDefault());
+
+        Field field = CONFIG_FIELDS.get(configKey);
+
+        try {
+            field.set(null, convertToFieldValue(field, configKey));
+        } catch (IllegalAccessException exception) {
+            DragonSurvival.LOGGER.error("Failed to update the field [" + field.getName() + "] with the default config value", exception);
+        }
     }
 
     public static Field getField(final String configKey) {
@@ -636,23 +654,32 @@ public class ConfigHandler {
         ModConfigSpec.ConfigValue valueHolder = CONFIG_VALUES.get(configKey);
 
         if (valueHolder == null) {
-            DragonSurvival.LOGGER.error("Could not set the config value for [{}]", configKey);
+            DragonSurvival.LOGGER.error("There is no known config for [{}]", configKey);
             return;
         }
 
-        // Set the value for the (hidden) config value field
-        valueHolder.set(convertToConfigValue(newValue));
-        valueHolder.save();
+
+        if (newValue != null) {
+            Object convertedValue = convertToConfigValue(newValue);
+            boolean isValid = valueHolder.getSpec().test(convertedValue);
+
+            if (!isValid) {
+                DragonSurvival.LOGGER.error("Tried to set an invalid value [{}] for the config [{}]", convertedValue, configKey);
+                return;
+            }
+
+            // Set the value for the (hidden) config value field
+            valueHolder.set(convertedValue);
+            valueHolder.save();
+        } else {
+            resetConfigValue(configKey);
+        }
 
         try {
             // Set the value for the class field
             Field field = ConfigHandler.CONFIG_FIELDS.get(configKey);
-
-            if (newValue != null) {
-                field.set(null, newValue);
-            } else {
-                DragonSurvival.LOGGER.error("Tried to update [{}] with a 'null' value", configKey);
-            }
+            // Since conversion is handled here (e.g. you can't set a float field with the value '0', you'd need to specify '0f')
+            field.set(null, convertToFieldValue(field, configKey));
         } catch (IllegalAccessException | IllegalArgumentException | NullPointerException exception) {
             DragonSurvival.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", configKey, newValue, exception);
         }

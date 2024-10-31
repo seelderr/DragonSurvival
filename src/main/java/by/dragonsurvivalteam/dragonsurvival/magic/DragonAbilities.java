@@ -29,11 +29,11 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Type;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import javax.annotation.Nullable;
 
 public class DragonAbilities {
     public static HashMap<String, ArrayList<DragonAbility>> ABILITIES = new HashMap<>();

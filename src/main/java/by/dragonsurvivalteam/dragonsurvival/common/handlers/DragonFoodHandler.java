@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber
@@ -590,9 +589,7 @@ public class DragonFoodHandler { // TODO :: create some tier-based tags for grou
 
             if (foodProperties != null) {
                 for (FoodProperties.PossibleEffect possibleEffect : foodProperties.effects()) {
-                    Supplier<MobEffectInstance> mobEffect = possibleEffect.effectSupplier();
-                    // Because we decided to leave confusion on pufferfish
-                    if (ToolTipHandler.hideUnsafeFood && !mobEffect.get().getEffect().value().isBeneficial() && mobEffect.get().getEffect() != MobEffects.CONFUSION) {
+                    if (ToolTipHandler.hideUnsafeFood && !possibleEffect.effectSupplier().get().getEffect().value().isBeneficial()) {
                         isSafe = false;
                         break;
                     }

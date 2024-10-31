@@ -32,6 +32,16 @@ public class FoodConfigCollector implements CustomConfig {
         return originalData;
     }
 
+    @Override
+    public String toString() {
+        return convert();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return super.equals(object) || object instanceof FoodConfigCollector config && config.convert().equals(convert());
+    }
+
     public Map<Item, FoodProperties> collectFoodData() {
         Map<Item, FoodProperties> foodMap = new ConcurrentHashMap<>();
 

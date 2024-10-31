@@ -29,6 +29,16 @@ public class FoodConfigPredicate implements CustomConfig {
         return originalData;
     }
 
+    @Override
+    public String toString() {
+        return convert();
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+        return super.equals(object) || object instanceof FoodConfigPredicate config && config.convert().equals(convert());
+    }
+
     public Optional<FoodProperties> getFoodData(final Item item) {
         if (!predicate.test(item)) {
             return Optional.empty();
