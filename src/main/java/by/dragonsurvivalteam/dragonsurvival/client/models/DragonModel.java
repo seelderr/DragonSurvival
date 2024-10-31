@@ -34,6 +34,12 @@ public class DragonModel extends GeoModel<DragonEntity> {
     private ResourceLocation overrideTexture;
     private CompletableFuture<Void> textureRegisterFuture = CompletableFuture.completedFuture(null);
 
+    /** Partial tick delta for 60 FPS */
+    private static final double FPS60_PARTIAL_TICK = 16.f / 50.f;
+
+    /** Factor to multiply the delta yaw and pitch by, needed for scaling for the animations */
+    private static final double DELTA_YAW_PITCH_FACTOR = 0.2;
+
     /**
      * TODO Body Types Update
      * Required:
@@ -73,29 +79,28 @@ public class DragonModel extends GeoModel<DragonEntity> {
         double headPitchAvg;
         double verticalVelocityAvg;
         if (!ClientDragonRenderer.isOverridingMovementData) {
-            double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * 0.2;
-            double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * 0.2;
-            double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * 0.2;
+            double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
+            double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
             double verticalVelocity = Mth.lerp(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), md.deltaMovementLastFrame.y, md.deltaMovement.y) * 10;
 
             // Accumulate them in the history
-            float fps60PartialTick = 16.f / 50.f;
-            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / fps60PartialTick) ) {
+            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
                 dragon.bodyYawHistory.removeFirst();
             }
             dragon.bodyYawHistory.add(bodyYawChange);
 
-            while(dragon.headYawHistory.size() > 10 / (deltaTick / fps60PartialTick) ) {
+            while(dragon.headYawHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
                 dragon.headYawHistory.removeFirst();
             }
             dragon.headYawHistory.add(headYawChange);
 
-            while(dragon.headPitchHistory.size() > 10 / (deltaTick / fps60PartialTick) ) {
+            while(dragon.headPitchHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
                 dragon.headPitchHistory.removeFirst();
             }
             dragon.headPitchHistory.add(headPitchChange);
 
-            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / fps60PartialTick) ) {
+            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / DELTA_YAW_PITCH_FACTOR) ) {
                 dragon.verticalVelocityHistory.removeFirst();
             }
             dragon.verticalVelocityHistory.add(verticalVelocity);
