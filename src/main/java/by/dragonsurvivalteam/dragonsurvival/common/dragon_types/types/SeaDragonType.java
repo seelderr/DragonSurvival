@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
@@ -29,6 +30,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SeaDragonType extends AbstractDragonType {
     public double timeWithoutWater;
@@ -58,11 +60,11 @@ public class SeaDragonType extends AbstractDragonType {
     public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
         Level level = player.level();
         boolean isInSeaBlock = DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON);
-        int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
-        WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
+        int maxTicksOutofWater = SeaDragonConfig.seaTicksWithoutWater;
+        Optional<WaterAbility> waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
 
-        if (waterAbility != null) {
-            maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
+        if (waterAbility.isPresent()) {
+            maxTicksOutofWater += Functions.secondsToTicks(waterAbility.get().getDuration());
         }
 
         double oldWaterTime = timeWithoutWater;
@@ -82,7 +84,7 @@ public class SeaDragonType extends AbstractDragonType {
                         Biome biome = level.getBiome(player.blockPosition()).value();
                         boolean hotBiome = biome.getPrecipitationAt(player.blockPosition()) == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
                         double timeIncrement = (level.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
-                        timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
+                        timeWithoutWater += SeaDragonConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
                     }
 
                     if (player.isInWaterRainOrBubble() || isInSeaBlock) {
@@ -93,7 +95,7 @@ public class SeaDragonType extends AbstractDragonType {
 
 
                     if (!player.level().isClientSide()) {
-                        float hydrationDamage = ServerConfig.seaDehydrationDamage.floatValue();
+                        float hydrationDamage = SeaDragonConfig.seaDehydrationDamage.floatValue();
 
                         if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
                             if (player.tickCount % 40 == 0) {

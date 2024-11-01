@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
@@ -25,6 +26,7 @@ import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ForestDragonType extends AbstractDragonType {
     public int timeInDarkness;
@@ -49,19 +51,16 @@ public class ForestDragonType extends AbstractDragonType {
     public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
         Level world = player.level();
 
-        int maxStressTicks = ServerConfig.forestStressTicks;
-        LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(player, LightInDarknessAbility.class);
+        int maxStressTicks = ForestDragonConfig.stressTicks;
+        Optional<LightInDarknessAbility> lightInDarkness = DragonAbilities.getAbility(player, LightInDarknessAbility.class);
 
-        if (lightInDarkness != null) {
-            maxStressTicks += Functions.secondsToTicks(lightInDarkness.getDuration());
+        if (lightInDarkness.isPresent()) {
+            maxStressTicks += Functions.secondsToTicks(lightInDarkness.get().getDuration());
         }
 
         double oldDarknessTime = timeInDarkness;
 
-        if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.MAGIC)
-                && ServerConfig.forestStressTicks > 0
-                && !player.isCreative() &&
-                !player.isSpectator()) {
+        if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.MAGIC) && ForestDragonConfig.stressTicks > 0 && !player.isCreative() && !player.isSpectator()) {
             if (!world.isClientSide()) {
                 LevelLightEngine lightManager = world.getChunkSource().getLightEngine();
                 if (lightManager.getLayerListener(LightLayer.BLOCK).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(player.blockPosition()) < 3 && lightManager.getLayerListener(LightLayer.SKY).getLightValue(
@@ -77,7 +76,7 @@ public class ForestDragonType extends AbstractDragonType {
                 timeInDarkness = Math.min(timeInDarkness, maxStressTicks);
 
                 if (timeInDarkness >= maxStressTicks && player.tickCount % 21 == 0) {
-                    player.addEffect(new MobEffectInstance(DSEffects.STRESS, Functions.secondsToTicks(ServerConfig.forestStressEffectDuration)));
+                    player.addEffect(new MobEffectInstance(DSEffects.STRESS, Functions.secondsToTicks(ForestDragonConfig.stressEffectDuration)));
                 }
 
 
@@ -87,7 +86,7 @@ public class ForestDragonType extends AbstractDragonType {
             }
 
             if (world.isClientSide() && !player.isCreative() && !player.isSpectator()) {
-                if (!player.hasEffect(DSEffects.MAGIC) && timeInDarkness == ServerConfig.forestStressTicks) {
+                if (!player.hasEffect(DSEffects.MAGIC) && timeInDarkness == ForestDragonConfig.stressTicks) {
                     world.addParticle(ParticleTypes.SMOKE, player.getX() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + world.random.nextDouble() * (world.random.nextBoolean() ? 1 : -1), 0, 0, 0);
                 }
             }

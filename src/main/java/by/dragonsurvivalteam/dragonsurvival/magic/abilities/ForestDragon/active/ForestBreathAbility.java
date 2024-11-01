@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
@@ -50,38 +51,47 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BRE
 
 @RegisterDragonAbility
 public class ForestBreathAbility extends BreathAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreath", comment = "Whether the forest breath ability should be enabled")
-    public static Boolean forestBreath = true;
+    @Translation(key = "forest_breath", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the forest breath ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forestBreath")
+    public static Boolean isEnabled = true;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathDamage", comment = "The amount of damage the forest breath ability deals. This value is multiplied by the skill level.")
-    public static Double forestBreathDamage = 2.0;
+    @Translation(key = "forest_breath_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (multiplied by ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_damage")
+    public static Double damage = 2.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCooldown", comment = "The cooldown in seconds of the forest breath ability")
-    public static Double forestBreathCooldown = 5.0;
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "forest_breath_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forestBreathCooldown")
+    public static Double cooldown = 5.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathCasttime", comment = "The casttime in seconds of the forest breath ability")
-    public static Double forestBreathCasttime = 1.0;
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "forest_breath_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_cast_time")
+    public static Double castTime = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathInitialMana", comment = "The mana cost for starting the forest breath ability")
-    public static Integer forestBreathInitialMana = 2;
+    @Translation(key = "forest_breath_initial_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for starting the cast")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_initial_mana_cost")
+    public static Integer initialManaCost = 2;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathOvertimeMana", comment = "The mana cost of sustaining the forest breath ability")
-    public static Integer forestBreathOvertimeMana = 1;
+    @Translation(key = "storm_breath_sustaining_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for sustaining the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forestBreathOvertimeMana")
+    public static Integer sustainedManaCost = 1;
 
     @ConfigRange(min = 0.5, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "forestBreathManaTicks", comment = "How often in seconds, mana is consumed while using forest breath")
-    public static Double forestBreathManaTicks = 2.0;
+    @Translation(key = "forest_breath_mana_cost_tick_rate", type = Translation.Type.CONFIGURATION, comments = "Time (in seconds) between ticks of the sustained mana cost being applied")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_mana_cost_tick_rate")
+    public static Double sustainedManaCostTickRate = 2.0;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "allowDirtTransformation", comment = "Allow the forest breath to transform dirt into nature related blocks")
+    @Translation(key = "forest_breath_dirt_transformation", type = Translation.Type.CONFIGURATION, comments = "If enabled the forest breath will be able to transform dirt into other nature related blocks")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_dirt_transformation")
     public static Boolean allowDirtTransformation = true;
 
     @ConfigType(Block.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "forest_breath"}, key = "dirtTransformationBlocks", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Blocks which dirt can be transformed into. Formatting: mod_id:block_id:chance (e.g. minecraft:podzol:7) (The chance is x out of 100)")
+    @Translation(key = "forest_breath_dirt_transformation_blocks", type = Translation.Type.CONFIGURATION, comments = "Blocks which dirt can be transformed into - Formatting: namespace:path:chance (e.g. minecraft:podzol:7) (The chance is x out of 100)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_dirt_transformation_blocks", validation = Validation.RESOURCE_LOCATION_NUMBER)
     public static List<String> dirtTransformationBlocks = List.of(
             "minecraft:moss_block:3",
             "minecraft:podzol:5",
@@ -101,17 +111,19 @@ public class ForestBreathAbility extends BreathAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/poisonous_breath_4.png")
+        };
     }
 
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + forestBreathDamage));
+        list.add(Component.translatable("ds.skill.damage", "+" + damage));
         return list;
     }
 
@@ -127,7 +139,7 @@ public class ForestBreathAbility extends BreathAbility {
 
     @Override
     public boolean isDisabled() {
-        return super.isDisabled() || !forestBreath;
+        return super.isDisabled() || !isEnabled;
     }
 
     @Override
@@ -251,7 +263,7 @@ public class ForestBreathAbility extends BreathAbility {
 
     @Override
     public int getManaCost() {
-        return forestBreathOvertimeMana;
+        return sustainedManaCost;
     }
 
     @Override
@@ -262,7 +274,7 @@ public class ForestBreathAbility extends BreathAbility {
 
     @Override
     public int getSkillCooldown() {
-        return Functions.secondsToTicks(forestBreathCooldown);
+        return Functions.secondsToTicks(cooldown);
     }
 
 
@@ -311,7 +323,7 @@ public class ForestBreathAbility extends BreathAbility {
     }
 
     public static float getDamage(int level) {
-        return (float) (forestBreathDamage * level);
+        return (float) (damage * level);
     }
 
 
@@ -332,17 +344,17 @@ public class ForestBreathAbility extends BreathAbility {
 
     @Override
     public int getSkillChargeTime() {
-        return Functions.secondsToTicks(forestBreathCasttime);
+        return Functions.secondsToTicks(castTime);
     }
 
     @Override
     public int getContinuousManaCostTime() {
-        return Functions.secondsToTicks(forestBreathManaTicks);
+        return Functions.secondsToTicks(sustainedManaCostTickRate);
     }
 
     @Override
     public int getInitManaCost() {
-        return forestBreathInitialMana;
+        return initialManaCost;
     }
 
     @Override

@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,36 +26,45 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class HunterAbility extends ChargeCastAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterEnabled", comment = "Whether the hunter ability should be enabled")
+    @Translation(key = "hunter", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the hunter ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter")
     public static Boolean hunterEnabled = true;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDuration", comment = "The duration in seconds of the hunter effect given when the ability is used")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "hunter_duration", type = Translation.Type.CONFIGURATION, comments = "Duration (in seconds) of the effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_duration")
     public static Double hunterDuration = 30.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCooldown", comment = "The cooldown in seconds of the hunter ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "hunter_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_cooldown")
     public static Double hunterCooldown = 30.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterCasttime", comment = "The cast time in seconds of the hunter ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "hunter_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_cast_time")
     public static Double hunterCasttime = 3.0;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterDamageBonus", comment = "The bonus damage multiplier the hunter effect gives when invisible. This value is multiplied by the skill level.")
-    public static Double hunterDamageBonus = 1.0;
+    @Translation(key = "hunter_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = {"Determines the damage multiplier when attacking while the effect is active (multiplied by the ability level) - disabled if set to 0", "Note that the effect will be removed after the first attack"})
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_damage_multiplier")
+    public static float hunterDamageBonus = 1.0f;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "hunterManaCost", comment = "The mana cost for using the hunter ability")
+    @Translation(key = "hunter_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_mana_cost")
     public static Integer hunterManaCost = 1;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "full_invisibility", comment = "Whether other players should appear fully invisible at maximum hunter stacks")
+    @Translation(key = "hunter_fully_invisible", type = Translation.Type.CONFIGURATION, comments = "If enabled other players will be fully invisible at maximum hunter stacks")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "full_invisibility")
     public static Boolean fullyInvisible = false;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "translucent_items", comment = "Whether your held items should also appear translucent")
-    public static Boolean translucentItems = true;
+    @Translation(key = "hunter_translucent_items_first_person", type = Translation.Type.CONFIGURATION, comments = "If enabled items held in first person will also appear translucent")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_translucent_items_first_person")
+    public static Boolean translucentItemsFirstPerson = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"magic", "abilities", "forest_dragon", "actives", "hunter"}, key = "fix_translucency", comment = "This enables the shader features of fabulous mode which are needed for translucency to work correctly")
+    @Translation(key = "hunter_fix_translucency", type = Translation.Type.CONFIGURATION, comments = "This enables the shader features of fabulous mode which are needed for translucency to work correctly")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_fix_translucency")
     public static Boolean fixTranslucency = true;
 
     private static final Integer[] REQUIRED_LEVELS = new Integer[]{0, 25, 35, 55};
@@ -135,7 +145,7 @@ public class HunterAbility extends ChargeCastAbility {
         return Functions.secondsToTicks(hunterDuration * getLevel());
     }
 
-    public double getDamage() {
+    public float getDamage() {
         return hunterDamageBonus * getLevel();
     }
 

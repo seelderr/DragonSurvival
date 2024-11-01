@@ -110,8 +110,8 @@ public class BallLightningEntity extends DragonBallEntity {
         Entity owner = getOwner();
         DamageSource source;
 
-        if (owner instanceof Player) {
-            range = DragonAbilities.getSelfAbility((Player) owner, BallLightningAbility.class).getRange();
+        if (owner instanceof Player player) {
+            range = DragonAbilities.getAbility(player, BallLightningAbility.class).map(BallLightningAbility::getRange).orElse(range);
             source = owner.damageSources().playerAttack((Player) owner);
         } else {
             source = damageSources().lightningBolt();

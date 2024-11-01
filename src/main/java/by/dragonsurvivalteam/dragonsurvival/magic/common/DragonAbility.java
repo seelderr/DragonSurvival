@@ -3,6 +3,9 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -81,13 +84,13 @@ public abstract class DragonAbility {
         if(!ServerConfig.dragonAbilities){
             return true;
         }
-        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
+        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.CAVE) && !CaveDragonConfig.caveDragonAbilities){
             return true;
         }
-        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
+        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.SEA) && !SeaDragonConfig.seaDragonAbilities){
             return true;
         }
-        return DragonUtils.isDragonType(getDragonType(), DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
+        return DragonUtils.isDragonType(getDragonType(), DragonTypes.FOREST) && !ForestDragonConfig.areAbilitiesEnabled;
     }
 
     public int getLevel() {

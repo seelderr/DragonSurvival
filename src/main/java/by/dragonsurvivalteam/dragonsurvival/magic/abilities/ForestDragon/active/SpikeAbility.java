@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.InstantCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -26,26 +27,32 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class SpikeAbility extends InstantCastAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeEnabled", comment = "Whether the spike ability should be enabled")
+    @Translation(key = "spike", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the spike ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike")
     public static Boolean spikeEnabled = true;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeSpread", comment = "The amount each additional spike fired will add to its inaccuracy")
+    @Translation(key = "spike_spread", type = Translation.Type.CONFIGURATION, comments = "The amount of spread each additionally fired spike will have - spikes will have no spread if set to 0")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_spread")
     public static Float spikeSpread = 1.0F;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeMultishot", comment = "Whether the spike ability will fire an additional shot per level")
+    @Translation(key = "spike_additional_projectiles", type = Translation.Type.CONFIGURATION, comments = "The spike ability will fire additional projectiles based on the ability level if enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_additional_projectiles")
     public static Boolean spikeMultishot = true;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in seconds of the spike ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "spike_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_cooldown")
     public static Double spikeCooldown = 3.0;
 
     @ConfigRange(min = 0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeDamage", comment = "The amount of damage the spike ability deals. This value is multiplied by the skill level.")
+    @Translation(key = "spike_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (multiplied by the ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_damage")
     public static Double spikeDamage = 2.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeManaCost", comment = "The mana cost for using the spike ability")
+    @Translation(key = "spike_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_mana_cost")
     public static Integer spikeManaCost = 1;
 
     @Override

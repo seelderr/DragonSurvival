@@ -3,11 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -18,12 +19,13 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class WaterAbility extends PassiveDragonAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "water", comment = "Whether the water ability should be enabled")
+    @Translation(key = "water", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the water ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "passive"}, key = "water")
     public static Boolean water = true;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDuration() + Functions.ticksToSeconds(ServerConfig.seaTicksWithoutWater));
+        return Component.translatable("ds.skill.description." + getName(), getDuration() + Functions.ticksToSeconds(SeaDragonConfig.seaTicksWithoutWater));
     }
 
     @Override
@@ -43,7 +45,8 @@ public class WaterAbility extends PassiveDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/water_3.png"),

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -16,7 +17,8 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class ContrastShowerAbility extends PassiveDragonAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "contrastShower", comment = "Whether the contrast shower ability should be enabled")
+    @Translation(key = "contrast_shower", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the contrast shower ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "passive"}, key = "contrast_shower")
     public static Boolean contrastShower = true;
 
     @Override
@@ -41,12 +43,14 @@ public class ContrastShowerAbility extends PassiveDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_3.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_5.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_5.png")
+        };
     }
 
 

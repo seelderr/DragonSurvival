@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.items.food;
 
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -16,7 +16,14 @@ import java.util.List;
 
 public class ChargedSoupItem extends Item {
     public ChargedSoupItem(Properties properties) {
-        super(properties.food(new FoodProperties.Builder().nutrition(1).saturationModifier(0.4F).alwaysEdible().effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F).effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(ServerConfig.chargedSoupBuffDuration), 0), 1.0F).build()));
+        super(properties.food(new FoodProperties.Builder()
+                .nutrition(1)
+                .saturationModifier(0.4F)
+                .alwaysEdible()
+                .effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F) // TODO :: dont add effect if its 0
+                .effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(DragonFoodHandler.chargedSoupBuffDuration), 0), 1.0F)
+                .build())
+        );
     }
 
     @Override

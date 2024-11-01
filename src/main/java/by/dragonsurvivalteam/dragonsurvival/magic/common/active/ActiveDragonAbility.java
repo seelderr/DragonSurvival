@@ -112,7 +112,7 @@ public abstract class ActiveDragonAbility extends DragonAbility {
     }
 
     public boolean canConsumeMana(Player player) {
-        return ManaHandler.canConsumeMana(player, getManaCost());
+        return ManaHandler.hasEnoughMana(player, getManaCost());
     }
 
     public void tickCooldown() {

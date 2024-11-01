@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -32,14 +33,20 @@ import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpen
 
 @EventBusSubscriber(Dist.CLIENT)
 public class InventoryScreenHandler {
-    public static final ResourceLocation DS_LOGO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ds_logo.png");
-    public static ExtendedButton altarOpenButton;
-    public static ExtendedButton creativeModeDragonInventoryButton;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragonInventory", comment = "Should the default inventory be replaced as a dragon?")
+    private static final ResourceLocation DS_LOGO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ds_logo.png");
+    private static ExtendedButton altarOpenButton;
+    private static ExtendedButton creativeModeDragonInventoryButton;
+
+    @Translation(key = "dragon_inventory", type = Translation.Type.CONFIGURATION, comments = "If enabled the default inventory is replaced with a custom inventory")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragon_inventory")
     public static Boolean dragonInventory = true;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragonTabs", comment = "Should dragon tabs be added to the default player inventory?")
+
+    @Translation(key = "dragon_tabs", type = Translation.Type.CONFIGURATION, comments = "If enabled tabs will be added to the vanilla inventory")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragon_tabs")
     public static Boolean dragonTabs = true;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "inventoryToggle", comment = "Should the buttons for toggling between dragon and normal inventory be added?")
+
+    @Translation(key = "inventory_toggle", type = Translation.Type.CONFIGURATION, comments = "If enabled there will be a button that lets you switch between the custom and vanilla inventory")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "inventory_toggle")
     public static Boolean inventoryToggle = true;
 
     @SubscribeEvent

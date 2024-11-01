@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -37,27 +38,33 @@ public class MagicHUD {
     public static final Color COLOR = new Color(243, 48, 59);
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position")
+    @Translation(key = "cast_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the cast bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "cast_bar_x_offset")
     public static Integer castbarXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position")
+    @Translation(key = "cast_bar_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the y position of the cast bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos")
     public static Integer castbarYOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position")
+    @Translation(key = "skill_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the skill bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skill_bar_x_offset")
     public static Integer skillbarXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position")
+    @Translation(key = "skill_bar_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the skill bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skill_bar_y_offset")
     public static Integer skillbarYOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position")
+    @Translation(key = "mana_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the mana bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "mana_bar_x_offset")
     public static Integer manabarXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position")
+    @Translation(key = "mana_bar_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the y position of the mana bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "mana_bar_y_offset")
     public static Integer manabarYOffset = 0;
 
     public static boolean renderExperienceBar(GuiGraphics guiGraphics, int screenWidth) {
@@ -168,7 +175,7 @@ public class MagicHUD {
 
             guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
-            int maxMana = ManaHandler.getMaxMana(localPlayer);
+            int maxMana = ManaHandler.getMaxMana(localPlayer); // FIXME :: cap it to some reasonable value for rendering the hud
             int curMana = ManaHandler.getCurrentMana(localPlayer);
 
             int manaX = i1;

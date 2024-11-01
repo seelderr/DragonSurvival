@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,23 +26,28 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class SeaEyesAbility extends ChargeCastAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVision", comment = "Whether the sea vision ability should be enabled")
+    @Translation(key = "sea_vision", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the sea vision ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "sea_vision"}, key = "sea_vision")
     public static Boolean seaEyes = true;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionDuration", comment = "The duration in seconds of the sea vision effect given when the ability is used")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "sea_vision_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "sea_vision"}, key = "sea_vision_duration")
     public static Double seaEyesDuration = 100.0;
 
-    @ConfigRange(min = 0.05, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionCooldown", comment = "The cooldown in seconds of the sea vision ability")
+    @ConfigRange(min = 0.05, max = 10_000)
+    @Translation(key = "sea_vision_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "sea_vision"}, key = "sea_vision_cooldown")
     public static Double seaEyesCooldown = 60.0;
 
-    @ConfigRange(min = 0.05, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaEyesCasttime", comment = "The cast time in seconds of the sea vision ability")
+    @ConfigRange(min = 0.05, max = 10_000)
+    @Translation(key = "sea_vision_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "sea_vision"}, key = "sea_vision_cast_time")
     public static Double seaEyesCasttime = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "sea_vision"}, key = "seaVisionManaCost", comment = "The mana cost for using the sea vision ability")
+    @Translation(key = "sea_vision_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "sea_vision"}, key = "sea_vision_mana_cost")
     public static Integer seaEyesManaCost = 1;
 
     @Override

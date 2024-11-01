@@ -3,11 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passiv
 
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -17,12 +18,13 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class CliffhangerAbility extends PassiveDragonAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHanger", comment = "Whether the cliffhanger ability should be enabled")
+    @Translation(key = "cliff_hander", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the cliff hanger ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "cliffHanger")
     public static Boolean cliffHanger = true;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), 3 + getHeight() + ServerConfig.forestFallReduction);
+        return Component.translatable("ds.skill.description." + getName(), 3 + getHeight() + ForestDragonConfig.fallReduction);
     }
 
     @Override

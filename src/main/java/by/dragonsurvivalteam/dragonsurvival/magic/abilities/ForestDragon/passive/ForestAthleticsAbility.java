@@ -6,13 +6,15 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.AthleticsAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class ForestAthleticsAbility extends AthleticsAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "forestAthletics", comment = "Whether the forest athletics ability should be enabled")
+    @Translation(key = "forest_athletics", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the forest athletics ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "forest_athletics")
     public static Boolean forestAthletics = true;
 
     @Override
@@ -32,12 +34,14 @@ public class ForestAthleticsAbility extends AthleticsAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_3.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_5.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_athletics_5.png")
+        };
     }
 
     @Override

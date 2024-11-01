@@ -35,7 +35,7 @@ public class ClientCastingHandler {
             Keybind.ABILITY4
     };
 
-    @SubscribeEvent
+    @SubscribeEvent // FIXME :: why isnt this using the keybind event
     public static void onTick(ClientTickEvent.Post clientTickEvent) {
         Minecraft instance = Minecraft.getInstance();
         if (instance.player == null || instance.level == null)

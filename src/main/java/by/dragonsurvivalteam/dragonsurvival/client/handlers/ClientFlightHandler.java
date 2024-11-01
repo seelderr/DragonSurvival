@@ -5,13 +5,14 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.client.ui.UiConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.ActionWithTimedCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -53,39 +54,38 @@ import org.joml.Vector3f;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-/**
- * Used in pair with {@link ServerFlightHandler}
- */
+/** Used in pair with {@link ServerFlightHandler} */
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientFlightHandler {
     public static final ResourceLocation SPIN_COOLDOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/spin_cooldown.png");
-    private static final ActionWithTimedCooldown hungerMessageWithCooldown = new ActionWithTimedCooldown(30_000, () -> {
+
+    private static final ActionWithTimedCooldown HUNGER_MESSAGE_WITH_COOLDOWN = new ActionWithTimedCooldown(30_000, () -> {
         Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
         if (localPlayer == null) return;
         localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
     });
-    /// region Config
-    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "jumpToFly", comment = "Should flight be activated when jumping in the air")
+
+    @Translation(key = "jump_to_fly", type = Translation.Type.CONFIGURATION, comments = "If enabled flight will be activated when jumping in the air")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "jump_to_fly")
     public static Boolean jumpToFly = false;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "lookAtSkyForFlight", comment = "Is it required to look up to start flying while jumping, requires that jumpToFly is on")
+
+    @Translation(key = "look_at_sky_for_flight", type = Translation.Type.CONFIGURATION, comments = "If enabled together with [jump_to_fly] you will be required to look at the sky to start flying")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "lookAtSkyForFlight")
     public static Boolean lookAtSkyForFlight = false;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flightZoomEffect", comment = "Should the zoom effect while gliding as a dragon be enabled")
+
+    @Translation(key = "flight_zoom_effect", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable a zoom effect while gliding as a dragon")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flight_zoom_effect")
     public static Boolean flightZoomEffect = true;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flightCameraMovement", comment = "Should the camera movement while gliding as a dragon be enabled")
+
+    @Translation(key = "flight_camera_movement", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable camera movement while gliding as a dragon")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flight_camera_movement")
     public static Boolean flightCameraMovement = true;
-    /// endregion
-    @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownXOffset", comment = "Offset the x position of the spin cooldown indicator in relation to its normal position")
-    public static Integer spinCooldownXOffset = 0;
-    @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spinCooldownYOffset", comment = "Offset the y position of the spin cooldown indicator in relation to its normal position")
-    public static Integer spinCooldownYOffset = 0;
+
     public static int lastSync;
     public static boolean wasGliding;
     public static boolean wasFlying;
-    /**
-     * Acceleration
-     */
+
+    /** Acceleration */
     static double ax, ay, az; // TODO :: Turn into vector?
     static float lastIncrease;
     static float lastZoom = 1f;
@@ -183,17 +183,17 @@ public class ClientFlightHandler {
                 Window window = Minecraft.getInstance().getWindow();
 
                 int cooldown = ServerFlightHandler.flightSpinCooldown * 20;
-                float f = ((float) cooldown - (float) handler.getMovementData().spinCooldown) / (float) cooldown;
+                float cooldownProgress = ((float) cooldown - (float) handler.getMovementData().spinCooldown) / (float) cooldown;
 
-                int k = window.getGuiScaledWidth() / 2 - 66 / 2;
-                int j = window.getGuiScaledHeight() - 96;
+                int x = window.getGuiScaledWidth() / 2 - 66 / 2;
+                int y = window.getGuiScaledHeight() - 96;
 
-                k += spinCooldownXOffset;
-                j += spinCooldownYOffset;
+                x += UiConfig.spinCooldownXOffset;
+                y += UiConfig.spinCooldownYOffset;
 
-                int l = (int) (f * 62);
-                event.getGuiGraphics().blit(SPIN_COOLDOWN, k, j, 0, 0, 66, 21, 256, 256);
-                event.getGuiGraphics().blit(SPIN_COOLDOWN, k + 4, j + 1, 4, 21, l, 21, 256, 256);
+                int width = (int) (cooldownProgress * 62);
+                event.getGuiGraphics().blit(SPIN_COOLDOWN, x, y, 0, 0, 66, 21, 256, 256);
+                event.getGuiGraphics().blit(SPIN_COOLDOWN, x + 4, y + 1, 4, 21, width, 21, 256, 256);
             }
         }
     }
@@ -675,7 +675,7 @@ public class ClientFlightHandler {
                 return false;
             }
             case NO_HUNGER -> {
-                hungerMessageWithCooldown.tryRun();
+                HUNGER_MESSAGE_WITH_COOLDOWN.tryRun();
                 return false;
             }
             case WINGS_DISABLED -> {

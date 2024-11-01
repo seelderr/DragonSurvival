@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
@@ -46,13 +47,16 @@ public class ToolTipHandler {
     private static final ResourceLocation TOOLTIP_BLINKING = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
     private static final ResourceLocation TOOLTIP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?")
+    @Translation(key = "tooltip_changes", type = Translation.Type.CONFIGURATION, comments = "If enabled certain modifications to some tooltips will be made (e.g. dragon food items)")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltip_changes")
     public static Boolean tooltipChanges = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideUnsafeFood", comment = "Should the tooltip be hidden for unsafe (negative effects) food?")
+    @Translation(key = "hide_unsafe_food", type = Translation.Type.CONFIGURATION, comments = "If enabled dragon food items with negative effects will not have the dragon food tooltips")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hide_unsafe_food")
     public static Boolean hideUnsafeFood = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
+    @Translation(key = "dragon_food_tooltips", type = Translation.Type.CONFIGURATION, comments = "If enabled the color of dragon food item tooltips will change to match the dragon")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragon_food_tooltips")
     public static Boolean dragonFoodTooltips = true;
 
     private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");

@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.Minecraft;
@@ -57,11 +58,13 @@ public class EmoteMenuHandler {
     public static final ResourceLocation resetTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteXOffset", comment = "Offset the x position of the emote button in relation to its normal position")
+    @Translation(key = "emote_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the emote button")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emote_x_offset")
     public static Integer emoteXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteYOffset", comment = "Offset the y position of the emote button in relation to its normal position")
+    @Translation(key = "emote_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the y position of the emote button")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emote_y_offset")
     public static Integer emoteYOffset = 0;
 
     private static int emotePage = 0;
@@ -72,15 +75,15 @@ public class EmoteMenuHandler {
 
     @SubscribeEvent
     public static void toggleEmoteButtons(ScreenEvent.Render.Pre renderGuiEvent) {
-        if (renderGuiEvent.getScreen() instanceof ChatScreen chatScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
+        if (renderGuiEvent.getScreen() instanceof ChatScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
             DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
-            for (ExtendedButton b : emoteButtons) {
-                b.visible = handler.getEmoteData().emoteMenuOpen;
+            for (ExtendedButton button : emoteButtons) {
+                button.visible = handler.getEmoteData().emoteMenuOpen;
             }
 
-            for (ExtendedButton b : keybindingButtons) {
-                b.visible = handler.getEmoteData().emoteMenuOpen && keybinding;
+            for (ExtendedButton button : keybindingButtons) {
+                button.visible = handler.getEmoteData().emoteMenuOpen && keybinding;
             }
         }
     }

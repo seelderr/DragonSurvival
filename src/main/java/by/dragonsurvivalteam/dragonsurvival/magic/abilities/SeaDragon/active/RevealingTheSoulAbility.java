@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -21,31 +22,38 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class RevealingTheSoulAbility extends AoeBuffAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoul", comment = "Whether the revealing The Soul ability should be enabled")
+    @Translation(key = "revealing_the_soul", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the revealing the soul ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul")
     public static Boolean revealingTheSoul = true;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulDuration", comment = "The duration in seconds of the revealing The Soul effect given when the ability is used")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "revealing_the_soul_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealingTheSoulDuration")
     public static Double revealingTheSoulDuration = 200.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCooldown", comment = "The cooldown in seconds of the revealing the soul ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "revealing_the_soul_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_cooldown", comment = "The cooldown in seconds of the revealing the soul ability")
     public static Double revealingTheSoulCooldown = 30.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCasttime", comment = "The cast time in seconds of the revealing the soul ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "revealing_the_soul_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_cast_time")
     public static Double revealingTheSoulCasttime = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulManaCost", comment = "The mana cost for using the revealing The Soul ability")
+    @Translation(key = "revealing_the_soul_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_mana_cost")
     public static Integer revealingTheSoulManaCost = 1;
 
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulMaxEXP", comment = "The max amount of increased exp that can be gained from a single mob with revealing the soul")
+    @ConfigRange(min = 0, max = 10_000)
+    @Translation(key = "revealing_the_soul_max_experience", type = Translation.Type.CONFIGURATION, comments = "The max. amount of extra experience that can be gained from a single mob with the revealing the soul effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_max_experience")
     public static Integer revealingTheSoulMaxEXP = 20;
 
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulMultiplier", comment = "The multiplier that is applied to exp with revealing the soul, the extra exp is in addition to the normal drops. so 1.0 = 100% increase")
+    @ConfigRange(min = 0, max = 10_000)
+    @Translation(key = "revealing_the_soul_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "The experience multiplier for the extra experience (as addition with the dropped experience - meaning a multiplier of 1 results in 100% experience increase)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_experience_multiplier")
     public static Double revealingTheSoulMultiplier = 1.0;
 
     @Override

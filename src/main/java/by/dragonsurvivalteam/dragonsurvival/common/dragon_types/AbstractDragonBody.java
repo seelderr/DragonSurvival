@@ -3,13 +3,16 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
 import java.util.Objects;
 
 public abstract class AbstractDragonBody implements NBTInterface, Comparable<AbstractDragonBody> {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body"}, key = "bodyAffectsHitbox", comment = "Whether the hitbox is affected by your body type")
+    @Translation(key = "other", type = Translation.Type.DESCRIPTION, comments = "some text")
+    @Translation(key = "body_affects_hitbox", type = Translation.Type.CONFIGURATION, comments = "If enabled the hitbox will be affected by the body type")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body"}, key = "body_affects_hitbox")
     public static Boolean bodyAffectsHitbox = true;
 
     public abstract String getBodyName();

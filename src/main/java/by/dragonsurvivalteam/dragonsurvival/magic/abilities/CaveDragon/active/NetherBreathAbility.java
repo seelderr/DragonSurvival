@@ -12,10 +12,12 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.sounds.SimpleSoundInstance;
@@ -47,35 +49,43 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREAT
 
 @RegisterDragonAbility
 public class NetherBreathAbility extends BreathAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathEnabled", comment = "Whether the firebreath ability should be enabled")
-    public static Boolean fireBreathEnabled = true;
+    @Translation(key = "fire_breath", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the fire breath ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath")
+    public static Boolean isEnabled = true;
 
     @ConfigRange(min = 0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathDamage", comment = "The amount of damage the firebreath ability deals. This value is multiplied by the skill level.")
-    public static Double fireBreathDamage = 3.0;
+    @Translation(key = "fire_breath_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (multiplied by the ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_damage")
+    public static Double damage = 3.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathInitialMana", comment = "The mana cost for starting the firebreath ability")
-    public static Integer fireBreathInitialMana = 2;
+    @Translation(key = "fire_breath_initial_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for starting the cast")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_initial_mana_cost")
+    public static Integer initialManaCost = 2;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathOvertimeMana", comment = "The mana cost of sustaining the firebreath ability")
-    public static Integer fireBreathOvertimeMana = 1;
+    @Translation(key = "fire_breath_sustaining_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for sustaining the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_sustaining_mana_cost")
+    public static Integer sustainedManaCost = 1;
 
     @ConfigRange(min = 0.5, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathManaTicks", comment = "How often in seconds, mana is consumed while using fire breath")
-    public static Double fireBreathManaTicks = 2.0;
+    @Translation(key = "fire_breath_mana_cost_tick_rate", type = Translation.Type.CONFIGURATION, comments = "Time (in seconds) between ticks of the sustained mana cost being applied")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_mana_cost_tick_rate")
+    public static Double sustainedManaCostTickRate = 2.0;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathSpreadsFire", comment = "Whether the fire breath actually spreads fire when used")
-    public static Boolean fireBreathSpreadsFire = true;
+    @Translation(key = "fire_breath_spreads_fire", type = Translation.Type.CONFIGURATION, comments = "Fire breath will spread actual fire if enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_spreads_fire")
+    public static Boolean spreadsFire = true;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCooldown", comment = "The cooldown in seconds of the fire breath ability")
-    public static Double fireBreathCooldown = 5.0;
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "fire_breath_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_cooldown")
+    public static Double cooldown = 5.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fire_breath"}, key = "fireBreathCasttime", comment = "The cast time in seconds of the fire breath ability")
-    public static Double fireBreathCasttime = 1.0;
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "fire_breath_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fire_breath"}, key = "fire_breath_cast_time")
+    public static Double castTime = 1.0;
 
     @Override
     public String getName() {
@@ -89,17 +99,19 @@ public class NetherBreathAbility extends BreathAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/nether_breath_4.png")
+        };
     }
 
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + fireBreathDamage));
+        list.add(Component.translatable("ds.skill.damage", "+" + damage));
         return list;
     }
 
@@ -115,12 +127,12 @@ public class NetherBreathAbility extends BreathAbility {
 
     @Override
     public boolean isDisabled() {
-        return super.isDisabled() || !fireBreathEnabled;
+        return super.isDisabled() || !isEnabled;
     }
 
     @Override
     public int getManaCost() {
-        return fireBreathOvertimeMana;
+        return sustainedManaCost;
     }
 
     @Override
@@ -130,13 +142,13 @@ public class NetherBreathAbility extends BreathAbility {
 
     @Override
     public int getSkillCooldown() {
-        return Functions.secondsToTicks(fireBreathCooldown);
+        return Functions.secondsToTicks(cooldown);
     }
 
     @Override
     public void onBlock(final BlockPos blockPosition, final BlockState blockState, final Direction direction) {
         if (!player.level().isClientSide) {
-            if (fireBreathSpreadsFire) {
+            if (spreadsFire) {
                 BlockPos firePosition = blockPosition.relative(direction);
                 Block block = blockState.getBlock();
 
@@ -152,9 +164,9 @@ public class NetherBreathAbility extends BreathAbility {
                 }
             }
 
-            BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
+            int level = DragonAbilities.getAbility(player, BurnAbility.class).map(DragonAbility::getLevel).orElse(0);
 
-            if (player.getRandom().nextInt(100) < burnAbility.level * 15) {
+            if (player.getRandom().nextInt(100) < level * 15) {
                 BlockState blockAbove = player.level().getBlockState(blockPosition.above());
 
                 if (blockAbove.getBlock() == Blocks.AIR) {
@@ -281,9 +293,9 @@ public class NetherBreathAbility extends BreathAbility {
         super.onEntityHit(entityHit);
 
         if (!entityHit.level().isClientSide()) {
-            BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
+            int level = DragonAbilities.getAbility(player, BurnAbility.class).map(DragonAbility::getLevel).orElse(0);
 
-            if (entityHit.getRandom().nextInt(100) < burnAbility.level * 15) {
+            if (entityHit.getRandom().nextInt(100) < level * 15) {
                 entityHit.getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
                 entityHit.addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
             }
@@ -296,7 +308,7 @@ public class NetherBreathAbility extends BreathAbility {
     }
 
     public static float getDamage(int level) {
-        return (float) (fireBreathDamage * level);
+        return (float) (damage * level);
     }
 
     @Override
@@ -306,17 +318,17 @@ public class NetherBreathAbility extends BreathAbility {
 
     @Override
     public int getSkillChargeTime() {
-        return Functions.secondsToTicks(fireBreathCasttime);
+        return Functions.secondsToTicks(castTime);
     }
 
     @Override
     public int getContinuousManaCostTime() {
-        return Functions.secondsToTicks(fireBreathManaTicks);
+        return Functions.secondsToTicks(sustainedManaCostTickRate);
     }
 
     @Override
     public int getInitManaCost() {
-        return fireBreathInitialMana;
+        return initialManaCost;
     }
 
     @Override

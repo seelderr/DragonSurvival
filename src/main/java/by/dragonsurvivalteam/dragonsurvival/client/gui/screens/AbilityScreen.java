@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -35,7 +36,7 @@ public class AbilityScreen extends Screen {
     private final int xSize = 256;
     private final int ySize = 256;
     public Screen sourceScreen;
-    public ArrayList<ActiveDragonAbility> unlockAbleSkills = new ArrayList<>();
+    public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
     private int guiLeft;
     private int guiTop;
     private AbstractDragonType type;
@@ -170,27 +171,26 @@ public class AbilityScreen extends Screen {
 
     @Override
     public void tick() {
-        DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
-            type = cap.getType();
-            unlockAbleSkills.clear();
+        //noinspection DataFlowIssue -> players should be present
+        DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
+        unlockableAbilities.clear();
+        type = data.getType();
 
-            for (ActiveDragonAbility ab : cap.getMagicData().getActiveAbilities()) {
-                ActiveDragonAbility ability = DragonAbilities.getSelfAbility(minecraft.player, ab.getClass());
-                ActiveDragonAbility db = ability != null ? ability : ab;
+        for (ActiveDragonAbility ability : data.getMagicData().getActiveAbilities()) {
+            int level = DragonAbilities.getAbility(minecraft.player, ability.getClass()).map(ActiveDragonAbility::getLevel).orElse(ability.level);
 
-                for (int i = db.getLevel(); i < db.getMaxLevel(); i++) {
-                    try {
-                        ActiveDragonAbility newActivty = db.getClass().newInstance();
-                        newActivty.setLevel(i + 1);
-                        unlockAbleSkills.add(newActivty);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
+            for (int i = level; i < ability.getMaxLevel(); i++) {
+                try {
+                    ActiveDragonAbility instance = ability.getClass().getDeclaredConstructor().newInstance();
+                    instance.setLevel(i + 1);
+                    unlockableAbilities.add(instance);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException(exception);
                 }
             }
+        }
 
-            unlockAbleSkills.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
-        });
+        unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
     }
 
     @Override

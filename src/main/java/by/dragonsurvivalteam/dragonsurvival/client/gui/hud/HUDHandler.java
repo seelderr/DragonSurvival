@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -16,10 +17,12 @@ import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class HUDHandler {
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaFoodLevel", comment = "Re-enable the vanilla hud for the food level")
+    @Translation(key = "show_vanilla_food_bar", type = Translation.Type.CONFIGURATION, comments = "If enabled the vanilla food bar will be shown")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "show_vanilla_food_bar")
     public static Boolean vanillaFoodLevel = false;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "vanillaExperienceBar", comment = "Re-enable the vanilla hud for the experience bar")
+    @Translation(key = "show_vanilla_experience_bar", type = Translation.Type.CONFIGURATION, comments = "If enabled the vanilla experience bar will be shown")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "hud"}, key = "show_vanilla_experience_bar")
     public static Boolean vanillaExperienceBar = false;
 
     @SubscribeEvent(receiveCanceled = true)

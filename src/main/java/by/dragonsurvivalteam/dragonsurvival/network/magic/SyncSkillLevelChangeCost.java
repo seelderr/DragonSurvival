@@ -32,7 +32,9 @@ public class SyncSkillLevelChangeCost implements IMessage<SyncSkillLevelChangeCo
                         if (sender instanceof ServerPlayer serverPlayer) {
                             DSAdvancementTriggers.UPGRADE_ABILITY.get().trigger(serverPlayer, ability.getName(), message.level);
                         }
-                        PassiveDragonAbility playerAbility = DragonAbilities.getSelfAbility(sender, ability.getClass());
+
+                        // Ability should be present
+                        PassiveDragonAbility playerAbility = DragonAbilities.getAbility(sender, ability.getClass(), handler.getType()).orElseThrow();
                         int levelCost = message.levelChange > 0 ? -playerAbility.getLevelCost(message.levelChange) : 0;
 
                         if (levelCost != 0 && !sender.isCreative()) {

@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -41,7 +42,8 @@ import java.util.Locale;
 
 public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation {
     @ConfigRange(min = 0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "baseBreathRange", comment = "The base range of the breath attack (breath range increases with dragon growth)")
+    @Translation(key = "base_breath_range", type = Translation.Type.CONFIGURATION, comments = "The base range of the dragon breath attack (increases with dragon size)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "base_breath_range")
     public static Integer baseBreathRange = 3;
 
     public int currentBreathRange;

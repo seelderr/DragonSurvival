@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -24,28 +25,33 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility {
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinEnabled", comment = "Whether the tough skin ability should be enabled")
+    @Translation(key = "tough_skin", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the tough skin ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "toughSkinEnabled")
     public static Boolean toughSkinEnabled = true;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "tough_skin_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_duration")
     public static Double toughSkinDuration = 200.0;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in seconds of the tough skin ability")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "tough_skin_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_cooldown")
     public static Double toughSkinCooldown = 30.0;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in seconds of the tough skin ability")
+    @ConfigRange(min = 1, max = 10_000)
+    @Translation(key = "tough_skin_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_cast_time")
     public static Double toughSkinCasttime = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability")
+    @Translation(key = "tough_skin_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_mana_cost")
     public static Integer toughSkinManaCost = 1;
 
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinArmorValue", comment = "The amount of extra armor given per level of tough skin effect")
+    @ConfigRange(min = 0, max = 10_000)
+    @Translation(key = "tough_skin_armor_scaling", type = Translation.Type.CONFIGURATION, comments = "Amount of extra armor per level of tough skin effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_armor_scaling")
     public static Double toughSkinArmorValue = 3.0;
 
     @Override

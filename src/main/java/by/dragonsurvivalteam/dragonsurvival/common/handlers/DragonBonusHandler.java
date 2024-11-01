@@ -5,6 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
@@ -27,6 +29,8 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
+import java.util.Optional;
+
 @EventBusSubscriber
 public class DragonBonusHandler {
     @SubscribeEvent
@@ -37,19 +41,19 @@ public class DragonBonusHandler {
         DragonStateProvider.getOptional(living).ifPresent(handler -> {
             if (handler.isDragon()) {
                 if (ServerConfig.bonusesEnabled) {
-                    if (ServerConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
+                    if (CaveDragonConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
                         event.setCanceled(true);
-                    } else if (ServerConfig.forestBushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
+                    } else if (ForestDragonConfig.bushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
                         event.setCanceled(true);
-                    } else if (ServerConfig.forestCactiImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().cactus()) {
+                    } else if (ForestDragonConfig.cactusImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().cactus()) {
                         event.setCanceled(true);
                     }
                 }
 
-                if (ServerConfig.caveSplashDamage != 0) {
+                if (CaveDragonConfig.caveSplashDamage != 0) {
                     if (DragonUtils.isDragonType(handler, DragonTypes.CAVE) && !living.hasEffect(DSEffects.FIRE)) {
                         if (damageSource.getDirectEntity() instanceof Snowball) {
-                            living.hurt(living.damageSources().generic(), ServerConfig.caveSplashDamage.floatValue());
+                            living.hurt(living.damageSources().generic(), CaveDragonConfig.caveSplashDamage.floatValue());
                         }
                     }
                 }
@@ -66,7 +70,7 @@ public class DragonBonusHandler {
         if (event.getSound() != null) {
             boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
 
-            if (isRelevant && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming) {
+            if (isRelevant && ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming) {
                 if (DragonUtils.isDragonType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
                     event.setCanceled(true);
                 }
@@ -90,11 +94,14 @@ public class DragonBonusHandler {
 
             if (DragonUtils.isDragonType(data, DragonTypes.FOREST)) {
                 if (ServerConfig.bonusesEnabled) {
-                    distance -= ServerConfig.forestFallReduction.floatValue();
+                    distance -= ForestDragonConfig.fallReduction.floatValue();
                 }
 
-                CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
-                distance -= ability.getHeight();
+                Optional<CliffhangerAbility> ability = DragonAbilities.getAbility(player, CliffhangerAbility.class);
+
+                if (ability.isPresent()) {
+                    distance -= ability.get().getHeight();
+                }
             }
 
             livingFallEvent.setDistance(distance);

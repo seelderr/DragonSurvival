@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
@@ -158,7 +159,7 @@ public class DSModifiers {
     }
 
     public static double buildSwimSpeedMod(DragonStateHandler handler) {
-        return DragonUtils.isDragonType(handler, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0;
+        return DragonUtils.isDragonType(handler, DragonTypes.SEA) && SeaDragonConfig.seaSwimmingBonuses ? 1 : 0;
     }
 
     public static double buildLavaSwimSpeedMod(DragonStateHandler handler) {

@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class HotBloodAbility extends InnateDragonAbility {
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), ServerConfig.caveWaterDamage, 0.5);
+        return Component.translatable("ds.skill.description." + getName(), CaveDragonConfig.caveWaterDamage, 0.5);
     }
 
     @Override
@@ -40,18 +41,20 @@ public class HotBloodAbility extends InnateDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_0.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_1.png")};
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_0.png"),
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/hot_blood_1.png")
+        };
     }
 
     @Override
     public int getLevel() {
-        return ServerConfig.penaltiesEnabled && ServerConfig.caveWaterDamage != 0.0 ? 1 : 0;
+        return ServerConfig.penaltiesEnabled && CaveDragonConfig.caveWaterDamage != 0 ? 1 : 0;
     }
 
     @Override
     public boolean isDisabled() {
-        return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.caveWaterDamage == 0.0;
+        return super.isDisabled() || !ServerConfig.penaltiesEnabled || CaveDragonConfig.caveWaterDamage == 0;
     }
 
     @Override

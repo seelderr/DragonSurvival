@@ -5,7 +5,10 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.config.types.CustomConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSLanguageProvider;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.electronwill.nightconfig.core.EnumGetMethod;
+import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -52,11 +55,6 @@ import java.util.regex.PatternSyntaxException;
  */
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ConfigHandler {
-    public static ClientConfig CLIENT;
-    public static ModConfigSpec clientSpec;
-    public static ServerConfig SERVER;
-    public static ModConfigSpec serverSpec;
-
     /** Contains the default values (specified in-code) <br> The key is {@link ConfigOption#key()} */
     private static final HashMap<String, Object> DEFAULT_CONFIG_VALUES = new HashMap<>();
     /** Contains the {@link ConfigType} variants <br> The key is {@link ConfigOption#key()} */
@@ -72,7 +70,7 @@ public class ConfigHandler {
     /** Mapping between from a registry entry like {@link Item} to its registry like {@link BuiltInRegistries#ITEM} */
     private static final HashMap<Class<?>, Registry<?>> REGISTRY_MAP = new HashMap<>();
 
-    public static void initRegistryMapping() {
+    private static void initRegistryMapping() {
         REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
         REGISTRY_MAP.put(Block.class, BuiltInRegistries.BLOCK);
         REGISTRY_MAP.put(EntityType.class, BuiltInRegistries.ENTITY_TYPE);
@@ -153,17 +151,11 @@ public class ConfigHandler {
 
         if (FMLLoader.getDist().isClient()) {
             Pair<ClientConfig, ModConfigSpec> clientConfig = new ModConfigSpec.Builder().configure(ClientConfig::new);
-            CLIENT = clientConfig.getLeft();
-            clientSpec = clientConfig.getRight();
-
-            modContainer.registerConfig(ModConfig.Type.CLIENT, clientSpec);
+            modContainer.registerConfig(ModConfig.Type.CLIENT, clientConfig.getRight());
         }
 
         Pair<ServerConfig, ModConfigSpec> serverConfig = new ModConfigSpec.Builder().configure(ServerConfig::new);
-        SERVER = serverConfig.getLeft();
-        serverSpec = serverConfig.getRight();
-
-        modContainer.registerConfig(ModConfig.Type.SERVER, serverSpec);
+        modContainer.registerConfig(ModConfig.Type.SERVER, serverConfig.getRight());
     }
 
     public static void resetConfigValues(final ConfigSide side) {
@@ -194,21 +186,39 @@ public class ConfigHandler {
         return field;
     }
 
+    public static String languageKey(final String key, boolean tooltip) {
+        String languageKey = DragonSurvival.MODID + ".configuration." + key;
+
+        if (tooltip) {
+            languageKey += ".tooltip";
+        }
+
+        return languageKey;
+    }
+
     public static void createConfigEntries(final ModConfigSpec.Builder builder, final ConfigSide side) {
         for (String key : CONFIG_KEYS.getOrDefault(side, Set.of())) {
             ConfigOption configOption = CONFIG_OBJECTS.get(key);
             Field field = CONFIG_FIELDS.get(key);
             Object defaultValues = DEFAULT_CONFIG_VALUES.get(configOption.key());
 
+            List<Translation> translations = DSLanguageProvider.getTranslations(field).stream().filter(translation -> translation.type() == Translation.Type.CONFIGURATION).toList();
+
+            if (translations.size() != 1) {
+                throw new IllegalStateException("Configuration key [" + key + "] had [" + translations.size() + "] translations - expected 1");
+            }
+
+            Translation translation = translations.getFirst();
+
             // Get the category - if none is present put it in the 'general' category
             String[] categories = configOption.category() != null && configOption.category().length > 0 ? configOption.category() : new String[]{"general"};
-            String[] comment = configOption.comment() != null ? configOption.comment() : new String[0];
 
             for (String category : categories) {
                 builder.push(category);
             }
 
-            builder.comment(comment);
+            builder.comment(translation.comments());
+            builder.translation(translation.type().prefix + translation.key());
 
             if (!configOption.localization().isBlank()) {
                 builder.translation(configOption.localization());
@@ -317,11 +327,11 @@ public class ConfigHandler {
         }
     }
 
-    public static boolean checkConfig(final ConfigOption configOption, final Object configValue) {
+    private static boolean checkConfig(final ConfigOption configOption, final Object configValue) {
         return checkSpecific(configOption, configValue);
     }
 
-    public static String getDefaultListValueForConfig(final String key) {
+    private static String getDefaultListValueForConfig(final String key) {
         return switch (key) {
             // Food options
             case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> "minecraft:empty:0:0";
@@ -342,7 +352,7 @@ public class ConfigHandler {
     private static final List<Character> VALID_REGEX_START = List.of('.', '^', '[', '(', '\\');
 
     /** More specific checks depending on the config type */
-    public static boolean checkSpecific(final ConfigOption configOption, final Object configValue) {
+    private static boolean checkSpecific(final ConfigOption configOption, final Object configValue) {
         switch (configOption.validation()) {
             case RESOURCE_LOCATION -> {
                 return ResourceLocation.tryParse((String) configValue) != null;
@@ -491,7 +501,7 @@ public class ConfigHandler {
      * @param <T>      Types which can be used in a registry (e.g. Item or Block)
      * @return Either a list of the resolved tag or the resource element
      */
-    public static <T> List<T> parseResourceLocation(@NotNull final Registry<T> registry, final String location) {
+    private static <T> List<T> parseResourceLocation(@NotNull final Registry<T> registry, final String location) {
         // There are configuration which have additional information after the resource location (e.g. food configuration)
         ResourceLocation resourceLocation = ResourceLocation.tryParse(location);
 
@@ -626,10 +636,8 @@ public class ConfigHandler {
         handleConfigChange(event.getConfig().getType());
     }
 
-    /**
-     * Sets the values of the config fields
-     */
-    public static void handleConfigChange(final ModConfig.Type type) {
+    /** Sets the values of the config fields */
+    private static void handleConfigChange(final ModConfig.Type type) {
         ConfigSide side = type == ModConfig.Type.SERVER ? ConfigSide.SERVER : ConfigSide.CLIENT;
         Set<String> configKeys = CONFIG_KEYS.get(side);
 

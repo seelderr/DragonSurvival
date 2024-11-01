@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncHunterStacksRemoval;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -127,15 +128,15 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
             return;
         }
 
-        // An addition of 1 just means 100% of the damage (i.e. no multiplier)
-        float bonus = hunterEffect.getAmplifier() + 2;
+        DragonStateHandler data = DragonStateProvider.getData(event.getEntity());
+        float multiplier = DragonAbilities.getAbility(event.getEntity(), HunterAbility.class, data.getType()).map(HunterAbility::getDamage).orElse(1f + hunterEffect.getAmplifier());
 
-        if (DragonStateProvider.getData(event.getEntity()).hasMaxHunterStacks()) {
-            bonus += 2f;
+        if (data.hasMaxHunterStacks()) {
+            multiplier += 2f;
         }
 
         event.setCriticalHit(true);
-        event.setDamageMultiplier(event.getDamageMultiplier() + bonus);
+        event.setDamageMultiplier(event.getDamageMultiplier() + multiplier);
         event.getEntity().removeEffect(DSEffects.HUNTER);
     }
 

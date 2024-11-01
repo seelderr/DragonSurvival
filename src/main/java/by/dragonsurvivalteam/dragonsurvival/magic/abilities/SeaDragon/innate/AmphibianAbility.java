@@ -4,6 +4,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class AmphibianAbility extends InnateDragonAbility {
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), ServerConfig.seaDehydrationDamage, 2);
+        return Component.translatable("ds.skill.description." + getName(), SeaDragonConfig.seaDehydrationDamage, 2);
     }
 
     @Override
@@ -41,11 +42,11 @@ public class AmphibianAbility extends InnateDragonAbility {
 
     @Override
     public int getLevel() {
-        return ServerConfig.penaltiesEnabled && ServerConfig.seaTicksWithoutWater != 0.0 ? 1 : 0;
+        return ServerConfig.penaltiesEnabled && SeaDragonConfig.seaTicksWithoutWater != 0 ? 1 : 0;
     }
 
     @Override
     public boolean isDisabled() {
-        return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0.0;
+        return super.isDisabled() || !ServerConfig.penaltiesEnabled || SeaDragonConfig.seaTicksWithoutWater == 0;
     }
 }

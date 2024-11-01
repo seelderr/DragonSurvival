@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.AmbusherEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
@@ -328,30 +328,6 @@ public class ServerConfig {
     public static Integer speedupEffectLevel = 2;
 
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveFireImmunity", comment = "Whether cave dragons are immune to fire damage types.")
-    public static Boolean caveFireImmunity = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveLavaSwimming", comment = "Set to false to disable cave dragon fast lava swimming.")
-    public static Boolean caveLavaSwimming = true;
-
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveLavaSwimmingTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava.")
-    public static Integer caveLavaSwimmingTicks = 3600;
-
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestFallReduction", comment = "How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.")
-    public static Double forestFallReduction = 5.0;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestBushImmunity", comment = "Whether forest dragons are immune to Sweet Berry Bush damage.")
-    public static Boolean forestBushImmunity = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestCactiImmunity", comment = "Whether forest dragons are immune to Cactus damage.")
-    public static Boolean forestCactiImmunity = true;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "seaSwimmingBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air.")
-    public static Boolean seaSwimmingBonuses = true;
 
     //Dragon Penalties
     @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties." )
@@ -500,52 +476,6 @@ public class ServerConfig {
             "spartanweaponry:longbow_.*"
     );
 
-    // Cave Dragon Penalties
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "cave_dragon"}, key = "caveWaterDamage", comment = "The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage.")
-    public static Double caveWaterDamage = 1.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "cave_dragon"}, key = "caveRainDamage", comment = "The amount of damage taken per rain damage tick (once every 40 ticks). Set to 0.0 to disable rain damage.")
-    public static Double caveRainDamage = 1.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "cave_dragon"}, key = "caveSplashDamage", comment = "The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage.")
-    public static Double caveSplashDamage = 2.0;
-
-    // Forest Dragon Penalties
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "forest_dragon"}, key = "forestStressTicks", comment = "The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect.")
-    public static Integer forestStressTicks = 100;
-
-    @ConfigRange(min = 2, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "forest_dragon"}, key = "forestStressEffectDuration", comment = "The number of seconds the stress effect lasts for.")
-    public static Integer forestStressEffectDuration = 10;
-
-    @ConfigRange(min = 0.1, max = 4.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "forest_dragon"}, key = "forestStressExhaustion", comment = "The amount of exhaustion applied per 10 ticks during the stress effect.")
-    public static Double forestStressExhaustion = 1.0;
-
-    // Sea Dragon Penalties
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaTicksBasedOnTemperature", comment = "The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
-    public static Integer seaTicksWithoutWater = 1000;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "waterConsumptionDependsOnTemperature", comment = "Whether the sea dragon should lose more water in warmer biomes and less during the night.")
-    public static Boolean seaTicksBasedOnTemperature = true;
-
-    @ConfigRange(min = 0.5, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaDehydrationDamage", comment = "The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks).")
-    public static Double seaDehydrationDamage = 1.0;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaAllowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.")
-    public static Boolean seaAllowWaterBottles = true;
-
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaTicksWithoutWaterRestored", comment = "How many ticks do water restoration items restore when used. Set to 0 to disable.")
-    public static Integer seaTicksWithoutWaterRestored = 5000;
-
-
     // Ore Loot
     @ConfigRange(min = 0.0, max = 1.0)
     @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "humanOreDustChance", comment = "The odds of dust dropping when a human harvests an ore.")
@@ -563,50 +493,14 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore.")
     public static Double dragonOreBoneChance = 0.01;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to cave dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
-    public static List<ItemHurtConfig> caveDragonHurtfulItems = List.of(
-            ItemHurtConfig.of("minecraft:potion:2"),
-            ItemHurtConfig.of("minecraft:water_bottle:2"),
-            ItemHurtConfig.of("minecraft:milk_bucket:2")
-    );
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to sea dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
-    public static List<ItemHurtConfig> seaDragonHurtfulItems = List.of();
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to forest dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
-    public static List<ItemHurtConfig> forestDragonHurtfulItems = List.of();
-
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "chargedSoupBuffDuration", comment = "How long in seconds should the cave fire effect from charged soup last. Set to 0 to disable.")
-    public static Integer chargedSoupBuffDuration = 300;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "cave_conditional_mana_blocks", comment = "Blocks that restore mana or cave dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
-    public static List<BlockStateConfig> caveConditionalManaBlocks = List.of(
-            BlockStateConfig.of("#minecraft:campfires:lit=true"),
-            BlockStateConfig.of("#c:player_workstations/furnaces:lit=true"),
-            BlockStateConfig.of("minecraft:smoker:lit=true"),
-            BlockStateConfig.of("minecraft:blast_furnace:lit=true")
-    );
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "sea_conditional_mana_blocks", comment = "Blocks that restore mana for sea dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
-    public static List<BlockStateConfig> seaConditionalManaBlocks = List.of();
-
+    @Translation(key = "forest_conditional_mana_blocks", type = Translation.Type.CONFIGURATION, comments = "Blocks that restore mana for forest dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "forest_conditional_mana_blocks", comment = "Blocks that restore mana for forest dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
     public static List<BlockStateConfig> forestConditionalManaBlocks = List.of();
 
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "dragonAbilities", comment = "Whether dragon abilities should be enabled")
     public static Boolean dragonAbilities = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon"}, key = "caveDragonAbilities", comment = "Whether cave dragon abilities should be enabled")
-    public static Boolean caveDragonAbilities = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon"}, key = "forestDragonAbilities", comment = "Whether forest dragon abilities should be enabled")
-    public static Boolean forestDragonAbilities = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon"}, key = "seaDragonAbilities", comment = "Whether sea dragon abilities should be enabled")
-    public static Boolean seaDragonAbilities = true;
 
 
     @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "noEXPRequirements", comment = "Disable the exp requirements for leveling up active skills")
@@ -779,7 +673,7 @@ public class ServerConfig {
     @ConfigRange(min = 1, max = 60 * 2)
     @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "minutesOfDragonEffect", comment = "Duration of effect given in exchange for experience in minutes")
     public static Integer minutesOfDragonEffect = 10;
-    //Please help me to fix this config. It doesn't work for buying in exchange for experience in beacon. My fix doesn't help, so I think the problem is deeper than I can solve it.
+    // FIXME Please help me to fix this config. It doesn't work for buying in exchange for experience in beacon. My fix doesn't help, so I think the problem is deeper than I can solve it.
 
     @ConfigType(MobEffect.class)
     @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Peace beacon" )

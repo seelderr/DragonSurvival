@@ -197,7 +197,7 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .add(Blocks.WATER_CAULDRON)
                 .add(Blocks.WET_SPONGE)
-                .add(Blocks.WATER)
+                .add(Blocks.WATER) // FIXME :: remove and check inWater instead
                 .add(DSBlocks.SEA_SOURCE_OF_MAGIC.value())
                 .addOptional(DragonSurvival.location("immersive_weathering", "thin_ice"))
                 .addOptional(DragonSurvival.location("immersive_weathering", "cryosol"))

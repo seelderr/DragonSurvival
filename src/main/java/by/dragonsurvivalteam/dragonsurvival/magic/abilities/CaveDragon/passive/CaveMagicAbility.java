@@ -6,13 +6,15 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class CaveMagicAbility extends MagicAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "caveMagic", comment = "Whether the cave magic ability should be enabled")
+    @Translation(key = "cave_magic", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the cave magic ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "passive"}, key = "cave_magic")
     public static Boolean caveMagic = true;
 
     @Override
@@ -32,7 +34,8 @@ public class CaveMagicAbility extends MagicAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_magic_3.png"),

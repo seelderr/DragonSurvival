@@ -5,6 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragon
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
@@ -18,6 +21,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+
+import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -34,17 +39,17 @@ public class DragonPenaltyHUD {
         int rightHeight;
 
         if (handler.getType() instanceof SeaDragonType seaDragonType) {
-            if (seaDragonType.timeWithoutWater > 0 && ServerConfig.penaltiesEnabled && ServerConfig.seaTicksWithoutWater != 0) {
+            if (seaDragonType.timeWithoutWater > 0 && ServerConfig.penaltiesEnabled && SeaDragonConfig.seaTicksWithoutWater != 0) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
                 gui.rightHeight += 10;
 
-                int maxTimeWithoutWater = ServerConfig.seaTicksWithoutWater;
-                WaterAbility waterAbility = DragonAbilities.getSelfAbility(localPlayer, WaterAbility.class);
+                int maxTimeWithoutWater = SeaDragonConfig.seaTicksWithoutWater;
+                Optional<WaterAbility> waterAbility = DragonAbilities.getAbility(localPlayer, WaterAbility.class);
 
-                if (waterAbility != null) {
-                    maxTimeWithoutWater += Functions.secondsToTicks(waterAbility.getDuration());
+                if (waterAbility.isPresent()) {
+                    maxTimeWithoutWater += Functions.secondsToTicks(waterAbility.get().getDuration());
                 }
 
                 double timeWithoutWater = maxTimeWithoutWater - seaDragonType.timeWithoutWater;
@@ -67,17 +72,17 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
         } else if (handler.getType() instanceof CaveDragonType caveDragonType) {
-            if (caveDragonType.timeInRain > 0 && ServerConfig.penaltiesEnabled && ServerConfig.caveRainDamage != 0.0) {
+            if (caveDragonType.timeInRain > 0 && ServerConfig.penaltiesEnabled && CaveDragonConfig.caveRainDamage != 0.0) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
                 gui.rightHeight += 10;
 
-                ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(localPlayer, ContrastShowerAbility.class);
+                Optional<ContrastShowerAbility> contrastShower = DragonAbilities.getAbility(localPlayer, ContrastShowerAbility.class);
                 int maxRainTime = 0;
 
-                if (contrastShower != null) {
-                    maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
+                if (contrastShower.isPresent()) {
+                    maxRainTime += Functions.secondsToTicks(contrastShower.get().getDuration());
                 }
 
                 final int timeInRain = maxRainTime - Math.min(caveDragonType.timeInRain, maxRainTime);
@@ -94,7 +99,7 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
 
-            if (caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming) {
+            if (caveDragonType.lavaAirSupply < CaveDragonConfig.caveLavaSwimmingTicks && ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimmingTicks != 0 && CaveDragonConfig.caveLavaSwimming) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
@@ -102,8 +107,8 @@ public class DragonPenaltyHUD {
 
                 int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
                 int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-                int full = Mth.ceil((double) (caveDragonType.lavaAirSupply - 2) * 10.0D / ServerConfig.caveLavaSwimmingTicks);
-                int partial = Mth.ceil((double) caveDragonType.lavaAirSupply * 10.0D / ServerConfig.caveLavaSwimmingTicks) - full;
+                int full = Mth.ceil((double) (caveDragonType.lavaAirSupply - 2) * 10.0D / CaveDragonConfig.caveLavaSwimmingTicks);
+                int partial = Mth.ceil((double) caveDragonType.lavaAirSupply * 10.0D / CaveDragonConfig.caveLavaSwimmingTicks) - full;
 
                 for (int i = 0; i < full + partial; ++i) {
                     guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 27, 9, 9);
@@ -112,17 +117,17 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
         } else if (handler.getType() instanceof ForestDragonType forestDragonType) {
-            if (forestDragonType.timeInDarkness > 0 && ServerConfig.penaltiesEnabled && ServerConfig.forestStressTicks != 0 && !localPlayer.hasEffect(DSEffects.STRESS)) {
+            if (forestDragonType.timeInDarkness > 0 && ServerConfig.penaltiesEnabled && ForestDragonConfig.stressTicks != 0 && !localPlayer.hasEffect(DSEffects.STRESS)) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
                 gui.rightHeight += 10;
 
-                int maxTimeInDarkness = ServerConfig.forestStressTicks;
-                LightInDarknessAbility lightInDarkness = DragonAbilities.getSelfAbility(localPlayer, LightInDarknessAbility.class);
+                int maxTimeInDarkness = ForestDragonConfig.stressTicks;
+                Optional<LightInDarknessAbility> lightInDarkness = DragonAbilities.getAbility(localPlayer, LightInDarknessAbility.class, forestDragonType);
 
-                if (lightInDarkness != null) {
-                    maxTimeInDarkness += Functions.secondsToTicks(lightInDarkness.getDuration());
+                if (lightInDarkness.isPresent()) {
+                    maxTimeInDarkness += Functions.secondsToTicks(lightInDarkness.get().getDuration());
                 }
 
                 final int timeInDarkness = maxTimeInDarkness - Math.min(forestDragonType.timeInDarkness, maxTimeInDarkness);

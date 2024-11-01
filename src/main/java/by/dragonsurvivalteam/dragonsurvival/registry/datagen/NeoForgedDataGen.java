@@ -28,24 +28,25 @@ public class NeoForgedDataGen {
     @SubscribeEvent
     public static void dataGen(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        PackOutput output = generator.getPackOutput();
+        ExistingFileHelper helper = event.getExistingFileHelper();
+        CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         // Client
-        generator.addProvider(event.includeClient(), new DataBlockStateProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new DataItemModelProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeClient(), new DataBlockStateProvider(output, helper));
+        generator.addProvider(event.includeClient(), new DataItemModelProvider(output, helper));
+        generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(output, lookup, helper));
+        generator.addProvider(event.includeClient(), new DSLanguageProvider(output, "en_us"));
 
         // Server
         LootTableProvider.SubProviderEntry blockLootTableSubProvider = new LootTableProvider.SubProviderEntry(
                 BlockLootTableSubProvider::new,
                 LootContextParamSets.BLOCK);
-        generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) output -> new LootTableProvider(output, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) lootTableOutput -> new LootTableProvider(lootTableOutput, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
 
         DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(
-                packOutput,
-                lookupProvider,
+                output,
+                lookup,
                 new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes),
                 Set.of(DragonSurvival.MODID)
         );
@@ -53,17 +54,17 @@ public class NeoForgedDataGen {
         generator.addProvider(event.includeServer(), datapackProvider);
 
         // Update the lookup provider with our datapack entries
-        lookupProvider = datapackProvider.getRegistryProvider();
+        lookup = datapackProvider.getRegistryProvider();
 
-        BlockTagsProvider blockTagsProvider = new DSBlockTags(packOutput, lookupProvider, existingFileHelper);
+        BlockTagsProvider blockTagsProvider = new DSBlockTags(output, lookup, helper);
         generator.addProvider(event.includeServer(), blockTagsProvider);
 
-        generator.addProvider(event.includeServer(), new DSItemTags(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSDamageTypeTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSEntityTypeTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSEffectTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSPoiTypeTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSEnchantmentTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DataBlockModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeServer(), new DSItemTags(output, lookup, blockTagsProvider.contentsGetter(), helper));
+        generator.addProvider(event.includeServer(), new DSDamageTypeTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSEntityTypeTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSEffectTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSPoiTypeTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSEnchantmentTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DataBlockModelProvider(output, helper));
     }
 }

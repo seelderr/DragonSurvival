@@ -7,6 +7,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragon
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
@@ -44,7 +47,7 @@ import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigH
 public class DragonPenaltyHandler {
     @SubscribeEvent
     public static void hitByWaterPotion(ProjectileImpactEvent potionEvent) {
-        if (!ServerConfig.penaltiesEnabled || ServerConfig.caveSplashDamage == 0.0) {
+        if (!ServerConfig.penaltiesEnabled || CaveDragonConfig.caveSplashDamage == 0.0) {
             return;
         }
 
@@ -72,7 +75,7 @@ public class DragonPenaltyHandler {
                         if(dragonStateHandler.getType() == null || !DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE)){
                             return;
                         }
-                        player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveSplashDamage.floatValue());
+                        player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), CaveDragonConfig.caveSplashDamage.floatValue());
                     }
                 });
             }
@@ -93,9 +96,9 @@ public class DragonPenaltyHandler {
         }
 
         List<ItemHurtConfig> hurtfulItems = switch (data.getType()) {
-            case CaveDragonType ignored -> ServerConfig.caveDragonHurtfulItems;
-            case SeaDragonType ignored -> ServerConfig.seaDragonHurtfulItems;
-            case ForestDragonType ignored -> ServerConfig.forestDragonHurtfulItems;
+            case CaveDragonType ignored -> CaveDragonConfig.caveDragonHurtfulItems;
+            case SeaDragonType ignored -> SeaDragonConfig.seaDragonHurtfulItems;
+            case ForestDragonType ignored -> ForestDragonConfig.hurtfulItems;
             default -> throw new IllegalStateException("Not a valid dragon type: " + data.getType().getClass().getName());
         };
 
@@ -113,7 +116,7 @@ public class DragonPenaltyHandler {
 
     @SubscribeEvent
     public static void onWaterConsumed(LivingEntityUseItemEvent.Finish destroyItemEvent) {
-        if (!ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0) {
+        if (!ServerConfig.penaltiesEnabled || SeaDragonConfig.seaTicksWithoutWater == 0) {
             return;
         }
 
@@ -122,17 +125,17 @@ public class DragonPenaltyHandler {
                 ItemStack itemStack = destroyItemEvent.getItem();
                 Player player = (Player) destroyItemEvent.getEntity();
 
-                if (!player.level().isClientSide() && ServerConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem) {
+                if (!player.level().isClientSide() && SeaDragonConfig.seaAllowWaterBottles && itemStack.getItem() instanceof PotionItem) {
                     Optional<Potion> potion = PotionUtils.getPotion(itemStack);
 
                     if (potion.isPresent() && potion.get() == Potions.WATER.value() && DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
-                        seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
+                        seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - SeaDragonConfig.seaTicksWithoutWaterRestored, 0);
                         PacketDistributor.sendToPlayersTrackingEntity(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
                     }
                 }
 
                 if (itemStack.is(DSItemTags.SEA_DRAGON_HYDRATION) && !player.level().isClientSide()) {
-                    seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - ServerConfig.seaTicksWithoutWaterRestored, 0);
+                    seaDragonType.timeWithoutWater = Math.max(seaDragonType.timeWithoutWater - SeaDragonConfig.seaTicksWithoutWaterRestored, 0);
                     PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), seaDragonType.writeNBT()));
                 }
             }

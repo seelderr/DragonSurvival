@@ -39,7 +39,6 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class DragonBeacon extends Block implements SimpleWaterloggedBlock, EntityBlock {
@@ -59,47 +58,47 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
         return super.updateShape(blockState, direction, blockState1, world, blockPos, blockPos1);
     }
 
-    @Override
-    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
-        Optional<DragonStateHandler> dragonState = DragonStateProvider.getOptional(pPlayer);
+    @Override // FIXME :: debug
+    @SuppressWarnings("deprecation") // registry holder usage is ok
+    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level level, @NotNull BlockPos pPos, @NotNull Player player, @NotNull BlockHitResult pHitResult) {
+        DragonStateHandler data = DragonStateProvider.getData(player);
 
-        if (dragonState.isPresent()) {
-            DragonStateHandler dragonStateHandler = dragonState.orElse(null);
-
-            if (dragonStateHandler.isDragon() && (pPlayer.totalExperience >= 60 || pPlayer.isCreative())) {
-                if (this == DSBlocks.PEACE_DRAGON_BEACON.get()) {
-                    if (!pLevel.isClientSide()) {
-                        ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
-                            if (effect != null) {
-                                pPlayer.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
-                            }
-                        });
-                    }
-                } else if (this == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
-                    if (!pLevel.isClientSide()) {
-                        ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
-                            if (effect != null) {
-                                pPlayer.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
-                            }
-                        });
-                    }
-                } else if (this == DSBlocks.FIRE_DRAGON_BEACON.get()) {
-                    if (!pLevel.isClientSide()) {
-                        ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
-                            if (effect != null) {
-                                pPlayer.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
-                            }
-                        });
-                    }
-                }
-
-                pPlayer.giveExperiencePoints(-60);
-                pLevel.playSound(pPlayer, pPos, DSSounds.APPLY_EFFECT.get(), SoundSource.PLAYERS, 1, 1);
-                return InteractionResult.SUCCESS;
-            }
+        if (!data.isDragon()) {
             return InteractionResult.FAIL;
         }
-        return InteractionResult.FAIL;
+
+        if (player.totalExperience < 60 && !player.isCreative()) {
+            return InteractionResult.FAIL;
+        }
+
+        boolean isClient = level.isClientSide();
+
+        if (!isClient) {
+            if (builtInRegistryHolder().is(DSBlocks.PEACE_DRAGON_BEACON)) {
+                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+                    if (effect != null) {
+                        player.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
+                    }
+                });
+            } else if (builtInRegistryHolder().is(DSBlocks.MAGIC_DRAGON_BEACON)) {
+                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+                    if (effect != null) {
+                        player.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
+                    }
+                });
+            } else if (this == DSBlocks.FIRE_DRAGON_BEACON.get()) {
+                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+                    if (effect != null) {
+                        player.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
+                    }
+                });
+            }
+
+            player.giveExperiencePoints(-60);
+            level.playSound(player, pPos, DSSounds.APPLY_EFFECT.get(), SoundSource.PLAYERS, 1, 1);
+        }
+
+        return InteractionResult.sidedSuccess(isClient);
     }
 
     @Override
