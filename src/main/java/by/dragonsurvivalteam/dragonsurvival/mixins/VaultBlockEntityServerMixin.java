@@ -28,7 +28,7 @@ public class VaultBlockEntityServerMixin {
     }
 
     @Inject(method = "tick", at = @At("TAIL"))
-    private static void preventStateUpdatingDelay(ServerLevel pLevel, BlockPos pPos, BlockState pState, VaultConfig pConfig, VaultServerData pServerData, VaultSharedData pSharedData, CallbackInfo ci) {
+    private static void dragonSurvival$preventStateUpdatingDelay(ServerLevel pLevel, BlockPos pPos, BlockState pState, VaultConfig pConfig, VaultServerData pServerData, VaultSharedData pSharedData, CallbackInfo ci) {
         if (ServerConfig.forceStateUpdatingOnVaults) {
             pServerData.pauseStateUpdatingUntil(0);
         }

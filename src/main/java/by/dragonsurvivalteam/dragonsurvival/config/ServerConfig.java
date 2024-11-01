@@ -2,14 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.AmbusherEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
+import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -363,8 +363,8 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride")
     public static Boolean limitedRiding = true;
 
-    @ConfigType(Item.class) // FIXME :: handle with tag
-    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", validation = Validation.RESOURCE_LOCATION, comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
+    @ConfigType(Item.class) // FIXME :: handle with tag (and keep this config for regex-only)
+    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", validation = Validation.RESOURCE_LOCATION_REGEX, comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
     public static List<String> blacklistedItems = List.of(
             "c:tools/shield",
             "c:tools/bow",
@@ -563,14 +563,18 @@ public class ServerConfig {
     @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore.")
     public static Double dragonOreBoneChance = 0.01;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to cave dragons when consumed. Formatting: item/modid:itemid:damage")
-    public static List<String> caveDragonHurtfulItems = Arrays.asList("minecraft:potion:2", "minecraft:water_bottle:2", "minecraft:milk_bucket:2");
+    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to cave dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
+    public static List<ItemHurtConfig> caveDragonHurtfulItems = List.of(
+            ItemHurtConfig.of("minecraft:potion:2"),
+            ItemHurtConfig.of("minecraft:water_bottle:2"),
+            ItemHurtConfig.of("minecraft:milk_bucket:2")
+    );
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to sea dragons when consumed. Formatting: item/modid:itemid:damage")
-    public static List<String> seaDragonHurtfulItems = Collections.emptyList();
+    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to sea dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
+    public static List<ItemHurtConfig> seaDragonHurtfulItems = List.of();
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to forest dragons when consumed. Formatting: item/modid:itemid:damage")
-    public static List<String> forestDragonHurtfulItems = Collections.emptyList();
+    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to forest dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
+    public static List<ItemHurtConfig> forestDragonHurtfulItems = List.of();
 
     @ConfigRange(min = 0, max = 10000)
     @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "chargedSoupBuffDuration", comment = "How long in seconds should the cave fire effect from charged soup last. Set to 0 to disable.")
@@ -788,4 +792,8 @@ public class ServerConfig {
     @ConfigType(MobEffect.class)
     @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Fire beacon" )
     public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
+
+    @ConfigRange(min = 0, max = 60)
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
+    public static Integer levitationAfterEffect = 3;
 }

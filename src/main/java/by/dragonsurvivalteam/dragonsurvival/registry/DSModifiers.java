@@ -20,7 +20,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import java.util.List;
 import java.util.function.Function;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DSModifiers {
 

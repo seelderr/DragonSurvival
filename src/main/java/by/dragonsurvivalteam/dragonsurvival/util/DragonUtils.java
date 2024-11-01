@@ -15,7 +15,6 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 public class DragonUtils {
-
     public static AbstractDragonType getDragonType(Player entity) {
         return DragonStateProvider.getData(entity).getType();
     }
@@ -32,6 +31,22 @@ public class DragonUtils {
         return handler.getBody();
     }
 
+    public static boolean isBodyType(final DragonStateHandler data, final AbstractDragonBody typeToCheck) {
+        if (data == null || typeToCheck == null) {
+            return false;
+        }
+
+        return isBodyType(data.getBody(), typeToCheck);
+    }
+
+    public static boolean isBodyType(final AbstractDragonBody playerType, final AbstractDragonBody typeToCheck) {
+        if (playerType == null || typeToCheck == null) {
+            return false;
+        }
+
+        return Objects.equal(playerType, typeToCheck);
+    }
+
     public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
         if (!(entity instanceof Player player)) {
             return false;
@@ -40,12 +55,12 @@ public class DragonUtils {
         return isDragonType(DragonStateProvider.getData(player), typeToCheck);
     }
 
-    public static boolean isDragonType(final DragonStateHandler playerHandler, final AbstractDragonType typeToCheck) {
-        if (playerHandler == null || typeToCheck == null || playerHandler.getType() == null) {
+    public static boolean isDragonType(final DragonStateHandler data, final AbstractDragonType typeToCheck) {
+        if (data == null || typeToCheck == null || data.getType() == null) {
             return false;
         }
 
-        return Objects.equal(playerHandler.getType().getTypeName(), typeToCheck.getTypeName());
+        return isDragonType(data.getType(), typeToCheck);
     }
 
     public static boolean isDragonType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
@@ -53,6 +68,7 @@ public class DragonUtils {
             return false;
         }
 
+        // FIXME :: equals checks sub type name - here we explicitly check the "base" type name - could that cause issues somewhere?
         return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
     }
 

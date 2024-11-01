@@ -13,7 +13,6 @@ import org.lwjgl.glfw.GLFW;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public enum Keybind {
-
     // Implementation inspired by Create
 
     TOGGLE_WINGS("ds.keybind.wings", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_G),
@@ -34,6 +33,10 @@ public enum Keybind {
     FREE_LOOK("ds.keybind.free_look", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
     DISABLE_DESTRUCTION("ds.keybind.toggle_destruction", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_RIGHT_ALT);
 
+    public static final int KEY_RELEASED = 0;
+    public static final int KEY_PRESSED = 1;
+    public static final int KEY_HELD = 2;
+
     private final Lazy<KeyMapping> keyMapping;
 
     Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
@@ -44,16 +47,10 @@ public enum Keybind {
         keyMapping = Lazy.of(() -> new KeyMapping(description, keyConflictContext, InputConstants.Type.KEYSYM, defaultKey, category));
     }
 
-    /**
-     * Runs when the mod is loaded, registers all key mappings.
-     *
-     * @param evt
-     */
     @SubscribeEvent
-    @SuppressWarnings("unused")
-    public static void registerAllKeys(RegisterKeyMappingsEvent evt) {
+    public static void registerAllKeys(RegisterKeyMappingsEvent event) {
         for (Keybind keybind : values()) {
-            evt.register(keybind.get());
+            event.register(keybind.get());
         }
     }
 
@@ -68,7 +65,7 @@ public enum Keybind {
      * @return True if a click was consumed. False if the key has no clicks to consume.
      */
     public boolean consumeClick() {
-        return keyMapping.get().consumeClick();
+        return get().consumeClick();
     }
 
     /**
@@ -77,7 +74,7 @@ public enum Keybind {
      * @return True if the key is down (in the current KeyConflictContext).
      */
     public boolean isDown() {
-        return keyMapping.get().isDown();
+        return get().isDown();
     }
 
     /**
@@ -86,6 +83,11 @@ public enum Keybind {
      * @return Key for this KeyMapping.
      */
     public InputConstants.Key getKey() {
-        return keyMapping.get().getKey();
+        return get().getKey();
+    }
+
+    /** Checks if the supplied key code (see {@link InputConstants}) matches the key */
+    public boolean isKey(int keyCode) {
+        return getKey().getValue() == keyCode;
     }
 }

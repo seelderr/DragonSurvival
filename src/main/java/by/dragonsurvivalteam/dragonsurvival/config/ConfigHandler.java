@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.config;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
+import by.dragonsurvivalteam.dragonsurvival.config.types.CustomConfig;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -42,13 +43,14 @@ import java.lang.reflect.ParameterizedType;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * Parses the annotated classes to handle the config values <br>
  * Normally it's a one way setting from the {@link ModConfigSpec.ConfigValue} fields to the class fields <br>
  * (The exception being {@link ConfigHandler#updateConfigValue(String, Object)})
  */
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class ConfigHandler {
     public static ClientConfig CLIENT;
     public static ModConfigSpec clientSpec;
@@ -56,21 +58,21 @@ public class ConfigHandler {
     public static ModConfigSpec serverSpec;
 
     /** Contains the default values (specified in-code) <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, Object> DEFAULT_CONFIG_VALUES = new HashMap<>();
+    private static final HashMap<String, Object> DEFAULT_CONFIG_VALUES = new HashMap<>();
     /** Contains the {@link ConfigType} variants <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, ConfigType> CONFIG_TYPES = new HashMap<>();
+    private static final HashMap<String, ConfigType> CONFIG_TYPES = new HashMap<>();
     /** Contains all {@link ConfigOption} entries <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, ConfigOption> CONFIG_OBJECTS = new HashMap<>();
-    /** Contains all fields which have an {@link ConfigOption} annotation <br> The key is {@link ConfigOption#key()} */
-    public static final HashMap<String, Field> CONFIG_FIELDS = new HashMap<>();
+    private static final HashMap<String, ConfigOption> CONFIG_OBJECTS = new HashMap<>();
+    /** Contains all fields which have a {@link ConfigOption} annotation <br> The key is {@link ConfigOption#key()} */
+    private static final HashMap<String, Field> CONFIG_FIELDS = new HashMap<>();
     /** Contains all config keys per side (i.e. client or server) */
-    public static final HashMap<ConfigSide, Set<String>> CONFIG_KEYS = new HashMap<>();
+    private static final HashMap<ConfigSide, Set<String>> CONFIG_KEYS = new HashMap<>();
     /** Contains all config values */
-    public static final HashMap<String, ModConfigSpec.ConfigValue<?>> CONFIG_VALUES = new HashMap<>();
-
+    private static final HashMap<String, ModConfigSpec.ConfigValue<?>> CONFIG_VALUES = new HashMap<>();
+    /** Mapping between from a registry entry like {@link Item} to its registry like {@link BuiltInRegistries#ITEM} */
     private static final HashMap<Class<?>, Registry<?>> REGISTRY_MAP = new HashMap<>();
 
-    public static void initTypes() {
+    public static void initRegistryMapping() {
         REGISTRY_MAP.put(Item.class, BuiltInRegistries.ITEM);
         REGISTRY_MAP.put(Block.class, BuiltInRegistries.BLOCK);
         REGISTRY_MAP.put(EntityType.class, BuiltInRegistries.ENTITY_TYPE);
@@ -82,33 +84,35 @@ public class ConfigHandler {
 
     private static List<Field> getFields() {
         List<Field> instances = new ArrayList<>();
-
         Type annotationType = Type.getType(ConfigOption.class);
-        ModList.get().getAllScanData().forEach(s -> {
-            List<ModFileScanData.AnnotationData> ebsTargets = s.getAnnotations().stream().filter(s1 -> s1.targetType() == ElementType.FIELD).filter(annotationData -> annotationType.equals(annotationData.annotationType())).toList();
 
-            ebsTargets.forEach(ad -> {
-                ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder) ad.annotationData().get("side");
+        ModList.get().getAllScanData().forEach(scanData -> {
+            List<ModFileScanData.AnnotationData> targets = scanData.getAnnotations().stream()
+                    .filter(annotationData -> annotationData.targetType() == ElementType.FIELD && annotationType.equals(annotationData.annotationType()))
+                    .toList();
+
+            targets.forEach(annotationData -> {
+                ModAnnotation.EnumHolder sidesValue = (ModAnnotation.EnumHolder) annotationData.annotationData().get("side");
                 Dist side = Objects.equals(sidesValue.value(), "CLIENT") ? Dist.CLIENT : Dist.DEDICATED_SERVER;
 
                 if (side == FMLEnvironment.dist || side == Dist.DEDICATED_SERVER) {
                     try {
-                        Class<?> c = Class.forName(ad.clazz().getClassName());
-                        Field fe = c.getDeclaredField(ad.memberName());
-                        instances.add(fe);
+                        Class<?> classType = Class.forName(annotationData.clazz().getClassName());
+                        Field field = classType.getDeclaredField(annotationData.memberName());
+                        instances.add(field);
                     } catch (Exception e) {
-                        DragonSurvivalMod.LOGGER.error(e);
+                        DragonSurvival.LOGGER.error(e);
                     }
                 }
             });
         });
+
         return instances;
     }
 
     public static void initConfig() {
-        initTypes();
-
         List<String> duplicateKeys = new ArrayList<>();
+        initRegistryMapping();
 
         getFields().forEach(field -> {
             // There are no per-instance configs
@@ -122,7 +126,7 @@ public class ConfigHandler {
                 // null because it's a static access (i.e. no instance)
                 DEFAULT_CONFIG_VALUES.put(configOption.key(), field.get(null));
             } catch (IllegalAccessException e) {
-                DragonSurvivalMod.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
+                DragonSurvival.LOGGER.error("There was a problem while trying to get the default config value of [{}]", ConfigHandler.createConfigPath(configOption), e);
             }
 
             CONFIG_FIELDS.put(configOption.key(), field);
@@ -160,6 +164,34 @@ public class ConfigHandler {
         serverSpec = serverConfig.getRight();
 
         modContainer.registerConfig(ModConfig.Type.SERVER, serverSpec);
+    }
+
+    public static void resetConfigValues(final ConfigSide side) {
+        CONFIG_KEYS.get(side).forEach(ConfigHandler::resetConfigValue);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"}) // ignore
+    public static void resetConfigValue(final String configKey) {
+        ModConfigSpec.ConfigValue configValue = CONFIG_VALUES.get(configKey);
+        configValue.set(configValue.getDefault());
+
+        Field field = CONFIG_FIELDS.get(configKey);
+
+        try {
+            field.set(null, convertToFieldValue(field, configKey));
+        } catch (IllegalAccessException exception) {
+            DragonSurvival.LOGGER.error("Failed to update the field [" + field.getName() + "] with the default config value", exception);
+        }
+    }
+
+    public static Field getField(final String configKey) {
+        Field field = CONFIG_FIELDS.get(configKey);
+
+        if (field == null) {
+            throw new IllegalArgumentException("There is no field for the supplied config key [" + configKey + "]");
+        }
+
+        return field;
     }
 
     public static void createConfigEntries(final ModConfigSpec.Builder builder, final ConfigSide side) {
@@ -228,14 +260,22 @@ public class ConfigHandler {
                                         List.of(configOption.key()),
                                         () -> customList.stream().map(CustomConfig::convert).toList(),
                                         () -> getDefaultListValueForConfig(configOption.key()),
-                                        configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || CustomConfig.validate(customConfigType, configValue),
+                                        configValue -> {
+                                            if (field.isAnnotationPresent(IgnoreConfigCheck.class) || CustomConfig.validate(customConfigType, configValue)) {
+                                                return true;
+                                            }
+
+                                            // To figure out which entry in the list has problems
+                                            DragonSurvival.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
+                                            return false;
+                                        },
                                         sizeRange
                                 );
 
                                 handledList = true;
                             }
                         } catch (ClassNotFoundException exception) {
-                            DragonSurvivalMod.LOGGER.error("A problem occurred while trying to handle the config [{}]", configOption.key(), exception);
+                            DragonSurvival.LOGGER.error("A problem occurred while trying to handle the config [{}]", configOption.key(), exception);
                         }
                     }
 
@@ -244,7 +284,15 @@ public class ConfigHandler {
                                 List.of(configOption.key()),
                                 () -> list,
                                 () -> getDefaultListValueForConfig(configOption.key()),
-                                configValue -> field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue),
+                                configValue -> {
+                                    if (field.isAnnotationPresent(IgnoreConfigCheck.class) || checkConfig(configOption, configValue)) {
+                                        return true;
+                                    }
+
+                                    // To figure out which entry in the list has problems
+                                    DragonSurvival.LOGGER.debug("Config entry [{}] of config [{}] was invalid", configValue, configOption.key());
+                                    return false;
+                                },
                                 sizeRange
                         );
                     }
@@ -257,10 +305,10 @@ public class ConfigHandler {
                     // This will likely run into a 'com.electronwill.nightconfig.core.io.WritingException: Unsupported value type' exception
                     ModConfigSpec.ConfigValue<Object> value = builder.define(configOption.key(), defaultValues);
                     CONFIG_VALUES.put(key, value);
-                    DragonSurvivalMod.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
+                    DragonSurvival.LOGGER.warn("Potential issue found for configuration: [{}]", configOption.key());
                 }
             } catch (Exception e) {
-                DragonSurvivalMod.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
+                DragonSurvival.LOGGER.error("Invalid configuration found: [{}]", configOption.key(), e);
             }
 
             for (int i = 0; i < categories.length; i++) {
@@ -290,13 +338,43 @@ public class ConfigHandler {
         };
     }
 
-    /**
-     * More specific checks depending on the config type
-     */
+    /** These are the regex meta characters that can start a valid regular expression */
+    private static final List<Character> VALID_REGEX_START = List.of('.', '^', '[', '(', '\\');
+
+    /** More specific checks depending on the config type */
     public static boolean checkSpecific(final ConfigOption configOption, final Object configValue) {
         switch (configOption.validation()) {
             case RESOURCE_LOCATION -> {
                 return ResourceLocation.tryParse((String) configValue) != null;
+            }
+            case RESOURCE_LOCATION_REGEX -> {
+                String[] data = ((String) configValue).split(":", 2);
+
+                if (data.length != 2) {
+                    return false;
+                }
+
+                if (!ResourceLocation.isValidNamespace(data[0])) {
+                    return false;
+                }
+
+                if (ResourceLocation.isValidPath(data[1])) {
+                    return true;
+                }
+
+                char firstCharacter = data[1].charAt(0);
+
+                if (!ResourceLocation.isAllowedInResourceLocation(firstCharacter) && !VALID_REGEX_START.contains(firstCharacter)) {
+                    // If the regex starts with an invalid resource location character it needs to be a valid regex start character
+                    return false;
+                }
+
+                try {
+                    Pattern.compile(data[1]);
+                    return true;
+                } catch (PatternSyntaxException ignored) {
+                    return false;
+                }
             }
             case RESOURCE_LOCATION_NUMBER -> {
                 String[] split = ((String) configValue).split(":");
@@ -309,7 +387,7 @@ public class ConfigHandler {
                     return false;
                 }
 
-                return isInteger(split[2]);
+                return ConfigUtils.validateInteger(split[2]);
             }
             case RESOURCE_LOCATION_OPTIONAL_NUMBER -> {
                 String[] split = ((String) configValue).split(":");
@@ -323,7 +401,7 @@ public class ConfigHandler {
                 }
 
                 if (split.length == 3) {
-                    return isInteger(split[2]);
+                    return ConfigUtils.validateInteger(split[2]);
                 }
 
                 return split.length == 2;
@@ -340,7 +418,7 @@ public class ConfigHandler {
                 }
 
                 if (split.length == 4) {
-                    return isInteger(split[2]) && isDouble(split[3]);
+                    return ConfigUtils.validateInteger(split[2]) && ConfigUtils.validateDouble(split[3]);
                 }
             }
         }
@@ -393,7 +471,7 @@ public class ConfigHandler {
                     String[] data = string.split(":");
 
                     if (data.length == 3) {
-                        return isInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
+                        return ConfigUtils.validateInteger(data[2]) && ResourceLocation.tryParse(data[0] + ":" + data[1]) != null;
                     }
 
                     return false;
@@ -403,24 +481,6 @@ public class ConfigHandler {
 
         // Would most likely only relevant for numeric or string lists?
         return true;
-    }
-
-    private static boolean isInteger(final String string) {
-        try {
-            Integer.parseInt(string);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
-
-    private static boolean isDouble(final String string) {
-        try {
-            Double.parseDouble(string);
-            return true;
-        } catch (NumberFormatException e) {
-            return false;
-        }
     }
 
     /**
@@ -437,7 +497,7 @@ public class ConfigHandler {
 
         if (resourceLocation == null) {
             // Only split the namespace from the (potential) regex path
-            String[] splitLocation = location.split(":", 1);
+            String[] splitLocation = location.split(":", 2);
 
             if (splitLocation.length < 2) {
                 return List.of();
@@ -508,7 +568,7 @@ public class ConfigHandler {
                     return CustomConfig.parse(classType, string);
                 }
             } catch (ClassNotFoundException exception) {
-                DragonSurvivalMod.LOGGER.error("A problem occurred while trying to parse a custom config entry: {}", value);
+                DragonSurvival.LOGGER.error("A problem occurred while trying to parse a custom config entry: {}", value);
             }
         }
 
@@ -587,7 +647,7 @@ public class ConfigHandler {
                     }
                 }
             } catch (IllegalAccessException | IllegalArgumentException exception) {
-                DragonSurvivalMod.LOGGER.error("An error occurred while setting the config [{}]", configKey, exception);
+                DragonSurvival.LOGGER.error("An error occurred while setting the config [{}]", configKey, exception);
             }
         }
 
@@ -610,25 +670,34 @@ public class ConfigHandler {
         ModConfigSpec.ConfigValue valueHolder = CONFIG_VALUES.get(configKey);
 
         if (valueHolder == null) {
-            DragonSurvivalMod.LOGGER.error("Could not set the config value for [{}]", configKey);
+            DragonSurvival.LOGGER.error("There is no known config for [{}]", configKey);
             return;
         }
 
-        // Set the value for the (hidden) config value field
-        valueHolder.set(convertToConfigValue(newValue));
-        valueHolder.save();
+
+        if (newValue != null) {
+            Object convertedValue = convertToConfigValue(newValue);
+            boolean isValid = valueHolder.getSpec().test(convertedValue);
+
+            if (!isValid) {
+                DragonSurvival.LOGGER.error("Tried to set an invalid value [{}] for the config [{}]", convertedValue, configKey);
+                return;
+            }
+
+            // Set the value for the (hidden) config value field
+            valueHolder.set(convertedValue);
+            valueHolder.save();
+        } else {
+            resetConfigValue(configKey);
+        }
 
         try {
             // Set the value for the class field
             Field field = ConfigHandler.CONFIG_FIELDS.get(configKey);
-
-            if (newValue != null) {
-                field.set(null, newValue);
-            } else {
-                DragonSurvivalMod.LOGGER.error("Tried to update [{}] with a 'null' value", configKey);
-            }
+            // Since conversion is handled here (e.g. you can't set a float field with the value '0', you'd need to specify '0f')
+            field.set(null, convertToFieldValue(field, configKey));
         } catch (IllegalAccessException | IllegalArgumentException | NullPointerException exception) {
-            DragonSurvivalMod.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", configKey, newValue, exception);
+            DragonSurvival.LOGGER.error("An error occurred while trying to update the config [{}] with the value [{}]", configKey, newValue, exception);
         }
     }
 

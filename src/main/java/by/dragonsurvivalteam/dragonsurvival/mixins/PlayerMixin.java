@@ -25,7 +25,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.Arrays;
 import java.util.Objects;
 
-
 @Mixin(Player.class)
 public abstract class PlayerMixin extends LivingEntity {
     protected PlayerMixin(EntityType<? extends LivingEntity> type, Level level) {
@@ -33,7 +32,7 @@ public abstract class PlayerMixin extends LivingEntity {
     }
 
     @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
-    public void isInvulnerableTo(DamageSource source, CallbackInfoReturnable<Boolean> callback) {
+    public void dragonSurvival$disableSuffocationDamage(DamageSource source, CallbackInfoReturnable<Boolean> callback) {
         if (ServerConfig.disableDragonSuffocation && source == damageSources().inWall() && DragonStateProvider.isDragon(this)) {
             callback.setReturnValue(true);
         }
@@ -53,20 +52,21 @@ public abstract class PlayerMixin extends LivingEntity {
         return original.call(instance);
     }
 
+    /** Prevent the player from moving when casting certain abilities or using emotes */
     @Inject(method = "isImmobile", at = @At("HEAD"), cancellable = true)
-    private void castMovement(CallbackInfoReturnable<Boolean> callback) {
-        DragonStateHandler handler = DragonStateProvider.getData((Player) (Object) this);
-
+    private void dragonSurvival$preventMovement(CallbackInfoReturnable<Boolean> callback) {
         if (!isDeadOrDying() && !isSleeping()) {
+            DragonStateHandler data = DragonStateProvider.getData((Player) (Object) this);
+
             if (!ServerConfig.canMoveWhileCasting) {
-                ActiveDragonAbility casting = handler.getMagicData().getCurrentlyCasting();
+                ActiveDragonAbility casting = data.getMagicData().getCurrentlyCasting();
 
                 if (casting != null && casting.requiresStationaryCasting()) {
                     callback.setReturnValue(true);
                 }
             }
 
-            if (!ServerConfig.canMoveInEmote && Arrays.stream(handler.getEmoteData().currentEmotes).noneMatch(Objects::nonNull)) {
+            if (!ServerConfig.canMoveInEmote && Arrays.stream(data.getEmoteData().currentEmotes).noneMatch(Objects::nonNull)) {
                 callback.setReturnValue(true);
             }
         }
@@ -74,7 +74,7 @@ public abstract class PlayerMixin extends LivingEntity {
 
     /** Allow treasure blocks to trigger sleep logic */
     @Inject(method = "isSleepingLongEnough", at = @At("HEAD"), cancellable = true)
-    public void isSleepingLongEnough(CallbackInfoReturnable<Boolean> callback) {
+    public void dragonSurvival$isSleepingLongEnough(CallbackInfoReturnable<Boolean> callback) {
         DragonStateProvider.getOptional(this).ifPresent(handler -> {
             if (handler.isDragon() && handler.treasureResting && handler.treasureSleepTimer >= 100) {
                 callback.setReturnValue(true);
@@ -82,11 +82,9 @@ public abstract class PlayerMixin extends LivingEntity {
         });
     }
 
-    /**
-     * Make sure dragon hitboxes are considered here
-     */
+    /** Make sure to consider the actual dragon hitbox when doing checks like these */
     @ModifyReturnValue(method = "canPlayerFitWithinBlocksAndEntitiesWhen", at = @At("RETURN"))
-    private boolean considerDragonPosesInCanPlayerFit(boolean returnValue, @Local(argsOnly = true) Pose pose) {
+    private boolean dragonSurvival$checkDragonHitbox(boolean returnValue, @Local(argsOnly = true) Pose pose) {
         if (DragonStateProvider.isDragon(this)) {
             return DragonSizeHandler.canPoseFit(this, pose);
         } else {

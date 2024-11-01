@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSAttributes {
-    public static final DeferredRegister<Attribute> DS_ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, DragonSurvivalMod.MODID);
+    public static final DeferredRegister<Attribute> DS_ATTRIBUTES = DeferredRegister.create(Registries.ATTRIBUTE, DragonSurvival.MODID);
     public static final Holder<Attribute> FLIGHT_STAMINA_COST = DS_ATTRIBUTES.register("flight_stamina_cost", () -> new RangedAttribute("ds.attribute.flight_stamina", 1, 0, 5).setSyncable(true));
     public static final Holder<Attribute> LAVA_SWIM_SPEED = DS_ATTRIBUTES.register("lava_swim_speed", () -> new RangedAttribute("ds.attribute.lava_swim_speed", 1, 0, 1024).setSyncable(true));
 

@@ -25,7 +25,6 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.InputEvent;
@@ -41,7 +40,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class EmoteMenuHandler {
@@ -197,13 +196,13 @@ public class EmoteMenuHandler {
             initGuiEvent.addListener(toggleButton);
 
             // Emote entries
-            for (int i = 0; i < PER_PAGE; i++) {
-                int finalI = i;
+            for (int index = 0; index < PER_PAGE; index++) {
+                int finalIndex = index;
 
                 // Emote buttons (Loop | Sound | Emote)
-                ExtendedButton loop = new ExtendedButton(startX, startY - 20 - height * (PER_PAGE - 1 - finalI), width, height, Component.empty(), btn -> {
+                ExtendedButton loop = new ExtendedButton(startX, startY - 20 - height * (PER_PAGE - 1 - finalIndex), width, height, Component.empty(), btn -> {
                     DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
-                    Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                    Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
 
                     if (emote == null || Stream.of(handler.getEmoteData().currentEmotes).anyMatch(s -> s != null && Objects.equals(s.animation, emote.animation))) {
                         return;
@@ -217,10 +216,10 @@ public class EmoteMenuHandler {
                 }, Supplier::get) {
                     @Override
                     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                        int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
+                        int color = isHovered && emotes.size() > finalIndex ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
                         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
 
-                        Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                        Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
 
                         if (emote != null) {
                             guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(emote.name), getX() + 22, getY() + (getHeight() - 8) / 2, Color.lightGray.getRGB());
@@ -229,12 +228,13 @@ public class EmoteMenuHandler {
                         }
                     }
                 };
+
                 emoteButtons.add(loop);
                 initGuiEvent.addListener(loop);
 
                 // Emote keybind menu
-                ExtendedButton emoteKeybindMenu = new ExtendedButton(startX - 65, startY - 20 - height * (PER_PAGE - 1 - finalI), 60, height, Component.empty(), btn -> {
-                    Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                ExtendedButton emoteKeybindMenu = new ExtendedButton(startX - 65, startY - 20 - height * (PER_PAGE - 1 - finalIndex), 60, height, Component.empty(), btn -> {
+                    Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
 
                     if (emote != null) {
                         currentlyKeybinding = emote.id;
@@ -242,11 +242,9 @@ public class EmoteMenuHandler {
                 }, Supplier::get) {
                     @Override
                     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                        int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
+                        int color = isHovered && emotes.size() > finalIndex ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
                         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
-
-
-                        Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                        Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
 
                         DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
                         if (emote != null) {
@@ -267,7 +265,7 @@ public class EmoteMenuHandler {
                     public boolean mouseClicked(double mouseX, double mouseY, int button) {
                         if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
                             DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
-                            Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                            Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
 
                             if (emote != null) {
                                 handler.getEmoteData().emoteKeybinds.put(emote.id, -1);
@@ -283,8 +281,8 @@ public class EmoteMenuHandler {
                 initGuiEvent.addListener(emoteKeybindMenu);
 
                 // Reset Emote keybind button
-                ExtendedButton resetEmoteKeybind = new ExtendedButton(startX - 70 - height, startY - 20 - height * (PER_PAGE - 1 - finalI), height, height, Component.empty(), btn -> {
-                    Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                ExtendedButton resetEmoteKeybind = new ExtendedButton(startX - 70 - height, startY - 20 - height * (PER_PAGE - 1 - finalIndex), height, height, Component.empty(), btn -> {
+                    Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
                     DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
                     if (emote != null) {
@@ -295,7 +293,7 @@ public class EmoteMenuHandler {
                 }, Supplier::get) {
                     @Override
                     public void renderWidget(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                        Emote emote = emotes.size() > finalI ? emotes.get(finalI) : null;
+                        Emote emote = emotes.size() > finalIndex ? emotes.get(finalIndex) : null;
 
                         DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
                         visible = emote != null && handler.getEmoteData().emoteKeybinds.getOrDefault(emote.id, -1) != -1;
@@ -304,7 +302,7 @@ public class EmoteMenuHandler {
                             return;
                         }
 
-                        int color = isHovered && emotes.size() > finalI ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
+                        int color = isHovered && emotes.size() > finalIndex ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
                         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
                         guiGraphics.blit(resetTexture, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
                     }
@@ -446,7 +444,6 @@ public class EmoteMenuHandler {
         return num;
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void onKey(InputEvent.Key keyInputEvent) {
         LocalPlayer player = Minecraft.getInstance().player;

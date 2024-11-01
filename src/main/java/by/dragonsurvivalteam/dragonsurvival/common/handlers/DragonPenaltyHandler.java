@@ -1,19 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.PotionUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
@@ -34,6 +34,9 @@ import net.neoforged.neoforge.event.entity.ProjectileImpactEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.List;
+import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler.DRAGON_BLACKLISTED_ITEMS;
 
@@ -82,22 +85,30 @@ public class DragonPenaltyHandler {
             return;
         }
 
-        ItemStack itemStack = destroyItemEvent.getItem();
+        ItemStack stack = destroyItemEvent.getItem();
+        DragonStateHandler data = DragonStateProvider.getData(player);
 
-        DragonStateProvider.getOptional(player).ifPresent(dragonStateHandler -> {
-            if(dragonStateHandler.isDragon()){
-                List<String> hurtfulItems = new ArrayList<>(
-                        DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST) ? ServerConfig.forestDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE) ? ServerConfig.caveDragonHurtfulItems : DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) ? ServerConfig.seaDragonHurtfulItems : new ArrayList<>());
+        if (!data.isDragon()) {
+            return;
+        }
 
-                for (String item : hurtfulItems) {
-                    if (item.replace("item:", "").replace("tag:", "").startsWith(ResourceHelper.getKey(itemStack.getItem()) + ":")) {
-                        String damage = item.substring(item.lastIndexOf(":") + 1);
-                        player.hurt(player.damageSources().generic(), Float.parseFloat(damage));
-                        break;
-                    }
-                }
+        List<ItemHurtConfig> hurtfulItems = switch (data.getType()) {
+            case CaveDragonType ignored -> ServerConfig.caveDragonHurtfulItems;
+            case SeaDragonType ignored -> ServerConfig.seaDragonHurtfulItems;
+            case ForestDragonType ignored -> ServerConfig.forestDragonHurtfulItems;
+            default -> throw new IllegalStateException("Not a valid dragon type: " + data.getType().getClass().getName());
+        };
+
+        for (ItemHurtConfig config : hurtfulItems) {
+            // TODO :: should only the first non-zero value be relevant or should it potentially call 'hurt' multiple times if an item is present in multiple configs?
+            float damage = config.getDamage(stack);
+
+            // TODO :: change config name and allow < 0 items to heal the dragon?
+            if (damage > 0) {
+                player.hurt(player.damageSources().generic(), damage);
+                return;
             }
-        });
+        }
     }
 
     @SubscribeEvent

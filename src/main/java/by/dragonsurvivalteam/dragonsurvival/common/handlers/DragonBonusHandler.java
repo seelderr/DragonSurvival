@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
@@ -127,7 +127,7 @@ public class DragonBonusHandler {
 
         // TODO :: also handle experience? would need a hook in 'CommonHooks#handleBlockDrops' to store some context and then modify the experience orb in 'ExperienceOrb#award'
         if (DragonUtils.isDragonType(dropsEvent.getBreaker(), DragonTypes.CAVE)) {
-            dropsEvent.getDrops().forEach(drop -> drop.getData(DragonSurvivalMod.ENTITY_HANDLER).isFireImmune = true);
+            dropsEvent.getDrops().forEach(drop -> drop.getData(DragonSurvival.ENTITY_HANDLER).isFireImmune = true);
         }
     }
 }

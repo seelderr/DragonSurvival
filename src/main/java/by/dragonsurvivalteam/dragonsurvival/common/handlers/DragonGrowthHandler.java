@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.*;
 
 @SuppressWarnings("unused")
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID)
+@EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
     public static long newbornToYoung = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
     public static long youngToAdult = TimeUnit.SECONDS.convert(15, TimeUnit.HOURS);

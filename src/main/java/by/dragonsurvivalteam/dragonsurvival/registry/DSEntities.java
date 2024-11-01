@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.*;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightningEntity;
@@ -24,12 +24,11 @@ import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-@SuppressWarnings("rawtypes,unchecked")
-@EventBusSubscriber(modid = DragonSurvivalMod.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class DSEntities {
     public static final DeferredRegister<EntityType<?>> DS_ENTITY_TYPES = DeferredRegister.create(
             BuiltInRegistries.ENTITY_TYPE,
-            DragonSurvivalMod.MODID
+            DragonSurvival.MODID
     );
 
     // Player related

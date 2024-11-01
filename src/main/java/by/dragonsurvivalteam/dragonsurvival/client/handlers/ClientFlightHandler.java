@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -39,7 +40,6 @@ import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.CalculateDetachedCameraDistanceEvent;
@@ -51,7 +51,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 /**
  * Used in pair with {@link ServerFlightHandler}
@@ -60,14 +60,11 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
 public class ClientFlightHandler {
     public static final ResourceLocation SPIN_COOLDOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/spin_cooldown.png");
     private static final ActionWithTimedCooldown hungerMessageWithCooldown = new ActionWithTimedCooldown(30_000, () -> {
-        var localPlayer = Minecraft.getInstance().player;
+        Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
         if (localPlayer == null) return;
         localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
     });
     /// region Config
-    @ConfigRange(min = 0, max = 60)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
-    public static Integer levitationAfterEffect = 3;
     @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "jumpToFly", comment = "Should flight be activated when jumping in the air")
     public static Boolean jumpToFly = false;
     @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "lookAtSkyForFlight", comment = "Is it required to look up to start flying while jumping, requires that jumpToFly is on")
@@ -102,9 +99,7 @@ public class ClientFlightHandler {
     /// region Flight Control
     @SubscribeEvent
     public static void flightCamera(CalculateDetachedCameraDistanceEvent event) {
-        Minecraft minecraft = Minecraft.getInstance();
-        LocalPlayer player = minecraft.player;
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
+        DragonStateProvider.getOptional(DragonSurvival.PROXY.getLocalPlayer()).ifPresent(handler -> {
             if (handler.isDragon()) {
                 // I'm not entirely sure why 20 works here, but it seems to be the magic number that
                 // keeps the dragon's size from the camera's perspective constant.
@@ -204,7 +199,6 @@ public class ClientFlightHandler {
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
     public static void flightParticles(PlayerTickEvent.Post playerTickEvent) {
         Player player = playerTickEvent.getEntity();
         DragonStateProvider.getOptional(player).ifPresent(handler -> {
@@ -261,7 +255,7 @@ public class ClientFlightHandler {
                     - call `player.resetFallDistance()` when the levitation effect is applied (MobEffectEvent.Added)
                     - add a check in ServerFlightHandler#changeFallDistance
                 */
-                levitationLeft = Functions.secondsToTicks(levitationAfterEffect);
+                levitationLeft = Functions.secondsToTicks(ServerConfig.levitationAfterEffect);
             } else if (levitationLeft > 0) {
                 // TODO :: Set to 0 once ground is reached?
                 levitationLeft--;

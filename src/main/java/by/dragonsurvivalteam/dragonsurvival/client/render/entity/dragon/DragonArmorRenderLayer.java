@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
@@ -37,8 +37,8 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.LOGGER;
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.res;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.LOGGER;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.res;
 
 public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
     private final GeoEntityRenderer<DragonEntity> renderer;
@@ -122,7 +122,7 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
                 try {
                     return compileArmorTexture(pPlayer);
                 } catch (IOException e) {
-                    DragonSurvivalMod.LOGGER.error("An error occurred while compiling the dragon armor texture", e);
+                    DragonSurvival.LOGGER.error("An error occurred while compiling the dragon armor texture", e);
                 }
 
                 return new NativeImage(0, 0, true);

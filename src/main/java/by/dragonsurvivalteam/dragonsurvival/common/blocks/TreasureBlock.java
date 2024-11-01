@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.TreasureParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.TreasureParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -11,6 +11,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
+import net.minecraft.util.FastColor;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.EntityType;
@@ -39,11 +40,8 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
-import software.bernie.geckolib.util.Color;
 
 import java.util.List;
 import java.util.Optional;
@@ -55,12 +53,13 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
     protected static final VoxelShape[] SHAPE_BY_LAYER = new VoxelShape[]{Shapes.empty(), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 2.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 4.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 6.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 8.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 10.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 12.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 14.0D, 16.0D), Block.box(0.0D, 0.0D, 0.0D, 16.0D, 16.0D, 16.0D)};
 
-    private final Color effectColor;
+    private final int effectColor;
 
-    public TreasureBlock(Color c, Properties p_i48328_1_) {
-        super(p_i48328_1_);
+    public TreasureBlock(int effectColor, Properties properties) {
+        super(properties);
+        this.effectColor = effectColor;
+
         registerDefaultState(stateDefinition.any().setValue(LAYERS, 1).setValue(WATERLOGGED, false));
-        effectColor = c;
     }
 
 
@@ -145,7 +144,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public float getShadeBrightness(@NotNull BlockState blockState, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos) {
         return 1.0F;
     }
@@ -271,15 +269,14 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public void animateTick(BlockState block, Level world, BlockPos pos, RandomSource random) {
-        double d1 = random.nextDouble();
-        double d2 = block.getValue(LAYERS) * (1.0 / 8) + .1;
-        double d3 = random.nextDouble();
+    public void animateTick(@NotNull BlockState block, Level level, BlockPos position, @NotNull RandomSource random) {
+        double xOffset = random.nextDouble();
+        double yOffset = block.getValue(LAYERS) * (1.0 / 8) + 0.1;
+        double zOffset = random.nextDouble();
 
-        if (world.isEmptyBlock(pos.above())) {
+        if (level.isEmptyBlock(position.above())) {
             if (random.nextInt(100) < 35) {
-                world.addParticle(new TreasureParticle.Data(effectColor.getRed() / 255F, effectColor.getGreen() / 255F, effectColor.getBlue() / 255F, 1F), (double) pos.getX() + d1, (double) pos.getY() + d2, (double) pos.getZ() + d3, 0.0D, 0.0D, 0.0D);
+                level.addParticle(new TreasureParticleOption(FastColor.ARGB32.red(effectColor) / 255F, FastColor.ARGB32.green(effectColor) / 255F, FastColor.ARGB32.blue(effectColor) / 255F, 1F), (double) position.getX() + xOffset, (double) position.getY() + yOffset, (double) position.getZ() + zOffset, 0, 0, 0);
             }
         }
     }

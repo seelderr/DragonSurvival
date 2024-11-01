@@ -23,7 +23,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.Map;
 import javax.annotation.Nullable;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class HelmetEntityRenderer implements BlockEntityRenderer<HelmetTileEntity> {
     private static final Map<Block, ResourceLocation> TEXTURE_BY_TYPE = Util.make(Maps.newHashMap(), resourceLocationHashMap -> {

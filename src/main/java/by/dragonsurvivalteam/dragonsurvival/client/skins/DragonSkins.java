@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonSkins {
     protected static boolean initialized = false;
@@ -71,7 +71,7 @@ public class DragonSkins {
 
         boolean renderStage = renderStage(player, dragonStage);
 
-        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && renderStage) {
+        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && renderStage) {
             if (playerSkinCache.containsKey(playerKey) && playerSkinCache.get(playerKey) != null) {
                 return playerSkinCache.get(playerKey);
             }
@@ -105,7 +105,7 @@ public class DragonSkins {
 
         // Wait an increasing amount of time depending on the number of failed attempts
         if (playerSkinMap == null && lastSkinFetchAttemptTime + numSkinFetchAttempts < Blaze3D.getTime() && numSkinFetchAttempts < 10) {
-            DragonSurvivalMod.LOGGER.warn("Customs skins are not yet fetched, re-fetching...");
+            DragonSurvival.LOGGER.warn("Customs skins are not yet fetched, re-fetching...");
             init();
 
             numSkinFetchAttempts++;
@@ -114,7 +114,7 @@ public class DragonSkins {
             playerSkinMap = SKIN_USERS.getOrDefault(level, null);
 
             if (playerSkinMap == null) {
-                DragonSurvivalMod.LOGGER.error("Custom skins could not be fetched");
+                DragonSurvival.LOGGER.error("Custom skins could not be fetched");
             }
         }
 
@@ -163,7 +163,7 @@ public class DragonSkins {
         // A failed attempt for fetching a glow skin should not result in no longer attempting to fetch the normal skin
         if (isNormalSkin) {
             if (!hasFailedFetch.contains(playerKey)) {
-                DragonSurvivalMod.LOGGER.info("Custom skin for user {} doesn't exist", playerKey);
+                DragonSurvival.LOGGER.info("Custom skin for user {} doesn't exist", playerKey);
                 hasFailedFetch.add(playerKey);
             }
         }
@@ -189,7 +189,7 @@ public class DragonSkins {
         boolean renderStage = renderStage(player, dragonStage);
 
 
-        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == Minecraft.getInstance().player) && playerSkinCache.containsKey(playerKey) && renderStage) {
+        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && playerSkinCache.containsKey(playerKey) && renderStage) {
             if (playerGlowCache.containsKey(playerKey)) {
                 return playerGlowCache.get(playerKey);
             } else {
@@ -197,7 +197,7 @@ public class DragonSkins {
                 playerGlowCache.put(playerKey, texture);
 
                 if (texture == null) {
-                    DragonSurvivalMod.LOGGER.info("Custom glow for user {} doesn't exist", player.getGameProfile().getName());
+                    DragonSurvival.LOGGER.info("Custom glow for user {} doesn't exist", player.getGameProfile().getName());
                 }
             }
         }
@@ -226,7 +226,7 @@ public class DragonSkins {
         }
         if (!first.ping()) {
             if (!second.ping()) {
-                DragonSurvivalMod.LOGGER.warn("Unable to connect to skin database.");
+                DragonSurvival.LOGGER.warn("Unable to connect to skin database.");
                 return;
             }
             first = second;

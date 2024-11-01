@@ -2,7 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.BackgroundColorSelectorComponent;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -13,7 +13,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class BackgroundColorButton extends ExtendedButton {
     public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
@@ -55,7 +55,7 @@ public class BackgroundColorButton extends ExtendedButton {
 
             colorComponent = new BackgroundColorSelectorComponent(this.screen, getX() - 50, getY() + height + 3, 120, 61);
             screen.renderables.add(renderButton);
-            colorComponent.children().forEach(listener -> ((AccessorScreen) screen).children().add(listener));
+            colorComponent.children().forEach(listener -> ((ScreenAccessor) screen).dragonSurvival$children().add(listener));
         } else {
             colorComponent.children().forEach(component -> screen.children().removeIf(other -> component == other));
             screen.children().removeIf(listener -> listener == colorComponent);

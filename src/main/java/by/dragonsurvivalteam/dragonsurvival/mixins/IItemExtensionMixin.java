@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(IItemExtension.class)
 public interface IItemExtensionMixin {
+    /** Return dragon food properties if the player is a dragon */
     @ModifyReturnValue(method = "getFoodProperties", at = @At("RETURN"))
     private FoodProperties dragonSurvival$getDragonFoodProperties(final FoodProperties original, final ItemStack stack, @Nullable final LivingEntity entity) {
         if (entity instanceof Player player) {

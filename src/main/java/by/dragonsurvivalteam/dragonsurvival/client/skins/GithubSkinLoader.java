@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
@@ -51,10 +51,10 @@ public class GithubSkinLoader extends NetSkinLoader {
                 }
                 return result;
             } catch (IOException exception) {
-                DragonSurvivalMod.LOGGER.warn("Reader could not be closed", exception);
+                DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvivalMod.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub");
+            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub");
         }
 
         return null;
@@ -96,7 +96,7 @@ public class GithubSkinLoader extends NetSkinLoader {
             URL url = new URL(fetchName);
             return internetGetStream(url, 15 * 1000);
         } catch (IOException exception) {
-            DragonSurvivalMod.LOGGER.error("Failed to get skin information in GitHub");
+            DragonSurvival.LOGGER.error("Failed to get skin information in GitHub");
         }
 
         return null;

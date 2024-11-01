@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.Dra
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -125,8 +125,8 @@ public class DropDownButton extends ExtendedButton {
             if (!screen.children().isEmpty()) {
                 screen.renderables.add(0, list);
                 screen.renderables.add(list);
-                ((AccessorScreen) screen).children().add(0, list);
-                ((AccessorScreen) screen).children().add(list);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(0, list);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(list);
 
                 for (GuiEventListener child : screen.children())
                     if (child instanceof ContainerObjectSelectionList) {
@@ -136,7 +136,7 @@ public class DropDownButton extends ExtendedButton {
                         }
                     }
             } else {
-                ((AccessorScreen) screen).children().add(list);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(list);
                 screen.renderables.add(list);
             }
 
@@ -158,7 +158,7 @@ public class DropDownButton extends ExtendedButton {
                         RenderSystem.disableScissor();
                 }
             };
-            ((AccessorScreen) screen).children().add(renderButton);
+            ((ScreenAccessor) screen).dragonSurvival$children().add(renderButton);
             screen.renderables.add(renderButton);
         } else {
             screen.children().removeIf(s -> s == list || s == renderButton);

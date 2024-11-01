@@ -17,13 +17,11 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class LavaVisionAbility extends ChargeCastAbility {
@@ -122,7 +120,6 @@ public class LavaVisionAbility extends ChargeCastAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
         list.add(Component.translatable("ds.skill.duration.seconds", "+" + lavaVisionDuration));
