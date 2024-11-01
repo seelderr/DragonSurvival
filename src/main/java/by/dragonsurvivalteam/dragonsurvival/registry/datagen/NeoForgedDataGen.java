@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
 import net.minecraft.core.HolderLookup;
@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
-@SuppressWarnings("unused")
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NeoForgedDataGen {
     @SubscribeEvent
@@ -48,7 +47,7 @@ public class NeoForgedDataGen {
                 packOutput,
                 lookupProvider,
                 new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes),
-                Set.of(DragonSurvivalMod.MODID)
+                Set.of(DragonSurvival.MODID)
         );
 
         generator.addProvider(event.includeServer(), datapackProvider);

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import net.minecraft.data.PackOutput;
@@ -23,7 +23,7 @@ import static net.neoforged.neoforge.client.model.generators.ModelProvider.BLOCK
 
 public class DataBlockStateProvider extends BlockStateProvider {
     public DataBlockStateProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
-        super(output, DragonSurvivalMod.MODID, existingFileHelper);
+        super(output, DragonSurvival.MODID, existingFileHelper);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DataBlockStateProvider extends BlockStateProvider {
                             String suffix = (hingeRight && !open || !hingeRight && open ? "_hinge" : "");
                             ResourceLocation texture = modLoc(BLOCK_FOLDER + "/" + name);
                             ModelFile door = models()
-                                    .withExistingParent(name + suffix, ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "small_dragon_door" + (suffix.equals("_hinge") ? "_rh" : "")))
+                                    .withExistingParent(name + suffix, ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "small_dragon_door" + (suffix.equals("_hinge") ? "_rh" : "")))
                                     .texture("bottom", texture)
                                     .texture("top", texture);
                             int yRot = (int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 90;
@@ -191,21 +191,24 @@ public class DataBlockStateProvider extends BlockStateProvider {
                 getVariantBuilder(holder.get())
                         .forAllStates(state -> {
                             boolean isEmpty = !state.getValue(SourceOfMagicBlock.FILLED);
-                            ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + name + (isEmpty ? "_empty" : "")));
-                            return ConfiguredModel.builder().modelFile(modelFile).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
+                            ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + name + (isEmpty ? "_empty" : "")));
+                            return ConfiguredModel.builder()
+                                    .modelFile(modelFile)
+                                    .rotationY((int) (state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot() + 180) % 360)
+                                    .build();
                         });
             } else if (holder.get() instanceof RotatedPillarBlock) {
                 getVariantBuilder(holder.get())
                         .forAllStates(state -> {
                             BlockModelBuilder builder = models().withExistingParent(holder.getId().getPath(), BLOCK_FOLDER + "/cube_column")
-                                    .texture("side", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "dragons_memory_side"))
-                                    .texture("end", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "dragons_memory_top"));
+                                    .texture("side", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "dragons_memory_side"))
+                                    .texture("end", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "dragons_memory_top"));
                             return ConfiguredModel.builder().modelFile(builder).build();
                         });
             } else if (holder.get() instanceof DragonBeacon) {
                 getVariantBuilder(holder.get())
                         .forAllStates(state -> {
-                            ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "empty"));
+                            ModelFile.ExistingModelFile modelFile = models().getExistingFile(ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "empty"));
                             return ConfiguredModel.builder().modelFile(modelFile).build();
                         });
             } else if (holder.get() instanceof SkeletonPieceBlock) {
@@ -217,9 +220,9 @@ public class DataBlockStateProvider extends BlockStateProvider {
 
                 getVariantBuilder(holder.get())
                         .forAllStates(state -> {
-                            BlockModelBuilder builder = models().withExistingParent(holder.getId().getPath(), ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + split[0]))
-                                    .texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin))
-                                    .texture("particle", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "placeholder_" + skin));
+                            BlockModelBuilder builder = models().withExistingParent(holder.getId().getPath(), ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + split[0]))
+                                    .texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin))
+                                    .texture("particle", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "placeholder_" + skin));
                             return ConfiguredModel.builder().modelFile(builder).rotationY((int) state.getValue(BlockStateProperties.HORIZONTAL_FACING).toYRot()).build();
                         });
             }

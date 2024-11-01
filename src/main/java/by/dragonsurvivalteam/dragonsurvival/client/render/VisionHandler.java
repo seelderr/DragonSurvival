@@ -1,14 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LiquidBlockRendererMixin;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.FogType;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 
@@ -53,11 +52,7 @@ public class VisionHandler {
     }
 
     public static boolean hasLavaVision() {
-        if (FMLEnvironment.dist != Dist.CLIENT) {
-            return false;
-        }
-
-        LocalPlayer player = Minecraft.getInstance().player;
+        Player player = DragonSurvival.PROXY.getLocalPlayer();
 
         if (player != null) {
             return player.hasEffect(DSEffects.LAVA_VISION);
@@ -67,11 +62,7 @@ public class VisionHandler {
     }
 
     public static boolean hasWaterVision() {
-        if (FMLEnvironment.dist != Dist.CLIENT) {
-            return false;
-        }
-
-        LocalPlayer player = Minecraft.getInstance().player;
+        Player player = DragonSurvival.PROXY.getLocalPlayer();
 
         if (player != null) {
             return player.hasEffect(DSEffects.WATER_VISION);

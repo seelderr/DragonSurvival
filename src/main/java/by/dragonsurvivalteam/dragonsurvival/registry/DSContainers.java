@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonInventoryScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SourceOfMagicScreen;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
@@ -20,7 +20,7 @@ public class DSContainers {
 
     public static final DeferredRegister<MenuType<?>> DS_CONTAINERS = DeferredRegister.create(
             BuiltInRegistries.MENU,
-            DragonSurvivalMod.MODID
+            DragonSurvival.MODID
     );
 
     public static final DeferredHolder<MenuType<?>, MenuType<SourceOfMagicContainer>> SOURCE_OF_MAGIC_CONTAINER = DS_CONTAINERS.register("dragon_nest", () -> IMenuTypeExtension.create(SourceOfMagicContainer::new));

@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.LargeFireParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.SmallFireParticle;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.sounds.FireBreathSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeFireParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
@@ -42,7 +42,7 @@ import net.neoforged.fml.loading.FMLEnvironment;
 
 import java.util.ArrayList;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
 @RegisterDragonAbility
@@ -97,7 +97,6 @@ public class NetherBreathAbility extends BreathAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
         list.add(Component.translatable("ds.skill.damage", "+" + fireBreathDamage));
@@ -165,7 +164,7 @@ public class NetherBreathAbility extends BreathAbility {
                     entity.setPotionContents(new PotionContents(CAVE_BREATH));
                     entity.setDuration(Functions.secondsToTicks(2));
                     entity.setRadius(1);
-                    entity.setParticle(new SmallFireParticle.Data(37, false));
+                    entity.setParticle(new SmallFireParticleOption(37, false));
                     entity.setOwner(player);
                     player.level().addFreshEntity(entity);
                 }
@@ -216,14 +215,14 @@ public class NetherBreathAbility extends BreathAbility {
                 double xSpeed = speed * 1f * xComp;
                 double ySpeed = speed * 1f * yComp;
                 double zSpeed = speed * 1f * zComp;
-                player.level().addParticle(new SmallFireParticle.Data(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+                player.level().addParticle(new SmallFireParticleOption(37, true), dx, dy, dz, xSpeed, ySpeed, zSpeed);
             }
 
             for (int i = 0; i < calculateNumberOfParticles(DragonStateProvider.getData(player).getSize()) / 2; i++) {
                 double xSpeed = speed * xComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - xComp * xComp);
                 double ySpeed = speed * yComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - yComp * yComp);
                 double zSpeed = speed * zComp + spread * 0.7 * (player.getRandom().nextFloat() * 2 - 1) * Math.sqrt(1 - zComp * zComp);
-                player.level().addParticle(new LargeFireParticle.Data(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
+                player.level().addParticle(new LargeFireParticleOption(37, false), dx, dy, dz, xSpeed, ySpeed, zSpeed);
             }
         }
 
@@ -285,7 +284,7 @@ public class NetherBreathAbility extends BreathAbility {
             BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
 
             if (entityHit.getRandom().nextInt(100) < burnAbility.level * 15) {
-                entityHit.getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
+                entityHit.getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player != null ? player.getId() : -1;
                 entityHit.addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(10), 0, false, true));
             }
         }

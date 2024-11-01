@@ -4,7 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.BallLightn
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class LightningBallModel extends GeoModel<BallLightningEntity> {
     private ResourceLocation currentTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/entity/lightning_texture.png");

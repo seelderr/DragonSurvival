@@ -7,10 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class FearOfDarkAbility extends InnateDragonAbility {
@@ -36,7 +34,6 @@ public class FearOfDarkAbility extends InnateDragonAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public boolean isDisabled() {
         return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.forestStressTicks == 0.0;
     }

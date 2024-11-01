@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
+import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -38,7 +40,6 @@ import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
@@ -48,7 +49,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
     // Weapon / tool swap data - START
-    /** Used in {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerStart} and {@link by.dragonsurvivalteam.dragonsurvival.mixins.MixinPlayerEnd} */
+    /** Used in {@link PlayerStartMixin} and {@link PlayerEndMixin} */
     public ItemStack storedMainHandWeapon = ItemStack.EMPTY;
     public boolean switchedWeapon;
 
@@ -73,12 +74,10 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public int altarCooldown;
     public boolean hasUsedAltar;
-    public boolean isInAltar = false;
+    public boolean isInAltar;
     public boolean refreshBody;
 
-    /**
-     * Last timestamp the server synchronized the player
-     */
+    /** Last timestamp the server synchronized the player */
     public int lastSync = 0;
 
     private final DragonMovementData movementData = new DragonMovementData();
@@ -98,9 +97,7 @@ public class DragonStateHandler extends EntityStateHandler {
     private double size;
     private boolean destructionEnabled;
 
-    /**
-     * Sets the size, health and base damage
-     */
+    /** Sets the size, health and base damage */
     public void setSize(double size, Player player) {
         setSize(size);
         DSModifiers.updateSizeModifiers(player);
@@ -142,7 +139,7 @@ public class DragonStateHandler extends EntityStateHandler {
         movementData.realtimeDeltaTick = realTimeDeltaTick;
     }
 
-    // Only call this version of setSize if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
+    /** Only used for rendering related code - to properly set the size (and update modifiers) use {@link DragonStateHandler#setSize(double, Player)} */
     public void setSize(double size) {
         if (size != this.size) {
             DragonLevel oldLevel = getLevel();
@@ -212,46 +209,47 @@ public class DragonStateHandler extends EntityStateHandler {
     public void setType(final AbstractDragonType type, Player player) {
         AbstractDragonType oldType = dragonType;
         setType(type);
-        if (oldType != dragonType) {
+
+        if (!DragonUtils.isDragonType(oldType, dragonType)) {
             DSModifiers.updateTypeModifiers(player);
         }
     }
 
-    // Only call this version of setType if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
+    /** Only used for rendering related code - to properly set the type (and update modifiers) use {@link DragonStateHandler#setType(AbstractDragonType, Player)} */
     public void setType(final AbstractDragonType type) {
-        if (type != null && !Objects.equals(dragonType, type)) {
-            growing = true;
-            getMagicData().initAbilities(type);
-        }
-
-        if (type != null) {
-            if (Objects.equals(dragonType, type)) {
-                return;
-            }
-
-            dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
-        } else {
+        if (type == null) {
             dragonType = null;
+            return;
         }
+
+        if (DragonUtils.isDragonType(dragonType, type)) {
+            return;
+        }
+
+        growing = true;
+        getMagicData().initAbilities(type);
+        dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
     }
 
     public void setBody(final AbstractDragonBody body, Player player) {
         AbstractDragonBody oldBody = dragonBody;
         setBody(body);
-        if (oldBody != dragonBody) {
+
+        if (!DragonUtils.isBodyType(oldBody, dragonBody)) {
             DSModifiers.updateBodyModifiers(player);
         }
     }
 
-    // Only call this version of setBody if we are doing something purely for rendering. Otherwise, call the setSize that accepts a Player object so that the player's attributes are updated.
+    /** Only used for rendering related code - to properly set the body (and update modifiers) use {@link DragonStateHandler#setBody(AbstractDragonBody, Player)} */
     public void setBody(final AbstractDragonBody body) {
-        if (body != null) {
-            if (dragonBody == null || !body.getBodyName().equals(dragonBody.getBodyName())) {
-                dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
-                refreshBody = true;
-            }
-        } else {
-            dragonBody = null;
+        if (body == null) {
+            dragonType = null;
+            return;
+        }
+
+        if (dragonBody == null || !DragonUtils.isBodyType(body, dragonBody)) {
+            dragonBody = DragonBodies.newDragonBodyInstance(body.getBodyName());
+            refreshBody = true;
         }
     }
 
@@ -491,9 +489,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void setHasFlight(boolean hasFlight) {
-        if (hasFlight != this.hasFlight) { // TODO :: Why this check?
-            this.hasFlight = hasFlight;
-        }
+        this.hasFlight = hasFlight;
     }
 
     public void setIsHiding(boolean isHiding) {

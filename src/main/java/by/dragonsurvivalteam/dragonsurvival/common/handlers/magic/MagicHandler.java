@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.SeaSweepParticle;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SeaSweepParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.BurnAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.RevealingTheSoulAbility;
@@ -49,7 +49,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 import java.util.Optional;
 
-@SuppressWarnings("unused")
 @EventBusSubscriber
 public class MagicHandler {
     @SubscribeEvent // TODO :: is this needed?
@@ -91,7 +90,7 @@ public class MagicHandler {
     @SubscribeEvent
     public static void livingTick(EntityTickEvent.Post event){
         if(event.getEntity() instanceof LivingEntity entity) {
-            EntityStateHandler data = entity.getData(DragonSurvivalMod.ENTITY_HANDLER);
+            EntityStateHandler data = entity.getData(DragonSurvival.ENTITY_HANDLER);
 
             if (entity.hasEffect(DSEffects.BURN)) {
                 if (entity.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value()) || entity.isInWaterRainOrBubble()) {
@@ -244,7 +243,7 @@ public class MagicHandler {
                         double d1 = Mth.cos(player.getYRot() * ((float) Math.PI / 180F));
 
                         if (player.level() instanceof ServerLevel serverLevel) {
-                            serverLevel.sendParticles(new SeaSweepParticle.Data(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
+                            serverLevel.sendParticles(new SeaSweepParticleOption(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
                         }
                     }
                 } else if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
@@ -252,7 +251,7 @@ public class MagicHandler {
                     boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
 
                     if (hit) {
-                        event.getEntity().getData(DragonSurvivalMod.ENTITY_HANDLER).lastAfflicted = player.getId();
+                        event.getEntity().getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player.getId();
 
                         if (!player.level().isClientSide()) {
                             event.getEntity().addEffect(new MobEffectInstance(DSEffects.BURN, Functions.secondsToTicks(30)));

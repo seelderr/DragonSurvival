@@ -26,7 +26,7 @@ import software.bernie.geckolib.model.GeoModel;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonModel extends GeoModel<DragonEntity> {
     private final ResourceLocation defaultTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/cave_newborn.png");
@@ -56,11 +56,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
     @Override
     public void applyMolangQueries(final AnimationState<DragonEntity> animationState, double currentTick) {
         super.applyMolangQueries(animationState, currentTick);
-
         DragonEntity dragon = animationState.getAnimatable();
+        Player player = dragon.getPlayer();
 
-        // In case the Integer (id of the player) is null
-        if (dragon.playerId == null || dragon.getPlayer() == null) {
+        if (player == null) {
             return;
         }
 
@@ -73,7 +72,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         MathParser.setVariable("query.head_yaw", () -> md.headYaw);
         MathParser.setVariable("query.head_pitch", () -> md.headPitch);
 
-        double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
+        double gravity = player.getAttributeValue(Attributes.GRAVITY);
         MathParser.setVariable("query.gravity", () -> gravity);
 
 
@@ -98,26 +97,26 @@ public class DragonModel extends GeoModel<DragonEntity> {
             float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
 
             // Accumulate them in the history
-            while(dragon.bodyYawHistory.size() > 10 / deltaTickFor60FPS ) {
+            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.bodyYawHistory.removeFirst();
             }
             dragon.bodyYawHistory.add(bodyYawChange);
 
-            while(dragon.headYawHistory.size() > 10 / deltaTickFor60FPS ) {
+            while(dragon.headYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.headYawHistory.removeFirst();
             }
             dragon.headYawHistory.add(headYawChange);
 
-            while(dragon.headPitchHistory.size() > 10 / deltaTickFor60FPS ) {
+            while(dragon.headPitchHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.headPitchHistory.removeFirst();
             }
             dragon.headPitchHistory.add(headPitchChange);
 
-            while(dragon.verticalVelocityHistory.size() > 10 / deltaTickFor60FPS ) {
+            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
                 dragon.verticalVelocityHistory.removeFirst();
             }
-            dragon.verticalVelocityHistory.add(verticalVelocity);
 
+            dragon.verticalVelocityHistory.add(verticalVelocity);
             bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
             headYawAvg = dragon.headYawHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
             headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
@@ -145,6 +144,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         return model;
     }
 
+    @Override
     public ResourceLocation getTextureResource(final DragonEntity dragon) {
         if (overrideTexture != null) {
             return overrideTexture;
@@ -197,24 +197,10 @@ public class DragonModel extends GeoModel<DragonEntity> {
         return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().name);
     }
 
-    public void setOverrideTexture(final ResourceLocation overrideTexture) {
-        this.overrideTexture = overrideTexture;
-    }
-
     @Override
     public ResourceLocation getAnimationResource(final DragonEntity dragon) {
         Player player = dragon.getPlayer();
-
-        if (player != null) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
-            AbstractDragonBody body = handler.getBody();
-
-            if (body != null) {
-                return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));
-            }
-        }
-
-        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
+        return getAnimationResource(player);
     }
 
     @Override
@@ -225,11 +211,27 @@ public class DragonModel extends GeoModel<DragonEntity> {
             DragonStateHandler data = DragonStateProvider.getData(player);
 
             if (data.hasHunterStacks() && !data.isBeingRenderedInInventory) {
-                // Required type to make other entities and water visible through the translucent dragon
                 return RenderType.itemEntityTranslucentCull(texture);
             }
         }
 
         return RenderType.entityCutout(texture);
+    }
+
+    public void setOverrideTexture(final ResourceLocation overrideTexture) {
+        this.overrideTexture = overrideTexture;
+    }
+
+    public static ResourceLocation getAnimationResource(final Player player) {
+        if (player != null) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+            AbstractDragonBody body = handler.getBody();
+
+            if (body != null) {
+                return ResourceLocation.fromNamespaceAndPath(MODID, String.format("animations/dragon_%s.json", body.getBodyNameLowerCase()));
+            }
+        }
+
+        return ResourceLocation.fromNamespaceAndPath(MODID, "animations/dragon_center.json");
     }
 }

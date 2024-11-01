@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.D
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.Minecraft;
@@ -87,8 +87,8 @@ public class DragonEditorDropdownButton extends DropDownButton {
                 screen.renderables.addFirst(list);
                 screen.renderables.add(list);
 
-                ((AccessorScreen) screen).children().addFirst(list);
-                ((AccessorScreen) screen).children().add(list);
+                ((ScreenAccessor) screen).dragonSurvival$children().addFirst(list);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(list);
 
                 for (GuiEventListener child : screen.children())
                     if (child instanceof ContainerObjectSelectionList) {
@@ -98,7 +98,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
                         }
                     }
             } else {
-                ((AccessorScreen) screen).children().add(list);
+                ((ScreenAccessor) screen).dragonSurvival$children().add(list);
                 screen.renderables.add(list);
             }
 
@@ -120,7 +120,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
                         RenderSystem.disableScissor();
                 }
             };
-            ((AccessorScreen) screen).children().add(renderButton);
+            ((ScreenAccessor) screen).dragonSurvival$children().add(renderButton);
             screen.renderables.add(renderButton);
         } else {
             screen.children().removeIf(s -> s == list || s == renderButton);

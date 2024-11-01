@@ -1,21 +1,20 @@
 package by.dragonsurvivalteam.dragonsurvival.client.handlers.magic;
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.CaveDragon.SmallFireParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.ForestDragon.SmallPoisonParticle;
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallPoisonParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ComputeFovModifierEvent;
@@ -58,7 +57,6 @@ public class ClientMagicHandler {
     }
 
     @SubscribeEvent
-    @OnlyIn(Dist.CLIENT)
     public static void livingTick(final EntityTickEvent.Post event) {
         if (event.getEntity() instanceof LivingEntity livingEntity) {
             if (!particlesOnDragons && DragonStateProvider.isDragon(livingEntity)) {
@@ -66,21 +64,21 @@ public class ClientMagicHandler {
             }
 
             if (livingEntity.hasEffect(DSEffects.BURN)) {
-                ParticleOptions data = new SmallFireParticle.Data(37F, false);
+                ParticleOptions data = new SmallFireParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {
                     renderEffectParticle(livingEntity, data);
                 }
             }
 
             if (livingEntity.hasEffect(DSEffects.DRAIN)) {
-                ParticleOptions data = new SmallPoisonParticle.Data(37F, false);
+                ParticleOptions data = new SmallPoisonParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {
                     renderEffectParticle(livingEntity, data);
                 }
             }
 
             if (livingEntity.hasEffect(DSEffects.CHARGED)) {
-                ParticleOptions data = new LargeLightningParticle.Data(37F, false);
+                ParticleOptions data = new LargeLightningParticleOption(37F, false);
                 for (int i = 0; i < 4; i++) {
                     renderEffectParticle(livingEntity, data);
                 }
@@ -89,7 +87,7 @@ public class ClientMagicHandler {
     }
 
     public static void renderEffectParticle(final LivingEntity entity, final ParticleOptions particle) {
-        Player localPlayer = ClientProxy.getLocalPlayer();
+        Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
 
         if (localPlayer != null) {
             double d0 = (double) entity.getRandom().nextFloat() * entity.getBbWidth();

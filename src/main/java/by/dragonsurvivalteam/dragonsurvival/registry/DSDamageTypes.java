@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.worldgen.BootstrapContext;
@@ -12,7 +12,7 @@ import net.minecraft.world.damagesource.DamageType;
 import net.minecraft.world.damagesource.DeathMessageType;
 import net.minecraft.world.level.Level;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DSDamageTypes {
     // We don't need to use a DeferredRegister for DamageTypes, as they are fully data driven.
@@ -57,7 +57,7 @@ public class DSDamageTypes {
     private static DamageType type(final String messageId) {
         return new DamageType(
                 // Translation key for the death message
-                DragonSurvivalMod.MODID + "." + messageId,
+                DragonSurvival.MODID + "." + messageId,
                 // Determines when the game difficulty should scale the damage
                 DamageScaling.WHEN_CAUSED_BY_LIVING_NON_PLAYER,
                 // Amount of exhaustion caused by receiving this kind of damage

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -22,7 +22,7 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
     public static final TagKey<EntityType<?>> HUNTER_TARGETS = key("hunter_targets");
 
     public DSEntityTypeTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
-        super(output, provider, DragonSurvivalMod.MODID, helper);
+        super(output, provider, DragonSurvival.MODID, helper);
     }
 
     @Override
@@ -82,6 +82,6 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
     }
 
     private static TagKey<EntityType<?>> key(@NotNull final String path) {
-        return TagKey.create(Registries.ENTITY_TYPE, DragonSurvivalMod.res(path));
+        return TagKey.create(Registries.ENTITY_TYPE, DragonSurvival.res(path));
     }
 }

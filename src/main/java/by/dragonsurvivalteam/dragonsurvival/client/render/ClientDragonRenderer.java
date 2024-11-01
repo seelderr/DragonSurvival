@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.models.DragonModel;
 import by.dragonsurvivalteam.dragonsurvival.client.skins.DragonSkins;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
@@ -17,9 +17,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorEntityRenderer;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorLivingRenderer;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.EntityRendererAccessor;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.LivingRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -59,6 +58,7 @@ import net.neoforged.neoforge.common.util.TriState;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Vector3f;
+import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.RenderUtil;
 
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,15 +67,11 @@ import java.util.concurrent.atomic.AtomicReference;
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientDragonRenderer {
     public static DragonModel dragonModel = new DragonModel();
-    /**
-     * First-person armor instance
-     */
-    public static DragonEntity dummyDragon;
 
-    // This used to ignore the pitch/yaw history and not update the movement data
-    // if we are overriding it for a specific render.
-    //
-    // Currently this is only used for showing the dragon in the inventory screen.
+    /**
+     * Used for inventory rendering - when set to true changed movement data will not be tracked <br>
+     * See {@link ClientDragonRenderer#setDragonMovementData(Player, float)} and {@link DragonModel#applyMolangQueries(AnimationState, double)}
+     */
     public static boolean isOverridingMovementData = false;
 
     /**
@@ -196,15 +192,8 @@ public class ClientDragonRenderer {
             playerDragonHashMap.put(player.getId(), new AtomicReference<>(dummyDragon));
         }
 
-        if (dummyDragon == null) {
-            dummyDragon = DSEntities.DRAGON.get().create(player.level());
-            assert dummyDragon != null;
-            dummyDragon.playerId = player.getId();
-        }
-
         if (handler.isDragon()) {
-
-            if (player == ClientProxy.getLocalPlayer()) {
+            if (player == minecraft.player) {
                 renderDelay = MAX_DELAY;
             }
 
@@ -230,13 +219,13 @@ public class ClientDragonRenderer {
                 int eventLight = renderPlayerEvent.getPackedLight();
                 final MultiBufferSource renderTypeBuffer = renderPlayerEvent.getMultiBufferSource();
 
-                if (dragonNameTags && player != ClientProxy.getLocalPlayer()) {
+                if (dragonNameTags && player != minecraft.player) {
                     RenderNameTagEvent renderNameplateEvent = new RenderNameTagEvent(player, player.getDisplayName(), playerRenderer, poseStack, renderTypeBuffer, eventLight, partialRenderTick);
                     NeoForge.EVENT_BUS.post(renderNameplateEvent);
 
                     // TODO: Test this, we might not need shouldShowName
-                    if (renderNameplateEvent.canRender().isTrue() && ((AccessorLivingRenderer) playerRenderer).dragonsurvival$callShouldShowName(player)) {
-                        ((AccessorEntityRenderer) playerRenderer).callRenderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
+                    if (renderNameplateEvent.canRender().isTrue() && ((LivingRendererAccessor) playerRenderer).dragonSurvival$callShouldShowName(player)) {
+                        ((EntityRendererAccessor) playerRenderer).dragonSurvival$renderNameTag(player, renderNameplateEvent.getContent(), poseStack, renderTypeBuffer, eventLight, partialRenderTick);
                     }
                 }
 
@@ -247,9 +236,9 @@ public class ClientDragonRenderer {
                 float scale = (float) (Math.max(size / 40.0D, 0.4D) * (attributeInstance != null ? attributeInstance.getValue() : 1.0D));
                 poseStack.scale(scale, scale, scale);
 
-                ((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
-                DragonEntity dummyDragon = playerDragonHashMap.get(player.getId()).get();
-                EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(dummyDragon);
+                ((EntityRendererAccessor) renderPlayerEvent.getRenderer()).dragonSurvival$setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
+                DragonEntity playerAsDragon = playerDragonHashMap.get(player.getId()).get(); // What will be rendered in place of the human player model
+                EntityRenderer<? super DragonEntity> dragonRenderer = minecraft.getEntityRenderDispatcher().getRenderer(playerAsDragon);
                 dragonModel.setOverrideTexture(texture);
 
                 if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
@@ -267,31 +256,34 @@ public class ClientDragonRenderer {
                         poseStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
                     }
                 }
+
                 if (!player.isInvisible()) {
                     boolean isPlayerGliding = ServerFlightHandler.isGliding(player);
                     Entity playerVehicle = player.getVehicle();
+
                     if (isPlayerGliding || (player.isPassenger() && DragonStateProvider.isDragon(playerVehicle) && ServerFlightHandler.isGliding((Player) playerVehicle))) {
-                        float upRot = 0;
+                        float upRot;
+
                         if (isPlayerGliding) {
                             upRot = Mth.clamp((float) (player.getDeltaMovement().y * 20), -80, 80);
                         } else {
                             upRot = Mth.clamp((float) (playerVehicle.getDeltaMovement().y * 20), -80, 80);
                         }
 
-                        dummyDragon.prevXRot = Mth.lerp(0.1F, dummyDragon.prevXRot, upRot);
-                        dummyDragon.prevXRot = Mth.clamp(dummyDragon.prevXRot, -80, 80);
+                        playerAsDragon.prevXRot = Mth.lerp(0.1F, playerAsDragon.prevXRot, upRot);
+                        playerAsDragon.prevXRot = Mth.clamp(playerAsDragon.prevXRot, -80, 80);
 
-                        handler.getMovementData().prevXRot = dummyDragon.prevXRot;
+                        handler.getMovementData().prevXRot = playerAsDragon.prevXRot;
 
-                        if (Float.isNaN(dummyDragon.prevXRot)) {
-                            dummyDragon.prevXRot = upRot;
+                        if (Float.isNaN(playerAsDragon.prevXRot)) {
+                            playerAsDragon.prevXRot = upRot;
                         }
 
-                        if (Float.isNaN(dummyDragon.prevXRot)) {
-                            dummyDragon.prevXRot = 0;
+                        if (Float.isNaN(playerAsDragon.prevXRot)) {
+                            playerAsDragon.prevXRot = 0;
                         }
 
-                        poseStack.mulPose(Axis.XN.rotationDegrees(dummyDragon.prevXRot));
+                        poseStack.mulPose(Axis.XN.rotationDegrees(playerAsDragon.prevXRot));
 
                         float yRot;
                         Vec3 deltaVel;
@@ -359,28 +351,28 @@ public class ClientDragonRenderer {
                         float targetRollDeg = targetRollNormalized * ROLL_MAX_DEG * Mth.DEG_TO_RAD;
 
                         // NaN/Inf prevention - snap directly
-                        if (!Double.isFinite(dummyDragon.prevZRot)) {
-                            dummyDragon.prevZRot = targetRollDeg;
+                        if (!Double.isFinite(playerAsDragon.prevZRot)) {
+                            playerAsDragon.prevZRot = targetRollDeg;
                         } else {
-                            dummyDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, dummyDragon.prevZRot, targetRollDeg);
+                            playerAsDragon.prevZRot = Mth.lerp(ROLL_VEL_LERP_FACTOR, playerAsDragon.prevZRot, targetRollDeg);
                         }
 
-                        handler.getMovementData().prevXRot = dummyDragon.prevXRot;
-                        handler.getMovementData().prevZRot = dummyDragon.prevZRot;
+                        handler.getMovementData().prevXRot = playerAsDragon.prevXRot;
+                        handler.getMovementData().prevZRot = playerAsDragon.prevZRot;
 
-                        poseStack.mulPose(Axis.ZP.rotation(dummyDragon.prevZRot));
+                        poseStack.mulPose(Axis.ZP.rotation(playerAsDragon.prevZRot));
                     } else {
                         handler.getMovementData().prevZRot = 0;
                         handler.getMovementData().prevXRot = 0;
                     }
                     if (player != minecraft.player || !Minecraft.getInstance().options.getCameraType().isFirstPerson() || !isPlayerGliding || renderFirstPersonFlight) {
-                        dragonRenderer.render(dummyDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
+                        dragonRenderer.render(playerAsDragon, yaw, partialRenderTick, poseStack, renderTypeBuffer, eventLight);
                     }
                 }
 
                 if (!player.isSpectator()) {
                     // Render the parrot on the players shoulder
-                    ((AccessorLivingRenderer) playerRenderer).dragonsurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
+                    ((LivingRendererAccessor) playerRenderer).dragonSurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
                         poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
                         poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
                         double height = 1.3 * scale;
@@ -403,16 +395,16 @@ public class ClientDragonRenderer {
                     }
                 }
             } catch (Throwable throwable) {
-                DragonSurvivalMod.LOGGER.error("A problem occurred while rendering a dragon in third person", throwable);
+                DragonSurvival.LOGGER.error("A problem occurred while rendering a dragon in third person", throwable);
             } finally {
                 poseStack.popPose();
             }
         } else {
-            if (renderDelay > 0 && player == ClientProxy.getLocalPlayer()) {
+            if (renderDelay > 0 && player == minecraft.player) {
                 renderDelay--;
                 renderPlayerEvent.setCanceled(true);
             } else {
-                ((AccessorEntityRenderer) renderPlayerEvent.getRenderer()).setShadowRadius(0.5F);
+                ((EntityRendererAccessor) renderPlayerEvent.getRenderer()).dragonSurvival$setShadowRadius(0.5F);
             }
         }
         dragonModel.setOverrideTexture(null);

@@ -268,7 +268,6 @@ public class ClawToolHandler {
         }
 
         BlockState state = event.getState();
-        float originalSpeed = event.getOriginalSpeed();
 
         float bonus = 0;
         float unlockedBonus = 0;
@@ -292,7 +291,7 @@ public class ClawToolHandler {
         }
 
         for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
-            if (state.is(tagKey)) {
+            if (state.is(tagKey) && unlockedBonus > bonus) {
                 bonus = unlockedBonus;
                 break;
             }

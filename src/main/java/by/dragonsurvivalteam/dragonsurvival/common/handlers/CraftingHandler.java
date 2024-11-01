@@ -12,7 +12,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.enchanting.GetEnchantmentLevelEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
-@SuppressWarnings("unused")
 @EventBusSubscriber
 public class CraftingHandler {
     @SubscribeEvent

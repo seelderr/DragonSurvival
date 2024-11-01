@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.HelmetBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
@@ -11,7 +11,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class DataBlockModelProvider extends BlockModelProvider {
     public DataBlockModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, DragonSurvivalMod.MODID, existingFileHelper);
+        super(output, DragonSurvival.MODID, existingFileHelper);
     }
 
     @Override
@@ -28,7 +28,7 @@ public class DataBlockModelProvider extends BlockModelProvider {
                         .texture("west", ResourceLocation.fromNamespaceAndPath(modid, BLOCK_FOLDER + "/" + holder.getId().getPath() + "_west"));
             } else if (holder.get() instanceof HelmetBlock) {
                 withExistingParent(holder.getId().getPath(), BLOCK_FOLDER + "/" + "skull")
-                        .texture("all", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "block/" + holder.getId().getPath()));
+                        .texture("all", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "block/" + holder.getId().getPath()));
             }
         });
     }

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -49,9 +49,9 @@ public class MagicCap extends SubCap {
         passiveDragonAbilities.clear();
         innateDragonAbilities.clear();
 
-
-        if (!ServerConfig.saveAllAbilities)
+        if (!ServerConfig.saveAllAbilities) {
             abilities.clear();
+        }
 
         if (type != null) {
             for (DragonAbility dragonAbility : DragonAbilities.ABILITIES.getOrDefault(type.getSubtypeName(), new ArrayList<>())) {
@@ -60,7 +60,7 @@ public class MagicCap extends SubCap {
                         DragonAbility ability = dragonAbility.getClass().newInstance();
                         abilities.put(ability.getName(), ability);
                     } catch (InstantiationException | IllegalAccessException e) {
-                        DragonSurvivalMod.LOGGER.error(e);
+                        DragonSurvival.LOGGER.error(e);
                     }
                 }
 
@@ -79,11 +79,9 @@ public class MagicCap extends SubCap {
         }
     }
 
-
     public int getCurrentMana() {
         return currentMana;
     }
-
 
     public void setCurrentMana(int currentMana) {
         this.currentMana = currentMana;
@@ -188,7 +186,7 @@ public class MagicCap extends SubCap {
                         ab.loadNBT(tag.getCompound(ability.getName()));
                         abilities.put(ab.getName(), ab);
                     } catch (InstantiationException | IllegalAccessException e) {
-                        DragonSurvivalMod.LOGGER.error(e);
+                        DragonSurvival.LOGGER.error(e);
                     }
                 }
             }

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
@@ -18,7 +18,7 @@ import java.util.Objects;
 
 public class DataItemModelProvider extends ItemModelProvider {
     public DataItemModelProvider(final PackOutput output, final ExistingFileHelper existingFileHelper) {
-        super(output, DragonSurvivalMod.MODID, existingFileHelper);
+        super(output, DragonSurvival.MODID, existingFileHelper);
     }
 
     private static final List<String> blockItemsThatShouldBeBasicInstead = List.of(
@@ -59,12 +59,12 @@ public class DataItemModelProvider extends ItemModelProvider {
                     String skin = split[1].substring(split[1].length() - 1);
 
                     getBuilder(blockItem.toString())
-                            .parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + split[0])))
-                            .texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin));
+                            .parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + split[0])))
+                            .texture("skeleton_texture", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + "skeleton_dragon_" + skin));
                 } else if (blockItem.toString().contains("vault")) {
-                    getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath()) + "_inactive"));
+                    getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath()) + "_inactive"));
                 } else {
-                    getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath())));
+                    getBuilder(blockItem.toString()).parent(new ModelFile.UncheckedModelFile(ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, BLOCK_FOLDER + "/" + holder.getId().getPath())));
                 }
             } else {
                 if (itemsThatAreManuallyAuthored.stream().anyMatch(holder.getId().getPath()::contains)) {
@@ -77,7 +77,7 @@ public class DataItemModelProvider extends ItemModelProvider {
                     ResourceLocation itemLoc = Objects.requireNonNull(BuiltInRegistries.ITEM.getKey(item));
                     getBuilder(itemLoc.toString())
                             .parent(new ModelFile.UncheckedModelFile("item/handheld"))
-                            .texture("layer0", ResourceLocation.fromNamespaceAndPath(DragonSurvivalMod.MODID, "item/" + itemLoc.getPath()));
+                            .texture("layer0", ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "item/" + itemLoc.getPath()));
                 } else {
                     basicItem(holder.get());
                 }

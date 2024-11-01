@@ -9,8 +9,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -35,12 +33,10 @@ public abstract class DragonAbility {
         return player;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public Component getTitle() {
         return Component.translatable("ds.skill." + getName());
     }
 
-    @OnlyIn(Dist.CLIENT)
     public Component getDescription() {
         return Component.translatable("ds.skill.description." + getName());
     }
@@ -49,7 +45,6 @@ public abstract class DragonAbility {
 
     public abstract AbstractDragonType getDragonType();
 
-    @OnlyIn(Dist.CLIENT)
     public abstract ResourceLocation[] getSkillTextures();
 
     public ResourceLocation getIcon() {
@@ -60,12 +55,10 @@ public abstract class DragonAbility {
         return 0;
     }
 
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getInfo() {
         return new ArrayList<>();
     }
 
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         return new ArrayList<>();
     }

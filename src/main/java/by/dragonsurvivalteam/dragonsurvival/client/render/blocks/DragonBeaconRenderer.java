@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.blocks;
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.DragonBeaconTileEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -43,21 +43,21 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
                 item = hasMemoryBlock ? DSItems.PASSIVE_PEACE_BEACON.getDelegate().value() : DSItems.INACTIVE_PEACE_DRAGON_BEACON.getDelegate().value();
 
                 if (!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock) {
-                    clientWorld.addParticle(new BeaconParticle.PeaceData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
+                    clientWorld.addParticle(DSParticles.PEACE_BEACON_PARTICLE.value(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
                 }
             }
             case MAGIC -> {
                 item = hasMemoryBlock ? DSItems.PASSIVE_MAGIC_BEACON.getDelegate().value() : DSItems.INACTIVE_MAGIC_DRAGON_BEACON.getDelegate().value();
 
                 if (!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock) {
-                    clientWorld.addParticle(new BeaconParticle.MagicData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
+                    clientWorld.addParticle(DSParticles.MAGIC_BEACON_PARTICLE.value(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
                 }
             }
             case FIRE -> {
                 item = hasMemoryBlock ? DSItems.PASSIVE_FIRE_BEACON.getDelegate().value() : DSItems.INACTIVE_FIRE_DRAGON_BEACON.getDelegate().value();
 
                 if (!minecraft.isPaused() && dragonBeaconEntity.tick % 5 == 0 && hasMemoryBlock) {
-                    clientWorld.addParticle(new BeaconParticle.FireData(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
+                    clientWorld.addParticle(DSParticles.FIRE_BEACON_PARTICLE.value(), dragonBeaconEntity.getX() + x, dragonBeaconEntity.getY() + 0.5, dragonBeaconEntity.getZ() + z, 0, 0, 0);
                 }
             }
         }

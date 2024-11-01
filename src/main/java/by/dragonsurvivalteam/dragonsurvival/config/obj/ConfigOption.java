@@ -10,8 +10,14 @@ import java.lang.annotation.Target;
 public @interface ConfigOption {
     ConfigSide side();
 
+    /**
+     * Identifier for this conf - needs to be unique
+     */
     String key();
 
+    /**
+     * Determines how validation will be handled
+     */
     Validation validation() default Validation.DEFAULT;
 
     /**
@@ -19,9 +25,17 @@ public @interface ConfigOption {
      */
     String[] category() default {};
 
+    /**
+     * Comment for the config file <br>
+     * The config screen uses translation keys instead (see {@link ConfigOption#localization()})
+     */
     String[] comment();
 
+    /**
+     * Custom translation key for the config name <br> <br>
+     * The default translation key is 'mod_id.configuration.key_of_this_config' <br>
+     * (An example would be 'dragonsurvival.configuration.requireDragonFood') <br> <br>
+     * Certain elements will have additional suffixes, like '.button' or '.title'
+     */
     String localization() default "";
-
-    boolean restart() default false;
 }
