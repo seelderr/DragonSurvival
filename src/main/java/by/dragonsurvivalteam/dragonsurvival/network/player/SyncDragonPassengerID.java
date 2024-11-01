@@ -12,7 +12,7 @@ import net.minecraft.world.entity.Entity;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class SyncDragonPassengerID implements IMessage<SyncDragonPassengerID.Data> {
     public static void handleClient(final Data message, final IPayloadContext context) {

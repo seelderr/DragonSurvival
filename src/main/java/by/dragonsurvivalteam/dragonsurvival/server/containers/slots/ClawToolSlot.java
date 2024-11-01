@@ -18,7 +18,7 @@ import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class ClawToolSlot extends Slot {
     static final ResourceLocation AXE_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "gui/dragon_claws_axe");

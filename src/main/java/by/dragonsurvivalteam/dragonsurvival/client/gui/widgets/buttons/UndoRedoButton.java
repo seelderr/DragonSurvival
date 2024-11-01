@@ -5,7 +5,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.resources.ResourceLocation;
 import org.checkerframework.checker.nullness.qual.NonNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class UndoRedoButton extends ArrowButton {
     public static final ResourceLocation undo = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_undo.png");

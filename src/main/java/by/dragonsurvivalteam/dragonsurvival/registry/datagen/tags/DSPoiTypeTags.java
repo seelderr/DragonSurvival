@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 
 public class DSPoiTypeTags extends PoiTypeTagsProvider {
     public DSPoiTypeTags(PackOutput pOutput, CompletableFuture<HolderLookup.Provider> pProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(pOutput, pProvider, DragonSurvivalMod.MODID, existingFileHelper);
+        super(pOutput, pProvider, DragonSurvival.MODID, existingFileHelper);
     }
 
     @Override

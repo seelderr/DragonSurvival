@@ -6,7 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
@@ -48,7 +47,8 @@ public class HUDHandler {
                 event.setCanceled(true);
             }
         } else if (id == VanillaGuiLayers.AIR_LEVEL) {
-            DragonStateHandler handler = DragonStateProvider.getData(ClientProxy.getLocalPlayer());
+            //noinspection DataFlowIssue -> player should be present
+            DragonStateHandler handler = DragonStateProvider.getData(minecraft.player);
 
             if (!handler.isDragon()) {
                 return;

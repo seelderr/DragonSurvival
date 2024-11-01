@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
@@ -16,11 +16,11 @@ import java.util.concurrent.CompletableFuture;
 
 public class DSEnchantmentTags extends EnchantmentTagsProvider {
     public DSEnchantmentTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-        super(output, lookupProvider, DragonSurvivalMod.MODID, existingFileHelper);
+        super(output, lookupProvider, DragonSurvival.MODID, existingFileHelper);
     }
 
     @Override
-    protected void addTags(@NotNull HolderLookup.Provider provider) { // FIXME :: size_changing is wrongly defined in json, add tag
+    protected void addTags(@NotNull HolderLookup.Provider provider) {
         // Used in enchantments
         tag(exclusiveSet("anti_dragon"))
                 .add(DSEnchantments.DRAGONSBANE)
@@ -42,6 +42,10 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
                 .add(DSEnchantments.SACRED_SCALES)
                 .add(DSEnchantments.UNBREAKABLE_SPIRIT)
                 .add(DSEnchantments.CURSE_OF_KINDNESS);
+
+        // Used in enchantments
+        tag(exclusiveSet("size_changing"))
+                .add(DSEnchantments.SHRINK);
     }
 
     private static TagKey<Enchantment> exclusiveSet(@NotNull final String path) {
@@ -49,6 +53,6 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
     }
 
     private static TagKey<Enchantment> key(@NotNull final String path) {
-        return TagKey.create(Registries.ENCHANTMENT, DragonSurvivalMod.res(path));
+        return TagKey.create(Registries.ENCHANTMENT, DragonSurvival.res(path));
     }
 }

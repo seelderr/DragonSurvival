@@ -6,8 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
-import by.dragonsurvivalteam.dragonsurvival.config.BlockStateConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;

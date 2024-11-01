@@ -7,25 +7,21 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.sensing.VillagerHostilesSensor;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(VillagerHostilesSensor.class)
 public class VillagerHostilesSensorMixin {
-
-    @Inject(at = @At(value = "HEAD"), method = "isClose", cancellable = true)
-    public void isCloseToMarkedEntity(LivingEntity pTarget, LivingEntity pAttacker, CallbackInfoReturnable<Boolean> cir) {
-        if (pAttacker.hasEffect(DSEffects.HUNTER_OMEN)) {
-            cir.setReturnValue(pTarget.distanceToSqr(pAttacker) <= (double) (8.0F * 8.0F));
+    @ModifyVariable(method = "isClose", at = @At(value = "STORE")) // 'attacker' is the villager itself
+    public float dragonSurvival$setHunterOmenDistance(float distance, @Local(argsOnly = true, ordinal = 1) final LivingEntity target) {
+        if (target.hasEffect(DSEffects.HUNTER_OMEN) && distance < 8) {
+            distance = 8;
         }
+
+        return distance;
     }
 
-    @ModifyReturnValue(at = @At(value = "RETURN"), method = "isHostile")
-    public boolean isHostileToMarkedEntity(boolean original, @Local(argsOnly = true) LivingEntity pAttacker) {
-        if (pAttacker.hasEffect(DSEffects.HUNTER_OMEN)) {
-            return true;
-        } else {
-            return original;
-        }
+    @ModifyReturnValue(method = "isHostile", at = @At(value = "RETURN"))
+    public boolean dragonSurvival$setHunterOmenAsHostile(boolean original, @Local(argsOnly = true) LivingEntity entity) {
+        return original || entity.hasEffect(DSEffects.HUNTER_OMEN);
     }
 }

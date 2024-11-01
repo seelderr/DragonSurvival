@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SourceOfMagicBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -8,10 +8,10 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncMagicSourceStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicPlaceholder;
 import by.dragonsurvivalteam.dragonsurvival.server.tileentity.SourceOfMagicTileEntity;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -21,8 +21,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
@@ -30,10 +28,8 @@ import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-
 @EventBusSubscriber
 public class SourceOfMagicHandler {
-
     public static void cancelSourceOfMagicServer(Player player) {
         DragonStateProvider.getOptional(player).ifPresent(cap -> {
             if (cap.getMagicData().onMagicSource) {
@@ -102,10 +98,10 @@ public class SourceOfMagicHandler {
                                 double x = -1 + random.nextDouble() * 2;
                                 double z = -1 + random.nextDouble() * 2;
 
-                                if (pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) {
-                                    player.level().addParticle(new BeaconParticle.MagicData(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+                                if (pState.getBlock() == DSBlocks.SEA_SOURCE_OF_MAGIC.get() || pState.getBlock() == DSBlocks.FOREST_SOURCE_OF_MAGIC.get()) { // TODO :: why do sea and forest use the same particle? forest has 'DSParticles.PEACE_BEACON_PARTICLE'
+                                    player.level().addParticle(DSParticles.MAGIC_BEACON_PARTICLE.value(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
                                 } else if (pState.getBlock() == DSBlocks.CAVE_SOURCE_OF_MAGIC.get()) {
-                                    player.level().addParticle(new BeaconParticle.FireData(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
+                                    player.level().addParticle(DSParticles.FIRE_BEACON_PARTICLE.value(), player.getX() + x, player.getY() + 0.5, player.getZ() + z, 0, 0, 0);
                                 }
 
                                 handler.getMagicData().magicSourceTimer++;
@@ -125,10 +121,9 @@ public class SourceOfMagicHandler {
         }
     }
 
-    @OnlyIn(Dist.CLIENT)
     @SubscribeEvent
     public static void playerTick(ClientTickEvent.Post event) {
-        Player player = Minecraft.getInstance().player;
+        Player player = DragonSurvival.PROXY.getLocalPlayer();
 
         if (DragonStateProvider.isDragon(player)) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
@@ -157,6 +152,4 @@ public class SourceOfMagicHandler {
             }
         }
     }
-
-    // There is a third case for mining as well. See MiningTickHandler.java
 }

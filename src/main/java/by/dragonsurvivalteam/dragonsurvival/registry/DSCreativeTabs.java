@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
@@ -21,7 +21,7 @@ public class DSCreativeTabs {
 
     public static final DeferredRegister<CreativeModeTab> DS_CREATIVE_MODE_TABS = DeferredRegister.create(
             Registries.CREATIVE_MODE_TAB,
-            DragonSurvivalMod.MODID
+            DragonSurvival.MODID
     );
 
     static CreativeModeTab.DisplayItemsGenerator displayBlockItemsGenerator = (parameters, output) -> Stream.of(DS_BLOCKS).forEach(

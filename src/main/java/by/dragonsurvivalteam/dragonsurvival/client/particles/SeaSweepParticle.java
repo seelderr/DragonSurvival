@@ -1,18 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.particles;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.MapCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
-import io.netty.buffer.ByteBuf;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.SeaSweepParticleOption;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.*;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.ByteBufCodecs;
-import net.minecraft.network.codec.StreamCodec;
 import org.jetbrains.annotations.NotNull;
-
 
 public class SeaSweepParticle extends TextureSheetParticle {
     private final SpriteSet sprites;
@@ -51,44 +42,7 @@ public class SeaSweepParticle extends TextureSheetParticle {
         return 15728880;
     }
 
-    public static class Type extends ParticleType<Data> {
-        public Type(boolean pOverrideLimitter) {
-            super(pOverrideLimitter);
-        }
-
-        @Override
-        public MapCodec<Data> codec() {
-            return Data.CODEC;
-        }
-
-        @Override
-        public StreamCodec<? super RegistryFriendlyByteBuf, Data> streamCodec() {
-            return Data.STREAM_CODEC;
-        }
-    }
-
-    public record Data(double quadSize) implements ParticleOptions {
-        public static final Type TYPE = new Type(false);
-
-        public static final MapCodec<Data> CODEC = RecordCodecBuilder.mapCodec(codecBuilder -> codecBuilder.group(Codec.DOUBLE.fieldOf("quadSize").forGetter(Data::quadSize)).apply(codecBuilder, Data::new));
-
-        public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.DOUBLE,
-                Data::quadSize,
-                Data::new
-        );
-
-        public double quadSize() {
-            return quadSize;
-        }
-
-        @Override
-        public @NotNull ParticleType<?> getType() {
-            return TYPE;
-        }
-    }
-
-    public static class Factory implements ParticleProvider<Data> {
+    public static class Factory implements ParticleProvider<SeaSweepParticleOption> {
         private final SpriteSet sprites;
 
         public Factory(SpriteSet spriteSet) {
@@ -96,8 +50,8 @@ public class SeaSweepParticle extends TextureSheetParticle {
         }
 
         @Override
-        public Particle createParticle(@NotNull Data data, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
-            return new SeaSweepParticle(level, x, y, z, data.quadSize, sprites);
+        public Particle createParticle(@NotNull SeaSweepParticleOption data, @NotNull ClientLevel level, double x, double y, double z, double xSpeed, double ySpeed, double zSpeed) {
+            return new SeaSweepParticle(level, x, y, z, data.quadSize(), sprites);
         }
     }
 }

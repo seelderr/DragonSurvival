@@ -7,7 +7,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @SuppressWarnings("unused")
 public class DSAdvancementTriggers {

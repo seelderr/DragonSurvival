@@ -18,6 +18,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
 runs {
 	configureEach {
+		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
 		systemProperty 'neoforge.logging.markers', 'REGISTRIES'
 		systemProperty 'neoforge.logging.console.level', 'debug'
 
@@ -25,31 +26,25 @@ runs {
 	}
 
 	client {
-		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
 		arguments '--username', 'Dev'
 	}
 
 	client_static_username { // To be able to start a second client in parallel
 		runType 'client'
-		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
 		arguments '--username', 'Dev'
 	}
 
 	server {
-		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
 		arguments '--nogui'
 	}
 
-	gameTestServer {
-		systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-	}
+	gameTestServer {}
 
 	data {
 		arguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
 	}
 
-	junit {
-	}
+	junit {}
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }

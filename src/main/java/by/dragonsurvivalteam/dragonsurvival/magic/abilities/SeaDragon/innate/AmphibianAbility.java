@@ -8,10 +8,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class AmphibianAbility extends InnateDragonAbility {
@@ -47,7 +45,6 @@ public class AmphibianAbility extends InnateDragonAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public boolean isDisabled() {
         return super.isDisabled() || !ServerConfig.penaltiesEnabled || ServerConfig.seaTicksWithoutWater == 0.0;
     }

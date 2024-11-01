@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.util;
 
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorAnimationController;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.AnimationControllerAccessor;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -28,8 +28,8 @@ public class AnimationUtils {
         }
 
         if (controller.getCurrentAnimation() != null) {
-            double distance = currentAnimationTick - ((AccessorAnimationController) controller).getTickOffset();
-            ((AccessorAnimationController) controller).setTickOffset(currentAnimationTick - distance * (controller.getAnimationSpeed() / speed));
+            double distance = currentAnimationTick - ((AnimationControllerAccessor) controller).dragonSurvival$getTickOffset();
+            ((AnimationControllerAccessor) controller).dragonSurvival$setTickOffset(currentAnimationTick - distance * (controller.getAnimationSpeed() / speed));
             controller.setAnimationSpeed(speed);
         }
     }

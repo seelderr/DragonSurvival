@@ -19,7 +19,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
     private final GeoEntityRenderer<DragonEntity> renderer;

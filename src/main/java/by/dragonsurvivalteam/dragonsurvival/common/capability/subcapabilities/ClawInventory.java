@@ -61,6 +61,10 @@ public class ClawInventory extends SubCap {
         }
     }
 
+    public void set(final Slot slot, final ItemStack stack) {
+        clawsInventory.setItem(slot.ordinal(), stack);
+    }
+
     public ItemStack get(final Slot slot) {
         return clawsInventory.getItem(slot.ordinal());
     }

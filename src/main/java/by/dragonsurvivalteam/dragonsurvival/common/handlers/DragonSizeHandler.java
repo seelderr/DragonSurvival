@@ -125,6 +125,7 @@ public class DragonSizeHandler {
         if (player.getForcedPose() != overridePose) {
             player.setForcedPose(overridePose);
 
+            // FIXME :: use proxy?
             if (player.level().isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
                 player.refreshDimensions();
             }

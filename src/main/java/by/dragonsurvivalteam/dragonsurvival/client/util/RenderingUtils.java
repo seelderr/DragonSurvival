@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.util;
 
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import com.mojang.blaze3d.platform.GlStateManager.DestFactor;
 import com.mojang.blaze3d.platform.GlStateManager.SourceFactor;
@@ -286,7 +286,7 @@ public class RenderingUtils {
                 image.close();
             }
         } catch (Exception e) {
-            DragonSurvivalMod.LOGGER.error(e);
+            DragonSurvival.LOGGER.error(e);
         }
     }
 
@@ -302,7 +302,7 @@ public class RenderingUtils {
         try {
             image = NativeImage.read(Minecraft.getInstance().getResourceManager().getResource(location).get().open());
         } catch (Exception e) {
-            DragonSurvivalMod.LOGGER.error(String.format("Texture resource %s not found!", location.getPath()), e);
+            DragonSurvival.LOGGER.error(String.format("Texture resource %s not found!", location.getPath()), e);
         }
 
         return image;

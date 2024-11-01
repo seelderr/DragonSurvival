@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
@@ -31,7 +31,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.mixins.AccessorScreen;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
@@ -74,9 +74,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(Dist.CLIENT)
 public class DragonEditorScreen extends Screen {
     private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
     private static final ResourceLocation SAVE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
@@ -376,7 +376,7 @@ public class DragonEditorScreen extends Screen {
             gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
             writer.close();
         } catch (IOException e) {
-            DragonSurvivalMod.LOGGER.error("An error occurred while trying to save the dragon skin", e);
+            DragonSurvival.LOGGER.error("An error occurred while trying to save the dragon skin", e);
         }
 
         return newPreset;
@@ -641,7 +641,7 @@ public class DragonEditorScreen extends Screen {
                                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
                             }
                         };
-                        ((AccessorScreen) DragonEditorScreen.this).children().add(conf);
+                        ((ScreenAccessor) DragonEditorScreen.this).dragonSurvival$children().add(conf);
                         renderables.add(renderButton);
                     }
                     toggled = !toggled;
@@ -681,7 +681,7 @@ public class DragonEditorScreen extends Screen {
             extraKeys.removeIf(s -> {
                 DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA, s, dragonType);
                 if (text == null) {
-                    DragonSurvivalMod.LOGGER.error("Key " + s + " not found!");
+                    DragonSurvival.LOGGER.error("Key " + s + " not found!");
                     return true;
                 }
                 return !text.random;
@@ -807,7 +807,7 @@ public class DragonEditorScreen extends Screen {
         dragonRender.xOffset = xOffset;
         dragonRender.yOffset = yOffset;
 
-        ((AccessorScreen) this).children().addFirst(dragonRender);
+        ((ScreenAccessor) this).dragonSurvival$children().addFirst(dragonRender);
     }
 
     public void confirm() {

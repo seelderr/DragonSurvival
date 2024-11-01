@@ -27,7 +27,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AbilityScreen extends Screen {
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_interface.png");

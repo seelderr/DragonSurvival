@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.BeaconParticle;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -11,18 +10,17 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility {
@@ -90,7 +88,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @Override
     public ParticleOptions getParticleEffect() {
-        return new BeaconParticle.PeaceData();
+        return DSParticles.PEACE_BEACON_PARTICLE.value();
     }
 
     @Override
@@ -142,7 +140,6 @@ public class ToughSkinAbility extends AoeBuffAbility {
     }
 
     @Override
-    @OnlyIn(Dist.CLIENT)
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
         list.add(Component.translatable("ds.skill.defence", "+" + toughSkinArmorValue));

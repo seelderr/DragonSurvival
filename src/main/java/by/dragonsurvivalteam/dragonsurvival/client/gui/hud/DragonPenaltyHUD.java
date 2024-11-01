@@ -19,7 +19,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonPenaltyHUD {
     public static final ResourceLocation DRAGON_HUD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");

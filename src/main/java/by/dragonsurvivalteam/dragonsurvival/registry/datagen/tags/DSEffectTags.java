@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod;
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
@@ -18,7 +18,7 @@ public class DSEffectTags extends TagsProvider<MobEffect> {
     public static final TagKey<MobEffect> UNBREAKABLE_SPIRIT_BLACKLIST = key("unbreakable_spirit_blacklist");
 
     public DSEffectTags(final PackOutput output, final CompletableFuture<HolderLookup.Provider> provider, @Nullable final ExistingFileHelper helper) {
-        super(output, Registries.MOB_EFFECT, provider, DragonSurvivalMod.MODID, helper);
+        super(output, Registries.MOB_EFFECT, provider, DragonSurvival.MODID, helper);
     }
 
     @Override
@@ -28,6 +28,6 @@ public class DSEffectTags extends TagsProvider<MobEffect> {
     }
 
     private static TagKey<MobEffect> key(@NotNull final String path) {
-        return TagKey.create(Registries.MOB_EFFECT, DragonSurvivalMod.res(path));
+        return TagKey.create(Registries.MOB_EFFECT, DragonSurvival.res(path));
     }
 }

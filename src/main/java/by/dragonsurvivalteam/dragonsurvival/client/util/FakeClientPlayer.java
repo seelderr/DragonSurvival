@@ -13,8 +13,6 @@ import net.minecraft.stats.Stat;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimationController;
 
@@ -22,7 +20,6 @@ import java.util.UUID;
 import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class FakeClientPlayer extends AbstractClientPlayer {
 
     public DragonStateHandler handler = new DragonStateHandler();

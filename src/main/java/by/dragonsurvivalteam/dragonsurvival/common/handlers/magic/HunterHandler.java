@@ -1,9 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.HunterAbility;
-import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncHunterStacksRemoval;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
@@ -161,7 +161,7 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
             return packedColor;
         }
 
-        float alpha = calculateAlpha(data, player == ClientProxy.getLocalPlayer());
+        float alpha = calculateAlpha(data, player == DragonSurvival.PROXY.getLocalPlayer());
         return applyAlpha(alpha, packedColor);
     }
 
@@ -178,7 +178,7 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
         }
 
         int packedColor = color.getColor();
-        float alpha = calculateAlpha(data, player == ClientProxy.getLocalPlayer());
+        float alpha = calculateAlpha(data, player == DragonSurvival.PROXY.getLocalPlayer());
         return Color.ofARGB((int) (alpha * 255), FastColor.ARGB32.red(packedColor), FastColor.ARGB32.green(packedColor), FastColor.ARGB32.blue(packedColor));
     }
 
@@ -187,7 +187,7 @@ public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatch
     }
 
     public static float calculateAlphaAsFloat(@NotNull final Player player) {
-        return calculateAlpha(DragonStateProvider.getData(player), player == ClientProxy.getLocalPlayer());
+        return calculateAlpha(DragonStateProvider.getData(player), player == DragonSurvival.PROXY.getLocalPlayer());
     }
 
     private static float calculateAlpha(@NotNull final DragonStateHandler data, boolean isLocalPlayer) {

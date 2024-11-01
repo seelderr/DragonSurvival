@@ -9,7 +9,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 import software.bernie.geckolib.model.data.EntityModelData;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class LeaderModel extends GeoModel<LeaderEntity> {
     @Override

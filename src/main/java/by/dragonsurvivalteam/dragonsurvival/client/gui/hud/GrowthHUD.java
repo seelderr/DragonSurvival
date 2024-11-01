@@ -20,7 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import java.awt.*;
 import java.util.HashMap;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class GrowthHUD {
     private static final HashMap<String, ResourceLocation> CACHE = new HashMap<>();

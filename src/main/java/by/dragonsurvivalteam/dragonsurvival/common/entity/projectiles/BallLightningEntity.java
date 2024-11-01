@@ -1,7 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
-import by.dragonsurvivalteam.dragonsurvival.client.particles.dragon.SeaDragon.LargeLightningParticle;
+import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.BallLightningAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.StormBreathAbility;
@@ -37,7 +37,7 @@ import javax.annotation.Nullable;
 public class BallLightningEntity extends DragonBallEntity {
     protected boolean isLingering = false;
     protected int lingerTicks = 100;
-    protected LargeLightningParticle.Data trail = new LargeLightningParticle.Data(37, false);
+    protected LargeLightningParticleOption trail = new LargeLightningParticleOption(37, false);
 
     public BallLightningEntity(double x, double y, double z, Vec3 velocity, Level level) {
         super(DSEntities.BALL_LIGHTNING.get(), x, y, z, velocity, level);

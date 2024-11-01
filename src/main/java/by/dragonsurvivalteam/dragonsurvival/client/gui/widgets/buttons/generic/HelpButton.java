@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 import java.util.Objects;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class HelpButton extends ExtendedButton {
     public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
