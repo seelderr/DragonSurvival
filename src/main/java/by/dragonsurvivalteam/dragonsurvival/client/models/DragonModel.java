@@ -64,9 +64,8 @@ public class DragonModel extends GeoModel<DragonEntity> {
             return;
         }
 
-        float deltaTickRaw = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
-        // At extremely low FPS (over 0.5 deltaTick) will cause molang to break
-        float deltaTick = Math.min(deltaTickRaw, 0.49f);
+        float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
+        float partialDeltaTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
         Player player = dragon.getPlayer();
         DragonStateHandler handler = DragonStateProvider.getData(player);
         DragonMovementData md = handler.getMovementData();
@@ -77,6 +76,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         double gravity = player.getAttribute(Attributes.GRAVITY).getValue();
         MathParser.setVariable("query.gravity", () -> gravity);
 
+
         double bodyYawAvg;
         double headYawAvg;
         double headPitchAvg;
@@ -85,7 +85,12 @@ public class DragonModel extends GeoModel<DragonEntity> {
             double bodyYawChange = Functions.angleDifference(md.bodyYaw, md.bodyYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
             double headYawChange = Functions.angleDifference(md.headYaw, md.headYawLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
             double headPitchChange = Functions.angleDifference(md.headPitch, md.headPitchLastFrame) / deltaTick * DELTA_YAW_PITCH_FACTOR;
-            double verticalVelocity = Mth.lerp(Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false), md.deltaMovementLastFrame.y, md.deltaMovement.y) * DELTA_MOVEMENT_FACTOR;
+
+            double verticalVelocity = Mth.lerp(partialDeltaTick, md.deltaMovementLastFrame.y, md.deltaMovement.y) * DELTA_MOVEMENT_FACTOR;
+            // Factor in the vertical angle of the dragon so that the vertical velocity is scaled down when the dragon is looking up or down
+            // Ideally, we would just use more precise data (factor in the full rotation of the player in our animations)
+            // but this works pretty well in most situations the player will encounter
+            verticalVelocity *= 1 - Mth.abs(Mth.clampedMap(md.prevXRot, -90, 90, -1, 1));
 
 
             // TODO: I want to get this data from DeltaTracker, but I can't seem to AT it properly
@@ -93,22 +98,22 @@ public class DragonModel extends GeoModel<DragonEntity> {
             float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
 
             // Accumulate them in the history
-            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.bodyYawHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.bodyYawHistory.removeFirst();
             }
             dragon.bodyYawHistory.add(bodyYawChange);
 
-            while(dragon.headYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.headYawHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.headYawHistory.removeFirst();
             }
             dragon.headYawHistory.add(headYawChange);
 
-            while(dragon.headPitchHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.headPitchHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.headPitchHistory.removeFirst();
             }
             dragon.headPitchHistory.add(headPitchChange);
 
-            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.verticalVelocityHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.verticalVelocityHistory.removeFirst();
             }
             dragon.verticalVelocityHistory.add(verticalVelocity);
