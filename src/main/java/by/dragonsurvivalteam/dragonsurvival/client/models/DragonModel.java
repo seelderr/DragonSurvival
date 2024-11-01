@@ -65,7 +65,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
         float deltaTick = Minecraft.getInstance().getTimer().getRealtimeDeltaTicks();
         float partialDeltaTick = Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false);
-        Player player = dragon.getPlayer();
         DragonStateHandler handler = DragonStateProvider.getData(player);
         DragonMovementData md = handler.getMovementData();
 
