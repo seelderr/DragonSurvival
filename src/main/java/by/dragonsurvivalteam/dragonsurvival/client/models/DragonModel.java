@@ -90,9 +90,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
             // but this works pretty well in most situations the player will encounter
             verticalVelocity *= 1 - Mth.abs(Mth.clampedMap(md.prevXRot, -90, 90, -1, 1));
 
-
-            // TODO: I want to get this data from DeltaTracker, but I can't seem to AT it properly
-            float msPerTick = 50.f;
+            float msPerTick = Minecraft.getInstance().level.tickRateManager().millisecondsPerTick();
             float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
 
             // Accumulate them in the history
