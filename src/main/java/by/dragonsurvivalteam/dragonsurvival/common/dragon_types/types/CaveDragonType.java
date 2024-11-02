@@ -30,7 +30,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.List;
 
 public class CaveDragonType extends AbstractDragonType {
-    public int timeInRain;
+    public int rainResistSupply;
     public int lavaAirSupply;
 
     public CaveDragonType() {
@@ -40,80 +40,87 @@ public class CaveDragonType extends AbstractDragonType {
     @Override
     public CompoundTag writeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("timeInRain", timeInRain);
+        tag.putInt("rainResistSupply", rainResistSupply);
         tag.putInt("lavaAirSupply", lavaAirSupply);
         return tag;
     }
 
     @Override
     public void readNBT(CompoundTag base) {
-        timeInRain = base.getInt("timeInRain");
+        rainResistSupply = base.getInt("rainResistSupply");
         lavaAirSupply = base.getInt("lavaAirSupply");
+    }
+
+    private static boolean isDragonTakingWaterDamage(Player player) {
+        return player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0;
+    }
+
+    private static boolean isDragonTakingRainDamage(Player player) {
+        boolean isOnCauldronOrHydratingBlock = DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON);
+        return (player.isInWaterOrRain() || isOnCauldronOrHydratingBlock) && !player.isInWaterOrBubble() && ServerConfig.caveRainDamage != 0.0;
+    }
+
+    public static int getMaxRainResistSupply(Player player) {
+        ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(player, ContrastShowerAbility.class);
+        return contrastShower != null ? Functions.secondsToTicks(contrastShower.getDuration()) : 1;
+    }
+
+    public boolean shouldShowRainResistSupply(Player player) {
+        int maxRainResistSupply = getMaxRainResistSupply(player);
+        return isDragonTakingRainDamage(player) || rainResistSupply < maxRainResistSupply && maxRainResistSupply != 1;
+    }
+
+    private static boolean isDragonLavaSwimming(Player player) {
+        return player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value()) && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && ServerConfig.caveLavaSwimmingTicks != 0;
+    }
+
+    public boolean shouldShowLavaAirSupply(Player player) {
+        return isDragonLavaSwimming(player) || lavaAirSupply < ServerConfig.caveLavaSwimmingTicks;
     }
 
     @Override
     public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
-        boolean isInSeaBlock = DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON);
-        ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(player, ContrastShowerAbility.class);
-        int maxRainTime = contrastShower != null ? Functions.secondsToTicks(contrastShower.getDuration()) : 1;
+        int maxRainTime = getMaxRainResistSupply(player);
 
         Level level = player.level();
-        double oldRainTime = timeInRain;
-        int oldLavaTicks = lavaAirSupply;
+        final float RAIN_AND_LAVA_PERCENTAGE_REGEN_RATE_PER_TICK = 0.0133333F;
 
-        if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.FIRE) && !player.isCreative() && !player.isSpectator()) {
-            if (!level.isClientSide()) {
-                if (player.isInWaterOrBubble() && ServerConfig.caveWaterDamage != 0.0 || player.isInWaterOrRain() && !player.isInWater() && ServerConfig.caveRainDamage != 0.0 || isInSeaBlock && ServerConfig.caveRainDamage != 0.0) {
-                    if (player.isInWaterOrBubble() && player.tickCount % 10 == 0 && ServerConfig.caveWaterDamage != 0.0) {
+        if (!level.isClientSide()) {
+            int oldRainResistSupply = rainResistSupply;
+            int oldLavaAirSupply = lavaAirSupply;
+
+            if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.FIRE) && !player.isCreative() && !player.isSpectator()) {
+                if (isDragonTakingWaterDamage(player) || isDragonTakingRainDamage(player)) {
+                    if (isDragonTakingWaterDamage(player)) {
                         player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), ServerConfig.caveWaterDamage.floatValue());
-                    } else if ((player.isInWaterOrRain() && !player.isInWaterOrBubble() || isInSeaBlock) && ServerConfig.caveRainDamage != 0.0) {
-                        timeInRain++;
-                    }
-
-                    if (timeInRain >= maxRainTime) {
-                        if (player.tickCount % 40 == 0) {
-                            player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.RAIN_BURN)), ServerConfig.caveRainDamage.floatValue());
+                    } else {
+                        rainResistSupply--;
+                        if(rainResistSupply % 10 == 0) {
+                            level.addParticle(ParticleTypes.POOF, player.getX() + level.random.nextDouble() * (level.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + level.random.nextDouble() * (level.random.nextBoolean() ? 1 : -1), 0, 0, 0);
                         }
                     }
 
-                    if (player.tickCount % 40 == 0) {
+                    if (rainResistSupply == -40) {
+                        rainResistSupply = 0;
+                        player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.RAIN_BURN)), ServerConfig.caveRainDamage.floatValue());
                         player.playSound(SoundEvents.LAVA_EXTINGUISH, 1.0F, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2F + 1.0F);
                     }
-
-                } else if (timeInRain > 0) {
-                    if (maxRainTime > 0) {
-                        timeInRain = Math.max(timeInRain - (int) Math.ceil(maxRainTime * 0.02F), 0);
-                    } else {
-                        timeInRain--;
-                    }
+                } else {
+                    rainResistSupply = Math.min(rainResistSupply + (int) Math.ceil(maxRainTime * RAIN_AND_LAVA_PERCENTAGE_REGEN_RATE_PER_TICK), maxRainTime);
                 }
             }
 
-            if (level.isClientSide()) {
-                if (player.tickCount % 10 == 0 && timeInRain > 0) {
-                    level.addParticle(ParticleTypes.POOF, player.getX() + level.random.nextDouble() * (level.random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + level.random.nextDouble() * (level.random.nextBoolean() ? 1 : -1), 0, 0, 0);
-                }
-            }
-        }
-
-        if (player.isOnFire() && ServerConfig.bonusesEnabled && ServerConfig.caveFireImmunity) {
-            player.clearFire();
-        }
-
-        if (!player.level().isClientSide()) {
             // Clamp the air supply to whatever the max is. This is needed to prevent issues if the server config is changed and lowers the max air supply.
             lavaAirSupply = Math.min(lavaAirSupply, ServerConfig.caveLavaSwimmingTicks);
 
-            if (player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value()) && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimming && ServerConfig.caveLavaSwimmingTicks != 0) {
+            if (isDragonLavaSwimming(player)) {
                 if (!player.getAbilities().invulnerable) {
                     lavaAirSupply--;
 
                     if (lavaAirSupply == -20) {
                         lavaAirSupply = 0;
 
-                        if (!player.level().isClientSide()) {
-                            player.hurt(player.damageSources().drown(), 2F);
-                        }
+                        player.hurt(player.damageSources().drown(), 2F);
                     }
                 }
 
@@ -121,12 +128,16 @@ public class CaveDragonType extends AbstractDragonType {
                     player.stopRiding();
                 }
             } else if (lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && !player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) {
-                lavaAirSupply = Math.min(lavaAirSupply + (int) Math.ceil(ServerConfig.caveLavaSwimmingTicks * 0.0133333F), ServerConfig.caveLavaSwimmingTicks);
+                lavaAirSupply = Math.min(lavaAirSupply + (int) Math.ceil(ServerConfig.caveLavaSwimmingTicks * RAIN_AND_LAVA_PERCENTAGE_REGEN_RATE_PER_TICK), ServerConfig.caveLavaSwimmingTicks);
+            }
+
+            if((oldLavaAirSupply != lavaAirSupply || rainResistSupply != oldRainResistSupply)) {
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
             }
         }
 
-        if (!level.isClientSide() && (oldLavaTicks != lavaAirSupply || timeInRain != oldRainTime)) {
-            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncDragonType.Data(player.getId(), dragonStateHandler.getType().writeNBT()));
+        if (player.isOnFire() && ServerConfig.bonusesEnabled && ServerConfig.caveFireImmunity) {
+            player.clearFire();
         }
     }
 
@@ -137,7 +148,7 @@ public class CaveDragonType extends AbstractDragonType {
 
     @Override
     public void onPlayerDeath() {
-        timeInRain = 0;
+        rainResistSupply = 0;
     }
 
     @Override
