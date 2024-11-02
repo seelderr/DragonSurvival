@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.Dra
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -22,14 +23,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
-    @Translation(key = CONFIRM_LOSE_ALL, type = Translation.Type.MISC, comments = "\nWith your current config settings all progress will be lost when changing species.\n\nWould you still like to continue?")
-    private final static String CONFIRM_LOSE_ALL = Translation.GUI_PREFIX + "dragon_editor.confirm.all";
+    @Translation(key = LangKey.GUI_CONFIRM_LOSE_ALL, type = Translation.Type.MISC, comments = "\nWith your current config settings all progress will be lost when changing species.\n\nWould you still like to continue?")
+    private final static String CONFIRM_LOSE_ALL = LangKey.GUI_CONFIRM_LOSE_ALL;
 
-    @Translation(key = CONFIRM_LOSE_GROWTH, type = Translation.Type.MISC, comments = "\nWith your current config settings your growth progress will be lost when changing species or body types.\n\nWould you still like to continue?")
-    private final static String CONFIRM_LOSE_GROWTH = Translation.GUI_PREFIX + "dragon_editor.confirm.growth";
+    @Translation(key = LangKey.GUI_CONFIRM_LOSE_GROWTH, type = Translation.Type.MISC, comments = "\nWith your current config settings your growth progress will be lost when changing species or body types.\n\nWould you still like to continue?")
+    private final static String CONFIRM_LOSE_GROWTH = LangKey.GUI_CONFIRM_LOSE_GROWTH;
 
-    @Translation(key = CONFIRM_LOSE_ABILITIES, type = Translation.Type.MISC, comments = "\nWith your current config settings your ability progress will be lost when changing species.\n\nWould you still like to continue?")
-    private final static String CONFIRM_LOSE_ABILITIES = Translation.GUI_PREFIX + "dragon_editor.confirm.abilities";
+    @Translation(key = LangKey.GUI_CONFIRM_LOSE_ABILITIES, type = Translation.Type.MISC, comments = "\nWith your current config settings your ability progress will be lost when changing species.\n\nWould you still like to continue?")
+    private final static String CONFIRM_LOSE_ABILITIES = LangKey.GUI_CONFIRM_LOSE_ABILITIES;
 
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/dragon_altar_warning.png");
 

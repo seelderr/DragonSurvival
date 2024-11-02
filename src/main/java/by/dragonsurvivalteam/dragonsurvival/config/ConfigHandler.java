@@ -5,8 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.config.types.CustomConfig;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProvider;
 import com.electronwill.nightconfig.core.EnumGetMethod;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
@@ -319,16 +319,11 @@ public class ConfigHandler {
     private static String getDefaultListValueForConfig(final String key) {
         return switch (key) {
             // Food options
-            case "caveDragonFoods", "forestDragonFoods", "seaDragonFoods" -> "minecraft:empty:0:0";
+            case "cave_foods", "forest_foods", "sea_foods" -> "minecraft:empty:0:0";
             // Hurtful items
-            case "hurtfulToCaveDragon", "hurtfulToForestDragon", "hurtfulToSeaDragon" -> "minecraft:empty:0";
-
-
-            // Blacklisted Slots
-            case "blacklistedSlots" -> "0";
-
+            case "cave_hurtful_items", "forest_hurtful_items", "sea_hurtful_items" -> "minecraft:empty:0";
             // Dirt transformations (forest dragon breath)
-            case "dirtTransformationBlocks" -> "minecraft:empty:0";
+            case "forest_breath_dirt_transformation_blocks" -> "minecraft:empty:0";
             default -> "minecraft:empty";
         };
     }

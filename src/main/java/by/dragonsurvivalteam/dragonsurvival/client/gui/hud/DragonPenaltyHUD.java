@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDrag
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -99,7 +100,7 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
 
-            if (caveDragonType.lavaAirSupply < CaveDragonConfig.caveLavaSwimmingTicks && ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimmingTicks != 0 && CaveDragonConfig.caveLavaSwimming) {
+            if (caveDragonType.lavaAirSupply < CaveDragonConfig.caveLavaSwimmingTicks && DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimmingTicks != 0 && CaveDragonConfig.caveLavaSwimming) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;

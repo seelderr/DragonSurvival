@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
@@ -302,7 +303,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         int harvestLevel = blockState.is(BlockTags.NEEDS_DIAMOND_TOOL) ? 3 : blockState.is(BlockTags.NEEDS_IRON_TOOL) ? 2 : blockState.is(BlockTags.NEEDS_STONE_TOOL) ? 1 : 0;
 
-        if (harvestLevel <= ServerConfig.baseHarvestLevel) {
+        if (harvestLevel <= DragonBonusConfig.baseHarvestLevel) {
             return true;
         }
 
@@ -413,15 +414,15 @@ public class DragonStateHandler extends EntityStateHandler {
             return -1;
         }
 
-        int harvestLevel = ServerConfig.baseHarvestLevel;
+        int harvestLevel = DragonBonusConfig.baseHarvestLevel;
         int bonusLevel = 0;
 
-        if (getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-            bonusLevel = ServerConfig.bonusHarvestLevel;
-        } else if (getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-            bonusLevel = ServerConfig.bonusHarvestLevel;
+        if (getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
+            bonusLevel = DragonBonusConfig.bonusHarvestLevel;
+        } else if (getLevel() == DragonLevel.YOUNG && DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
+            bonusLevel = DragonBonusConfig.bonusHarvestLevel;
         } else if (getLevel() == DragonLevel.ADULT) {
-            bonusLevel = ServerConfig.bonusHarvestLevel;
+            bonusLevel = DragonBonusConfig.bonusHarvestLevel;
         }
 
         if (slot == getType().slotForBonus) {
@@ -441,7 +442,7 @@ public class DragonStateHandler extends EntityStateHandler {
     /**
      * @param slot The (dragon) tool slot the item would belong to (e.g. `1` for Pickaxe)
      * @return the tier of the current dragon harvest level<br>
-     * (Which is a combination of {@link ServerConfig#baseHarvestLevel} and {@link ServerConfig#bonusHarvestLevel} (if enabled))<br>
+     * (Which is a combination of {@link DragonBonusConfig#baseHarvestLevel} and {@link DragonBonusConfig#bonusHarvestLevel} (if enabled))<br>
      * Will return null if the config somehow set a negative harvest level
      */
     public @Nullable Tier getDragonHarvestTier(int slot) {

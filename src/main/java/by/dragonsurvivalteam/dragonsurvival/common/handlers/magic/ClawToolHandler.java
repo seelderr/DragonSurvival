@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -98,7 +99,7 @@ public class ClawToolHandler {
 
     @SubscribeEvent
     public static void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck) {
-        if (!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools) {
+        if (!DragonBonusConfig.bonusesEnabled || !DragonBonusConfig.clawsAreTools) {
             return;
         }
         Player playerEntity = harvestCheck.getEntity();
@@ -245,7 +246,7 @@ public class ClawToolHandler {
 
     @SubscribeEvent
     public static void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {
-        if (!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools) {
+        if (!DragonBonusConfig.bonusesEnabled || !DragonBonusConfig.clawsAreTools) {
             return;
         }
 
@@ -267,13 +268,13 @@ public class ClawToolHandler {
         float bonus = 0;
         float unlockedBonus = 0;
 
-        if (handler.getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-            unlockedBonus = ServerConfig.bonusBreakSpeed;
-        } else if (handler.getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-            unlockedBonus = ServerConfig.bonusBreakSpeed;
+        if (handler.getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
+            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
+        } else if (handler.getLevel() == DragonLevel.YOUNG && DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
+            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
         } else if (handler.getLevel() == DragonLevel.ADULT) {
-            unlockedBonus = ServerConfig.bonusBreakSpeedAdult;
-            bonus = ServerConfig.baseBreakSpeedAdult;
+            unlockedBonus = DragonBonusConfig.bonusBreakSpeedAdult;
+            bonus = DragonBonusConfig.baseBreakSpeedAdult;
         }
 
         for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
@@ -287,7 +288,7 @@ public class ClawToolHandler {
             ItemStack clawTool = handler.getClawToolData().getClawsInventory().getItem(i);
 
             if (state.requiresCorrectToolForDrops() && clawTool.isCorrectToolForDrops(state) || clawTool.getDestroySpeed(state) > 1) {
-                bonus /= ServerConfig.bonusBreakSpeedReduction;
+                bonus /= DragonBonusConfig.bonusBreakSpeedReduction;
                 break;
             }
         }

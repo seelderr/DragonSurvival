@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
@@ -40,7 +41,7 @@ public class DragonBonusHandler {
 
         DragonStateProvider.getOptional(living).ifPresent(handler -> {
             if (handler.isDragon()) {
-                if (ServerConfig.bonusesEnabled) {
+                if (DragonBonusConfig.bonusesEnabled) {
                     if (CaveDragonConfig.caveFireImmunity && DragonUtils.isDragonType(handler, DragonTypes.CAVE) && damageSource.is(DamageTypeTags.IS_FIRE)) {
                         event.setCanceled(true);
                     } else if (ForestDragonConfig.bushImmunity && DragonUtils.isDragonType(handler, DragonTypes.FOREST) && damageSource == living.damageSources().sweetBerryBush()) {
@@ -70,7 +71,7 @@ public class DragonBonusHandler {
         if (event.getSound() != null) {
             boolean isRelevant = event.getSound().value().getLocation().getPath().contains(".step");
 
-            if (isRelevant && ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming) {
+            if (isRelevant && DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming) {
                 if (DragonUtils.isDragonType(player, DragonTypes.CAVE) && DragonSizeHandler.getOverridePose(player) == Pose.SWIMMING) {
                     event.setCanceled(true);
                 }
@@ -93,7 +94,7 @@ public class DragonBonusHandler {
             float distance = livingFallEvent.getDistance();
 
             if (DragonUtils.isDragonType(data, DragonTypes.FOREST)) {
-                if (ServerConfig.bonusesEnabled) {
+                if (DragonBonusConfig.bonusesEnabled) {
                     distance -= ForestDragonConfig.fallReduction.floatValue();
                 }
 

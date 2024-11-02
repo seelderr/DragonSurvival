@@ -76,8 +76,8 @@ public class ForestBreathAbility extends BreathAbility {
     public static Integer initialManaCost = 2;
 
     @ConfigRange(min = 0, max = 100)
-    @Translation(key = "storm_breath_sustaining_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for sustaining the ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forestBreathOvertimeMana")
+    @Translation(key = "forest_breath_sustaining_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for sustaining the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath_sustaining_mana_cost")
     public static Integer sustainedManaCost = 1;
 
     @ConfigRange(min = 0.5, max = 100.0)

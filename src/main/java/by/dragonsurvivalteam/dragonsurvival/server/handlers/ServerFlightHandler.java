@@ -11,7 +11,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
@@ -32,47 +34,64 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
-/**
- * Used in pair with {@link ClientFlightHandler}
- */
-@EventBusSubscriber()
-@SuppressWarnings("unused")
+/** Used in pair with {@link ClientFlightHandler} */
+@EventBusSubscriber
 public class ServerFlightHandler {
-
-    public static final int spinDuration = (int) Math.round(0.76 * 20);
+    public static final int SPIN_DURATION = Functions.secondsToTicks(0.76);
 
     @ConfigRange(min = 0.1, max = 1)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "maxFlightSpeed", comment = "Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal.")
+    @Translation(key = "flight_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight speed multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_speed_multiplier")
     public static Double maxFlightSpeed = 0.3;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "startWithLevitation", comment = "Whether dragons can use levitation magic from birth.")
-    public static Boolean startWithLevitation = true;
+    @Translation(key = "start_with_flight", type = Translation.Type.CONFIGURATION, comments = {
+            "If enabled dragons can fly from the start",
+            "If disabled players will have to use the item that grants wings or interact with the ender dragon"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "start_with_flight")
+    public static Boolean startWithFlight = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin", comment = "Whether you should be able to obtain the spin ability from the ender dragon or take special item.")
-    public static Boolean enderDragonGrantsSpin = true;
+    @Translation(key = "ender_dragon_interaction", type = Translation.Type.CONFIGURATION, comments = {
+            "The ender dragon will be able to grant flight and the spin attack if enabled",
+            "If disabled special items will have to be used"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin")
+    public static Boolean enderDragonInteraction = true;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is below this parameter, he can't open his wings.")
+    @Translation(key = "flight_hunger_threshold", type = Translation.Type.CONFIGURATION, comments = "Determines the required food values to be able to fly")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_hunger_threshold")
     public static Integer flightHungerThreshold = 6;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
+    @Translation(key = "fold_wings_threshold", type = Translation.Type.CONFIGURATION, comments = "Determines the food values at which the dragon will stop being able to fly mid-flight")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "fold_wings_threshold")
     public static Integer foldWingsThreshold = 0;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Whether fall damage in flight is included. If true dragon will take damage from the fall.")
+    @Translation(key = "flight_fall_damage", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable fall damage from falling while in flight")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_fall_damage")
     public static Boolean enableFlightFallDamage = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "lethalFallDamage", comment = "Whether fall damage from flight is lethal, otherwise it will leave you at half a heart")
+    @Translation(key = "lethal_fall_damage", type = Translation.Type.CONFIGURATION, comments = "Determines whether fall damage during flight can be lethal or not - if disabled it will leave the player at half a heart")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "lethal_fall_damage")
     public static Boolean lethalFlight = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsOnLand", comment = "Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually.")
+    @Translation(key = "fold_wings_on_land", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will automatically stop fold their wings (i.e. stop flying) when landing")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "fold_wings_on_land")
     public static Boolean foldWingsOnLand = false;
 
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight")
+    @ConfigRange(min = 0, max = /* 1 hour */ 3600)
+    @Translation(key = "flight_spin_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) of the spin attack during flifght")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_spin_cooldown")
     public static Integer flightSpinCooldown = 5;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "stableHover", comment = "Should hovering be completely stable similar to creative flight?")
+    @ConfigRange(min = 1, max = /* 1 hour */ 72_000)
+    @Translation(key = "flight_hunger_ticks", type = Translation.Type.CONFIGURATION, comments = "Determines the amount of ticks (20 ticks = 1 second) it takes for one hunger point to be drained while flying")
+    @ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "flight_hunger_ticks")
+    public static int flightHungerTicks = 50;
+
+    @Translation(key = "stable_hover", type = Translation.Type.CONFIGURATION, comments = "If enabled hovering will behave the same as creative flight (i.e. stable flight)")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "stable_hover")
     public static boolean stableHover = false;
 
     /**
@@ -263,10 +282,6 @@ public class ServerFlightHandler {
         boolean validSwim = (DragonUtils.isDragonType(dragonStateHandler, DragonTypes.SEA) || DragonUtils.isDragonType(dragonStateHandler, DragonTypes.FOREST)) && player.isInWater() || player.isInLava() && DragonUtils.isDragonType(dragonStateHandler, DragonTypes.CAVE);
         return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
     }
-
-    @ConfigRange(min = 1, max = 60 * 60 * 20)
-    @ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "wings", comment = "How many ticks it takes for one hunger point to be drained while flying, this is based on hover flight.")
-    public static int flightHungerTicks = 50;
 
     @SubscribeEvent
     public static void playerFoodExhaustion(PlayerTickEvent.Post playerTickEvent) {

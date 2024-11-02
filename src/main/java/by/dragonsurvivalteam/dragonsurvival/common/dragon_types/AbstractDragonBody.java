@@ -9,7 +9,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Locale;
 
 public abstract class AbstractDragonBody implements NBTInterface, Comparable<AbstractDragonBody> {
-    @Translation(key = "other", type = Translation.Type.DESCRIPTION, comments = "some text")
     @Translation(key = "body_affects_hitbox", type = Translation.Type.CONFIGURATION, comments = "If enabled the hitbox will be affected by the body type")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body"}, key = "body_affects_hitbox")
     public static Boolean bodyAffectsHitbox = true;

@@ -1,6 +1,7 @@
-package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
+package by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.data.PackOutput;
 import net.neoforged.fml.ModList;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -37,15 +38,17 @@ public class DSLanguageProvider extends LanguageProvider {
             try {
                 // Technically 'AnnotationData#annotationData' contains the information
                 // To keep things simple though we use the same method as in 'ConfigHandler#createConfigEntries'
-                translations = getTranslations(annotationData.clazz().getClass().getField(annotationData.memberName()));
-            } catch (NoSuchFieldException exception) {
-                throw new RuntimeException(exception);
+                translations = getTranslations(Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName()));
+            } catch (ReflectiveOperationException exception) {
+                throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
             }
 
             translations.forEach(translation -> {
-                if (locale.equals(translation.locale())) {
+                if (!locale.equals(translation.locale())) {
                     return;
                 }
+
+                DragonSurvival.LOGGER.info("Processing [{}]", translation);
 
                 StringBuilder comment = new StringBuilder();
 
@@ -58,7 +61,12 @@ public class DSLanguageProvider extends LanguageProvider {
                     }
                 }
 
-                add(translation.type().prefix + translation.key() + translation.type().suffix, comment.toString());
+                try {
+                    add(translation.type().prefix + translation.key() + translation.type().suffix, comment.toString());
+                } catch (IllegalStateException exception) {
+                    DragonSurvival.LOGGER.error("Invalid translation entry due to a duplicate key issue [{}]", translation);
+                    throw exception;
+                }
 
                 if (translation.type() == Translation.Type.CONFIGURATION) {
                     // If no translation key for the configuration key is supplied it will default to '<mod_id>.configuration.<key>'
@@ -76,6 +84,7 @@ public class DSLanguageProvider extends LanguageProvider {
                         }
                     }
 
+                    // TODO :: add a warning if this is too long
                     add(translation.type().prefix + translation.key(), translatedKey.toString());
                 }
             });

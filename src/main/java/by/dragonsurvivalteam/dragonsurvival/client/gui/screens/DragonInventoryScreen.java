@@ -129,7 +129,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                 guiGraphics.blit(DRAGON_CLAW_BUTTON, getX(), getY(), 0, 0, 11, 11, 11, 11);
             }
         };
-        clawToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws")));
+        clawToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws"))); // FIXME :: translate
         addRenderableWidget(clawToggle);
 
         // Growth icon in the claw menu
@@ -144,7 +144,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         clawMenuButtons.add(growthIcon);
 
         // Info button at the bottom of the claw menu
-        HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0, true);
+        HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0, true); // FIXME :: translate
         addRenderableWidget(infoButton);
         clawMenuButtons.add(infoButton);
 
@@ -153,7 +153,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             boolean claws = !handler.getClawToolData().shouldRenderClaws;
 
             handler.getClawToolData().shouldRenderClaws = claws;
-            ConfigHandler.updateConfigValue("renderDragonClaws", handler.getClawToolData().shouldRenderClaws);
+            ConfigHandler.updateConfigValue("render_dragon_claws", handler.getClawToolData().shouldRenderClaws);
             PacketDistributor.sendToServer(new SyncDragonClawRender.Data(player.getId(), claws));
         }) {
             @Override
@@ -168,7 +168,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                 }
             }
         };
-        clawRenderButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws.rendering")));
+        clawRenderButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws.rendering"))); // FIXME :: translate
         addRenderableWidget(clawRenderButton);
         clawMenuButtons.add(clawRenderButton);
 
@@ -184,7 +184,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                     guiGraphics.blit(INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
                 }
             };
-            inventoryToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.vanilla")));
+            inventoryToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.vanilla"))); // FIXME :: translate
             addRenderableWidget(inventoryToggle);
         }
     }
@@ -362,7 +362,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             StringJoiner result = new StringJoiner(", ");
             displayData.forEach(result::add);
 
-            List<Component> components = List.of(
+            List<Component> components = List.of( // FIXME :: translate
                     Component.translatable("ds.gui.growth_stage").append(Component.translatable(handler.getLevel().getName())),
                     Component.translatable("ds.gui.growth_age", age),
                     Component.translatable("ds.gui.growth_help", result.toString())

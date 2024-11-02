@@ -226,7 +226,7 @@ public class SkinsScreen extends Screen {
 
             handler.getSkinData().renderNewborn = newValue;
             renderNewborn = newValue;
-            ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
+            ConfigHandler.updateConfigValue("render_newborn_skin", handler.getSkinData().renderNewborn);
             PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
             setTextures();
         }, Supplier::get) {
@@ -244,7 +244,7 @@ public class SkinsScreen extends Screen {
 
             handler.getSkinData().renderYoung = newValue;
             renderYoung = newValue;
-            ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
+            ConfigHandler.updateConfigValue("render_young_skin", handler.getSkinData().renderYoung);
             PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
             setTextures();
         }, Supplier::get) {
@@ -262,7 +262,7 @@ public class SkinsScreen extends Screen {
 
             handler.getSkinData().renderAdult = newValue;
             renderAdult = newValue;
-            ConfigHandler.updateConfigValue("renderAdultSkin", handler.getSkinData().renderAdult);
+            ConfigHandler.updateConfigValue("render_adult_skin", handler.getSkinData().renderAdult);
             PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
             setTextures();
         }, Supplier::get) {
@@ -276,7 +276,7 @@ public class SkinsScreen extends Screen {
         // Button to enable / disable the rendering of customized skins (of other players)
         addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
             ClientDragonRenderer.renderOtherPlayerSkins = !ClientDragonRenderer.renderOtherPlayerSkins;
-            ConfigHandler.updateConfigValue("renderOtherPlayerSkins", ClientDragonRenderer.renderOtherPlayerSkins);
+            ConfigHandler.updateConfigValue("render_other_players_custom_skins", ClientDragonRenderer.renderOtherPlayerSkins);
             setTextures();
         }, Supplier::get) {
             @Override
@@ -321,7 +321,7 @@ public class SkinsScreen extends Screen {
         wikiButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.wiki")));
         addRenderableWidget(wikiButton);
 
-        addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1));
+        addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1)); // FIXME :: translate
 
         addRenderableWidget(Button.builder(Component.translatable("ds.gui.skins.yours"), button -> {
             playerName = minecraft.player.getGameProfile().getName();

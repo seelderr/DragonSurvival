@@ -49,6 +49,8 @@ public class GeneralTests {
         DragonSurvival.LOGGER.info("Starting second tool swap layer");
         ToolUtils.swapStart(player, state);
         assertMainHandItem(helper, player, clawItem);
+        assertStoredItem(helper, player, mainHandItem);
+        assertClawItem(helper, player, ClawInventory.Slot.PICKAXE, ItemStack.EMPTY);
 
         DragonSurvival.LOGGER.info("Ending second tool swap layer");
         ToolUtils.swapFinish(player);

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -150,7 +151,7 @@ public abstract class EntityMixin {
         }
 
         //noinspection ConstantValue -> the condition is not always false
-        return ServerConfig.bonusesEnabled && CaveDragonConfig.caveFireImmunity && (Object) this instanceof Player player && DragonUtils.isDragonType(player, DragonTypes.CAVE);
+        return DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveFireImmunity && (Object) this instanceof Player player && DragonUtils.isDragonType(player, DragonTypes.CAVE);
     }
 
     @Shadow public abstract double getX();

@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
@@ -137,7 +138,7 @@ public class DragonSizeHandler {
 
     public static Pose getOverridePose(Player player) {
         if (player != null) {
-            boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && DragonUtils.isDragonType(player, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
+            boolean swimming = (player.isInWaterOrBubble() || player.isInLava() && DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && DragonUtils.isDragonType(player, DragonTypes.CAVE)) && player.isSprinting() && !player.isPassenger();
             boolean flying = ServerFlightHandler.isFlying(player);
             boolean spinning = player.isAutoSpinAttack();
             boolean crouching = player.isShiftKeyDown();

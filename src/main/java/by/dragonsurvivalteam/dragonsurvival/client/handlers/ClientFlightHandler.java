@@ -282,8 +282,6 @@ public class ClientFlightHandler {
 
                         // Only apply while in water (not while flying)
                         if (ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)) {
-                            Input movement = player.input;
-
                             Vec3 deltaMovement = player.getDeltaMovement();
 
                             double maxFlightSpeed = ServerFlightHandler.maxFlightSpeed;
@@ -515,7 +513,7 @@ public class ClientFlightHandler {
         if (!handler.getMovementData().spinLearned) return;
 
         if (ServerFlightHandler.isFlying(player) || ServerFlightHandler.canSwimSpin(player)) {
-            handler.getMovementData().spinAttack = ServerFlightHandler.spinDuration;
+            handler.getMovementData().spinAttack = ServerFlightHandler.SPIN_DURATION;
             handler.getMovementData().spinCooldown = ServerFlightHandler.flightSpinCooldown * 20;
             PacketDistributor.sendToServer(
                     new SyncSpinStatus.Data(

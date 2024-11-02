@@ -34,9 +34,9 @@ public class DragonBonusTests {
         float bonusSpeed = 2f;
         float defaultSpeed = 1f;
 
-        TestUtils.setAndCheckConfig(helper, "baseHarvestLevel", 0);
-        TestUtils.setAndCheckConfig(helper, "bonusHarvestLevel", 1);
-        TestUtils.setAndCheckConfig(helper, "bonusBreakSpeed", bonusSpeed);
+        TestUtils.setAndCheckConfig(helper, "base_harvest_level", 0);
+        TestUtils.setAndCheckConfig(helper, "harvest_level_bonus", 1);
+        TestUtils.setAndCheckConfig(helper, "break_speed_multiplier", bonusSpeed);
 
         BlockState state = TestUtils.setBlock(helper, Blocks.IRON_ORE);
         BlockPos position = helper.absolutePos(BlockPos.ZERO);
@@ -44,7 +44,7 @@ public class DragonBonusTests {
         player.setOnGround(true);
 
         // Check that the bonus is not yet unlocked
-        TestUtils.setAndCheckConfig(helper, "bonusUnlockedAt", DragonLevel.YOUNG);
+        TestUtils.setAndCheckConfig(helper, "bonus_unlocks_at", DragonLevel.YOUNG);
         float speed = player.getDigSpeed(state, position);
         helper.assertTrue(speed == defaultSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, defaultSpeed));
 
@@ -52,7 +52,7 @@ public class DragonBonusTests {
         helper.assertTrue(!canHarvest, String.format("[%s] can be harvested - expected block to not be harvestable", state));
 
         // Check that the bonus gets unlocked at the correct level
-        TestUtils.setAndCheckConfig(helper, "bonusUnlockedAt", DragonLevel.NEWBORN);
+        TestUtils.setAndCheckConfig(helper, "bonus_unlocks_at", DragonLevel.NEWBORN);
         canHarvest = player.hasCorrectToolForDrops(state, helper.getLevel(), position);
         helper.assertTrue(canHarvest, String.format("[%s] cannot be harvested - expected block to be harvestable", state));
 
@@ -61,7 +61,7 @@ public class DragonBonusTests {
         helper.assertTrue(speed == expectedSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, expectedSpeed));
 
         // Check that the base harvest level bonus works
-        TestUtils.setAndCheckConfig(helper, "baseHarvestLevel", /* Stone */ 1);
+        TestUtils.setAndCheckConfig(helper, "base_harvest_level", /* Stone */ 1);
         canHarvest = player.hasCorrectToolForDrops(state, helper.getLevel(), position);
         helper.assertTrue(canHarvest, String.format("[%s] cannot be harvested - expected block to be harvestable", state));
 
@@ -71,7 +71,7 @@ public class DragonBonusTests {
         helper.assertTrue(!canHarvest, String.format("[%s] can be harvested - expected block to not be harvestable", state));
 
         // Check that higher base harvest levels work correctly
-        TestUtils.setAndCheckConfig(helper, "baseHarvestLevel", /* Diamond */ 3);
+        TestUtils.setAndCheckConfig(helper, "base_harvest_level", /* Diamond */ 3);
         canHarvest = player.hasCorrectToolForDrops(state, helper.getLevel(), position);
         helper.assertTrue(canHarvest, String.format("[%s] cannot be harvested - expected block to be harvestable", state));
 

@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -164,7 +165,7 @@ public class DragonGrowthHandler {
 
     @SubscribeEvent
     public static void onPlayerUpdate(PlayerTickEvent.Pre event) {
-        if (!ServerConfig.alternateGrowing) {
+        if (!ServerConfig.naturalGrowth) {
             return;
         }
 
@@ -179,7 +180,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        if (player.tickCount % (60 * 20) != 0) {
+        if (player.tickCount % (Functions.secondsToTicks(60)) != 0) {
             return;
         }
 
@@ -192,20 +193,20 @@ public class DragonGrowthHandler {
                     4. After maximum growth. = 30 days for max growth
                  */
 
-                double d;
-                double timeIncrement = 60 * 20;
+                double growth;
+                double timeIncrement = Functions.secondsToTicks(60);
 
                 if (handler.getSize() < YOUNG.size) {
-                    d = (YOUNG.size - NEWBORN.size) / (newbornToYoung * 20.0) * timeIncrement * ServerConfig.newbornGrowthModifier;
+                    growth = (YOUNG.size - NEWBORN.size) / (newbornToYoung * 20.0) * timeIncrement * ServerConfig.newbornGrowthModifier;
                 } else if (handler.getSize() < ADULT.size) {
-                    d = (ADULT.size - YOUNG.size) / (youngToAdult * 20.0) * timeIncrement * ServerConfig.youngGrowthModifier;
+                    growth = (ADULT.size - YOUNG.size) / (youngToAdult * 20.0) * timeIncrement * ServerConfig.youngGrowthModifier;
                 } else if (handler.getSize() < ADULT.maxSize) {
-                    d = (40 - ADULT.size) / (adultToAncient * 20.0) * timeIncrement * ServerConfig.adultGrowthModifier;
+                    growth = (40 - ADULT.size) / (adultToAncient * 20.0) * timeIncrement * ServerConfig.adultGrowthModifier;
                 } else {
-                    d = (60 - 40) / (ancient * 20.0) * timeIncrement * ServerConfig.maxGrowthModifier;
+                    growth = (60 - 40) / (ancient * 20.0) * timeIncrement * ServerConfig.maxGrowthModifier;
                 }
 
-                double size = handler.getSize() + d;
+                double size = handler.getSize() + growth;
                 size = Math.min(size, ServerConfig.maxGrowthSize);
 
                 if (handler.getSize() != size) {

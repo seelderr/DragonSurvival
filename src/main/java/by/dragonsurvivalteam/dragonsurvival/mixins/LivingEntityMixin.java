@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -169,7 +170,7 @@ public abstract class LivingEntityMixin extends Entity {
             return;
         }
 
-        boolean isInLava = ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && DragonUtils.isDragonType(data, DragonTypes.CAVE) && isInLava();
+        boolean isInLava = DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && DragonUtils.isDragonType(data, DragonTypes.CAVE) && isInLava();
 
         if (!isInLava && !isInWater() || !player.isAffectedByFluids() || player.canStandOnFluid(fluidState)) {
             return;

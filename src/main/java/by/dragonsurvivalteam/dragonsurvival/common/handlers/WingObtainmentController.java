@@ -97,7 +97,7 @@ public class WingObtainmentController {
 
         if (event.getTo() == Level.END) {
             DragonStateProvider.getOptional(player).ifPresent(data -> {
-                if (data.isDragon() && !data.getMovementData().spinLearned && ServerFlightHandler.enderDragonGrantsSpin) {
+                if (data.isDragon() && !data.getMovementData().spinLearned && ServerFlightHandler.enderDragonInteraction) {
                     SERVICE.schedule(() -> PacketDistributor.sendToPlayer(player, new SyncChatEvent.Data(ENDER_DRAGON_UUID.toString(), "ds.endmessage")), 3, TimeUnit.SECONDS);
                 }
             });
@@ -134,7 +134,7 @@ public class WingObtainmentController {
     public static void serverChatEvent(ServerChatEvent chatEvent) {
         ServerPlayer player = chatEvent.getPlayer();
 
-        if (!ServerFlightHandler.enderDragonGrantsSpin || player.level().dimension() != Level.END) {
+        if (!ServerFlightHandler.enderDragonInteraction || player.level().dimension() != Level.END) {
             return;
         }
 

@@ -832,7 +832,7 @@ public class DragonEditorScreen extends Screen {
                     cap.setSize(size, minecraft.player);
                 }
 
-                cap.setHasFlight(ServerConfig.saveGrowthStage ? cap.hasFlight() || ServerFlightHandler.startWithLevitation : ServerFlightHandler.startWithLevitation);
+                cap.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && cap.hasFlight());
                 cap.setIsHiding(false);
                 cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
 

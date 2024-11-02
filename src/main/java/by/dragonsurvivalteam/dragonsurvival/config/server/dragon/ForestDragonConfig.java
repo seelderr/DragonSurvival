@@ -56,8 +56,8 @@ public class ForestDragonConfig {
     public static Integer stressEffectDuration = 10;
 
     @ConfigRange(min = 0.1, max = 4.0)
-    @Translation(key = "hide_unsafe_food", type = Translation.Type.CONFIGURATION, comments = "The amount of exhaustion applied every 10 tick (0.5 seconds) during the stress effect")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "penalties"}, key = "forestStressExhaustion")
+    @Translation(key = "forest_stress_exhaustion_rate", type = Translation.Type.CONFIGURATION, comments = "The amount of exhaustion applied every 10 tick (0.5 seconds) during the stress effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "penalties"}, key = "forest_stress_exhaustion_rate")
     public static Double stressExhaustion = 1.0;
 
     // --- Food --- //

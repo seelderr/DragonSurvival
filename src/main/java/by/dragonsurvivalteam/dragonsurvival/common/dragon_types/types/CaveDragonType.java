@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
@@ -98,7 +99,7 @@ public class CaveDragonType extends AbstractDragonType {
         // In case the server config is changed and lowers the max. air supply
         lavaAirSupply = Math.min(lavaAirSupply, CaveDragonConfig.caveLavaSwimmingTicks);
 
-        if (ServerConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && CaveDragonConfig.caveLavaSwimmingTicks > 0 && player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())) {
+        if (DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && CaveDragonConfig.caveLavaSwimmingTicks > 0 && player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())) {
             lavaAirSupply--;
 
             if (lavaAirSupply == -20) {

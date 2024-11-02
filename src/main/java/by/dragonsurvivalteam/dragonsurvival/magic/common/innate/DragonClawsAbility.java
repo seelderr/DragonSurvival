@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.client.resources.language.I18n;
@@ -43,7 +44,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
             components.add(Component.translatable("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + harvestInfo.getFirst().name().toLowerCase(Locale.ENGLISH))));
         }
 
-        double damageBonus = handler.isDragon() && ServerConfig.attackDamage ? handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.newbornBonusDamage : 0;
+        double damageBonus = handler.isDragon() && DragonBonusConfig.isDamageBonusEnabled ? handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage : 0;
 
         if (damageBonus > 0.0) {
             components.add(Component.translatable("ds.skill.claws.damage", "+" + damageBonus));
