@@ -4,69 +4,84 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
 
 public class SouthBodyType extends AbstractDragonBody {
-
     @ConfigRange(min = -1.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southJumpBonus", comment = "The jump bonus given to South-type dragons. It's a very sensitive parameter.")
-    public static Double southJumpBonus = 0.2;
+    @Translation(key = "south_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_jump_bonus")
+    public static Double southJumpBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southStepBonus", comment = "The step bonus given to South-type dragons")
+    @Translation(key = "south_step_height_bonus", type = Translation.Type.CONFIGURATION, comments = "Step height bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_step_height_bonus")
     public static Double southStepBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southDamageBonus", comment = "The damage bonus given to South-type dragons")
-    public static Double southDamageBonus = 0.5;
+    @Translation(key = "south_damage_bonus", type = Translation.Type.CONFIGURATION, comments = "Damage bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_damage_bonus")
+    public static Double southDamageBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southDamageMult", comment = "The damage multiplier given to South-type dragons")
+    @Translation(key = "south_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_damage_multiplier")
     public static Double southDamageMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southArmorBonus", comment = "The armor bonus given to South-type dragons")
+    @Translation(key = "south_armor_bonus", type = Translation.Type.CONFIGURATION, comments = "Armor bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_armor_bonus")
     public static Double southArmorBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southManaBonus", comment = "The mana bonus given to South-type dragons")
+    @Translation(key = "south_mana_bonus", type = Translation.Type.CONFIGURATION, comments = "Mana bonus")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_mana_bonus")
     public static Double southManaBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southSwimSpeedBonus", comment = "The swimSpeed bonus given to South-type dragons")
-    public static Double southSwimSpeedBonus = -0.2;
+    @Translation(key = "south_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_swim_speed_bonus")
+    public static Double southSwimSpeedBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southHealthBonus", comment = "The health bonus given to South-type dragons")
+    @Translation(key = "south_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_health_bonus")
     public static Double southHealthBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southHealthMult", comment = "The health multiplier given to South-type dragons")
+    @Translation(key = "south_health_multiplier", type = Translation.Type.CONFIGURATION, comments = "Health multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_health_multiplier")
     public static Double southHealthMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southKnockbackBonus", comment = "The knockback bonus given to South-type dragons")
+    @Translation(key = "south_knockback_bonus", type = Translation.Type.CONFIGURATION, comments = "Knockback bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_knockback_bonus")
     public static Double southKnockbackBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southRunMult", comment = "The run speed multiplier given to South-type dragons")
-    public static Double southRunMult = 1.2;
+    @Translation(key = "south_movement_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_movement_speed_multiplier")
+    public static Double southRunMult = 1.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southExpMult", comment = "The exp multiplier given to South-type dragons. Can cause dupes with some mods. Increase carefully.")
+    @Translation(key = "south_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "Experience multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_experience_multiplier")
     public static Double southExpMult = 1.0;
 
-    @ConfigRange(min = 0.0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southFlightMult", comment = "The flight multiplier given to South-type dragons. It is not recommended to do less than 1.0 (otherwise your dragon will fall instead of flying upwards)")
-    public static Double southFlightMult = 0.8;
+    @ConfigRange(min = 1.0, max = 10)
+    @Translation(key = "south_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_flight_multiplier")
+    public static Double southFlightMult = 1.2;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to South-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
-    public static Double southFlightStaminaMult = 1.2;
+    @Translation(key = "south_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_flight_stamina_multiplier")
+    public static Double southFlightStaminaMult = 1.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southGravityMult", comment = "The gravity multiplier given to South-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")
-    public static Double southGravityMult = 1.2;
+    @Translation(key = "south_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_gravity_multiplier")
+    public static Double southGravityMult = 1.0;
 
     @Override
     public CompoundTag writeNBT() {

@@ -22,83 +22,75 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.EventHooks;
 import net.neoforged.neoforge.event.level.ModifyCustomSpawnersEvent;
+import org.jetbrains.annotations.NotNull;
 
 // This is mostly copied from PatrolSpawner.java
 @EventBusSubscriber
 public class AmbusherSpawner implements CustomSpawner {
-
     private int nextTick;
 
     @Override
-    public int tick(ServerLevel pLevel, boolean pSpawnEnemies, boolean pSpawnFriendlies) {
-        if (!pSpawnEnemies) {
+    public int tick(@NotNull ServerLevel level, boolean spawnEnemies, boolean spawnFriendlies) {
+        if (!spawnEnemies || !level.getGameRules().getBoolean(GameRules.RULE_DO_PATROL_SPAWNING)) {
             return 0;
-        } else if (!pLevel.getGameRules().getBoolean(GameRules.RULE_DO_PATROL_SPAWNING)) {
-            return 0;
-        } else {
-            RandomSource randomsource = pLevel.random;
-            this.nextTick--;
-            if (this.nextTick > 0) {
-                return 0;
-            } else {
-                this.nextTick = this.nextTick + ServerConfig.ambusherSpawnAttemptFrequency + randomsource.nextInt(ServerConfig.ambusherSpawnAttemptFrequency / 10);
-                if (!pLevel.isDay()) {
-                    return 0;
-                } else if (randomsource.nextDouble() < ServerConfig.ambusherSpawnChance) {
-                    return 0;
-                } else {
-                    int j = pLevel.players().size();
-                    if (j < 1) {
-                        return 0;
-                    } else {
-                        Player player = pLevel.players().get(randomsource.nextInt(j));
-                        if (player.isSpectator()) {
-                            return 0;
-                        } else {
-                            int k = (24 + randomsource.nextInt(24)) * (randomsource.nextBoolean() ? -1 : 1);
-                            int l = (24 + randomsource.nextInt(24)) * (randomsource.nextBoolean() ? -1 : 1);
-                            BlockPos.MutableBlockPos blockpos$mutableblockpos = player.blockPosition().mutable().move(k, 0, l);
-                            int i1 = 10;
-                            if (!pLevel.hasChunksAt(
-                                    blockpos$mutableblockpos.getX() - 10,
-                                    blockpos$mutableblockpos.getZ() - 10,
-                                    blockpos$mutableblockpos.getX() + 10,
-                                    blockpos$mutableblockpos.getZ() + 10
-                            )) {
-                                return 0;
-                            } else {
-                                Holder<Biome> holder = pLevel.getBiome(blockpos$mutableblockpos);
-                                if (holder.is(BiomeTags.WITHOUT_PATROL_SPAWNS)) {
-                                    return 0;
-                                } else {
-                                    int j1 = 0;
-                                    int k1 = (int) Math.ceil(pLevel.getCurrentDifficultyAt(blockpos$mutableblockpos).getEffectiveDifficulty()) + 1;
-
-                                    for (int l1 = 0; l1 < k1; l1++) {
-                                        j1++;
-                                        blockpos$mutableblockpos.setY(
-                                                pLevel.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, blockpos$mutableblockpos).getY()
-                                        );
-                                        if (l1 == 0) {
-                                            if (!this.spawnPatrolMember(pLevel, blockpos$mutableblockpos, randomsource, true)) {
-                                                break;
-                                            }
-                                        } else {
-                                            this.spawnPatrolMember(pLevel, blockpos$mutableblockpos, randomsource, false);
-                                        }
-
-                                        blockpos$mutableblockpos.setX(blockpos$mutableblockpos.getX() + randomsource.nextInt(5) - randomsource.nextInt(5));
-                                        blockpos$mutableblockpos.setZ(blockpos$mutableblockpos.getZ() + randomsource.nextInt(5) - randomsource.nextInt(5));
-                                    }
-
-                                    return j1;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
+
+        nextTick--;
+
+        if (nextTick > 0) {
+            return 0;
+        }
+
+        // The random is used to vary the spawn rate a bit
+        nextTick = nextTick + ServerConfig.ambusherSpawnAttemptFrequency + level.getRandom().nextInt(ServerConfig.ambusherSpawnAttemptFrequency / 10);
+
+        if (!level.isDay() || level.getRandom().nextDouble() < ServerConfig.ambusherSpawnChance) {
+            return 0;
+        }
+
+        if (level.players().isEmpty()) {
+            return 0;
+        }
+
+        Player player = level.players().get(level.getRandom().nextInt(level.players().size()));
+
+        if (player.isCreative() || player.isSpectator()) {
+            return 0;
+        }
+
+        int x = (24 + level.getRandom().nextInt(24)) * (level.getRandom().nextBoolean() ? -1 : 1);
+        int z = (24 + level.getRandom().nextInt(24)) * (level.getRandom().nextBoolean() ? -1 : 1);
+        BlockPos.MutableBlockPos spawnPosition = player.blockPosition().mutable().move(x, 0, z);
+
+        if (!level.hasChunksAt(spawnPosition.getX() - 10, spawnPosition.getZ() - 10, spawnPosition.getX() + 10, spawnPosition.getZ() + 10)) {
+            return 0;
+        }
+
+        if (level.getBiome(spawnPosition).is(BiomeTags.WITHOUT_PATROL_SPAWNS)) {
+            return 0;
+        }
+
+        int membersSpawned = 0; // Doesn't seem to be used from the caller
+        int difficulty = (int) Math.ceil(level.getCurrentDifficultyAt(spawnPosition).getEffectiveDifficulty()) + 1;
+
+        // Spawns members depending on the calculated difficulty
+        for (int i = 0; i < difficulty; i++) {
+            spawnPosition.setY(level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, spawnPosition).getY());
+            membersSpawned++;
+
+            if (i == 0) { // Spawn the leader at the end
+                if (!this.spawnPatrolMember(level, spawnPosition, level.getRandom(), true)) {
+                    break;
+                }
+            } else {
+                this.spawnPatrolMember(level, spawnPosition, level.getRandom(), false);
+            }
+
+            spawnPosition.setX(spawnPosition.getX() + level.getRandom().nextInt(5) - level.getRandom().nextInt(5));
+            spawnPosition.setZ(spawnPosition.getZ() + level.getRandom().nextInt(5) - level.getRandom().nextInt(5));
+        }
+
+        return membersSpawned;
     }
 
     private boolean spawnPatrolMember(ServerLevel pLevel, BlockPos pPos, RandomSource pRandom, boolean pLeader) {

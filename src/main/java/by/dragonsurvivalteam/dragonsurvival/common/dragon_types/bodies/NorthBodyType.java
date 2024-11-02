@@ -4,68 +4,83 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
 
 public class NorthBodyType extends AbstractDragonBody {
-
     @ConfigRange(min = -1.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northJumpBonus", comment = "The jump bonus given to North-type dragons. It's a very sensitive parameter.")
+    @Translation(key = "north_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_jump_bonus")
     public static Double northJumpBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northStepBonus", comment = "The step bonus given to North-type dragons")
+    @Translation(key = "north_step_height_bonus", type = Translation.Type.CONFIGURATION, comments = "Step height bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_step_height_bonus")
     public static Double northStepBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northDamageBonus", comment = "The damage bonus given to North-type dragons")
+    @Translation(key = "north_damage_bonus", type = Translation.Type.CONFIGURATION, comments = "Damage bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_damage_bonus")
     public static Double northDamageBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northDamageMult", comment = "The damage multiplier given to North-type dragons")
+    @Translation(key = "north_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_damage_multiplier")
     public static Double northDamageMult = 0.8;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northArmorBonus", comment = "The armor bonus given to North-type dragons.")
+    @Translation(key = "north_armor_bonus", type = Translation.Type.CONFIGURATION, comments = "Armor bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_armor_bonus")
     public static Double northArmorBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northManaBonus", comment = "The mana bonus given to North-type dragons")
+    @Translation(key = "north_mana_bonus", type = Translation.Type.CONFIGURATION, comments = "Mana bonus")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_mana_bonus")
     public static Double northManaBonus = 2.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northSwimSpeedBonus", comment = "The swimSpeed bonus given to North-type dragons")
+    @Translation(key = "north_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_swim_speed_bonus")
     public static Double northSwimSpeedBonus = 1.5;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northHealthBonus", comment = "The health bonus given to North-type dragons")
+    @Translation(key = "north_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_health_bonus")
     public static Double northHealthBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northHealthMult", comment = "The health multiplier given to North-type dragons")
+    @Translation(key = "north_health_multiplier", type = Translation.Type.CONFIGURATION, comments = "Health multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_health_multiplier")
     public static Double northHealthMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northKnockbackBonus", comment = "The knockback bonus given to North-type dragons")
+    @Translation(key = "north_knockback_bonus", type = Translation.Type.CONFIGURATION, comments = "Knockback bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_knockback_bonus")
     public static Double northKnockbackBonus = -0.5;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northRunMult", comment = "The run speed multiplier given to North-type dragons")
+    @Translation(key = "north_movement_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_movement_speed_multiplier")
     public static Double northRunMult = 0.7;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northExpMult", comment = "The exp multiplier given to North-type dragons. Can cause dupes with some mods. Increase carefully.")
+    @Translation(key = "north_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "Experience multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_experience_multiplier")
     public static Double northExpMult = 1.0;
 
-    @ConfigRange(min = 0.0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northFlightMult", comment = "The flight multiplier given to North-type dragons. It is not recommended to do less than 1.0 (otherwise your dragon will fall instead of flying upwards)")
+    @ConfigRange(min = 1.0, max = 10)
+    @Translation(key = "north_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_flight_multiplier")
     public static Double northFlightMult = 1.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to North-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
+    @Translation(key = "north_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_flight_stamina_multiplier")
     public static Double northFlightStaminaMult = 1.2;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northGravityMult", comment = "The gravity multiplier given to North-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")
+    @Translation(key = "north_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_gravity_multiplier")
     public static Double northGravityMult = 1.0;
 
     @Override

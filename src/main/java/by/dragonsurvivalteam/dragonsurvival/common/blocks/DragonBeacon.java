@@ -75,19 +75,19 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 
         if (!isClient) {
             if (builtInRegistryHolder().is(DSBlocks.PEACE_DRAGON_BEACON)) {
-                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.forestDragonBeaconEffects).forEach(effect -> {
                     if (effect != null) {
                         player.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
                     }
                 });
             } else if (builtInRegistryHolder().is(DSBlocks.MAGIC_DRAGON_BEACON)) {
-                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.seaDragonBeaconEffects).forEach(effect -> {
                     if (effect != null) {
                         player.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
                     }
                 });
             } else if (this == DSBlocks.FIRE_DRAGON_BEACON.get()) {
-                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+                ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.caveDragonBeaconEffects).forEach(effect -> {
                     if (effect != null) {
                         player.addEffect(new MobEffectInstance(MobEffectUtils.getHolder(effect), Functions.minutesToTicks(ServerConfig.minutesOfDragonEffect)));
                     }

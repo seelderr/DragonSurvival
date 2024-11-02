@@ -4,68 +4,83 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
 
 public class WestBodyType extends AbstractDragonBody {
-
     @ConfigRange(min = -1.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westJumpBonus", comment = "The jump bonus given to West-type dragons. It's a very sensitive parameter.")
+    @Translation(key = "west_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_jump_bonus")
     public static Double westJumpBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westStepBonus", comment = "The step bonus given to West-type dragons")
+    @Translation(key = "west_step_height_bonus", type = Translation.Type.CONFIGURATION, comments = "Step height bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_step_height_bonus")
     public static Double westStepBonus = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westDamageBonus", comment = "The damage bonus given to West-type dragons")
+    @Translation(key = "west_damage_bonus", type = Translation.Type.CONFIGURATION, comments = "Damage bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_damage_bonus")
     public static Double westDamageBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westDamageMult", comment = "The damage multiplier given to West-type dragons")
+    @Translation(key = "west_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_damage_multiplier")
     public static Double westDamageMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westArmorBonus", comment = "The armor bonus given to West-type dragons")
+    @Translation(key = "west_armor_bonus", type = Translation.Type.CONFIGURATION, comments = "Armor bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_armor_bonus")
     public static Double westArmorBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westManaBonus", comment = "The mana bonus given to West-type dragons")
+    @Translation(key = "west_mana_bonus", type = Translation.Type.CONFIGURATION, comments = "Mana bonus")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_mana_bonus")
     public static Double westManaBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westSwimSpeedBonus", comment = "The swimSpeed bonus given to West-type dragons")
+    @Translation(key = "west_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_swim_speed_bonus")
     public static Double westSwimSpeedBonus = -0.2;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westHealthBonus", comment = "The health bonus given to West-type dragons")
+    @Translation(key = "west_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_health_bonus")
     public static Double westHealthBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westHealthMult", comment = "The health multiplier given to West-type dragons")
+    @Translation(key = "west_health_multiplier", type = Translation.Type.CONFIGURATION, comments = "Health multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_health_multiplier")
     public static Double westHealthMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westKnockbackBonus", comment = "The knockback bonus given to West-type dragons")
+    @Translation(key = "west_knockback_bonus", type = Translation.Type.CONFIGURATION, comments = "Knockback bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_knockback_bonus")
     public static Double westKnockbackBonus = 0.5;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westRunMult", comment = "The run speed multiplier given to West-type dragons")
+    @Translation(key = "west_movement_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_movement_speed_multiplier")
     public static Double westRunMult = 0.9;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westExpMult", comment = "The exp multiplier given to West-type dragons. Can cause dupes with some mods. Increase carefully.")
+    @Translation(key = "west_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "Experience multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_experience_multiplier")
     public static Double westExpMult = 1.0;
 
-    @ConfigRange(min = 0.0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westFlightMult", comment = "The flight multiplier given to West-type dragons. It is not recommended to do less than 1.0 (otherwise your dragon will fall instead of flying upwards)")
+    @ConfigRange(min = 1.0, max = 10)
+    @Translation(key = "west_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_flight_multiplier")
     public static Double westFlightMult = 1.2;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to West-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
+    @Translation(key = "west_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_flight_stamina_multiplier")
     public static Double westFlightStaminaMult = 0.2;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westGravityMult", comment = "The gravity multiplier given to West-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")
+    @Translation(key = "west_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_gravity_multiplier")
     public static Double westGravityMult = 1.0;
 
     @Override

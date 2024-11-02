@@ -5,8 +5,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.sounds.FastGlideSound;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.client.ui.UiConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
@@ -80,6 +80,16 @@ public class ClientFlightHandler {
     @Translation(key = "flight_camera_movement", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable camera movement while gliding as a dragon")
     @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "flight_camera_movement")
     public static Boolean flightCameraMovement = true;
+
+    @ConfigRange(min = -1000, max = 1000)
+    @Translation(key = "spin_cooldown_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset to the x position of the spin cooldown indicator")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spin_cooldown_x_offset")
+    public static Integer spinCooldownXOffset = 0;
+
+    @ConfigRange(min = -1000, max = 1000)
+    @Translation(key = "spin_cooldown_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset to the y position of the spin cooldown indicator")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spin_cooldown_y_offset")
+    public static Integer spinCooldownYOffset = 0;
 
     public static int lastSync;
     public static boolean wasGliding;
@@ -188,8 +198,8 @@ public class ClientFlightHandler {
                 int x = window.getGuiScaledWidth() / 2 - 66 / 2;
                 int y = window.getGuiScaledHeight() - 96;
 
-                x += UiConfig.spinCooldownXOffset;
-                y += UiConfig.spinCooldownYOffset;
+                x += spinCooldownXOffset;
+                y += spinCooldownYOffset;
 
                 int width = (int) (cooldownProgress * 62);
                 event.getGuiGraphics().blit(SPIN_COOLDOWN, x, y, 0, 0, 66, 21, 256, 256);

@@ -56,19 +56,19 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 
             switch (beacon.type) {
                 case PEACE ->
-                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.forestDragonBeaconEffects).forEach(effect -> {
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
                 case MAGIC ->
-                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.seaDragonBeaconEffects).forEach(effect -> {
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
                 case FIRE ->
-                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.caveDragonBeaconEffects).forEach(effect -> {
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }

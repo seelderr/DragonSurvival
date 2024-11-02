@@ -1,8 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,10 +21,18 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 public class DragonEditorConfirmComponent extends AbstractContainerEventHandler implements Renderable {
-    public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_altar_warning.png");
+    @Translation(key = CONFIRM_LOSE_ALL, type = Translation.Type.MISC, comments = "\nWith your current config settings all progress will be lost when changing species.\n\nWould you still like to continue?")
+    private final static String CONFIRM_LOSE_ALL = Translation.GUI_PREFIX + "dragon_editor.confirm.all";
+
+    @Translation(key = CONFIRM_LOSE_GROWTH, type = Translation.Type.MISC, comments = "\nWith your current config settings your growth progress will be lost when changing species or body types.\n\nWould you still like to continue?")
+    private final static String CONFIRM_LOSE_GROWTH = Translation.GUI_PREFIX + "dragon_editor.confirm.growth";
+
+    @Translation(key = CONFIRM_LOSE_ABILITIES, type = Translation.Type.MISC, comments = "\nWith your current config settings your ability progress will be lost when changing species.\n\nWould you still like to continue?")
+    private final static String CONFIRM_LOSE_ABILITIES = Translation.GUI_PREFIX + "dragon_editor.confirm.abilities";
+
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/dragon_altar_warning.png");
+
     private final AbstractWidget btn1;
     private final AbstractWidget btn2;
     private final int x;
@@ -31,7 +41,6 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
     private final int ySize;
     public boolean visible;
     public boolean isBodyTypeChange;
-
 
     public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize) {
         this.x = x;
@@ -90,24 +99,16 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
     public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
         guiGraphics.fillGradient(0, 0, Minecraft.getInstance().getWindow().getWidth(), Minecraft.getInstance().getWindow().getHeight(), -1072689136, -804253680);
 
-        String suffix = "";
+        String key = "";
 
         if (!ServerConfig.saveAllAbilities && (!ServerConfig.saveGrowthStage && !isBodyTypeChange)) {
-            // No data will be kept
-            suffix = "all";
+            key = CONFIRM_LOSE_ALL;
         } else if ((ServerConfig.saveAllAbilities || isBodyTypeChange) && !ServerConfig.saveGrowthStage) {
-            // Abilities will be kept
-            if (isBodyTypeChange) {
-                suffix = "ability_from_body";
-            } else {
-                suffix = "ability";
-            }
+            key = CONFIRM_LOSE_GROWTH;
         } else if (!ServerConfig.saveAllAbilities) {
-            // Growth will be kept
-            suffix = "growth";
+            key = CONFIRM_LOSE_ABILITIES;
         }
 
-        String key = "ds.gui.dragon_editor.confirm." + suffix;
         String text = Component.translatable(key).getString();
         guiGraphics.blit(BACKGROUND_TEXTURE, x, y, 0, 0, xSize, ySize);
         TextRenderUtil.drawCenteredScaledTextSplit(guiGraphics, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 150);

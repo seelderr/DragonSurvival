@@ -4,68 +4,83 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBo
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
 
 public class EastBodyType extends AbstractDragonBody {
-
     @ConfigRange(min = -1.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastJumpBonus", comment = "The jump bonus given to East-type dragons. It's a very sensitive parameter.")
+    @Translation(key = "east_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_jump_bonus")
     public static Double eastJumpBonus = 0.1;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastStepBonus", comment = "The step bonus given to East-type dragons")
+    @Translation(key = "east_step_height_bonus", type = Translation.Type.CONFIGURATION, comments = "Step height bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_step_height_bonus")
     public static Double eastStepBonus = 0.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastDamageBonus", comment = "The damage bonus given to East-type dragons")
+    @Translation(key = "east_damage_bonus", type = Translation.Type.CONFIGURATION, comments = "Damage bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_damage_bonus")
     public static Double eastDamageBonus = -1.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastDamageMult", comment = "The damage multiplier given to East-type dragons")
+    @Translation(key = "east_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_damage_multiplier")
     public static Double eastDamageMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastArmorBonus", comment = "The armor bonus given to East-type dragons")
+    @Translation(key = "east_armor_bonus", type = Translation.Type.CONFIGURATION, comments = "Armor bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_armor_bonus")
     public static Double eastArmorBonus = 2.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastManaBonus", comment = "The mana bonus given to East-type dragons")
+    @Translation(key = "east_mana_bonus", type = Translation.Type.CONFIGURATION, comments = "Mana bonus")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_mana_bonus")
     public static Double eastManaBonus = 2.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastSwimSpeedBonus", comment = "The swimSpeed bonus given to East-type dragons")
+    @Translation(key = "east_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_swim_speed_bonus")
     public static Double eastSwimSpeedBonus = 0.5;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastHealthBonus", comment = "The health bonus given to East-type dragons")
+    @Translation(key = "east_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_health_bonus")
     public static Double eastHealthBonus = 0.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastHealthMult", comment = "The health multiplier given to East-type dragons")
+    @Translation(key = "east_health_multiplier", type = Translation.Type.CONFIGURATION, comments = "Health multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_health_multiplier")
     public static Double eastHealthMult = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastKnockbackBonus", comment = "The knockback bonus given to East-type dragons")
+    @Translation(key = "east_knockback_bonus", type = Translation.Type.CONFIGURATION, comments = "Knockback bonus (additive)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_knockback_bonus")
     public static Double eastKnockbackBonus = -1.0;
 
     @ConfigRange(min = -10.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastRunMult", comment = "The run speed multiplier given to East-type dragons")
+    @Translation(key = "east_movement_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier (multiply total)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_movement_speed_multiplier")
     public static Double eastRunMult = 1.1;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastExpMult", comment = "The exp multiplier given to East-type dragons. Can cause dupes with some mods. Increase carefully.")
+    @Translation(key = "east_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "Experience multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_experience_multiplier")
     public static Double eastExpMult = 1.0;
 
-    @ConfigRange(min = 0.0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastFlightMult", comment = "The flight multiplier given to East-type dragons. It is not recommended to do less than 1.0 (otherwise your dragon will fall instead of flying upwards)")
+    @ConfigRange(min = 1.0, max = 10)
+    @Translation(key = "east_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_flight_multiplier")
     public static Double eastFlightMult = 1.0;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to East-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
+    @Translation(key = "east_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_flight_stamina_multiplier")
     public static Double eastFlightStaminaMult = 1.2;
 
     @ConfigRange(min = 0.0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastGravityMult", comment = "The gravity multiplier given to East-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")
+    @Translation(key = "east_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_gravity_multiplier")
     public static Double eastGravityMult = 1.0;
 
     @Override

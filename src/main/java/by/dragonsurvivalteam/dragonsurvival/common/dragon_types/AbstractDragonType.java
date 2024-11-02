@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public abstract class AbstractDragonType implements NBTInterface, Comparable<AbstractDragonType> {
     public int slotForBonus;
@@ -31,16 +30,13 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
     public abstract List<TagKey<Block>> mineableBlocks();
 
     @Override
-    public int compareTo(@NotNull AbstractDragonType o) {
-        return getTypeName().compareTo(o.getTypeName());
+    public int compareTo(@NotNull AbstractDragonType type) {
+        return getTypeName().compareTo(type.getTypeName());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof AbstractDragonType type) {
-            return Objects.equals(type.getSubtypeName(), getSubtypeName());
-        }
-        return super.equals(obj);
+    public boolean equals(Object object) {
+        return super.equals(object) || object instanceof AbstractDragonType type && type.getSubtypeName().equals(getSubtypeName());
     }
 
     @Override

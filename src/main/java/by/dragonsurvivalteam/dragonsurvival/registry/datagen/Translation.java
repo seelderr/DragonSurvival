@@ -8,6 +8,26 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Translation.Translations.class)
 public @interface Translation {
+    // Prefix determined by vanilla
+    String ITEM_PREFIX = "item." + DragonSurvival.MODID + ".";
+    String BLOCK_PREFIX = "block." + DragonSurvival.MODID + ".";
+    String ENTITY_PREFIX = "entity." + DragonSurvival.MODID + ".";
+    String EFFECT_PREFIX = "effect." + DragonSurvival.MODID + ".";
+
+    // Custom prefix
+    String DESCRIPTION_PREFIX = DragonSurvival.MODID + ".description";
+    String DESCRIPTION_ADDITION_PREFIX = DragonSurvival.MODID + ".description.addition";
+    String CONFIGURATION_PREFIX = DragonSurvival.MODID + ".configuration.";
+    String ABILITY_PREFIX = DragonSurvival.MODID + ".ability.";
+    String ADVANCEMENT_PREFIX = DragonSurvival.MODID + ".advancement.";
+    String SKIN_PART_PREFIX = DragonSurvival.MODID + ".skin_part.";
+    String GUI_PREFIX = DragonSurvival.MODID + ".gui.";
+    String KEYBIND_PREFIX = DragonSurvival.MODID + ".keybind";
+    String EMOTE_PREFIX = DragonSurvival.MODID + ".emote.";
+
+    // Suffix
+    String CONFIGURATION_SUFFIX = ".tooltip";
+
     String key();
 
     Type type();
@@ -24,20 +44,20 @@ public @interface Translation {
     }
 
     enum Type {
-        ITEM("item." + DragonSurvival.MODID + ".", ""),
-        BLOCK("block." + DragonSurvival.MODID + ".", ""),
-        ENTITY("entity." + DragonSurvival.MODID + ".", ""),
-        EFFECT("effect." + DragonSurvival.MODID + ".", ""),
-        DESCRIPTION(DragonSurvival.MODID + ".description", ""),
-        DESCRIPTION_ADDITION(DragonSurvival.MODID + ".description.add.", ""),
-        CONFIGURATION(DragonSurvival.MODID + ".configuration.", ".tooltip"),
-        ABILITY(DragonSurvival.MODID + ".ability", ""),
-        ADVANCEMENT(DragonSurvival.MODID + ".advancement.", ""),
-        SKIN_PART(DragonSurvival.MODID + ".skin_part.", ""),
-        GUI(DragonSurvival.MODID + ".gui.", ""),
-        KEYBIND(DragonSurvival.MODID + ".keybind", ""),
-        EMOTE(DragonSurvival.MODID + ".emote.", ""),
-        MISC(DragonSurvival.MODID + ".", "");
+        ITEM(ITEM_PREFIX, ""),
+        BLOCK(BLOCK_PREFIX, ""),
+        ENTITY(ENTITY_PREFIX, ""),
+        EFFECT(EFFECT_PREFIX, ""),
+        DESCRIPTION(DESCRIPTION_PREFIX, ""),
+        DESCRIPTION_ADDITION(DESCRIPTION_ADDITION_PREFIX, ""),
+        CONFIGURATION(CONFIGURATION_PREFIX, CONFIGURATION_SUFFIX),
+        ABILITY(ABILITY_PREFIX, ""),
+        ADVANCEMENT(ADVANCEMENT_PREFIX, ""),
+        SKIN_PART(SKIN_PART_PREFIX, ""),
+        GUI(GUI_PREFIX, ""),
+        KEYBIND(KEYBIND_PREFIX, ""),
+        EMOTE(EMOTE_PREFIX, ""),
+        MISC("", "");
 
         public final String prefix;
         public final String suffix;

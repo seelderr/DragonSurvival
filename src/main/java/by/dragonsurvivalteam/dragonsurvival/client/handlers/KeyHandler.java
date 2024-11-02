@@ -18,7 +18,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 public class KeyHandler {
     @SubscribeEvent
     public static void toggleDestructionMode(final InputEvent.Key event) {
-        if (!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
+        if (!ServerConfig.allowBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
 

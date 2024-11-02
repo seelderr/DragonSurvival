@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDrag
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -85,7 +86,7 @@ public class ManaHandler {
                 manaBlocks = DSBlockTags.REGENERATES_SEA_DRAGON_MANA;
             }
             case ForestDragonType ignored -> {
-                conditionalBlocks = ServerConfig.forestConditionalManaBlocks;
+                conditionalBlocks = ForestDragonConfig.forestConditionalManaBlocks;
                 manaBlocks = DSBlockTags.REGENERATES_FOREST_DRAGON_MANA;
             }
             default -> throw new IllegalStateException("Invalid dragon type: [" + data.getType().getClass().getName() + "]");
@@ -111,7 +112,7 @@ public class ManaHandler {
     public static int getMaxMana(final Player player) {
         int mana;
 
-        if (ServerConfig.consumeEXPAsMana) {
+        if (ServerConfig.consumeExperienceAsMana) {
             mana = 1 + getManaExperienceFromLevels(player);
         } else {
             mana = 10;
@@ -150,7 +151,7 @@ public class ManaHandler {
         DragonStateHandler data = DragonStateProvider.getData(player);
         int pureMana = data.getMagicData().getCurrentMana();
 
-        if (ServerConfig.consumeEXPAsMana && player.level().isClientSide()) {
+        if (ServerConfig.consumeExperienceAsMana && player.level().isClientSide()) {
             // Check if experience would be consumed as part of the mana cost
             if (pureMana < manaCost && getCurrentMana(player) >= manaCost) {
                 player.playSound(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.01F, 0.01F);
@@ -161,7 +162,7 @@ public class ManaHandler {
             return;
         }
 
-        if (ServerConfig.consumeEXPAsMana) {
+        if (ServerConfig.consumeExperienceAsMana) {
             if (pureMana < manaCost) {
                 int missingMana = pureMana - manaCost;
                 int experienceCost = missingMana * EXPERIENCE_TO_MANA;
@@ -181,7 +182,7 @@ public class ManaHandler {
         DragonStateHandler data = DragonStateProvider.getData(player);
         int currentMana = data.getMagicData().getCurrentMana();
 
-        if (ServerConfig.consumeEXPAsMana) {
+        if (ServerConfig.consumeExperienceAsMana) {
             currentMana += getManaExperienceFromLevels(player);
         }
 

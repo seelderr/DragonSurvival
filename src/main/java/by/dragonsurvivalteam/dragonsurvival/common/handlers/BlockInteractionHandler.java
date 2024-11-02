@@ -24,7 +24,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public class BlockInteractionHandler {
     @SubscribeEvent
     public static void createAltar(PlayerInteractEvent.RightClickBlock rightClickBlock) {
-        if (!ServerConfig.altarCraftable) {
+        if (!ServerConfig.transformAltar) {
             return;
         }
 

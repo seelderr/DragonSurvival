@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.Validation;
+import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.types.FoodConfigCollector;
 import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
@@ -22,6 +23,10 @@ public class ForestDragonConfig {
     @Translation(key = "forest_abilities", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable forest dragon abilities")
     @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic"}, key = "forest_abilities")
     public static Boolean areAbilitiesEnabled = true;
+
+    @Translation(key = "forest_conditional_mana_blocks", type = Translation.Type.CONFIGURATION, comments = "Blocks that restore mana for forest dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic"}, key = "forest_conditional_mana_blocks")
+    public static List<BlockStateConfig> forestConditionalManaBlocks = List.of();
 
     // --- Bonus --- //
 

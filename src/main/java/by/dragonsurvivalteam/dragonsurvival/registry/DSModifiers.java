@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -126,9 +127,11 @@ public class DSModifiers {
     );
 
     public static double buildHealthMod(DragonStateHandler handler) {
-        if (!ServerConfig.healthAdjustments) return 0;
+        if (!DragonBonusConfig.healthAdjustments) return 0;
         double healthModifier;
         double size = handler.getSize();
+        // TODO :: change to sth. simpler? e.g. health point per size point (0.5 by default?)
+        //  still need to subtract default player health of 20 so smaller dragon sizes give a negative value (reduce health)
         if (ServerConfig.allowLargeScaling && size > ServerConfig.maxHealthSize) {
             healthModifier = ServerConfig.maxHealth + ServerConfig.largeMaxHealthScalar * ((size - ServerConfig.maxHealthSize) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE) - 20;
         } else {
@@ -150,8 +153,8 @@ public class DSModifiers {
     }
 
     public static double buildDamageMod(DragonStateHandler handler) {
-        if (!ServerConfig.attackDamage) return 0;
-        double ageBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.newbornBonusDamage;
+        if (!DragonBonusConfig.isDamageBonusEnabled) return 0;
+        double ageBonus = handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage;
         if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
             ageBonus += ServerConfig.largeDamageBonus * ((handler.getSize() - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE);
         }
@@ -169,7 +172,7 @@ public class DSModifiers {
 
     public static double buildStepHeightMod(DragonStateHandler handler) {
         double size = handler.getSize();
-        double stepHeightBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultStepHeight : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngStepHeight : ServerConfig.newbornStepHeight;
+        double stepHeightBonus = handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultStepHeight : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngStepHeight : DragonBonusConfig.newbornStepHeight;
         if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling) {
             stepHeightBonus += ServerConfig.largeStepHeightScalar * (size - ServerConfig.DEFAULT_MAX_GROWTH_SIZE) / ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
         }
@@ -204,9 +207,9 @@ public class DSModifiers {
             }
         }
         switch (handler.getLevel()) {
-            case NEWBORN -> jumpBonus += ServerConfig.newbornJump; //1+ block
-            case YOUNG -> jumpBonus += ServerConfig.youngJump; //1.5+ block
-            case ADULT -> jumpBonus += ServerConfig.adultJump; //2+ blocks
+            case NEWBORN -> jumpBonus += DragonBonusConfig.newbornJump; //1+ block
+            case YOUNG -> jumpBonus += DragonBonusConfig.youngJump; //1.5+ block
+            case ADULT -> jumpBonus += DragonBonusConfig.adultJump; //2+ blocks
         }
         return jumpBonus;
     }

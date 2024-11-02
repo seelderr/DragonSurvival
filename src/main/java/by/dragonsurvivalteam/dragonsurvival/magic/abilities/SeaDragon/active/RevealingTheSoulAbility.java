@@ -33,7 +33,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
 
     @ConfigRange(min = 0.05, max = 10_000.0)
     @Translation(key = "revealing_the_soul_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_cooldown", comment = "The cooldown in seconds of the revealing the soul ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_cooldown")
     public static Double revealingTheSoulCooldown = 30.0;
 
     @ConfigRange(min = 0.05, max = 10_000.0)

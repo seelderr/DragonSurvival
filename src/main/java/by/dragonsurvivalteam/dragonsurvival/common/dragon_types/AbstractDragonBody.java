@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
-import java.util.Objects;
 
 public abstract class AbstractDragonBody implements NBTInterface, Comparable<AbstractDragonBody> {
     @Translation(key = "other", type = Translation.Type.DESCRIPTION, comments = "some text")
@@ -21,15 +20,13 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
 
     public abstract void onPlayerDeath();
 
+    @Override
     public int compareTo(@NotNull AbstractDragonBody b) {
         return getBodyName().compareTo(b.getBodyName());
     }
 
-    public boolean equals(Object obj) {
-        if (obj instanceof AbstractDragonBody b) {
-            return Objects.equals(getBodyName(), b.getBodyName());
-        }
-        return super.equals(obj);
+    public boolean equals(Object object) {
+        return super.equals(object) || object instanceof AbstractDragonBody body && body.getBodyName().equals(getBodyName());
     }
 
     @Override

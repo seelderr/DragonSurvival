@@ -43,7 +43,7 @@ public class HUDHandler {
             if (wasRendered) {
                 event.setCanceled(true);
             }
-        } else if (ServerConfig.consumeEXPAsMana && !vanillaExperienceBar && id == VanillaGuiLayers.EXPERIENCE_BAR) {
+        } else if (ServerConfig.consumeExperienceAsMana && !vanillaExperienceBar && id == VanillaGuiLayers.EXPERIENCE_BAR) {
             boolean wasRendered = MagicHUD.renderExperienceBar(event.getGuiGraphics(), screenWidth);
 
             if (wasRendered) {

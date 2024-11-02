@@ -20,7 +20,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 @RegisterDragonAbility
 public class InspirationAbility extends AoeBuffAbility {
     @Translation(key = "inspiration", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the inspiration ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "inspiration"}, key = "inspiration", comment = "Whether the inspiration ability should be enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "inspiration"}, key = "inspiration")
     public static Boolean inspirationEnabled = true;
 
     @ConfigRange(min = 0.05, max = 10_000.0)

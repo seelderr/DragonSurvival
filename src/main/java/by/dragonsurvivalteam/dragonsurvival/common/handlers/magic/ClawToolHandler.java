@@ -14,7 +14,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,6 +21,7 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
@@ -79,23 +79,18 @@ public class ClawToolHandler {
     // This needs to happen as early as possible to make sure drops are added before other mods interact with them
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void playerDieEvent(LivingDropsEvent event) {
-        Entity ent = event.getEntity();
+        if (event.getEntity() instanceof Player player && !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.retainClawItems) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        if (ent instanceof Player player) {
-            if (!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems) {
-                DragonStateHandler handler = DragonStateProvider.getData(player);
+            for (int i = 0; i < ClawInventory.Slot.size(); i++) {
+                ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
-                for (int i = 0; i < ClawInventory.Slot.size(); i++) {
-                    ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
-
-                    if (!stack.isEmpty()) {
-                        Holder<Enchantment> vanishingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.VANISHING_CURSE);
-                        if (EnchantmentHelper.getTagEnchantmentLevel(vanishingCurse, stack) == 0) {
-                            event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
-                        }
-
-                        handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
+                if (!stack.isEmpty()) {
+                    if (!EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
+                        event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
                     }
+
+                    handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
                 }
             }
         }
@@ -281,18 +276,18 @@ public class ClawToolHandler {
             bonus = ServerConfig.baseBreakSpeedAdult;
         }
 
+        for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
+            if (state.is(tagKey) && unlockedBonus > bonus) {
+                bonus = unlockedBonus;
+                break;
+            }
+        }
+
         for (int i = 0; i < ClawInventory.Slot.size(); i++) {
             ItemStack clawTool = handler.getClawToolData().getClawsInventory().getItem(i);
 
             if (state.requiresCorrectToolForDrops() && clawTool.isCorrectToolForDrops(state) || clawTool.getDestroySpeed(state) > 1) {
                 bonus /= ServerConfig.bonusBreakSpeedReduction;
-                break;
-            }
-        }
-
-        for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
-            if (state.is(tagKey) && unlockedBonus > bonus) {
-                bonus = unlockedBonus;
                 break;
             }
         }

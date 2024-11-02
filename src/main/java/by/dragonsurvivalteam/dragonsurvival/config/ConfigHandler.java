@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.types.CustomConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.electronwill.nightconfig.core.EnumGetMethod;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -186,16 +185,6 @@ public class ConfigHandler {
         return field;
     }
 
-    public static String languageKey(final String key, boolean tooltip) {
-        String languageKey = DragonSurvival.MODID + ".configuration." + key;
-
-        if (tooltip) {
-            languageKey += ".tooltip";
-        }
-
-        return languageKey;
-    }
-
     public static void createConfigEntries(final ModConfigSpec.Builder builder, final ConfigSide side) {
         for (String key : CONFIG_KEYS.getOrDefault(side, Set.of())) {
             ConfigOption configOption = CONFIG_OBJECTS.get(key);
@@ -219,10 +208,6 @@ public class ConfigHandler {
 
             builder.comment(translation.comments());
             builder.translation(translation.type().prefix + translation.key());
-
-            if (!configOption.localization().isBlank()) {
-                builder.translation(configOption.localization());
-            }
 
             try {
                 ConfigRange range = field.isAnnotationPresent(ConfigRange.class) ? field.getAnnotation(ConfigRange.class) : null;
@@ -604,6 +589,7 @@ public class ConfigHandler {
         }
 
         if (value instanceof Number number) {
+            //noinspection IfCanBeSwitch -> it can't due to the check for the primitive type
             if (field.getType().equals(double.class) || field.getType().equals(Double.class)) {
                 return number.doubleValue();
             }
