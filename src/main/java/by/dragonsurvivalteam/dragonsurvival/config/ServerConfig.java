@@ -617,11 +617,11 @@ public class ServerConfig {
 
     @ConfigRange(min = 0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "initialPassiveCost", comment = "The initial exp cost for leveling passive skills.")
-    public static Integer initialPassiveCost = 4;
+    public static Integer initialPassiveCost = 1;
 
     @ConfigRange(min = 0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "passiveScalingCost", comment = "The multiplier that is used to increase the passive skill costs per level")
-    public static Double passiveScalingCost = 6.0;
+    public static Double passiveScalingCost = 4.0;
 
 
     @ConfigRange(min = 1, max = 1000)

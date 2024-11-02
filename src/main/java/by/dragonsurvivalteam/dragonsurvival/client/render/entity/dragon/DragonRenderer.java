@@ -132,7 +132,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
             GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
             GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
 
-            if (animations.stream().anyMatch(magicAnimations::contains)) {
+            if (!animations.stream().anyMatch(magicAnimations::contains)) {
                 magic.setHidden(true);
                 magicCircle.setHidden(true);
             } else {
