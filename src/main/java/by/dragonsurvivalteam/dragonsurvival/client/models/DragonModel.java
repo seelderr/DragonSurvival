@@ -96,22 +96,22 @@ public class DragonModel extends GeoModel<DragonEntity> {
             float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
 
             // Accumulate them in the history
-            while(dragon.bodyYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.bodyYawHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.bodyYawHistory.removeFirst();
             }
             dragon.bodyYawHistory.add(bodyYawChange);
 
-            while(dragon.headYawHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.headYawHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.headYawHistory.removeFirst();
             }
             dragon.headYawHistory.add(headYawChange);
 
-            while(dragon.headPitchHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.headPitchHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.headPitchHistory.removeFirst();
             }
             dragon.headPitchHistory.add(headPitchChange);
 
-            while(dragon.verticalVelocityHistory.size() > 10 / (deltaTick / deltaTickFor60FPS) ) {
+            while(dragon.verticalVelocityHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.verticalVelocityHistory.removeFirst();
             }
 
