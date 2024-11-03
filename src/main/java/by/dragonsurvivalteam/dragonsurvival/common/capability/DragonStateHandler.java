@@ -212,6 +212,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         if (!DragonUtils.isDragonType(oldType, dragonType)) {
             DSModifiers.updateTypeModifiers(player);
+            skinData.skinPreset.initDefaults(dragonType);
         }
     }
 
