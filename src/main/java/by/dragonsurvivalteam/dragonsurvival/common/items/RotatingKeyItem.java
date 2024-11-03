@@ -14,7 +14,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
@@ -35,7 +34,7 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 import java.util.Optional;
 import java.util.function.Consumer;
 
-public class RotatingKeyItem extends Item implements GeoItem {
+public class RotatingKeyItem extends TooltipItem implements GeoItem {
     public final ResourceLocation texture, model;
     private final TagKey<Structure> target;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
@@ -45,11 +44,10 @@ public class RotatingKeyItem extends Item implements GeoItem {
     // Client data used for rendering
     public final Vector3f fake_target = new Vector3f();
     public Vector3f currentTarget = new Vector3f();
-    public Vector3f prevRotation = new Vector3f();
     public Player playerHoldingItem;
 
-    public RotatingKeyItem(Properties pProperties, ResourceLocation model, ResourceLocation texture, ResourceLocation target) {
-        super(pProperties);
+    public RotatingKeyItem(Properties properties, ResourceLocation model, ResourceLocation texture, ResourceLocation target) {
+        super(properties, null);
         this.target = TagKey.create(Registries.STRUCTURE, target);
         this.model = model;
         this.texture = texture;

@@ -56,19 +56,25 @@ public class DSLanguageProvider extends LanguageProvider {
 
             try {
                 Field field = Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName());
-                // For holders the path from the resource location will be used if no key is set (since vanilla uses that for the item translation key as well e.g.)
-                boolean isHolder = Holder.class.isAssignableFrom(field.getType());
+                field.setAccessible(true);
 
-                if (isHolder && key == null) {
-                    Holder<?> holder = (Holder<?>) field.get(null);
+                if (key == null) {
+                    if (Holder.class.isAssignableFrom(field.getType())) {
+                        Holder<?> holder = (Holder<?>) field.get(null);
 
-                    //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
-                    key = type.prefix + holder.getKey().location().getPath() + type.suffix;
-                    add(key, format(comments));
+                        //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
+                        key = type.prefix + holder.getKey().location().getPath() + type.suffix;
+                        add(key, format(comments));
 
-                    continue;
-                } else if (isHolder) {
-                    DragonSurvival.LOGGER.warn("Annotated a holder field with a custom key [{}] - was this intentional? data: [{}]", key, annotationData);
+                        continue;
+                    }
+
+                    if (type == Translation.Type.MISC && String.class.isAssignableFrom(field.getType())) {
+                        String translationKey = (String) field.get(null);
+                        add(translationKey, format(comments));
+
+                        continue;
+                    }
                 }
             } catch (ReflectiveOperationException exception) {
                 throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
