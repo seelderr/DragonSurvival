@@ -76,7 +76,7 @@ public class PlayerLoginHandler {
                 AbstractDragonType type = dragonStateHandler.getType();
 
                 if (type instanceof CaveDragonType cave) {
-                    cave.timeInRain = 0;
+                    cave.rainResistanceSupply = CaveDragonType.getMaxRainResistanceSupply(player);
                     cave.lavaAirSupply = CaveDragonConfig.caveLavaSwimmingTicks;
                 }
 

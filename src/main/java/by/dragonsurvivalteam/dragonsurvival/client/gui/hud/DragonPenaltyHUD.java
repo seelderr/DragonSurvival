@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConf
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -73,25 +72,18 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
         } else if (handler.getType() instanceof CaveDragonType caveDragonType) {
-            if (caveDragonType.timeInRain > 0 && ServerConfig.penaltiesEnabled && CaveDragonConfig.caveRainDamage != 0.0) {
+            int maxRainResistanceSupply = CaveDragonType.getMaxRainResistanceSupply(localPlayer);
+
+            if (ServerConfig.penaltiesEnabled && CaveDragonConfig.caveRainDamage > 0 && caveDragonType.rainResistanceSupply < maxRainResistanceSupply) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
                 gui.rightHeight += 10;
 
-                Optional<ContrastShowerAbility> contrastShower = DragonAbilities.getAbility(localPlayer, ContrastShowerAbility.class);
-                int maxRainTime = 0;
-
-                if (contrastShower.isPresent()) {
-                    maxRainTime += Functions.secondsToTicks(contrastShower.get().getDuration());
-                }
-
-                final int timeInRain = maxRainTime - Math.min(caveDragonType.timeInRain, maxRainTime);
-
-                final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
-                final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-                final int full = Mth.ceil((double) (timeInRain - 2) * 10.0D / maxRainTime);
-                final int partial = Mth.ceil((double) timeInRain * 10.0D / maxRainTime) - full;
+                int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
+                int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
+                int full = Mth.ceil((double) (caveDragonType.rainResistanceSupply - 2) * 10 / maxRainResistanceSupply);
+                int partial = Mth.ceil((double) caveDragonType.rainResistanceSupply * 10 / maxRainResistanceSupply) - full;
 
                 for (int i = 0; i < full + partial; ++i) {
                     guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 54, 9, 9);

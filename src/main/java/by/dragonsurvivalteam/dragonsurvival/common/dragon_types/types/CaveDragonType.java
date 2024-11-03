@@ -29,7 +29,11 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import java.util.List;
 
 public class CaveDragonType extends AbstractDragonType {
-    public int timeInRain;
+    /** Once the rain resistance supply reaches this value the dragon will take damage and the rain resistance supply will go back to 0 */
+    private static final int RAIN_DAMAGE_RATE_POINT = -40;
+    private static final float SUPPLY_RATE = 0.013f;
+
+    public int rainResistanceSupply;
     public int lavaAirSupply;
 
     public CaveDragonType() {
@@ -39,15 +43,15 @@ public class CaveDragonType extends AbstractDragonType {
     @Override
     public CompoundTag writeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("timeInRain", timeInRain);
-        tag.putInt("lavaAirSupply", lavaAirSupply);
+        tag.putInt("rain_resistance_supply", rainResistanceSupply);
+        tag.putInt("lava_air_supply", lavaAirSupply);
         return tag;
     }
 
     @Override
     public void readNBT(CompoundTag base) {
-        timeInRain = base.getInt("timeInRain");
-        lavaAirSupply = base.getInt("lavaAirSupply");
+        rainResistanceSupply = base.getInt("rain_resistance_supply");
+        lavaAirSupply = base.getInt("lava_air_supply");
     }
 
     @Override
@@ -57,49 +61,46 @@ public class CaveDragonType extends AbstractDragonType {
         }
 
         if (ServerConfig.penaltiesEnabled && !player.hasEffect(DSEffects.FIRE)) {
-            int maxRainTime = DragonAbilities.getAbility(player, ContrastShowerAbility.class).map(ability -> Functions.secondsToTicks(ability.getDuration())).orElse(1);
-            boolean wasInWater = false;
+            boolean hadWaterContact = false;
 
-            if (CaveDragonConfig.caveWaterDamage > 0 && player.isInWaterOrBubble()) {
-                wasInWater = true;
+            if (isTakingWaterDamage(player)) {
+                hadWaterContact = true;
 
                 if (player.tickCount % 10 == 0) {
                     player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.WATER_BURN)), CaveDragonConfig.caveWaterDamage.floatValue());
                 }
             }
 
-            if (CaveDragonConfig.caveRainDamage > 0 && (/* check rain */ player.isInWaterOrRain() && !player.isInWater() || /* check other water sources */ DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON))) {
-                wasInWater = true;
-                timeInRain++;
+            if (isTakingRainDamage(player)) {
+                hadWaterContact = true;
+                rainResistanceSupply--;
+
+                if (rainResistanceSupply % 10 == 0) {
+                    player.level().addParticle(ParticleTypes.POOF, player.getX() + player.level().random.nextDouble() * (player.level().random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + player.level().random.nextDouble() * (player.level().random.nextBoolean() ? 1 : -1), 0, 0, 0);
+                }
             }
 
-            if (!player.level().isClientSide() && wasInWater && player.tickCount % 40 == 0) {
-                if (timeInRain >= maxRainTime) {
+            if (hadWaterContact && rainResistanceSupply == RAIN_DAMAGE_RATE_POINT) {
+                player.playSound(SoundEvents.LAVA_EXTINGUISH, 1, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2f + 1);
+
+                if (!player.level().isClientSide()) { // TODO :: add the sound to the damage type itself? would need to extend the DamageEffects enum
                     player.hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.RAIN_BURN)), CaveDragonConfig.caveRainDamage.floatValue());
                 }
 
-                player.playSound(SoundEvents.LAVA_EXTINGUISH, 1.0F, (player.getRandom().nextFloat() - player.getRandom().nextFloat()) * 0.2F + 1.0F);
+                rainResistanceSupply = 0;
             }
 
-            // Only reduce the time in rain if the player wasn't in contact with water
-            if (!wasInWater && timeInRain > 0) {
-                if (maxRainTime > 1) {
-                    // The ability reduces the time in rain by a larger amount (e.g. level 1 is 30 seconds -> 600 ticks * 0.02f -> 12)
-                    timeInRain = Math.max(0, timeInRain - (int) Math.ceil(maxRainTime * 0.02f));
-                } else {
-                    timeInRain--;
-                }
-            }
-
-            if (player.level().isClientSide() && timeInRain > 0 && player.tickCount % 10 == 0) {
-                player.level().addParticle(ParticleTypes.POOF, player.getX() + player.level().random.nextDouble() * (player.level().random.nextBoolean() ? 1 : -1), player.getY() + 0.5F, player.getZ() + player.level().random.nextDouble() * (player.level().random.nextBoolean() ? 1 : -1), 0, 0, 0);
+            if (!hadWaterContact) {
+                // Only increase the rain resistance supply if the player wasn't in contact with water
+                int maxResistance = getMaxRainResistanceSupply(player);
+                rainResistanceSupply = Math.min(maxResistance, rainResistanceSupply + (int) Math.ceil(maxResistance * SUPPLY_RATE));
             }
         }
 
         // In case the server config is changed and lowers the max. air supply
         lavaAirSupply = Math.min(lavaAirSupply, CaveDragonConfig.caveLavaSwimmingTicks);
 
-        if (DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && CaveDragonConfig.caveLavaSwimmingTicks > 0 && player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value())) {
+        if (isLavaSwimming(player)) {
             lavaAirSupply--;
 
             if (lavaAirSupply == -20) {
@@ -113,8 +114,8 @@ public class CaveDragonType extends AbstractDragonType {
             if (!player.level().isClientSide() && player.isPassenger() && player.getVehicle() != null && !player.getVehicle().canBeRiddenUnderFluidType(NeoForgeMod.WATER_TYPE.value(), player)) {
                 player.stopRiding();
             }
-        } else if (lavaAirSupply < CaveDragonConfig.caveLavaSwimmingTicks && !player.isEyeInFluidType(NeoForgeMod.WATER_TYPE.value())) {
-            lavaAirSupply = Math.min(lavaAirSupply + (int) Math.ceil(CaveDragonConfig.caveLavaSwimmingTicks * 0.0133333F), CaveDragonConfig.caveLavaSwimmingTicks);
+        } else if (lavaAirSupply < CaveDragonConfig.caveLavaSwimmingTicks && player.getEyeInFluidType().isAir()) {
+            lavaAirSupply = Math.min(CaveDragonConfig.caveLavaSwimmingTicks, lavaAirSupply + (int) Math.ceil(CaveDragonConfig.caveLavaSwimmingTicks * SUPPLY_RATE));
         }
     }
 
@@ -125,7 +126,7 @@ public class CaveDragonType extends AbstractDragonType {
 
     @Override
     public void onPlayerDeath() {
-        timeInRain = 0;
+        rainResistanceSupply = 0;
     }
 
     @Override
@@ -141,5 +142,21 @@ public class CaveDragonType extends AbstractDragonType {
     @Override
     public String getTypeName() {
         return "cave";
+    }
+
+    public static int getMaxRainResistanceSupply(final Player player) {
+        return DragonAbilities.getAbility(player, ContrastShowerAbility.class).map(ability -> Functions.secondsToTicks(ability.getDuration())).orElse(1);
+    }
+
+    public static boolean isTakingRainDamage(final Player player) {
+        return CaveDragonConfig.caveRainDamage > 0 && (/* check rain */ player.isInWaterOrRain() && !player.isInWater() || /* check other water sources */ DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON));
+    }
+
+    public static boolean isTakingWaterDamage(final Player player) {
+        return CaveDragonConfig.caveWaterDamage > 0 && player.isInWaterOrBubble();
+    }
+
+    public static boolean isLavaSwimming(final Player player) {
+        return DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveLavaSwimming && CaveDragonConfig.caveLavaSwimmingTicks > 0 && player.isEyeInFluidType(NeoForgeMod.LAVA_TYPE.value());
     }
 }

@@ -62,11 +62,11 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 
     private List<String> getEffectsForBeacon(Block block, Level pLevel) {
         if (block == DSBlocks.PEACE_DRAGON_BEACON.get()) {
-            return ServerConfig.peaceBeaconEffects;
+            return ServerConfig.forestDragonBeaconEffects;
         } else if (block == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
-            return ServerConfig.magicBeaconEffects;
+            return ServerConfig.seaDragonBeaconEffects;
         } else if (block == DSBlocks.FIRE_DRAGON_BEACON.get()) {
-            return ServerConfig.fireBeaconEffects;
+            return ServerConfig.caveDragonBeaconEffects;
         }
 
         return null;
