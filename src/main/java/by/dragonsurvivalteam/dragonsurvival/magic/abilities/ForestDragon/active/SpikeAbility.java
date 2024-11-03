@@ -33,26 +33,26 @@ public class SpikeAbility extends InstantCastAbility {
 
     @ConfigRange(min = 0.0, max = 100.0)
     @Translation(key = "spike_spread", type = Translation.Type.CONFIGURATION, comments = "The amount of spread each additionally fired spike will have - spikes will have no spread if set to 0")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_spread")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_spread")
     public static Float spikeSpread = 1.0F;
 
     @Translation(key = "spike_additional_projectiles", type = Translation.Type.CONFIGURATION, comments = "The spike ability will fire additional projectiles based on the ability level if enabled")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_additional_projectiles")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_additional_projectiles")
     public static Boolean spikeMultishot = true;
 
     @ConfigRange(min = 0.05, max = 10_000.0)
     @Translation(key = "spike_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_cooldown")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_cooldown")
     public static Double spikeCooldown = 3.0;
 
     @ConfigRange(min = 0, max = 100.0)
     @Translation(key = "spike_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (multiplied by the ability level)")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_damage")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_damage")
     public static Double spikeDamage = 2.0;
 
     @ConfigRange(min = 0, max = 100)
     @Translation(key = "spike_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "actives", "spike"}, key = "spike_mana_cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_mana_cost")
     public static Integer spikeManaCost = 1;
 
     @Override

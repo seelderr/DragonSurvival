@@ -17,6 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncMagicStats;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.ExperienceUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -34,6 +35,13 @@ import java.util.List;
 
 @EventBusSubscriber
 public class ManaHandler {
+    /**
+     * Ratio for converting experience to mana and vice versa <br> <br>
+     * Level  5:   55 experience points <br>
+     * Level 10:  160 experience points <br>
+     * Level 20:  550 experience points <br>
+     * Level 30: 1395 experience points <br>
+     */
     private static final int EXPERIENCE_TO_MANA = 10;
 
     @SubscribeEvent
@@ -110,12 +118,10 @@ public class ManaHandler {
     }
 
     public static int getMaxMana(final Player player) {
-        int mana;
+        int mana = 1;
 
         if (ServerConfig.consumeExperienceAsMana) {
-            mana = 1 + getManaExperienceFromLevels(player);
-        } else {
-            mana = 10;
+            mana += getManaFromExperience(player);
         }
 
         DragonStateHandler data = DragonStateProvider.getData(player);
@@ -125,7 +131,7 @@ public class ManaHandler {
             mana += data.getBody().getManaBonus();
         }
 
-        return Math.max(mana, 0);
+        return Math.max(0, mana);
     }
 
     public static void replenishMana(Player player, int mana) {
@@ -165,8 +171,7 @@ public class ManaHandler {
         if (ServerConfig.consumeExperienceAsMana) {
             if (pureMana < manaCost) {
                 int missingMana = pureMana - manaCost;
-                int experienceCost = missingMana * EXPERIENCE_TO_MANA;
-                player.giveExperiencePoints(experienceCost);
+                player.giveExperiencePoints(convertMana(missingMana));
                 data.getMagicData().setCurrentMana(0);
             } else {
                 data.getMagicData().setCurrentMana(pureMana - manaCost);
@@ -183,45 +188,23 @@ public class ManaHandler {
         int currentMana = data.getMagicData().getCurrentMana();
 
         if (ServerConfig.consumeExperienceAsMana) {
-            currentMana += getManaExperienceFromLevels(player);
+            currentMana += getManaFromExperience(player);
         }
 
         return Math.min(currentMana, getMaxMana(player));
     }
 
-    private static int getManaExperienceFromLevels(final Player player) {
-        return getManaExperience(getTotalExperience(player));
+    private static int getManaFromExperience(final Player player) {
+        return convertExperience(ExperienceUtils.getTotalExperience(player));
     }
 
-    /** 10 experience points count as 1 mana */
-    private static int getManaExperience(int experience) {
+    /** Convert experience points to mana based on the {@link ManaHandler#EXPERIENCE_TO_MANA} ratio */
+    private static int convertExperience(int experience) {
         return experience / EXPERIENCE_TO_MANA;
     }
 
-    /**
-     * <a href="https://github.com/Shadows-of-Fire/Placebo/blob/1.21/src/main/java/dev/shadowsoffire/placebo/util/EnchantmentUtils.java#L60">Taken from here</a>
-     * <br> <br>
-     * Calculates the amount of experience the passed level is worth <br>
-     * <a href="https://minecraft.wiki/w/Experience#Leveling_up">Reference</a>
-     *
-     * @param level The target level
-     * @return The amount of experience required to reach the given level when starting from the previous level
-     */
-    public static int getExperienceForLevel(int level) {
-        if (level == 0) return 0;
-        if (level > 30) return 112 + (level - 31) * 9;
-        if (level > 15) return 37 + (level - 16) * 5;
-        return 7 + (level - 1) * 2;
-    }
-
-    /** Calculate teh total experience the player has based on their experience levels */
-    public static int getTotalExperience(final Player player) {
-        int experience = 0;
-
-        for (int level = 1; level <= player.experienceLevel; level++) {
-            experience += getExperienceForLevel(level);
-        }
-
-        return experience;
+    /** Convert mana to experience points based on the {@link ManaHandler#EXPERIENCE_TO_MANA} ratio */
+    private static int convertMana(int mana) {
+        return mana * EXPERIENCE_TO_MANA;
     }
 }

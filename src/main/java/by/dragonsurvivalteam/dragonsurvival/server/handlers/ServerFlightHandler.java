@@ -87,7 +87,7 @@ public class ServerFlightHandler {
 
     @ConfigRange(min = 1, max = /* 1 hour */ 72_000)
     @Translation(key = "flight_hunger_ticks", type = Translation.Type.CONFIGURATION, comments = "Determines the amount of ticks (20 ticks = 1 second) it takes for one hunger point to be drained while flying")
-    @ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "flight_hunger_ticks")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_hunger_ticks")
     public static int flightHungerTicks = 50;
 
     @Translation(key = "stable_hover", type = Translation.Type.CONFIGURATION, comments = "If enabled hovering will behave the same as creative flight (i.e. stable flight)")

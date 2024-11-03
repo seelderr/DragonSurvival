@@ -51,23 +51,31 @@ public abstract class ActiveDragonAbility extends DragonAbility {
 
     @Override
     public int getLevel() {
-        if (isDisabled()) {
+        Player player = getPlayer();
+
+        if (player == null || isDisabled()) {
             return 0;
         }
 
-        if (getRequiredLevels() != null && getPlayer() != null) {
-            int level = 0;
-
-            for (int requiredExperience : getRequiredLevels()) {
-                if (getPlayer().experienceLevel >= requiredExperience || ServerConfig.noExperienceRequirements) {
-                    level++;
-                }
-            }
-
-            return level;
+        if (ServerConfig.noExperienceRequirements) {
+            return getMaxLevel();
         }
 
-        return super.getLevel();
+        Integer[] levels = getRequiredLevels();
+
+        if (levels == null) {
+            return 0;
+        }
+
+        int level = 0;
+
+        for (int requiredLevel : levels) {
+            if (player.experienceLevel >= requiredLevel) {
+                level++;
+            }
+        }
+
+        return level;
     }
 
     public int getCurrentRequiredLevel() {

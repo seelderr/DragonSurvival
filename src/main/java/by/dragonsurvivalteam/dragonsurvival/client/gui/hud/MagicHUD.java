@@ -175,8 +175,10 @@ public class MagicHUD {
 
             guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
-            int maxMana = ManaHandler.getMaxMana(localPlayer); // FIXME :: cap it to some reasonable value for rendering the hud
-            int curMana = ManaHandler.getCurrentMana(localPlayer);
+            // Don't render more than two rows (1 icon = 1 mana point)
+            // This makes the mana bars also stop just before the emote button when the chat window is open
+            int maxMana = Math.min(20, ManaHandler.getMaxMana(localPlayer));
+            int currentMana = Math.min(maxMana, ManaHandler.getCurrentMana(localPlayer));
 
             int manaX = i1;
             int manaY = height - sizeY;
@@ -190,7 +192,7 @@ public class MagicHUD {
                     if (manaSlot < maxMana) {
                         boolean goodCondi = ManaHandler.isPlayerInGoodConditions(localPlayer);
                         int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
-                        int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
+                        int xPos = currentMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
                         float rescale = 2.15F;
                         guiGraphics.blit(widgetTextures, manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 204 / rescale, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
                     }

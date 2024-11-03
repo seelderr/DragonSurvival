@@ -114,15 +114,15 @@ public class StormBreathAbility extends BreathAbility {
 
     @ConfigRange(min = 0.0, max = 100.0)
     @Translation(key = "charged_effect_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (scales with ability level)")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "charged_effect_damage_multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_damage_multiplier")
     public static Double chargedEffectDamageMultiplier = 1.0;
 
-    @ConfigType(EntityType.class)
+    @ConfigType(EntityType.class) // FIXME :: use tag
     @Translation(key = "charged_effect_spread_blacklist", type = Translation.Type.CONFIGURATION, comments = "Entities which will not spread the charged effect - Format: namespace:path")
     @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_spread_blacklist", validation = Validation.RESOURCE_LOCATION)
     public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
 
-    @ConfigType(EntityType.class)
+    @ConfigType(EntityType.class) // FIXME :: use tag
     @Translation(key = "charged_effect_blacklist", type = Translation.Type.CONFIGURATION, comments = "Entities which are not affected by the charged effect - Format: namespace:path")
     @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_blacklist", validation = Validation.RESOURCE_LOCATION)
     public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
