@@ -3,8 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
 import net.neoforged.fml.ModList;
+import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
 import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.text.WordUtils;
@@ -25,63 +27,74 @@ public class DSLanguageProvider extends LanguageProvider {
 
     @Override
     protected void addTranslations() {
+        // This list contains a separate entry for each annotation - therefor we don't need to check for the Translations list element
         Set<ModFileScanData.AnnotationData> annotationDataSet = ModList.get().getModFileById(DragonSurvival.MODID).getFile().getScanResult().getAnnotations();
-        handleTranslations(annotationDataSet);
+
+        handleTranslationAnnotations(annotationDataSet);
         handleConfigCategories(annotationDataSet);
     }
 
-    private void handleTranslations(final Set<ModFileScanData.AnnotationData> annotationDataSet) {
+    private void handleTranslationAnnotations(final Set<ModFileScanData.AnnotationData> annotationDataSet) {
         Type translationType = Type.getType(Translation.class);
-        Type translationListType = Type.getType(Translation.Translations.class);
 
         for (ModFileScanData.AnnotationData annotationData : annotationDataSet) {
-            if (!annotationData.annotationType().equals(translationType) && !annotationData.annotationType().equals(translationListType)) {
+            if (!annotationData.annotationType().equals(translationType)) {
                 continue;
             }
 
-            List<Translation> translations;
+            // Default values of annotations are not stored in the annotation data map
+            String locale = (String) annotationData.annotationData().get("locale");
+
+            if (locale != null && !locale.equals(this.locale)) {
+                continue;
+            }
+
+            String key = (String) annotationData.annotationData().get("key");
+            Translation.Type type = Translation.Type.valueOf(((ModAnnotation.EnumHolder) annotationData.annotationData().get("type")).value());
+            //noinspection unchecked -> type is correct
+            List<String> comments = (List<String>) annotationData.annotationData().get("comments");
 
             try {
-                // Technically 'AnnotationData#annotationData' contains the information
-                // To keep things simple though we use the same method as in 'ConfigHandler#createConfigEntries'
-                translations = getTranslations(Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName()));
+                Field field = Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName());
+                // For holders the path from the resource location will be used if no key is set (since vanilla uses that for the item translation key as well e.g.)
+                boolean isHolder = Holder.class.isAssignableFrom(field.getType());
+
+                if (isHolder && key == null) {
+                    Holder<?> holder = (Holder<?>) field.get(null);
+
+                    //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
+                    key = type.prefix + holder.getKey().location().getPath() + type.suffix;
+                    add(key, format(comments));
+
+                    continue;
+                } else if (isHolder) {
+                    DragonSurvival.LOGGER.warn("Annotated a holder field with a custom key [{}] - was this intentional? data: [{}]", key, annotationData);
+                }
             } catch (ReflectiveOperationException exception) {
                 throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
             }
 
-            translations.forEach(translation -> {
-                if (!locale.equals(translation.locale())) {
-                    return;
+            if (key == null || key.isEmpty()) {
+                throw new IllegalStateException("Key should not be empty if annotated on a non-holder field - annotation data: [" + annotationData + "]");
+            }
+
+            try {
+                add(type.prefix + key + type.suffix, format(comments));
+            } catch (IllegalStateException exception) {
+                // Log extra information to make debugging easier
+                DragonSurvival.LOGGER.error("Invalid translation entry due to a duplicate key issue [{}]", annotationData);
+                throw exception;
+            }
+
+            if (type == Translation.Type.CONFIGURATION) {
+                String capitalized = capitalize(key.split("_"));
+
+                if (capitalized.length() > 25) {
+                    DragonSurvival.LOGGER.warn("Translation [{}] for the key [{}] might be too long for the configuration screen", capitalized, key);
                 }
 
-                StringBuilder comment = new StringBuilder();
-
-                for (int line = 0; line < translation.comments().length; line++) {
-                    comment.append(translation.comments()[line]);
-
-                    // Don't add a new line to the last line
-                    if (line != translation.comments().length - 1) {
-                        comment.append("\n");
-                    }
-                }
-
-                try {
-                    add(translation.type().prefix + translation.key() + translation.type().suffix, comment.toString());
-                } catch (IllegalStateException exception) {
-                    DragonSurvival.LOGGER.error("Invalid translation entry due to a duplicate key issue [{}]", translation);
-                    throw exception;
-                }
-
-                if (translation.type() == Translation.Type.CONFIGURATION) {
-                    String capitalized = capitalize(translation.key().split("_"));
-
-                    if (capitalized.length() > 25) {
-                        DragonSurvival.LOGGER.warn("Translation [{}] for the key [{}] might be too long for the configuration screen", capitalized, translation.key());
-                    }
-
-                    add(translation.type().prefix + translation.key(), capitalized);
-                }
-            });
+                add(type.prefix + key, capitalized);
+            }
         }
     }
 
@@ -127,6 +140,26 @@ public class DSLanguageProvider extends LanguageProvider {
         }
 
         return List.of();
+    }
+
+    private String format(final List<String> comments) {
+        return format(comments.toArray(new String[0]));
+    }
+
+    /** Separates the comment elements by a new line */
+    private String format(final String... comments) {
+        StringBuilder comment = new StringBuilder();
+
+        for (int line = 0; line < comments.length; line++) {
+            comment.append(comments[line]);
+
+            // Don't add a new line to the last line
+            if (line != comments.length - 1) {
+                comment.append("\n");
+            }
+        }
+
+        return comment.toString();
     }
 
     @SuppressWarnings("deprecation") // ignore
