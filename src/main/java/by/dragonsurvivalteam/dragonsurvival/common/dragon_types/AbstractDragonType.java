@@ -3,9 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import com.mojang.datafixers.util.Pair;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
@@ -64,9 +61,9 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
         return getTypeName().toUpperCase(Locale.ENGLISH);
     }
 
-	public String getTypeNameLowerCase() {
-		return getTypeName().toLowerCase(Locale.ENGLISH);
-	}
+    public String getTypeNameLowerCase() {
+        return getTypeName().toLowerCase(Locale.ENGLISH);
+    }
 
     public abstract ResourceLocation getFoodIcons();
     public abstract ResourceLocation getManaIcons();

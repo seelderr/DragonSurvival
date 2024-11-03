@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -11,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
-import java.util.List;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
@@ -28,11 +25,15 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.lighting.LevelLightEngine;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-public class ForestDragonType extends AbstractDragonType{
-	public static ResourceLocation FOREST_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_food_icons.png");
-	public static ResourceLocation FOREST_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_magic_icons.png");
+import java.util.List;
 
-	public int timeInDarkness;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+
+public class ForestDragonType extends AbstractDragonType{
+    public static ResourceLocation FOREST_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_food_icons.png");
+    public static ResourceLocation FOREST_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_magic_icons.png");
+
+    public int timeInDarkness;
 
     public ForestDragonType() {
         slotForBonus = 2;
@@ -128,20 +129,20 @@ public class ForestDragonType extends AbstractDragonType{
         return null;
     }
 
-	@Override
-	public ResourceLocation getFoodIcons() {
-		return FOREST_FOOD;
-	}
+    @Override
+    public ResourceLocation getFoodIcons() {
+        return FOREST_FOOD;
+    }
 
-	@Override
-	public ResourceLocation getManaIcons() {
-		return FOREST_MANA;
-	}
+    @Override
+    public ResourceLocation getManaIcons() {
+        return FOREST_MANA;
+    }
 
-	@Override
-	public String getTypeName(){
-		return "forest";
-	}
+    @Override
+    public String getTypeName(){
+        return "forest";
+    }
 
     @Override
     public List<TagKey<Block>> mineableBlocks() {

@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
@@ -32,12 +30,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
-public class CaveDragonType extends AbstractDragonType{
-	public static ResourceLocation CAVE_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_food_icons.png");
-	public static ResourceLocation CAVE_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_magic_icons.png");
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-	public int rainResistSupply;
-	public int lavaAirSupply;
+public class CaveDragonType extends AbstractDragonType{
+    public static ResourceLocation CAVE_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_food_icons.png");
+    public static ResourceLocation CAVE_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_magic_icons.png");
+
+    public int rainResistSupply;
+    public int lavaAirSupply;
 
     public CaveDragonType() {
         slotForBonus = 1;
@@ -162,20 +162,20 @@ public class CaveDragonType extends AbstractDragonType{
         return null;
     }
 
-	@Override
-	public ResourceLocation getFoodIcons() {
-		return CAVE_FOOD;
-	}
+    @Override
+    public ResourceLocation getFoodIcons() {
+        return CAVE_FOOD;
+    }
 
-	@Override
-	public ResourceLocation getManaIcons() {
-		return CAVE_MANA;
-	}
+    @Override
+    public ResourceLocation getManaIcons() {
+        return CAVE_MANA;
+    }
 
-	@Override
-	public List<TagKey<Block>> mineableBlocks(){
-		return List.of(BlockTags.MINEABLE_WITH_PICKAXE);
-	}
+    @Override
+    public List<TagKey<Block>> mineableBlocks(){
+        return List.of(BlockTags.MINEABLE_WITH_PICKAXE);
+    }
 
     @Override
     public String getTypeName() {

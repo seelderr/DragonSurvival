@@ -177,24 +177,24 @@ public class MagicHUD {
             manaX += manabarXOffset;
             manaY += manabarYOffset;
 
-			for (int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++) {
-				for (int x = 0; x < 10; x++) {
-					int manaSlot = i * 10 + x;
-					if (manaSlot < maxMana) {
-						int xPos;
-						if (curMana <= manaSlot) {
-							xPos = ManaHandler.isPlayerInGoodConditions(localPlayer) ? 19 : 37;
-						} else {
-							xPos = 0;
-						}
-						//int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
-						//int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
-						float rescale = 2.15F;
-						guiGraphics.blit(handler.getType().getManaIcons(), manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
-					}
-				}
-			}
-		}
+            for (int i = 0; i < 1 + Math.ceil(maxMana / 10.0); i++) {
+                for (int x = 0; x < 10; x++) {
+                    int manaSlot = i * 10 + x;
+                    if (manaSlot < maxMana) {
+                        int xPos;
+                        if (curMana <= manaSlot) {
+                            xPos = ManaHandler.isPlayerInGoodConditions(localPlayer) ? 19 : 37;
+                        } else {
+                            xPos = 0;
+                        }
+                        //int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
+                        //int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
+                        float rescale = 2.15F;
+                        guiGraphics.blit(handler.getType().getManaIcons(), manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
+                    }
+                }
+            }
+        }
 
         ActiveDragonAbility ability = handler.getMagicData().getAbilityFromSlot(handler.getMagicData().getSelectedAbilitySlot());
 

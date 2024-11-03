@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.render.item;
 import by.dragonsurvivalteam.dragonsurvival.common.items.RotatingKeyItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import java.lang.Math;
 import net.minecraft.client.renderer.MultiBufferSource;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
@@ -11,6 +10,7 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
+
 
 public class RotatingKeyRenderer extends GeoItemRenderer<RotatingKeyItem> {
     public RotatingKeyRenderer() {

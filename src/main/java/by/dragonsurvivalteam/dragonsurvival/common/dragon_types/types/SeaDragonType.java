@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
@@ -33,11 +31,13 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
-public class SeaDragonType extends AbstractDragonType {
-	public ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
-	public static ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-	public double timeWithoutWater;
+public class SeaDragonType extends AbstractDragonType {
+    public ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
+    public static ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
+
+    public double timeWithoutWater;
 
     public SeaDragonType() {
         slotForBonus = 3;
@@ -143,18 +143,18 @@ public class SeaDragonType extends AbstractDragonType {
         return null;
     }
 
-	@Override
-	public ResourceLocation getFoodIcons() {
-		return SEA_FOOD;
-	}
+    @Override
+    public ResourceLocation getFoodIcons() {
+        return SEA_FOOD;
+    }
 
-	@Override
-	public ResourceLocation getManaIcons() {
-		return SEA_MANA;
-	}
+    @Override
+    public ResourceLocation getManaIcons() {
+        return SEA_MANA;
+    }
 
-	@Override
-	public List<TagKey<Block>> mineableBlocks(){
-		return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
-	}
+    @Override
+    public List<TagKey<Block>> mineableBlocks(){
+        return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
+    }
 }
