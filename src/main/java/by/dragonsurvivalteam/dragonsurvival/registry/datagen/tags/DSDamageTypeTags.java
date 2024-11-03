@@ -56,6 +56,9 @@ public class DSDamageTypeTags extends DamageTypeTagsProvider {
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
                 .add(DSDamageTypes.SPECTRAL_IMPACT);
 
+        tag(DamageTypeTags.BYPASSES_COOLDOWN)
+                .add(DSDamageTypes.FOREST_DRAGON_SPIKE);
+
         tag(DamageTypeTags.IS_FIRE)
                 .add(DSDamageTypes.CAVE_DRAGON_BURN)
                 .add(DSDamageTypes.CAVE_DRAGON_BREATH);

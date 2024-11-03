@@ -29,6 +29,7 @@ public class DSDamageTypes {
     public static final ResourceKey<DamageType> SEA_DRAGON_BREATH = key("sea_dragon_breath");
     public static final ResourceKey<DamageType> SPECTRAL_IMPACT = key("spectral_impact");
     public static final ResourceKey<DamageType> WATER_BURN = key("water_burn");
+    public static final ResourceKey<DamageType> FOREST_DRAGON_SPIKE = key("forest_dragon_spike");
 
     public static Holder<DamageType> get(final Level level, final ResourceKey<DamageType> damageType) {
         return level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(damageType);
@@ -48,6 +49,7 @@ public class DSDamageTypes {
         register(context, DSDamageTypes.SEA_DRAGON_BREATH);
         register(context, DSDamageTypes.SPECTRAL_IMPACT);
         register(context, DSDamageTypes.WATER_BURN);
+        register(context, DSDamageTypes.FOREST_DRAGON_SPIKE);
     }
 
     private static void register(final BootstrapContext<DamageType> context, final ResourceKey<DamageType> damageType) {

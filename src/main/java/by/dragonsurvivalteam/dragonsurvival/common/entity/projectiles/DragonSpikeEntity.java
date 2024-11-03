@@ -2,8 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles;
 
 
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active.SpikeAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.util.TargetingFunctions;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.protocol.game.ClientboundGameEventPacket;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -13,16 +15,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.Unit;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.AbstractArrow;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
+import org.jetbrains.annotations.NotNull;
 
 
 public class DragonSpikeEntity extends AbstractArrow {
@@ -49,9 +54,9 @@ public class DragonSpikeEntity extends AbstractArrow {
         Entity entity1 = getOwner();
         DamageSource damagesource;
         if (entity1 == null) {
-            damagesource = damageSources().arrow(this, this);
+            damagesource = damageSources().source(DSDamageTypes.FOREST_DRAGON_SPIKE, this, this);
         } else {
-            damagesource = damageSources().arrow(this, entity1);
+            damagesource = damageSources().source(DSDamageTypes.FOREST_DRAGON_SPIKE, this, entity1);
             if (entity1 instanceof LivingEntity livingEntity) {
                 livingEntity.setLastHurtMob(entity);
             }
@@ -109,23 +114,29 @@ public class DragonSpikeEntity extends AbstractArrow {
     }
 
     @Override
-    protected void onHitBlock(BlockHitResult blockHitResult) {
+    protected void onHitBlock(@NotNull BlockHitResult blockHitResult) {
         super.onHitBlock(blockHitResult);
     }
 
     @Override
 
-    protected SoundEvent getDefaultHitGroundSoundEvent() {
+    protected @NotNull SoundEvent getDefaultHitGroundSoundEvent() {
         return SoundEvents.AXE_STRIP;
     }
 
     @Override
-    protected ItemStack getPickupItem() {
-        return ItemStack.EMPTY;
+    protected @NotNull ItemStack getPickupItem() {
+        // Can't return empty stack or we get an encoding error (player will never be able to pick this up anyways)
+        ItemStack pickUpItem = new ItemStack(Items.STONE, 1);
+        pickUpItem.set(DataComponents.INTANGIBLE_PROJECTILE, Unit.INSTANCE);
+        return pickUpItem;
     }
 
     @Override
-    protected ItemStack getDefaultPickupItem() {
-        return ItemStack.EMPTY;
+    protected @NotNull ItemStack getDefaultPickupItem() {
+        // Can't return empty stack or we get an encoding error (player will never be able to pick this up anyways)
+        ItemStack pickUpItem = new ItemStack(Items.STONE, 1);
+        pickUpItem.set(DataComponents.INTANGIBLE_PROJECTILE, Unit.INSTANCE);
+        return pickUpItem;
     }
 }
