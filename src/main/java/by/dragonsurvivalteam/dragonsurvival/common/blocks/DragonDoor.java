@@ -84,7 +84,6 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock {
     @Override
     public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
         Part part = stateIn.getValue(PART);
-        //TODO
 
         if (stateIn.getValue(WATERLOGGED)) {
             worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));

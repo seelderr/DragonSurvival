@@ -158,7 +158,7 @@ public class SkinsScreen extends Screen {
         guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
         drawNonShadowString(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
-        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(Component.translatable(level.getName())).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
+        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(level.translatableName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
         if (!loading) {
             if (noSkin) {

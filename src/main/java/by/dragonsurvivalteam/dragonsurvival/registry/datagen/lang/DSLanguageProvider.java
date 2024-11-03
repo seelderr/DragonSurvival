@@ -12,6 +12,7 @@ import net.neoforged.neoforgespi.language.ModFileScanData;
 import org.apache.commons.lang3.text.WordUtils;
 import org.objectweb.asm.Type;
 
+import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,30 +55,32 @@ public class DSLanguageProvider extends LanguageProvider {
             //noinspection unchecked -> type is correct
             List<String> comments = (List<String>) annotationData.annotationData().get("comments");
 
-            try {
-                Field field = Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName());
-                field.setAccessible(true);
+            if (annotationData.targetType() == ElementType.FIELD) {
+                try {
+                    Field field = Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName());
+                    field.setAccessible(true);
 
-                if (key == null) {
-                    if (Holder.class.isAssignableFrom(field.getType())) {
-                        Holder<?> holder = (Holder<?>) field.get(null);
+                    if (key == null) {
+                        if (Holder.class.isAssignableFrom(field.getType())) {
+                            Holder<?> holder = (Holder<?>) field.get(null);
 
-                        //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
-                        key = type.prefix + holder.getKey().location().getPath() + type.suffix;
-                        add(key, format(comments));
+                            //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
+                            key = type.prefix + holder.getKey().location().getPath() + type.suffix;
+                            add(key, format(comments));
 
-                        continue;
+                            continue;
+                        }
+
+                        if (type == Translation.Type.MISC && String.class.isAssignableFrom(field.getType())) {
+                            String translationKey = (String) field.get(null);
+                            add(translationKey, format(comments));
+
+                            continue;
+                        }
                     }
-
-                    if (type == Translation.Type.MISC && String.class.isAssignableFrom(field.getType())) {
-                        String translationKey = (String) field.get(null);
-                        add(translationKey, format(comments));
-
-                        continue;
-                    }
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
                 }
-            } catch (ReflectiveOperationException exception) {
-                throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
             }
 
             if (key == null || key.isEmpty()) {

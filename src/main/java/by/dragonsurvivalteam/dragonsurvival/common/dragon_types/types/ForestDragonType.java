@@ -8,10 +8,12 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.LightInDarknessAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -32,8 +34,11 @@ import java.util.Optional;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class ForestDragonType extends AbstractDragonType{
-    public static ResourceLocation FOREST_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_food_icons.png");
-    public static ResourceLocation FOREST_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_magic_icons.png");
+    @Translation(type = Translation.Type.MISC, comments = "Forest Dragon")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("forest_dragon");
+
+    private static final ResourceLocation FOREST_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_food_icons.png");
+    private static final ResourceLocation FOREST_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_magic_icons.png");
 
     public int timeInDarkness;
 
@@ -44,13 +49,13 @@ public class ForestDragonType extends AbstractDragonType{
     @Override
     public CompoundTag writeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("timeInDarkness", timeInDarkness);
+        tag.putInt("time_in_darkness", timeInDarkness);
         return tag;
     }
 
     @Override
     public void readNBT(CompoundTag base) {
-        timeInDarkness = base.getInt("timeInDarkness");
+        timeInDarkness = base.getInt("time_in_darkness");
     }
 
     @Override
@@ -100,7 +105,7 @@ public class ForestDragonType extends AbstractDragonType{
     }
 
     @Override
-    public boolean isInManaCondition(Player player, DragonStateHandler cap) {
+    public boolean isInManaCondition(Player player) {
         if (player.level().canSeeSky(player.blockPosition())) {
             int light = player.level().getBrightness(LightLayer.SKY, player.blockPosition()) - player.level().getSkyDarken();
             float f = player.level().getSunAngle(1.0F);
@@ -146,5 +151,10 @@ public class ForestDragonType extends AbstractDragonType{
     @Override
     public List<TagKey<Block>> mineableBlocks() {
         return List.of(BlockTags.MINEABLE_WITH_AXE);
+    }
+
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
     }
 }

@@ -10,11 +10,13 @@ import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
@@ -32,8 +34,11 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class CaveDragonType extends AbstractDragonType {
-    public static ResourceLocation CAVE_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_food_icons.png");
-    public static ResourceLocation CAVE_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_magic_icons.png");
+    @Translation(type = Translation.Type.MISC, comments = "Cave Dragon")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("cave_dragon");
+
+    private static final ResourceLocation CAVE_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_food_icons.png");
+    private static final ResourceLocation CAVE_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_magic_icons.png");
 
     /** Once the rain resistance supply reaches this value the dragon will take damage and the rain resistance supply will go back to 0 */
     private static final int RAIN_DAMAGE_RATE_POINT = -40;
@@ -126,7 +131,7 @@ public class CaveDragonType extends AbstractDragonType {
     }
 
     @Override
-    public boolean isInManaCondition(Player player, DragonStateHandler cap) {
+    public boolean isInManaCondition(Player player) {
         return player.isInLava() || player.isOnFire() || player.hasEffect(DSEffects.BURN) || player.hasEffect(DSEffects.FIRE) || DragonTraitHandler.isInCauldron(player, Blocks.LAVA_CAULDRON);
     }
 
@@ -158,6 +163,11 @@ public class CaveDragonType extends AbstractDragonType {
     @Override
     public String getTypeName() {
         return "cave";
+    }
+
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
     }
 
     public static int getMaxRainResistanceSupply(final Player player) {

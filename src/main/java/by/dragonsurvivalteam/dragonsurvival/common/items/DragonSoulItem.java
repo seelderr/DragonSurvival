@@ -17,7 +17,6 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -178,31 +177,22 @@ public class DragonSoulItem extends Item {
         super.appendHoverText(stack, context, tooltips, flag);
 
         if (stack.has(DataComponents.CUSTOM_DATA)) {
-            CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).copyTag();
+            //noinspection DataFlowIssue, deprecation -> tag isn't modified, no need to create a copy
+            CompoundTag tag = stack.get(DataComponents.CUSTOM_DATA).getUnsafe();
             tooltips.add(Component.translatable(DESCRIPTION));
             AbstractDragonType dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
 
-            MutableComponent dragonName;
+            Component dragonName;
+
             if (dragonType != null) {
-                dragonName = switch (dragonType.toString()) {
-                    case "forest" -> Component.translatable("ds.skill.forest_dragon");
-                    case "cave" -> Component.translatable("ds.skill.cave_dragon");
-                    case "sea" -> Component.translatable("ds.skill.sea_dragon");
-                    default -> Component.literal("No translation key for dragon type!");
-                };
+                dragonName = dragonType.translatableName();
             } else {
-                dragonName = Component.literal("No translation key for dragon type!");
+                dragonName = Component.literal("Invalid dragon type");
             }
 
             double size = tag.getDouble("size");
             DragonLevel level = DragonStateHandler.getLevel(size);
-            MutableComponent dragonGrowthStage = switch (level) {
-                case DragonLevel.NEWBORN -> Component.translatable("ds.level.newborn");
-                case DragonLevel.YOUNG -> Component.translatable("ds.level.young");
-                case DragonLevel.ADULT -> Component.translatable("ds.level.adult");
-            };
-
-            tooltips.add(Component.translatable(INFO, dragonName, dragonGrowthStage, String.format("%.0f", size)));
+            tooltips.add(Component.translatable(INFO, dragonName, level.translatableName(), String.format("%.0f", size)));
 
             if (tag.getBoolean("spinLearned")) {
                 tooltips.add(Component.translatable(HAS_SPIN));
@@ -220,7 +210,7 @@ public class DragonSoulItem extends Item {
         CustomData data = soul.get(DataComponents.CUSTOM_DATA);
 
         if (data != null) {
-            // No need to copy the tag for this (since it's not being modified)
+            //noinspection deprecation -> tag isn't modified, no need to create a copy
             return data.getUnsafe().getString("type");
         }
 

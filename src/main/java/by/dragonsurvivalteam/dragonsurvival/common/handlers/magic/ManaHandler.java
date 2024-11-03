@@ -76,7 +76,7 @@ public class ManaHandler {
             return false;
         }
 
-        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC)) {
+        if (player.hasEffect(DSEffects.SOURCE_OF_MAGIC) || data.getType().isInManaCondition(player)) {
             return true;
         }
 

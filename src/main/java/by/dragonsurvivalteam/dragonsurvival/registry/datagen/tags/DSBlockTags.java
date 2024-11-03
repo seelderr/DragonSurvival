@@ -183,9 +183,7 @@ public class DSBlockTags extends BlockTagsProvider {
     private void addToDragonManaBlocks() {
         tag(REGENERATES_CAVE_DRAGON_MANA)
                 .addTag(BlockTags.FIRE)
-                .add(Blocks.LAVA_CAULDRON)
                 .add(Blocks.MAGMA_BLOCK)
-                .add(Blocks.LAVA)
                 .add(DSBlocks.CAVE_SOURCE_OF_MAGIC.value())
                 .addOptionalTag(DragonSurvival.location("immersive_weathering", "charred_blocks"))
                 .addOptionalTag(DragonSurvival.location("regions_unexplored", "ash"))
@@ -197,7 +195,6 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .add(Blocks.WATER_CAULDRON)
                 .add(Blocks.WET_SPONGE)
-                .add(Blocks.WATER) // FIXME :: remove and check inWater instead
                 .add(DSBlocks.SEA_SOURCE_OF_MAGIC.value())
                 .addOptional(DragonSurvival.location("immersive_weathering", "thin_ice"))
                 .addOptional(DragonSurvival.location("immersive_weathering", "cryosol"))

@@ -10,11 +10,13 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Wa
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -36,8 +38,11 @@ import java.util.Optional;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class SeaDragonType extends AbstractDragonType {
-    public ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
-    public static ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
+    @Translation(type = Translation.Type.MISC, comments = "Sea Dragon")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("sea_dragon");
+
+    private static final ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
+    private static final ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
 
     public double timeWithoutWater;
 
@@ -48,13 +53,13 @@ public class SeaDragonType extends AbstractDragonType {
     @Override
     public CompoundTag writeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putDouble("timeWithoutWater", timeWithoutWater);
+        tag.putDouble("time_without_water", timeWithoutWater);
         return tag;
     }
 
     @Override
     public void readNBT(CompoundTag base) {
-        timeWithoutWater = base.getDouble("timeWithoutWater");
+        timeWithoutWater = base.getDouble("time_without_water");
     }
 
     @Override
@@ -131,7 +136,7 @@ public class SeaDragonType extends AbstractDragonType {
 
 
     @Override
-    public boolean isInManaCondition(final Player player, final DragonStateHandler cap) {
+    public boolean isInManaCondition(final Player player) {
         return player.isInWaterRainOrBubble() || player.hasEffect(DSEffects.CHARGED) || player.hasEffect(DSEffects.PEACE);
     }
 
@@ -158,5 +163,10 @@ public class SeaDragonType extends AbstractDragonType {
     @Override
     public List<TagKey<Block>> mineableBlocks(){
         return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
+    }
+
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
     }
 }

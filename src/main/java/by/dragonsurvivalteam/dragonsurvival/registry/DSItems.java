@@ -326,6 +326,9 @@ public class DSItems {
     public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(new Properties().rarity(Rarity.EPIC)));
 
     public static final String GOOD_DRAGON_KEY_ID = "good_dragon_key";
+
+    @Translation(type = Translation.Type.ITEM, comments = "Light Key")
+    @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Light Vault. Purchased from the dragon rider villager.")
     public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register(GOOD_DRAGON_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + GOOD_DRAGON_KEY_ID + ".geo.json"),
@@ -333,6 +336,9 @@ public class DSItems {
             DragonSurvival.res("treasure_friendly")));
 
     public static final String EVIL_DRAGON_KEY_ID = "evil_dragon_key";
+
+    @Translation(type = Translation.Type.ITEM, comments = "Dark Key")
+    @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Dark Vault in Nether. Drops if you kill a dragon hunter knight.")
     public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(EVIL_DRAGON_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + EVIL_DRAGON_KEY_ID + ".geo.json"),
@@ -340,24 +346,42 @@ public class DSItems {
             DragonSurvival.res("treasure_angry")));
 
     public static final String HUNTER_KEY_ID = "hunter_key";
+
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Key")
+    @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks a treasure vault for dragon hunters. Can be purchased from the Hunter Leader in the Hunter Castle.")
     public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register(HUNTER_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + HUNTER_KEY_ID + ".geo.json"),
             DragonSurvival.res("textures/item/" + HUNTER_KEY_ID + ".png"),
             DragonSurvival.res("treasure_hunter")));
 
+    @Translation(type = Translation.Type.ITEM, comments = "Spearman Promotion")
+    @Translation(type = Translation.Type.DESCRIPTION, comments = "■ §7Use on a Hunter Spearman to turn him into a Hunter Leader.")
     public static final Holder<Item> SPEARMAN_PROMOTION = DS_ITEMS.register("spearman_promotion", location -> new TooltipItem(new Properties().rarity(Rarity.COMMON), location.getPath()));
 
     // --- Spawn eggs --- //
 
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Hound Spawn Egg")
     public static final Holder<Item> HOUND_SPAWN_EGG = DS_ITEMS.register("hound_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_HOUND, 0xA66A2C, 0xD5AA72, new Properties().rarity(Rarity.COMMON)));
+
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Spearman Spawn Egg")
     public static final Holder<Item> SPEARMAN_SPAWN_EGG = DS_ITEMS.register("spearman_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_SPEARMAN, 0xE6E3E1, 0xD1C8B8, new Properties().rarity(Rarity.COMMON)));
+
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Knight Spawn Egg")
     public static final Holder<Item> KNIGHT_SPAWN_EGG = DS_ITEMS.register("knight_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_KNIGHT, 0x615B62, 0xCCBCAD, new Properties().rarity(Rarity.COMMON)));
+
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Ambusher Spawn Egg")
     public static final Holder<Item> AMBUSHER_SPAWN_EGG = DS_ITEMS.register("ambusher_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_AMBUSHER, 0x756C63, 0x423930, new Properties().rarity(Rarity.COMMON)));
+
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Griffin Spawn Egg")
     public static final Holder<Item> GRIFFIN_SPAWN_EGG = DS_ITEMS.register("griffin_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_GRIFFIN, 0xE9D5CC, 0x71260A, new Properties().rarity(Rarity.COMMON)));
+
+    @Translation(type = Translation.Type.ITEM, comments = "Hunter Leader Spawn Egg")
     public static final Holder<Item> LEADER_SPAWN_EGG = DS_ITEMS.register("leader_spawn_egg", () -> new DeferredSpawnEggItem(DSEntities.HUNTER_LEADER, 0x202020, 0xb3814e, new Properties().rarity(Rarity.COMMON)));
 
     // --- Not shown in creative tab --- //
+
+    // TODO :: currently have no translation
 
     public static final Holder<Item> BOLAS = DS_ITEMS.register("bolas", () -> new BolasArrowItem(new Item.Properties()));
     public static final Holder<Item> HUNTING_NET = DS_ITEMS.register("dragon_hunting_mesh", () -> new Item(new Item.Properties()));
