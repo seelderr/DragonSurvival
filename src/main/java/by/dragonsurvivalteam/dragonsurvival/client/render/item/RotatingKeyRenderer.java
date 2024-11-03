@@ -11,6 +11,7 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
 
+
 public class RotatingKeyRenderer extends GeoItemRenderer<RotatingKeyItem> {
     public RotatingKeyRenderer() {
         super(new RotatingKeyModel());

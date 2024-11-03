@@ -386,8 +386,9 @@ public class DragonStateHandler extends EntityStateHandler {
         tierPath = tierPath.replace("wood", "wooden");
 
         Item item = switch (toolSlot) {
+            case 0 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "sword"));
             case 1 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "pickaxe"));
-            case 2 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "axe"));
+            case 2 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace( tierPath + "axe"));
             case 3 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "shovel"));
             default -> ItemStack.EMPTY.getItem();
         };
