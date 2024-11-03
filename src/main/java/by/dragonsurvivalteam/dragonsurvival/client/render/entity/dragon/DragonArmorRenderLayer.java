@@ -146,8 +146,9 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
             if (!armorMasks.containsKey(slot)) continue;
             ItemStack itemstack = pPlayer.getItemBySlot(slot);
             ResourceLocation existingArmorLocation = generateArmorTextureResourceLocation(pPlayer, slot);
+            NativeImage armorImage = RenderingUtils.getImageFromResource(existingArmorLocation);
+            // TODO: This will need to be significantly more flexible for 1.21.2 onwards (since anything can be considered armor)
             if (itemstack.getItem() instanceof ArmorItem) {
-                NativeImage armorImage = RenderingUtils.getImageFromResource(existingArmorLocation);
                 if (armorImage == null) {
                     continue;
                 }
@@ -250,6 +251,17 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
                         }
                     }
                 }
+            } else {
+                // If it isn't an armor item, just copy the texture over
+                if(armorImage != null) {
+                    for (int x = 0; x < armorImage.getWidth(); x++) {
+                        for (int y = 0; y < armorImage.getHeight(); y++) {
+                            if(armorImage.getPixelRGBA(x, y) != 0) {
+                                image.setPixelRGBA(x, y, armorImage.getPixelRGBA(x, y));
+                            }
+                        }
+                    }
+                }
             }
         }
         return image;
@@ -291,15 +303,15 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
     }
 
     private static ResourceLocation generateArmorTextureResourceLocation(Player playerEntity, EquipmentSlot equipmentSlot) {
-        String texture = "textures/armor/";
         Item item = playerEntity.getItemBySlot(equipmentSlot).getItem();
-        String texture2 = itemToResLoc(item);
-        if (texture2 != null) {
-            texture2 = texture + texture2;
-            if (Minecraft.getInstance().getResourceManager().getResource(res(texture2)).isPresent()) {
-                return res(texture2);
+        ResourceLocation resourceLocation = itemToArmorResLoc(item);
+        if (resourceLocation != null) {
+            if (Minecraft.getInstance().getResourceManager().getResource(resourceLocation).isPresent()) {
+                return resourceLocation;
             }
         }
+
+        String texture = "textures/armor/";
         if (item instanceof ArmorItem armorItem) {
             Holder<ArmorMaterial> armorMaterial = armorItem.getMaterial();
             boolean isVanillaArmor = false;
@@ -357,9 +369,9 @@ public class DragonArmorRenderLayer extends GeoRenderLayer<DragonEntity> {
         return res(texture + "empty_armor.png");
     }
 
-    private static String itemToResLoc(Item item) {
+    private static ResourceLocation itemToArmorResLoc(Item item) {
         if (item == Items.AIR) return null;
-        return ResourceHelper.getKey(item).getPath();
+        return ResourceLocation.parse(DragonSurvival.MODID + ":" + "textures/armor/" + ResourceHelper.getKey(item).getNamespace() + "/" + ResourceHelper.getKey(item).getPath() + ".png");
     }
 
     private static String stripInvalidPathChars(String loc) {
