@@ -67,25 +67,19 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
         } else if (handler.getType() instanceof CaveDragonType caveDragonType) {
-            if (caveDragonType.timeInRain > 0 && ServerConfig.penaltiesEnabled && ServerConfig.caveRainDamage != 0.0) {
+            if (caveDragonType.shouldShowRainResistSupply(localPlayer)) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;
                 gui.rightHeight += 10;
 
-                ContrastShowerAbility contrastShower = DragonAbilities.getSelfAbility(localPlayer, ContrastShowerAbility.class);
-                int maxRainTime = 0;
-
-                if (contrastShower != null) {
-                    maxRainTime += Functions.secondsToTicks(contrastShower.getDuration());
-                }
-
-                final int timeInRain = maxRainTime - Math.min(caveDragonType.timeInRain, maxRainTime);
+                final int maxRainTime = CaveDragonType.getMaxRainResistSupply(localPlayer);
+                final int rainResistSupply = caveDragonType.rainResistSupply;
 
                 final int left = Minecraft.getInstance().getWindow().getGuiScaledWidth() / 2 + 91;
                 final int top = Minecraft.getInstance().getWindow().getGuiScaledHeight() - rightHeight;
-                final int full = Mth.ceil((double) (timeInRain - 2) * 10.0D / maxRainTime);
-                final int partial = Mth.ceil((double) timeInRain * 10.0D / maxRainTime) - full;
+                final int full = Mth.ceil((double) (rainResistSupply - 2) * 10.0D / maxRainTime);
+                final int partial = Mth.ceil((double) rainResistSupply * 10.0D / maxRainTime) - full;
 
                 for (int i = 0; i < full + partial; ++i) {
                     guiGraphics.blit(DRAGON_HUD, left - i * 8 - 9, top, i < full ? 0 : 9, 54, 9, 9);
@@ -94,7 +88,7 @@ public class DragonPenaltyHUD {
                 RenderSystem.disableBlend();
             }
 
-            if (caveDragonType.lavaAirSupply < ServerConfig.caveLavaSwimmingTicks && ServerConfig.bonusesEnabled && ServerConfig.caveLavaSwimmingTicks != 0 && ServerConfig.caveLavaSwimming) {
+            if (caveDragonType.shouldShowLavaAirSupply(localPlayer)) {
                 RenderSystem.enableBlend();
 
                 rightHeight = gui.rightHeight;

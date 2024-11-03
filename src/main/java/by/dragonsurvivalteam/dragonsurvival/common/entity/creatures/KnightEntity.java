@@ -123,7 +123,7 @@ public class KnightEntity extends Hunter {
 
         for (Player player : players) {
             if (DragonStateProvider.isDragon(player)) {
-                player.addEffect(new MobEffectInstance(DSEffects.MAGIC_DISABLED, 100, 0));
+                player.addEffect(new MobEffectInstance(DSEffects.MAGIC_DISABLED, 100, 0, false, false));
             }
         }
     }

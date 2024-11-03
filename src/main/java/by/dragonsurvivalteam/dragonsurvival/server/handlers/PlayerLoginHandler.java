@@ -8,8 +8,11 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragon
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive.ContrastShowerAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -75,7 +78,7 @@ public class PlayerLoginHandler {
                 AbstractDragonType type = dragonStateHandler.getType();
 
                 if (type instanceof CaveDragonType cave) {
-                    cave.timeInRain = 0;
+                    cave.rainResistSupply = CaveDragonType.getMaxRainResistSupply(player);
                     cave.lavaAirSupply = ServerConfig.caveLavaSwimmingTicks;
                 }
 
