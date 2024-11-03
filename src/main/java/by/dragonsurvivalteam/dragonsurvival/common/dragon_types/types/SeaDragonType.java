@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
@@ -30,7 +31,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+
 public class SeaDragonType extends AbstractDragonType {
+    public ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
+    public static ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
+
     public double timeWithoutWater;
 
     public SeaDragonType() {
@@ -138,7 +144,17 @@ public class SeaDragonType extends AbstractDragonType {
     }
 
     @Override
-    public List<TagKey<Block>> mineableBlocks() {
+    public ResourceLocation getFoodIcons() {
+        return SEA_FOOD;
+    }
+
+    @Override
+    public ResourceLocation getManaIcons() {
+        return SEA_MANA;
+    }
+
+    @Override
+    public List<TagKey<Block>> mineableBlocks(){
         return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
     }
 }

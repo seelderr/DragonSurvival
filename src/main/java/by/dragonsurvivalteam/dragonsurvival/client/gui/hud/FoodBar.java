@@ -41,7 +41,9 @@ public class FoodBar {
         final int top = height - gui.rightHeight;
         gui.rightHeight += 10;
         final FoodData food = localPlayer.getFoodData();
-        final int type = DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
+
+        ResourceLocation foodIcons = handler.getType().getFoodIcons();
+
         final boolean hunger = localPlayer.hasEffect(MobEffects.HUNGER);
 
         for (int i = 0; i < 10; i++) {
@@ -53,12 +55,13 @@ public class FoodBar {
                 y = top + RANDOM.nextInt(3) - 1;
             }
 
-            guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 117 : 0, type, 9, 9);
+
+            guiGraphics.blit(foodIcons, left - i * 8 - 9, y, hunger ? 117 : 0, 0, 9, 9);
 
             if (icon < food.getFoodLevel()) {
-                guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 72 : 36, type, 9, 9);
+                guiGraphics.blit(foodIcons, left - i * 8 - 9, y, hunger ? 72 : 36, 0, 9, 9);
             } else if (icon == food.getFoodLevel()) {
-                guiGraphics.blit(FOOD_ICONS, left - i * 8 - 9, y, hunger ? 81 : 45, type, 9, 9);
+                guiGraphics.blit(foodIcons, left - i * 8 - 9, y, hunger ? 81 : 45, 0, 9, 9);
             }
         }
 
@@ -66,5 +69,9 @@ public class FoodBar {
         Minecraft.getInstance().getProfiler().pop();
 
         return true;
+    }
+
+    public static int getFoodOffset(DragonStateHandler handler) {
+        return DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
     }
 }

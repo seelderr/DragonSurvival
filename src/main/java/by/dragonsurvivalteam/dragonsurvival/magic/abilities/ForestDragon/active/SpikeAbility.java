@@ -145,20 +145,11 @@ public class SpikeAbility extends InstantCastAbility {
     @Override
     public void onCast(Player player) {
         float speed = 1;
-
-        Vec3 eyePos = player.getEyePosition();
-        Vec3 lookAngle = player.getLookAngle();
-
-        Vec3 projPos;
-        if (player.getAbilities().flying) {
-            projPos = lookAngle.scale(2.0F).add(eyePos);
-        } else {
-            projPos = lookAngle.scale(1.0F).add(eyePos);
-        }
-
+        // Copied from AbstractArrow.java constructor
+        Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());
         for (int i = 0; i < getLevel(); i++) {
             DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE.get(), player.level());
-            entity.setPos(projPos);
+            entity.setPos(launchPos);
             entity.setOwner(player);
             entity.setArrow_level(getLevel());
             entity.setBaseDamage(getDamage());

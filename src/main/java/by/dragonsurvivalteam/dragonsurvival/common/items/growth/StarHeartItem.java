@@ -19,8 +19,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public class StarHeartItem extends Item {
-    public StarHeartItem(Properties p_i48487_1_) {
+public class StarHeartItem extends Item{
+    public StarHeartItem(Properties p_i48487_1_){
         super(p_i48487_1_);
     }
 
