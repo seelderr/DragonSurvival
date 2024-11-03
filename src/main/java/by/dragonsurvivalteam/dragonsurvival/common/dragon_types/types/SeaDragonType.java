@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvivalMod.MODID;
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
