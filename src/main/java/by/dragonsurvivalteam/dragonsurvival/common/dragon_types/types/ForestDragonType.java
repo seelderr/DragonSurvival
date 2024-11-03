@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
@@ -28,7 +29,12 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.List;
 import java.util.Optional;
 
-public class ForestDragonType extends AbstractDragonType {
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+
+public class ForestDragonType extends AbstractDragonType{
+    public static ResourceLocation FOREST_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_food_icons.png");
+    public static ResourceLocation FOREST_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/forest_magic_icons.png");
+
     public int timeInDarkness;
 
     public ForestDragonType() {
@@ -123,7 +129,17 @@ public class ForestDragonType extends AbstractDragonType {
     }
 
     @Override
-    public String getTypeName() {
+    public ResourceLocation getFoodIcons() {
+        return FOREST_FOOD;
+    }
+
+    @Override
+    public ResourceLocation getManaIcons() {
+        return FOREST_MANA;
+    }
+
+    @Override
+    public String getTypeName(){
         return "forest";
     }
 

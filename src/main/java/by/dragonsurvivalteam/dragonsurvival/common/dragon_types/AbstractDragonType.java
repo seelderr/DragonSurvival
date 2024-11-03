@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
@@ -59,4 +60,7 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
     public String getTypeNameLowerCase() {
         return getTypeName().toLowerCase(Locale.ENGLISH);
     }
+
+    public abstract ResourceLocation getFoodIcons();
+    public abstract ResourceLocation getManaIcons();
 }

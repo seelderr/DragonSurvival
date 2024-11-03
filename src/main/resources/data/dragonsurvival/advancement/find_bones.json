@@ -1,0 +1,31 @@
+{
+  "parent": "dragonsurvival:collect_dust",
+  "display": {
+    "icon": {
+      "id": "dragonsurvival:star_bone"
+    },
+    "title": {
+      "translate": "ds.advancements.find_bones.title"
+    },
+    "description": {
+      "translate": "ds.advancements.find_bones.description"
+    },
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:location",
+      "conditions": {
+        "player": {
+          "location": {
+            "structures": "#dragonsurvival:dragon_skeletons"
+          }
+        }
+      }
+    },
+    "rewards": {
+      "experience": 12
+    }
+  }
+}

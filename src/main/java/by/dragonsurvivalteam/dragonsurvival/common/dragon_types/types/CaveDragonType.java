@@ -15,6 +15,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
@@ -28,7 +29,12 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+
 public class CaveDragonType extends AbstractDragonType {
+    public static ResourceLocation CAVE_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_food_icons.png");
+    public static ResourceLocation CAVE_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cave_magic_icons.png");
+
     /** Once the rain resistance supply reaches this value the dragon will take damage and the rain resistance supply will go back to 0 */
     private static final int RAIN_DAMAGE_RATE_POINT = -40;
     private static final float SUPPLY_RATE = 0.013f;
@@ -135,7 +141,17 @@ public class CaveDragonType extends AbstractDragonType {
     }
 
     @Override
-    public List<TagKey<Block>> mineableBlocks() {
+    public ResourceLocation getFoodIcons() {
+        return CAVE_FOOD;
+    }
+
+    @Override
+    public ResourceLocation getManaIcons() {
+        return CAVE_MANA;
+    }
+
+    @Override
+    public List<TagKey<Block>> mineableBlocks(){
         return List.of(BlockTags.MINEABLE_WITH_PICKAXE);
     }
 
