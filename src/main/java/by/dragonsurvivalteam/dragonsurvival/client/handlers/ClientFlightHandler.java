@@ -91,6 +91,9 @@ public class ClientFlightHandler {
     static float lastZoom = 1f;
     private static int levitationLeft;
 
+    // These are the drag values from vanilla Elytra flying. See isFallFlying() section in LivingEntity#travel()
+    private static final Vec3 ELYTRA_FLY_DRAG = new Vec3(0.99, 0.98, 0.99);
+
     // 7 ticks is the value used to trigger creative flight (in LocalPlayer#aiStep()).
     // This ignores checking the ground, letting the dragon start flying even in tight spaces.
     private static final TickedCooldown jumpFlyCooldown = new TickedCooldown(7);
@@ -299,9 +302,8 @@ public class ClientFlightHandler {
 
                         if (handler.isWingsSpread()) {
                             Input movement = player.input;
-                            boolean hasFood = player.getFoodData().getFoodLevel() > ServerFlightHandler.flightHungerThreshold || player.isCreative();
 
-                            if (!hasFood) {
+                            if (!hasEnoughFoodToStartFlight(player) || player.isCreative()) {
                                 // TODO :: If you use Math.abs you always get a positive number, shouldn't this be max() instead of clamp()?
                                 ay = Mth.clamp(Math.abs(ay * 4), -0.4 * ServerFlightHandler.maxFlightSpeed, 0.4 * ServerFlightHandler.maxFlightSpeed);
                             }
@@ -377,7 +379,7 @@ public class ClientFlightHandler {
                                             deltaMovement = deltaMovement.add(ax, ay * horizontalMovement, az);
                                         }
 
-                                        deltaMovement = deltaMovement.multiply(0.99F, 0.98F, 0.99F);
+                                        deltaMovement = deltaMovement.multiply(ELYTRA_FLY_DRAG);
 
                                         player.setDeltaMovement(deltaMovement);
                                         ay = player.getDeltaMovement().y;
@@ -444,7 +446,7 @@ public class ClientFlightHandler {
                                             deltaMovement = new Vec3(deltaMovement.x, -0.5 + deltaMovement.y, deltaMovement.z);
                                             player.setDeltaMovement(deltaMovement);
                                         } else if (wasFlying) { // Don't activate on a regular jump
-                                            double yMotion = hasFood ? -gravity + ay : -(gravity * 4) + ay;
+                                            double yMotion = hasEnoughFoodToStartFlight(player) ? -gravity + ay : -(gravity * 4) + ay;
                                             deltaMovement = new Vec3(deltaMovement.x, yMotion, deltaMovement.z);
                                             player.setDeltaMovement(deltaMovement);
                                         }
