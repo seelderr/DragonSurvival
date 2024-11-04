@@ -21,7 +21,7 @@ public class DSEnchantments { // TODO :: chance description addition to 'enchant
     @Translation(type = Translation.Type.ENCHANTMENT_DESCRIPTION, comments = "Attacks heal dragons and apply a regeneration effect.")
     public static ResourceKey<Enchantment> DRAGONSBOON = register("dragonsboon");
 
-    @Translation(type = Translation.Type.ENCHANTMENT, comments = "Dragonsbonk") // TODO :: add to enchantment tags to make it not appear in enchantment table etc.
+    @Translation(type = Translation.Type.ENCHANTMENT, comments = "Dragonsbonk")
     @Translation(type = Translation.Type.ENCHANTMENT_DESCRIPTION, comments = "Test enchantment - should not be available")
     public static ResourceKey<Enchantment> DRAGONSBONK = register("dragonsbonk");
 

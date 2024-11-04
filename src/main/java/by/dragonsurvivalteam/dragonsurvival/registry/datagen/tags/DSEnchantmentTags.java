@@ -6,6 +6,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.EnchantmentTagsProvider;
+import net.minecraft.tags.EnchantmentTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -21,6 +22,8 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
 
     @Override
     protected void addTags(@NotNull HolderLookup.Provider provider) {
+        addToVanillaTags();
+
         // Used in enchantments
         tag(exclusiveSet("anti_dragon"))
                 .add(DSEnchantments.DRAGONSBANE)
@@ -46,6 +49,16 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
         // Used in enchantments
         tag(exclusiveSet("size_changing"))
                 .add(DSEnchantments.SHRINK);
+    }
+
+    private void addToVanillaTags() {
+        // Enchantments in this tag...
+        // - won't be enchanted on to random loot, traded equipment or equipment from spawned mobs
+        // - won't appear in the enchantment table
+        // - won't naturally appear in trades
+        // - double trade prices
+        // (these behaviours can be changed by adding them manually to other specific vanilla enchantment tags)
+        tag(EnchantmentTags.TREASURE).add(DSEnchantments.DRAGONSBONK);
     }
 
     private static TagKey<Enchantment> exclusiveSet(@NotNull final String path) {
