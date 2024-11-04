@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceKey;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.modscan.ModAnnotation;
 import net.neoforged.neoforge.common.data.LanguageProvider;
@@ -65,7 +66,16 @@ public class DSLanguageProvider extends LanguageProvider {
                             Holder<?> holder = (Holder<?>) field.get(null);
 
                             //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
-                            key = type.prefix + holder.getKey().location().getPath() + type.suffix;
+                            key = type.wrap(holder.getKey().location().getPath());
+                            add(key, format(comments));
+
+                            continue;
+                        }
+
+                        if (ResourceKey.class.isAssignableFrom(field.getType())) {
+                            ResourceKey<?> resourceKey = (ResourceKey<?>) field.get(null);
+
+                            key = type.wrap(resourceKey.location().getPath());
                             add(key, format(comments));
 
                             continue;
@@ -88,7 +98,7 @@ public class DSLanguageProvider extends LanguageProvider {
             }
 
             try {
-                add(type.prefix + key + type.suffix, format(comments));
+                add(type.wrap(key), format(comments));
             } catch (IllegalStateException exception) {
                 // Log extra information to make debugging easier
                 DragonSurvival.LOGGER.error("Invalid translation entry due to a duplicate key issue [{}]", annotationData);

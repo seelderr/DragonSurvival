@@ -1,7 +1,7 @@
 {
     "anvil_cost": 2,
     "description": {
-        "translate": "ds.enchantment.dragonsboon"
+        "translate": "enchantment.dragonsurvival.dragonsboon"
     },
     "effects": {
         "minecraft:damage" : [

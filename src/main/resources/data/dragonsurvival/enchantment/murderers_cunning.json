@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.murderers_cunning"
+    "translate": "enchantment.dragonsurvival.murderers_cunning"
   },
   "effects": {},
   "exclusive_set": "#dragonsurvival:exclusive_set/good_dragon",

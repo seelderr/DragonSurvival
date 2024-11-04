@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.draconic_superiority"
+    "translate": "enchantment.dragonsurvival.draconic_superiority"
   },
   "effects": {
     "minecraft:damage" : [

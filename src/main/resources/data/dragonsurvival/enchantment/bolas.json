@@ -1,7 +1,7 @@
 {
   "anvil_cost": 1,
   "description": {
-    "translate": "ds.enchantment.bolas"
+    "translate": "enchantment.dragonsurvival.bolas"
   },
   "effects": {},
   "max_cost": {

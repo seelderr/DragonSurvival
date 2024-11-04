@@ -1,7 +1,7 @@
 {
     "anvil_cost": 2,
     "description": {
-        "translate": "ds.enchantment.dragonsbane"
+        "translate": "enchantment.dragonsurvival.dragonsbane"
     },
     "effects": {
         "minecraft:damage" : [

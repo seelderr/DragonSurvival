@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.dragonsbonk"
+    "translate": "enchantment.dragonsurvival.dragonsbonk"
   },
   "effects": {
     "minecraft:post_attack": [

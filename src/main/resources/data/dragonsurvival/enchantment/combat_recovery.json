@@ -1,6 +1,6 @@
 {
   "description": {
-    "translate": "ds.enchantment.combat_recovery"
+    "translate": "enchantment.dragonsurvival.combat_recovery"
   },
   "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
   "supported_items": "#minecraft:enchantable/head_armor",

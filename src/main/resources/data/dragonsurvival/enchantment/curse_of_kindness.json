@@ -1,7 +1,7 @@
 {
     "anvil_cost": 2,
     "description": {
-        "translate": "ds.enchantment.curse_of_kindness"
+        "translate": "enchantment.dragonsurvival.curse_of_kindness"
     },
     "effects": {
         "minecraft:damage" : [

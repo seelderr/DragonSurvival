@@ -137,6 +137,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Legacy Dragon Door")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 The very first large door we added to the mod. Just for nostalgia.")
     public static final DeferredHolder<Block, DragonDoor> LEGACY_DRAGON_DOOR = register(
             "legacy_dragon_door",
             () -> new DragonDoor(Block.Properties.of()
@@ -178,6 +179,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Cave Dragon Door")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 A large door that only a cave dragon may open.")
     public static final DeferredHolder<Block, DragonDoor> CAVE_DRAGON_DOOR = register(
             "cave_dragon_door",
             () -> new DragonDoor(Block.Properties.of()
@@ -190,6 +192,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Door")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 A large door that only a forest dragon may open.")
     public static final DeferredHolder<Block, DragonDoor> FOREST_DRAGON_DOOR = register(
             "forest_dragon_door",
             () -> new DragonDoor(Block.Properties.of()
@@ -202,6 +205,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Door")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 A large door that only a sea dragon may open.")
     public static final DeferredHolder<Block, DragonDoor> SEA_DRAGON_DOOR = register(
             "sea_dragon_door",
             () -> new DragonDoor(Block.Properties.of()
@@ -394,6 +398,7 @@ public class DSBlocks {
     // --- Source of Magic --- //
 
     @Translation(type = Translation.Type.BLOCK, comments = "Forest Source of Magic")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Forest dragons can bathe here to temporarily gain infinite mana. Damages other creatures.")
     public static final DeferredHolder<Block, SourceOfMagicBlock> FOREST_SOURCE_OF_MAGIC = register(
             "forest_source_of_magic",
             () -> new SourceOfMagicBlock(Block.Properties.of()
@@ -405,6 +410,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Cave Source of Magic")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Cave dragons can bathe here to temporarily gain infinite mana. Damages other creatures.")
     public static final DeferredHolder<Block, SourceOfMagicBlock> CAVE_SOURCE_OF_MAGIC = register(
             "cave_source_of_magic",
             () -> new SourceOfMagicBlock(Block.Properties.of()
@@ -415,6 +421,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Sea Source of Magic")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Sea dragons can bathe here to temporarily gain infinite mana. Damages other creatures.")
     public static final DeferredHolder<Block, SourceOfMagicBlock> SEA_SOURCE_OF_MAGIC = register(
             "sea_source_of_magic",
             () -> new SourceOfMagicBlock(Block.Properties.of()
@@ -529,6 +536,7 @@ public class DSBlocks {
     // --- Dragon Beacons --- //
 
     @Translation(type = Translation.Type.BLOCK, comments = "Dragon Memory for Beacons")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 If set under any dragon beacon, you will passively receive its effect in an area centered on the beacon at no additional cost, but for reduced duration. You may still activate the beacon to receive the full duration effect.")
     public static final DeferredHolder<Block, RotatedPillarBlock> DRAGON_MEMORY_BLOCK = register(
             "dragon_memory_block",
             () -> new RotatedPillarBlock(Block.Properties.of()
@@ -539,6 +547,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Empty Dragon Beacon")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Required to create dragon beacons. When you craft this item, you will keep the beacon used in its recipe.")
     public static final DeferredHolder<Block, DragonBeacon> DRAGON_BEACON = register(
             "empty_dragon_beacon",
             () -> new DragonBeacon(Block.Properties.of()
@@ -551,6 +560,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Beacon")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Gives the effects «Forest Magic» and «Haste». Best for forest dragons. You can buy an effect by pressing the right button in exchange for experience.")
     public static final DeferredHolder<Block, DragonBeacon> FOREST_DRAGON_BEACON = register(
             "forest_dragon_beacon",
             () -> new DragonBeacon(DRAGON_BEACON.get().properties()
@@ -558,6 +568,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Beacon")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Gives the effects «Sea Peace» and «Animal Calm». Best for sea dragons. Peaceful animals stop running away from the dragon. You can buy an effect by pressing the right button in exchange for experience.")
     public static final DeferredHolder<Block, DragonBeacon> SEA_DRAGON_BEACON = register(
             "sea_dragon_beacon",
             () -> new DragonBeacon(DRAGON_BEACON.get().properties()
@@ -565,6 +576,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Cave Dragon Beacon")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Gives the effects «Cave Fire» and «Sturdy Skin». Gives extra armor. Best for cave dragons. You can buy an effect by pressing the right button in exchange for experience.")
     public static final DeferredHolder<Block, DragonBeacon> CAVE_DRAGON_BEACON = register(
             "cave_dragon_beacon",
             () -> new DragonBeacon(DRAGON_BEACON.get().properties()
@@ -643,6 +655,7 @@ public class DSBlocks {
     // --- Dragon Treasure Plates --- //
 
     @Translation(type = Translation.Type.BLOCK, comments = "Dragon Pressure Plate")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while any dragon stands on it. It will not activate if a human steps on it.")
     public static final DeferredHolder<Block, DragonPressurePlates> DRAGON_PRESSURE_PLATE = register(
             "dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
@@ -654,6 +667,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Human Pressure Plate")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal only while a human stands on it. Will not activate for dragons.")
     public static final DeferredHolder<Block, DragonPressurePlates> HUMAN_PRESSURE_PLATE = register(
             "human_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
@@ -665,6 +679,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Pressure Plate")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while a sea dragon stands on it. Can open a sea dragon door, if adjacent to it.")
     public static final DeferredHolder<Block, DragonPressurePlates> SEA_PRESSURE_PLATE = register(
             "sea_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
@@ -676,6 +691,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Pressure Plate")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while a forest dragon stands on it. Can open a forest dragon door, if adjacent to it.")
     public static final DeferredHolder<Block, DragonPressurePlates> FOREST_PRESSURE_PLATE = register(
             "forest_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
@@ -688,6 +704,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Cave Dragon Pressure Plate")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while a cave dragon stands on it. Can open a cave dragon door, if adjacent to it.")
     public static final DeferredHolder<Block, DragonPressurePlates> CAVE_PRESSURE_PLATE = register(
             "cave_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
@@ -701,6 +718,7 @@ public class DSBlocks {
     // --- Helmets --- //
 
     @Translation(type = Translation.Type.BLOCK, comments = "Gray Knight Helmet")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Poor hunter. Fortunately, you didn't know him.")
     public static final DeferredHolder<Block, HelmetBlock> GRAY_KNIGHT_HELMET = register(
             "gray_knight_helmet",
             () -> new HelmetBlock(BlockBehaviour.Properties.of()
@@ -710,6 +728,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Golden Knight Helmet")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 You surely remember that the knight wore dark armor. Where did the golden helmet come from?")
     public static final DeferredHolder<Block, HelmetBlock> GOLDEN_KNIGHT_HELMET = register(
             "golden_knight_helmet",
             () -> new HelmetBlock(BlockBehaviour.Properties.of()
@@ -720,6 +739,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Black Knight Helmet")
+    @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 You should have used the Eye of Innos.")
     public static final DeferredHolder<Block, HelmetBlock> BLACK_KNIGHT_HELMET = register(
             "black_knight_helmet",
             () -> new HelmetBlock(BlockBehaviour.Properties.of()

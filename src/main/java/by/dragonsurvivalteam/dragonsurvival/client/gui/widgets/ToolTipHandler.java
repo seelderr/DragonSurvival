@@ -109,7 +109,8 @@ public class ToolTipHandler {
     @SubscribeEvent // Add certain descriptions to our items which use generic classes
     public static void addCustomItemDescriptions(ItemTooltipEvent event) {
         if (event.getEntity() != null && event.getEntity().level().isClientSide() && event.getItemStack() != ItemStack.EMPTY) {
-            ResourceLocation location = event.getItemStack().getItem().builtInRegistryHolder().key().location();
+            //noinspection DataFlowIssue -> ignore
+            ResourceLocation location = event.getItemStack().getItemHolder().getKey().location();
             String languageKey = "";
 
             if (event.getItemStack().getItem() instanceof EnchantedBookItem) {
@@ -119,7 +120,7 @@ public class ToolTipHandler {
                 if (enchantments != null && enchantments.size() == 1) {
                     Holder<Enchantment> holder = enchantments.entrySet().iterator().next().getKey();
                     //noinspection DataFlowIssue -> would only be null for 'Holder$Direct' which shouldn't be used here
-                    languageKey = "ds.description." + holder.getKey().location().getPath();
+                    languageKey = Translation.Type.DESCRIPTION_ADDITION.wrap(holder.getKey().location().getPath());
                 }
             } else if (location.getNamespace().equals(MODID)) {
                 /* TODO
@@ -132,7 +133,7 @@ public class ToolTipHandler {
                 }
                 */
 
-                languageKey = "ds.description.add." + location.getPath();
+                languageKey = Translation.Type.DESCRIPTION_ADDITION.wrap(location.getPath());
             }
 
             if (!languageKey.isEmpty() && I18n.exists(languageKey)) {

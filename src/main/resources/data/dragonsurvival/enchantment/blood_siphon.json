@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.blood_siphon"
+    "translate": "enchantment.dragonsurvival.blood_siphon"
   },
   "effects": {
     "minecraft:post_attack" : [

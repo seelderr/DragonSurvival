@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.unbreakable_spirit"
+    "translate": "enchantment.dragonsurvival.unbreakable_spirit"
   },
   "effects": {},
   "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
