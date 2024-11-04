@@ -27,7 +27,7 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NeoForgedDataGen {
     @SubscribeEvent
-    public static void dataGen(final GatherDataEvent event) {
+    public static void generateData(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
         PackOutput output = generator.getPackOutput();
         ExistingFileHelper helper = event.getExistingFileHelper();
@@ -59,7 +59,6 @@ public class NeoForgedDataGen {
 
         BlockTagsProvider blockTagsProvider = new DSBlockTags(output, lookup, helper);
         generator.addProvider(event.includeServer(), blockTagsProvider);
-
         generator.addProvider(event.includeServer(), new DSItemTags(output, lookup, blockTagsProvider.contentsGetter(), helper));
         generator.addProvider(event.includeServer(), new DSDamageTypeTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DSEntityTypeTags(output, lookup, helper));
@@ -67,5 +66,8 @@ public class NeoForgedDataGen {
         generator.addProvider(event.includeServer(), new DSPoiTypeTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DSEnchantmentTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DataBlockModelProvider(output, helper));
+
+        // Should run last due to doing weird registry things
+        generator.addProvider(event.includeServer(), new DSRecipes(output, lookup));
     }
 }

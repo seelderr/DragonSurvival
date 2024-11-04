@@ -1,12 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "building",
   "ingredients": [
     {
       "item": "dragonsurvival:acacia_dragon_door"
     }
   ],
   "result": {
-    "id": "dragonsurvival:acacia_small_dragon_door",
-    "count": 3
+    "count": 3,
+    "id": "dragonsurvival:small_acacia_dragon_door"
   }
 }

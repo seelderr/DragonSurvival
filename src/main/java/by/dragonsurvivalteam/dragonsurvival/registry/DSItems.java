@@ -267,6 +267,7 @@ public class DSItems {
     // --- Weapons --- //
 
     @Translation(type = Translation.Type.ITEM, comments = "Sword That Bonks Dragons")
+    @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 The sword of the dragon hunters. Slow, but strong. Can be found in the hunters treasury.")
     public static final Holder<Item> DRAGON_HUNTER_SWORD = DS_ITEMS.register("dragon_hunter_sword", location -> new DragonHunterWeapon(
             DSEquipment.DRAGON_HUNTER,
             new Item.Properties().rarity(Rarity.EPIC).fireResistant().attributes(SwordItem.createAttributes(Tiers.NETHERITE, 4, -2.8F)),

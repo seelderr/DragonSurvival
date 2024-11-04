@@ -10,6 +10,7 @@
     "BlockMixin",
     "EntityMixin",
     "FireworkRocketItemMixin",
+    "Holder$ReferenceAccess",
     "IItemExtensionMixin",
     "ILivingEntityExtensionMixin",
     "ItemEntityMixin",

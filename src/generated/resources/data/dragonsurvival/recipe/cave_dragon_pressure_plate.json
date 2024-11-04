@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "building",
   "ingredients": [
     {
       "item": "minecraft:polished_blackstone_pressure_plate"
@@ -9,7 +10,7 @@
     }
   ],
   "result": {
-    "id": "dragonsurvival:cave_dragon_pressure_plate",
-    "count": 1
+    "count": 1,
+    "id": "dragonsurvival:cave_dragon_pressure_plate"
   }
 }

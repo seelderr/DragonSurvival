@@ -1,5 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "building",
   "ingredients": [
     {
       "item": "minecraft:birch_door"
@@ -12,7 +13,7 @@
     }
   ],
   "result": {
-    "id": "dragonsurvival:birch_dragon_door",
-    "count": 2
+    "count": 2,
+    "id": "dragonsurvival:birch_dragon_door"
   }
 }

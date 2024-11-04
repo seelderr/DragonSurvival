@@ -1,12 +1,13 @@
 {
   "type": "minecraft:crafting_shapeless",
+  "category": "building",
   "ingredients": [
     {
       "item": "dragonsurvival:cave_dragon_door"
     }
   ],
   "result": {
-    "id": "dragonsurvival:cave_small_dragon_door",
-    "count": 3
+    "count": 3,
+    "id": "dragonsurvival:small_cave_dragon_door"
   }
 }

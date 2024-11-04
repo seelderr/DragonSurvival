@@ -29,6 +29,12 @@ public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> IS_EVIL_DRAGON = key("is_evil_dragon");
     public static final TagKey<Item> CLAW_WEAPONS = key("claw_weapons");
 
+    // Used in recipes
+    public static final TagKey<Item> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
+    public static final TagKey<Item> SMALL_WOODEN_DRAGON_DOORS = key("small_wooden_dragon_doors");
+    public static final TagKey<Item> CHARRED_FOOD = key("charred_food");
+    public static final TagKey<Item> COLD_ITEMS = key("cold_items");
+
     public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
         super(output, provider, blockTags, DragonSurvival.MODID, helper);
     }
@@ -62,8 +68,7 @@ public class DSItemTags extends ItemTagsProvider {
                 .addTag(ItemTags.SWORDS)
                 .addTag(Tags.Items.MELEE_WEAPON_TOOLS);
 
-        // Used in recipes
-        tag(key("charred_food"))
+        tag(CHARRED_FOOD)
                 .add(DSItems.CHARGED_COAL.value())
                 .add(DSItems.CHARGED_SOUP.value())
                 .add(DSItems.CHARRED_MEAT.value())
@@ -71,8 +76,7 @@ public class DSItemTags extends ItemTagsProvider {
                 .add(DSItems.CHARRED_SEAFOOD.value())
                 .add(DSItems.CHARRED_VEGETABLE.value());
 
-        // Used in recipes
-        tag(key("cold_items"))
+        tag(COLD_ITEMS)
                 .add(Items.SNOWBALL)
                 .add(Items.ICE)
                 .add(Items.PACKED_ICE)
@@ -88,8 +92,8 @@ public class DSItemTags extends ItemTagsProvider {
 
         copy(DSBlockTags.DRAGON_ALTARS, key("dragon_altars"));
         copy(DSBlockTags.DRAGON_TREASURES, key("dragon_treasures"));
-        copy(DSBlockTags.SMALL_WOODEN_DRAGON_DOORS, key("small_wooden_dragon_doors"));
-        copy(DSBlockTags.WOODEN_DRAGON_DOORS, key("wooden_dragon_doors"));
+        copy(DSBlockTags.SMALL_WOODEN_DRAGON_DOORS, SMALL_WOODEN_DRAGON_DOORS);
+        copy(DSBlockTags.WOODEN_DRAGON_DOORS, WOODEN_DRAGON_DOORS);
     }
 
     private void addToVanillaTags() {

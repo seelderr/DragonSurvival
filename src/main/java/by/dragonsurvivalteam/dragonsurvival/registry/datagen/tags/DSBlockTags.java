@@ -283,7 +283,7 @@ public class DSBlockTags extends BlockTagsProvider {
     private void addToVanillaTags() {
         tag(BlockTags.MINEABLE_WITH_AXE)
                 .addTag(WOODEN_DRAGON_DOORS)
-                .add(DSBlocks.FOREST_PRESSURE_PLATE.value());
+                .add(DSBlocks.FOREST_DRAGON_PRESSURE_PLATE.value());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
                 .add(DSBlocks.STONE_DRAGON_ALTAR.value())
@@ -324,8 +324,8 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(DSBlocks.CAVE_DRAGON_BEACON.value())
                 .add(DSBlocks.DRAGON_PRESSURE_PLATE.value())
                 .add(DSBlocks.HUMAN_PRESSURE_PLATE.value())
-                .add(DSBlocks.SEA_PRESSURE_PLATE.value())
-                .add(DSBlocks.CAVE_PRESSURE_PLATE.value());
+                .add(DSBlocks.SEA_DRAGON_PRESSURE_PLATE.value())
+                .add(DSBlocks.CAVE_DRAGON_PRESSURE_PLATE.value());
         
         tag(BlockTags.NEEDS_STONE_TOOL)
                 .add(DSBlocks.GOLD_DRAGON_TREASURE.value())

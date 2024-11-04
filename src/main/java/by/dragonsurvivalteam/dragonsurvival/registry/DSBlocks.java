@@ -680,7 +680,7 @@ public class DSBlocks {
 
     @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Pressure Plate")
     @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while a sea dragon stands on it. Can open a sea dragon door, if adjacent to it.")
-    public static final DeferredHolder<Block, DragonPressurePlates> SEA_PRESSURE_PLATE = register(
+    public static final DeferredHolder<Block, DragonPressurePlates> SEA_DRAGON_PRESSURE_PLATE = register(
             "sea_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -692,7 +692,7 @@ public class DSBlocks {
 
     @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Pressure Plate")
     @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while a forest dragon stands on it. Can open a forest dragon door, if adjacent to it.")
-    public static final DeferredHolder<Block, DragonPressurePlates> FOREST_PRESSURE_PLATE = register(
+    public static final DeferredHolder<Block, DragonPressurePlates> FOREST_DRAGON_PRESSURE_PLATE = register(
             "forest_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
@@ -705,7 +705,7 @@ public class DSBlocks {
 
     @Translation(type = Translation.Type.BLOCK, comments = "Cave Dragon Pressure Plate")
     @Translation(type = Translation.Type.DESCRIPTION_ADDITION, comments = "■§7 Produces a redstone signal while a cave dragon stands on it. Can open a cave dragon door, if adjacent to it.")
-    public static final DeferredHolder<Block, DragonPressurePlates> CAVE_PRESSURE_PLATE = register(
+    public static final DeferredHolder<Block, DragonPressurePlates> CAVE_DRAGON_PRESSURE_PLATE = register(
             "cave_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
