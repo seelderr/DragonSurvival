@@ -116,31 +116,24 @@ public class DSEntities {
 
     @SubscribeEvent
     public static void attributeCreationEvent(final EntityAttributeCreationEvent event) {
-        event.put(DRAGON.get(), DragonEntity.createLivingAttributes().build());
-        event.put(HUNTER_HOUND.get(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
-        event.put(HUNTER_SPEARMAN.get(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.spearmanSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.spearmanDamage).add(Attributes.ARMOR, ServerConfig.spearmanArmor).add(Attributes.MAX_HEALTH, ServerConfig.spearmanHealth).build());
-        event.put(HUNTER_KNIGHT.get(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
-        event.put(HUNTER_AMBUSHER.get(), AmbusherEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.ambusherSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.ambusherDamage).add(Attributes.ARMOR, ServerConfig.ambusherArmor).add(Attributes.MAX_HEALTH, ServerConfig.ambusherHealth).build());
-        event.put(HUNTER_GRIFFIN.get(), GriffinEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.griffinSpeed).add(Attributes.FLYING_SPEED, ServerConfig.griffinSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.griffinDamage).add(Attributes.MAX_HEALTH, ServerConfig.griffinHealth).build());
-        event.put(HUNTER_LEADER.get(), LeaderEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.leaderSpeed).add(Attributes.MAX_HEALTH, ServerConfig.leaderHealth).build());
+        event.put(DRAGON.value(), DragonEntity.createLivingAttributes().build());
+        event.put(HUNTER_HOUND.value(), Wolf.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.houndSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.houndDamage).add(Attributes.MAX_HEALTH, ServerConfig.houndHealth).build());
+        event.put(HUNTER_SPEARMAN.value(), Vindicator.createAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.spearmanSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.spearmanDamage).add(Attributes.ARMOR, ServerConfig.spearmanArmor).add(Attributes.MAX_HEALTH, ServerConfig.spearmanHealth).build());
+        event.put(HUNTER_KNIGHT.value(), KnightEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.knightSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.knightDamage).add(Attributes.ARMOR, ServerConfig.knightArmor).add(Attributes.MAX_HEALTH, ServerConfig.knightHealth).build());
+        event.put(HUNTER_AMBUSHER.value(), AmbusherEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.ambusherSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.ambusherDamage).add(Attributes.ARMOR, ServerConfig.ambusherArmor).add(Attributes.MAX_HEALTH, ServerConfig.ambusherHealth).build());
+        event.put(HUNTER_GRIFFIN.value(), GriffinEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.griffinSpeed).add(Attributes.FLYING_SPEED, ServerConfig.griffinSpeed).add(Attributes.ATTACK_DAMAGE, ServerConfig.griffinDamage).add(Attributes.MAX_HEALTH, ServerConfig.griffinHealth).build());
+        event.put(HUNTER_LEADER.value(), LeaderEntity.createMobAttributes().add(Attributes.MOVEMENT_SPEED, ServerConfig.leaderSpeed).add(Attributes.MAX_HEALTH, ServerConfig.leaderHealth).build());
     }
 
     @SubscribeEvent
+    @SuppressWarnings({"unchecked", "rawtypes", "deprecation"}) // ignore
     public static void registerSpawn(final RegisterSpawnPlacementsEvent event) {
-        SpawnPlacements.SpawnPredicate predicate = (pEntityType, serverWorld, mobSpawnType, pPos, random) -> serverWorld.canSeeSky(pPos);
+        SpawnPlacements.SpawnPredicate predicate = (entity, level, spawnType, position, random) -> level.canSeeSky(position) && level.getBlockState(position.below()).isSolid();
 
-        event.register(HUNTER_SPEARMAN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HUNTER_KNIGHT.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HUNTER_AMBUSHER.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HUNTER_HOUND.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-        event.register(HUNTER_GRIFFIN.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
-    }
-
-    public static <T extends DeferredHolder<EntityType<?>, EntityType<? extends PathfinderMob>>> T castToPathFinder(final DeferredHolder entityType) {
-        return (T) entityType;
-    }
-
-    public static <T extends DeferredHolder<EntityType<?>, EntityType<? extends Mob>>> T castToMob(final DeferredHolder entityType) {
-        return (T) entityType;
+        event.register(HUNTER_SPEARMAN.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(HUNTER_KNIGHT.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(HUNTER_AMBUSHER.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(HUNTER_HOUND.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        event.register(HUNTER_GRIFFIN.value(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, predicate, RegisterSpawnPlacementsEvent.Operation.REPLACE);
     }
 }

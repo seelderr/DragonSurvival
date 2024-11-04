@@ -8,7 +8,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-public class DSEnchantments { // TODO :: chance description addition to 'enchantment.desc' for mod support (and shorten the text)
+public class DSEnchantments {
     @Translation(type = Translation.Type.ENCHANTMENT, comments = "Bolas Arrows")
     @Translation(type = Translation.Type.ENCHANTMENT_DESCRIPTION, comments = "Causes crossbows to shoot bolas instead, trapping hit entities.")
     public static ResourceKey<Enchantment> BOLAS = register("bolas");
