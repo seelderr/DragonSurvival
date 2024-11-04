@@ -43,15 +43,15 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:broken_knight_helmet_1"
+          "name": "dragonsurvival:gray_knight_helmet"
         },
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:broken_knight_helmet_2"
+          "name": "dragonsurvival:golden_knight_helmet"
         },
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:broken_knight_helmet_3"
+          "name": "dragonsurvival:black_knight_helmet"
         }
       ],
       "conditions": [

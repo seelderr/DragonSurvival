@@ -1,7 +1,8 @@
-// 1.21.1	2024-11-04T11:43:09.1624417	Dragon Survival Block tags
+// 1.21.1	2024-11-04T20:26:17.33889	Dragon Survival Block tags
 cfdfa924695a061d4c8b66f106d176243a4d38e3 data/dragonsurvival/tags/block/castle_blocks.json
 14d92c956ef4bb064b2fdd6923ec39eb8b07eaf2 data/dragonsurvival/tags/block/cave_dragon_breath_destructible.json
 cc6f21df43aff58278ff2d2b8b8a1900fb202738 data/dragonsurvival/tags/block/dragon_altars.json
+f619ffe1567682777028849930e160e620c521e4 data/dragonsurvival/tags/block/dragon_beacons.json
 f9a6a5f3b67bb79883689bdd154a227493642cf6 data/dragonsurvival/tags/block/dragon_bones.json
 33150f07d989f304c1970ffe443e33921b5d63a4 data/dragonsurvival/tags/block/dragon_treasures.json
 0fd05ce24f7e0237534571ed952465bbb582b59d data/dragonsurvival/tags/block/enables_hunter_effect.json
@@ -17,8 +18,8 @@ b379e12b0c693face3bfc9b86367db615d961d58 data/dragonsurvival/tags/block/regenera
 fd798457fb826f03aa054a8c74212a72fa868056 data/dragonsurvival/tags/block/speeds_up_cave_dragon.json
 80b206dfb4f86a018b0e44e8e495346e01fb1207 data/dragonsurvival/tags/block/speeds_up_forest_dragon.json
 47a3644e7f22cddd94c1176aec5bc06d31799191 data/dragonsurvival/tags/block/speeds_up_sea_dragon.json
-f653db99449d5876e44ecaba700affa86aad664d data/dragonsurvival/tags/block/wooden_dragon_doors.json
-4f77dfd68927b9086fdc21084a376b2b66d4c9f5 data/minecraft/tags/block/mineable/axe.json
+8b0d8659326e1f6e12cf4ad7fa75e1044e477f3e data/dragonsurvival/tags/block/wooden_dragon_doors.json
+169131f118cef67e68e93c1799b1d1fb22e8c66c data/minecraft/tags/block/mineable/axe.json
 5e603b00a98e22a9f85dc7bd46b0f29017d655e4 data/minecraft/tags/block/mineable/pickaxe.json
 44de56d16a14933436bcc03f031025eb47f82e47 data/minecraft/tags/block/needs_iron_tool.json
 8b67b6e568583b903af15f0ff1285da6e35b7982 data/minecraft/tags/block/needs_stone_tool.json

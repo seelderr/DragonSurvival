@@ -7,11 +7,11 @@
   ],
   "parent": "minecraft:recipes/root",
   "criteria": {
-    "has_redstone_dust": {
+    "has_redstone_bulb": {
       "conditions": {
         "items": [
           {
-            "items": "#c:dusts/redstone"
+            "items": "regions_unexplored:redstone_bulb"
           }
         ]
       },
@@ -27,7 +27,7 @@
   "requirements": [
     [
       "has_the_recipe",
-      "has_redstone_dust"
+      "has_redstone_bulb"
     ]
   ],
   "rewards": {

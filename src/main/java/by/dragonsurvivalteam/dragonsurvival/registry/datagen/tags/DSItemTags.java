@@ -30,8 +30,13 @@ public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> CLAW_WEAPONS = key("claw_weapons");
 
     // Used in recipes
+    public static final TagKey<Item> DRAGON_ALTARS = key("dragon_altars");
+    public static final TagKey<Item> DRAGON_TREASURES = key("dragon_treasures");
+    public static final TagKey<Item> DRAGON_BEACONS = key("dragon_beacons");
+
     public static final TagKey<Item> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
     public static final TagKey<Item> SMALL_WOODEN_DRAGON_DOORS = key("small_wooden_dragon_doors");
+
     public static final TagKey<Item> CHARRED_FOOD = key("charred_food");
     public static final TagKey<Item> COLD_ITEMS = key("cold_items");
 
@@ -90,8 +95,10 @@ public class DSItemTags extends ItemTagsProvider {
                 .addTag(ItemTags.CHEST_ARMOR_ENCHANTABLE)
                 .add(Items.ELYTRA);
 
-        copy(DSBlockTags.DRAGON_ALTARS, key("dragon_altars"));
-        copy(DSBlockTags.DRAGON_TREASURES, key("dragon_treasures"));
+        copy(DSBlockTags.DRAGON_ALTARS, DRAGON_ALTARS);
+        copy(DSBlockTags.DRAGON_TREASURES, DRAGON_TREASURES);
+        copy(DSBlockTags.DRAGON_BEACONS, DRAGON_BEACONS);
+
         copy(DSBlockTags.SMALL_WOODEN_DRAGON_DOORS, SMALL_WOODEN_DRAGON_DOORS);
         copy(DSBlockTags.WOODEN_DRAGON_DOORS, WOODEN_DRAGON_DOORS);
     }

@@ -47,7 +47,7 @@ public class DSTileEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<DragonBeaconTileEntity>> DRAGON_BEACON = DS_TILE_ENTITIES.register(
             "dragon_beacon", () -> BlockEntityType.Builder.of(
                             DragonBeaconTileEntity::new,
-                            DSBlocks.DRAGON_BEACON.get(),
+                            DSBlocks.EMPTY_DRAGON_BEACON.get(),
                             DSBlocks.FOREST_DRAGON_BEACON.get(),
                             DSBlocks.SEA_DRAGON_BEACON.get(),
                             DSBlocks.CAVE_DRAGON_BEACON.get())

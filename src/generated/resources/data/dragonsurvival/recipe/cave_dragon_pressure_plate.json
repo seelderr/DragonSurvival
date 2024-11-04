@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "building",
+  "category": "redstone",
   "ingredients": [
     {
       "item": "minecraft:polished_blackstone_pressure_plate"

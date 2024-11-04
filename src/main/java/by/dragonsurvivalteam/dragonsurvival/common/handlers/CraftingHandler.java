@@ -21,7 +21,7 @@ public class CraftingHandler {
         int rem = ContainerHelper.clearOrCountMatchingItems(inventory, item -> item.is(DSItems.PASSIVE_FIRE_BEACON)
                 || item.is(DSItems.PASSIVE_MAGIC_BEACON)
                 || item.is(DSItems.PASSIVE_PEACE_BEACON), 1, true);
-        if (rem == 0 && result.getItem() == DSBlocks.DRAGON_BEACON.get().asItem()) {
+        if (rem == 0 && result.getItem() == DSBlocks.EMPTY_DRAGON_BEACON.get().asItem()) {
             craftedEvent.getEntity().addItem(new ItemStack(Items.BEACON));
         }
     }

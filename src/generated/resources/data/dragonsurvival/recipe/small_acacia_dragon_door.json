@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "category": "building",
+  "category": "redstone",
   "ingredients": [
     {
       "item": "dragonsurvival:acacia_dragon_door"
