@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
@@ -13,7 +14,10 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -76,9 +80,9 @@ public class ServerFlightHandler {
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableCollisionDamage", comment = "Dragons will take damage from colliding whilst glide-flying (similar to elytra).")
     public static boolean enableCollisionDamage = true;
 
-    /**
-     * Sets the fall damage based on flight speed and dragon's size
-     */
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Dragons will take fall damage from colliding whilst glide-flying (similar to elytra).")
+    public static boolean enableFlightFallDamage = true;
+
     @SubscribeEvent
     public static void foldWingsOnLand(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntity();
@@ -98,54 +102,95 @@ public class ServerFlightHandler {
         });
     }
 
+    /**
+     * Sets the fall damage based on flight speed and dragon's size
+     */
+    @SubscribeEvent
+    public static void changeFallDistanceToUseFlightSpeed(LivingFallEvent event) {
+        LivingEntity livingEntity = event.getEntity();
+        double verticalFlightSpeed = livingEntity.getDeltaMovement().y * livingEntity.getDeltaMovement().y;
+
+        if(livingEntity instanceof Player player) {
+            DragonStateProvider.getOptional(livingEntity).ifPresent(handler -> {
+                // Don't use the helper functions here, as isFlying() will return false if the player is grounded
+                if (handler.isDragon() && handler.hasFlight() && handler.isWingsSpread() && player.isSprinting()) {
+                    if (!enableFlightFallDamage
+                            || verticalFlightSpeed <= 1
+                            || (livingEntity.isPassenger() && DragonStateProvider.isDragon(livingEntity.getVehicle())))
+                    {
+                        event.setCanceled(true);
+                        return;
+                    }
+
+                    double damage = verticalFlightSpeed * (handler.getSize() / 20);
+                    damage = Mth.clamp(damage, 0, livingEntity.getHealth() -  1);
+
+                    // See Attributes.SAFE_FALL_DISTANCE
+                    final float SAFE_FALL_DISTANCE_DEFAULT_VALUE = 3.0f;
+                    event.setDistance((float) damage + SAFE_FALL_DISTANCE_DEFAULT_VALUE);
+                }
+            });
+        }
+    }
+
     public static boolean isFlying(Player player) {
         DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
         return dragonStateHandler.hasFlight() && dragonStateHandler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava();
+    }
+
+    private static Holder<MobEffect> getFlightEffectForType(AbstractDragonType type) {
+        if (type.equals(DragonTypes.SEA)) {
+            return DSEffects.sea_wings;
+        } else if (type.equals(DragonTypes.CAVE)) {
+            return DSEffects.cave_wings;
+        } else if (type.equals(DragonTypes.FOREST)) {
+            return DSEffects.forest_wings;
+        }
+
+        return null;
+    }
+
+    private static boolean hasCorrectFlightEffect(Player player) {
+        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
+        Holder<MobEffect> flightEffect = getFlightEffectForType(dragonStateHandler.getType());
+        if(flightEffect == null) {
+            return false;
+        }
+
+        return player.hasEffect(flightEffect);
+    }
+
+    private static void clearAllFlightEffects(Player player) {
+        player.removeEffect(DSEffects.sea_wings);
+        player.removeEffect(DSEffects.cave_wings);
+        player.removeEffect(DSEffects.forest_wings);
     }
 
     @SubscribeEvent
     public static void showFlightIcon(PlayerTickEvent.Pre playerTickEvent) {
         Player player = playerTickEvent.getEntity();
         DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon()) {
-                if (player.tickCount % 10 == 0) {
-                    if (handler.isWingsSpread()) {
-                        if (DragonUtils.isDragonType(player, DragonTypes.SEA)) {
-                            player.addEffect(new MobEffectInstance(DSEffects.sea_wings, -1, 0, true, false, true));
-
-                        }
-                        if (DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
-                            player.addEffect(new MobEffectInstance(DSEffects.cave_wings, -1, 0, true, false, true));
-
-                        }
-                        if (DragonUtils.isDragonType(player, DragonTypes.FOREST)) {
-                            player.addEffect(new MobEffectInstance(DSEffects.forest_wings, -1, 0, true, false, true));
-                        }
+            if (handler.isDragon() && handler.isWingsSpread()) {
+                if (!hasCorrectFlightEffect(player)) {
+                    clearAllFlightEffects(player);
+                    Holder<MobEffect> flightEffect = getFlightEffectForType(handler.getType());
+                    if(flightEffect != null) {
+                        player.addEffect(new MobEffectInstance(flightEffect, -1, 0, true, false, true));
                     }
                 }
-            }
-
-            if (!handler.isDragon() || !handler.isWingsSpread()) {
-                if (player.hasEffect(DSEffects.sea_wings)) {
-                    player.removeEffect(DSEffects.sea_wings);
-                }
-                if (player.hasEffect(DSEffects.cave_wings)) {
-                    player.removeEffect(DSEffects.cave_wings);
-                }
-                if (player.hasEffect(DSEffects.forest_wings)) {
-                    player.removeEffect(DSEffects.forest_wings);
-                }
+            } else {
+                clearAllFlightEffects(player);
             }
         });
     }
 
     @SubscribeEvent
-    public static void getPreCollisionSpeed(PlayerTickEvent.Pre playerTickEvent) {
+    public static void getPreCollisionData(PlayerTickEvent.Pre playerTickEvent) {
         if(playerTickEvent.getEntity().level().isClientSide()) return;
 
         Player player = playerTickEvent.getEntity();
         DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (isGliding(player) && enableCollisionDamage) {
+            if (isGliding(player)) {
                 handler.preCollisionDeltaMovement = player.getDeltaMovement();
             }
         });
@@ -177,7 +222,7 @@ public class ServerFlightHandler {
 
         Player player = playerTickEvent.getEntity();
         DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon() && isFlying(player)) {
+            if (handler.isDragon() && isFlying(player) && !isGliding(player)) {
                 player.resetFallDistance();
             }
         });
