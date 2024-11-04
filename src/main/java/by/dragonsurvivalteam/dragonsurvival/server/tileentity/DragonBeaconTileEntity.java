@@ -84,11 +84,11 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 
     private static void setType(final DragonBeaconTileEntity beaconTileEntity, final Block beacon) {
         if (beaconTileEntity.type == Type.NONE) {
-            if (beacon == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
-                beaconTileEntity.type = Type.MAGIC;
-            } else if (beacon == DSBlocks.PEACE_DRAGON_BEACON.get()) {
+            if (beacon == DSBlocks.SEA_DRAGON_BEACON.get()) {
                 beaconTileEntity.type = Type.PEACE;
-            } else if (beacon == DSBlocks.FIRE_DRAGON_BEACON.get()) {
+            } else if (beacon == DSBlocks.FOREST_DRAGON_BEACON.get()) {
+                beaconTileEntity.type = Type.MAGIC;
+            } else if (beacon == DSBlocks.CAVE_DRAGON_BEACON.get()) {
                 beaconTileEntity.type = Type.FIRE;
             }
         }

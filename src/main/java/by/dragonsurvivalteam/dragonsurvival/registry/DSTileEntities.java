@@ -38,9 +38,9 @@ public class DSTileEntities {
     public static final DeferredHolder<BlockEntityType<?>, BlockEntityType<HelmetTileEntity>> HELMET_TILE = DS_TILE_ENTITIES.register(
             "knight_helmet", () -> BlockEntityType.Builder.of(
                             HelmetTileEntity::new,
-                            DSBlocks.HELMET_BLOCK_1.get(),
-                            DSBlocks.HELMET_BLOCK_2.get(),
-                            DSBlocks.HELMET_BLOCK_3.get())
+                            DSBlocks.GRAY_KNIGHT_HELMET.get(),
+                            DSBlocks.GOLDEN_KNIGHT_HELMET.get(),
+                            DSBlocks.BLACK_KNIGHT_HELMET.get())
                     .build(null)
     );
 
@@ -48,9 +48,9 @@ public class DSTileEntities {
             "dragon_beacon", () -> BlockEntityType.Builder.of(
                             DragonBeaconTileEntity::new,
                             DSBlocks.DRAGON_BEACON.get(),
-                            DSBlocks.PEACE_DRAGON_BEACON.get(),
-                            DSBlocks.MAGIC_DRAGON_BEACON.get(),
-                            DSBlocks.FIRE_DRAGON_BEACON.get())
+                            DSBlocks.FOREST_DRAGON_BEACON.get(),
+                            DSBlocks.SEA_DRAGON_BEACON.get(),
+                            DSBlocks.CAVE_DRAGON_BEACON.get())
                     .build(null)
     );
 }

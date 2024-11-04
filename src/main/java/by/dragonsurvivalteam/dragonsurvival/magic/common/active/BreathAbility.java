@@ -201,9 +201,9 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
 
                         if (state.getBlock() != Blocks.AIR) {
                             TagKey<Block> destructibleBlocks = switch (this) {
-                                case NetherBreathAbility ignored -> DSBlockTags.NETHER_BREATH_DESTRUCTIBLE;
-                                case StormBreathAbility ignored -> DSBlockTags.STORM_BREATH_DESTRUCTIBLE;
-                                case ForestBreathAbility ignored -> DSBlockTags.FOREST_BREATH_DESTRUCTIBLE;
+                                case NetherBreathAbility ignored -> DSBlockTags.CAVE_DRAGON_BREATH_DESTRUCTIBLE;
+                                case StormBreathAbility ignored -> DSBlockTags.SEA_DRAGON_BREATH_DESTRUCTIBLE;
+                                case ForestBreathAbility ignored -> DSBlockTags.FOREST_DRAGON_BREATH_DESTRUCTIBLE;
                                 default -> throw new IllegalStateException("Invalid breath type [" + this.getClass().getName() + "]");
                             };
 

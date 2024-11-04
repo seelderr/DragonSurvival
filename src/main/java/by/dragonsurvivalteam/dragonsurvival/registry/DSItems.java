@@ -325,24 +325,24 @@ public class DSItems {
 
     public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(new Properties().rarity(Rarity.EPIC)));
 
-    public static final String GOOD_DRAGON_KEY_ID = "good_dragon_key";
+    public static final String LIGHT_DRAGON_KEY_ID = "good_dragon_key";
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Light Vault. Purchased from the dragon rider villager.")
-    public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register(GOOD_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register(LIGHT_DRAGON_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-            DragonSurvival.res("geo/" + GOOD_DRAGON_KEY_ID + ".geo.json"),
-            DragonSurvival.res("textures/item/" + GOOD_DRAGON_KEY_ID + ".png"),
+            DragonSurvival.res("geo/" + LIGHT_DRAGON_KEY_ID + ".geo.json"),
+            DragonSurvival.res("textures/item/" + LIGHT_DRAGON_KEY_ID + ".png"),
             DragonSurvival.res("treasure_friendly")));
 
-    public static final String EVIL_DRAGON_KEY_ID = "evil_dragon_key";
+    public static final String DARK_DRAGON_KEY_ID = "evil_dragon_key";
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Dark Vault in Nether. Drops if you kill a dragon hunter knight.")
-    public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(EVIL_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(DARK_DRAGON_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-            DragonSurvival.res("geo/" + EVIL_DRAGON_KEY_ID + ".geo.json"),
-            DragonSurvival.res("textures/item/" + EVIL_DRAGON_KEY_ID + ".png"),
+            DragonSurvival.res("geo/" + DARK_DRAGON_KEY_ID + ".geo.json"),
+            DragonSurvival.res("textures/item/" + DARK_DRAGON_KEY_ID + ".png"),
             DragonSurvival.res("treasure_angry")));
 
     public static final String HUNTER_KEY_ID = "hunter_key";

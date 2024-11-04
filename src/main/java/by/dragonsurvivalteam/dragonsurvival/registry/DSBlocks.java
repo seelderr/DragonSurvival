@@ -1,16 +1,15 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.*;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonPressurePlates.PressurePlateType;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.CompoundTagBuilder;
 import com.mojang.datafixers.util.Pair;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -161,14 +160,14 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Gothic Dragon Door")
-    public static final DeferredHolder<Block, DragonDoor> SLEEPER_DRAGON_DOOR = register(
-            "sleeper_dragon_door",
+    public static final DeferredHolder<Block, DragonDoor> GOTHIC_DRAGON_DOOR = register(
+            "gothic_dragon_door",
             () -> new DragonDoor(OAK_DRAGON_DOOR.get().properties(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Skyrim Dragon Door")
-    public static final DeferredHolder<Block, DragonDoor> MURDERER_DRAGON_DOOR = register(
-            "murderer_dragon_door",
+    public static final DeferredHolder<Block, DragonDoor> SKYRIM_DRAGON_DOOR = register(
+            "skyrim_dragon_door",
             () -> new DragonDoor(OAK_DRAGON_DOOR.get().properties(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
@@ -216,9 +215,9 @@ public class DSBlocks {
 
     // --- Small Dragon Doors --- //
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Oak Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> OAK_SMALL_DOOR = register(
-            "oak_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Oak Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_OAK_DRAGON_DOOR = register(
+            "small_oak_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.OAK_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -228,9 +227,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Spruce Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> SPRUCE_SMALL_DOOR = register(
-            "spruce_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Spruce Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_SPRUCE_DRAGON_DOOR = register(
+            "small_spruce_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.SPRUCE_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -240,9 +239,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Acacia Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> ACACIA_SMALL_DOOR = register(
-            "acacia_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Acacia Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_ACACIA_DRAGON_DOOR = register(
+            "small_acacia_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.ACACIA_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -252,9 +251,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Birch Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> BIRCH_SMALL_DOOR = register(
-            "birch_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Birch Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_BIRCH_DRAGON_DOOR = register(
+            "small_birch_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.BIRCH_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -264,9 +263,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Jungle Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> JUNGLE_SMALL_DOOR = register(
-            "jungle_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Jungle Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_JUNGLE_DRAGON_DOOR = register(
+            "small_jungle_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.JUNGLE_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -276,9 +275,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Dark Oak Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> DARK_OAK_SMALL_DOOR = register(
-            "dark_oak_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Dark Oak Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_DARK_OAK_DRAGON_DOOR = register(
+            "small_dark_oak_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.DARK_OAK_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -288,9 +287,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Crimson Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> CRIMSON_SMALL_DOOR = register(
-            "crimson_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Crimson Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_CRIMSON_DRAGON_DOOR = register(
+            "small_crimson_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -300,9 +299,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Warped Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> WARPED_SMALL_DOOR = register(
-            "warped_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Warped Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_WARPED_DRAGON_DOOR = register(
+            "small_warped_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of()
                     .mapColor(Blocks.WARPED_PLANKS.defaultMapColor())
                     .ignitedByLava()
@@ -312,9 +311,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Stone Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> STONE_SMALL_DOOR = register(
-            "stone_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Stone Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_STONE_DRAGON_DOOR = register(
+            "small_stone_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/)
                     .mapColor(Blocks.STONE.defaultMapColor())
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -323,9 +322,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Gothic Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> SLEEPER_SMALL_DOOR = register(
-            "sleeper_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Gothic Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_GOTHIC_DRAGON_DOOR = register(
+            "small_gothic_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/)
                     .mapColor(Blocks.CRIMSON_PLANKS.defaultMapColor())
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -334,9 +333,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.NONE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Cave Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> CAVE_SMALL_DOOR = register(
-            "cave_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Cave Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_CAVE_DRAGON_DOOR = register(
+            "small_cave_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.STONE*/)
                     .mapColor(Blocks.BLACKSTONE.defaultMapColor())
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -346,9 +345,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.CAVE)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Forest Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> FOREST_SMALL_DOOR = register(
-            "forest_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Forest Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_FOREST_DRAGON_DOOR = register(
+            "small_forest_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.WOOD*/)
                     .mapColor(Blocks.DARK_PRISMARINE.defaultMapColor())
                     .ignitedByLava()
@@ -358,9 +357,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.FOREST)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Sea Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> SEA_SMALL_DOOR = register(
-            "sea_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Sea Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_SEA_DRAGON_DOOR = register(
+            "small_sea_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.STONE*/)
                     .mapColor(MapColor.COLOR_BROWN)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -370,9 +369,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.SEA)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Iron Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> IRON_SMALL_DOOR = register(
-            "iron_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Iron Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_IRON_DRAGON_DOOR = register(
+            "small_iron_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.METAL*/)
                     .mapColor(MapColor.METAL)
                     .requiresCorrectToolForDrops()
@@ -381,9 +380,9 @@ public class DSBlocks {
                     .noOcclusion(), DragonDoor.DragonDoorOpenRequirement.POWER)
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Skyrim Small Dragon Door")
-    public static final DeferredHolder<Block, SmallDragonDoor> MURDERER_SMALL_DOOR = register(
-            "murderer_small_dragon_door",
+    @Translation(type = Translation.Type.BLOCK, comments = "Small Skyrim Dragon Door")
+    public static final DeferredHolder<Block, SmallDragonDoor> SMALL_SKYRIM_DRAGON_DOOR = register(
+            "small_skyrim_dragon_door",
             () -> new SmallDragonDoor(Block.Properties.of(/*Material.METAL*/)
                     .mapColor(MapColor.METAL)
                     .requiresCorrectToolForDrops()
@@ -429,8 +428,8 @@ public class DSBlocks {
     // --- Dragon Altars --- //
 
     @Translation(type = Translation.Type.BLOCK, comments = "Stone Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_STONE = register(
-            "dragon_altar_stone",
+    public static final DeferredHolder<Block, Block> STONE_DRAGON_ALTAR = register(
+            "stone_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -440,8 +439,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Sandstone Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_SANDSTONE = register(
-            "dragon_altar_sandstone",
+    public static final DeferredHolder<Block, Block> SANDSTONE_DRAGON_ALTAR = register(
+            "sandstone_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -451,8 +450,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Red Sandstone Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_RED_SANDSTONE = register(
-            "dragon_altar_red_sandstone",
+    public static final DeferredHolder<Block, Block> RED_SANDSTONE_DRAGON_ALTAR = register(
+            "red_sandstone_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -462,8 +461,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Purpur Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_PURPUR_BLOCK = register(
-            "dragon_altar_purpur_block",
+    public static final DeferredHolder<Block, Block> PURPUR_DRAGON_ALTAR = register(
+            "purpur_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -473,8 +472,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Oak Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_OAK_LOG = register(
-            "dragon_altar_oak_log",
+    public static final DeferredHolder<Block, Block> OAK_DRAGON_ALTAR = register(
+            "oak_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .ignitedByLava()
@@ -484,8 +483,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Birch Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_BIRCH_LOG = register(
-            "dragon_altar_birch_log",
+    public static final DeferredHolder<Block, Block> BIRCH_DRAGON_ALTAR = register(
+            "birch_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .ignitedByLava()
@@ -495,8 +494,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Nether Brick Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_NETHER_BRICKS = register(
-            "dragon_altar_nether_bricks",
+    public static final DeferredHolder<Block, Block> NETHER_BRICK_DRAGON_ALTAR = register(
+            "nether_brick_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -505,9 +504,9 @@ public class DSBlocks {
                     .requiresCorrectToolForDrops())
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Mossy Cobblestone Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_MOSSY_COBBLESTONE = register(
-            "dragon_altar_mossy_cobblestone",
+    @Translation(type = Translation.Type.BLOCK, comments = "Mossy Dragon Altar")
+    public static final DeferredHolder<Block, Block> MOSSY_DRAGON_ALTAR = register(
+            "mossy_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -517,8 +516,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Blackstone Dragon Altar")
-    public static final DeferredHolder<Block, Block> DRAGON_ALTAR_BLACKSTONE = register(
-            "dragon_altar_blackstone",
+    public static final DeferredHolder<Block, Block> BLACKSTONE_DRAGON_ALTAR = register(
+            "blackstone_dragon_altar",
             () -> new DragonAltarBlock(Block.Properties.of()
                     .mapColor(MapColor.STONE)
                     .instrument(NoteBlockInstrument.BASEDRUM)
@@ -551,23 +550,23 @@ public class DSBlocks {
                     .noCollission())
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Beacon")
-    public static final DeferredHolder<Block, DragonBeacon> PEACE_DRAGON_BEACON = register(
-            "dragon_beacon_peace",
+    @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Beacon")
+    public static final DeferredHolder<Block, DragonBeacon> FOREST_DRAGON_BEACON = register(
+            "forest_dragon_beacon",
             () -> new DragonBeacon(DRAGON_BEACON.get().properties()
                     .lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
     );
 
-    @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Beacon")
-    public static final DeferredHolder<Block, DragonBeacon> MAGIC_DRAGON_BEACON = register(
-            "dragon_beacon_magic",
+    @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Beacon")
+    public static final DeferredHolder<Block, DragonBeacon> SEA_DRAGON_BEACON = register(
+            "sea_dragon_beacon",
             () -> new DragonBeacon(DRAGON_BEACON.get().properties()
                     .lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Cave Dragon Beacon")
-    public static final DeferredHolder<Block, DragonBeacon> FIRE_DRAGON_BEACON = register(
-            "dragon_beacon_fire",
+    public static final DeferredHolder<Block, DragonBeacon> CAVE_DRAGON_BEACON = register(
+            "cave_dragon_beacon",
             () -> new DragonBeacon(DRAGON_BEACON.get().properties()
                     .lightLevel(value -> value.getValue(DragonBeacon.LIT) ? 15 : 0))
     );
@@ -575,8 +574,8 @@ public class DSBlocks {
     // --- Treasures --- //
 
     @Translation(type = Translation.Type.BLOCK, comments = "Debris Dragon Treasure")
-    public static final DeferredHolder<Block, TreasureBlock> TREASURE_DEBRIS = register(
-            "treasure_debris",
+    public static final DeferredHolder<Block, TreasureBlock> DEBRIS_DRAGON_TREASURE = register(
+            "debris_dragon_treasure",
             () -> new TreasureBlock(FastColor.ARGB32.color(255, 148, 120, 114),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_BROWN)
@@ -586,8 +585,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Diamond Dragon Treasure")
-    public static final DeferredHolder<Block, TreasureBlock> TREASURE_DIAMOND = register(
-            "treasure_diamond",
+    public static final DeferredHolder<Block, TreasureBlock> DIAMOND_DRAGON_TREASURE = register(
+            "diamond_dragon_treasure",
             () -> new TreasureBlock(FastColor.ARGB32.color(255, 212, 255, 255),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.DIAMOND)
@@ -597,8 +596,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Emerald Dragon Treasure")
-    public static final DeferredHolder<Block, TreasureBlock> TREASURE_EMERALD = register(
-            "treasure_emerald",
+    public static final DeferredHolder<Block, TreasureBlock> EMERALD_DRAGON_TREASURE = register(
+            "emerald_dragon_treasure",
             () -> new TreasureBlock(FastColor.ARGB32.color(255, 57, 240, 94),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_GREEN)
@@ -608,8 +607,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Copper Dragon Treasure")
-    public static final DeferredHolder<Block, TreasureBlock> TREASURE_COPPER = register(
-            "treasure_copper",
+    public static final DeferredHolder<Block, TreasureBlock> COPPER_DRAGON_TREASURE = register(
+            "copper_dragon_treasure",
             () -> new TreasureBlock(FastColor.ARGB32.color(255, 255, 255, 208),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_ORANGE)
@@ -620,8 +619,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Gold Dragon Treasure")
-    public static final DeferredHolder<Block, TreasureBlock> TREASURE_GOLD = register(
-            "treasure_gold",
+    public static final DeferredHolder<Block, TreasureBlock> GOLD_DRAGON_TREASURE = register(
+            "gold_dragon_treasure",
             () -> new TreasureBlock(FastColor.ARGB32.color(255, 255, 255, 243),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.GOLD)
@@ -631,8 +630,8 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Iron Dragon Treasure")
-    public static final DeferredHolder<Block, TreasureBlock> TREASURE_IRON = register(
-            "treasure_iron",
+    public static final DeferredHolder<Block, TreasureBlock> IRON_DRAGON_TREASURE = register(
+            "iron_dragon_treasure",
             () -> new TreasureBlock(FastColor.ARGB32.color(255, 211, 211, 211),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.METAL)
@@ -643,7 +642,8 @@ public class DSBlocks {
 
     // --- Dragon Treasure Plates --- //
 
-    public static final DeferredHolder<Block, DragonPressurePlates> DRAGON_PRESSURE_PLATE = DS_BLOCKS.register(
+    @Translation(type = Translation.Type.BLOCK, comments = "Dragon Pressure Plate")
+    public static final DeferredHolder<Block, DragonPressurePlates> DRAGON_PRESSURE_PLATE = register(
             "dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -653,12 +653,8 @@ public class DSBlocks {
                     .requiresCorrectToolForDrops(), PressurePlateType.DRAGON)
     );
 
-    public static final Holder<Item> DRAGON_PRESSURE_PLATE_ITEM = DS_ITEMS.register(
-            "dragon_pressure_plate",
-            () -> new BlockItem(DRAGON_PRESSURE_PLATE.get(), new Item.Properties())
-    );
-
-    public static final DeferredHolder<Block, DragonPressurePlates> HUMAN_PRESSURE_PLATE = DS_BLOCKS.register(
+    @Translation(type = Translation.Type.BLOCK, comments = "Human Pressure Plate")
+    public static final DeferredHolder<Block, DragonPressurePlates> HUMAN_PRESSURE_PLATE = register(
             "human_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -668,12 +664,8 @@ public class DSBlocks {
                     .requiresCorrectToolForDrops(), PressurePlateType.HUMAN)
     );
 
-    public static final Holder<Item> HUMAN_PRESSURE_PLATE_ITEM = DS_ITEMS.register(
-            "human_pressure_plate",
-            () -> new BlockItem(HUMAN_PRESSURE_PLATE.get(), new Item.Properties())
-    );
-
-    public static final DeferredHolder<Block, DragonPressurePlates> SEA_PRESSURE_PLATE = DS_BLOCKS.register(
+    @Translation(type = Translation.Type.BLOCK, comments = "Sea Dragon Pressure Plate")
+    public static final DeferredHolder<Block, DragonPressurePlates> SEA_PRESSURE_PLATE = register(
             "sea_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -683,12 +675,8 @@ public class DSBlocks {
                     .requiresCorrectToolForDrops(), PressurePlateType.SEA)
     );
 
-    public static final Holder<Item> SEA_PRESSURE_PLATE_ITEM = DS_ITEMS.register(
-            "sea_dragon_pressure_plate",
-            () -> new BlockItem(SEA_PRESSURE_PLATE.get(), new Item.Properties())
-    );
-
-    public static final DeferredHolder<Block, DragonPressurePlates> FOREST_PRESSURE_PLATE = DS_BLOCKS.register(
+    @Translation(type = Translation.Type.BLOCK, comments = "Forest Dragon Pressure Plate")
+    public static final DeferredHolder<Block, DragonPressurePlates> FOREST_PRESSURE_PLATE = register(
             "forest_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
@@ -699,12 +687,8 @@ public class DSBlocks {
                     .requiresCorrectToolForDrops(), PressurePlateType.FOREST)
     );
 
-    public static final Holder<Item> FOREST_PRESSURE_PLATE_ITEM = DS_ITEMS.register(
-            "forest_dragon_pressure_plate",
-            () -> new BlockItem(FOREST_PRESSURE_PLATE.get(), new Item.Properties())
-    );
-
-    public static final DeferredHolder<Block, DragonPressurePlates> CAVE_PRESSURE_PLATE = DS_BLOCKS.register(
+    @Translation(type = Translation.Type.BLOCK, comments = "Cave Dragon Pressure Plate")
+    public static final DeferredHolder<Block, DragonPressurePlates> CAVE_PRESSURE_PLATE = register(
             "cave_dragon_pressure_plate",
             () -> new DragonPressurePlates(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE)
@@ -714,29 +698,20 @@ public class DSBlocks {
                     .requiresCorrectToolForDrops(), PressurePlateType.CAVE)
     );
 
-    public static final Holder<Item> CAVE_PRESSURE_PLATE_ITEM = DS_ITEMS.register(
-            "cave_dragon_pressure_plate",
-            () -> new BlockItem(CAVE_PRESSURE_PLATE.get(), new Item.Properties())
-    );
+    // --- Helmets --- //
 
-    // TODO: (maybe we need to register items too? not sure)
-    // Helmet Blocks
-
-    public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_1 = DS_BLOCKS.register(
-            "broken_knight_helmet_1",
+    @Translation(type = Translation.Type.BLOCK, comments = "Gray Knight Helmet")
+    public static final DeferredHolder<Block, HelmetBlock> GRAY_KNIGHT_HELMET = register(
+            "gray_knight_helmet",
             () -> new HelmetBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(5.0F)
                     .sound(SoundType.METAL))
     );
 
-    public static final DeferredHolder<Item, BlockItem> HELMET_BLOCK_1_ITEM = DS_ITEMS.register(
-            "broken_knight_helmet_1",
-            () -> new BlockItem(HELMET_BLOCK_1.get(), new Item.Properties())
-    );
-
-    public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_2 = DS_BLOCKS.register(
-            "broken_knight_helmet_2",
+    @Translation(type = Translation.Type.BLOCK, comments = "Golden Knight Helmet")
+    public static final DeferredHolder<Block, HelmetBlock> GOLDEN_KNIGHT_HELMET = register(
+            "golden_knight_helmet",
             () -> new HelmetBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(5.0F)
@@ -744,13 +719,9 @@ public class DSBlocks {
                     .noOcclusion())
     );
 
-    public static final DeferredHolder<Item, BlockItem> HELMET_BLOCK_2_ITEM = DS_ITEMS.register(
-            "broken_knight_helmet_2",
-            () -> new BlockItem(HELMET_BLOCK_2.get(), new Item.Properties())
-    );
-
-    public static final DeferredHolder<Block, HelmetBlock> HELMET_BLOCK_3 = DS_BLOCKS.register(
-            "broken_knight_helmet_3",
+    @Translation(type = Translation.Type.BLOCK, comments = "Black Knight Helmet")
+    public static final DeferredHolder<Block, HelmetBlock> BLACK_KNIGHT_HELMET = register(
+            "black_knight_helmet",
             () -> new HelmetBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL)
                     .strength(5.0F)
@@ -758,38 +729,31 @@ public class DSBlocks {
                     .noOcclusion())
     );
 
-    public static final DeferredHolder<Item, BlockItem> HELMET_BLOCK_3_ITEM = DS_ITEMS.register(
-            "broken_knight_helmet_3",
-            () -> new BlockItem(HELMET_BLOCK_3.get(), new Item.Properties())
-    );
+    // --- Misc --- //
 
-    private static final CompoundTag GOOD_VAULT_TAG = CompoundTagBuilder.tag()
+    private static final CompoundTag LIGHT_VAULT_TAG = CompoundTagBuilder.tag()
             .putTag("config", CompoundTagBuilder.tag()
                     .putTag("key_item", CompoundTagBuilder.tag()
                             .putInt("count", 1)
-                            .putString("id", location(DSItems.GOOD_DRAGON_KEY_ID)).build()
-                    ).putString("loot_table", location("generic/dragon_vault_friendly")).build()
+                            .putString("id", DragonSurvival.res(DSItems.LIGHT_DRAGON_KEY_ID).toString()).build()
+                    ).putString("loot_table", DragonSurvival.res("generic/light_vault").toString()).build()
             ).build();
 
-    private static final CompoundTag EVIL_VAULT_TAG = CompoundTagBuilder.tag()
+    private static final CompoundTag DARK_VAULT_TAG = CompoundTagBuilder.tag()
             .putTag("config", CompoundTagBuilder.tag()
                     .putTag("key_item", CompoundTagBuilder.tag()
                             .putInt("count", 1)
-                            .putString("id", location(DSItems.EVIL_DRAGON_KEY_ID)).build()
-                    ).putString("loot_table", location("generic/dragon_vault_angry")).build()
+                            .putString("id", DragonSurvival.res(DSItems.DARK_DRAGON_KEY_ID).toString()).build()
+                    ).putString("loot_table", DragonSurvival.res("generic/dark_vault").toString()).build()
             ).build();
 
     private static final CompoundTag HUNTER_VAULT_TAG = CompoundTagBuilder.tag()
             .putTag("config", CompoundTagBuilder.tag()
                     .putTag("key_item", CompoundTagBuilder.tag()
                             .putInt("count", 1)
-                            .putString("id", location(DSItems.HUNTER_KEY_ID)).build()
-                    ).putString("loot_table", location("generic/dragon_vault_hunter")).build()
+                            .putString("id", DragonSurvival.res(DSItems.HUNTER_KEY_ID).toString()).build()
+                    ).putString("loot_table", DragonSurvival.res("generic/hunter_vault").toString()).build()
             ).build();
-
-    public static String location(final String path) {
-        return ResourceLocation.fromNamespaceAndPath(MODID, path).toString();
-    }
 
     // Copied from "vault" entry for Blocks.java
     private static final BlockBehaviour.Properties vaultBlockProperties = BlockBehaviour.Properties.of()
@@ -801,39 +765,43 @@ public class DSBlocks {
             .strength(50.0F)
             .isViewBlocking((a, b, c) -> false);
 
-    public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_FRIENDLY = DS_BLOCKS.register(
-            "dragon_vault_friendly",
+    @Translation(type = Translation.Type.BLOCK, comments = "Light Vault")
+    public static final DeferredHolder<Block, VaultBlock> LIGHT_VAULT = DS_BLOCKS.register(
+            "light_vault",
             () -> new VaultBlock(vaultBlockProperties)
     );
 
-    public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_FRIENDLY_ITEM = DS_ITEMS.register(
-            "dragon_vault_friendly",
-            () -> new BlockItem(DRAGON_VAULT_FRIENDLY.get(), new Item.Properties()
-                    .component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(GOOD_VAULT_TAG)))
+    public static final DeferredHolder<Item, BlockItem> LIGHT_VAULT_ITEM = DS_ITEMS.register(
+            "light_vault",
+            () -> new BlockItem(LIGHT_VAULT.get(), new Item.Properties()
+                    .component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(LIGHT_VAULT_TAG)))
     );
 
-    public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_ANGRY = DS_BLOCKS.register(
-            "dragon_vault_angry",
+    @Translation(type = Translation.Type.BLOCK, comments = "Dark Vault")
+    public static final DeferredHolder<Block, VaultBlock> DARK_VAULT = DS_BLOCKS.register(
+            "dark_vault",
             () -> new VaultBlock(vaultBlockProperties)
     );
 
-    public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_ANGRY_ITEM = DS_ITEMS.register(
-            "dragon_vault_angry",
-            () -> new BlockItem(DRAGON_VAULT_ANGRY.get(), new Item.Properties()
-                    .component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(EVIL_VAULT_TAG)))
+    public static final DeferredHolder<Item, BlockItem> DARK_VAULT_ITEM = DS_ITEMS.register(
+            "dark_vault",
+            () -> new BlockItem(DARK_VAULT.get(), new Item.Properties()
+                    .component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(DARK_VAULT_TAG)))
     );
 
-    public static final DeferredHolder<Block, VaultBlock> DRAGON_VAULT_HUNTER = DS_BLOCKS.register(
-            "dragon_vault_hunter",
+    @Translation(type = Translation.Type.BLOCK, comments = "Hunter's Vault")
+    public static final DeferredHolder<Block, VaultBlock> HUNTER_VAULT = DS_BLOCKS.register(
+            "hunter_vault",
             () -> new VaultBlock(vaultBlockProperties)
     );
 
-    public static final DeferredHolder<Item, BlockItem> DRAGON_VAULT_HUNTER_ITEM = DS_ITEMS.register(
-            "dragon_vault_hunter",
-            () -> new BlockItem(DRAGON_VAULT_HUNTER.get(), new Item.Properties()
+    public static final DeferredHolder<Item, BlockItem> HUNTER_VAULT_ITEM = DS_ITEMS.register(
+            "hunter_vault",
+            () -> new BlockItem(HUNTER_VAULT.get(), new Item.Properties()
                     .component(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(HUNTER_VAULT_TAG)))
     );
 
+    @Translation(type = Translation.Type.BLOCK, comments = "Dragon Rider Workbench")
     public static final DeferredHolder<Block, Block> DRAGON_RIDER_WORKBENCH = DS_BLOCKS.register(
             "dragon_rider_workbench",
             () -> new DragonRiderWorkbenchBlock(BlockBehaviour.Properties.of()

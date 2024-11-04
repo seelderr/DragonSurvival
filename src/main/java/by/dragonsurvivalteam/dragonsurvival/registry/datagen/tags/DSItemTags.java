@@ -88,7 +88,7 @@ public class DSItemTags extends ItemTagsProvider {
 
         copy(DSBlockTags.DRAGON_ALTARS, key("dragon_altars"));
         copy(DSBlockTags.DRAGON_TREASURES, key("dragon_treasures"));
-        copy(DSBlockTags.WOODEN_DRAGON_DOORS_SMALL, key("wooden_dragon_doors_small"));
+        copy(DSBlockTags.SMALL_WOODEN_DRAGON_DOORS, key("small_wooden_dragon_doors"));
         copy(DSBlockTags.WOODEN_DRAGON_DOORS, key("wooden_dragon_doors"));
     }
 
