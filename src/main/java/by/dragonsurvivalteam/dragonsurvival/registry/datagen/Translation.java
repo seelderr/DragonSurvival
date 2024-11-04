@@ -33,6 +33,7 @@ public @interface Translation {
         BLOCK("block." + DragonSurvival.MODID + ".", ""),
         ENTITY("entity." + DragonSurvival.MODID + ".", ""),
         EFFECT("effect." + DragonSurvival.MODID + ".", ""),
+        EFFECT_DESCRIPTION("effect." + DragonSurvival.MODID + ".", ".desc"),
         ENCHANTMENT("enchantment." + DragonSurvival.MODID + ".", ""),
         ENCHANTMENT_DESCRIPTION("enchantment." + DragonSurvival.MODID + ".", ".desc"),
         DESCRIPTION(DragonSurvival.MODID + ".description.", ""),

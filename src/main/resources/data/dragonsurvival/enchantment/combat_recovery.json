@@ -36,7 +36,7 @@
             },
             {
               "type": "minecraft:apply_mob_effect",
-              "to_apply": "dragonsurvival:regen_delay",
+              "to_apply": "dragonsurvival:regeneration_delay",
               "min_duration": 40,
               "max_duration": 40,
               "min_amplifier": 0,
@@ -52,7 +52,7 @@
               "entity": "this",
               "predicate": {
                 "effects": {
-                  "dragonsurvival:regen_delay": {
+                  "dragonsurvival:regeneration_delay": {
                     "amplifier": {
                       "min": 0,
                       "max": 0

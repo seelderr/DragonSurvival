@@ -186,7 +186,7 @@ public class MagicHandler {
             amplifier = Mth.clamp(amplifier, 0, 255);
 
             if (amplifier != instance.getAmplifier()) {
-                MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier);
+                MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier, instance.isAmbient(), instance.isVisible(), instance.showIcon());
 
                 if (affected.hasEffect(instance.getEffect())) {
                     affected.removeEffect(instance.getEffect());

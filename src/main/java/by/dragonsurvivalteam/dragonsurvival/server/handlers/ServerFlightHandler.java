@@ -187,32 +187,32 @@ public class ServerFlightHandler {
                 if (player.tickCount % 10 == 0) {
                     if (handler.isWingsSpread()) {
                         if (DragonUtils.isDragonType(player, DragonTypes.SEA)) {
-                            player.addEffect(new MobEffectInstance(DSEffects.sea_wings, 500, 0, true, false, true));
+                            player.addEffect(new MobEffectInstance(DSEffects.SEA_DRAGON_WINGS, 500, 0, true, false, true));
 
                         }
                         if (DragonUtils.isDragonType(player, DragonTypes.CAVE)) {
-                            player.addEffect(new MobEffectInstance(DSEffects.cave_wings, 500, 0, true, false, true));
+                            player.addEffect(new MobEffectInstance(DSEffects.CAVE_DRAGON_WINGS, 500, 0, true, false, true));
 
                         }
                         if (DragonUtils.isDragonType(player, DragonTypes.FOREST)) {
-                            player.addEffect(new MobEffectInstance(DSEffects.forest_wings, 500, 0, true, false, true));
+                            player.addEffect(new MobEffectInstance(DSEffects.FOREST_DRAGON_WINGS, 500, 0, true, false, true));
                         }
                     }
                 }
             }
 
             if (!handler.isDragon() || !handler.isWingsSpread()) {
-                if (player.hasEffect(DSEffects.sea_wings)) {
+                if (player.hasEffect(DSEffects.SEA_DRAGON_WINGS)) {
                     player.resetFallDistance();
-                    player.removeEffect(DSEffects.sea_wings);
+                    player.removeEffect(DSEffects.SEA_DRAGON_WINGS);
                 }
-                if (player.hasEffect(DSEffects.cave_wings)) {
+                if (player.hasEffect(DSEffects.CAVE_DRAGON_WINGS)) {
                     player.resetFallDistance();
-                    player.removeEffect(DSEffects.cave_wings);
+                    player.removeEffect(DSEffects.CAVE_DRAGON_WINGS);
                 }
-                if (player.hasEffect(DSEffects.forest_wings)) {
+                if (player.hasEffect(DSEffects.FOREST_DRAGON_WINGS)) {
                     player.resetFallDistance();
-                    player.removeEffect(DSEffects.forest_wings);
+                    player.removeEffect(DSEffects.FOREST_DRAGON_WINGS);
                 }
             }
         });

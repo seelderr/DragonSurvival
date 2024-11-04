@@ -114,7 +114,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @Override
     public MobEffectInstance getEffect() {
-        return new MobEffectInstance(DSEffects.STRONG_LEATHER, Functions.secondsToTicks(toughSkinDuration), getLevel() - 1);
+        return new MobEffectInstance(DSEffects.STRONG_LEATHER, Functions.secondsToTicks(toughSkinDuration), getLevel() - 1, false, false);
     }
 
     @Override

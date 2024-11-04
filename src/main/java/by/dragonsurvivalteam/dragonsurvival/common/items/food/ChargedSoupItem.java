@@ -18,10 +18,10 @@ public class ChargedSoupItem extends Item {
     public ChargedSoupItem(Properties properties) {
         super(properties.food(new FoodProperties.Builder()
                 .nutrition(1)
-                .saturationModifier(0.4F)
+                .saturationModifier(0.4f)
                 .alwaysEdible()
-                .effect(() -> new MobEffectInstance(MobEffects.POISON, 20 * 15, 0), 1.0F) // TODO :: dont add effect if its 0
-                .effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(DragonFoodHandler.chargedSoupBuffDuration), 0), 1.0F)
+                .effect(() -> new MobEffectInstance(MobEffects.POISON, Functions.secondsToTicks(15), 0), 1)
+                .effect(() -> new MobEffectInstance(DSEffects.FIRE, Functions.secondsToTicks(DragonFoodHandler.chargedSoupBuffDuration), 0), 1)
                 .build())
         );
     }
@@ -29,6 +29,6 @@ public class ChargedSoupItem extends Item {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
         super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-        pTooltipComponents.add(Component.translatable("ds.description.chargedSoup"));
+        pTooltipComponents.add(Component.translatable("ds.description.chargedSoup")); // TODO
     }
 }

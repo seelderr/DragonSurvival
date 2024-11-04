@@ -105,7 +105,7 @@ public class InspirationAbility extends AoeBuffAbility {
 
     @Override
     public MobEffectInstance getEffect() {
-        return new MobEffectInstance(MobEffects.DIG_SPEED, Functions.secondsToTicks(inspirationDuration), 2);
+        return new MobEffectInstance(MobEffects.DIG_SPEED, Functions.secondsToTicks(inspirationDuration), 2, false, false);
     }
 
     @Override
