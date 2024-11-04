@@ -17,6 +17,7 @@ import java.lang.annotation.ElementType;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 public class DSLanguageProvider extends LanguageProvider {
@@ -64,19 +65,15 @@ public class DSLanguageProvider extends LanguageProvider {
                     if (key == null) {
                         if (Holder.class.isAssignableFrom(field.getType())) {
                             Holder<?> holder = (Holder<?>) field.get(null);
-
                             //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
-                            key = type.wrap(holder.getKey().location().getPath());
-                            add(key, format(comments));
+                            add(type.wrap(holder.getKey().location().getPath()), format(comments));
 
                             continue;
                         }
 
                         if (ResourceKey.class.isAssignableFrom(field.getType())) {
                             ResourceKey<?> resourceKey = (ResourceKey<?>) field.get(null);
-
-                            key = type.wrap(resourceKey.location().getPath());
-                            add(key, format(comments));
+                            add(type.wrap(resourceKey.location().getPath()), format(comments));
 
                             continue;
                         }
@@ -87,6 +84,13 @@ public class DSLanguageProvider extends LanguageProvider {
 
                             continue;
                         }
+
+                        if (field.getType().isEnum()) {
+                            Enum<?> value = (Enum<?>) field.get(null);
+                            add(type.wrap(value.toString().toLowerCase(Locale.ENGLISH)), format(comments));
+
+                            continue;
+                        }
                     }
                 } catch (ReflectiveOperationException exception) {
                     throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
@@ -94,7 +98,7 @@ public class DSLanguageProvider extends LanguageProvider {
             }
 
             if (key == null || key.isEmpty()) {
-                throw new IllegalStateException("Key should not be empty if annotated on a non-holder field - annotation data: [" + annotationData + "]");
+                throw new IllegalStateException("Empty keys are not supported on that field type - annotation data: [" + annotationData + "]");
             }
 
             try {

@@ -22,7 +22,7 @@ public class KeyHandler {
             return;
         }
 
-        if (Minecraft.getInstance().screen != null || event.getAction() != Keybind.KEY_PRESSED || !Keybind.DISABLE_DESTRUCTION.isKey(event.getKey())) {
+        if (Minecraft.getInstance().screen != null || event.getAction() != Keybind.KEY_PRESSED || !Keybind.TOGGLE_DESTRUCTION.isKey(event.getKey())) {
             return;
         }
 
@@ -38,7 +38,7 @@ public class KeyHandler {
             return;
         }
 
-        Keybind.DISABLE_DESTRUCTION.consumeClick();
+        Keybind.TOGGLE_DESTRUCTION.consumeClick();
         data.setDestructionEnabled(!data.getDestructionEnabled());
         PacketDistributor.sendToServer(new SyncDestructionEnabled.Data(player.getId(), data.getDestructionEnabled()));
         player.displayClientMessage(Component.translatable(data.getDestructionEnabled() ? "ds.destruction.toggled_on" : "ds.destruction.toggled_off"), true);

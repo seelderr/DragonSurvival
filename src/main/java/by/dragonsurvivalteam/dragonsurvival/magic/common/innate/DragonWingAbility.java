@@ -10,10 +10,10 @@ import java.util.Locale;
 public abstract class DragonWingAbility extends InnateDragonAbility {
     @Override
     public Component getDescription() {
-        String key = Keybind.TOGGLE_WINGS.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
+        String key = Keybind.TOGGLE_FLIGHT.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
         if (key.isEmpty())
-            key = Keybind.TOGGLE_WINGS.getKey().getDisplayName().getString();
+            key = Keybind.TOGGLE_FLIGHT.getKey().getDisplayName().getString();
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
         return Component.translatable("ds.skill.description." + getName(), key).append("\n").append(Component.translatable("ds.skill.description." + getName() + (handler.getMovementData().spinLearned ? ".has_spin" : ".no_spin")));

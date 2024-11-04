@@ -67,7 +67,7 @@ public class ClientCastingHandler {
         if (Keybind.NEXT_ABILITY.consumeClick()) {
             selectedSlot = (selectedSlot + 1) % slotKeybinds.length;
         }
-        if (Keybind.PREV_ABILITY.consumeClick()) {
+        if (Keybind.PREVIOUS_ABILITY.consumeClick()) {
             // Add length because % can return a negative remainder
             selectedSlot = (selectedSlot - 1 + slotKeybinds.length) % slotKeybinds.length;
         }

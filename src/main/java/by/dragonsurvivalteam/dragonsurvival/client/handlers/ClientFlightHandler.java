@@ -487,7 +487,7 @@ public class ClientFlightHandler {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         if (!handler.isDragon()) return; // handler should never be null
 
-        while (Keybind.TOGGLE_WINGS.consumeClick()) {
+        while (Keybind.TOGGLE_FLIGHT.consumeClick()) {
             toggleWingsManual(player, handler);
         }
 
