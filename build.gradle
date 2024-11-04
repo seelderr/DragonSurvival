@@ -80,8 +80,8 @@ dependencies {
 
 	// Test
 //	implementation "curse.maven:jade-324717:5846105" // 15.8.2
-//	implementation "maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge"
-//	implementation "curse.maven:irisshaders-455508:5765375" // 1.8 Beta 5
+	implementation "maven.modrinth:sodium:mc1.21-0.6.0-beta.2-neoforge"
+	implementation "curse.maven:irisshaders-455508:5765375" // 1.8 Beta 5
 
 	testImplementation 'org.junit.jupiter:junit-jupiter:5.7.1'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

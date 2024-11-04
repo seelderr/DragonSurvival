@@ -34,6 +34,7 @@ public @interface Translation {
         ENTITY("entity." + DragonSurvival.MODID + ".", ""),
         EFFECT("effect." + DragonSurvival.MODID + ".", ""),
         ENCHANTMENT("enchantment." + DragonSurvival.MODID + ".", ""),
+        ENCHANTMENT_DESCRIPTION("enchantment." + DragonSurvival.MODID + ".", ".desc"),
         DESCRIPTION(DragonSurvival.MODID + ".description.", ""),
         DESCRIPTION_ADDITION(DragonSurvival.MODID + ".description.addition.", ""),
         CONFIGURATION(DragonSurvival.MODID + ".configuration.", ".tooltip"),

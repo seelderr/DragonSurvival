@@ -211,6 +211,10 @@ public class ConfigHandler {
             builder.comment(translation.comments());
             builder.translation(translation.type().prefix + translation.key());
 
+            if (configOption.requiresRestart()) {
+                builder.gameRestart();
+            }
+
             try {
                 ConfigRange range = field.isAnnotationPresent(ConfigRange.class) ? field.getAnnotation(ConfigRange.class) : null;
                 boolean hasRange = range != null;

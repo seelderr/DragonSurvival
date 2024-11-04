@@ -64,7 +64,7 @@ public class HunterAbility extends ChargeCastAbility {
     public static Boolean translucentItemsFirstPerson = true;
 
     @Translation(key = "hunter_fix_translucency", type = Translation.Type.CONFIGURATION, comments = "This enables the shader features of fabulous mode which are needed for translucency to work correctly")
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_fix_translucency")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"forest_dragon", "magic", "abilities", "active", "hunter"}, key = "hunter_fix_translucency", /* Otherwise might crash */ requiresRestart = true)
     public static Boolean fixTranslucency = true;
 
     private static final Integer[] REQUIRED_LEVELS = new Integer[]{0, 25, 35, 55};

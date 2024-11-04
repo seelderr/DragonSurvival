@@ -28,6 +28,10 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     }
 
     public void initDefaults(AbstractDragonType type) {
+        if (type == null) {
+            return;
+        }
+
         for (DragonLevel level : DragonLevel.values()) {
             skinAges.put(level, Lazy.of(() -> new SkinAgeGroup(level, type)));
         }
