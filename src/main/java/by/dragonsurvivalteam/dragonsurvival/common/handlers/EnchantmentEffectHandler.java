@@ -30,18 +30,22 @@ import java.util.List;
 public class EnchantmentEffectHandler {
     @SubscribeEvent
     public static void fireCrossbow(ArrowLooseEvent event) {
-        Holder<Enchantment> bolas = EnchantmentUtils.getHolder(DSEnchantments.BOLAS);
-        if (bolas != null && !event.isCanceled() && event.getBow().getEnchantmentLevel(bolas) > 0) {
-            if (event.getBow().getItem() instanceof CrossbowItem) {
-                ChargedProjectiles p = event.getBow().get(DataComponents.CHARGED_PROJECTILES);
-                if (p != null) {
-                    List<ItemStack> ammo = p.getItems();
-                    List<ItemStack> projectiles = new ArrayList<>(List.of());
-                    for (ItemStack itemStack : ammo) {
-                        projectiles.add(itemStack.getItem() instanceof ArrowItem ? new ItemStack(DSItems.BOLAS.value()) : itemStack);
-                    }
-                    event.getBow().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
+        if (!(event.getBow().getItem() instanceof CrossbowItem)) {
+            return;
+        }
+
+        if (EnchantmentUtils.getLevel(event.getLevel(), DSEnchantments.BOLAS, event.getBow()) > 0) {
+            ChargedProjectiles charged = event.getBow().get(DataComponents.CHARGED_PROJECTILES);
+
+            if (charged != null) {
+                List<ItemStack> ammo = charged.getItems();
+                List<ItemStack> projectiles = new ArrayList<>();
+
+                for (ItemStack itemStack : ammo) {
+                    projectiles.add(itemStack.getItem() instanceof ArrowItem ? new ItemStack(DSItems.BOLAS.value()) : itemStack);
                 }
+
+                event.getBow().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
             }
         }
     }

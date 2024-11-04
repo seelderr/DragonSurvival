@@ -46,6 +46,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class ToolTipHandler {
     private static final ResourceLocation TOOLTIP_BLINKING = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
     private static final ResourceLocation TOOLTIP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
+    private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
 
     @Translation(key = "tooltip_changes", type = Translation.Type.CONFIGURATION, comments = "If enabled certain modifications to some tooltips will be made (e.g. dragon food items)")
     @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltip_changes")
@@ -59,7 +60,9 @@ public class ToolTipHandler {
     @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragon_food_tooltips")
     public static Boolean dragonFoodTooltips = true;
 
-    private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
+    @Translation(key = "enchantment_descriptions", type = Translation.Type.CONFIGURATION, comments = "Adds enchantment descriptions to enchanted books which contain 1 enchantment (and said enchantment is from this mod)")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "enchantment_descriptions")
+    public static Boolean enchantmentDescriptions = true;
 
     @SubscribeEvent
     public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent) {
@@ -113,14 +116,14 @@ public class ToolTipHandler {
             ResourceLocation location = event.getItemStack().getItemHolder().getKey().location();
             String languageKey = "";
 
-            if (event.getItemStack().getItem() instanceof EnchantedBookItem) {
+            if (enchantmentDescriptions && event.getItemStack().getItem() instanceof EnchantedBookItem) {
                 ItemEnchantments enchantments = event.getItemStack().get(DataComponents.STORED_ENCHANTMENTS);
 
                 // Only add it to single-entry enchanted books since the text is longer than usual enchantment descriptions
                 if (enchantments != null && enchantments.size() == 1) {
                     Holder<Enchantment> holder = enchantments.entrySet().iterator().next().getKey();
                     //noinspection DataFlowIssue -> would only be null for 'Holder$Direct' which shouldn't be used here
-                    languageKey = Translation.Type.DESCRIPTION_ADDITION.wrap(holder.getKey().location().getPath());
+                    languageKey = Translation.Type.ENCHANTMENT_DESCRIPTION.wrap(holder.getKey().location().getPath());
                 }
             } else if (location.getNamespace().equals(MODID)) {
                 /* TODO

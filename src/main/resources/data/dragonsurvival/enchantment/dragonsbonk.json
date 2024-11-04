@@ -51,7 +51,6 @@
       }
     ]
   },
-
   "exclusive_set": "#dragonsurvival:exclusive_set/anti_dragon",
   "max_cost": {
     "base": 21,

@@ -4,7 +4,7 @@
     "translate": "enchantment.dragonsurvival.sacred_scales"
   },
   "effects": {
-    "minecraft:damage_protection" : [
+    "minecraft:damage_protection": [
       {
         "effect": {
           "type": "minecraft:add",
@@ -38,7 +38,6 @@
       }
     ]
   },
-
   "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
   "max_cost": {
     "base": 21,

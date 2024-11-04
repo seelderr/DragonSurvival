@@ -32,6 +32,8 @@ public class Bolas extends AbstractArrow {
     ) {
         super(DSEntities.BOLAS_ENTITY.value(), pX, pY, pZ, pLevel, pPickupItemStack, pFiredFromWeapon);
     }
+
+    // FIXME :: why is this commented out?
     //@Override
     //protected Item getDefaultItem(){
     //	return DSItems.HUNTING_NET.value();
@@ -57,6 +59,6 @@ public class Bolas extends AbstractArrow {
 
     @Override
     protected @NotNull ItemStack getDefaultPickupItem() {
-        return new ItemStack(Items.ARROW);
+        return new ItemStack(Items.ARROW); // FIXME :: why not implement bolas as proper item and return them here?
     }
 }
