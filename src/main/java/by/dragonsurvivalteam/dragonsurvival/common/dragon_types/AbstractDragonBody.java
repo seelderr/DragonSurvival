@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Locale;
@@ -112,4 +113,8 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
     public String getBodyNameLowerCase() {
         return getBodyName().toLowerCase(Locale.ENGLISH);
     }
+
+    public abstract Component translatableName();
+
+    public abstract Component translatableInfo();
 }

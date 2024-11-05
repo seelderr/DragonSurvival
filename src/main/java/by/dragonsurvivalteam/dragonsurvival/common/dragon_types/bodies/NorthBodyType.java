@@ -6,8 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 public class NorthBodyType extends AbstractDragonBody {
+    @Translation(type = Translation.Type.MISC, comments = "North")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("body.north");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§6■ Northern Type§r",
+            "■ Perfect travelers, conquering water, lava and air. They are slower on the ground and weaker physically, but are magically adept and excel at swimming. Their flat bodies allow them to go places other dragons cannot.",
+            "§7■ You may change your body type at any time, but you will lose your growth progress. Each type has their own strengths and weaknesses, but the change is mostly cosmetic."
+    })
+    private static final String INFO = Translation.Type.DESCRIPTION.wrap("body.north_info");
+
     @ConfigRange(min = -1.0, max = 100)
     @Translation(key = "north_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_jump_bonus")
@@ -97,14 +108,27 @@ public class NorthBodyType extends AbstractDragonBody {
         return "north";
     }
 
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
+    }
+
+    @Override
+    public Component translatableInfo() {
+        return Component.translatable(INFO);
+    }
+
+    @Override
     public Double getHeightMult() {
         return 0.55;
     }
 
+    @Override
     public Double getEyeHeightMult() {
         return 0.55;
     }
 
+    @Override
     public Boolean isSquish() {
         return AbstractDragonBody.bodyAffectsHitbox;
     }
@@ -117,62 +141,77 @@ public class NorthBodyType extends AbstractDragonBody {
     public void onPlayerDeath() {
     }
 
+    @Override
     public Double getJumpBonus() {
         return northJumpBonus;
     }
 
+    @Override
     public Double getStepBonus() {
         return northStepBonus;
     }
 
+    @Override
     public Double getDamageBonus() {
         return northDamageBonus;
     }
 
+    @Override
     public Double getArmorBonus() {
         return northArmorBonus;
     }
 
+    @Override
     public Double getManaBonus() {
         return northManaBonus;
     }
 
+    @Override
     public Double getSwimSpeedBonus() {
         return northSwimSpeedBonus;
     }
 
+    @Override
     public Double getHealthBonus() {
         return northHealthBonus;
     }
 
+    @Override
     public Double getKnockbackBonus() {
         return northKnockbackBonus;
     }
 
+    @Override
     public Double getRunMult() {
         return northRunMult;
     }
 
+    @Override
     public Double getDamageMult() {
         return northDamageMult;
     }
 
+    @Override
     public Double getExpMult() {
         return northExpMult;
     }
 
+    @Override
     public Double getFlightMult() {
         return northFlightMult;
     }
 
+    @Override
     public Double getFlightStaminaMult() {
         return northFlightStaminaMult;
     }
 
+    @Override
     public Double getHealthMult() {
         return northHealthMult;
     }
 
+    @Override
     public Double getGravityMult() {
         return northGravityMult;
     }

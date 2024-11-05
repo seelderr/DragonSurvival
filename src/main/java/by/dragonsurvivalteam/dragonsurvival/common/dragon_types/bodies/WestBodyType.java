@@ -6,8 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 public class WestBodyType extends AbstractDragonBody {
+    @Translation(type = Translation.Type.MISC, comments = "West")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("body.west");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§6■ Western Type§r",
+            "■ Conquerors of mountain and sky, they are unrivalled in their element, but are rather clumsy on the ground.",
+            "§7■ You may change your body type at any time, but you will lose your growth progress."
+    })
+    private static final String INFO = Translation.Type.DESCRIPTION.wrap("body.west_info");
+
     @ConfigRange(min = -1.0, max = 100)
     @Translation(key = "west_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_jump_bonus")
@@ -97,6 +108,17 @@ public class WestBodyType extends AbstractDragonBody {
         return "west";
     }
 
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
+    }
+
+    @Override
+    public Component translatableInfo() {
+        return Component.translatable(INFO);
+    }
+
+    @Override
     public Boolean canHideWings() {
         return false;
     }
@@ -109,62 +131,77 @@ public class WestBodyType extends AbstractDragonBody {
     public void onPlayerDeath() {
     }
 
+    @Override
     public Double getJumpBonus() {
         return westJumpBonus;
     }
 
+    @Override
     public Double getStepBonus() {
         return westStepBonus;
     }
 
+    @Override
     public Double getDamageBonus() {
         return westDamageBonus;
     }
 
+    @Override
     public Double getArmorBonus() {
         return westArmorBonus;
     }
 
+    @Override
     public Double getManaBonus() {
         return westManaBonus;
     }
 
+    @Override
     public Double getSwimSpeedBonus() {
         return westSwimSpeedBonus;
     }
 
+    @Override
     public Double getHealthBonus() {
         return westHealthBonus;
     }
 
+    @Override
     public Double getKnockbackBonus() {
         return westKnockbackBonus;
     }
 
+    @Override
     public Double getRunMult() {
         return westRunMult;
     }
 
+    @Override
     public Double getDamageMult() {
         return westDamageMult;
     }
 
+    @Override
     public Double getExpMult() {
         return westExpMult;
     }
 
+    @Override
     public Double getFlightMult() {
         return westFlightMult;
     }
 
+    @Override
     public Double getFlightStaminaMult() {
         return westFlightStaminaMult;
     }
 
+    @Override
     public Double getHealthMult() {
         return westHealthMult;
     }
 
+    @Override
     public Double getGravityMult() {
         return westGravityMult;
     }

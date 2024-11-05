@@ -70,5 +70,10 @@ public @interface Translation {
         public String wrap(final String key) {
             return prefix + key + suffix;
         }
+
+        /** Expects the key in the format of {@link Translation.Type#wrap(String)} */
+        public String unwrap(final String key) {
+            return key.substring(prefix.length(), key.length() - suffix.length());
+        }
     }
 }

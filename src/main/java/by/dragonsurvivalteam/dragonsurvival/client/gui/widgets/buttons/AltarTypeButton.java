@@ -42,29 +42,29 @@ public class AltarTypeButton extends Button {
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_altar_icons.png");
 
     @Translation(type = Translation.Type.MISC, comments = "You have awakened from your sleep, and become a human.")
-    private static final String CHOICE_HUMAN = Translation.Type.GUI.wrap("choice.human");
+    private static final String CHOICE_HUMAN = Translation.Type.GUI.wrap("altar.choice.human");
 
     @Translation(type = Translation.Type.MISC, comments = "■ §nHuman.§r\n■ Homo sapiens.§r\nTravelers, builders, and creators.")
-    private static final String HUMAN = Translation.Type.GUI.wrap("info.human");
+    private static final String HUMAN = Translation.Type.GUI.wrap("altar.info.human");
 
     @Translation(type = Translation.Type.MISC, comments = "§c■ Cave dragon.§r\n§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on stone and magma blocks.\n§4■ Weakness:§r water.\n§6■ Diet:§r")
-    private static final String CAVE_DRAGON = Translation.Type.GUI.wrap("info.cave");
+    private static final String CAVE_DRAGON = Translation.Type.GUI.wrap("altar.info.cave");
 
     @Translation(type = Translation.Type.MISC, comments = "§3■ Sea dragon.§r\n§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on ice and beach blocks.\n§4■ Weakness:§r dehydration.\n§6■ Diet:§r")
-    private static final String SEA_DRAGON = Translation.Type.GUI.wrap("info.sea");
+    private static final String SEA_DRAGON = Translation.Type.GUI.wrap("altar.info.sea");
 
     @Translation(type = Translation.Type.MISC, comments = "§a■ Forest dragon.§r\n§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on wooden and grass blocks.\n§4■ Weakness:§r dark caves.\n§6■ Diet:§r")
-    private static final String FOREST_DRAGON = Translation.Type.GUI.wrap("info.forest");
+    private static final String FOREST_DRAGON = Translation.Type.GUI.wrap("altar.info.forest");
 
+    public AbstractDragonType type;
+
+    private final DragonAltarScreen parent;
     private int scroll;
     private boolean resetScroll;
 
-    public AbstractDragonType type;
-    private final DragonAltarScreen gui;
-
-    public AltarTypeButton(DragonAltarScreen gui, AbstractDragonType type, int x, int y) {
+    public AltarTypeButton(DragonAltarScreen parent, AbstractDragonType type, int x, int y) {
         super(x, y, 49, 147, Component.empty(), Button::onPress, DEFAULT_NARRATION);
-        this.gui = gui;
+        this.parent = parent;
         this.type = type;
 
         scroll = 0;
@@ -114,6 +114,7 @@ public class AltarTypeButton extends Button {
                     default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
                 };
 
+                // TODO : could append a scroll-icon here?
                 // Using the color codes in the translation doesn't seem to apply the color to the entire text - therefor we create the [shown / max_items] tooltip part here
                 MutableComponent shownFoods = Component.literal(" [" + (scroll + maxItems) + " / " + (foods.size() - 1) + "]").withStyle(ChatFormatting.DARK_GRAY);
                 components.addFirst(Either.left(Component.translatable(translationKey).append(shownFoods)));
@@ -165,7 +166,8 @@ public class AltarTypeButton extends Button {
                 PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
             });
             player.closeContainer();
-        } else
-            Minecraft.getInstance().setScreen(new DragonEditorScreen(gui, type));
+        } else {
+            Minecraft.getInstance().setScreen(new DragonEditorScreen(parent, type));
+        }
     }
 }

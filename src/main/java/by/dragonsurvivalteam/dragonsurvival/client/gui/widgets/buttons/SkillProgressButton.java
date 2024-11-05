@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -24,6 +25,8 @@ public class SkillProgressButton extends Button {
     @Translation(type = Translation.Type.MISC, comments = "§6■ Requires level:§r %s")
     private static final String REQUIRED_LEVEL = Translation.Type.GUI.wrap("required_level");
 
+    private static final ResourceLocation BLANK_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/blank.png");
+
     private final int slot;
     private final AbilityScreen screen;
     private ActiveDragonAbility buttonAbility;
@@ -36,7 +39,7 @@ public class SkillProgressButton extends Button {
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        ResourceLocation texture = buttonAbility != null ? buttonAbility.getIcon() : AbilityButton.BLANK_TEXTURE;
+        ResourceLocation texture = buttonAbility != null ? buttonAbility.getIcon() : BLANK_TEXTURE;
 
         if (screen.unlockableAbilities.size() > slot) {
             ActiveDragonAbility ability1 = screen.unlockableAbilities.get(slot);
@@ -46,10 +49,10 @@ public class SkillProgressButton extends Button {
                 buttonAbility = ability1;
             }
         } else {
-            texture = AbilityButton.BLANK_TEXTURE;
+            texture = BLANK_TEXTURE;
         }
 
-        if (texture == AbilityButton.BLANK_TEXTURE) {
+        if (texture == BLANK_TEXTURE) {
             buttonAbility = null;
         }
 

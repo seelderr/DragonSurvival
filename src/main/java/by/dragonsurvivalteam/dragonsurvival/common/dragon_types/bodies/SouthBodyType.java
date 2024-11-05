@@ -6,8 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 public class SouthBodyType extends AbstractDragonBody {
+    @Translation(type = Translation.Type.MISC, comments = "South")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("body.south");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§6■ Southern Type§r",
+            "■ They are adapted to life on the plains, capable of running swiftly, and leaping high into the air. The special structure of their paws gives them many advantages on the ground, and they are physically strong, but they will struggle at flight and swimming.",
+            "§7■ You may change your body type at any time, but you will lose your growth progress. Each type has their own strengths and weaknesses, but the change is mostly cosmetic."
+    })
+    private static final String INFO = Translation.Type.DESCRIPTION.wrap("body.south_info");
+
     @ConfigRange(min = -1.0, max = 100)
     @Translation(key = "south_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_jump_bonus")
@@ -98,6 +109,16 @@ public class SouthBodyType extends AbstractDragonBody {
     }
 
     @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
+    }
+
+    @Override
+    public Component translatableInfo() {
+        return Component.translatable(INFO);
+    }
+
+    @Override
     public void onPlayerUpdate() {
     }
 
@@ -105,62 +126,77 @@ public class SouthBodyType extends AbstractDragonBody {
     public void onPlayerDeath() {
     }
 
+    @Override
     public Double getJumpBonus() {
         return southJumpBonus;
     }
 
+    @Override
     public Double getStepBonus() {
         return southStepBonus;
     }
 
+    @Override
     public Double getDamageBonus() {
         return southDamageBonus;
     }
 
+    @Override
     public Double getArmorBonus() {
         return southArmorBonus;
     }
 
+    @Override
     public Double getManaBonus() {
         return southManaBonus;
     }
 
+    @Override
     public Double getSwimSpeedBonus() {
         return southSwimSpeedBonus;
     }
 
+    @Override
     public Double getHealthBonus() {
         return southHealthBonus;
     }
 
+    @Override
     public Double getKnockbackBonus() {
         return southKnockbackBonus;
     }
 
+    @Override
     public Double getRunMult() {
         return southRunMult;
     }
 
+    @Override
     public Double getDamageMult() {
         return southDamageMult;
     }
 
+    @Override
     public Double getExpMult() {
         return southExpMult;
     }
 
+    @Override
     public Double getFlightMult() {
         return southFlightMult;
     }
 
+    @Override
     public Double getFlightStaminaMult() {
         return southFlightStaminaMult;
     }
 
+    @Override
     public Double getHealthMult() {
         return southHealthMult;
     }
 
+    @Override
     public Double getGravityMult() {
         return southGravityMult;
     }

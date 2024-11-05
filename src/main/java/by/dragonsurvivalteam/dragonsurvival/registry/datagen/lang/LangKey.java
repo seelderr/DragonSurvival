@@ -16,4 +16,7 @@ public class LangKey {
 
     @Translation(type = Translation.Type.MISC, comments = "Glowing")
     public static final String GUI_GLOWING = Translation.Type.GUI.wrap("glowing");
+
+    @Translation(type = Translation.Type.MISC, comments = "DRAGON EDITOR")
+    public static final String GUI_DRAGON_EDITOR = Translation.Type.GUI.wrap("dragon_editor");
 }

@@ -70,12 +70,12 @@ public class AbilityScreen extends Screen {
             float progress1 = Math.min(1F, Math.min(0.5F, progress) * 2F);
             float progress2 = Math.min(1F, Math.min(0.5F, progress - 0.5F) * 2F);
 
-            guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress1), 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress1), 3, 128, 128);
 
             if (progress > 0.5) {
-                guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress2), 3, 128, 128);
+                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress2), 3, 128, 128);
             }
 
             int expChange = -1;
@@ -96,10 +96,10 @@ public class AbilityScreen extends Screen {
                 float Changeprogress1 = Math.min(1F, Math.min(0.5F, Changeprogress) * 2F);
                 float Changeprogress2 = Math.min(1F, Math.min(0.5F, Changeprogress - 0.5F) * 2F);
 
-                guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress1), 3, 128, 128);
+                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress1), 3, 128, 128);
 
                 if (Changeprogress2 > 0.5) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress2), 3, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress2), 3, 128, 128);
                 }
             }
 

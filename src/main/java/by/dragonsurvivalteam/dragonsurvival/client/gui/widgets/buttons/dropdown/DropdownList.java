@@ -13,14 +13,14 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DropdownList extends AbstractSelectionList<DropdownEntry> {
     public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
+
     private static final ResourceLocation SCROLLER_SPRITE = ResourceLocation.withDefaultNamespace("widget/scroller");
     private static final ResourceLocation SCROLLER_BACKGROUND_SPRITE = ResourceLocation.withDefaultNamespace("widget/scroller_background");
-    public int listWidth;
+
     public boolean visible;
 
     public DropdownList(int x, int y, int xSize, int ySize, int itemHeight) {
         super(Minecraft.getInstance(), 0, 0, 0, itemHeight);
-        listWidth = xSize;
         reposition(x, y, xSize, ySize);
     }
 
@@ -113,16 +113,7 @@ public class DropdownList extends AbstractSelectionList<DropdownEntry> {
         }
 
         renderDecorations(guiGraphics, mouseX, mouseY);
-//		guiGraphics.fill(getX(), getY(), getRight(), getBottom(), 0xFFA5A5A5);
         RenderSystem.disableBlend();
         guiGraphics.pose().popPose();
     }
-
-//	@Override
-//	public boolean isMouseOver(double pMouseX, double pMouseY) {
-//		return pMouseY >= (double)this.getY()
-//				&& pMouseY <= (double)this.getBottom()
-//				&& pMouseX >= (double)this.getX()
-//				&& pMouseX <= (double) this.getX();
-//	}
 }

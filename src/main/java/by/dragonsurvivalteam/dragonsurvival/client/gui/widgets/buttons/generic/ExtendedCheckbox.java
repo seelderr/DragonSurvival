@@ -21,17 +21,18 @@ public class ExtendedCheckbox extends AbstractButton {
         void onValueChange(ExtendedCheckbox pCheckbox, boolean pValue);
     }
 
-    public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
-    final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/checkbox.png");
-    private final int renderWidth;
-    public Consumer<ExtendedCheckbox> pressable;
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/checkbox.png");
+
     public boolean selected;
+
+    private final int renderWidth;
+    private final Consumer<ExtendedCheckbox> pressable;
     private final ExtendedCheckbox.OnValueChange onValueChange;
 
     public ExtendedCheckbox(int pX, int pY, int pWidth, int renderWidth, int pHeight, Component pMessage, boolean pSelected, Consumer<ExtendedCheckbox> pressable) {
         super(pX, pY, pWidth, pHeight, pMessage);
-        this.onValueChange = (pCheckbox, selected) -> {
-        };
+        this.onValueChange = (checkbox, selected) -> { /* Nothing to do */ };
         this.selected = pSelected;
         this.pressable = pressable;
         this.renderWidth = renderWidth;

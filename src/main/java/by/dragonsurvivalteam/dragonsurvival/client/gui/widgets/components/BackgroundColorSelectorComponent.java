@@ -29,12 +29,11 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
         this.xSize = xSize;
         this.ySize = ySize;
 
-        Color defaultC = new Color(screen.backgroundColor);
+        Color defaultColor = new Color(screen.backgroundColor);
+        float alpha = (float) (screen.backgroundColor >> 24 & 255) / 255.0F;
 
-        float f3 = (float) (screen.backgroundColor >> 24 & 255) / 255.0F;
-
-        colorPicker = new ColorPickerButton(x + 3, y, xSize - 5, ySize, defaultC, c -> {
-            Color c1 = new Color(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, f3);
+        colorPicker = new ColorPickerButton(x + 3, y, xSize - 5, ySize, defaultColor, color -> {
+            Color c1 = new Color(color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, alpha);
             screen.backgroundColor = c1.getRGB();
         });
     }

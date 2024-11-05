@@ -6,8 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 public class EastBodyType extends AbstractDragonBody {
+    @Translation(type = Translation.Type.MISC, comments = "East")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("body.east");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§6■ Eastern Type§r",
+            "■ Adapted to life in caves, they lack large wings, reducing the effectiveness of their levitation magic, but they are still excellent swimmers. They have a larger supply of mana, and natural armor.",
+            "§7■ You may change your body type at any time, but you will lose your growth progress."
+    })
+    private static final String INFO = Translation.Type.DESCRIPTION.wrap("body.east_info");
+
     @ConfigRange(min = -1.0, max = 100)
     @Translation(key = "east_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_jump_bonus")
@@ -98,6 +109,16 @@ public class EastBodyType extends AbstractDragonBody {
     }
 
     @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
+    }
+
+    @Override
+    public Component translatableInfo() {
+        return Component.translatable(INFO);
+    }
+
+    @Override
     public void onPlayerUpdate() {
     }
 
@@ -105,62 +126,77 @@ public class EastBodyType extends AbstractDragonBody {
     public void onPlayerDeath() {
     }
 
+    @Override
     public Double getJumpBonus() {
         return eastJumpBonus;
     }
 
+    @Override
     public Double getFlightMult() {
         return eastFlightMult;
     }
 
+    @Override
     public Double getStepBonus() {
         return eastStepBonus;
     }
 
+    @Override
     public Double getDamageBonus() {
         return eastDamageBonus;
     }
 
+    @Override
     public Double getArmorBonus() {
         return eastArmorBonus;
     }
 
+    @Override
     public Double getManaBonus() {
         return eastManaBonus;
     }
 
+    @Override
     public Double getSwimSpeedBonus() {
         return eastSwimSpeedBonus;
     }
 
+    @Override
     public Double getHealthBonus() {
         return eastHealthBonus;
     }
 
+    @Override
     public Double getKnockbackBonus() {
         return eastKnockbackBonus;
     }
 
+    @Override
     public Double getRunMult() {
         return eastRunMult;
     }
 
+    @Override
     public Double getDamageMult() {
         return eastDamageMult;
     }
 
+    @Override
     public Double getExpMult() {
         return eastExpMult;
     }
 
+    @Override
     public Double getFlightStaminaMult() {
         return eastFlightStaminaMult;
     }
 
+    @Override
     public Double getHealthMult() {
         return eastHealthMult;
     }
 
+    @Override
     public Double getGravityMult() {
         return eastGravityMult;
     }

@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownEntry;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownValueEntry;
@@ -43,8 +42,9 @@ public class DropDownButton extends ExtendedButton {
     }
 
     public void updateMessage() {
-        if (current != null)
-            message = Component.translatable(DragonEditorScreen.partToTranslation(current));
+        if (current != null) {
+            message = Component.translatable(current);
+        }
     }
 
     @Override
@@ -111,7 +111,7 @@ public class DropDownButton extends ExtendedButton {
 
             for (int i = 0; i < values.length; i++) {
                 String val = values[i];
-                DropdownEntry ent = createEntry(i, val);
+                DropdownEntry ent = createEntry(val);
                 list.addEntry(ent);
 
                 if (Objects.equals(val, current))
@@ -169,8 +169,8 @@ public class DropDownButton extends ExtendedButton {
         updateMessage();
     }
 
-    public DropdownEntry createEntry(int pos, String val) {
-        return new DropdownValueEntry(this, pos, val, setter);
+    public DropdownEntry createEntry(String translationKEy) {
+        return new DropdownValueEntry(this, translationKEy, setter);
     }
 
     @Override

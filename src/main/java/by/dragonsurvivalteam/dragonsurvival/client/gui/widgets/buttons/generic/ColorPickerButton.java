@@ -24,7 +24,6 @@ public class ColorPickerButton extends ExtendedButton {
 
         float[] hsb = Color.RGBtoHSB(defaultColor.getRed(), defaultColor.getGreen(), defaultColor.getBlue(), null);
         selectorX = (hsb[0] * width);
-
         selectorY = (hsb[2] < 1.0f ? hsb[2] * (height / 2f) : height / 2f + (1 - hsb[1]) * (height / 2f));
     }
 
@@ -63,8 +62,6 @@ public class ColorPickerButton extends ExtendedButton {
         return super.mouseDragged(pMouseX, pMouseY, pButton, pDragX, pDragY);
     }
 
-    //Removes button sound
     @Override
-    public void playDownSound(SoundManager pHandler) {
-    }
+    public void playDownSound(@NotNull SoundManager handler) { /* Remove button sound */ }
 }

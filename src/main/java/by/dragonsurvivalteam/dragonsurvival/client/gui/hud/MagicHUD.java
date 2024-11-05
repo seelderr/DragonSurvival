@@ -31,9 +31,10 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class MagicHUD {
     // 1.20.6 moved a whole bunch of widgets around, so to keep compatibiltiy with older versions, we need to use the old widgets texture
-    public static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
-    public static final ResourceLocation widgetTextures = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
-    public static final ResourceLocation castBars = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cast_bars.png");
+    public static final ResourceLocation WIDGET_TEXTURES = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
+
+    private static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
+    private static final ResourceLocation CAST_BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cast_bars.png");
 
     public static final Color COLOR = new Color(243, 48, 59);
 
@@ -97,10 +98,10 @@ public class MagicHUD {
 
             int experienceProgress = (int) (localPlayer.experienceProgress * 183.0F);
             int height = guiScaledHeight - 32 + 3;
-            guiGraphics.blit(widgetTextures, width, height, 0, 0, 164, 182, 5, 256, 256);
+            guiGraphics.blit(WIDGET_TEXTURES, width, height, 0, 0, 164, 182, 5, 256, 256);
 
             if (experienceProgress > 0) {
-                guiGraphics.blit(widgetTextures, width, height, 0, 0, 169, experienceProgress, 5, 256, 256);
+                guiGraphics.blit(WIDGET_TEXTURES, width, height, 0, 0, 169, experienceProgress, 5, 256, 256);
             }
         }
 
@@ -232,8 +233,8 @@ public class MagicHUD {
 
                 guiGraphics.pose().translate(startX, startY, 0);
 
-                guiGraphics.blit(castBars, startX, startY, 0, yPos1, 196, 47, 256, 256);
-                guiGraphics.blit(castBars, startX + 2, startY + 41, 0, yPos2, (int) (191 * perc), 4, 256, 256);
+                guiGraphics.blit(CAST_BARS, startX, startY, 0, yPos1, 196, 47, 256, 256);
+                guiGraphics.blit(CAST_BARS, startX + 2, startY + 41, 0, yPos2, (int) (191 * perc), 4, 256, 256);
 
                 guiGraphics.blit(ability.getIcon(), startX + 78, startY + 3, 0, 0, 36, 36, 36, 36);
 

@@ -34,6 +34,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -49,7 +51,6 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -78,48 +79,43 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class DragonEditorScreen extends Screen {
-    private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
-    private static final ResourceLocation SAVE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
-    private static final ResourceLocation RANDOM = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/random_icon.png");
-    private static final ResourceLocation RESET = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_button.png");
-    private final Screen source;
-    private final String[] animations = {"sit_dentist",
-            "sit_head_locked",
-            "idle_head_locked",
-            "fly_head_locked",
-            "swim_fast_head_locked",
-            "run_head_locked",
-            "spinning_on_back"};
-    public int guiLeft;
-    public int guiTop;
-    public boolean confirmation = false;
-    public boolean showUi = true;
-
-    public DragonUIRenderComponent dragonRender;
-
     public static final DragonStateHandler HANDLER = new DragonStateHandler();
+
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
+    private static final ResourceLocation SAVE_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
+    private static final ResourceLocation RANDOM_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/random_icon.png");
+    private static final ResourceLocation RESET_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_button.png");
+
+    public int guiTop;
+    public boolean confirmation;
+    public boolean showUi = true;
 
     public DragonLevel level;
     public AbstractDragonType dragonType;
     public AbstractDragonBody dragonBody;
     public SkinPreset preset;
     public int currentSelected;
-    private final HashMap<DragonLevel, Integer> presetSelections = new HashMap<>();
-
-    private final List<ColorSelectorButton> colorButtons = new ArrayList<>();
-    public ExtendedCheckbox defaultSkinCheckbox;
-    private ExtendedCheckbox showUiCheckbox;
 
     public int backgroundColor = -804253680;
-    float tick;
+
+    private final Screen source;
+    private int guiLeft;
+
+    private final String[] animations = {"sit_dentist", "sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "spinning_on_back"};
+    private final HashMap<DragonLevel, Integer> presetSelections = new HashMap<>();
+    private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
+    private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
+    private DragonUIRenderComponent dragonRender;
+    private ExtendedCheckbox defaultSkinCheckbox;
+    private ExtendedCheckbox showUiCheckbox;
+    private DragonEditorConfirmComponent confirmComponent;
+    private ExtendedCheckbox wingsCheckbox;
+
+    private float tick;
     private int curAnimation;
     private int lastSelected;
     private boolean hasInit;
-    private DragonEditorConfirmComponent conf;
     private boolean isEditor;
-    private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
-    private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
-    private ExtendedCheckbox wingsCheckbox;
 
     public DragonEditorScreen(Screen source) {
         this(source, null);
@@ -127,24 +123,24 @@ public class DragonEditorScreen extends Screen {
     }
 
     public DragonEditorScreen(Screen source, AbstractDragonType dragonType) {
-        super(Component.translatable("ds.gui.dragon_editor"));
+        super(Component.translatable(LangKey.GUI_DRAGON_EDITOR));
         this.source = source;
         this.dragonType = dragonType;
     }
 
     public record EditorAction<T>(Function<T, T> action, T value) {
-
         public T run() {
             return action.apply(value);
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof EditorAction<?> action) {
-                if (action.action != null && action.value != null) {
-                    return action.action.equals(this.action) && action.value.equals(this.value);
+        public boolean equals(Object object) {
+            if (object instanceof EditorAction<?> editorAction) {
+                if (editorAction.action != null && editorAction.value != null) {
+                    return editorAction.action.equals(action) && editorAction.value.equals(this.value);
                 }
             }
+
             return false;
         }
     }
@@ -167,7 +163,6 @@ public class DragonEditorScreen extends Screen {
     };
 
     // setHueAction, setSaturationAction, setBrightnessAction in HueSelectorComponent.Java
-
     // setDragonSlotAction in DragonEditorSlotButton.Java
 
     public final Function<CompoundTag, CompoundTag> setSkinPresetAction = (tag) -> {
@@ -304,12 +299,9 @@ public class DragonEditorScreen extends Screen {
         }
 
         FakeClientPlayerUtils.getFakePlayer(0, HANDLER).animationSupplier = () -> animations[curAnimation];
-
         renderBackground(guiGraphics, pMouseX, pMouseY, pPartialTicks);
         children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent) s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
-
-        DragonAltarScreen.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
-
+        DragonAltarScreen.renderBorders(guiGraphics, BACKGROUND_TEXTURE, 0, width, 32, height - 32, width, height);
         TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
         if (showUi) {
@@ -455,7 +447,7 @@ public class DragonEditorScreen extends Screen {
         guiLeft = (width - 256) / 2;
         guiTop = (height - 120) / 2;
 
-        conf = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
+        confirmComponent = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
         initDragonRender();
 
         Minecraft minecraft = getMinecraft();
@@ -557,9 +549,9 @@ public class DragonEditorScreen extends Screen {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
                 if (isHoveredOrFocused()) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 } else {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 }
             }
         });
@@ -573,12 +565,12 @@ public class DragonEditorScreen extends Screen {
         }, Supplier::get) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-                RenderSystem.setShaderTexture(0, MagicHUD.widgetTextures);
+                RenderSystem.setShaderTexture(0, MagicHUD.WIDGET_TEXTURES);
 
                 if (isHoveredOrFocused()) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 } else {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
                 }
             }
         });
@@ -608,7 +600,7 @@ public class DragonEditorScreen extends Screen {
                 if (toggled && (!visible || !confirmation)) {
                     toggled = false;
                     Screen screen = Minecraft.getInstance().screen;
-                    screen.children().removeIf(s -> s == conf);
+                    screen.children().removeIf(s -> s == confirmComponent);
                     screen.renderables.removeIf(s -> s == renderButton);
                 }
             }
@@ -622,7 +614,7 @@ public class DragonEditorScreen extends Screen {
                 if (handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved) {
                     confirmation = true;
                     showUi = false;
-                    conf.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
+                    confirmComponent.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
                 } else {
                     confirm();
                 }
@@ -633,19 +625,19 @@ public class DragonEditorScreen extends Screen {
                         }) {
                             @Override
                             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                                if (conf != null && confirmation) {
-                                    conf.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+                                if (confirmComponent != null && confirmation) {
+                                    confirmComponent.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
                                 }
 
                                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
                             }
                         };
-                        ((ScreenAccessor) DragonEditorScreen.this).dragonSurvival$children().add(conf);
+                        ((ScreenAccessor) DragonEditorScreen.this).dragonSurvival$children().add(confirmComponent);
                         renderables.add(renderButton);
                     }
                     toggled = !toggled;
                 } else {
-                    children().removeIf(s -> s == conf);
+                    children().removeIf(s -> s == confirmComponent);
                     renderables.removeIf(s -> s == renderButton);
                 }
             }
@@ -667,7 +659,7 @@ public class DragonEditorScreen extends Screen {
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                guiGraphics.blit(RESET, getX(), getY(), 0, 0, width, height, width, height);
+                guiGraphics.blit(RESET_ICON, getX(), getY(), 0, 0, width, height, width, height);
             }
         };
         resetButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.reset")));
@@ -732,7 +724,7 @@ public class DragonEditorScreen extends Screen {
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                guiGraphics.blit(RANDOM, getX(), getY(), 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(RANDOM_ICON, getX(), getY(), 0, 0, 16, 16, 16, 16);
             }
         };
         randomButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.random")));
@@ -749,7 +741,7 @@ public class DragonEditorScreen extends Screen {
         ExtendedButton saveSlotButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(SAVE_ICON, getX(), getY(), 0, 0, 16, 16, 16, 16);
             }
         };
         saveSlotButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.save_slot")));
@@ -862,17 +854,11 @@ public class DragonEditorScreen extends Screen {
     }
 
     public static String partToTranslation(final String part) {
-        String text = "ds.skin_part." + DragonEditorScreen.HANDLER.getTypeNameLowerCase() + "." + part.toLowerCase(Locale.ENGLISH);
-
-        if (I18n.exists(text)) {
-            return text;
-        }
-
-        return part;
+        return Translation.Type.SKIN_PART.wrap(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + "." + part.toLowerCase(Locale.ENGLISH));
     }
 
-    public static String partToTechnical(final String part) {
-        return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + ".", "");
+    public static String partToTechnical(final String key) {
+        return Translation.Type.SKIN_PART.unwrap(key).replace(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + ".", "");
     }
 
     @SubscribeEvent

@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class SleepOnTreasureTrigger extends SimpleCriterionTrigger<SleepOnTreasu
     }
 
     @Override
-    public Codec<SleepOnTreasureInstance> codec() {
+    public @NotNull Codec<SleepOnTreasureInstance> codec() {
         return SleepOnTreasureInstance.CODEC;
     }
 

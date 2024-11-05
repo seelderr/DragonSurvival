@@ -100,17 +100,17 @@ public class TabButton extends Button {
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_) {
         if (isCurrent()) {
-            guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), type == Type.INVENTORY_TAB ? 0 : 28, 0, 28, 32);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), type == Type.INVENTORY_TAB ? 0 : 28, 0, 28, 32);
         } else if (isHovered()) {
-            guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 84, 0, 28, 32);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 84, 0, 28, 32);
         } else {
-            guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 56, 0, 28, 32);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 56, 0, 28, 32);
         }
 
         if (isHovered() || isCurrent()) {
-            guiGraphics.blit(MagicHUD.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), type.ordinal() * 24, 67, 24, 24);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), type.ordinal() * 24, 67, 24, 24);
         } else {
-            guiGraphics.blit(MagicHUD.widgetTextures, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), type.ordinal() * 24, 41, 24, 24);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX() + 2, getY() + 2 + (isCurrent() ? 2 : 0), type.ordinal() * 24, 41, 24, 24);
         }
     }
 }

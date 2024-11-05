@@ -37,12 +37,13 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
     private final AbstractWidget confirmButton;
     private final AbstractWidget cancelButton;
 
+    public boolean visible;
+    public boolean isBodyTypeChange;
+
     private final int x;
     private final int y;
     private final int xSize;
     private final int ySize;
-    public boolean visible;
-    public boolean isBodyTypeChange;
 
     public DragonEditorConfirmComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize) {
         this.x = x;
@@ -51,7 +52,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
         this.ySize = ySize;
         this.isBodyTypeChange = false;
 
-        confirmButton = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, actio -> { /* Nothing to do */ }) {
+        confirmButton = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, action -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getFGColor());

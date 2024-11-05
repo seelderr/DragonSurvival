@@ -27,7 +27,7 @@ import java.util.Optional;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonPenaltyHUD {
-    public static final ResourceLocation DRAGON_HUD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
+    private static final ResourceLocation DRAGON_HUD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
 
     public static void renderDragonPenaltyHUD(final DragonStateHandler handler, final Gui gui, final GuiGraphics guiGraphics) {
         LocalPlayer localPlayer = Minecraft.getInstance().player;

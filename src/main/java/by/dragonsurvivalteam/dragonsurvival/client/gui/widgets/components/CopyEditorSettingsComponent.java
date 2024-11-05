@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
-import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.CopySettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
@@ -17,15 +16,21 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.AbstractContainerEventHandler;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+
 public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Renderable {
     @Translation(type = Translation.Type.MISC, comments = "Copy to...")
     private static final String COPY_TO = Translation.Type.GUI.wrap("copy_to");
+
+    private static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");
+    private static final ResourceLocation CANCEL_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cancel_button.png");
 
     public boolean visible;
 
@@ -50,7 +55,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-                guiGraphics.blit(DragonAltarScreen.CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
+                guiGraphics.blit(CONFIRM_BUTTON, getX() + 1, getY(), 0, 0, 15, 15, 15, 15);
             }
 
             @Override
@@ -95,7 +100,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 setMessage(Component.empty());
                 super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-                guiGraphics.blit(DragonAltarScreen.CANCEL_BUTTON, getX(), getY(), 0, 0, 15, 15, 15, 15);
+                guiGraphics.blit(CANCEL_BUTTON, getX(), getY(), 0, 0, 15, 15, 15, 15);
             }
 
             @Override

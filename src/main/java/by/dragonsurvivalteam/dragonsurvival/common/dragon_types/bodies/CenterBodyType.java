@@ -6,8 +6,19 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 
 public class CenterBodyType extends AbstractDragonBody {
+    @Translation(type = Translation.Type.MISC, comments = "Center")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("body.center");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§6■ Central Type§r",
+            "■ Inhabitants of all biomes, and the most common type of dragon. They are the most balanced type of dragon, having no particular strengths or weaknesses.",
+            "§7■ You may change your body type at any time, but you will lose your growth progress."
+    })
+    private static final String INFO = Translation.Type.DESCRIPTION.wrap("body.center_info");
+
     @ConfigRange(min = -1.0, max = 100)
     @Translation(key = "center_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "center"}, key = "center_jump_bonus")
@@ -97,6 +108,16 @@ public class CenterBodyType extends AbstractDragonBody {
         return "center";
     }
 
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
+    }
+
+    @Override
+    public Component translatableInfo() {
+        return Component.translatable(INFO);
+    }
+
     public Boolean canHideWings() {
         return false;
     }
@@ -109,62 +130,77 @@ public class CenterBodyType extends AbstractDragonBody {
     public void onPlayerDeath() {
     }
 
+    @Override
     public Double getJumpBonus() {
         return centerJumpBonus;
     }
 
+    @Override
     public Double getStepBonus() {
         return centerStepBonus;
     }
 
+    @Override
     public Double getDamageBonus() {
         return centerDamageBonus;
     }
 
+    @Override
     public Double getArmorBonus() {
         return centerArmorBonus;
     }
 
+    @Override
     public Double getManaBonus() {
         return centerManaBonus;
     }
 
+    @Override
     public Double getSwimSpeedBonus() {
         return centerSwimSpeedBonus;
     }
 
+    @Override
     public Double getHealthBonus() {
         return centerHealthBonus;
     }
 
+    @Override
     public Double getKnockbackBonus() {
         return centerKnockbackBonus;
     }
 
+    @Override
     public Double getRunMult() {
         return centerRunMult;
     }
 
+    @Override
     public Double getDamageMult() {
         return centerDamageMult;
     }
 
+    @Override
     public Double getExpMult() {
         return centerExpMult;
     }
 
+    @Override
     public Double getFlightMult() {
         return centerFlightMult;
     }
 
+    @Override
     public Double getFlightStaminaMult() {
         return centerFlightStaminaMult;
     }
 
+    @Override
     public Double getHealthMult() {
         return centerHealthMult;
     }
 
+    @Override
     public Double getGravityMult() {
         return centerGravityMult;
     }
