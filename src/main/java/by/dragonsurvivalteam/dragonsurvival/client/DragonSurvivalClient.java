@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.extensions.ShakeWhenUsedExtension;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ClientDietComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.DietComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBoots;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
@@ -35,6 +37,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -53,6 +56,7 @@ public class DragonSurvivalClient {
 
         bus.addListener(this::setup);
         bus.addListener(this::registerItemExtensions);
+        bus.addListener(this::registerTooltips);
     }
 
     private void setup(final FMLClientSetupEvent event) {
@@ -77,6 +81,10 @@ public class DragonSurvivalClient {
             EntityRenderers.register(DSEntities.HUNTER_GRIFFIN.get(), manager -> new GriffinRenderer(manager, new GriffinModel()));
             EntityRenderers.register(DSEntities.HUNTER_LEADER.get(), manager -> new LeaderRenderer(manager, new LeaderModel()));
         });
+    }
+
+    private void registerTooltips(final RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(DietComponent.class, ClientDietComponent::new);
     }
 
     private void registerItemExtensions(RegisterClientExtensionsEvent event) {

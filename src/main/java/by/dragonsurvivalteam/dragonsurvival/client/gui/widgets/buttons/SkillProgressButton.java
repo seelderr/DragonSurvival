@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -20,6 +21,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class SkillProgressButton extends Button {
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Requires level:§r %s")
+    private static final String REQUIRED_LEVEL = Translation.Type.GUI.wrap("required_level");
+
     private final int slot;
     private final AbilityScreen screen;
     private ActiveDragonAbility buttonAbility;
@@ -75,7 +79,7 @@ public class SkillProgressButton extends Button {
                     int requiredLevel = buttonAbility.getCurrentRequiredLevel();
 
                     if (requiredLevel != -1) {
-                        description.add(Component.translatable("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
+                        description.add(Component.translatable(REQUIRED_LEVEL, requiredLevel).withStyle(ChatFormatting.WHITE));
                     }
 
                     guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, mouseX, mouseY);

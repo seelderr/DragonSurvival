@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.Dra
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -33,8 +34,9 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/dragon_altar_warning.png");
 
-    private final AbstractWidget btn1;
-    private final AbstractWidget btn2;
+    private final AbstractWidget confirmButton;
+    private final AbstractWidget cancelButton;
+
     private final int x;
     private final int y;
     private final int xSize;
@@ -49,14 +51,13 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
         this.ySize = ySize;
         this.isBodyTypeChange = false;
 
-        btn1 = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, pButton -> {
-        }) {
+        confirmButton = new ExtendedButton(x + 19, y + 133, 41, 21, CommonComponents.GUI_YES, actio -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getFGColor());
 
                 if (isHovered()) {
-                    guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.done"), mouseX, mouseY);
+                    guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable(LangKey.GUI_CONFIRM), mouseX, mouseY);
                 }
             }
 
@@ -66,14 +67,13 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
             }
         };
 
-        btn2 = new ExtendedButton(x + 66, y + 133, 41, 21, CommonComponents.GUI_NO, pButton -> {
-        }) {
+        cancelButton = new ExtendedButton(x + 66, y + 133, 41, 21, CommonComponents.GUI_NO, action -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 guiGraphics.drawCenteredString(Minecraft.getInstance().font, getMessage(), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, getFGColor());
 
                 if (isHovered) {
-                    guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.gui.dragon_editor.tooltip.cancel"), mouseX, mouseY);
+                    guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable(LangKey.GUI_CANCEL), mouseX, mouseY);
                 }
             }
 
@@ -87,7 +87,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
 
     @Override
     public @NotNull List<? extends GuiEventListener> children() {
-        return ImmutableList.of(btn1, btn2);
+        return ImmutableList.of(confirmButton, cancelButton);
     }
 
     @Override
@@ -113,7 +113,7 @@ public class DragonEditorConfirmComponent extends AbstractContainerEventHandler 
         guiGraphics.blit(BACKGROUND_TEXTURE, x, y, 0, 0, xSize, ySize);
         TextRenderUtil.drawCenteredScaledTextSplit(guiGraphics, x + xSize / 2, y + 42, 1f, text, DyeColor.WHITE.getTextColor(), xSize - 10, 150);
 
-        btn1.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-        btn2.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+        confirmButton.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+        cancelButton.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
     }
 }

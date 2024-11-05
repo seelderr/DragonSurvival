@@ -135,10 +135,10 @@ public class AbilityScreen extends Screen {
         int startY = guiTop;
 
         //Inventory
-        addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, TabButton.TabType.INVENTORY, this));
-        addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, TabButton.TabType.ABILITY, this));
-        addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.TabType.GITHUB_REMINDER, this));
-        addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.TabType.SKINS, this));
+        addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, TabButton.Type.INVENTORY_TAB, this));
+        addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, TabButton.Type.ABILITY_TAB, this));
+        addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.Type.GITHUB_REMINDER_TAB, this));
+        addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.Type.SKINS_TAB, this));
 
         addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F), startY + 8 - 30, 4, this));
 

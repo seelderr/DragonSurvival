@@ -57,40 +57,40 @@ public class DSLanguageProvider extends LanguageProvider {
             //noinspection unchecked -> type is correct
             List<String> comments = (List<String>) annotationData.annotationData().get("comments");
 
-            if (annotationData.targetType() == ElementType.FIELD) {
+            if (key == null && annotationData.targetType() == ElementType.FIELD) {
                 try {
+                    // Only static fields are supported - non-static types will throw an NullPointerException when retrieving the field value
+                    // Currently that is intended since annotating a non-static field with a translation would be a user error
                     Field field = Class.forName(annotationData.clazz().getClassName()).getDeclaredField(annotationData.memberName());
                     field.setAccessible(true);
 
-                    if (key == null) {
-                        if (Holder.class.isAssignableFrom(field.getType())) {
-                            Holder<?> holder = (Holder<?>) field.get(null);
-                            //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
-                            add(type.wrap(holder.getKey().location().getPath()), format(comments));
+                    if (Holder.class.isAssignableFrom(field.getType())) {
+                        Holder<?> holder = (Holder<?>) field.get(null);
+                        //noinspection DataFlowIssue -> only a problem if we work with Holder$Direct which should not be the case here
+                        add(type.wrap(holder.getKey().location().getPath()), format(comments));
 
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (ResourceKey.class.isAssignableFrom(field.getType())) {
-                            ResourceKey<?> resourceKey = (ResourceKey<?>) field.get(null);
-                            add(type.wrap(resourceKey.location().getPath()), format(comments));
+                    if (ResourceKey.class.isAssignableFrom(field.getType())) {
+                        ResourceKey<?> resourceKey = (ResourceKey<?>) field.get(null);
+                        add(type.wrap(resourceKey.location().getPath()), format(comments));
 
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (type == Translation.Type.MISC && String.class.isAssignableFrom(field.getType())) {
-                            String translationKey = (String) field.get(null);
-                            add(translationKey, format(comments));
+                    if (type == Translation.Type.MISC && String.class.isAssignableFrom(field.getType())) {
+                        String translationKey = (String) field.get(null);
+                        add(translationKey, format(comments));
 
-                            continue;
-                        }
+                        continue;
+                    }
 
-                        if (field.getType().isEnum()) {
-                            Enum<?> value = (Enum<?>) field.get(null);
-                            add(type.wrap(value.toString().toLowerCase(Locale.ENGLISH)), format(comments));
+                    if (field.getType().isEnum()) {
+                        Enum<?> value = (Enum<?>) field.get(null);
+                        add(type.wrap(value.toString().toLowerCase(Locale.ENGLISH)), format(comments));
 
-                            continue;
-                        }
+                        continue;
                     }
                 } catch (ReflectiveOperationException exception) {
                     throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);

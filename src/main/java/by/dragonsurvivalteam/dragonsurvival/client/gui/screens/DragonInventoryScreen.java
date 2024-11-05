@@ -111,10 +111,10 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.TabType.INVENTORY, this));
-        addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.TabType.ABILITY, this));
-        addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, TabButton.TabType.GITHUB_REMINDER, this));
-        addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, TabButton.TabType.SKINS, this));
+        addRenderableWidget(new TabButton(leftPos, topPos - 28, TabButton.Type.INVENTORY_TAB, this));
+        addRenderableWidget(new TabButton(leftPos + 28, topPos - 26, TabButton.Type.ABILITY_TAB, this));
+        addRenderableWidget(new TabButton(leftPos + 57, topPos - 26, TabButton.Type.GITHUB_REMINDER_TAB, this));
+        addRenderableWidget(new TabButton(leftPos + 86, topPos - 26, TabButton.Type.SKINS_TAB, this));
 
         ExtendedButton clawToggle = new ExtendedButton(leftPos + 27, topPos + 10, 11, 11, Component.empty(), button -> {
             clawsMenu = !clawsMenu;

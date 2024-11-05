@@ -48,15 +48,15 @@ import java.util.Objects;
 public class ToolTipHandler {
     private static final ResourceLocation TOOLTIP_BLINKING = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/magic_tips_1.png");
     private static final ResourceLocation TOOLTIP = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/magic_tips_0.png");
-    private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "food_tooltip_icon_font");
+    private static final ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "food_tooltip_icon_font");
 
-    @Translation(type = Translation.Type.MISC, comments = "§c■ Cave dragon food§r")
+    @Translation(type = Translation.Type.MISC, comments = "§c■ Cave dragon food: §r")
     private static final String CAVE_DRAGON_FOOD = Translation.Type.DESCRIPTION.wrap("cave_dragon_food");
 
-    @Translation(type = Translation.Type.MISC, comments = "§3■ Sea dragon food§r")
+    @Translation(type = Translation.Type.MISC, comments = "§3■ Sea dragon food: §r")
     private static final String SEA_DRAGON_FOOD = Translation.Type.DESCRIPTION.wrap("sea_dragon_food");
 
-    @Translation(type = Translation.Type.MISC, comments = "§a■ Forest dragon food§r")
+    @Translation(type = Translation.Type.MISC, comments = "§a■ Forest dragon food: §r")
     private static final String FOREST_DRAGON_FOOD = Translation.Type.DESCRIPTION.wrap("forest_dragon_food");
 
     @Translation(key = "tooltip_changes", type = Translation.Type.CONFIGURATION, comments = "If enabled certain modifications to some tooltips will be made (e.g. dragon food items)")
@@ -84,27 +84,59 @@ public class ToolTipHandler {
             Item item = tooltipEvent.getItemStack().getItem();
             List<Component> toolTip = tooltipEvent.getToolTip();
 
-            if (DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)) {
-                toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
+            if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
+                toolTip.add(createFoodTooltip(item, DragonTypes.FOREST));
             }
 
-            if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
-                toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
+            if (DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)) {
+                toolTip.add(createFoodTooltip(item, DragonTypes.CAVE));
             }
 
             if (DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)) {
-                toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
+                toolTip.add(createFoodTooltip(item, DragonTypes.SEA));
             }
         }
     }
 
-    private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String nutritionIcon, final String saturationIcon) {
+    private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type) {
         String translationKey = switch (type) {
             case CaveDragonType ignored -> CAVE_DRAGON_FOOD;
             case SeaDragonType ignored -> SEA_DRAGON_FOOD;
             case ForestDragonType ignored -> FOREST_DRAGON_FOOD;
             default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
         };
+
+        return Component.translatable(translationKey).append(getFoodTooltipData(item, type));
+    }
+
+    /** Returns a tooltip component in the format of '1.0 nutrition_icon / 0.5 saturation_icon' (color and icon depend on the dragon type) */
+    public static MutableComponent getFoodTooltipData(final Item item, final AbstractDragonType type) {
+        if (type == null) {
+            return Component.empty();
+        }
+
+        String nutritionIcon;
+        String saturationIcon;
+        ChatFormatting color;
+
+        switch (type) {
+            case ForestDragonType ignored -> {
+                nutritionIcon = "\uEA01";
+                saturationIcon = "\uEA04";
+                color = ChatFormatting.GREEN;
+            }
+            case CaveDragonType ignored -> {
+                nutritionIcon = "\uEA02";
+                saturationIcon = "\uEA05";
+                color = ChatFormatting.RED;
+            }
+            case SeaDragonType ignored -> {
+                nutritionIcon = "\uEA03";
+                saturationIcon = "\uEA06";
+                color = ChatFormatting.DARK_AQUA;
+            }
+            default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
+        }
 
         FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
 
@@ -120,13 +152,14 @@ public class ToolTipHandler {
             saturation = String.format("%.1f", saturationValue / 2);
         }
 
-        MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withFont(ICONS));
-        MutableComponent nutritionComponent = Component.literal(": " + nutrition + " ").withStyle(color);
+        // Use white color to reset the color (i.e. don't color the icons)
+        MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withFont(ICONS));
+        MutableComponent nutritionComponent = Component.literal(nutrition + " ").withStyle(color);
 
-        MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withFont(ICONS));
+        MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withFont(ICONS));
         MutableComponent saturationComponent = Component.literal(" / " + saturation + " ").withStyle(color);
 
-        return Component.translatable(translationKey).append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
+        return nutritionComponent.append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
     }
 
     @SubscribeEvent // Add certain descriptions to our items which use generic classes

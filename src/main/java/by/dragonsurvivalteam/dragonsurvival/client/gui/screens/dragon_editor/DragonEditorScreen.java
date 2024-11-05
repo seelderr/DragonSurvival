@@ -541,8 +541,7 @@ public class DragonEditorScreen extends Screen {
                 }
             }));
 
-            ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {
-            });
+            ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight());
             colorSelectorButtons.put(layers, colorButton);
             addRenderableWidget(colorButton);
             i++;

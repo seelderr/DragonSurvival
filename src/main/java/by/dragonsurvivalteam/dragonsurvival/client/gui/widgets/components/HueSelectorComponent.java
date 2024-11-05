@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -28,20 +29,23 @@ import java.util.function.Supplier;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class HueSelectorComponent extends AbstractContainerEventHandler implements Renderable {
-    public static final ResourceLocation resetSettingsTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
+    private static final ResourceLocation RESET_SETTINGS_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
+
+    public boolean visible;
+
     private final ExtendedButton hueReset;
     private final ExtendedButton saturationReset;
     private final ExtendedButton brightnessReset;
     private final ExtendedCheckbox glowing;
+    private final ExtendedSlider hueSlider;
+    private final ExtendedSlider saturationSlider;
+    private final ExtendedSlider brightnessSlider;
+    private final Supplier<LayerSettings> settings;
+
     private final int x;
     private final int y;
     private final int xSize;
     private final int ySize;
-    private final Supplier<LayerSettings> settings;
-    public boolean visible;
-    private final ExtendedSlider hueSlider;
-    private final ExtendedSlider saturationSlider;
-    private final ExtendedSlider brightnessSlider;
 
     private boolean hasModifiedColor(DragonEditorObject.DragonTextureMetadata texture) {
         return texture != null && (Float.compare(Math.round(settings.get().hue * 360), Math.round(texture.average_hue * 360)) != 0 || !(Math.abs(settings.get().saturation - 0.5f) < 0.05) || !(Math.abs(settings.get().brightness - 0.5f) < 0.05));
@@ -58,8 +62,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
         DragonEditorObject.DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
 
-        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
-        }) {
+        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), set.glowing, action -> { /* Nothing to do */ }) {
             final Function<Boolean, Boolean> setGlowingAction = value -> {
                 settings.get().glowing = value;
                 this.selected = settings.get().glowing;
@@ -135,7 +138,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-                guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(RESET_SETTINGS_TEXTURE, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
             }
         };
 
@@ -196,7 +199,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-                guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(RESET_SETTINGS_TEXTURE, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
             }
         };
 
@@ -257,7 +260,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partial) {
                 super.renderWidget(guiGraphics, mouseX, mouseY, partial);
-                guiGraphics.blit(resetSettingsTexture, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(RESET_SETTINGS_TEXTURE, getX() + 2, getY() + 2, 0, 0, 16, 16, 16, 16);
             }
         };
     }

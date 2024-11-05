@@ -17,7 +17,6 @@ import static by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dr
 
 public class BackgroundColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
     public final ExtendedButton colorPicker;
-    private final DragonEditorScreen screen;
     private final int x;
     private final int y;
     private final int xSize;
@@ -25,7 +24,6 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
     public boolean visible;
 
     public BackgroundColorSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize) {
-        this.screen = screen;
         this.x = x;
         this.y = y;
         this.xSize = xSize;
@@ -47,7 +45,7 @@ public class BackgroundColorSelectorComponent extends AbstractContainerEventHand
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
+    public @NotNull List<? extends GuiEventListener> children() {
         return ImmutableList.of(colorPicker);
     }
 

@@ -18,39 +18,38 @@ import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
-import java.util.function.Consumer;
 
 public class ColorSelectorButton extends ExtendedButton {
-    private final DragonEditorScreen screen;
     public final EnumSkinLayer layer;
-    public Consumer<Double> setter;
-    public boolean toggled;
-    public int xSize, ySize;
+
+    private final DragonEditorScreen screen;
     private HueSelectorComponent hueComponent;
     private ColorSelectorComponent colorComponent;
     private Renderable renderButton;
 
-    public ColorSelectorButton(DragonEditorScreen screen, EnumSkinLayer layer, int x, int y, int xSize, int ySize, Consumer<Double> setter) {
-        super(x, y, xSize, ySize, Component.empty(), pButton -> {
-        });
+    private final int xSize;
+    private final int ySize;
+    private boolean toggled;
+
+    public ColorSelectorButton(DragonEditorScreen screen, EnumSkinLayer layer, int x, int y, int xSize, int ySize) {
+        super(x, y, xSize, ySize, Component.empty(), action -> { /* Nothing to do */ });
         this.xSize = xSize;
         this.ySize = ySize;
-        this.setter = setter;
         this.screen = screen;
         this.layer = layer;
         visible = true;
     }
 
     @Override
-    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
-        super.renderWidget(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
+    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float patialTick) {
+        super.renderWidget(guiGraphics, mouseX, mouseY, patialTick);
         active = !screen.preset.skinAges.get(screen.level).get().defaultSkin;
 
         if (visible) {
             RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 100, getX() + 2, getY() + 2, getX() + xSize - 2, getY() + ySize - 2, new int[]{Color.red.getRGB(), Color.GREEN.getRGB(), Color.BLUE.getRGB(), Color.yellow.getRGB()});
         }
 
-        if (toggled && (!visible || !isMouseOver(p_230430_2_, p_230430_3_) && (hueComponent == null || !hueComponent.isMouseOver(p_230430_2_, p_230430_3_)) && (colorComponent == null || !colorComponent.isMouseOver(p_230430_2_, p_230430_3_)))) {
+        if (toggled && (!visible || !isMouseOver(mouseX, mouseY) && (hueComponent == null || !hueComponent.isMouseOver(mouseX, mouseY)) && (colorComponent == null || !colorComponent.isMouseOver(mouseX, mouseY)))) {
             toggled = false;
             Screen screen = Minecraft.getInstance().screen;
             screen.children().removeIf(s -> s == colorComponent);
@@ -58,9 +57,8 @@ public class ColorSelectorButton extends ExtendedButton {
             screen.renderables.removeIf(s -> s == renderButton);
         }
 
-        DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
-
-        visible = text != null && text.colorable;
+        DragonTextureMetadata texture = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+        visible = texture != null && texture.colorable;
     }
 
     @Override
@@ -70,21 +68,21 @@ public class ColorSelectorButton extends ExtendedButton {
 
     @Override
     public void onPress() {
-        DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
         if (!toggled) {
-            renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {
-            }) {
+            DragonTextureMetadata texture = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+
+            renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), action -> { /* Nothing to do */ }) {
                 @Override
                 public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230430_2_, int p_230430_3_, float p_230430_4_) {
                     active = visible = false;
 
-                    if (hueComponent != null && text.defaultColor == null) {
+                    if (hueComponent != null && texture.defaultColor == null) {
                         hueComponent.visible = ColorSelectorButton.this.visible;
                         if (hueComponent.visible)
                             hueComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
                     }
 
-                    if (colorComponent != null && text.defaultColor != null) {
+                    if (colorComponent != null && texture.defaultColor != null) {
                         colorComponent.visible = ColorSelectorButton.this.visible;
                         if (colorComponent.visible)
                             colorComponent.render(guiGraphics, p_230430_2_, p_230430_3_, p_230430_4_);
@@ -94,7 +92,7 @@ public class ColorSelectorButton extends ExtendedButton {
 
             Screen screen = Minecraft.getInstance().screen;
 
-            if (text.defaultColor == null) {
+            if (texture.defaultColor == null) {
                 int offset = screen.height - (getY() + 80);
                 hueComponent = new HueSelectorComponent(this.screen, getX() + xSize - 120, getY() + Math.min(offset, 0), 120, 90, layer);
                 ((ScreenAccessor) screen).dragonSurvival$children().add(0, hueComponent);

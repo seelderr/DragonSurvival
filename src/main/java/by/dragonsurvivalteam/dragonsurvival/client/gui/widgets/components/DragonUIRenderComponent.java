@@ -68,7 +68,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
+    public @NotNull List<? extends GuiEventListener> children() {
         return ImmutableList.of();
     }
 
