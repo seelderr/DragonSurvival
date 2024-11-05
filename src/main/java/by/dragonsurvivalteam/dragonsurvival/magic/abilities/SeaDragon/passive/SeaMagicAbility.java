@@ -11,6 +11,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Magic points (Mana) are used for dragon magic. Restores on wet blocks.\n",
+        "■ Current amount of §2%s§r mana:",
+        " - §2%s§r from «Sea Magic»",
+        " - §2%s§r body type",
+        " - §2%s§r from experience"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Sea Magic")
 @RegisterDragonAbility
 public class SeaMagicAbility extends MagicAbility {
     @Translation(key = "sea_magic", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the sea magic ability")

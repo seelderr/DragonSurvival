@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -17,6 +16,11 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Increases your capacity for hydration while outside of water. Will help you to survive while venturing onto land, or even in the Nether.\n",
+        "■ Duration: §2%s§rs"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Water")
 @RegisterDragonAbility
 public class WaterAbility extends PassiveDragonAbility {
     @Translation(key = "water", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the water ability")
@@ -25,7 +29,7 @@ public class WaterAbility extends PassiveDragonAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDuration() + Functions.ticksToSeconds(SeaDragonConfig.seaTicksWithoutWater));
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDuration() + Functions.ticksToSeconds(SeaDragonConfig.seaTicksWithoutWater));
     }
 
     @Override

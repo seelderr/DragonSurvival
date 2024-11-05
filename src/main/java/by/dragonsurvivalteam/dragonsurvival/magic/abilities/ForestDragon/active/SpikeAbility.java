@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
@@ -25,6 +24,8 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out sharp §cdarts§r, which fly a large distance to pierce your target. Less effective underwater.")
+@Translation(type = Translation.Type.ABILITY, comments = "Spike")
 @RegisterDragonAbility
 public class SpikeAbility extends InstantCastAbility {
     @Translation(key = "spike", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the spike ability")
@@ -57,7 +58,7 @@ public class SpikeAbility extends InstantCastAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDamage());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDamage());
     }
 
     @Override
@@ -77,11 +78,13 @@ public class SpikeAbility extends InstantCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_4.png")
+        };
     }
 
 
@@ -173,8 +176,10 @@ public class SpikeAbility extends InstantCastAbility {
             entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, i * spikeSpread);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, entity.getSoundSource(), 1.0F, 2.0F);
             player.level().addFreshEntity(entity);
-            if (!spikeMultishot)
+
+            if (!spikeMultishot) {
                 break;
+            }
         }
     }
 }

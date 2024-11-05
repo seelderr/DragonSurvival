@@ -90,6 +90,9 @@ public class SkinsScreen extends Screen {
     @Translation(type = Translation.Type.MISC, comments = "■ Shows a randomly selected §6other player§r§f who uploaded a skin. You §ccan't use§r§f their appearance for yourself!§7 Only look and admire! >:D")
     private static final String RANDOM_INFO = Translation.Type.GUI.wrap("skin_screen.random_info");
 
+    @Translation(type = Translation.Type.MISC, comments = "Show player skins")
+    private static final String OTHERS = Translation.Type.GUI.wrap("skin_screen.others");
+
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/skin_interface.png");
     private static final ResourceLocation DISCORD_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/discord_button.png");
     private static final ResourceLocation WIKI_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/wiki_button.png");
@@ -310,7 +313,7 @@ public class SkinsScreen extends Screen {
         });
 
         // Button to enable / disable the rendering of customized skins (of other players)
-        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable(OTHERS), button -> {
             ClientDragonRenderer.renderOtherPlayerSkins = !ClientDragonRenderer.renderOtherPlayerSkins;
             ConfigHandler.updateConfigValue("render_other_players_custom_skins", ClientDragonRenderer.renderOtherPlayerSkins);
             setTextures();

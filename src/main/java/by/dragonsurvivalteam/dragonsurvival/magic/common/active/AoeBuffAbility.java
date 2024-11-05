@@ -16,12 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
 public abstract class AoeBuffAbility extends ChargeCastAbility {
     @Override
-    public void onCasting(Player player, int currentCastTime) {
-
-    }
+    public void onCasting(Player player, int currentCastTime) { }
 
     @Override
     public void castingComplete(Player player) {

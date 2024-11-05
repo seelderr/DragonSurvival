@@ -11,6 +11,11 @@ import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Standing on wooden or grassy blocks will give you §2Speed %s§r\n",
+        "■ Duration: §2%s§rs"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Forest Athletics")
 @RegisterDragonAbility
 public class ForestAthleticsAbility extends AthleticsAbility {
     @Translation(key = "forest_athletics", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the forest athletics ability")

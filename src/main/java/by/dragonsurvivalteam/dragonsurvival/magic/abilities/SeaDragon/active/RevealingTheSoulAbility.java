@@ -20,6 +20,11 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ AOE Buff: multiplies the amount of §2experience§r gained from monsters up to a limit.\n",
+        "■ Effect does not stack. Cannot be used in flight."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Soul Revelation")
 @RegisterDragonAbility
 public class RevealingTheSoulAbility extends AoeBuffAbility {
     @Translation(key = "revealing_the_soul", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the revealing the soul ability")
@@ -28,7 +33,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
 
     @ConfigRange(min = 1.0, max = 10_000.0)
     @Translation(key = "revealing_the_soul_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealingTheSoulDuration")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_duration")
     public static Double revealingTheSoulDuration = 200.0;
 
     @ConfigRange(min = 0.05, max = 10_000.0)
@@ -73,11 +78,13 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_4.png"),};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/revealing_the_soul_4.png")
+        };
     }
 
     @Override

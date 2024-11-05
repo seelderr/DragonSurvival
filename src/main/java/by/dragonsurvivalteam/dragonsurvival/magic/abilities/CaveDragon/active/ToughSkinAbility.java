@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -23,10 +22,12 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Grants additional armor points to all entities in an area around the dragon.")
+@Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility {
     @Translation(key = "tough_skin", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the tough skin ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "toughSkinEnabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin")
     public static Boolean toughSkinEnabled = true;
 
     @ConfigRange(min = 1.0, max = 10_000.0)
@@ -119,7 +120,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), toughSkinDuration, getDefence(getLevel()));
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), toughSkinDuration, getDefence(getLevel()));
     }
 
     @Override

@@ -22,6 +22,11 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Ranged attack: shoots out a condensed ball of electrical energy. Deals damage and §celectrifies§r nearby enemies as it travels.\n",
+        "■ During a thunderstorm, lightning may strike the ball."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Ball Lightning")
 @RegisterDragonAbility
 public class BallLightningAbility extends ChargeCastAbility {
     @Translation(key = "ball_lightning", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the ball lightning ability")
@@ -137,7 +142,7 @@ public class BallLightningAbility extends ChargeCastAbility {
     @Override
 
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDamage());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDamage());
     }
 
     @Override
@@ -152,11 +157,13 @@ public class BallLightningAbility extends ChargeCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_4.png"),};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/ball_lightning_4.png")
+        };
     }
 
     @Override

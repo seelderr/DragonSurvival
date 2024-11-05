@@ -24,6 +24,11 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Personal buff: Activates the §2Hunter§r effect, which allows you to become invisible in tall grass and increases your movement speed. Your first melee strike will remove this effect and cause a critical hit with a §c%s§r damage bonus.\n",
+        "■ Effect does not stack. Cannot be used in flight. Will be removed early if you take damage, or attack a target.",
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Hunter")
 @RegisterDragonAbility
 public class HunterAbility extends ChargeCastAbility {
     @Translation(key = "hunter", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the hunter ability")
@@ -151,7 +156,7 @@ public class HunterAbility extends ChargeCastAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), "+" + hunterDamageBonus * getLevel() + "x", getDuration());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), "+" + hunterDamageBonus * getLevel() + "x", getDuration());
     }
 
     @Override
@@ -166,11 +171,13 @@ public class HunterAbility extends ChargeCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/hunter_4.png")
+        };
     }
 
 

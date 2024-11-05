@@ -4,10 +4,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Cave dragons have a netherite skeleton, and are made mostly of lava. Their diet includes charred meat and coal. Peaceful animals fear dragons.\n",
+        "■ They have innate §2immunity to fire§r and they feel best in the Nether."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Cave Dragon")
 @RegisterDragonAbility
 public class CaveDragonInfoAbility extends InnateDragonAbility {
     @Override

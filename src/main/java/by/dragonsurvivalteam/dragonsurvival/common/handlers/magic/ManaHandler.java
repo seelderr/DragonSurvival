@@ -194,7 +194,7 @@ public class ManaHandler {
         return Math.min(currentMana, getMaxMana(player));
     }
 
-    private static int getManaFromExperience(final Player player) {
+    public static int getManaFromExperience(final Player player) {
         return convertExperience(ExperienceUtils.getTotalExperience(player));
     }
 

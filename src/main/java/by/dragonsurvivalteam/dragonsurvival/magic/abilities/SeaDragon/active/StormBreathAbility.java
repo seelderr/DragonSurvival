@@ -55,6 +55,12 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Elemental breath: a stream of sparks. Targets become §c«Electrified»§r and deal electric damage to everything nearby.\n",
+        "■ Charges creepers, and may summon thunderbolts during a storm.\n",
+        "■ Range depends on the age of the dragon."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Storm Breath")
 @RegisterDragonAbility
 public class StormBreathAbility extends BreathAbility {
     @Translation(key = "storm_breath", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the storm breath ability")
@@ -290,11 +296,13 @@ public class StormBreathAbility extends BreathAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_4.png")
+        };
     }
 
 

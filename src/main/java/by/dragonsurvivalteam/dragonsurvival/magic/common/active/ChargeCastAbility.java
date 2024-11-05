@@ -24,7 +24,6 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
         if (castTime >= getSkillCastingTime() && castStartTime != -1 && !castFinished) {
             castingComplete(player);
             startCooldown();
-            castStartTime = clientTime;
             castFinished = true;
 
             ManaHandler.consumeMana(player, getManaCost());

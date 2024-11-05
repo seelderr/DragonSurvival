@@ -49,10 +49,15 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BREATH;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Elemental breath: a toxic gas that creates a §c«Drain»§r area of effect, which is deadly for creatures, but helps plants grow faster.\n",
+        "■ Range depends on the age of the dragon. Cannot be used while affected by «Stress».",
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Forest Breath")
 @RegisterDragonAbility
 public class ForestBreathAbility extends BreathAbility {
     @Translation(key = "forest_breath", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the forest breath ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forestBreath")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "forest_breath"}, key = "forest_breath")
     public static Boolean isEnabled = true;
 
     @ConfigRange(min = 0.0, max = 100.0)

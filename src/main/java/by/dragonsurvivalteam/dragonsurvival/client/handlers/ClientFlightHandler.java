@@ -57,13 +57,11 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 /** Used in pair with {@link ServerFlightHandler} */
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientFlightHandler {
-    public static final ResourceLocation SPIN_COOLDOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/spin_cooldown.png");
+    @Translation(type = Translation.Type.MISC, comments = "Hunger has exhausted you, and you can't fly.")
+    private static final String NO_HUNGER = Translation.Type.GUI.wrap("message.no_hunger");
 
-    private static final ActionWithTimedCooldown HUNGER_MESSAGE_WITH_COOLDOWN = new ActionWithTimedCooldown(30_000, () -> {
-        Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
-        if (localPlayer == null) return;
-        localPlayer.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
-    });
+    @Translation(type = Translation.Type.MISC, comments = "You have §cno levitation skill§r. You need to talk to the Ender dragon, or use the Flight Grant special item.")
+    private static final String NO_WINGS = Translation.Type.GUI.wrap("message.no_wings");
 
     @Translation(key = "jump_to_fly", type = Translation.Type.CONFIGURATION, comments = "If enabled flight will be activated when jumping in the air")
     @ConfigOption(side = ConfigSide.CLIENT, category = "flight", key = "jump_to_fly")
@@ -91,6 +89,14 @@ public class ClientFlightHandler {
     @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "spin"}, key = "spin_cooldown_y_offset")
     public static Integer spinCooldownYOffset = 0;
 
+    private static final ResourceLocation SPIN_COOLDOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/spin_cooldown.png");
+
+    private static final ActionWithTimedCooldown HUNGER_MESSAGE_WITH_COOLDOWN = new ActionWithTimedCooldown(30_000, () -> {
+        Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
+        if (localPlayer == null) return;
+        localPlayer.sendSystemMessage(Component.translatable(NO_HUNGER));
+    });
+
     public static int lastSync;
     public static boolean wasGliding;
     public static boolean wasFlying;
@@ -106,7 +112,6 @@ public class ClientFlightHandler {
     private static final TickedCooldown jumpFlyCooldown = new TickedCooldown(7);
     private static boolean lastJumpInputState; // We need to track the rising edge manually
 
-    /// region Flight Control
     @SubscribeEvent
     public static void flightCamera(CalculateDetachedCameraDistanceEvent event) {
         DragonStateProvider.getOptional(DragonSurvival.PROXY.getLocalPlayer()).ifPresent(handler -> {
@@ -250,9 +255,7 @@ public class ClientFlightHandler {
         });
     }
 
-    /**
-     * Controls acceleration
-     */
+    /** Controls acceleration */
     @SubscribeEvent
     public static void flightControl(final ClientTickEvent.Pre event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -506,7 +509,6 @@ public class ClientFlightHandler {
         }
     }
 
-    /// region Spin
     private static void doSpin(LocalPlayer player, DragonStateHandler handler) {
         if (ServerFlightHandler.isSpin(player)) return;
         if (handler.getMovementData().spinCooldown > 0) return;
@@ -538,9 +540,6 @@ public class ClientFlightHandler {
             player.level().addParticle(particleData, posX, posY, posZ, player.getDeltaMovement().x * -1, player.getDeltaMovement().y * -1, player.getDeltaMovement().z * -1);
         }
     }
-    ///endregion
-
-    ///region Toggle Wings
 
     /**
      * Enables or disables wings. Sends error messages if unsuccessful.
@@ -560,11 +559,11 @@ public class ClientFlightHandler {
                 return false;
             }
             case NO_WINGS -> {
-                player.sendSystemMessage(Component.translatable("ds.you.have.no.wings"));
+                player.sendSystemMessage(Component.translatable(NO_WINGS));
                 return false;
             }
             case NO_HUNGER -> {
-                player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+                player.sendSystemMessage(Component.translatable(NO_HUNGER));
                 return false;
             }
             case WINGS_DISABLED -> {
@@ -693,9 +692,7 @@ public class ClientFlightHandler {
             default -> throw new IllegalStateException("Unexpected value: " + enableWings(player, handler));
         }
     }
-    ///endregion
 
-    /// region Helpers
     private static boolean hasWingDisablingEffect(LivingEntity entity) {
         return entity.hasEffect(DSEffects.TRAPPED) || entity.hasEffect(DSEffects.WINGS_BROKEN);
     }
@@ -715,5 +712,4 @@ public class ClientFlightHandler {
             return new Vec3(vector3d.x * (double) f1 - vector3d.z * (double) f, vector3d.y, vector3d.z * (double) f1 + vector3d.x * (double) f);
         }
     }
-    ///endregion
 }

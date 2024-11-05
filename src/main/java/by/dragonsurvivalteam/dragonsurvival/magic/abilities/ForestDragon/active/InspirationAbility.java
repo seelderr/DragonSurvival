@@ -17,6 +17,11 @@ import net.minecraft.world.effect.MobEffects;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ AOE buff: provides §2Haste III§r to all nearby creatures, increasing your block harvesting speed.\n",
+        "■ Effect does not stack. Cannot be used in flight.",
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Inspiration")
 @RegisterDragonAbility
 public class InspirationAbility extends AoeBuffAbility {
     @Translation(key = "inspiration", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the inspiration ability")
@@ -60,11 +65,13 @@ public class InspirationAbility extends AoeBuffAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/inspiration_4.png")
+        };
     }
 
 

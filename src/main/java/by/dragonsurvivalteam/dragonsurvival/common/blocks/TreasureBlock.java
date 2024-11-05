@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.TreasureParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncTreasureRestStatus;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -48,6 +49,9 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 
 public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBlock {
+    @Translation(type = Translation.Type.MISC, comments = "■§7 Dragons can sleep on treasure to regenerate health and mana. Gathering more treasure increases the speed of the regeneration. Build your horde and show off your wealth!")
+    private static final String TREASURE = Translation.Type.DESCRIPTION.wrap("treasure");
+
     public static final IntegerProperty LAYERS = BlockStateProperties.LAYERS;
     public static final BooleanProperty WATERLOGGED = BlockStateProperties.WATERLOGGED;
 
@@ -64,9 +68,9 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
 
 
     @Override
-    public boolean isPathfindable(BlockState pState, PathComputationType pPathComputationType) {
+    public boolean isPathfindable(@NotNull BlockState state, PathComputationType pPathComputationType) {
         return switch (pPathComputationType) {
-            case LAND -> pState.getValue(LAYERS) < 5;
+            case LAND -> state.getValue(LAYERS) < 5;
             case WATER, AIR -> false;
         };
     }
@@ -172,8 +176,8 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     @Nullable public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState blockstate = context.getLevel().getBlockState(context.getClickedPos());
         if (blockstate.is(this)) {
-            int i = blockstate.getValue(LAYERS);
-            return blockstate.setValue(LAYERS, Math.min(8, i + 1)).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
+            int layers = blockstate.getValue(LAYERS);
+            return blockstate.setValue(LAYERS, Math.min(8, layers + 1)).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
         } else {
             return super.getStateForPlacement(context).setValue(WATERLOGGED, context.getLevel().getFluidState(context.getClickedPos()).getType() == Fluids.WATER);
         }
@@ -193,7 +197,7 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
         super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-        pTooltipComponents.add(Component.translatable("ds.description.treasures"));
+        pTooltipComponents.add(Component.translatable(TREASURE));
     }
 
     @Override

@@ -47,6 +47,11 @@ import java.util.ArrayList;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.CAVE_BREATH;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Elemental breath: a stream of fire that ignites enemies and blocks. Range depends on age of the dragon.\n",
+        "■ Is able to destroy some blocks. Cannot be used under water, and during rain."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Nether Breath") // TODO :: rename things from nether to fire? or from fire to nether?
 @RegisterDragonAbility
 public class NetherBreathAbility extends BreathAbility {
     @Translation(key = "fire_breath", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the fire breath ability")

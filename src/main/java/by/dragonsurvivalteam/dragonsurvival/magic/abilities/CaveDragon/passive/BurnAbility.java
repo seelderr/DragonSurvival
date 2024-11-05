@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -16,6 +15,13 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Your target has a %s%% chance to receive the §c«Burned»§r effect from your attacks.\n",
+        "The effect deals damage when the target moves.\n",
+        "The faster the movement, the more damage is done.\n",
+        "■ Creatures with fire resistance are immune to this effect."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Burn")
 @RegisterDragonAbility
 public class BurnAbility extends PassiveDragonAbility {
     @Translation(key = "burn", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the burn ability")
@@ -29,7 +35,7 @@ public class BurnAbility extends PassiveDragonAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getChance());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getChance());
     }
 
     @Override

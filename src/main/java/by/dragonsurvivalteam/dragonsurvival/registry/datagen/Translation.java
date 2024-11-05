@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -14,8 +15,9 @@ import java.util.Locale;
  * - {@link String} annotated with the type {@link Type#MISC} will use its stored value, not wrapping anything <br>
  * - {@link Holder} will use {@link Holder#getKey()} -> {@link ResourceKey#location()} -> {@link ResourceLocation#getPath()} to determine the wrapped value <br>
  * - {@link ResourceKey} will use {@link ResourceKey#location()} -> {@link ResourceLocation#getPath()} to determine the wrapped value <br>
+ * - {@link DragonAbility} will use {@link DragonAbility#getName()} to determine the wrapped value
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Repeatable(Translation.Translations.class)
 public @interface Translation {
@@ -33,7 +35,7 @@ public @interface Translation {
     String[] comments();
 
     // To allow multiple translations (potentially of differing types) to be set on one field
-    @Target(ElementType.FIELD)
+    @Target({ElementType.FIELD, ElementType.TYPE})
     @Retention(RetentionPolicy.RUNTIME)
     @interface Translations {
         Translation[] value();
@@ -51,6 +53,7 @@ public @interface Translation {
         DESCRIPTION_ADDITION(DragonSurvival.MODID + ".description.addition.", ""),
         CONFIGURATION(DragonSurvival.MODID + ".configuration.", ".tooltip"),
         ABILITY(DragonSurvival.MODID + ".ability.", ""),
+        ABILITY_DESCRIPTION(DragonSurvival.MODID + ".ability.", ".desc"),
         ADVANCEMENT(DragonSurvival.MODID + ".advancement.", ""),
         SKIN_PART(DragonSurvival.MODID + ".skin_part.", ""),
         GUI(DragonSurvival.MODID + ".gui.", ""),

@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
 import net.minecraft.data.PackOutput;
@@ -91,6 +92,21 @@ public class DSLanguageProvider extends LanguageProvider {
                     if (field.getType().isEnum()) {
                         Enum<?> value = (Enum<?>) field.get(null);
                         add(type.wrap(value.toString().toLowerCase(Locale.ENGLISH)), format(comments));
+
+                        continue;
+                    }
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException("An error occurred while trying to get the translations from [" + annotationData + "]", exception);
+                }
+            }
+
+            if (key == null && annotationData.targetType() == ElementType.TYPE) {
+                try {
+                    Class<?> classType = Class.forName(annotationData.memberName());
+
+                    if (DragonAbility.class.isAssignableFrom(classType)) {
+                        DragonAbility ability = (DragonAbility) classType.getDeclaredConstructor().newInstance();
+                        add(type.wrap(ability.getName()), format(comments));
 
                         continue;
                     }

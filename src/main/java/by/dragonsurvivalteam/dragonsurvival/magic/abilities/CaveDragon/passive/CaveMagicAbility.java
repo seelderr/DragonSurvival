@@ -11,6 +11,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Magic points (Mana) are used for dragon magic. Restores while standing on hot blocks.\n",
+        "■ Current amount of §2%s§r mana:",
+        " - §2%s§r from «Cave Magic»",
+        " - §2%s§r from body type",
+        " - §2%s§r from experience"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Cave Magic")
 @RegisterDragonAbility
 public class CaveMagicAbility extends MagicAbility {
     @Translation(key = "cave_magic", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the cave magic ability")

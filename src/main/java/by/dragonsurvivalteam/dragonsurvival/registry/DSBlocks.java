@@ -822,21 +822,22 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Dragon Rider Workbench")
-    public static final DeferredHolder<Block, Block> DRAGON_RIDER_WORKBENCH = DS_BLOCKS.register(
-            "dragon_rider_workbench",
+    public static final DeferredHolder<Block, Block> DRAGON_RIDER_WORKBENCH = DS_BLOCKS.register("dragon_rider_workbench",
             () -> new DragonRiderWorkbenchBlock(BlockBehaviour.Properties.of()
                     .sound(SoundType.TRIAL_SPAWNER)
                     .mapColor(MapColor.WOOD)
             )
     );
 
-    public static final DeferredHolder<Item, BlockItem> DRAGON_RIDER_WORKBENCH_ITEM = DS_ITEMS.register(
-            "dragon_rider_workbench",
+    public static final DeferredHolder<Item, BlockItem> DRAGON_RIDER_WORKBENCH_ITEM = DS_ITEMS.register("dragon_rider_workbench",
             () -> new BlockItem(DRAGON_RIDER_WORKBENCH.get(), new Item.Properties()) {
+                @Translation(type = Translation.Type.MISC, comments = "■§7 A work station for a villager who sells useful dragon enchantments. Knows the secrets to getting into the draconic vaults.")
+                private static final String DRAGON_RIDER_WORKBENCH = Translation.Type.DESCRIPTION.wrap("dragon_rider_workbench");
+
                 @Override
                 public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
                     super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-                    pTooltipComponents.add(Component.translatable("ds.description.dragon_rider_workbench"));
+                    pTooltipComponents.add(Component.translatable(DRAGON_RIDER_WORKBENCH));
                 }
             }
     );

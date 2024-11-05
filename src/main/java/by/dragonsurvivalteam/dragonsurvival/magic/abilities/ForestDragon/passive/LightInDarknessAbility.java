@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -17,15 +16,17 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Allows you to stay longer in dark areas. Delay before you gain §c«Stress»§r while in low light level: §2%ss§r.")
+@Translation(type = Translation.Type.ABILITY, comments = "Light the Dark")
 @RegisterDragonAbility
 public class LightInDarknessAbility extends PassiveDragonAbility {
     @Translation(key = "light_in_darkness", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the light in darkness ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "lightInDarkness")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "light_in_darkness")
     public static Boolean lightInDarkness = true;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDuration() + Functions.ticksToSeconds(ForestDragonConfig.stressTicks));
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDuration() + Functions.ticksToSeconds(ForestDragonConfig.stressTicks));
     }
 
     @Override

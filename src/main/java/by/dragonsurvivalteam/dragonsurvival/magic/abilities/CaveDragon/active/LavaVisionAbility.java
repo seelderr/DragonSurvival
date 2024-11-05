@@ -24,6 +24,8 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Personal buff: makes lava more §2transparent§r while active.")
+@Translation(type = Translation.Type.ABILITY, comments = "Lava Vision")
 @RegisterDragonAbility
 public class LavaVisionAbility extends ChargeCastAbility {
     @Translation(key = "lava_vision", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the lava vision ability")
@@ -118,11 +120,13 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_4.png")
+        };
     }
 
     @Override

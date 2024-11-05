@@ -6,9 +6,11 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -37,11 +39,11 @@ public abstract class DragonAbility {
     }
 
     public Component getTitle() {
-        return Component.translatable("ds.skill." + getName());
+        return Component.translatable(Translation.Type.ABILITY.wrap(getName()));
     }
 
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()));
     }
 
     public abstract String getName();
@@ -102,5 +104,9 @@ public abstract class DragonAbility {
 
     public void setLevel(int level) {
         this.level = Mth.clamp(level, getMinLevel(), getMaxLevel());
+    }
+
+    public MutableComponent description() {
+        return Component.empty();
     }
 }

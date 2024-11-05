@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -16,6 +15,8 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Gives a §c%s%%§r chance to make your attack ignore enemy armor.")
+@Translation(type = Translation.Type.ABILITY, comments = "Spectral Impact")
 @RegisterDragonAbility
 public class SpectralImpactAbility extends PassiveDragonAbility {
     @Translation(key = "spectral_impact", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the spectral ability")
@@ -29,7 +30,7 @@ public class SpectralImpactAbility extends PassiveDragonAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getChance());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getChance());
     }
 
     @Override

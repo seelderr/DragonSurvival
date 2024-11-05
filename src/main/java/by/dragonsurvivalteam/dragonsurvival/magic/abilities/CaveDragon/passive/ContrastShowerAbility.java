@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -15,6 +14,11 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ You are resistant to Rain, snow and snowfall for: §2%s§rs\n",
+        "■ Water, potions and snowballs are still dangerous"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Contrast Shower")
 @RegisterDragonAbility
 public class ContrastShowerAbility extends PassiveDragonAbility {
     @Translation(key = "contrast_shower", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the contrast shower ability")
@@ -28,7 +32,7 @@ public class ContrastShowerAbility extends PassiveDragonAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDuration());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDuration());
     }
 
     @Override

@@ -22,6 +22,8 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out a fireball that §cexplodes§r and sets the area on fire.")
+@Translation(type = Translation.Type.ABILITY, comments = "Fireball")
 @RegisterDragonAbility
 public class FireBallAbility extends ChargeCastAbility {
     @Translation(key = "fireball", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the fireball ability")

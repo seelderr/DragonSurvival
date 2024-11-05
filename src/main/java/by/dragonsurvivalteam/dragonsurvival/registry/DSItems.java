@@ -47,10 +47,10 @@ public class DSItems {
     // --- Growth --- //
 
     @Translation(type = Translation.Type.ITEM, comments = "Star Bone")
-    public static final Holder<Item> STAR_BONE = DS_ITEMS.register("star_bone", () -> new StarBoneItem(new Properties()));
+    public static final Holder<Item> STAR_BONE = DS_ITEMS.register("star_bone", location -> new StarBoneItem(new Properties(), location.getPath()));
 
     @Translation(type = Translation.Type.ITEM, comments = "Star Heart")
-    public static final Holder<Item> STAR_HEART = DS_ITEMS.register("star_heart", () -> new StarHeartItem(new Properties()));
+    public static final Holder<Item> STAR_HEART = DS_ITEMS.register("star_heart", location -> new StarHeartItem(new Properties(), location.getPath()));
 
     @Translation(type = Translation.Type.DESCRIPTION, comments = {
             "§6■ Part of the Elder dragon.§r",
@@ -242,7 +242,7 @@ public class DSItems {
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Upgrade")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 A rare item that allows you to upgrade your Netherite Armor to Dark Armor. The armor will have built-in enchantments to help you effectively shed blood in the name of evil.")
-    public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", () -> new TooltipItem(new Properties().rarity(Rarity.RARE), "ds.description.evil_dragon_upgrade"));
+    public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", location -> new TooltipItem(new Properties().rarity(Rarity.RARE), location.getPath()));
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Helmet")
     public static final Holder<Item> EVIL_DRAGON_HELMET = DS_ITEMS.register("evil_dragon_helmet", () -> new EvilDragonArmorItem(
@@ -318,11 +318,11 @@ public class DSItems {
 
     @Translation(type = Translation.Type.ITEM, comments = "Flight Grant")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 This item gives your dragon the ability to fly. Consumed on use. Can also be used to remove flight.")
-    public static final Holder<Item> WING_GRANT_ITEM = DS_ITEMS.register("wing_grant", () -> new WingGrantItem(new Properties()));
+    public static final Holder<Item> WING_GRANT_ITEM = DS_ITEMS.register("wing_grant", location -> new WingGrantItem(new Properties(), location.getPath()));
 
     @Translation(type = Translation.Type.ITEM, comments = "Spin Grant")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 This item gives your dragon the ability to spin while flying. Consumed on use. Can be used again to remove the ability.")
-    public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", () -> new SpinGrantItem(new Properties()));
+    public static final Holder<Item> SPIN_GRANT_ITEM = DS_ITEMS.register("spin_grant", location -> new SpinGrantItem(new Properties(), location.getPath()));
 
     public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(new Properties().rarity(Rarity.EPIC)));
 

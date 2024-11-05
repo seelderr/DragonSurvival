@@ -24,6 +24,11 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Personal Buff: provides §2Sea Vision§r for a short time.\n",
+        "■ Effect does not stack. Cannot be used in flight."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Sea Vision")
 @RegisterDragonAbility
 public class SeaEyesAbility extends ChargeCastAbility {
     @Translation(key = "sea_vision", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the sea vision ability")
@@ -61,9 +66,7 @@ public class SeaEyesAbility extends ChargeCastAbility {
     }
 
     @Override
-    public void onCasting(Player player, int currentCastTime) {
-
-    }
+    public void onCasting(Player player, int currentCastTime) { }
 
     @Override
     public void castingComplete(Player player) {
@@ -124,7 +127,7 @@ public class SeaEyesAbility extends ChargeCastAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), Functions.ticksToSeconds(getDuration()));
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), Functions.ticksToSeconds(getDuration()));
     }
 
     @Override
@@ -139,11 +142,13 @@ public class SeaEyesAbility extends ChargeCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_eyes_4.png")
+        };
     }
 
     @Override

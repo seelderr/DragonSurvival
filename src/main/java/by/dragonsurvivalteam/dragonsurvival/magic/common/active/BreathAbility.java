@@ -272,13 +272,6 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
         return (int) Math.max(Math.min(100, size * 0.6), 12);
     }
 
-    /*public static class BreathDamage extends DamageSource {
-        public BreathDamage(@NotNull final Entity entity) {
-            super(DSDamageTypes.entityDamageSource(entity.level(), DSDamageTypes.DRAGON_BREATH, entity), entity);
-            setMagic();
-        }
-    }*/
-
     public static int calculateCurrentBreathRange(double size) {
         float sizeFactor = Math.min((float) size / DragonLevel.ADULT.size, 1.0f);
         float additionalBreathRange = sizeFactor * 4.0f + (float) size * 0.05f;

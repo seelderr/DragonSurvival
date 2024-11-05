@@ -34,7 +34,6 @@ public abstract class ActiveDragonAbility extends DragonAbility {
     @Override
     public void loadNBT(CompoundTag nbt) {
         super.loadNBT(nbt);
-        //currentCooldown = nbt.getInt("cooldown");
     }
 
     public abstract Integer[] getRequiredLevels();

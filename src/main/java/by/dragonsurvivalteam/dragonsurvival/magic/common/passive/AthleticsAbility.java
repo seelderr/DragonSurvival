@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragon
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -21,7 +22,7 @@ import java.util.ArrayList;
 public abstract class AthleticsAbility extends TickablePassiveAbility {
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
     }
 
     public int getDuration() {

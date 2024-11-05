@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -16,15 +15,17 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Your landing becomes much softer. Safe fall distance: §2%sb§r.")
+@Translation(type = Translation.Type.ABILITY, comments = "Cliffhanger")
 @RegisterDragonAbility
 public class CliffhangerAbility extends PassiveDragonAbility {
-    @Translation(key = "cliff_hander", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the cliff hanger ability")
-    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "cliffHanger")
+    @Translation(key = "cliff_hanger", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the cliff hanger ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "cliff_hanger")
     public static Boolean cliffHanger = true;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), 3 + getHeight() + ForestDragonConfig.fallReduction);
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), 3 + getHeight() + ForestDragonConfig.fallReduction);
     }
 
     @Override

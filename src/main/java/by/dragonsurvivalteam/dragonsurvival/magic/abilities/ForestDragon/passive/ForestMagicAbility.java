@@ -11,6 +11,14 @@ import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Magic points (Mana) are used for dragon magic. Restores under direct sunlight and on grass.\n",
+        "■ Current amount of §2%s§r mana:",
+        " - §2%s§r from «Forest Magic»",
+        " - §2%s§r from body type",
+        " - §2%s§r from experience"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Forest Magic")
 @RegisterDragonAbility
 public class ForestMagicAbility extends MagicAbility {
     @Translation(key = "forest_magic", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the forest magic ability")
@@ -34,7 +42,8 @@ public class ForestMagicAbility extends MagicAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_3.png"),
