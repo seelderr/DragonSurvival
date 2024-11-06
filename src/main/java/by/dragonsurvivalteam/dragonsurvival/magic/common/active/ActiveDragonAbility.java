@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -19,6 +20,15 @@ import net.minecraft.world.entity.player.Player;
 import java.util.ArrayList;
 
 public abstract class ActiveDragonAbility extends DragonAbility {
+    @Translation(type = Translation.Type.MISC, comments = "§fNot enough§r §cmana or experience§r!")
+    private static final String NO_MANA = Translation.Type.GUI.wrap("ability.no_mana");
+
+    @Translation(type = Translation.Type.MISC, comments = "§fThis ability is §r§cnot ready§r§f yet!§r (%s)")
+    private static final String COOLDOWN = Translation.Type.GUI.wrap("ability.cooldown");
+
+    @Translation(type = Translation.Type.MISC, comments = "§fThis skill cannot be used §r§cwhile flying§r§f!§f")
+    private static final String FLYING = Translation.Type.GUI.wrap("ability.flying");
+
     private int currentCooldown;
 
     public abstract int getManaCost();
@@ -41,7 +51,7 @@ public abstract class ActiveDragonAbility extends DragonAbility {
 
     public abstract int getSkillCooldown();
 
-    public int getNextRequiredLevel() {
+    public int getNextRequiredLevel() { // TODO :: unused
         if (getLevel() <= getMaxLevel())
             if (getRequiredLevels().length > getLevel() && getLevel() > 0)
                 return getRequiredLevels()[getLevel()];
@@ -85,7 +95,7 @@ public abstract class ActiveDragonAbility extends DragonAbility {
         return 0;
     }
 
-    public int getLevelCost() {
+    public int getLevelCost() { // TODO :: unused
         return 1 + (int) (0.75 * getLevel());
     }
 
@@ -100,18 +110,18 @@ public abstract class ActiveDragonAbility extends DragonAbility {
         }
 
         if (!canConsumeMana(player)) {
-            MagicHUD.castingError(Component.translatable("ds.skill_mana_check_failure"));
+            MagicHUD.castingError(Component.translatable(NO_MANA));
             return false;
         }
 
         if (getCurrentCooldown() != 0) {
-            MagicHUD.castingError(Component.translatable("ds.skill_cooldown_check_failure", nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
+            MagicHUD.castingError(Component.translatable(COOLDOWN, nf.format(getCurrentCooldown() / 20F) + "s").withStyle(ChatFormatting.RED));
             return false;
         }
 
         if (requiresStationaryCasting() || ServerFlightHandler.isGliding(player)) {
             if (handler.isWingsSpread() && player.isFallFlying() || !player.onGround() && player.fallDistance > 0.15F) {
-                MagicHUD.castingError(Component.translatable("ds.skill.nofly"));
+                MagicHUD.castingError(Component.translatable(FLYING));
                 return false;
             }
         }

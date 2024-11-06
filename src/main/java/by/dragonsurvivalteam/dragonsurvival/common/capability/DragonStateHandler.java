@@ -380,7 +380,7 @@ public class DragonStateHandler extends EntityStateHandler {
      */
     public ItemStack getToolOfType(final Tier tier, int toolSlot) {
         if (!(tier instanceof Tiers tiers)) {
-            // TODO :: Do something with ForgeTier to support custom tools (benefit = ?)
+            // TODO :: what to do about modded tiers? check if they are effective for netherite, diamond etc.?
             return ItemStack.EMPTY;
         }
 

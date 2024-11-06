@@ -4,21 +4,39 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate.CaveClawAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate.ForestClawAbility;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate.SeaClawAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import com.mojang.datafixers.util.Pair;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.TieredItem;
 import net.minecraft.world.item.Tiers;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Locale;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
+    @Translation(type = Translation.Type.MISC, comments = "Pickaxe")
+    private static final String CAVE_TOOL = Translation.Type.ABILITY_DESCRIPTION.wrap("claw.cave_tool");
+
+    @Translation(type = Translation.Type.MISC, comments = "Shovel")
+    private static final String SEA_TOOL = Translation.Type.ABILITY_DESCRIPTION.wrap("claw.sea_tool");
+
+    @Translation(type = Translation.Type.MISC, comments = "Axe")
+    private static final String FOREST_TOOL = Translation.Type.ABILITY_DESCRIPTION.wrap("claw.forest_tool");
+
+    @Translation(type = Translation.Type.MISC, comments = "§d■ Claws type:§r %s")
+    private static final String TOOL_TYPE = Translation.Type.ABILITY_DESCRIPTION.wrap("claw.tool_type");
+
+    @Translation(type = Translation.Type.MISC, comments = "§d■ Level:§r %s")
+    private static final String HARVEST_LEVEL = Translation.Type.ABILITY_DESCRIPTION.wrap("claw.harvest_level");
+
+    @Translation(type = Translation.Type.MISC, comments = "§d■ Claw damage bonus:§r %s")
+    private static final String DAMAGE = Translation.Type.ABILITY_DESCRIPTION.wrap("claw.damage");
+
     @Override
     public int getMaxLevel() {
         return 1;
@@ -33,20 +51,26 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
     public ArrayList<Component> getInfo() {
         //noinspection DataFlowIssue -> player is present
         DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
-
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.tool_type." + getName()));
 
-        Pair<Tiers, Integer> harvestInfo = getHarvestInfo();
+        Component tool = switch (this) {
+            case CaveClawAbility ignored -> Component.translatable(CAVE_TOOL);
+            case SeaClawAbility ignored -> Component.translatable(SEA_TOOL);
+            case ForestClawAbility ignored -> Component.translatable(FOREST_TOOL);
+            default -> Component.empty();
+        };
 
-        if (harvestInfo != null) {
-            components.add(Component.translatable("ds.skill.harvest_level", I18n.get("ds.skill.harvest_level." + harvestInfo.getFirst().name().toLowerCase(Locale.ENGLISH))));
+        components.add(Component.translatable(TOOL_TYPE, tool));
+        Tier tier = Tier.getByTier(getTier());
+
+        if (tier != null) {
+            components.add(Component.translatable(HARVEST_LEVEL, tier.translation()));
         }
 
         double damageBonus = handler.isDragon() && DragonBonusConfig.isDamageBonusEnabled ? handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage : 0;
 
         if (damageBonus > 0.0) {
-            components.add(Component.translatable("ds.skill.claws.damage", "+" + damageBonus));
+            components.add(Component.translatable(DAMAGE, "+" + damageBonus));
         }
 
         return components;
@@ -54,42 +78,72 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
     @Override
     public int getLevel() {
-        Pair<Tiers, Integer> harvestInfo = getHarvestInfo();
-        int textureId = harvestInfo != null ? harvestInfo.getSecond() : 0;
-
-        return FMLEnvironment.dist == Dist.CLIENT ? textureId : 0;
+        return getTier();
     }
 
-    public @Nullable Pair<Tiers, Integer> getHarvestInfo() {
+    public int getTier() {
         //noinspection DataFlowIssue -> player is present
         DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
 
         if (handler.getType() == null) {
-            return null;
+            return 0;
         }
 
         Item item = handler.getInnateFakeTool().getItem();
 
         if (!(item instanceof TieredItem tieredItem && tieredItem.getTier() instanceof Tiers tier)) {
-            return Pair.of(Tiers.WOOD, 0);
+            return 0;
         }
-
-        int textureId = 0;
 
         if (Tiers.WOOD.equals(tier)) {
-            textureId = 1;
+            return 1;
         } else if (Tiers.STONE.equals(tier)) {
-            textureId = 2;
+            return 2;
         } else if (Tiers.IRON.equals(tier)) {
-            textureId = 3;
+            return 3;
         } else if (Tiers.GOLD.equals(tier)) {
-            textureId = 4;
+            return 4; // TODO :: will never be the case
         } else if (Tiers.DIAMOND.equals(tier)) {
-            textureId = 5;
+            return 5;
         } else if (Tiers.NETHERITE.equals(tier)) {
-            textureId = 6;
+            return 6;
         }
 
-        return Pair.of(tier, textureId);
+        return 0;
+    }
+
+    public enum Tier {
+        @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Wood")
+        CLAW_WOOD(1),
+        @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Stone")
+        CLAW_STONE(2),
+        @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Iron")
+        CLAW_IRON(3),
+        @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Gold")
+        CLAW_GOLD(4),
+        @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Diamond")
+        CLAW_DIAMOND(5),
+        @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Netherite")
+        CLAW_NETHERITE(6);
+
+        private final int tier;
+
+        Tier(int tier) {
+            this.tier = tier;
+        }
+
+        public Component translation() {
+            return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(toString().toLowerCase(Locale.ENGLISH)));
+        }
+
+        public static @Nullable Tier getByTier(int tier) {
+            for (Tier value : values()) {
+                if (value.tier == tier) {
+                    return value;
+                }
+            }
+
+            return null;
+        }
     }
 }

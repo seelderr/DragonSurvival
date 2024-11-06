@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.platform.InputConstants;
@@ -41,19 +42,49 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonInventoryScreen extends EffectRenderingInventoryScreen<DragonContainer> {
+    @Translation(type = Translation.Type.MISC, comments = "§6Dragon Tab§r")
+    private static final String TOGGLE = Translation.Type.GUI.wrap("dragon_inventory.toggle");
+
+    @Translation(type = Translation.Type.MISC, comments = "Toggle showing claws and teeth textures on your model.")
+    private static final String TOGGLE_CLAWS = Translation.Type.GUI.wrap("dragon_inventory.toggle_claws");
+
+    @Translation(type = Translation.Type.MISC, comments = "Open vanilla inventory screen")
+    private static final String TOGGLE_VANILLA_INVENTORY = Translation.Type.GUI.wrap("dragon_inventory.toggle_vanilla_inventory");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ A dragon is §6born§r with strong claws and teeth, but you can make them even better! Just put §6any tools§r§f here in your claw slots and your bare paw will borrow their aspect as long as they are intact.",
+            "§7■ Does not stack with «Claws and Teeth» skill, which only applies if these slots are empty."
+    })
+    private static final String HELP_CLAWS = Translation.Type.GUI.wrap("help.claws");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ §6Stage§r§7: ")
+    private static final String GROWTH_STAGE = Translation.Type.GUI.wrap("dragon_inventory.growth_stage");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ §6Age§r§7: %s")
+    private static final String GROWTH_AGE = Translation.Type.GUI.wrap("dragon_inventory.growth_age");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "\n■ All dragons will gradually grow as time passes, improving their attributes. At certain growth stages, your appearance will change, and your growth will slow. You can use these items to speed up growth:§r",
+            "§6■ %s\n",
+            "§7■ A Star Bone will revert your growth slightly, and a Star Heart will completely stop you from growing. The biggest dragons can take other players for a ride!"
+    })
+    private static final String GROWTH_INFO = Translation.Type.GUI.wrap("dragon_inventory.growth_info");
+
     public static final ResourceLocation INVENTORY_TOGGLE_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/inventory_button.png");
-    public static final ResourceLocation SETTINGS_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/settings_button.png");
-    static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_inventory.png");
+
+    private static final ResourceLocation BACKGROUND = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_inventory.png");
     private static final ResourceLocation CLAWS_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws.png");
     private static final ResourceLocation DRAGON_CLAW_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_button.png");
     private static final ResourceLocation DRAGON_CLAW_CHECKMARK = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_checked.png");
+
     public static double mouseX = -1;
     public static double mouseY = -1;
-    private final List<ExtendedButton> clawMenuButtons = new ArrayList<>();
+
+    private boolean clawsMenu;
     private final Player player;
-    public boolean clawsMenu = false;
     private boolean buttonClicked;
     private boolean isGrowthIconHovered;
+    private final List<ExtendedButton> clawMenuButtons = new ArrayList<>();
 
     private static HashMap<String, ResourceLocation> textures;
 
@@ -69,16 +100,16 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         for (String key : keys) {
             AbstractDragonType type = DragonTypes.staticTypes.get(key);
 
-            String start = "textures/gui/growth/";
-            String end = ".png";
+            String prefix = "textures/gui/growth/";
+            String suffix = ".png";
 
             for (int i = 1; i <= DragonLevel.values().length; i++) {
                 String growthResource = createTextureKey(type, "growth", "_" + i);
-                textures.put(growthResource, ResourceLocation.fromNamespaceAndPath(MODID, start + growthResource + end));
+                textures.put(growthResource, ResourceLocation.fromNamespaceAndPath(MODID, prefix + growthResource + suffix));
             }
 
             String circleResource = createTextureKey(type, "circle", "");
-            textures.put(circleResource, ResourceLocation.fromNamespaceAndPath(MODID, start + circleResource + end));
+            textures.put(circleResource, ResourceLocation.fromNamespaceAndPath(MODID, prefix + circleResource + suffix));
         }
     }
 
@@ -129,7 +160,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                 guiGraphics.blit(DRAGON_CLAW_BUTTON, getX(), getY(), 0, 0, 11, 11, 11, 11);
             }
         };
-        clawToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws"))); // FIXME :: translate
+        clawToggle.setTooltip(Tooltip.create(Component.translatable(TOGGLE)));
         addRenderableWidget(clawToggle);
 
         // Growth icon in the claw menu
@@ -144,7 +175,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         clawMenuButtons.add(growthIcon);
 
         // Info button at the bottom of the claw menu
-        HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, "ds.skill.help.claws", 0, true); // FIXME :: translate
+        HelpButton infoButton = new HelpButton(leftPos - 80 + 34, topPos + 112, 9, 9, HELP_CLAWS, 0, true);
         addRenderableWidget(infoButton);
         clawMenuButtons.add(infoButton);
 
@@ -168,7 +199,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                 }
             }
         };
-        clawRenderButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.claws.rendering"))); // FIXME :: translate
+        clawRenderButton.setTooltip(Tooltip.create(Component.translatable(TOGGLE_CLAWS)));
         addRenderableWidget(clawRenderButton);
         clawMenuButtons.add(clawRenderButton);
 
@@ -184,7 +215,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                     guiGraphics.blit(INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
                 }
             };
-            inventoryToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.vanilla"))); // FIXME :: translate
+            inventoryToggle.setTooltip(Tooltip.create(Component.translatable(TOGGLE_VANILLA_INVENTORY)));
             addRenderableWidget(inventoryToggle);
         }
     }
@@ -362,10 +393,10 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             StringJoiner result = new StringJoiner(", ");
             displayData.forEach(result::add);
 
-            List<Component> components = List.of( // FIXME :: translate
-                    Component.translatable("ds.gui.growth_stage").append(handler.getLevel().translatableName()),
-                    Component.translatable("ds.gui.growth_age", age),
-                    Component.translatable("ds.gui.growth_help", result.toString())
+            List<Component> components = List.of(
+                    Component.translatable(GROWTH_STAGE).append(handler.getLevel().translatableName()),
+                    Component.translatable(GROWTH_AGE, age),
+                    Component.translatable(GROWTH_INFO, result.toString())
             );
 
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, components, mouseX, mouseY);
