@@ -75,10 +75,9 @@ public class ClawToolHandler {
         });
     }
 
-    // This needs to happen as early as possible to make sure drops are added before other mods interact with them
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST) // In order to add the drops early for other mods (e.g. grave mods)
     public static void playerDieEvent(LivingDropsEvent event) {
-        if (event.getEntity() instanceof Player player && !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.retainClawItems) {
+        if (!ServerConfig.retainClawItems && event.getEntity() instanceof Player player && !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
 
             for (int i = 0; i < ClawInventory.Slot.size(); i++) {
@@ -100,16 +99,20 @@ public class ClawToolHandler {
         if (!DragonBonusConfig.bonusesEnabled || !DragonBonusConfig.clawsAreTools) {
             return;
         }
-        Player playerEntity = harvestCheck.getEntity();
-        DragonStateProvider.getOptional(playerEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon()) {
-                ItemStack stack = playerEntity.getMainHandItem();
-                BlockState blockState = harvestCheck.getTargetBlock();
-                if (ToolUtils.shouldUseDragonTools(stack) && !harvestCheck.canHarvest()) {
-                    harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(blockState));
-                }
-            }
-        });
+
+        Player player = harvestCheck.getEntity();
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (!data.isDragon()) {
+            return;
+        }
+
+        ItemStack stack = player.getMainHandItem();
+        BlockState state = harvestCheck.getTargetBlock();
+
+        if (!harvestCheck.canHarvest() && ToolUtils.shouldUseDragonTools(stack)) {
+            harvestCheck.setCanHarvest(data.canHarvestWithPaw(state));
+        }
     }
 
     public static ItemStack getDragonHarvestTool(final Player player, final BlockState state) {
@@ -188,7 +191,6 @@ public class ClawToolHandler {
 
         if (result.getType() != HitResult.Type.MISS) {
             BlockState state = world.getBlockState(result.getBlockPos());
-
             return getDragonHarvestTool(player, state);
         }
 
@@ -210,14 +212,10 @@ public class ClawToolHandler {
             return ItemStack.EMPTY;
         }
 
-        DragonStateHandler cap = DragonStateProvider.getData(player);
-
-        return cap.getClawToolData().getClawsInventory().getItem(0);
+        return DragonStateProvider.getData(player).getClawToolData().getSword();
     }
 
-    /**
-     * Handle tool breaking for the dragon
-     */
+    /** Handle tool breaking for the dragon */
     @SubscribeEvent
     public static void onToolBreak(final PlayerDestroyItemEvent event) {
         if (event.getHand() == null) return;
@@ -233,7 +231,7 @@ public class ClawToolHandler {
                     DragonStateHandler handler = DragonStateProvider.getData(player);
 
                     if (handler.switchedTool || handler.switchedWeapon) {
-                        player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
+                        player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1, 1);
                         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncBrokenTool.Data(player.getId(), handler.switchedTool ? handler.switchedToolSlot : ClawInventory.Slot.SWORD.ordinal()));
                     }
@@ -288,7 +286,6 @@ public class ClawToolHandler {
             }
         }
 
-        // Don't discard the changes other mods already did to the harvest speed
         event.setNewSpeed(event.getNewSpeed() * Math.max(1, bonus));
     }
 }

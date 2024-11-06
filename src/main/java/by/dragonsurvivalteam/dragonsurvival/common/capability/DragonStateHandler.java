@@ -298,7 +298,6 @@ public class DragonStateHandler extends EntityStateHandler {
             return -1;
         }
 
-        int harvestLevel = DragonBonusConfig.baseHarvestLevel;
         int bonusLevel = 0;
 
         if (state == null || state.is(getType().harvestableBlocks())) {
@@ -311,7 +310,7 @@ public class DragonStateHandler extends EntityStateHandler {
             }
         }
 
-        return harvestLevel + bonusLevel;
+        return DragonBonusConfig.baseHarvestLevel + bonusLevel;
     }
 
     public void setPassengerId(int passengerId) {

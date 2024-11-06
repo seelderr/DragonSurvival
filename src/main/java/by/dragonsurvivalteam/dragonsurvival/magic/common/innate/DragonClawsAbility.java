@@ -103,6 +103,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
         return 0;
     }
 
+    /** Maps the texture id / level from {@link DragonClawsAbility#getTier()} to the related tier */
     public enum Tier {
         @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Wood")
         CLAW_WOOD(1),
