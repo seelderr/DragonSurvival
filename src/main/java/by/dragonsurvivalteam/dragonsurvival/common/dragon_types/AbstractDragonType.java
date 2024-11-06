@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Locale;
 
 public abstract class AbstractDragonType implements NBTInterface, Comparable<AbstractDragonType> {
-    public int slotForBonus;
+    /** Determines which claw tool slot affects the claw texture */
+    public int clawTextureSlot;
 
     public abstract String getTypeName();
 
@@ -26,10 +27,10 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
 
     public abstract void onPlayerDeath();
 
-    //Not implemented
+    // TODO :: unused
     public abstract List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler);
 
-    public abstract List<TagKey<Block>> mineableBlocks();
+    public abstract TagKey<Block> harvestableBlocks();
 
     @Override
     public int compareTo(@NotNull AbstractDragonType type) {

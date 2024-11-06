@@ -37,6 +37,10 @@ public class DSBlockTags extends BlockTagsProvider {
     public static final TagKey<Block> SEA_DRAGON_BREATH_DESTRUCTIBLE = key("sea_dragon_breath_destructible");
     public static final TagKey<Block> FOREST_DRAGON_BREATH_DESTRUCTIBLE = key("forest_dragon_breath_destructible");
 
+    public static final TagKey<Block> CAVE_DRAGON_HARVESTABLE = key("cave_dragon_harvestable");
+    public static final TagKey<Block> SEA_DRAGON_HARVESTABLE = key("sea_dragon_harvestable");
+    public static final TagKey<Block> FOREST_DRAGON_HARVESTABLE = key("forest_dragon_harvestable");
+
     public static final TagKey<Block> HYDRATES_SEA_DRAGON = key("hydrates_sea_dragon");
     public static final TagKey<Block> FOREST_BREATH_GROW_BLACKLIST = key("forest_breath_grow_blacklist");
 
@@ -57,6 +61,7 @@ public class DSBlockTags extends BlockTagsProvider {
         addToDragonSpeedUpBlocks();
         addToDragonManaBlocks();
         addToBreathDestructibleBlocks();
+        addToHarvestableBlocks();
 
         DSBlocks.DS_BLOCKS.getEntries().forEach(holder -> {
             Block block = holder.value();
@@ -162,6 +167,12 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS)
                 .add(Blocks.CHAIN)
                 .add(Blocks.LANTERN);
+    }
+
+    private void addToHarvestableBlocks() {
+        tag(CAVE_DRAGON_HARVESTABLE).addTag(BlockTags.MINEABLE_WITH_PICKAXE);
+        tag(SEA_DRAGON_HARVESTABLE).addTag(BlockTags.MINEABLE_WITH_SHOVEL);
+        tag(FOREST_DRAGON_HARVESTABLE).addTag(BlockTags.MINEABLE_WITH_AXE);
     }
 
     /** These blocks can be destroyed by the respective dragon breath */

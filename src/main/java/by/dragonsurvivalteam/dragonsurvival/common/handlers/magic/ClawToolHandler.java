@@ -13,7 +13,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
@@ -28,7 +27,6 @@ import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -277,11 +275,8 @@ public class ClawToolHandler {
             bonus = DragonBonusConfig.baseBreakSpeedAdult;
         }
 
-        for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
-            if (state.is(tagKey) && unlockedBonus > bonus) {
-                bonus = unlockedBonus;
-                break;
-            }
+        if (unlockedBonus > bonus && state.is(handler.getType().harvestableBlocks())) {
+            bonus = unlockedBonus;
         }
 
         for (int i = 0; i < ClawInventory.Slot.size(); i++) {

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
@@ -18,7 +19,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
@@ -47,7 +47,7 @@ public class SeaDragonType extends AbstractDragonType {
     public double timeWithoutWater;
 
     public SeaDragonType() {
-        slotForBonus = 3;
+        clawTextureSlot = ClawInventory.Slot.SHOVEL.ordinal();
     }
 
     @Override
@@ -161,8 +161,8 @@ public class SeaDragonType extends AbstractDragonType {
     }
 
     @Override
-    public List<TagKey<Block>> mineableBlocks(){
-        return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
+    public TagKey<Block> harvestableBlocks(){
+        return DSBlockTags.SEA_DRAGON_HARVESTABLE;
     }
 
     @Override

@@ -50,9 +50,7 @@ public class DragonRidingHandler {
         return DragonRideAttemptResult.SUCCESS;
     }
 
-    /**
-     * Mounting a dragon
-     */
+    /** Mounting a dragon */
     @SubscribeEvent
     public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) {
         Entity ent = event.getTarget();

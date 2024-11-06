@@ -10,9 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate.Sea
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.TieredItem;
-import net.minecraft.world.item.Tiers;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -69,7 +66,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
         double damageBonus = handler.isDragon() && DragonBonusConfig.isDamageBonusEnabled ? handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage : 0;
 
-        if (damageBonus > 0.0) {
+        if (damageBonus > 0) {
             components.add(Component.translatable(DAMAGE, "+" + damageBonus));
         }
 
@@ -89,23 +86,17 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
             return 0;
         }
 
-        Item item = handler.getInnateFakeTool().getItem();
+        int level = handler.getDragonHarvestLevel(null);
 
-        if (!(item instanceof TieredItem tieredItem && tieredItem.getTier() instanceof Tiers tier)) {
-            return 0;
-        }
-
-        if (Tiers.WOOD.equals(tier)) {
+        if (/* Wood */ level == 0) {
             return 1;
-        } else if (Tiers.STONE.equals(tier)) {
+        } else if (/* Stone */ level == 1) {
             return 2;
-        } else if (Tiers.IRON.equals(tier)) {
+        } else if (/* Iron */ level == 2) {
             return 3;
-        } else if (Tiers.GOLD.equals(tier)) {
-            return 4; // TODO :: will never be the case
-        } else if (Tiers.DIAMOND.equals(tier)) {
+        } else if (/* Diamond */ level == 4) {
             return 5;
-        } else if (Tiers.NETHERITE.equals(tier)) {
+        } else if (/* Netherite */ level > 4) {
             return 6;
         }
 

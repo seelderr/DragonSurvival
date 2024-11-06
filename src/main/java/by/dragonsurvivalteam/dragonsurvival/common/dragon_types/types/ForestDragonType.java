@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
@@ -9,13 +10,13 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.Mth;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -43,7 +44,7 @@ public class ForestDragonType extends AbstractDragonType{
     public int timeInDarkness;
 
     public ForestDragonType() {
-        slotForBonus = 2;
+        clawTextureSlot = ClawInventory.Slot.AXE.ordinal();
     }
 
     @Override
@@ -149,8 +150,8 @@ public class ForestDragonType extends AbstractDragonType{
     }
 
     @Override
-    public List<TagKey<Block>> mineableBlocks() {
-        return List.of(BlockTags.MINEABLE_WITH_AXE);
+    public TagKey<Block> harvestableBlocks() {
+        return DSBlockTags.FOREST_DRAGON_HARVESTABLE;
     }
 
     @Override
