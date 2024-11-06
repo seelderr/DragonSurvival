@@ -57,6 +57,7 @@ public @interface Translation {
         ABILITY(DragonSurvival.MODID + ".ability.", ""),
         ABILITY_DESCRIPTION(DragonSurvival.MODID + ".ability.", ".desc"),
         ADVANCEMENT(DragonSurvival.MODID + ".advancement.", ""),
+        ADVANCEMENT_DESCRIPTION(DragonSurvival.MODID + ".advancement.", ".desc"),
         SKIN_PART(DragonSurvival.MODID + ".skin_part.", ""),
         GUI(DragonSurvival.MODID + ".gui.", ""),
         KEYBIND(DragonSurvival.MODID + ".keybind.", ""),

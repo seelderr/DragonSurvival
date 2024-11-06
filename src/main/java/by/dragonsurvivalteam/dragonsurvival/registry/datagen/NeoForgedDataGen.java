@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.DSAdvancements;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
 import net.minecraft.core.HolderLookup;
@@ -14,6 +15,7 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -66,6 +68,7 @@ public class NeoForgedDataGen {
         generator.addProvider(event.includeServer(), new DSPoiTypeTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DSEnchantmentTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DataBlockModelProvider(output, helper));
+        generator.addProvider(event.includeServer(), new AdvancementProvider(output, lookup, helper, List.of(new DSAdvancements())));
 
         // Should run last due to doing weird registry things
         generator.addProvider(event.includeServer(), new DSRecipes(output, lookup));
