@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -112,8 +113,8 @@ public class BallLightningAbility extends ChargeCastAbility {
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.aoe", getRange() + "x" + getRange() + "x" + getRange()));
-        components.add(Component.translatable("ds.skill.damage", getDamage()));
+        components.add(Component.translatable(LangKey.ABILITY_AOE, getRange() + "x" + getRange() + "x" + getRange()));
+        components.add(Component.translatable(LangKey.ABILITY_DAMAGE, getDamage()));
 
         if (!Keybind.ABILITY2.get().isUnbound()) {
             String key = Keybind.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
@@ -121,7 +122,7 @@ public class BallLightningAbility extends ChargeCastAbility {
             if (key.isEmpty()) {
                 key = Keybind.ABILITY2.getKey().getDisplayName().getString();
             }
-            components.add(Component.translatable("ds.skill.keybind", key));
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -169,7 +170,7 @@ public class BallLightningAbility extends ChargeCastAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + ballLightningDamage));
+        list.add(Component.translatable(LangKey.ABILITY_DAMAGE, "+" + ballLightningDamage));
         return list;
     }
 

@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
@@ -153,10 +154,10 @@ public abstract class ActiveDragonAbility extends DragonAbility {
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
 
-        components.add(Component.translatable("ds.skill.mana_cost", getManaCost()));
+        components.add(Component.translatable(LangKey.ABILITY_MANA_COST, getManaCost()));
 
         if (getSkillCooldown() > 0)
-            components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
+            components.add(Component.translatable(LangKey.ABILITY_COOLDOWN, Functions.ticksToSeconds(getSkillCooldown())));
 
         return components;
     }

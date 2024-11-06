@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -109,7 +110,7 @@ public class HunterAbility extends ChargeCastAbility {
             if (key.isEmpty()) {
                 key = Keybind.ABILITY4.getKey().getDisplayName().getString();
             }
-            components.add(Component.translatable("ds.skill.keybind", key));
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -184,8 +185,8 @@ public class HunterAbility extends ChargeCastAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.duration.seconds", "+" + hunterDuration));
-        list.add(Component.translatable("ds.skill.damage", "+" + hunterDamageBonus + "X"));
+        list.add(Component.translatable(LangKey.ABILITY_DURATION, "+" + hunterDuration));
+        list.add(Component.translatable(LangKey.ABILITY_DAMAGE, "+" + hunterDamageBonus + "X"));
         return list;
     }
 

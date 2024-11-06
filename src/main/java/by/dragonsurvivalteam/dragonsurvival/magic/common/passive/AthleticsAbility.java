@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDrag
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -66,7 +67,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.duration.seconds", "+1"));
+        list.add(Component.translatable(LangKey.ABILITY_DURATION, "+1"));
         return list;
     }
 }

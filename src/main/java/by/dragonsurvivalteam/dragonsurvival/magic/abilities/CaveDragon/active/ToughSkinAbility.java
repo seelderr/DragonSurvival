@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -26,6 +27,9 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 @Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility {
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Defense:§r %s")
+    private static final String DEFENSE = Translation.Type.ABILITY_DESCRIPTION.wrap("tough_skin.defense");
+
     @Translation(key = "tough_skin", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the tough skin ability")
     @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin")
     public static Boolean toughSkinEnabled = true;
@@ -73,16 +77,16 @@ public class ToughSkinAbility extends AoeBuffAbility {
             components = new ArrayList<>(components.subList(0, components.size() - 1));
         }
 
-        components.add(Component.translatable("ds.skill.duration.seconds", toughSkinDuration));
+        components.add(Component.translatable(LangKey.ABILITY_DURATION, toughSkinDuration));
 
         if (!Keybind.ABILITY3.get().isUnbound()) {
-
             String key = Keybind.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
             if (key.isEmpty()) {
                 key = Keybind.ABILITY3.getKey().getDisplayName().getString();
             }
-            components.add(Component.translatable("ds.skill.keybind", key));
+
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -135,10 +139,12 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")
+        };
     }
 
 
@@ -149,7 +155,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.defence", "+" + toughSkinArmorValue));
+        list.add(Component.translatable(DEFENSE, "+" + toughSkinArmorValue));
         return list;
     }
 

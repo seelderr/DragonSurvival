@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonCon
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -61,7 +62,7 @@ public class CliffhangerAbility extends PassiveDragonAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.range.blocks", "+1"));
+        list.add(Component.translatable(LangKey.ABILITY_RANGE, "+1"));
         return list;
     }
 

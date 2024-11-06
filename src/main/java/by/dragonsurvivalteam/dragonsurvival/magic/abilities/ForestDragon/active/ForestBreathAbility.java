@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.Minecraft;
@@ -51,7 +52,7 @@ import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.FOREST_BRE
 
 @Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
         "■ Elemental breath: a toxic gas that creates a §c«Drain»§r area of effect, which is deadly for creatures, but helps plants grow faster.\n",
-        "■ Range depends on the age of the dragon. Cannot be used while affected by «Stress».",
+        "■ Range depends on the age of the dragon. Cannot be used while affected by §c«Stress»§r.",
 })
 @Translation(type = Translation.Type.ABILITY, comments = "Forest Breath")
 @RegisterDragonAbility
@@ -128,7 +129,7 @@ public class ForestBreathAbility extends BreathAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + damage));
+        list.add(Component.translatable(LangKey.ABILITY_DAMAGE, "+" + damage));
         return list;
     }
 

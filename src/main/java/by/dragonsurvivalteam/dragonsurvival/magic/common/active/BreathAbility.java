@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.ISecondAnimation;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -41,6 +42,9 @@ import java.util.List;
 import java.util.Locale;
 
 public abstract class BreathAbility extends ChannelingCastAbility implements ISecondAnimation {
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Cast costs:§r %s per %ss")
+    private static final String CHANNEL_COST = Translation.Type.ABILITY_DESCRIPTION.wrap("breath.channel_cost");
+
     @ConfigRange(min = 0, max = 10)
     @Translation(key = "base_breath_range", type = Translation.Type.CONFIGURATION, comments = "The base range of the dragon breath attack (increases with dragon size)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "base_breath_range")
@@ -242,14 +246,14 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
         DragonStateHandler handler = DragonStateProvider.getData(player);
         int range = calculateCurrentBreathRange(handler.getSize());
 
-        components.add(Component.translatable("ds.skill.mana_cost", getInitManaCost()));
-        components.add(Component.translatable("ds.skill.channel_cost", getManaCost(), 2));
+        components.add(Component.translatable(LangKey.ABILITY_MANA_COST, getInitManaCost()));
+        components.add(Component.translatable(CHANNEL_COST, getManaCost(), 2));
 
-        components.add(Component.translatable("ds.skill.cast_time", Functions.ticksToSeconds(getSkillChargeTime())));
-        components.add(Component.translatable("ds.skill.cooldown", Functions.ticksToSeconds(getSkillCooldown())));
+        components.add(Component.translatable(LangKey.ABILITY_CAST_TIME, Functions.ticksToSeconds(getSkillChargeTime())));
+        components.add(Component.translatable(LangKey.ABILITY_COOLDOWN, Functions.ticksToSeconds(getSkillCooldown())));
 
-        components.add(Component.translatable("ds.skill.damage", getDamage()));
-        components.add(Component.translatable("ds.skill.range.blocks", range));
+        components.add(Component.translatable(LangKey.ABILITY_DAMAGE, getDamage()));
+        components.add(Component.translatable(LangKey.ABILITY_RANGE, range));
 
         if (!Keybind.ABILITY1.get().isUnbound()) {
             String key = Keybind.ABILITY1.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
@@ -258,7 +262,7 @@ public abstract class BreathAbility extends ChannelingCastAbility implements ISe
                 key = Keybind.ABILITY1.getKey().getDisplayName().getString();
             }
 
-            components.add(Component.translatable("ds.skill.keybind", key));
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
