@@ -109,7 +109,7 @@
   "dragonsurvival.ability.lava_vision": "Lava Vision",
   "dragonsurvival.ability.lava_vision.desc": "■ Personal buff: makes lava more §2transparent§r while active.",
   "dragonsurvival.ability.light_in_darkness": "Light the Dark",
-  "dragonsurvival.ability.light_in_darkness.desc": "■ Allows you to stay longer in dark areas. Delay before you gain «Stress» while in low light level: §2%ss§r.",
+  "dragonsurvival.ability.light_in_darkness.desc": "■ Allows you to stay longer in dark areas. Delay before you gain §c«Stress»§r while in low light level: §2%ss§r.",
   "dragonsurvival.ability.nether_breath": "Nether Breath",
   "dragonsurvival.ability.nether_breath.desc": "■ Elemental breath: a stream of fire that ignites enemies and blocks. Range depends on age of the dragon.\n\n■ Is able to destroy some blocks. Cannot be used under water, and during rain.",
   "dragonsurvival.ability.no_lava_spin.desc": "■ You have not yet unlocked the ability to §cspin§r in air and in lava.",
