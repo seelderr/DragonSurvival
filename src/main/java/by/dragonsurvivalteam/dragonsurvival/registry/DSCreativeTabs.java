@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.PermanentEnchantmentItem;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -16,21 +17,13 @@ import java.util.stream.Stream;
 
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks.DS_BLOCKS;
 
-@SuppressWarnings("unused")
 public class DSCreativeTabs {
+    @Translation(type = Translation.Type.MISC, comments = "Dragon Survival")
+    private static final String CREATIVE_TAB = Translation.Type.GUI.wrap("creative_tab");
 
-    public static final DeferredRegister<CreativeModeTab> DS_CREATIVE_MODE_TABS = DeferredRegister.create(
-            Registries.CREATIVE_MODE_TAB,
-            DragonSurvival.MODID
-    );
+    public static final DeferredRegister<CreativeModeTab> DS_CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, DragonSurvival.MODID);
 
-    static CreativeModeTab.DisplayItemsGenerator displayBlockItemsGenerator = (parameters, output) -> Stream.of(DS_BLOCKS).forEach(
-            holder -> holder.getEntries().forEach(
-                    entry -> output.accept(entry.get())
-            )
-    );
-
-    static List<Holder<Item>> hiddenCreativeModeItems = Arrays.asList(
+    private static final List<Holder<Item>> HIDDEN = Arrays.asList(
             DSItems.HUNTING_NET,
             DSItems.LIGHTNING_TEXTURE_ITEM,
             DSItems.PASSIVE_MAGIC_BEACON,
@@ -42,21 +35,18 @@ public class DSCreativeTabs {
             DSItems.BOLAS
     );
 
-    static CreativeModeTab.DisplayItemsGenerator displayItemsGenerator = (parameters, output) -> Stream.of(DSItems.DS_ITEMS).forEach(
-            holder -> holder.getEntries().forEach(
-                    entry -> {
-                        if (entry.get() instanceof PermanentEnchantmentItem || !(hiddenCreativeModeItems.contains(entry) || entry.get().toString().contains("skeleton"))) {
-                            output.accept(entry.get());
-                        }
-                    }
-            )
-    );
+    private static final CreativeModeTab.DisplayItemsGenerator BLOCK_ITEM_GENERATOR = (parameters, output) -> Stream.of(DS_BLOCKS).forEach(holder -> holder.getEntries().forEach(entry -> output.accept(entry.value())));
+    private static final CreativeModeTab.DisplayItemsGenerator ITEM_GENERATOR = (parameters, output) -> Stream.of(DSItems.DS_ITEMS).forEach(holder -> holder.getEntries().forEach(entry -> {
+        if (entry.value() instanceof PermanentEnchantmentItem || !(HIDDEN.contains(entry) || entry.value().toString().contains("skeleton"))) {
+            output.accept(entry.value());
+        }
+    }));
 
     public static Holder<CreativeModeTab> DS_TAB = DS_CREATIVE_MODE_TABS.register("dragon_survival", () -> CreativeModeTab.builder()
             .icon(() -> new ItemStack(DSItems.ELDER_DRAGON_BONE))
-            .title(Component.translatable("itemGroup.dragon.survival.blocks"))
-            .displayItems(displayBlockItemsGenerator)
-            .displayItems(displayItemsGenerator)
+            .title(Component.translatable(CREATIVE_TAB))
+            .displayItems(BLOCK_ITEM_GENERATOR)
+            .displayItems(ITEM_GENERATOR)
             .build()
     );
 }
