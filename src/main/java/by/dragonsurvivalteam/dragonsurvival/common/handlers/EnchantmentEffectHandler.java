@@ -71,13 +71,13 @@ public class EnchantmentEffectHandler {
         double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
         return switch (handler.getLevel()) {
             case NEWBORN ->
-                    (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
+                    (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.NEWBORN_TO_YOUNG * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
             case YOUNG ->
-                    (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
+                    (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.YOUNG_TO_ADULT * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
             case ADULT -> {
                 if (handler.getSize() > DragonLevel.ADULT.maxSize)
-                    yield (60 - 40) / (DragonGrowthHandler.ancient * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
-                yield (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToAncient * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
+                    yield (60 - 40) / (DragonGrowthHandler.ANCIENT * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
+                yield (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.ADULT_TO_ANCIENT * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
             }
         };
     }

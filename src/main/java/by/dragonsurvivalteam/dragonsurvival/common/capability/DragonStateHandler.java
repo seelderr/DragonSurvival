@@ -364,9 +364,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    /**
-     * Calls {@link DragonStateHandler#getToolOfType(Tier, int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)}
-     */
+    /** Calls {@link DragonStateHandler#getToolOfType(Tier, int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
     public ItemStack getToolOfType(final Tier tier, final BlockState blockState) {
         return getToolOfType(tier, getRelevantToolSlot(blockState));
     }
@@ -380,12 +378,16 @@ public class DragonStateHandler extends EntityStateHandler {
      */
     public ItemStack getToolOfType(final Tier tier, int toolSlot) {
         if (!(tier instanceof Tiers tiers)) {
-            // TODO :: what to do about modded tiers? check if they are effective for netherite, diamond etc.?
             return ItemStack.EMPTY;
         }
 
         String tierPath = tiers.name().toLowerCase(Locale.ENGLISH) + "_";
-        tierPath = tierPath.replace("wood", "wooden");
+
+        if (tier == Tiers.WOOD) {
+            tierPath = tierPath.replace("wood", "wooden");
+        } else if (tier == Tiers.GOLD) {
+            tierPath = tierPath.replace("gold", "golden");
+        }
 
         Item item = switch (toolSlot) {
             case 0 -> BuiltInRegistries.ITEM.get(ResourceLocation.withDefaultNamespace(tierPath + "sword"));
@@ -398,9 +400,7 @@ public class DragonStateHandler extends EntityStateHandler {
         return item.getDefaultInstance();
     }
 
-    /**
-     * Calls {@link DragonStateHandler#getDragonHarvestLevel(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)}
-     */
+    /** Calls {@link DragonStateHandler#getDragonHarvestLevel(int)} with the result of {@link DragonStateHandler#getRelevantToolSlot(BlockState)} */
     public int getDragonHarvestLevel(final BlockState blockState) {
         return getDragonHarvestLevel(getRelevantToolSlot(blockState));
     }

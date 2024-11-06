@@ -12,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
@@ -295,7 +295,7 @@ public class ServerFlightHandler {
                     if (isFlying(player)) {
                         if (!player.level().isClientSide()) {
                             if (player.getFoodData().getFoodLevel() <= foldWingsThreshold && !player.isCreative()) {
-                                player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+                                player.sendSystemMessage(Component.translatable(LangKey.MESSAGE_NO_HUNGER));
                                 dragonStateHandler.setWingsSpread(false);
                                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
                                 return;
@@ -307,9 +307,11 @@ public class ServerFlightHandler {
                         float moveSpeedReq = 1.0F;
                         float minFoodReq = l / 10f;
                         float drain = Math.max(minFoodReq, (float) (Math.min(1.0, Math.max(0, Math.max(moveSpeedReq - moveSpeed, 0) / moveSpeedReq)) * l));
-                        AttributeInstance flightStamina;
-                        if ((flightStamina = player.getAttribute(DSAttributes.FLIGHT_STAMINA_COST)) != null && flightStamina.getValue() != 0) {
-                            drain /= (float) flightStamina.getValue();
+
+                        double flightStamina = player.getAttributeValue(DSAttributes.FLIGHT_STAMINA_COST);
+
+                        if (flightStamina > 0) {
+                            drain /= (float) flightStamina;
                         }
 
                         player.causeFoodExhaustion(drain);

@@ -27,6 +27,12 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 @Translation(type = Translation.Type.ABILITY, comments = "Soul Revelation")
 @RegisterDragonAbility
 public class RevealingTheSoulAbility extends AoeBuffAbility {
+    @Translation(type = Translation.Type.MISC, comments = "§6■ EXP multiplier:§r %s")
+    private static final String XP_MULTIPLIER = Translation.Type.ABILITY_DESCRIPTION.wrap("revealing_the_soul.xp_multiplier");
+
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Max EXP bonus:§r %s")
+    private static final String XP_MAXIMUM_GAIN = Translation.Type.ABILITY_DESCRIPTION.wrap("revealing_the_soul.xp_maximum_gain");
+
     @Translation(key = "revealing_the_soul", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the revealing the soul ability")
     @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul")
     public static Boolean revealingTheSoul = true;
@@ -135,8 +141,8 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.bonus_exp.multiplier", revealingTheSoulMultiplier + "x"));
-        components.add(Component.translatable("ds.skill.bonus_exp.max_gain", Integer.toString(revealingTheSoulMaxEXP)));
+        components.add(Component.translatable(XP_MULTIPLIER, revealingTheSoulMultiplier + "x"));
+        components.add(Component.translatable(XP_MAXIMUM_GAIN, Integer.toString(revealingTheSoulMaxEXP)));
         return components;
     }
 

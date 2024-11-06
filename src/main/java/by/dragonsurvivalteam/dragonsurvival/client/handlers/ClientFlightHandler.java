@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.ActionWithTimedCooldown;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -57,9 +58,6 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 /** Used in pair with {@link ServerFlightHandler} */
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientFlightHandler {
-    @Translation(type = Translation.Type.MISC, comments = "Hunger has exhausted you, and you can't fly.")
-    private static final String NO_HUNGER = Translation.Type.GUI.wrap("message.no_hunger");
-
     @Translation(type = Translation.Type.MISC, comments = "You have §cno levitation skill§r. You need to talk to the Ender dragon, or use the Flight Grant special item.")
     private static final String NO_WINGS = Translation.Type.GUI.wrap("message.no_wings");
 
@@ -94,7 +92,7 @@ public class ClientFlightHandler {
     private static final ActionWithTimedCooldown HUNGER_MESSAGE_WITH_COOLDOWN = new ActionWithTimedCooldown(30_000, () -> {
         Player localPlayer = DragonSurvival.PROXY.getLocalPlayer();
         if (localPlayer == null) return;
-        localPlayer.sendSystemMessage(Component.translatable(NO_HUNGER));
+        localPlayer.sendSystemMessage(Component.translatable(LangKey.MESSAGE_NO_HUNGER));
     });
 
     public static int lastSync;
@@ -563,7 +561,7 @@ public class ClientFlightHandler {
                 return false;
             }
             case NO_HUNGER -> {
-                player.sendSystemMessage(Component.translatable(NO_HUNGER));
+                player.sendSystemMessage(Component.translatable(LangKey.MESSAGE_NO_HUNGER));
                 return false;
             }
             case WINGS_DISABLED -> {

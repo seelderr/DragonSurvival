@@ -45,6 +45,8 @@ public @interface Translation {
         ITEM("item." + DragonSurvival.MODID + ".", ""),
         BLOCK("block." + DragonSurvival.MODID + ".", ""),
         ENTITY("entity." + DragonSurvival.MODID + ".", ""),
+        ATTRIBUTE("attribute." + DragonSurvival.MODID + ".", ""),
+        ATTRIBUTE_DESCRIPTION("attribute." + DragonSurvival.MODID + ".", ".desc"),
         EFFECT("effect." + DragonSurvival.MODID + ".", ""),
         EFFECT_DESCRIPTION("effect." + DragonSurvival.MODID + ".", ".desc"),
         ENCHANTMENT("enchantment." + DragonSurvival.MODID + ".", ""),

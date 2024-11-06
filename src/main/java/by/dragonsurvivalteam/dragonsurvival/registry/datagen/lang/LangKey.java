@@ -21,6 +21,11 @@ public class LangKey {
     @Translation(type = Translation.Type.MISC, comments = "DRAGON EDITOR")
     public static final String GUI_DRAGON_EDITOR = Translation.Type.GUI.wrap("general.dragon_editor");
 
+    // --- GUI messages --- //
+
+    @Translation(type = Translation.Type.MISC, comments = "Hunger has exhausted you, and you can't fly.")
+    public static final String MESSAGE_NO_HUNGER = Translation.Type.GUI.wrap("message.no_hunger");
+
     // --- Abilities --- //
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Damage:§r %s")
@@ -49,4 +54,9 @@ public class LangKey {
 
     @Translation(type = Translation.Type.MISC, comments = "§6■ Currently bound to:§r [%s]")
     public static final String ABILITY_KEYBIND = Translation.Type.ABILITY.wrap("general.keybind");
+
+    // --- Misc --- //
+
+    @Translation(type = Translation.Type.MISC, comments = "Kingdom Explorer Map")
+    public static final String ITEM_KINGDOM_EXPLORER_MAP = Translation.Type.ITEM.wrap("kingdom_explorer_map");
 }
