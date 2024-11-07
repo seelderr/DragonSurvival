@@ -1,0 +1,63 @@
+{
+  "parent": "dragonsurvival:be_old_cave_dragon",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "ability": "burn",
+        "level": 4
+      },
+      "trigger": "dragonsurvival:upgrade_ability"
+    },
+    "criterion_1": {
+      "conditions": {
+        "ability": "cave_athletics",
+        "level": 5
+      },
+      "trigger": "dragonsurvival:upgrade_ability"
+    },
+    "criterion_2": {
+      "conditions": {
+        "ability": "contrast_shower",
+        "level": 5
+      },
+      "trigger": "dragonsurvival:upgrade_ability"
+    },
+    "criterion_3": {
+      "conditions": {
+        "ability": "cave_magic",
+        "level": 10
+      },
+      "trigger": "dragonsurvival:upgrade_ability"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:cave_source_of_magic"
+    },
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ],
+    [
+      "criterion_1"
+    ],
+    [
+      "criterion_2"
+    ],
+    [
+      "criterion_3"
+    ]
+  ],
+  "rewards": {
+    "experience": 90
+  },
+  "sends_telemetry_event": true
+}

@@ -1,22 +1,24 @@
 {
-  "parent": "dragonsurvival:root",
+  "parent": "dragonsurvival:collect_heart_from_monster",
   "criteria": {
     "criterion_0": {
+      "conditions": {
+        "type": "forest",
+        "size": 59.9
+      },
       "trigger": "dragonsurvival:be_dragon"
     }
   },
   "display": {
-    "announce_to_chat": false,
     "description": {
-      "translate": "dragonsurvival.advancement.be_dragon.desc"
+      "translate": ""
     },
     "icon": {
       "count": 1,
-      "id": "dragonsurvival:star_bone"
+      "id": "dragonsurvival:forest_dragon_beacon"
     },
-    "show_toast": false,
     "title": {
-      "translate": "dragonsurvival.advancement.be_dragon"
+      "translate": ""
     }
   },
   "requirements": [
@@ -25,7 +27,7 @@
     ]
   ],
   "rewards": {
-    "experience": 12
+    "experience": 120
   },
   "sends_telemetry_event": true
 }

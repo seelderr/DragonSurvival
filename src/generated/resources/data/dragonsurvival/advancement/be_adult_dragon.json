@@ -1,22 +1,23 @@
 {
-  "parent": "dragonsurvival:root",
+  "parent": "dragonsurvival:be_young_dragon",
   "criteria": {
     "criterion_0": {
+      "conditions": {
+        "size": 29.9
+      },
       "trigger": "dragonsurvival:be_dragon"
     }
   },
   "display": {
-    "announce_to_chat": false,
     "description": {
-      "translate": "dragonsurvival.advancement.be_dragon.desc"
+      "translate": "dragonsurvival.advancement.be_adult_dragon.desc"
     },
     "icon": {
       "count": 1,
-      "id": "dragonsurvival:star_bone"
+      "id": "dragonsurvival:weak_dragon_heart"
     },
-    "show_toast": false,
     "title": {
-      "translate": "dragonsurvival.advancement.be_dragon"
+      "translate": "dragonsurvival.advancement.be_adult_dragon"
     }
   },
   "requirements": [
@@ -24,8 +25,5 @@
       "criterion_0"
     ]
   ],
-  "rewards": {
-    "experience": 12
-  },
   "sends_telemetry_event": true
 }
