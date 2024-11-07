@@ -1,0 +1,32 @@
+{
+  "parent": "dragonsurvival:place_altar",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "type": "forest"
+      },
+      "trigger": "dragonsurvival:be_dragon"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:dragon_soul"
+    },
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 12
+  },
+  "sends_telemetry_event": true
+}

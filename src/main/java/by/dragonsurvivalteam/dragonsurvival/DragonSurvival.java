@@ -34,7 +34,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers.DS_TRIGGERS;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes.DS_ATTRIBUTES;
@@ -67,16 +66,9 @@ public class DragonSurvival {
 
     public static final DeferredRegister<AttachmentType<?>> DS_ATTACHMENT_TYPES = DeferredRegister.create(NeoForgeRegistries.Keys.ATTACHMENT_TYPES, MODID);
 
-    public static final Supplier<AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register(
-            "entity_handler",
-            () -> AttachmentType.serializable(EntityStateHandler::new).build()
-    );
-
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<EntityStateHandler>> ENTITY_HANDLER = DS_ATTACHMENT_TYPES.register("entity_handler", () -> AttachmentType.serializable(EntityStateHandler::new).build());
     // TODO :: does this need a custom copy handle for entering the end portal?
-    public static final Supplier<AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register(
-            "dragon_handler",
-            () -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build()
-    );
+    public static final DeferredHolder<AttachmentType<?>, AttachmentType<DragonStateHandler>> DRAGON_HANDLER = DS_ATTACHMENT_TYPES.register("dragon_handler", () -> AttachmentType.serializable(DragonStateHandler::new).copyOnDeath().build());
 
     public DragonSurvival(IEventBus bus, ModContainer container) {
         PROXY = FMLLoader.getDist().isClient() ? new ClientProxy() : new ServerProxy();

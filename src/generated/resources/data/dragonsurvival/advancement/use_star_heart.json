@@ -1,0 +1,29 @@
+{
+  "parent": "dragonsurvival:be_dragon",
+  "criteria": {
+    "criterion_0": {
+      "trigger": "dragonsurvival:use_star_heart"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:star_heart"
+    },
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}

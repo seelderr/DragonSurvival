@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:be_old_cave_dragon",
+  "parent": "dragonsurvival:cave/be_old_dragon",
   "criteria": {
     "criterion_0": {
       "conditions": {
