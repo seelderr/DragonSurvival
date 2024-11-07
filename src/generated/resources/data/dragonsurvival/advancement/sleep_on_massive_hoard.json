@@ -1,5 +1,5 @@
 {
-  "parent": "dragonsurvival:sleep_on_treasure",
+  "parent": "dragonsurvival:sleep_on_hoard",
   "criteria": {
     "criterion_0": {
       "conditions": {

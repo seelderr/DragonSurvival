@@ -1,0 +1,47 @@
+{
+  "parent": "dragonsurvival:forest/be_dragon",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "player": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "nbt": "{\"neoforge:attachments\":{\"dragonsurvival:dragon_handler\":{type:\"forest\"}}}",
+              "stepping_on": {
+                "block": {
+                  "blocks": "minecraft:sweet_berry_bush"
+                }
+              }
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:location"
+    }
+  },
+  "display": {
+    "announce_to_chat": false,
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:sweet_berries"
+    },
+    "show_toast": false,
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 30
+  },
+  "sends_telemetry_event": true
+}
