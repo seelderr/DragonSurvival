@@ -1,7 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.subtypes.FrostDragonSubtype;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.subtypes.VoltaicDragonSubtype;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -19,19 +17,15 @@ public class DragonTypes {
     public static final HashMap<String, AbstractDragonType> staticSubtypes = new HashMap<>();
     public static final HashMap<String, ArrayList<AbstractDragonType>> subtypeMap = new HashMap<>();
 
-	public static CaveDragonType CAVE;
-	public static SeaDragonType SEA;
-	public static ForestDragonType FOREST;
-	public static FrostDragonSubtype FROST;
-	public static VoltaicDragonSubtype VOLTAIC;
+    public static CaveDragonType CAVE;
+    public static SeaDragonType SEA;
+    public static ForestDragonType FOREST;
 
     public static void registerTypes() {
         CAVE = registerType(CaveDragonType::new);
         SEA = registerType(SeaDragonType::new);
-		FOREST = registerType(ForestDragonType::new);
-		FROST = registerSubtype(FrostDragonSubtype::new);
-		VOLTAIC = registerSubtype(VoltaicDragonSubtype::new);
-	}
+        FOREST = registerType(ForestDragonType::new);
+    }
 
     public static <T extends AbstractDragonType> T registerType(Supplier<T> constructor) {
         T type = constructor.get();
