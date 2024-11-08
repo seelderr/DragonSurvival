@@ -211,7 +211,6 @@ public class TreasureBlock extends FallingBlock implements SimpleWaterloggedBloc
         }
     }
 
-    // TODO: Is unit codec okay here?
     @Override
     protected @NotNull MapCodec<? extends FallingBlock> codec() {
         return MapCodec.unit(this);

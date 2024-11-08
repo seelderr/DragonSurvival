@@ -64,18 +64,17 @@ public class DragonAltarBlock extends Block {
     }
 
     @Override
-    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
-        DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
+    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player player, @NotNull BlockHitResult pHitResult) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!pLevel.isClientSide()) {
-            if (handler.altarCooldown > 0) {
-                //Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
-                int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
-                int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
-                pPlayer.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
+            if (ServerConfig.altarUsageCooldown > 0 && handler.altarCooldown > 0) {
+                int minutes = (int) (Functions.ticksToMinutes(handler.altarCooldown));
+                int seconds = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(minutes)));
+                player.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, (minutes > 0 ? minutes + "m " : "") + seconds + "s"));
                 return InteractionResult.FAIL;
             } else {
-                PacketDistributor.sendToPlayer((ServerPlayer) pPlayer, new AllowOpenDragonAltar.Data());
+                PacketDistributor.sendToPlayer((ServerPlayer) player, AllowOpenDragonAltar.INSTANCE);
                 handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
                 handler.hasUsedAltar = true;
                 handler.isInAltar = true;

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
@@ -11,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -102,24 +104,21 @@ public class PlayerLoginHandler {
 
     @SubscribeEvent
     public static void startWithDragonChoice(PlayerTickEvent.Post event) {
-        if (!ServerConfig.startWithDragonChoice) return;
-        if (event.getEntity().level().isClientSide()) return;
-
-        if (event.getEntity() instanceof ServerPlayer player) {
-            if (player.isDeadOrDying()) return;
-
-            if (player.tickCount > 5 * 20) {
-                DragonStateProvider.getOptional(player).ifPresent(cap -> {
-                    if (!cap.hasUsedAltar && !cap.isInAltar && !DragonStateProvider.isDragon(player)) {
-                        PacketDistributor.sendToPlayer(player, new AllowOpenDragonAltar.Data());
-                        cap.isInAltar = true;
-                    }
-
-                    if (cap.altarCooldown > 0) {
-                        cap.altarCooldown--;
-                    }
-                });
-            }
+        if (!(event.getEntity() instanceof ServerPlayer serverPlayer) || serverPlayer.isDeadOrDying()) {
+            return;
         }
+
+        DragonStateHandler data = DragonStateProvider.getData(serverPlayer);
+
+        if (data.altarCooldown > 0) {
+            data.altarCooldown--;
+        }
+
+        if (!ServerConfig.startWithDragonChoice || data.hasUsedAltar || serverPlayer.tickCount < Functions.secondsToTicks(5)) {
+            return;
+        }
+
+        PacketDistributor.sendToPlayer(serverPlayer, AllowOpenDragonAltar.INSTANCE);
+        data.isInAltar = true;
     }
 }
