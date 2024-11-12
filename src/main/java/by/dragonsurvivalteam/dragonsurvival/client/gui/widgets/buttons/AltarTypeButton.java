@@ -44,16 +44,35 @@ public class AltarTypeButton extends Button {
     @Translation(type = Translation.Type.MISC, comments = "You have awakened from your sleep, and become a human.")
     private static final String CHOICE_HUMAN = Translation.Type.GUI.wrap("altar.choice.human");
 
-    @Translation(type = Translation.Type.MISC, comments = "■ §nHuman.§r\n■ Homo sapiens.§r\nTravelers, builders, and creators.")
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ §nHuman.§r",
+            "■ Homo sapiens.§r",
+            "Travelers, builders, and creators."
+    })
     private static final String HUMAN = Translation.Type.GUI.wrap("altar.info.human");
 
-    @Translation(type = Translation.Type.MISC, comments = "§c■ Cave dragon.§r\n§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on stone and magma blocks.\n§4■ Weakness:§r water.\n§6■ Diet:§r")
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§c■ Cave dragon.§r",
+            "§2■ Features:§f§r fire resistance, pickaxe claws, fire magic, faster movement on stone and magma blocks.",
+            "§4■ Weakness:§r water.",
+            "§6■ Diet:§r"
+    })
     private static final String CAVE_DRAGON = Translation.Type.GUI.wrap("altar.info.cave");
 
-    @Translation(type = Translation.Type.MISC, comments = "§3■ Sea dragon.§r\n§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on ice and beach blocks.\n§4■ Weakness:§r dehydration.\n§6■ Diet:§r")
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§3■ Sea dragon.§r",
+            "§2■ Features:§f§r underwater breathing, shovel claws, electric magic, faster movement on ice and beach blocks.",
+            "§4■ Weakness:§r dehydration.",
+            "§6■ Diet:§r"
+    })
     private static final String SEA_DRAGON = Translation.Type.GUI.wrap("altar.info.sea");
 
-    @Translation(type = Translation.Type.MISC, comments = "§a■ Forest dragon.§r\n§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on wooden and grass blocks.\n§4■ Weakness:§r dark caves.\n§6■ Diet:§r")
+    @Translation(type = Translation.Type.MISC, comments = {
+            "§a■ Forest dragon.§r",
+            "§2■ Features:§f§r soft fall, axe claws, poison magic, faster movement on wooden and grass blocks.",
+            "§4■ Weakness:§r dark caves.",
+            "§6■ Diet:§r"
+    })
     private static final String FOREST_DRAGON = Translation.Type.GUI.wrap("altar.info.forest");
 
     public AbstractDragonType type;
@@ -93,8 +112,9 @@ public class AltarTypeButton extends Button {
                 scroll = 0;
             }
 
+            List<Either<FormattedText, TooltipComponent>> components = new ArrayList<>();
+
             if (type != null) {
-                List<Either<FormattedText, TooltipComponent>> components = new ArrayList<>();
                 List<Item> foods = DragonFoodHandler.getEdibleFoods(type);
 
                 int maxItems = 5;
@@ -125,7 +145,8 @@ public class AltarTypeButton extends Button {
 
                 graphics.renderComponentTooltipFromElements(Minecraft.getInstance().font, components, mouseX, mouseY, ItemStack.EMPTY);
             } else {
-                graphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(Component.translatable(HUMAN)), mouseX, mouseY);
+                components.addFirst(Either.left(Component.translatable(HUMAN)));
+                graphics.renderComponentTooltipFromElements(Minecraft.getInstance().font, components, mouseX, mouseY, ItemStack.EMPTY);
             }
         } else {
             resetScroll = true;
