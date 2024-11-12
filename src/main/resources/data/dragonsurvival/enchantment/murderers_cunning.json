@@ -4,7 +4,7 @@
     "translate": "enchantment.dragonsurvival.murderers_cunning"
   },
   "effects": {},
-  "exclusive_set": "#dragonsurvival:exclusive_set/good_dragon",
+  "exclusive_set": "#dragonsurvival:exclusive_set/light_dragon",
   "max_cost": {
     "base": 21,
     "per_level_above_first": 11

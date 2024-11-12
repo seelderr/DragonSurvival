@@ -38,9 +38,8 @@ public class DataItemModelProvider extends ItemModelProvider {
             "hunter_partisan_diamond",
             "hunter_partisan_netherite",
             "hunter_key",
-            "good_dragon_key",
-            "evil_dragon_key",
-            "hunter_dragon_key",
+            "dark_key",
+            "light_key",
             "dragon_soul"
     );
 

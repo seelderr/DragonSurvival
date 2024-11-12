@@ -146,7 +146,7 @@ public class DragonPenaltyHandler {
         return DRAGON_BLACKLISTED_ITEMS.contains(item);
     }
 
-    @SubscribeEvent // Prevent the player from equipping blacklisted armor (or mix good and evil dragon armor)
+    @SubscribeEvent // Prevent the player from equipping blacklisted armor (or from mixing light and dark dragon armor)
     public static void preventEquipment(final ItemStackedOnOtherEvent event) {
         ItemStack stack = event.getStackedOnItem(); // FIXME :: this is probably a neoforge bug, this should be carried item -> might be changed in the future
         Player player = event.getPlayer();
@@ -167,14 +167,14 @@ public class DragonPenaltyHandler {
             }
         }
 
-        boolean isGoodDragonItem = stack.is(DSItemTags.IS_GOOD_DRAGON);
+        boolean isLightArmor = stack.is(DSItemTags.LIGHT_ARMOR);
 
-        if (isGoodDragonItem && player.hasEffect(DSEffects.HUNTER_OMEN)) {
+        if (isLightArmor && player.hasEffect(DSEffects.HUNTER_OMEN)) {
             event.setCanceled(true);
             return;
         }
 
-        boolean isEvilDragonItem = stack.is(DSItemTags.IS_EVIL_DRAGON);
+        boolean isDarkArmor = stack.is(DSItemTags.DARK_ARMOR);
 
         for (ItemStack armor : player.getArmorSlots()) {
             if (armor.isEmpty()) {
@@ -183,9 +183,9 @@ public class DragonPenaltyHandler {
 
             boolean isActionInvalid = false;
 
-            if (isEvilDragonItem && armor.is(DSItemTags.IS_GOOD_DRAGON)) {
+            if (isDarkArmor && armor.is(DSItemTags.LIGHT_ARMOR)) {
                 isActionInvalid = true;
-            } else if (isGoodDragonItem && (armor.is(DSItemTags.IS_EVIL_DRAGON))) {
+            } else if (isLightArmor && (armor.is(DSItemTags.DARK_ARMOR))) {
                 isActionInvalid = true;
             }
 

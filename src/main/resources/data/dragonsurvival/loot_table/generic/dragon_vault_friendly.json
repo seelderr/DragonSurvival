@@ -30,7 +30,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:good_dragon_upgrade"
+          "name": "dragonsurvival:light_upgrade"
         }
       ]
     },

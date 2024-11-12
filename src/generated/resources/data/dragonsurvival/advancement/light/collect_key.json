@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "dragonsurvival:good_dragon_key"
+            "items": "dragonsurvival:light_key"
           }
         ]
       },
@@ -18,7 +18,7 @@
     },
     "icon": {
       "count": 1,
-      "id": "dragonsurvival:good_dragon_key"
+      "id": "dragonsurvival:light_key"
     },
     "title": {
       "translate": "dragonsurvival.advancement.light/collect_key"

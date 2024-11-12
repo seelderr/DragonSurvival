@@ -90,66 +90,68 @@ public class DragonSurvivalClient {
     private void registerItemExtensions(RegisterClientExtensionsEvent event) {
         event.registerItem(new ShakeWhenUsedExtension(), DSItems.DRAGON_SOUL.value());
 
-        // Good dragon armor
+        // --- Light dragon armor --- //
+
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, true, false, false, false);
             }
-        }, DSItems.GOOD_DRAGON_HELMET.value());
+        }, DSItems.LIGHT_DRAGON_HELMET.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, true, false, false);
             }
-        }, DSItems.GOOD_DRAGON_CHESTPLATE.value());
+        }, DSItems.LIGHT_DRAGON_CHESTPLATE.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, true, false);
             }
-        }, DSItems.GOOD_DRAGON_LEGGINGS.value());
+        }, DSItems.LIGHT_DRAGON_LEGGINGS.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, false, true);
             }
-        }, DSItems.GOOD_DRAGON_BOOTS.value());
+        }, DSItems.LIGHT_DRAGON_BOOTS.value());
 
-        // Evil dragon armor
+        // --- Dark dragon armor --- //
+
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, true, false, false, false);
             }
-        }, DSItems.EVIL_DRAGON_HELMET.value());
+        }, DSItems.DARK_DRAGON_HELMET.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, true, false, false);
             }
-        }, DSItems.EVIL_DRAGON_CHESTPLATE.value());
+        }, DSItems.DARK_DRAGON_CHESTPLATE.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, true, false);
             }
-        }, DSItems.EVIL_DRAGON_LEGGINGS.value());
+        }, DSItems.DARK_DRAGON_LEGGINGS.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, false, true);
             }
-        }, DSItems.EVIL_DRAGON_BOOTS.value());
+        }, DSItems.DARK_DRAGON_BOOTS.value());
 
         // TODO: This is part of the way to get the helmet block to render in hand correctly, not sure how to fix some of the other issues though
-        /*event.registerItem(new IClientItemExtensions(){
+        /* event.registerItem(new IClientItemExtensions(){
             private final HelmetStackTileEntityRenderer renderer = new HelmetStackTileEntityRenderer();
 
             @Override

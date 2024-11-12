@@ -755,7 +755,7 @@ public class DSBlocks {
             .putTag("config", CompoundTagBuilder.tag()
                     .putTag("key_item", CompoundTagBuilder.tag()
                             .putInt("count", 1)
-                            .putString("id", DragonSurvival.res(DSItems.LIGHT_DRAGON_KEY_ID).toString()).build()
+                            .putString("id", DragonSurvival.res(DSItems.LIGHT_KEY_ID).toString()).build()
                     ).putString("loot_table", DragonSurvival.res("generic/light_vault").toString()).build()
             ).build();
 
@@ -763,7 +763,7 @@ public class DSBlocks {
             .putTag("config", CompoundTagBuilder.tag()
                     .putTag("key_item", CompoundTagBuilder.tag()
                             .putInt("count", 1)
-                            .putString("id", DragonSurvival.res(DSItems.DARK_DRAGON_KEY_ID).toString()).build()
+                            .putString("id", DragonSurvival.res(DSItems.DARK_KEY_ID).toString()).build()
                     ).putString("loot_table", DragonSurvival.res("generic/dark_vault").toString()).build()
             ).build();
 

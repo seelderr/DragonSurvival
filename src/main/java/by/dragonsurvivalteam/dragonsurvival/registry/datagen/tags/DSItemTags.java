@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DarkDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.LightDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -25,8 +25,8 @@ import java.util.concurrent.CompletableFuture;
 public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> KEEP_EFFECTS = key("keep_effects");
     public static final TagKey<Item> SEA_DRAGON_HYDRATION = key("sea_dragon_hydration");
-    public static final TagKey<Item> IS_GOOD_DRAGON = key("is_good_dragon");
-    public static final TagKey<Item> IS_EVIL_DRAGON = key("is_evil_dragon");
+    public static final TagKey<Item> LIGHT_ARMOR = key("light_armor");
+    public static final TagKey<Item> DARK_ARMOR = key("dark_armor");
     public static final TagKey<Item> CLAW_WEAPONS = key("claw_weapons");
 
     // Used in recipes
@@ -51,10 +51,10 @@ public class DSItemTags extends ItemTagsProvider {
         DSItems.DS_ITEMS.getEntries().forEach(holder -> {
             Item item = holder.value();
 
-            if (item instanceof GoodDragonArmorItem) {
-                tag(IS_GOOD_DRAGON).add(item);
-            } else if (item instanceof EvilDragonArmorItem) {
-                tag(IS_EVIL_DRAGON).add(item);
+            if (item instanceof LightDragonArmorItem) {
+                tag(LIGHT_ARMOR).add(item);
+            } else if (item instanceof DarkDragonArmorItem) {
+                tag(DARK_ARMOR).add(item);
             }
         });
 

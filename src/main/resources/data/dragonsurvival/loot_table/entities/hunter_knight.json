@@ -69,7 +69,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:evil_dragon_key"
+          "name": "dragonsurvival:dark_key"
         }
       ],
       "conditions": [

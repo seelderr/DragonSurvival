@@ -15,7 +15,7 @@
           {
             "condition": "minecraft:match_tool",
             "predicate": {
-              "items": "dragonsurvival:good_dragon_key"
+              "items": "dragonsurvival:light_key"
             }
           }
         ]

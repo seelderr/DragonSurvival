@@ -31,7 +31,7 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
                 .add(DSEnchantments.DRAGONSBOON);
 
         // Used in enchantments
-        tag(exclusiveSet("evil_dragon")) // FIXME
+        tag(exclusiveSet("dark_dragon"))
                 .add(DSEnchantments.BLOOD_SIPHON)
                 .add(DSEnchantments.DRACONIC_SUPERIORITY)
                 .add(DSEnchantments.MURDERERS_CUNNING)
@@ -39,7 +39,7 @@ public class DSEnchantmentTags extends EnchantmentTagsProvider {
                 .add(DSEnchantments.CURSE_OF_OUTLAW);
 
         // Used in enchantments
-        tag(exclusiveSet("good_dragon")) // FIXME
+        tag(exclusiveSet("light_dragon"))
                 .add(DSEnchantments.AERODYNAMIC_MASTERY)
                 .add(DSEnchantments.COMBAT_RECOVERY)
                 .add(DSEnchantments.SACRED_SCALES)

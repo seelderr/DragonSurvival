@@ -128,17 +128,17 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
         // --- Parent: dark/open_vault --- //
 
-        AdvancementHolder getArmorItem = createWithToast(openVault, DARK_GET_ARMOR_ITEM, DSItems.EVIL_DRAGON_HELMET.value(), List.of(
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_HELMET.value(), DSItems.EVIL_DRAGON_CHESTPLATE.value(), DSItems.EVIL_DRAGON_LEGGINGS.value(), DSItems.EVIL_DRAGON_BOOTS.value())
+        AdvancementHolder getArmorItem = createWithToast(openVault, DARK_GET_ARMOR_ITEM, DSItems.DARK_DRAGON_HELMET.value(), List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.DARK_DRAGON_HELMET.value(), DSItems.DARK_DRAGON_CHESTPLATE.value(), DSItems.DARK_DRAGON_LEGGINGS.value(), DSItems.DARK_DRAGON_BOOTS.value())
         ), 0);
 
         // --- Parent: dark/get_armor_item --- //
 
-        createWithToast(getArmorItem, DARK_GET_ARMOR_SET, DSItems.EVIL_DRAGON_HELMET.value(), List.of(
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_HELMET.value()),
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_CHESTPLATE.value()),
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_LEGGINGS.value()),
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_BOOTS.value())
+        createWithToast(getArmorItem, DARK_GET_ARMOR_SET, DSItems.DARK_DRAGON_HELMET.value(), List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.DARK_DRAGON_HELMET.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.DARK_DRAGON_CHESTPLATE.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.DARK_DRAGON_LEGGINGS.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.DARK_DRAGON_BOOTS.value())
         ), 0);
     }
 
@@ -157,17 +157,17 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
         // --- Parent: light/open_vault --- //
 
-        AdvancementHolder getArmorItem = createWithToast(openVault, LIGHT_GET_ARMOR_ITEM, DSItems.GOOD_DRAGON_HELMET.value(), List.of(
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_HELMET.value(), DSItems.GOOD_DRAGON_CHESTPLATE.value(), DSItems.GOOD_DRAGON_LEGGINGS.value(), DSItems.GOOD_DRAGON_BOOTS.value())
+        AdvancementHolder getArmorItem = createWithToast(openVault, LIGHT_GET_ARMOR_ITEM, DSItems.LIGHT_DRAGON_HELMET.value(), List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.LIGHT_DRAGON_HELMET.value(), DSItems.LIGHT_DRAGON_CHESTPLATE.value(), DSItems.LIGHT_DRAGON_LEGGINGS.value(), DSItems.LIGHT_DRAGON_BOOTS.value())
         ), 0);
 
         // --- Parent: light/get_armor_item --- //
 
-        createWithToast(getArmorItem, LIGHT_GET_ARMOR_SET, DSItems.GOOD_DRAGON_HELMET.value(), List.of(
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_HELMET.value()),
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_CHESTPLATE.value()),
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_LEGGINGS.value()),
-                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_BOOTS.value())
+        createWithToast(getArmorItem, LIGHT_GET_ARMOR_SET, DSItems.LIGHT_DRAGON_HELMET.value(), List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.LIGHT_DRAGON_HELMET.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.LIGHT_DRAGON_CHESTPLATE.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.LIGHT_DRAGON_LEGGINGS.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.LIGHT_DRAGON_BOOTS.value())
         ), 0);
     }
 

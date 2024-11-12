@@ -88,39 +88,46 @@ public class RotatingKeyItem extends TooltipItem implements GeoItem {
     }
 
     @Override
-    public void inventoryTick(@NotNull ItemStack pStack, @NotNull Level pLevel, @NotNull Entity pEntity, int pSlotId, boolean pIsSelected) {
-        super.inventoryTick(pStack, pLevel, pEntity, pSlotId, pIsSelected);
-        if (pEntity instanceof Player player) {
-            if (player.getMainHandItem() == pStack || player.getOffhandItem() == pStack) {
-                if (pLevel instanceof ServerLevel serverLevel) {
-                    if (serverLevel.getGameTime() % 20 == 0) {
-                        Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
-                        if (structure.isPresent()) {
-                            Pair<BlockPos, Holder<Structure>> nearest = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(
-                                    serverLevel, structure.get(), pEntity.blockPosition(), 25, false);
-                            if (nearest != null) {
-                                SectionPos section = SectionPos.of(nearest.getFirst());
-                                StructureStart start = serverLevel.structureManager().getStartForStructure(section, nearest.getSecond().value(),
-                                        serverLevel.getChunk(section.x(), section.z(), ChunkStatus.STRUCTURE_STARTS));
-                                if (start != null) {
-                                    pStack.set(DSDataComponents.TARGET_POSITION, start.getBoundingBox().getCenter().getCenter().toVector3f());
-                                    return;
-                                }
-                            }
-                        }
-                        pStack.set(DSDataComponents.TARGET_POSITION, fake_target);
-                        triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
-                    } else {
-                        playerHoldingItem = player;
-                        currentTarget = pStack.get(DSDataComponents.TARGET_POSITION);
-                        if (currentTarget == fake_target || currentTarget == null || currentTarget.length() < 0.1) {
-                            triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "no_target");
-                            return;
-                        }
-                        triggerAnim(pEntity, GeoItem.getId(pStack), "rotating_key_controller", "idle");
+    public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slot, boolean isSelected) {
+        super.inventoryTick(stack, level, entity, slot, isSelected);
+
+        if (!(entity instanceof Player player) || (player.getMainHandItem() != stack && player.getOffhandItem() != stack)) {
+            return;
+        }
+
+        if (!(level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+
+        if (serverLevel.getGameTime() % 20 == 0) {
+            Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
+
+            if (structure.isPresent()) {
+                Pair<BlockPos, Holder<Structure>> nearest = serverLevel.getChunkSource().getGenerator().findNearestMapStructure(serverLevel, structure.get(), entity.blockPosition(), 25, false);
+
+                if (nearest != null) {
+                    SectionPos section = SectionPos.of(nearest.getFirst());
+                    StructureStart start = serverLevel.structureManager().getStartForStructure(section, nearest.getSecond().value(), serverLevel.getChunk(section.x(), section.z(), ChunkStatus.STRUCTURE_STARTS));
+
+                    if (start != null) {
+                        stack.set(DSDataComponents.TARGET_POSITION, start.getBoundingBox().getCenter().getCenter().toVector3f());
+                        return;
                     }
                 }
             }
+
+            stack.set(DSDataComponents.TARGET_POSITION, fake_target);
+            triggerAnim(entity, GeoItem.getId(stack), "rotating_key_controller", "no_target");
+        } else {
+            playerHoldingItem = player;
+            currentTarget = stack.get(DSDataComponents.TARGET_POSITION);
+
+            if (currentTarget == fake_target || currentTarget == null || currentTarget.length() < 0.1) {
+                triggerAnim(entity, GeoItem.getId(stack), "rotating_key_controller", "no_target");
+                return;
+            }
+
+            triggerAnim(entity, GeoItem.getId(stack), "rotating_key_controller", "idle");
         }
     }
 }

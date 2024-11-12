@@ -18,7 +18,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "dragonsurvival:evil_dragon_upgrade"
+          "name": "dragonsurvival:dark_upgrade"
         }
       ]
     },

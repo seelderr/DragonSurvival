@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "dragonsurvival:evil_dragon_key"
+            "items": "dragonsurvival:dark_key"
           }
         ]
       },
@@ -18,7 +18,7 @@
     },
     "icon": {
       "count": 1,
-      "id": "dragonsurvival:evil_dragon_key"
+      "id": "dragonsurvival:dark_key"
     },
     "title": {
       "translate": "dragonsurvival.advancement.dark/collect_key"

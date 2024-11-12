@@ -1,9 +1,9 @@
 {
     "type": "minecraft:smithing_transform",
-    "template": { "item": "dragonsurvival:evil_dragon_upgrade" },
+    "template": { "item": "dragonsurvival:light_upgrade" },
     "base": { "item":"minecraft:netherite_leggings" },
     "addition": { "item": "dragonsurvival:elder_dragon_heart" },
     "result": {
-        "id": "dragonsurvival:evil_dragon_leggings"
+        "id": "dragonsurvival:light_dragon_leggings"
     }
 }

@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.enchantment.ItemEnchantments;
 
-public class EvilDragonArmorItem extends ArmorItem implements PermanentEnchantmentItem {
+public class DarkDragonArmorItem extends ArmorItem implements PermanentEnchantmentItem {
     public ItemEnchantments getDefaultEnchantments() {
         ItemEnchantments.Mutable enchantments = new ItemEnchantments.Mutable(ItemEnchantments.EMPTY);
 
@@ -21,7 +21,7 @@ public class EvilDragonArmorItem extends ArmorItem implements PermanentEnchantme
         return enchantments.toImmutable();
     }
 
-    public EvilDragonArmorItem(Type pType, Properties pProperties) {
-        super(DSEquipment.EVIL_DRAGON_ARMOR_MATERIAL, pType, pProperties);
+    public DarkDragonArmorItem(Type pType, Properties pProperties) {
+        super(DSEquipment.DARK_DRAGON_ARMOR_MATERIAL, pType, pProperties);
     }
 }

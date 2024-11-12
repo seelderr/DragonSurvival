@@ -1,9 +1,9 @@
 {
     "type": "minecraft:smithing_transform",
-    "template": { "item": "dragonsurvival:good_dragon_upgrade" },
+    "template": { "item": "dragonsurvival:dark_upgrade" },
     "base": { "item":"minecraft:netherite_chestplate" },
     "addition": { "item": "dragonsurvival:elder_dragon_heart" },
     "result": {
-        "id": "dragonsurvival:good_dragon_chestplate"
+        "id": "dragonsurvival:dark_dragon_chestplate"
     }
 }

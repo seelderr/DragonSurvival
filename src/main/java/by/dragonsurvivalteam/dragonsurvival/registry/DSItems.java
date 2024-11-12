@@ -5,9 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.items.*;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DarkDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DragonHunterWeapon;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.LightDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
@@ -218,49 +218,49 @@ public class DSItems {
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Upgrade")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 A rare item that allows you to upgrade your Netherite Armor to Light Armor. The armor will have built-in enchantments to help you live peacefully in this world.")
-    public static final Holder<Item> GOOD_DRAGON_UPGRADE = DS_ITEMS.register("good_dragon_upgrade", location -> new TooltipItem(new Properties().rarity(Rarity.RARE), location.getPath()));
+    public static final Holder<Item> LIGHT_UPGRADE = DS_ITEMS.register("light_upgrade", location -> new TooltipItem(new Properties().rarity(Rarity.RARE), location.getPath()));
 
-    @Translation(type = Translation.Type.ITEM, comments = "Light Helmet") // FIXME
-    public static final Holder<Item> GOOD_DRAGON_HELMET = DS_ITEMS.register("good_dragon_helmet", () -> new GoodDragonArmorItem(
+    @Translation(type = Translation.Type.ITEM, comments = "Light Helmet")
+    public static final Holder<Item> LIGHT_DRAGON_HELMET = DS_ITEMS.register("light_dragon_helmet", () -> new LightDragonArmorItem(
             ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Chestplate")
-    public static final Holder<Item> GOOD_DRAGON_CHESTPLATE = DS_ITEMS.register("good_dragon_chestplate", () -> new GoodDragonArmorItem(
+    public static final Holder<Item> LIGHT_DRAGON_CHESTPLATE = DS_ITEMS.register("light_dragon_chestplate", () -> new LightDragonArmorItem(
             ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Leggings")
-    public static final Holder<Item> GOOD_DRAGON_LEGGINGS = DS_ITEMS.register("good_dragon_leggings", () -> new GoodDragonArmorItem(
+    public static final Holder<Item> LIGHT_DRAGON_LEGGINGS = DS_ITEMS.register("light_dragon_leggings", () -> new LightDragonArmorItem(
             ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Boots")
-    public static final Holder<Item> GOOD_DRAGON_BOOTS = DS_ITEMS.register("good_dragon_boots", () -> new GoodDragonArmorItem(
+    public static final Holder<Item> LIGHT_DRAGON_BOOTS = DS_ITEMS.register("light_dragon_boots", () -> new LightDragonArmorItem(
             ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Upgrade")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 A rare item that allows you to upgrade your Netherite Armor to Dark Armor. The armor will have built-in enchantments to help you effectively shed blood in the name of evil.")
-    public static final Holder<Item> EVIL_DRAGON_UPGRADE = DS_ITEMS.register("evil_dragon_upgrade", location -> new TooltipItem(new Properties().rarity(Rarity.RARE), location.getPath()));
+    public static final Holder<Item> DARK_UPGRADE = DS_ITEMS.register("dark_upgrade", location -> new TooltipItem(new Properties().rarity(Rarity.RARE), location.getPath()));
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Helmet")
-    public static final Holder<Item> EVIL_DRAGON_HELMET = DS_ITEMS.register("evil_dragon_helmet", () -> new EvilDragonArmorItem(
+    public static final Holder<Item> DARK_DRAGON_HELMET = DS_ITEMS.register("dark_dragon_helmet", () -> new DarkDragonArmorItem(
             ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Chestplate")
-    public static final Holder<Item> EVIL_DRAGON_CHESTPLATE = DS_ITEMS.register("evil_dragon_chestplate", () -> new EvilDragonArmorItem(
+    public static final Holder<Item> DARK_DRAGON_CHESTPLATE = DS_ITEMS.register("dark_dragon_chestplate", () -> new DarkDragonArmorItem(
             ArmorItem.Type.CHESTPLATE, new Item.Properties().durability(ArmorItem.Type.CHESTPLATE.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Leggings")
-    public static final Holder<Item> EVIL_DRAGON_LEGGINGS = DS_ITEMS.register("evil_dragon_leggings", () -> new EvilDragonArmorItem(
+    public static final Holder<Item> DARK_DRAGON_LEGGINGS = DS_ITEMS.register("dark_dragon_leggings", () -> new DarkDragonArmorItem(
             ArmorItem.Type.LEGGINGS, new Item.Properties().durability(ArmorItem.Type.LEGGINGS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Boots")
-    public static final Holder<Item> EVIL_DRAGON_BOOTS = DS_ITEMS.register("evil_dragon_boots", () -> new EvilDragonArmorItem(
+    public static final Holder<Item> DARK_DRAGON_BOOTS = DS_ITEMS.register("dark_dragon_boots", () -> new DarkDragonArmorItem(
             ArmorItem.Type.BOOTS, new Item.Properties().durability(ArmorItem.Type.BOOTS.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
 
@@ -326,25 +326,25 @@ public class DSItems {
 
     public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(new Properties().rarity(Rarity.EPIC)));
 
-    public static final String LIGHT_DRAGON_KEY_ID = "good_dragon_key"; // FIXME
+    public static final String LIGHT_KEY_ID = "light_key";
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Light Vault. Purchased from the dragon rider villager.")
-    public static final Holder<Item> LIGHT_KEY = DS_ITEMS.register(LIGHT_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> LIGHT_KEY = DS_ITEMS.register(LIGHT_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-            DragonSurvival.res("geo/" + LIGHT_DRAGON_KEY_ID + ".geo.json"),
-            DragonSurvival.res("textures/item/" + LIGHT_DRAGON_KEY_ID + ".png"),
-            DragonSurvival.res("treasure_friendly")));
+            DragonSurvival.res("geo/" + LIGHT_KEY_ID + ".geo.json"),
+            DragonSurvival.res("textures/item/" + LIGHT_KEY_ID + ".png"),
+            DragonSurvival.res("light_treasure")));
 
-    public static final String DARK_DRAGON_KEY_ID = "evil_dragon_key"; // FIXME
+    public static final String DARK_KEY_ID = "dark_key";
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Dark Vault in Nether. Drops if you kill a dragon hunter knight.")
-    public static final Holder<Item> DARK_KEY = DS_ITEMS.register(DARK_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> DARK_KEY = DS_ITEMS.register(DARK_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
-            DragonSurvival.res("geo/" + DARK_DRAGON_KEY_ID + ".geo.json"),
-            DragonSurvival.res("textures/item/" + DARK_DRAGON_KEY_ID + ".png"),
-            DragonSurvival.res("treasure_angry")));
+            DragonSurvival.res("geo/" + DARK_KEY_ID + ".geo.json"),
+            DragonSurvival.res("textures/item/" + DARK_KEY_ID + ".png"),
+            DragonSurvival.res("dark_treasure")));
 
     public static final String HUNTER_KEY_ID = "hunter_key";
 
@@ -354,7 +354,7 @@ public class DSItems {
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + HUNTER_KEY_ID + ".geo.json"),
             DragonSurvival.res("textures/item/" + HUNTER_KEY_ID + ".png"),
-            DragonSurvival.res("treasure_hunter")));
+            DragonSurvival.res("hunter_treasure")));
 
     @Translation(type = Translation.Type.ITEM, comments = "Spearman Promotion")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■ §7Use on a Hunter Spearman to turn him into a Hunter Leader.")
