@@ -34,7 +34,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
 
     @ConfigRange(min = 0.05, max = 10000.0)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulCasttime", comment = "The cast time in seconds of the revealing the soul ability")
-    public static Double revealingTheSoulCasttime = 1.0;
+    public static Double revealingTheSoulCasttime = 2.0;
 
     @ConfigRange(min = 0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "revealing_the_soul"}, key = "revealingTheSoulManaCost", comment = "The mana cost for using the revealing The Soul ability")

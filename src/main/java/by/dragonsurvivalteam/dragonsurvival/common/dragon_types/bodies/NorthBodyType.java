@@ -34,7 +34,7 @@ public class NorthBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northSwimSpeedBonus", comment = "The swimSpeed bonus given to North-type dragons")
-    public static Double northSwimSpeedBonus = 1.5;
+    public static Double northSwimSpeedBonus = 0.5;
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northHealthBonus", comment = "The health bonus given to North-type dragons")
@@ -62,7 +62,7 @@ public class NorthBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to North-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
-    public static Double northFlightStaminaMult = 1.2;
+    public static Double northFlightStaminaMult = 0.9;
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "northGravityMult", comment = "The gravity multiplier given to North-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")

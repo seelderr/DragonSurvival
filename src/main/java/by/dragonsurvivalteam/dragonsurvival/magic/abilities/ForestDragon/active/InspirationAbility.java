@@ -27,7 +27,7 @@ public class InspirationAbility extends AoeBuffAbility {
 
     @ConfigRange(min = 0.05, max = 10000)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationCasttime", comment = "The cast time in seconds of the inspiration ability")
-    public static Double inspirationCasttime = 1.0;
+    public static Double inspirationCasttime = 2.0;
 
     @ConfigRange(min = 1.0, max = 10000.0)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "inspiration"}, key = "inspirationDuration", comment = "The duration in seconds of the inspiration effect given when the ability is used")

@@ -34,7 +34,7 @@ public class EastBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastSwimSpeedBonus", comment = "The swimSpeed bonus given to East-type dragons")
-    public static Double eastSwimSpeedBonus = 0.5;
+    public static Double eastSwimSpeedBonus = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastHealthBonus", comment = "The health bonus given to East-type dragons")
@@ -62,11 +62,11 @@ public class EastBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to East-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
-    public static Double eastFlightStaminaMult = 1.2;
+    public static Double eastFlightStaminaMult = 0.8;
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "eastGravityMult", comment = "The gravity multiplier given to East-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")
-    public static Double eastGravityMult = 1.0;
+    public static Double eastGravityMult = 1.1;
 
     @Override
     public CompoundTag writeNBT() {

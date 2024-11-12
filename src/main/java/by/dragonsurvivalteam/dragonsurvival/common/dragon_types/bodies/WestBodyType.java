@@ -34,7 +34,7 @@ public class WestBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westSwimSpeedBonus", comment = "The swimSpeed bonus given to West-type dragons")
-    public static Double westSwimSpeedBonus = -0.2;
+    public static Double westSwimSpeedBonus = -0.3;
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westHealthBonus", comment = "The health bonus given to West-type dragons")
@@ -50,7 +50,7 @@ public class WestBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = -10.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westRunMult", comment = "The run speed multiplier given to West-type dragons")
-    public static Double westRunMult = 0.9;
+    public static Double westRunMult = 0.7;
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westExpMult", comment = "The exp multiplier given to West-type dragons. Can cause dupes with some mods. Increase carefully.")
@@ -62,7 +62,7 @@ public class WestBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to West-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
-    public static Double westFlightStaminaMult = 0.2;
+    public static Double westFlightStaminaMult = 2.0;
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "westGravityMult", comment = "The gravity multiplier given to West-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")

@@ -31,7 +31,7 @@ public class SpikeAbility extends InstantCastAbility {
 
     @ConfigRange(min = 0.0, max = 100.0)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeSpread", comment = "The amount each additional spike fired will add to its inaccuracy")
-    public static Float spikeSpread = 1.0F;
+    public static Float spikeSpread = 1.5F;
 
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeMultishot", comment = "Whether the spike ability will fire an additional shot per level")
     public static Boolean spikeMultishot = true;

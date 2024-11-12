@@ -38,7 +38,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @ConfigRange(min = 1, max = 10000)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in seconds of the tough skin ability")
-    public static Double toughSkinCasttime = 1.0;
+    public static Double toughSkinCasttime = 2.0;
 
     @ConfigRange(min = 0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability")

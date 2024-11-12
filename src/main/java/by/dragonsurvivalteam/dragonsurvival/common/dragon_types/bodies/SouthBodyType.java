@@ -62,7 +62,7 @@ public class SouthBodyType extends AbstractDragonBody {
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southFlightStaminaMult", comment = "The flightStamina (food waste rate) multiplier given to South-type dragons. The higher the number, the faster hunger is consumed. It's a very sensitive setting.")
-    public static Double southFlightStaminaMult = 1.2;
+    public static Double southFlightStaminaMult = 0.5;
 
     @ConfigRange(min = 0.0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "southGravityMult", comment = "The gravity multiplier given to South-type dragons. The greater the gravity, the faster the dragon will fall during flight and drown faster.")
