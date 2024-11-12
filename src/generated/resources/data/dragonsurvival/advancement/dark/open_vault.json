@@ -1,0 +1,47 @@
+{
+  "parent": "dragonsurvival:dark/collect_key",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "dragonsurvival:dark_vault"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "dragonsurvival:evil_dragon_key"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:item_used_on_block"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:dark_vault"
+    },
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 10
+  },
+  "sends_telemetry_event": true
+}

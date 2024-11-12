@@ -1,0 +1,33 @@
+{
+  "parent": "dragonsurvival:dark/affected_by_hunter_omen",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "items": [
+          {
+            "items": "dragonsurvival:evil_dragon_key"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:evil_dragon_key"
+    },
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

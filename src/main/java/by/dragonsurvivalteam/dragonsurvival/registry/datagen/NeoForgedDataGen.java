@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.DSAdvancements;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
@@ -47,13 +48,11 @@ public class NeoForgedDataGen {
                 LootContextParamSets.BLOCK);
         generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) lootTableOutput -> new LootTableProvider(lootTableOutput, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
 
-        DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(
-                output,
-                lookup,
-                new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes),
-                Set.of(DragonSurvival.MODID)
-        );
-
+        // built-in registries
+        RegistrySetBuilder builder = new RegistrySetBuilder();
+        builder.add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes);
+        builder.add(Registries.ENCHANTMENT, DSEnchantments::registerEnchantments);
+        DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);
 
         // Update the lookup provider with our datapack entries

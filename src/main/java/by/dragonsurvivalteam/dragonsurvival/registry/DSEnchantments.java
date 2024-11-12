@@ -1,10 +1,19 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.DataComponentMap;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.data.worldgen.BootstrapContext;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.item.enchantment.Enchantment;
+
+import java.util.List;
+import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -71,5 +80,24 @@ public class DSEnchantments {
 
     private static ResourceKey<Enchantment> register(String key) {
         return ResourceKey.create(Registries.ENCHANTMENT, ResourceLocation.fromNamespaceAndPath(MODID, key));
+    }
+
+    // TODO :: currently only has enchantments which are needed for further data generation (e.g. for advancements)
+    public static void registerEnchantments(final BootstrapContext<Enchantment> context) {
+        context.register(BOLAS, new Enchantment(
+                Component.translatable(Translation.Type.ENCHANTMENT.wrap("bolas")),
+                new Enchantment.EnchantmentDefinition(
+                        context.lookup(Registries.ITEM).getOrThrow(ItemTags.CROSSBOW_ENCHANTABLE),
+                        Optional.empty(),
+                        1,
+                        1,
+                        Enchantment.constantCost(10),
+                        Enchantment.constantCost(25),
+                        1,
+                        List.of(EquipmentSlotGroup.MAINHAND, EquipmentSlotGroup.OFFHAND)
+                ),
+                HolderSet.empty(),
+                DataComponentMap.EMPTY
+        ));
     }
 }

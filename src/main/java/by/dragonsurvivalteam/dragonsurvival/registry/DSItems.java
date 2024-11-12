@@ -220,7 +220,7 @@ public class DSItems {
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 A rare item that allows you to upgrade your Netherite Armor to Light Armor. The armor will have built-in enchantments to help you live peacefully in this world.")
     public static final Holder<Item> GOOD_DRAGON_UPGRADE = DS_ITEMS.register("good_dragon_upgrade", location -> new TooltipItem(new Properties().rarity(Rarity.RARE), location.getPath()));
 
-    @Translation(type = Translation.Type.ITEM, comments = "Light Helmet")
+    @Translation(type = Translation.Type.ITEM, comments = "Light Helmet") // FIXME
     public static final Holder<Item> GOOD_DRAGON_HELMET = DS_ITEMS.register("good_dragon_helmet", () -> new GoodDragonArmorItem(
             ArmorItem.Type.HELMET, new Item.Properties().durability(ArmorItem.Type.HELMET.getDurability(100)).rarity(Rarity.EPIC).fireResistant())
     );
@@ -326,21 +326,21 @@ public class DSItems {
 
     public static final Holder<Item> DRAGON_SOUL = DS_ITEMS.register("dragon_soul", () -> new DragonSoulItem(new Properties().rarity(Rarity.EPIC)));
 
-    public static final String LIGHT_DRAGON_KEY_ID = "good_dragon_key";
+    public static final String LIGHT_DRAGON_KEY_ID = "good_dragon_key"; // FIXME
 
     @Translation(type = Translation.Type.ITEM, comments = "Light Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Light Vault. Purchased from the dragon rider villager.")
-    public static final Holder<Item> GOOD_DRAGON_KEY = DS_ITEMS.register(LIGHT_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> LIGHT_KEY = DS_ITEMS.register(LIGHT_DRAGON_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + LIGHT_DRAGON_KEY_ID + ".geo.json"),
             DragonSurvival.res("textures/item/" + LIGHT_DRAGON_KEY_ID + ".png"),
             DragonSurvival.res("treasure_friendly")));
 
-    public static final String DARK_DRAGON_KEY_ID = "evil_dragon_key";
+    public static final String DARK_DRAGON_KEY_ID = "evil_dragon_key"; // FIXME
 
     @Translation(type = Translation.Type.ITEM, comments = "Dark Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks the Dark Vault in Nether. Drops if you kill a dragon hunter knight.")
-    public static final Holder<Item> EVIL_DRAGON_KEY = DS_ITEMS.register(DARK_DRAGON_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> DARK_KEY = DS_ITEMS.register(DARK_DRAGON_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + DARK_DRAGON_KEY_ID + ".geo.json"),
             DragonSurvival.res("textures/item/" + DARK_DRAGON_KEY_ID + ".png"),
@@ -350,7 +350,7 @@ public class DSItems {
 
     @Translation(type = Translation.Type.ITEM, comments = "Hunter Key")
     @Translation(type = Translation.Type.DESCRIPTION, comments = "■§7 An enchanted key that unlocks a treasure vault for dragon hunters. Can be purchased from the Hunter Leader in the Hunter Castle.")
-    public static final Holder<Item> HUNTER_DRAGON_KEY = DS_ITEMS.register(HUNTER_KEY_ID, () -> new RotatingKeyItem(
+    public static final Holder<Item> HUNTER_KEY = DS_ITEMS.register(HUNTER_KEY_ID, () -> new RotatingKeyItem(
             new Item.Properties().rarity(Rarity.UNCOMMON).component(DSDataComponents.TARGET_POSITION, new Vector3f()),
             DragonSurvival.res("geo/" + HUNTER_KEY_ID + ".geo.json"),
             DragonSurvival.res("textures/item/" + HUNTER_KEY_ID + ".png"),

@@ -17,10 +17,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.Se
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
+import by.dragonsurvivalteam.dragonsurvival.registry.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSItemTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -34,19 +31,22 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
+import net.minecraft.tags.StructureTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import net.minecraft.world.level.storage.loot.predicates.MatchTool;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.predicates.*;
 import net.neoforged.neoforge.attachment.AttachmentHolder;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.AdvancementProvider;
@@ -120,21 +120,155 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         AdvancementHolder collectDust = create(root, "collect_dust", Items.COAL_ORE, COLLECT_DUST, COLLECT_DUST_DESCRIPTION, InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.ELDER_DRAGON_DUST.value()), 6);
         buildCollectDustChildren(collectDust);
 
-        create(root, "path_choice", Items.OAK_SIGN, "", "", noItemInteract(EntityType.VILLAGER), 6);
-
         AdvancementHolder placeAltar = create(root, "place_altar", DSBlocks.STONE_DRAGON_ALTAR.value(), "", "", placeBlock(DSItemTags.DRAGON_ALTARS), 6);
+        buildPlaceAltarChildren(placeAltar);
 
+        AdvancementHolder pathChoice = create(root, "path_choice", Items.OAK_SIGN, "", "", noItemInteract(EntityType.VILLAGER), 6);
+        buildHunterAdvancements(pathChoice);
+        buildLightAdvancements(pathChoice);
+        buildDarkAdvancements(pathChoice);
+    }
+
+    private void buildDarkAdvancements(final AdvancementHolder parent) {
+        // --- Parent: path_choice --- //
+
+        /* TODO :: previously used:
+        "id": "minecraft:player_head",
+        "components": {
+            "minecraft:profile": {
+                "name": "MHF_Villager"
+            }
+        }
+        */
+        AdvancementHolder affectedByHunterOmen = createWithToast(parent, "dark/affected_by_hunter_omen", Items.OMINOUS_BOTTLE, "", "", effectWithMinDuration(DSEffects.HUNTER_OMEN, 300), 6);
+
+        // --- Parent: dark/affected_by_hunter_omen --- //
+
+        AdvancementHolder collectKey = createWithToast(affectedByHunterOmen, "dark/collect_key", DSItems.DARK_KEY.value(), "", "", InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.DARK_KEY.value()), 0);
+
+        // --- Parent: dark/collect_key --- //
+
+        AdvancementHolder openVault = createWithToast(collectKey, "dark/open_vault", DSBlocks.DARK_VAULT.value(), "", "", itemUsedOnBlock(DSBlocks.DARK_VAULT.value(), DSItems.DARK_KEY.value()), 10);
+
+        // --- Parent: dark/open_vault --- //
+
+        AdvancementHolder getArmorItem = createWithToast(openVault, "dark/get_armor_item", DSItems.EVIL_DRAGON_HELMET.value(), "", "", List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_HELMET.value(), DSItems.EVIL_DRAGON_CHESTPLATE.value(), DSItems.EVIL_DRAGON_LEGGINGS.value(), DSItems.EVIL_DRAGON_BOOTS.value())
+        ), 0);
+
+        // --- Parent: dark/get_armor_item --- //
+
+        createWithToast(getArmorItem, "dark/get_all_armor_items", DSItems.EVIL_DRAGON_HELMET.value(), "", "", List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_HELMET.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_CHESTPLATE.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_LEGGINGS.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.EVIL_DRAGON_BOOTS.value())
+        ), 0);
+    }
+
+    private void buildLightAdvancements(final AdvancementHolder parent) {
+        // --- Parent: path_choice --- //
+
+        AdvancementHolder dragonRiderWorkbench = create(parent, "light/dragon_rider_workbench", DSBlocks.DRAGON_RIDER_WORKBENCH.value(), "", "", crafted(DSBlocks.DRAGON_RIDER_WORKBENCH.value()), 6);
+
+        // --- Parent: light/dragon_rider_workbench --- //
+
+        AdvancementHolder collectKey = createWithToast(dragonRiderWorkbench, "light/collect_key", DSItems.LIGHT_KEY.value(), "", "", InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.LIGHT_KEY.value()), 0);
+
+        // --- Parent: light/collect_key --- //
+
+        AdvancementHolder openVault = createWithToast(collectKey, "light/open_vault", DSBlocks.LIGHT_VAULT.value(), "", "", itemUsedOnBlock(DSBlocks.LIGHT_VAULT.value(), DSItems.LIGHT_KEY.value()), 10);
+
+        // --- Parent: light/open_vault --- //
+
+        AdvancementHolder getArmorItem = createWithToast(openVault, "light/get_armor_item", DSItems.GOOD_DRAGON_HELMET.value(), "", "", List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_HELMET.value(), DSItems.GOOD_DRAGON_CHESTPLATE.value(), DSItems.GOOD_DRAGON_LEGGINGS.value(), DSItems.GOOD_DRAGON_BOOTS.value())
+        ), 0);
+
+        // --- Parent: light/get_armor_item --- //
+
+        createWithToast(getArmorItem, "light/get_all_armor_items", DSItems.GOOD_DRAGON_HELMET.value(), "", "", List.of(
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_HELMET.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_CHESTPLATE.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_LEGGINGS.value()),
+                InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.GOOD_DRAGON_BOOTS.value())
+        ), 0);
+    }
+
+    private void buildHunterAdvancements(final AdvancementHolder parent) {
+        // --- Parent: path_choice --- //
+
+        AdvancementHolder promotion = createWithToast(parent, "hunter/promotion", DSItems.SPEARMAN_PROMOTION.value(), "", "", itemInteract(DSEntities.HUNTER_SPEARMAN.value(), DSItems.SPEARMAN_PROMOTION.value()), 6);
+
+        // --- Parent: hunter/promotion --- //
+
+        AdvancementHolder collectKey = createWithToast(promotion, "hunter/collect_key", DSItems.HUNTER_KEY.value(), "", "", InventoryChangeTrigger.TriggerInstance.hasItems(DSItems.HUNTER_KEY.value()), 0);
+
+        // --- Parent: hunter/collect_key --- //
+
+        AdvancementHolder openVault = createWithToast(collectKey, "hunter/open_vault", DSBlocks.HUNTER_VAULT.value(), "", "", itemUsedOnBlock(DSBlocks.HUNTER_VAULT.value(), DSItems.HUNTER_KEY.value()), 10);
+
+        // --- Parent: hunter/open_vault --- //
+
+        Holder.Reference<Enchantment> bolas = registries.lookupOrThrow(Registries.ENCHANTMENT).getOrThrow(DSEnchantments.BOLAS);
+        create(openVault, "hunter/fire_bolas", DSItems.BOLAS.value(), "", "", ShotCrossbowTrigger.TriggerInstance.shotCrossbow(
+                Optional.of(ItemPredicate.Builder.item().of(Tags.Items.TOOLS_CROSSBOW).withSubPredicate(
+                                ItemSubPredicates.ENCHANTMENTS, ItemEnchantmentsPredicate.enchantments(
+                                        List.of(new EnchantmentPredicate(bolas, MinMaxBounds.Ints.atLeast(1)))
+                                )
+                        ).build()
+                )
+        ), 0);
+    }
+
+    private void buildPlaceAltarChildren(final AdvancementHolder parent) {
         // --- Parent: place_altar --- //
 
-        AdvancementHolder beCaveDragon = createWithToast(placeAltar, "cave/be_dragon", DSItems.DRAGON_SOUL.value(), "", "", beDragon(DragonTypes.CAVE), 12);
+        AdvancementHolder beCaveDragon = createWithToast(parent, "cave/be_dragon", DSItems.DRAGON_SOUL.value(), "", "", beDragon(DragonTypes.CAVE), 12);
         buildBeCaveDragonChildren(beCaveDragon);
 
-        AdvancementHolder beForestDragon = createWithToast(placeAltar, "forest/be_dragon", DSItems.DRAGON_SOUL.value(), "", "", beDragon(DragonTypes.FOREST), 12);
+        AdvancementHolder beForestDragon = createWithToast(parent, "forest/be_dragon", DSItems.DRAGON_SOUL.value(), "", "", beDragon(DragonTypes.FOREST), 12);
         buildBeForestDragonChildren(beForestDragon);
 
-        createWithToast(placeAltar, "sea/be_dragon", DSItems.DRAGON_SOUL.value(), "", "", beDragon(DragonTypes.SEA), 12);
+        AdvancementHolder beSeaDragon = createWithToast(parent, "sea/be_dragon", DSItems.DRAGON_SOUL.value(), "", "", beDragon(DragonTypes.SEA), 12);
+        buildBeSeaDragonChildren(beSeaDragon);
+    }
 
+    private void buildBeSeaDragonChildren(final AdvancementHolder parent) {
+        // --- Parent: sea/be_dragon --- //
 
+        // TODO :: have either chat or toast notification for this one?
+        AdvancementHolder lootShipwreck = create(parent, "sea/loot_shipwreck", Items.HEART_OF_THE_SEA, "", "", location(dragonType(DragonTypes.SEA).located(structure(StructureTags.SHIPWRECK))), 20);
+
+        AdvancementHolder rainDancing = create(parent, "sea/rain_dancing", Items.WATER_BUCKET, "", "", List.of(
+                location(ContextAwarePredicate.create(entityCondition(dragonType(DragonTypes.SEA).build()), WeatherCheck.weather().setRaining(true).build())),
+                location(ContextAwarePredicate.create(entityCondition(dragonType(DragonTypes.SEA).build()), WeatherCheck.weather().setThundering(true).build()))
+        ), 30);
+
+        // --- Parent: sea/loot_shipwreck --- //
+
+        create(lootShipwreck, "sea/fish_eater", DSItems.SEASONED_FISH.value(), "", "", List.of(
+                consumeItem(Items.KELP),
+                consumeItem(DSItems.SEASONED_FISH.value()),
+                consumeItem(DSItems.GOLDEN_CORAL_PUFFERFISH.value()),
+                consumeItem(DSItems.FROZEN_RAW_FISH.value()),
+                consumeItem(DSItems.GOLDEN_TURTLE_EGG.value()),
+                consumeItem(DSItems.SEA_DRAGON_TREAT.value())
+        ), 80);
+
+        // --- Parent: sea/rain_dancing --- //
+
+        AdvancementHolder placeSnowInNether = create(rainDancing, "sea/place_snow_in_nether", Items.SNOW_BLOCK, "", "", placeBlockAsDragon(
+                dragonType(DragonTypes.SEA).located(dimension(Level.NETHER)), Blocks.SNOW_BLOCK
+        ), 16);
+
+        // --- Parent: sea/place_snow_in_nether --- //
+
+        create(placeSnowInNether, "sea/sea_peace_in_nether", Items.CAULDRON, "", "", location(
+                dragonType(DragonTypes.SEA)
+                        .effects(effect(DSEffects.PEACE))
+                        .located(dimension(Level.NETHER))
+        ), 0);
     }
 
     private void buildBeForestDragonChildren(final AdvancementHolder parent) {
@@ -160,7 +294,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         // --- Parent: forest/meat_eater --- //
 
         create(meatEater, "forest/transplant_chorus_fruit", DSItems.DIAMOND_CHORUS.value(), "", "", placeBlockAsDragon(
-                dragonType(DragonTypes.FOREST).located(LocationPredicate.Builder.location().setDimension(Level.OVERWORLD)), Blocks.CHORUS_FLOWER
+                dragonType(DragonTypes.FOREST).located(dimension(Level.OVERWORLD)), Blocks.CHORUS_FLOWER
         ), 90);
 
         // --- Parent: forest/stand_on_sweet_berries --- //
@@ -196,8 +330,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         // FIXME :: previously used change dimension but also had the lava vision effect check - what is the intention here?
         createWithToast(diamondsInLava, "cave/go_home", Items.NETHER_BRICK_STAIRS, "", "", location(
                 dragonType(DragonTypes.CAVE)
-                        .located(LocationPredicate.Builder.location().setDimension(Level.NETHER))
-                        .effects(MobEffectsPredicate.Builder.effects().and(DSEffects.LAVA_VISION))
+                        .effects(effect(DSEffects.LAVA_VISION))
+                        .located(dimension(Level.NETHER))
         ), 20);
 
         // --- Parent: cave/rock_eater --- //
@@ -228,8 +362,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         AdvancementHolder sleepOnTreasure = createWithAnnouncement(parent, "sleep_on_treasure", Items.GOLD_NUGGET, "", "", sleepOnTreasure(10), 10);
         buildSleepOnTreasureChildren(sleepOnTreasure);
 
-        HolderSet.Named<Structure> dragonSkeletons = registries.lookupOrThrow(Registries.STRUCTURE).getOrThrow(TagKey.create(Registries.STRUCTURE, DragonSurvival.res("dragon_skeletons"))); // FIXME :: add proper tag
-        createWithToast(parent, "find_bones", DSItems.STAR_BONE.value(), "", "", PlayerTrigger.TriggerInstance.located(LocationPredicate.Builder.location().setStructures(dragonSkeletons)), 12);
+        TagKey<Structure> tag = TagKey.create(Registries.STRUCTURE, DragonSurvival.res("dragon_skeletons")); // FIXME :: add proper tag
+        createWithToast(parent, "find_bones", DSItems.STAR_BONE.value(), "", "", PlayerTrigger.TriggerInstance.located(structure(tag)), 12);
 
         AdvancementHolder useMemoryBlock = createWithToast(parent, "use_memory_block", DSBlocks.DRAGON_MEMORY_BLOCK.value(), "", "", itemUsedOnBlock(DSBlocks.DRAGON_MEMORY_BLOCK.value(), DSItemTags.DRAGON_BEACONS), 10);
         buildUseMemoryBlockChildren(useMemoryBlock);
@@ -352,31 +486,66 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return advancement.save(saver, DragonSurvival.res(path), helper);
     }
 
-    private static Optional<ContextAwarePredicate> caveDragonLavaPredicate(@NotNull final HolderLookup.Provider registries) {
+    // --- Misc --- //
+
+    private Criterion<PlayerTrigger.TriggerInstance> tick(final EntityPredicate predicate) {
+        return CriteriaTriggers.TICK.createCriterion(new PlayerTrigger.TriggerInstance(Optional.of(EntityPredicate.wrap(predicate))));
+    }
+
+    @SuppressWarnings("deprecation") // ignore
+    private Criterion<RecipeCraftedTrigger.TriggerInstance> crafted(final ItemLike item) {
+        return RecipeCraftedTrigger.TriggerInstance.craftedItem(item.asItem().builtInRegistryHolder().key().location());
+    }
+
+    @SafeVarargs
+    private MobEffectsPredicate.Builder effect(final Holder<MobEffect>... effects) {
+        MobEffectsPredicate.Builder builder = MobEffectsPredicate.Builder.effects();
+
+        for (Holder<MobEffect> effect : effects) {
+            builder.and(effect);
+        }
+
+        return builder;
+    }
+
+    private LocationPredicate.Builder dimension(final ResourceKey<Level> dimension) {
+        return LocationPredicate.Builder.inDimension(dimension);
+    }
+
+    private LocationPredicate.Builder structure(final TagKey<Structure> tag) {
+        HolderSet.Named<Structure> set = registries.lookupOrThrow(Registries.STRUCTURE).getOrThrow(tag);
+        return LocationPredicate.Builder.location().setStructures(set);
+    }
+
+    private LootItemCondition entityCondition(final EntityPredicate predicate) {
+        return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, predicate).build();
+    }
+
+    private Optional<ContextAwarePredicate> caveDragonLavaPredicate(@NotNull final HolderLookup.Provider registries) {
         return Optional.of(EntityPredicate.wrap(dragonType(DragonTypes.CAVE).located(lavaPredicate(registries))));
     }
 
-    private static LocationPredicate.Builder lavaPredicate(@NotNull final HolderLookup.Provider registries) {
+    private LocationPredicate.Builder lavaPredicate(@NotNull final HolderLookup.Provider registries) {
         return LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(registries.lookupOrThrow(Registries.FLUID).getOrThrow(FluidTags.LAVA)));
     }
 
-    private static LocationPredicate.Builder waterPredicate(@NotNull final HolderLookup.Provider registries) {
+    private LocationPredicate.Builder waterPredicate(@NotNull final HolderLookup.Provider registries) {
         return LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(registries.lookupOrThrow(Registries.FLUID).getOrThrow(FluidTags.WATER)));
     }
 
-    private static LocationPredicate.Builder block(final Block block) {
+    private LocationPredicate.Builder block(final Block block) {
         return LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(block));
     }
 
-    private static LocationPredicate.Builder light(final MinMaxBounds.Ints bounds) {
+    private LocationPredicate.Builder light(final MinMaxBounds.Ints bounds) {
         return LocationPredicate.Builder.location().setLight(LightPredicate.Builder.light().setComposite(bounds));
     }
 
-    private static EntityPredicate.Builder dragonType(final AbstractDragonType type) {
+    private EntityPredicate.Builder dragonType(final AbstractDragonType type) {
         return EntityPredicate.Builder.entity().nbt(new NbtPredicate(dragonNBT(type)));
     }
 
-    private static CompoundTag dragonNBT(final AbstractDragonType dragonType) {
+    private CompoundTag dragonNBT(final AbstractDragonType dragonType) {
         CompoundTag type = new CompoundTag();
         type.putString("type", dragonType.getTypeName());
 
@@ -390,10 +559,8 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return nbt;
     }
 
-    // --- Misc --- //
-
     @SuppressWarnings("deprecation") // ignore
-    public static Criterion<InventoryChangeTrigger.TriggerInstance> dragonHasItem(final AbstractDragonType dragonType, final ItemLike... items) {
+    public Criterion<InventoryChangeTrigger.TriggerInstance> dragonHasItem(final AbstractDragonType dragonType, final ItemLike... items) {
         List<ItemPredicate> predicates = new ArrayList<>();
 
         for (ItemLike item : items) {
@@ -403,80 +570,90 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return CriteriaTriggers.INVENTORY_CHANGED.createCriterion(new InventoryChangeTrigger.TriggerInstance(Optional.of(EntityPredicate.wrap(dragonType(dragonType))), InventoryChangeTrigger.TriggerInstance.Slots.ANY, predicates));
     }
 
-    public static Criterion<PlayerTrigger.TriggerInstance> location(final EntityPredicate.Builder builder) {
+    public Criterion<PlayerTrigger.TriggerInstance> location(final ContextAwarePredicate predicate) {
+        return CriteriaTriggers.LOCATION.createCriterion(new PlayerTrigger.TriggerInstance(Optional.of(predicate)));
+    }
+
+    public Criterion<PlayerTrigger.TriggerInstance> location(final EntityPredicate.Builder builder) {
         return CriteriaTriggers.LOCATION.createCriterion(new PlayerTrigger.TriggerInstance(Optional.of(EntityPredicate.wrap(builder))));
     }
 
-    public static Criterion<ConsumeItemTrigger.TriggerInstance> consumeItem(final Item... items) {
+    public Criterion<ConsumeItemTrigger.TriggerInstance> consumeItem(final Item... items) {
         return ConsumeItemTrigger.TriggerInstance.usedItem(ItemPredicate.Builder.item().of(items));
     }
 
-    public static Criterion<UsingItemTrigger.TriggerInstance> usingItem(final Item item) {
+    public Criterion<UsingItemTrigger.TriggerInstance> usingItem(final Item item) {
         return CriteriaTriggers.USING_ITEM.createCriterion(new UsingItemTrigger.TriggerInstance(Optional.empty(), Optional.of(ItemPredicate.Builder.item().of(item).build())));
     }
 
-    public static Criterion<ItemUsedOnLocationTrigger.TriggerInstance> placeBlockAsDragon(final EntityPredicate.Builder builder, final Block block) {
+    public Criterion<ItemUsedOnLocationTrigger.TriggerInstance> placeBlockAsDragon(final EntityPredicate.Builder builder, final Block block) {
         ContextAwarePredicate blockPredicate = ContextAwarePredicate.create(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block).build());
         return CriteriaTriggers.PLACED_BLOCK.createCriterion(new ItemUsedOnLocationTrigger.TriggerInstance(Optional.of(EntityPredicate.wrap(builder)), Optional.of(blockPredicate)));
     }
 
-    public static Criterion<ItemUsedOnLocationTrigger.TriggerInstance> placeBlock(final Block block) {
+    public Criterion<ItemUsedOnLocationTrigger.TriggerInstance> placeBlock(final Block block) {
         return ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(block);
     }
 
-    public static Criterion<ItemUsedOnLocationTrigger.TriggerInstance> placeBlock(final TagKey<Item> blocks) {
+    public Criterion<ItemUsedOnLocationTrigger.TriggerInstance> placeBlock(final TagKey<Item> blocks) {
         return ItemUsedOnLocationTrigger.TriggerInstance.placedBlock(MatchTool.toolMatches(ItemPredicate.Builder.item().of(blocks)));
     }
 
-    public static Criterion<ItemUsedOnLocationTrigger.TriggerInstance> itemUsedOnBlock(final Block block, final ItemLike... items) {
+    public Criterion<ItemUsedOnLocationTrigger.TriggerInstance> itemUsedOnBlock(final Block block, final ItemLike... items) {
         return ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(block)), ItemPredicate.Builder.item().of(items));
     }
 
-    public static Criterion<ItemUsedOnLocationTrigger.TriggerInstance> itemUsedOnBlock(final Block block, final TagKey<Item> items) {
+    public Criterion<ItemUsedOnLocationTrigger.TriggerInstance> itemUsedOnBlock(final Block block, final TagKey<Item> items) {
         return ItemUsedOnLocationTrigger.TriggerInstance.itemUsedOnBlock(LocationPredicate.Builder.location().setBlock(BlockPredicate.Builder.block().of(block)), ItemPredicate.Builder.item().of(items));
     }
 
-    public static Criterion<EffectsChangedTrigger.TriggerInstance> effectWithMinDuration(final Holder<MobEffect> effect, int minDuration) {
+    public Criterion<EffectsChangedTrigger.TriggerInstance> effectWithMinDuration(final Holder<MobEffect> effect, int minDuration) {
         return EffectsChangedTrigger.TriggerInstance.hasEffects(MobEffectsPredicate.Builder.effects().and(effect, new MobEffectsPredicate.MobEffectInstancePredicate(MinMaxBounds.Ints.ANY, MinMaxBounds.Ints.atLeast(minDuration), Optional.empty(), Optional.empty())));
     }
 
-    public static Criterion<PlayerInteractTrigger.TriggerInstance> noItemInteract(final EntityType<?> type) {
+    public Criterion<PlayerInteractTrigger.TriggerInstance> itemInteract(final EntityType<?> type, final ItemLike... items) {
+        Optional<ContextAwarePredicate> entityPredicate = Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(type)));
+        Optional<ItemPredicate> itemPredicate = Optional.of(ItemPredicate.Builder.item().of(items).build());
+        return CriteriaTriggers.PLAYER_INTERACTED_WITH_ENTITY.createCriterion(new PlayerInteractTrigger.TriggerInstance(Optional.empty(), itemPredicate, entityPredicate));
+    }
+
+    public Criterion<PlayerInteractTrigger.TriggerInstance> noItemInteract(final EntityType<?> type) {
         return CriteriaTriggers.PLAYER_INTERACTED_WITH_ENTITY.createCriterion(new PlayerInteractTrigger.TriggerInstance(Optional.empty(), Optional.empty(), Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(type)))));
     }
 
     // --- Mine Block Under Lava --- //
 
     @SuppressWarnings("deprecation") // ignore
-    public static Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockUnderLava(@NotNull final HolderLookup.Provider registries, final Block... blocks) {
+    public Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockUnderLava(@NotNull final HolderLookup.Provider registries, final Block... blocks) {
         return DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().createCriterion(new MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance(caveDragonLavaPredicate(registries), Optional.of(HolderSet.direct(Block::builtInRegistryHolder, blocks))));
     }
 
-    public static Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockUnderLava(@NotNull final HolderLookup.Provider registries, final TagKey<Block> blocks) {
+    public Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockUnderLava(@NotNull final HolderLookup.Provider registries, final TagKey<Block> blocks) {
         return DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().createCriterion(new MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance(caveDragonLavaPredicate(registries), Optional.of(BuiltInRegistries.BLOCK.getOrCreateTag(blocks))));
     }
 
     // --- Use Dragon Soul --- //
 
-    public static Criterion<UseDragonSoulTrigger.UseDragonSoulInstance> useDragonSoul() {
+    public Criterion<UseDragonSoulTrigger.UseDragonSoulInstance> useDragonSoul() {
         return DSAdvancementTriggers.USE_DRAGON_SOUL.get().createCriterion(new UseDragonSoulTrigger.UseDragonSoulInstance(Optional.empty()));
     }
 
     // --- Use Star Heart --- //
 
-    public static Criterion<UseStarHeartTrigger.UseStarHeartInstance> useStarHeart() {
+    public Criterion<UseStarHeartTrigger.UseStarHeartInstance> useStarHeart() {
         return DSAdvancementTriggers.USE_STAR_HEART.get().createCriterion(new UseStarHeartTrigger.UseStarHeartInstance(Optional.empty()));
     }
 
 
     // --- Sleep On Treasure --- //
 
-    public static Criterion<SleepOnTreasureTrigger.SleepOnTreasureInstance> sleepOnTreasure(int nearbyTreasureAmount) {
+    public Criterion<SleepOnTreasureTrigger.SleepOnTreasureInstance> sleepOnTreasure(int nearbyTreasureAmount) {
         return DSAdvancementTriggers.SLEEP_ON_TREASURE.get().createCriterion(new SleepOnTreasureTrigger.SleepOnTreasureInstance(Optional.empty(), Optional.of(nearbyTreasureAmount)));
     }
 
     // --- Upgrade Ability --- //
 
-    public static Criterion<UpgradeAbilityTrigger.UpgradeAbilityInstance> upgradeAbilityMax(final Class<? extends DragonAbility> abilityType) {
+    public Criterion<UpgradeAbilityTrigger.UpgradeAbilityInstance> upgradeAbilityMax(final Class<? extends DragonAbility> abilityType) {
         DragonAbility ability;
 
         try {
@@ -488,29 +665,29 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return upgradeAbility(ability.getName(), ability.getMaxLevel());
     }
 
-    public static Criterion<UpgradeAbilityTrigger.UpgradeAbilityInstance> upgradeAbility(final String ability, int level) {
+    public Criterion<UpgradeAbilityTrigger.UpgradeAbilityInstance> upgradeAbility(final String ability, int level) {
         return DSAdvancementTriggers.UPGRADE_ABILITY.get().createCriterion(new UpgradeAbilityTrigger.UpgradeAbilityInstance(Optional.empty(), Optional.of(ability), Optional.of(level)));
     }
 
     // --- Be Dragon --- //
 
-    public static Criterion<BeDragonTrigger.BeDragonInstance> beDragon() {
+    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon() {
         return beDragon(Optional.empty(), Optional.empty());
     }
 
-    public static Criterion<BeDragonTrigger.BeDragonInstance> beDragon(final AbstractDragonType type) {
+    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(final AbstractDragonType type) {
         return beDragon(Optional.empty(), Optional.of(type.getTypeName()));
     }
 
-    public static Criterion<BeDragonTrigger.BeDragonInstance> beDragon(double size) {
+    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(double size) {
         return beDragon(Optional.of(size), Optional.empty());
     }
 
-    public static Criterion<BeDragonTrigger.BeDragonInstance> beDragon(double size, final AbstractDragonType type) {
+    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(double size, final AbstractDragonType type) {
         return beDragon(Optional.of(size), Optional.of(type.getTypeName()));
     }
 
-    public static Criterion<BeDragonTrigger.BeDragonInstance> beDragon(final Optional<Double> size, final Optional<String> type) {
+    public Criterion<BeDragonTrigger.BeDragonInstance> beDragon(final Optional<Double> size, final Optional<String> type) {
         return DSAdvancementTriggers.BE_DRAGON.get().createCriterion(new BeDragonTrigger.BeDragonInstance(Optional.empty(), size, type));
     }
 }

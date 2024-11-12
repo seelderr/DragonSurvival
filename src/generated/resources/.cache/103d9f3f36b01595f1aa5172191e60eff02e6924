@@ -1,4 +1,4 @@
-// 1.21.1	2024-10-27T15:42:24.7499471	Registries
+// 1.21.1	2024-11-12T09:58:24.9811119	Registries
 011b2ee382ec961722c100bbf059b4aa460f44b0 data/dragonsurvival/damage_type/anti_dragon.json
 afb20257741b4a8be55ecf8e013125f113a9d486 data/dragonsurvival/damage_type/cave_dragon_breath.json
 7a732909707be826e322901b5c204e548e48a12b data/dragonsurvival/damage_type/cave_dragon_burn.json
@@ -12,3 +12,4 @@ a00e3c820b682b55466d426777c46109965dda7e data/dragonsurvival/damage_type/forest_
 9324d2a244a05eb4c3b5e1569cf72db6a0dad382 data/dragonsurvival/damage_type/sea_dragon_breath.json
 8742553c9323837e23002ce815536f5ce4a86427 data/dragonsurvival/damage_type/spectral_impact.json
 3f23f53780e47cb3f324226b6427baef314125d5 data/dragonsurvival/damage_type/water_burn.json
+af16c6fd6045f7a95654506a3b0c0bef505e6c33 data/dragonsurvival/enchantment/bolas.json

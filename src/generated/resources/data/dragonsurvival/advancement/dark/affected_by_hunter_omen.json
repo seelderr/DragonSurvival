@@ -1,0 +1,38 @@
+{
+  "parent": "dragonsurvival:path_choice",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "effects": {
+          "dragonsurvival:hunter_omen": {
+            "duration": {
+              "min": 300
+            }
+          }
+        }
+      },
+      "trigger": "minecraft:effects_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": ""
+    },
+    "icon": {
+      "count": 1,
+      "id": "minecraft:ominous_bottle"
+    },
+    "title": {
+      "translate": ""
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 6
+  },
+  "sends_telemetry_event": true
+}
