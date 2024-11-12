@@ -298,8 +298,7 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
                         .effects(MobEffectsPredicate.Builder.effects().and(DSEffects.MAGIC))
         ), 40);
 
-        // FIXME :: why did it previously check for the drain effect - what was the intention here?
-        AdvancementHolder poisonousPotato = create(parent, FOREST_POISONOUS_POTATO, Items.POISONOUS_POTATO, dragonHasItem(DragonTypes.FOREST, Items.POISONOUS_POTATO), 16);
+        AdvancementHolder poisonousPotato = create(parent, FOREST_POISONOUS_POTATO, Items.POISONOUS_POTATO, convertPotato(dragonType(DragonTypes.FOREST)), 16);
 
         // --- Parent: forest/poisonous_potato --- //
 
@@ -597,6 +596,12 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
 
     public Criterion<PlayerInteractTrigger.TriggerInstance> noItemInteract(final EntityType<?> type) {
         return CriteriaTriggers.PLAYER_INTERACTED_WITH_ENTITY.createCriterion(new PlayerInteractTrigger.TriggerInstance(Optional.empty(), Optional.empty(), Optional.of(EntityPredicate.wrap(EntityPredicate.Builder.entity().of(type)))));
+    }
+
+    // --- Convert Potato --- //
+
+    public Criterion<ConvertPotatoTrigger.TriggerInstance> convertPotato(final EntityPredicate.Builder builder) {
+        return DSAdvancementTriggers.CONVERT_POTATO.get().createCriterion(new ConvertPotatoTrigger.TriggerInstance(Optional.of(EntityPredicate.wrap(builder.build()))));
     }
 
     // --- Mine Block Under Lava --- //

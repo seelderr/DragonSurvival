@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallPoisonParticle
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -26,6 +27,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -168,11 +170,15 @@ public class ForestBreathAbility extends BreathAbility {
             }
         }
 
-        if (blockState.getBlock() == Blocks.POTATOES) {
+        if (blockState.getBlock() instanceof PotatoBlock potato) {
             if (/* 10% */ player.getRandom().nextInt(100) < 10) {
-                if (((PotatoBlock) blockState.getBlock()).isMaxAge(blockState)) {
+                if (potato.isMaxAge(blockState)) {
                     serverLevel.destroyBlock(blockPosition, false);
                     serverLevel.addFreshEntity(new ItemEntity(serverLevel, blockPosition.getX() + 0.5, blockPosition.getY(), blockPosition.getZ() + 0.5, new ItemStack(Items.POISONOUS_POTATO)));
+
+                    if (player instanceof ServerPlayer serverPlayer) {
+                        DSAdvancementTriggers.CONVERT_POTATO.get().trigger(serverPlayer);
+                    }
                 }
             }
         }
