@@ -24,7 +24,7 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.forest/poisonous_potato.desc"
     },
     "icon": {
       "count": 1,
@@ -32,7 +32,7 @@
     },
     "show_toast": false,
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.forest/poisonous_potato"
     }
   },
   "requirements": [

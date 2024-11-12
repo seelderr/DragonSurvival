@@ -77,7 +77,7 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/rock_eater.desc"
     },
     "icon": {
       "count": 1,
@@ -85,7 +85,7 @@
     },
     "show_toast": false,
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/rock_eater"
     }
   },
   "requirements": [

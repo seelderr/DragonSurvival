@@ -7,14 +7,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.use_star_heart.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:star_heart"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.use_star_heart"
     }
   },
   "requirements": [

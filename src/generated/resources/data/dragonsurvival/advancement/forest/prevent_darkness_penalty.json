@@ -30,7 +30,7 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.forest/prevent_darkness_penalty.desc"
     },
     "icon": {
       "count": 1,
@@ -38,7 +38,7 @@
     },
     "show_toast": false,
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.forest/prevent_darkness_penalty"
     }
   },
   "requirements": [

@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.dark/collect_key.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:evil_dragon_key"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.dark/collect_key"
     }
   },
   "requirements": [

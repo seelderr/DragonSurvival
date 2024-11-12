@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.hunter/collect_key.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:hunter_key"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.hunter/collect_key"
     }
   },
   "requirements": [

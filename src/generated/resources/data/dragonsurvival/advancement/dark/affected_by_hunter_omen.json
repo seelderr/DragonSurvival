@@ -16,14 +16,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.dark/affected_by_hunter_omen.desc"
     },
     "icon": {
       "count": 1,
       "id": "minecraft:ominous_bottle"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.dark/affected_by_hunter_omen"
     }
   },
   "requirements": [

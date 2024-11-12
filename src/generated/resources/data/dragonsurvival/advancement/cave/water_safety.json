@@ -27,7 +27,7 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/water_safety.desc"
     },
     "icon": {
       "count": 1,
@@ -35,7 +35,7 @@
     },
     "show_toast": false,
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/water_safety"
     }
   },
   "requirements": [

@@ -25,7 +25,7 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.sea/peace_in_nether.desc"
     },
     "icon": {
       "count": 1,
@@ -33,7 +33,7 @@
     },
     "show_toast": false,
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.sea/peace_in_nether"
     }
   },
   "requirements": [

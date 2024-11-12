@@ -44,14 +44,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.light/get_armor_set.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:good_dragon_helmet"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.light/get_armor_set"
     }
   },
   "requirements": [

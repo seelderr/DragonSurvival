@@ -11,14 +11,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/be_old_dragon.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:cave_dragon_beacon"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/be_old_dragon"
     }
   },
   "requirements": [
@@ -27,7 +27,7 @@
     ]
   ],
   "rewards": {
-    "experience": 90
+    "experience": 120
   },
   "sends_telemetry_event": true
 }

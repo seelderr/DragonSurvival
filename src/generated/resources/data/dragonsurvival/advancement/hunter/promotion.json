@@ -21,14 +21,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.hunter/promotion.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:spearman_promotion"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.hunter/promotion"
     }
   },
   "requirements": [

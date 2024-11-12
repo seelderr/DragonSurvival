@@ -19,7 +19,7 @@
   "display": {
     "announce_to_chat": false,
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.path_choice.desc"
     },
     "icon": {
       "count": 1,
@@ -27,7 +27,7 @@
     },
     "show_toast": false,
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.path_choice"
     }
   },
   "requirements": [

@@ -11,14 +11,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.sea/be_old_dragon.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:sea_dragon_beacon"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.sea/be_old_dragon"
     }
   },
   "requirements": [

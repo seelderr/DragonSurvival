@@ -29,14 +29,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.change_beacon.desc"
     },
     "icon": {
       "count": 1,
       "id": "minecraft:netherite_ingot"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.change_beacon"
     }
   },
   "requirements": [

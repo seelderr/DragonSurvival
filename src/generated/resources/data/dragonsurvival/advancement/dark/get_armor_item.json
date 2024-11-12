@@ -23,14 +23,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.dark/get_armor_item.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:evil_dragon_helmet"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.dark/get_armor_item"
     }
   },
   "requirements": [

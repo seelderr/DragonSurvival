@@ -32,14 +32,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/master_all_passives.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:cave_source_of_magic"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/master_all_passives"
     }
   },
   "requirements": [
@@ -57,7 +57,7 @@
     ]
   ],
   "rewards": {
-    "experience": 90
+    "experience": 150
   },
   "sends_telemetry_event": true
 }

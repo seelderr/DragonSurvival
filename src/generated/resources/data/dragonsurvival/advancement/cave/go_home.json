@@ -8,9 +8,6 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "effects": {
-                "dragonsurvival:lava_vision": {}
-              },
               "location": {
                 "dimension": "minecraft:the_nether"
               },
@@ -24,14 +21,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/go_home.desc"
     },
     "icon": {
       "count": 1,
       "id": "minecraft:nether_brick_stairs"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.cave/go_home"
     }
   },
   "requirements": [

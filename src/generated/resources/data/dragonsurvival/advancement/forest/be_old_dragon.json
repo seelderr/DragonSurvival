@@ -11,14 +11,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.forest/be_old_dragon.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:forest_dragon_beacon"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.forest/be_old_dragon"
     }
   },
   "requirements": [

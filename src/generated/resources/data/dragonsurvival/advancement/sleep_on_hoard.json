@@ -10,14 +10,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.sleep_on_hoard.desc"
     },
     "icon": {
       "count": 1,
       "id": "minecraft:gold_ingot"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.sleep_on_hoard"
     }
   },
   "requirements": [

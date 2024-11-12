@@ -14,14 +14,14 @@
   },
   "display": {
     "description": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.light/collect_key.desc"
     },
     "icon": {
       "count": 1,
       "id": "dragonsurvival:good_dragon_key"
     },
     "title": {
-      "translate": ""
+      "translate": "dragonsurvival.advancement.light/collect_key"
     }
   },
   "requirements": [

@@ -89,6 +89,14 @@ public class DSLanguageProvider extends LanguageProvider {
                         continue;
                     }
 
+                    // For advancement translations the field will only contain the path which will also be used for the advancement itself
+                    if ((type == Translation.Type.ADVANCEMENT || type == Translation.Type.ADVANCEMENT_DESCRIPTION) && String.class.isAssignableFrom(field.getType())) {
+                        String path = (String) field.get(null);
+                        add(type.wrap(path), format(comments));
+
+                        continue;
+                    }
+
                     if (field.getType().isEnum()) {
                         Enum<?> value = (Enum<?>) field.get(null);
                         add(type.wrap(value.toString().toLowerCase(Locale.ENGLISH)), format(comments));
