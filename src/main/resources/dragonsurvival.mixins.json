@@ -15,6 +15,7 @@
     "ItemEntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
+    "MaceItemMixin",
     "PlayerEndMixin",
     "PlayerMixin",
     "PlayerStartMixin",

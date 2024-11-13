@@ -65,7 +65,6 @@ public class DragonStateHandler extends EntityStateHandler {
     /** Only needs to be updated on effect removal (server -> client) */
     private int hunterStacks;
 
-    public boolean hasFlown;
     public boolean growing = true;
 
     public boolean treasureResting;
@@ -96,6 +95,9 @@ public class DragonStateHandler extends EntityStateHandler {
     private boolean areWingsSpread;
     private double size;
     private boolean destructionEnabled;
+
+    // Needed to calculate collision damage correctly when flying. See ServerFlightHandler.
+    public Vec3 preCollisionDeltaMovement = Vec3.ZERO;
 
     /** Sets the size, health and base damage */
     public void setSize(double size, Player player) {
