@@ -1,10 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.item;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.items.RotatingKeyItem;
 import net.minecraft.resources.ResourceLocation;
 import software.bernie.geckolib.model.GeoModel;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.res;
 
 public class RotatingKeyModel extends GeoModel<RotatingKeyItem> {
     @Override
@@ -19,7 +18,6 @@ public class RotatingKeyModel extends GeoModel<RotatingKeyItem> {
 
     @Override
     public ResourceLocation getAnimationResource(RotatingKeyItem object) {
-        return res("animations/key.animation.json");
+        return DragonSurvival.res("animations/key.animation.json");
     }
-
 }

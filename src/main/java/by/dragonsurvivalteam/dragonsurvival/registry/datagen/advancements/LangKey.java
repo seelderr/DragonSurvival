@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements;
 
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 
+/** Translation keys only used by advancements */
 public class LangKey {
     // --- Root --- //
 
@@ -125,7 +126,7 @@ public class LangKey {
     protected static final String CAVE_DIAMONDS_IN_LAVA = "cave/diamonds_in_lava";
 
     @Translation(type = Translation.Type.ADVANCEMENT, comments = "Smells like... Home")
-    @Translation(type = Translation.Type.ADVANCEMENT_DESCRIPTION, comments = "Venture into the Nether as a cave dragon with Cave Vision.")
+    @Translation(type = Translation.Type.ADVANCEMENT_DESCRIPTION, comments = "Submerge yourself in the fiery depths of the nether.")
     protected static final String CAVE_GO_HOME = "cave/go_home";
 
     // --- Sea --- //

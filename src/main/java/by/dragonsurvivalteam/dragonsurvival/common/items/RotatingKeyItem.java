@@ -117,17 +117,18 @@ public class RotatingKeyItem extends TooltipItem implements GeoItem {
             }
 
             stack.set(DSDataComponents.TARGET_POSITION, fake_target);
-            triggerAnim(entity, GeoItem.getId(stack), "rotating_key_controller", "no_target");
         } else {
             playerHoldingItem = player;
             currentTarget = stack.get(DSDataComponents.TARGET_POSITION);
+            String animation;
 
             if (currentTarget == fake_target || currentTarget == null || currentTarget.length() < 0.1) {
-                triggerAnim(entity, GeoItem.getId(stack), "rotating_key_controller", "no_target");
-                return;
+                animation = "no_target";
+            } else {
+                animation = "idle";
             }
 
-            triggerAnim(entity, GeoItem.getId(stack), "rotating_key_controller", "idle");
+            triggerAnim(entity, GeoItem.getOrAssignId(stack, serverLevel), "rotating_key_controller", animation);
         }
     }
 }

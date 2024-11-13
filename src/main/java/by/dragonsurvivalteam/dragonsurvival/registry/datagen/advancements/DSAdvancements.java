@@ -45,6 +45,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.*;
 import net.neoforged.neoforge.attachment.AttachmentHolder;
@@ -226,24 +227,26 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
                 consumeItem(DSItems.CAVE_DRAGON_TREAT.value())
         ), 60);
 
-        AdvancementHolder swimInLava = create(parent, CAVE_SWIM_IN_LAVA, Items.LAVA_BUCKET, location(dragonType(DragonTypes.CAVE).located(isInLava(registries))), 20);
+        AdvancementHolder swimInLava = create(parent, CAVE_SWIM_IN_LAVA, Items.LAVA_BUCKET, location(
+                dragonType(DragonTypes.CAVE).located(isInFluid(FluidTags.LAVA))
+        ), 20);
 
         // --- Parent: cave/rock_eater --- //
 
         create(rockEater, CAVE_WATER_SAFETY, DSItems.CHARGED_SOUP.value(), location(
                 dragonType(DragonTypes.CAVE)
-                        .located(isInWater(registries))
+                        .located(isInFluid(FluidTags.WATER))
                         .effects(MobEffectsPredicate.Builder.effects().and(DSEffects.FIRE))
         ), 40);
 
         // --- Parent: cave/swim_in_lava --- //
 
-        AdvancementHolder diamondsInLava = create(swimInLava, CAVE_DIAMONDS_IN_LAVA, Items.DIAMOND_ORE, mineBlockInLava(registries, Tags.Blocks.ORES_DIAMOND), 40);
+        AdvancementHolder diamondsInLava = create(swimInLava, CAVE_DIAMONDS_IN_LAVA, Items.DIAMOND_ORE, mineBlockInLava(Tags.Blocks.ORES_DIAMOND), 40);
 
-        // FIXME :: previously used change dimension but also had the lava vision effect check - what is the intention here?
         createWithToast(diamondsInLava, CAVE_GO_HOME, Items.NETHER_BRICK_STAIRS, location(
                 dragonType(DragonTypes.CAVE)
-                        .located(dimension(Level.NETHER))
+                        .located(dimension(Level.NETHER).setFluid(fluid(FluidTags.LAVA)))
+                        .effects(effect(DSEffects.LAVA_VISION))
         ), 20);
     }
 
@@ -498,16 +501,16 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
         return LootItemEntityPropertyCondition.hasProperties(LootContext.EntityTarget.THIS, predicate).build();
     }
 
-    private Optional<ContextAwarePredicate> caveDragonInLava(@NotNull final HolderLookup.Provider registries) {
-        return Optional.of(EntityPredicate.wrap(dragonType(DragonTypes.CAVE).located(isInLava(registries))));
+    private Optional<ContextAwarePredicate> caveDragonInLava() {
+        return Optional.of(EntityPredicate.wrap(dragonType(DragonTypes.CAVE).located(isInFluid(FluidTags.LAVA))));
     }
 
-    private LocationPredicate.Builder isInLava(@NotNull final HolderLookup.Provider registries) {
-        return LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(registries.lookupOrThrow(Registries.FLUID).getOrThrow(FluidTags.LAVA)));
+    private FluidPredicate.Builder fluid(final TagKey<Fluid> fluids) {
+        return FluidPredicate.Builder.fluid().of(registries.lookupOrThrow(Registries.FLUID).getOrThrow(fluids));
     }
 
-    private LocationPredicate.Builder isInWater(@NotNull final HolderLookup.Provider registries) {
-        return LocationPredicate.Builder.location().setFluid(FluidPredicate.Builder.fluid().of(registries.lookupOrThrow(Registries.FLUID).getOrThrow(FluidTags.WATER)));
+    private LocationPredicate.Builder isInFluid(final TagKey<Fluid> fluids) {
+        return LocationPredicate.Builder.location().setFluid(fluid(fluids));
     }
 
     private LocationPredicate.Builder block(final Block block) {
@@ -607,12 +610,12 @@ public class DSAdvancements implements AdvancementProvider.AdvancementGenerator 
     // --- Mine Block Under Lava --- //
 
     @SuppressWarnings("deprecation") // ignore
-    public Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockInLava(@NotNull final HolderLookup.Provider registries, final Block... blocks) {
-        return DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().createCriterion(new MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance(caveDragonInLava(registries), Optional.of(HolderSet.direct(Block::builtInRegistryHolder, blocks))));
+    public Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockInLava(final Block... blocks) {
+        return DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().createCriterion(new MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance(caveDragonInLava(), Optional.of(HolderSet.direct(Block::builtInRegistryHolder, blocks))));
     }
 
-    public Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockInLava(@NotNull final HolderLookup.Provider registries, final TagKey<Block> blocks) {
-        return DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().createCriterion(new MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance(caveDragonInLava(registries), Optional.of(BuiltInRegistries.BLOCK.getOrCreateTag(blocks))));
+    public Criterion<MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance> mineBlockInLava(final TagKey<Block> blocks) {
+        return DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().createCriterion(new MineBlockUnderLavaTrigger.MineBlockUnderLavaInstance(caveDragonInLava(), Optional.of(BuiltInRegistries.BLOCK.getOrCreateTag(blocks))));
     }
 
     // --- Use Dragon Soul --- //

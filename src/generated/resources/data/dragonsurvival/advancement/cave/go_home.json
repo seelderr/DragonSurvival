@@ -8,8 +8,14 @@
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
+              "effects": {
+                "dragonsurvival:lava_vision": {}
+              },
               "location": {
-                "dimension": "minecraft:the_nether"
+                "dimension": "minecraft:the_nether",
+                "fluid": {
+                  "fluids": "#minecraft:lava"
+                }
               },
               "nbt": "{\"neoforge:attachments\":{\"dragonsurvival:dragon_handler\":{type:\"cave\"}}}"
             }
