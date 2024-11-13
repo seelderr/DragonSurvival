@@ -371,7 +371,6 @@ public class ServerFlightHandler {
     }
 
     public static boolean isGliding(Player player) {
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
         boolean hasFood = player.getFoodData().getFoodLevel() > flightHungerThreshold || player.isCreative();
         return hasFood && player.isSprinting() && isFlying(player);
     }
