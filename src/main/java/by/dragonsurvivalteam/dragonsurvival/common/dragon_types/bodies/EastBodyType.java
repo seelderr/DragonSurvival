@@ -52,7 +52,7 @@ public class EastBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "east_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_swim_speed_bonus")
-    public static Double eastSwimSpeedBonus = 1;
+    public static Double eastSwimSpeedBonus = 1.0;
 
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "east_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")

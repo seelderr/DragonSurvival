@@ -88,33 +88,38 @@ public class ServerFlightHandler {
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "stable_hover")
     public static boolean stableHover = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collisionDamageSpeedFactor", comment = "How much does the change in horizontal speed impact the damage taken from a collision whilst flying?")
+    @Translation(key = "collision_damage_speed_factor", type = Translation.Type.CONFIGURATION, comments = "How much does the change in horizontal speed impact the damage taken from a collision whilst flying?")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collision_damage_speed_factor")
     public static float collisionDamageSpeedFactor = 10.0f;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collisionDamageThreshold", comment = "The amount of damage subtracted from the base damage when a collision occurs whilst flying.")
+    @Translation(key = "collision_damage_threshold", type = Translation.Type.CONFIGURATION, comments = "The amount of damage subtracted from the base damage when a collision occurs whilst flying.")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collision_damage_threshold")
     public static float collisionDamageThreshold = 3.0f;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableCollisionDamage", comment = "Dragons will take damage from colliding whilst glide-flying (similar to elytra).")
+    @Translation(key = "enable_collision_damage", type = Translation.Type.CONFIGURATION, comments = "Dragons will take damage from colliding whilst glide-flying (similar to elytra).")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enable_collision_damage")
     public static boolean enableCollisionDamage = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Dragons will take fall damage from colliding whilst glide-flying (similar to elytra).")
+    @Translation(key = "enable_flight_fall_damage", type = Translation.Type.CONFIGURATION, comments = "Dragons will take fall damage from colliding whilst glide-flying (similar to elytra).")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enable_flight_fall_damage")
     public static boolean enableFlightFallDamage = true;
 
     @SubscribeEvent
     public static void foldWingsOnLand(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntity();
-        double flightSpeed = event.getDistance();
 
-        DragonStateProvider.getOptional(livingEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && dragonStateHandler.hasFlight()) {
-                if (!livingEntity.level().isClientSide()) {
-                    if (foldWingsOnLand) {
-                        if (dragonStateHandler.isWingsSpread()) {
-                            dragonStateHandler.setWingsSpread(false);
-                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncFlyingStatus.Data(livingEntity.getId(), false));
-                        }
-                    }
-                }
+        if (livingEntity.level().isClientSide()) {
+            return;
+        }
+
+        DragonStateProvider.getOptional(livingEntity).ifPresent(handler -> {
+            if (!foldWingsOnLand || !handler.isDragon() || !handler.hasFlight()) {
+                return;
+            }
+
+            if (handler.isWingsSpread()) {
+                handler.setWingsSpread(false);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncFlyingStatus.Data(livingEntity.getId(), false));
             }
         });
     }
@@ -156,12 +161,12 @@ public class ServerFlightHandler {
     }
 
     private static Holder<MobEffect> getFlightEffectForType(AbstractDragonType type) {
-        if (type.equals(DragonTypes.SEA)) {
-            return DSEffects.sea_wings;
-        } else if (type.equals(DragonTypes.CAVE)) {
-            return DSEffects.cave_wings;
-        } else if (type.equals(DragonTypes.FOREST)) {
-            return DSEffects.forest_wings;
+        if (DragonUtils.isDragonType(type, DragonTypes.SEA)) {
+            return DSEffects.SEA_DRAGON_WINGS;
+        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE)) {
+            return DSEffects.CAVE_DRAGON_WINGS;
+        } else if (DragonUtils.isDragonType(type, DragonTypes.FOREST)) {
+            return DSEffects.FOREST_DRAGON_WINGS;
         }
 
         return null;
@@ -178,9 +183,18 @@ public class ServerFlightHandler {
     }
 
     private static void clearAllFlightEffects(Player player) {
-        player.removeEffect(DSEffects.sea_wings);
-        player.removeEffect(DSEffects.cave_wings);
-        player.removeEffect(DSEffects.forest_wings);
+        // Check for effect first to avoid unnecessary event spam etc.
+        if (player.hasEffect(DSEffects.SEA_DRAGON_WINGS)) {
+            player.removeEffect(DSEffects.SEA_DRAGON_WINGS);
+        }
+
+        if (player.hasEffect(DSEffects.CAVE_DRAGON_WINGS)) {
+            player.removeEffect(DSEffects.CAVE_DRAGON_WINGS);
+        }
+
+        if (player.hasEffect(DSEffects.FOREST_DRAGON_WINGS)) {
+            player.removeEffect(DSEffects.FOREST_DRAGON_WINGS);
+        }
     }
 
     @SubscribeEvent
@@ -213,7 +227,7 @@ public class ServerFlightHandler {
 
         if (isGliding(player)) {
             // Gather collision data
-            DragonStateProvider.getData(player).preCollisionDeltaMovement = player.getDeltaMovement();
+            handler.preCollisionDeltaMovement = player.getDeltaMovement();
         } else if (isFlying(player)) {
             // Handle fall distance
             player.resetFallDistance();
@@ -245,52 +259,61 @@ public class ServerFlightHandler {
     }
 
     @SubscribeEvent
-    public static void playerFlightAttacks(PlayerTickEvent.Pre playerTickEvent) {
+    public static void playerFlightAttacks(PlayerTickEvent.Pre event) {
+        Player player = event.getEntity();
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon()) {
-                if (handler.getMovementData().spinAttack > 0) {
-                    if (!isFlying(player) && !canSwimSpin(player)) {
-                        if (!player.level().isClientSide()) {
-                            handler.getMovementData().spinAttack = 0;
-                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                        }
-                    }
-                }
+        if (!handler.isDragon()) {
+            return;
+        }
 
-                if (isSpin(player)) {
-                    int range = 5;
-                    List<Entity> entities = player.level().getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
-                    entities.removeIf(e -> e.distanceTo(player) > range);
-                    entities.remove(player);
-                    entities.removeIf(e -> e instanceof Player && !player.canHarmPlayer((Player) e));
-                    for (Entity ent : entities) {
-                        if (player.hasPassenger(ent)) {
-                            continue;
-                        }
-                        if (ent instanceof LivingEntity entity) {
-                            //Don't hit the same mob multiple times
-                            if (entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20) {
-                                continue;
-                            }
-                        }
-                        player.attack(ent);
-                    }
-
-                    handler.getMovementData().spinAttack--;
-
-                    if (!player.level().isClientSide()) {
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                    }
-                } else if (handler.getMovementData().spinCooldown > 0) {
-                    if (!player.level().isClientSide()) {
-                        handler.getMovementData().spinCooldown--;
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                    }
-                }
+        if (handler.getMovementData().spinAttack > 0 && !player.level().isClientSide()) {
+            if (!isFlying(player) && !canSwimSpin(player)) {
+                handler.getMovementData().spinAttack = 0;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
             }
-        });
+        }
+
+        if (isSpin(player)) {
+            int range = 5;
+            List<Entity> entities = player.level().getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
+
+            for (Entity target : entities) {
+                if (target == player) {
+                    continue;
+                }
+
+                if (target instanceof Player otherPlayer && !player.canHarmPlayer(otherPlayer)) {
+                    continue;
+                }
+
+                if (target.distanceTo(player) > range) {
+                    continue;
+                }
+
+                if (player.hasPassenger(target)) {
+                    continue;
+                }
+
+                if (target instanceof LivingEntity entity) {
+                    // Don't hit the same mob multiple times
+                    if (entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20) {
+                        continue;
+                    }
+                }
+
+                player.attack(target);
+            }
+
+            handler.getMovementData().spinAttack--;
+
+            if (!player.level().isClientSide()) {
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+            }
+        } else if (handler.getMovementData().spinCooldown > 0 && !player.level().isClientSide()) {
+            handler.getMovementData().spinCooldown--;
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+        }
     }
 
     public static boolean isSpin(Player entity) {

@@ -15,21 +15,16 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.ActionWithTimedCooldown;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
-import by.dragonsurvivalteam.dragonsurvival.util.Functions;
-import by.dragonsurvivalteam.dragonsurvival.util.TickedCooldown;
+import by.dragonsurvivalteam.dragonsurvival.util.*;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.Input;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.GameRenderer;
-import net.minecraft.core.Holder;
 import net.minecraft.core.particles.DustParticleOptions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
@@ -37,8 +32,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.enchantment.Enchantment;
-import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
@@ -215,45 +208,31 @@ public class ClientFlightHandler {
     }
 
     @SubscribeEvent
-    public static void flightParticles(PlayerTickEvent.Post playerTickEvent) {
-        Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon()) {
-                if (handler.getMovementData().spinAttack > 0) {
+    public static void flightParticles(PlayerTickEvent.Post event) {
+        Player player = event.getEntity();
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
-                    // TODO: Removed because I don't think it does anything. Prove me wrong!
-                    /*if(player.tickCount - lastSync >= 20){
-                        //Request the server to resync the status of a spin if it is has been too long since the last update
-                        NetworkHandler.CHANNEL.sendToServer(new RequestSpinResync());
-                    }*/
+        if (!handler.isDragon() || handler.getMovementData().spinAttack <= 0) {
+            return;
+        }
 
-                    if (ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)) {
-                        spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);
-                    }
+        if (ServerFlightHandler.canSwimSpin(player) && ServerFlightHandler.isSpin(player)) {
+            spawnSpinParticle(player, player.isInWater() ? ParticleTypes.BUBBLE_COLUMN_UP : ParticleTypes.LAVA);
+        }
 
-                    Holder<Enchantment> fireAspect = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.FIRE_ASPECT);
-                    Holder<Enchantment> knockback = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.KNOCKBACK);
-                    Holder<Enchantment> sweepingEdge = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SWEEPING_EDGE);
-                    Holder<Enchantment> sharpness = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SHARPNESS);
-                    Holder<Enchantment> smite = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.SMITE);
-                    Holder<Enchantment> baneOfArthropods = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.BANE_OF_ARTHROPODS);
-
-                    if (EnchantmentHelper.getEnchantmentLevel(fireAspect, player) > 0) {
-                        spawnSpinParticle(player, ParticleTypes.LAVA);
-                    } else if (EnchantmentHelper.getEnchantmentLevel(knockback, player) > 0) {
-                        spawnSpinParticle(player, ParticleTypes.EXPLOSION);
-                    } else if (EnchantmentHelper.getEnchantmentLevel(sweepingEdge, player) > 0) {
-                        spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK);
-                    } else if (EnchantmentHelper.getEnchantmentLevel(sharpness, player) > 0) {
-                        spawnSpinParticle(player, new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1f));
-                    } else if (EnchantmentHelper.getEnchantmentLevel(smite, player) > 0) {
-                        spawnSpinParticle(player, ParticleTypes.ENCHANT);
-                    } else if (EnchantmentHelper.getEnchantmentLevel(baneOfArthropods, player) > 0) {
-                        spawnSpinParticle(player, ParticleTypes.DRIPPING_OBSIDIAN_TEAR);
-                    }
-                }
-            }
-        });
+        if (EnchantmentUtils.getLevel(player, Enchantments.FIRE_ASPECT) > 0) {
+            spawnSpinParticle(player, ParticleTypes.LAVA);
+        } else if (EnchantmentUtils.getLevel(player, Enchantments.KNOCKBACK) > 0) {
+            spawnSpinParticle(player, ParticleTypes.EXPLOSION);
+        } else if (EnchantmentUtils.getLevel(player, Enchantments.SWEEPING_EDGE) > 0) {
+            spawnSpinParticle(player, ParticleTypes.SWEEP_ATTACK);
+        } else if (EnchantmentUtils.getLevel(player, Enchantments.SHARPNESS) > 0) {
+            spawnSpinParticle(player, new DustParticleOptions(new Vector3f(1f, 1f, 1f), 1f));
+        } else if (EnchantmentUtils.getLevel(player, Enchantments.SMITE) > 0) {
+            spawnSpinParticle(player, ParticleTypes.ENCHANT);
+        } else if (EnchantmentUtils.getLevel(player, Enchantments.BANE_OF_ARTHROPODS) > 0) {
+            spawnSpinParticle(player, ParticleTypes.DRIPPING_OBSIDIAN_TEAR);
+        }
     }
 
     /** Controls acceleration */
