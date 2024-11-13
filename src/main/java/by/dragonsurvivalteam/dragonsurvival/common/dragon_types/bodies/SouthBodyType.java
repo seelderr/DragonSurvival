@@ -87,7 +87,7 @@ public class SouthBodyType extends AbstractDragonBody {
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "south_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_flight_stamina_multiplier")
-    public static Double southFlightStaminaMult = 1.0;
+    public static Double southFlightStaminaMult = 0.5;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "south_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")

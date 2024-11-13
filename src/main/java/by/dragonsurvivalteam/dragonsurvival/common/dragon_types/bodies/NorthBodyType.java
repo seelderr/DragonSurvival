@@ -52,7 +52,7 @@ public class NorthBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "north_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_swim_speed_bonus")
-    public static Double northSwimSpeedBonus = 1.5;
+    public static Double northSwimSpeedBonus = 0.5;
 
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "north_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
@@ -87,7 +87,7 @@ public class NorthBodyType extends AbstractDragonBody {
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "north_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_flight_stamina_multiplier")
-    public static Double northFlightStaminaMult = 1.2;
+    public static Double northFlightStaminaMult = 0.9;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "north_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")

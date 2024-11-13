@@ -50,7 +50,7 @@ public class RevealingTheSoulAbility extends AoeBuffAbility {
     @ConfigRange(min = 0.05, max = 10_000.0)
     @Translation(key = "revealing_the_soul_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "revealing_the_soul"}, key = "revealing_the_soul_cast_time")
-    public static Double revealingTheSoulCasttime = 1.0;
+    public static Double revealingTheSoulCasttime = 2.0;
 
     @ConfigRange(min = 0, max = 100)
     @Translation(key = "revealing_the_soul_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")

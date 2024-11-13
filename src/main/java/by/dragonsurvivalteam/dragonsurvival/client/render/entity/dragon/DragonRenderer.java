@@ -41,8 +41,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         magicAnimations.add("cast_self_buff");
         magicAnimations.add("self_buff");
         magicAnimations.add("fly_head_locked_magic");
-        magicAnimations.add("sit_dentist_on_magic_source");
         magicAnimations.add("flapping_wings_standing");
+        magicAnimations.add("fly_head_locked");
+        magicAnimations.add("sit_on_magic_source");
+        magicAnimations.add("sit_dentist");
     }
 
     public DragonRenderer(final EntityRendererProvider.Context context, final GeoModel<DragonEntity> model) {
@@ -127,7 +129,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
             GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
             GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
 
-            if (animations.stream().anyMatch(magicAnimations::contains)) {
+            if (!animations.stream().anyMatch(magicAnimations::contains)) {
                 magic.setHidden(true);
                 magicCircle.setHidden(true);
             } else {

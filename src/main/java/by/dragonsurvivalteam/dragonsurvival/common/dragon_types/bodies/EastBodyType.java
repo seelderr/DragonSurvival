@@ -52,7 +52,7 @@ public class EastBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "east_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_swim_speed_bonus")
-    public static Double eastSwimSpeedBonus = 0.5;
+    public static Double eastSwimSpeedBonus = 1;
 
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "east_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
@@ -87,12 +87,12 @@ public class EastBodyType extends AbstractDragonBody {
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "east_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_flight_stamina_multiplier")
-    public static Double eastFlightStaminaMult = 1.2;
+    public static Double eastFlightStaminaMult = 0.8;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "east_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_gravity_multiplier")
-    public static Double eastGravityMult = 1.0;
+    public static Double eastGravityMult = 1.1;
 
     @Override
     public CompoundTag writeNBT() {

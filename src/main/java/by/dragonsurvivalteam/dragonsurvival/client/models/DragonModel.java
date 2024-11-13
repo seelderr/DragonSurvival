@@ -130,7 +130,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         double currentHeadYawChange = MathParser.getVariableFor("query.head_yaw_change").get();
         double currentTailMotionUp = MathParser.getVariableFor("query.tail_motion_up").get();
 
-        double lerpRate = Math.max(1., deltaTick);
+        double lerpRate = Math.min(1., deltaTick);
         MathParser.setVariable("query.body_yaw_change", () -> Mth.lerp(lerpRate, currentBodyYawChange, bodyYawAvg));
         MathParser.setVariable("query.head_yaw_change", () -> Mth.lerp(lerpRate, currentHeadPitchChange, headYawAvg));
         MathParser.setVariable("query.head_pitch_change", () -> Mth.lerp(lerpRate, currentHeadYawChange, headPitchAvg));

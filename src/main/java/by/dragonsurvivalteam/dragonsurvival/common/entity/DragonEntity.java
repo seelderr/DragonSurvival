@@ -323,7 +323,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
                     animationSpeed = 2;
                     lockTailAndNeck();
                     state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
-                    animationController.transitionLength(2);
+                    animationController.transitionLength(5);
                 } else if (deltaMovement.y < -1) {
                     lockTailAndNeck();
                     state.setAnimation(AnimationUtils.createAnimation(builder, FLY_DIVE_ALT));
@@ -388,10 +388,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             // Don't add any animation
         } else if (!player.onGround() && dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0) {
             state.setAnimation(AnimationUtils.createAnimation(builder, JUMP));
-            animationController.transitionLength(2);
+            animationController.transitionLength(1);
         } else if (!player.onGround()) {
             state.setAnimation(AnimationUtils.createAnimation(builder, FALL_LOOP));
-            animationController.transitionLength(5);
+            animationController.transitionLength(6);
         } else if (player.isShiftKeyDown() || !DragonSizeHandler.canPoseFit(player, Pose.STANDING) && DragonSizeHandler.canPoseFit(player, Pose.CROUCHING)) {
             // Player is Sneaking
             if (hasMoveInput) {
@@ -422,7 +422,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             animationController.transitionLength(2);
         } else if (handler.getMovementData().dig) {
             state.setAnimation(AnimationUtils.createAnimation(builder, DIG));
-            animationController.transitionLength(2);
+            animationController.transitionLength(6);
         } else {
             state.setAnimation(AnimationUtils.createAnimation(builder, IDLE));
             animationController.transitionLength(2);

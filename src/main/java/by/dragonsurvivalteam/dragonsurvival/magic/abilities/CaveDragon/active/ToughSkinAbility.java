@@ -47,7 +47,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
     @ConfigRange(min = 1, max = 10_000)
     @Translation(key = "tough_skin_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_cast_time")
-    public static Double toughSkinCasttime = 1.0;
+    public static Double toughSkinCasttime = 2.0;
 
     @ConfigRange(min = 0, max = 100)
     @Translation(key = "tough_skin_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")

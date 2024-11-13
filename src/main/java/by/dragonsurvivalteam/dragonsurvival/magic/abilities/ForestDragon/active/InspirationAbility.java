@@ -36,7 +36,7 @@ public class InspirationAbility extends AoeBuffAbility {
     @ConfigRange(min = 0.05, max = 10_000)
     @Translation(key = "inspiration_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "inspiration"}, key = "inspiration_cast_time")
-    public static Double inspirationCasttime = 1.0;
+    public static Double inspirationCasttime = 2.0;
 
     @ConfigRange(min = 1.0, max = 10_000.0)
     @Translation(key = "inspiration_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")

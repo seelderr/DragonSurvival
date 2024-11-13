@@ -52,7 +52,7 @@ public class WestBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "west_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_swim_speed_bonus")
-    public static Double westSwimSpeedBonus = -0.2;
+    public static Double westSwimSpeedBonus = -0.3;
 
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "west_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
@@ -72,7 +72,7 @@ public class WestBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "west_movement_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier (multiply total)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_movement_speed_multiplier")
-    public static Double westRunMult = 0.9;
+    public static Double westRunMult = 0.7;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "west_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "Experience multiplier")
@@ -87,7 +87,7 @@ public class WestBodyType extends AbstractDragonBody {
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "west_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "west"}, key = "west_flight_stamina_multiplier")
-    public static Double westFlightStaminaMult = 0.2;
+    public static Double westFlightStaminaMult = 2.0;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "west_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")

@@ -529,12 +529,12 @@ public class ServerConfig {
     @ConfigRange(min = 0, max = 100)
     @Translation(key = "passive_ability_initial_cost", type = Translation.Type.CONFIGURATION, comments = "The initial experience cost for leveling passive abilities")
     @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "passive_ability_initial_cost")
-    public static Integer initialPassiveCost = 4;
+    public static Integer initialPassiveCost = 1;
 
     @ConfigRange(min = 0, max = 100)
     @Translation(key = "passive_ability_cost_multiplier", type = Translation.Type.CONFIGURATION, comments = "Multiplier to the experience cost of passive skills")
     @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "passive_ability_cost_multiplier")
-    public static Double passiveScalingCost = 6.0;
+    public static Double passiveScalingCost = 4.0;
 
     @ConfigRange(min = 1, max = 1000)
     @Translation(key = "favorable_mana_regeneration", type = Translation.Type.CONFIGURATION, comments = "Determines how fast (in ticks) (20 ticks = 1 second) mana is restored in favorable conditions")

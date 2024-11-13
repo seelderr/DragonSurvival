@@ -36,7 +36,7 @@ public class SpikeAbility extends InstantCastAbility {
     @ConfigRange(min = 0.0, max = 100.0)
     @Translation(key = "spike_spread", type = Translation.Type.CONFIGURATION, comments = "The amount of spread each additionally fired spike will have - spikes will have no spread if set to 0")
     @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_spread")
-    public static Float spikeSpread = 1.0F;
+    public static Float spikeSpread = 1.5F;
 
     @Translation(key = "spike_additional_projectiles", type = Translation.Type.CONFIGURATION, comments = "The spike ability will fire additional projectiles based on the ability level if enabled")
     @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_additional_projectiles")
@@ -156,20 +156,11 @@ public class SpikeAbility extends InstantCastAbility {
     @Override
     public void onCast(Player player) {
         float speed = 1;
-
-        Vec3 eyePos = player.getEyePosition();
-        Vec3 lookAngle = player.getLookAngle();
-
-        Vec3 projPos;
-        if (player.getAbilities().flying) {
-            projPos = lookAngle.scale(2.0F).add(eyePos);
-        } else {
-            projPos = lookAngle.scale(1.0F).add(eyePos);
-        }
-
+        // Copied from AbstractArrow.java constructor
+        Vec3 launchPos = new Vec3(player.getX(), player.getEyeY() - 0.1F, player.getZ());
         for (int i = 0; i < getLevel(); i++) {
             DragonSpikeEntity entity = new DragonSpikeEntity(DSEntities.DRAGON_SPIKE.get(), player.level());
-            entity.setPos(projPos);
+            entity.setPos(launchPos);
             entity.setOwner(player);
             entity.setArrow_level(getLevel());
             entity.setBaseDamage(getDamage());
