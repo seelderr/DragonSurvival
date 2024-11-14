@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMove
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
+import by.dragonsurvivalteam.dragonsurvival.util.AnimationUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.datafixers.util.Pair;
@@ -33,9 +34,6 @@ public class DragonModel extends GeoModel<DragonEntity> {
     private final ResourceLocation model = ResourceLocation.fromNamespaceAndPath(MODID, "geo/dragon_model.geo.json");
     private ResourceLocation overrideTexture;
     private CompletableFuture<Void> textureRegisterFuture = CompletableFuture.completedFuture(null);
-
-    /** Time in MS of 1 frame for 60 FPS */
-    private static final float MS_FOR_60FPS = 1.f / 60.f * 1000.f;
 
     /** Factor to multiply the delta yaw and pitch by, needed for scaling for the animations */
     private static final double DELTA_YAW_PITCH_FACTOR = 0.2;
@@ -90,9 +88,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
             // but this works pretty well in most situations the player will encounter
             verticalVelocity *= 1 - Mth.abs(Mth.clampedMap(md.prevXRot, -90, 90, -1, 1));
 
-            float msPerTick = Minecraft.getInstance().level.tickRateManager().millisecondsPerTick();
-            float deltaTickFor60FPS = (deltaTick / (MS_FOR_60FPS / msPerTick));
-
+            float deltaTickFor60FPS = AnimationUtils.getDeltaTickFor60FPS();
             // Accumulate them in the history
             while(dragon.bodyYawHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.bodyYawHistory.removeFirst();
@@ -109,11 +105,19 @@ public class DragonModel extends GeoModel<DragonEntity> {
             }
             dragon.headPitchHistory.add(headPitchChange);
 
+            // Handle the clear case (see DragonEntity.java)
+            if(dragon.clearVerticalVelocity) {
+                dragon.verticalVelocityHistory.clear();
+                while(dragon.verticalVelocityHistory.size() < 10 / deltaTickFor60FPS) {
+                    dragon.verticalVelocityHistory.add(0.);
+                }
+            }
+
             while(dragon.verticalVelocityHistory.size() > 10 / deltaTickFor60FPS ) {
                 dragon.verticalVelocityHistory.removeFirst();
             }
-
             dragon.verticalVelocityHistory.add(verticalVelocity);
+
             bodyYawAvg = dragon.bodyYawHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
             headYawAvg = dragon.headYawHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
             headPitchAvg = dragon.headPitchHistory.stream().mapToDouble(Double::doubleValue).average().orElse(0);
@@ -128,7 +132,15 @@ public class DragonModel extends GeoModel<DragonEntity> {
         double currentBodyYawChange = MathParser.getVariableFor("query.body_yaw_change").get();
         double currentHeadPitchChange = MathParser.getVariableFor("query.head_pitch_change").get();
         double currentHeadYawChange = MathParser.getVariableFor("query.head_yaw_change").get();
-        double currentTailMotionUp = MathParser.getVariableFor("query.tail_motion_up").get();
+
+        // Handle the clear case (see DragonEntity.java)
+        double currentTailMotionUp;
+        if(dragon.clearVerticalVelocity) {
+            currentTailMotionUp = 0;
+            dragon.clearVerticalVelocity = false;
+        } else {
+            currentTailMotionUp = MathParser.getVariableFor("query.tail_motion_up").get();
+        }
 
         double lerpRate = Math.min(1., deltaTick);
         MathParser.setVariable("query.body_yaw_change", () -> Mth.lerp(lerpRate, currentBodyYawChange, bodyYawAvg));

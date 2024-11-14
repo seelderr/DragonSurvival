@@ -65,11 +65,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
     // The dragon displayed in the editor doesn't want to mirror the local player's UUID, so this isn't used there either
     public boolean overrideUUIDWithLocalPlayerForTextureFetch = false;
 
-
-    public double body_yaw_change = 0;
-    public double head_yaw_change = 0;
-    public double head_pitch_change = 0;
-    public double y_accel = 0;
+    public boolean clearVerticalVelocity = false;
     ActiveDragonAbility lastCast = null;
     public boolean started, ended;
     AnimationTimer animationTimer = new AnimationTimer();
@@ -263,6 +259,10 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         tailLocked = true;
     }
 
+    private void clearVerticalVelocity() {
+        clearVerticalVelocity = true;
+    }
+
     private PlayState predicate(final AnimationState<DragonEntity> state) {
         Player player = getPlayer();
 
@@ -362,6 +362,11 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
                 state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
                 animationController.transitionLength(2);
             } else {
+                // Clear vertical velocity if we just transitioned to this pose, to prevent the dragon from jerking up when landing in water
+                if (!AnimationUtils.isAnimationPlaying(animationController, SWIM) && !AnimationUtils.isAnimationPlaying(animationController, SWIM_FAST) && !AnimationUtils.isAnimationPlaying(animationController, FLY_SPIN)) {
+                    clearVerticalVelocity();
+                }
+
                 lockTailAndNeck();
                 useDynamicScaling = true;
                 baseSpeed = defaultPlayerFastSwimSpeed; // Default base fast speed for the player
@@ -375,16 +380,21 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
                 state.setAnimation(AnimationUtils.createAnimation(builder, FLY_SPIN));
                 animationController.transitionLength(2);
             } else {
+                // Clear vertical velocity if we just transitioned to this pose, to prevent the dragon from jerking up when landing in water
+                if (!AnimationUtils.isAnimationPlaying(animationController, SWIM) && !AnimationUtils.isAnimationPlaying(animationController, SWIM_FAST) && !AnimationUtils.isAnimationPlaying(animationController, FLY_SPIN)) {
+                    clearVerticalVelocity();
+                }
+
                 lockTailAndNeck();
                 useDynamicScaling = true;
                 baseSpeed = defaultPlayerSwimSpeed;
                 state.setAnimation(AnimationUtils.createAnimation(builder, SWIM));
                 animationController.transitionLength(2);
             }
-        } else if (AnimationUtils.isAnimationPlaying(animationController, "fly_land")) {
+        } else if (AnimationUtils.isAnimationPlaying(animationController, FLY_LAND)) {
             state.setAnimation(AnimationUtils.createAnimation(builder, FLY_LAND_END));
             animationController.transitionLength(2);
-        } else if (AnimationUtils.isAnimationPlaying(animationController, "fly_land_end")) {
+        } else if (AnimationUtils.isAnimationPlaying(animationController, FLY_LAND_END)) {
             // Don't add any animation
         } else if (!player.onGround() && dragonsJumpingTicks.getOrDefault(this.playerId, 0) > 0) {
             state.setAnimation(AnimationUtils.createAnimation(builder, JUMP));
@@ -405,11 +415,6 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             } else {
                 state.setAnimation(AnimationUtils.createAnimation(builder, SNEAK));
                 animationController.transitionLength(5);
-            }
-
-            // TODO: This is a temporary fix for the transition between the swim and sneak animation causing the dragon to jerk up in a weird way
-            if (AnimationUtils.isAnimationPlaying(animationController, "swim") || AnimationUtils.isAnimationPlaying(animationController, "swim_fast")) {
-                animationController.transitionLength(0);
             }
         } else if (player.isSprinting()) {
             useDynamicScaling = true;
