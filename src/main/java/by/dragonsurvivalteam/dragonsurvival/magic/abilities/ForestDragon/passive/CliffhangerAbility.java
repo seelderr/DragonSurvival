@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
+import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
@@ -19,6 +20,10 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class CliffhangerAbility extends PassiveDragonAbility {
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHanger", comment = "Whether the cliffhanger ability should be enabled")
     public static Boolean cliffHanger = true;
+
+    @ConfigRange(min = 0.0, max = 100.0)
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHangerFallReduction", comment = "How many blocks of fall damage is mitigated for cliffhanger level 0.")
+    public static Double cliffHangerBaseFallReduction = 5.0;
 
     @Override
     public Component getDescription() {
@@ -52,7 +57,7 @@ public class CliffhangerAbility extends PassiveDragonAbility {
     }
 
     public int getHeight() {
-        return getLevel();
+        return getLevel() + cliffHangerBaseFallReduction.intValue();
     }
 
     @Override

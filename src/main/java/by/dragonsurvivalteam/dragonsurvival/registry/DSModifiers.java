@@ -4,6 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
@@ -24,17 +26,16 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DSModifiers {
 
-    public record ModifierBuilder(ResourceLocation modifier, Holder<Attribute> attribute, Operation operation,
-                                Function<DragonStateHandler, Double> calculator) {
-        private AttributeModifier buildModifier(DragonStateHandler handler) {
-            return new AttributeModifier(modifier, calculator.apply(handler), operation);
+    private record ModifierBuilder(ResourceLocation modifier, Holder<Attribute> attribute, Operation operation,
+                                Function<Player, Double> calculator) {
+        private AttributeModifier buildModifier(Player player) {
+            return new AttributeModifier(modifier, calculator.apply(player), operation);
         }
 
         public void updateModifier(Player player) {
             // Special case for health modifier
             float oldMax = player.getMaxHealth();
 
-            DragonStateHandler handler = DragonStateProvider.getData(player);
             AttributeInstance instance = player.getAttribute(attribute);
             if (instance == null) {
                 return;
@@ -44,8 +45,9 @@ public class DSModifiers {
                 instance.removeModifier(oldMod);
             }
 
+            DragonStateHandler handler = DragonStateProvider.getData(player);
             if (handler.isDragon()) {
-                AttributeModifier builtModifier = buildModifier(handler);
+                AttributeModifier builtModifier = buildModifier(player);
                 instance.addPermanentModifier(builtModifier);
                 if (attribute == Attributes.MAX_HEALTH) {
                     float newHealth = Math.min(player.getMaxHealth(), player.getHealth() * player.getMaxHealth() / oldMax);
@@ -55,30 +57,31 @@ public class DSModifiers {
         }
     }
 
-    public static final ResourceLocation DRAGON_REACH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_reach_modifier");
-    public static final ResourceLocation DRAGON_HEALTH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_health_modifier");
-    public static final ResourceLocation DRAGON_DAMAGE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_damage_modifier");
-    public static final ResourceLocation DRAGON_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_swim_speed_modifier");
-    public static final ResourceLocation DRAGON_STEP_HEIGHT_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_step_height_modifier");
-    public static final ResourceLocation DRAGON_MOVEMENT_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement_speed_modifier");
-    public static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
-    public static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
-    public static final ResourceLocation DRAGON_SUBMERGED_MINING_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_submerged_mining_speed");
-    public static final ResourceLocation DRAGON_LAVA_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_lava_swim_speed_modifier");
+    private static final ResourceLocation DRAGON_REACH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_reach_modifier");
+    private static final ResourceLocation DRAGON_HEALTH_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_health_modifier");
+    private static final ResourceLocation DRAGON_DAMAGE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_damage_modifier");
+    private static final ResourceLocation DRAGON_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_swim_speed_modifier");
+    private static final ResourceLocation DRAGON_STEP_HEIGHT_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_step_height_modifier");
+    private static final ResourceLocation DRAGON_MOVEMENT_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_movement_speed_modifier");
+    private static final ResourceLocation DRAGON_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_jump_bonus");
+    private static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
+    private static final ResourceLocation DRAGON_SUBMERGED_MINING_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_submerged_mining_speed");
+    private static final ResourceLocation DRAGON_LAVA_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_lava_swim_speed_modifier");
+    private static final ResourceLocation DRAGON_FOREST_SAFE_FALL_DISTANCE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_forest_safe_fall_distance_modifier");
 
-    public static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
-    public static final ResourceLocation DRAGON_BODY_HEALTH_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_bonus");
-    public static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
-    public static final ResourceLocation DRAGON_BODY_STRENGTH = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength");
-    public static final ResourceLocation DRAGON_BODY_STRENGTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength_mult");
-    public static final ResourceLocation DRAGON_BODY_KNOCKBACK_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_knockback_bonus");
-    public static final ResourceLocation DRAGON_BODY_SWIM_SPEED_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_swim_speed_bonus");
-    public static final ResourceLocation DRAGON_BODY_STEP_HEIGHT_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_step_height_bonus");
-    public static final ResourceLocation DRAGON_BODY_GRAVITY_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_gravity_mult");
-    public static final ResourceLocation DRAGON_BODY_HEALTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_mult");
-    public static final ResourceLocation DRAGON_BODY_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_jump_bonus");
-    public static final ResourceLocation DRAGON_BODY_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_safe_fall_distance");
-    public static final ResourceLocation DRAGON_BODY_FLIGHT_STAMINA = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_flight_stamina");
+    private static final ResourceLocation DRAGON_BODY_MOVEMENT_SPEED = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_movement_speed");
+    private static final ResourceLocation DRAGON_BODY_HEALTH_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_bonus");
+    private static final ResourceLocation DRAGON_BODY_ARMOR = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_armor");
+    private static final ResourceLocation DRAGON_BODY_STRENGTH = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength");
+    private static final ResourceLocation DRAGON_BODY_STRENGTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_strength_mult");
+    private static final ResourceLocation DRAGON_BODY_KNOCKBACK_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_knockback_bonus");
+    private static final ResourceLocation DRAGON_BODY_SWIM_SPEED_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_swim_speed_bonus");
+    private static final ResourceLocation DRAGON_BODY_STEP_HEIGHT_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_step_height_bonus");
+    private static final ResourceLocation DRAGON_BODY_GRAVITY_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_gravity_mult");
+    private static final ResourceLocation DRAGON_BODY_HEALTH_MULT = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_health_mult");
+    private static final ResourceLocation DRAGON_BODY_JUMP_BONUS = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_jump_bonus");
+    private static final ResourceLocation DRAGON_BODY_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_safe_fall_distance");
+    private static final ResourceLocation DRAGON_BODY_FLIGHT_STAMINA = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_body_flight_stamina");
 
     // Used in MixinPlayerEntity to add the slow falling effect to dragons
     public static final ResourceLocation SLOW_FALLING = ResourceLocation.fromNamespaceAndPath(MODID, "slow_falling");
@@ -92,39 +95,67 @@ public class DSModifiers {
     // Modifier for tough skin ability
     public static final ResourceLocation TOUGH_SKIN = ResourceLocation.fromNamespaceAndPath(MODID, "tough_skin");
 
-    public static final List<ModifierBuilder> TYPE_MODIFIER_BUILDERS = List.of(
+    private static final List<ModifierBuilder> TYPE_MODIFIER_BUILDERS = List.of(
             new ModifierBuilder(DRAGON_SWIM_SPEED_MODIFIER, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, DSModifiers::buildSwimSpeedMod),
             new ModifierBuilder(DRAGON_SUBMERGED_MINING_SPEED, Attributes.SUBMERGED_MINING_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildSubmergedMiningSpeedMod),
-            new ModifierBuilder(DRAGON_LAVA_SWIM_SPEED_MODIFIER, DSAttributes.LAVA_SWIM_SPEED, Operation.ADD_VALUE, DSModifiers::buildLavaSwimSpeedMod)
+            new ModifierBuilder(DRAGON_LAVA_SWIM_SPEED_MODIFIER, DSAttributes.LAVA_SWIM_SPEED, Operation.ADD_VALUE, DSModifiers::buildLavaSwimSpeedMod),
+            new ModifierBuilder(DRAGON_FOREST_SAFE_FALL_DISTANCE_MODIFIER, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildForestSafeFallDistanceMod)
     );
 
-    public static final List<ModifierBuilder> SIZE_MODIFIER_BUILDERS = List.of(
+    private static final List<ModifierBuilder> SIZE_MODIFIER_BUILDERS = List.of(
             new ModifierBuilder(DRAGON_HEALTH_MODIFIER, Attributes.MAX_HEALTH, Operation.ADD_VALUE, DSModifiers::buildHealthMod),
             new ModifierBuilder(DRAGON_DAMAGE_MODIFIER, Attributes.ATTACK_DAMAGE, Operation.ADD_VALUE, DSModifiers::buildDamageMod),
             new ModifierBuilder(DRAGON_REACH_MODIFIER, Attributes.BLOCK_INTERACTION_RANGE, Operation.ADD_MULTIPLIED_BASE, DSModifiers::buildReachMod),
             new ModifierBuilder(DRAGON_STEP_HEIGHT_MODIFIER, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, DSModifiers::buildStepHeightMod),
             new ModifierBuilder(DRAGON_MOVEMENT_SPEED_MODIFIER, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildMovementSpeedMod),
             new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod),
-            new ModifierBuilder(DRAGON_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildJumpMod)
+            new ModifierBuilder(DRAGON_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildSafeFallDistanceMod)
     );
 
-    public static final List<ModifierBuilder> BODY_MODIFIER_BUILDERS = List.of(
-            new ModifierBuilder(DRAGON_BODY_MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getRunMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_ARMOR, Attributes.ARMOR, Operation.ADD_VALUE, handler -> handler.getBody().getArmorBonus()),
-            new ModifierBuilder(DRAGON_BODY_STRENGTH, Attributes.ATTACK_DAMAGE, Operation.ADD_VALUE, handler -> handler.getBody().getDamageBonus()),
-            new ModifierBuilder(DRAGON_BODY_STRENGTH_MULT, Attributes.ATTACK_DAMAGE, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getDamageMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_KNOCKBACK_BONUS, Attributes.ATTACK_KNOCKBACK, Operation.ADD_VALUE, handler -> handler.getBody().getKnockbackBonus()),
-            new ModifierBuilder(DRAGON_BODY_SWIM_SPEED_BONUS, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, handler -> handler.getBody().getSwimSpeedBonus()),
-            new ModifierBuilder(DRAGON_BODY_STEP_HEIGHT_BONUS, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, handler -> handler.getBody().getStepBonus()),
-            new ModifierBuilder(DRAGON_BODY_GRAVITY_MULT, Attributes.GRAVITY, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getGravityMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, handler -> handler.getBody().getHealthBonus()),
-            new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getHealthMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, handler -> handler.getBody().getJumpBonus()),
-            new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, handler -> handler.getBody().getJumpBonus()),
-            new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, handler -> handler.getBody().getFlightStaminaMult())
+    private static final List<ModifierBuilder> BODY_MODIFIER_BUILDERS = List.of(
+            new ModifierBuilder(DRAGON_BODY_MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getRunMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_ARMOR, Attributes.ARMOR, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getArmorBonus()),
+            new ModifierBuilder(DRAGON_BODY_STRENGTH, Attributes.ATTACK_DAMAGE, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getDamageBonus()),
+            new ModifierBuilder(DRAGON_BODY_STRENGTH_MULT, Attributes.ATTACK_DAMAGE, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getDamageMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_KNOCKBACK_BONUS, Attributes.ATTACK_KNOCKBACK, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getKnockbackBonus()),
+            new ModifierBuilder(DRAGON_BODY_SWIM_SPEED_BONUS, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getSwimSpeedBonus()),
+            new ModifierBuilder(DRAGON_BODY_STEP_HEIGHT_BONUS, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getStepBonus()),
+            new ModifierBuilder(DRAGON_BODY_GRAVITY_MULT, Attributes.GRAVITY, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getGravityMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getHealthBonus()),
+            new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getHealthMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getJumpBonus()),
+            new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildBodySafeFallDistanceMod),
+            new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getFlightStaminaMult())
     );
 
-    public static double buildHealthMod(DragonStateHandler handler) {
+    private static double buildForestSafeFallDistanceMod(Player player) {
+        double distance = 0;
+        if (DragonUtils.isDragonType(player, DragonTypes.FOREST)) {
+            CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
+            distance += ability.getHeight();
+        }
+
+        return distance;
+    }
+
+    private static double buildSafeFallDistanceMod(Player player) {
+        double jumpMod = buildJumpMod(player);
+        double gravity = player.getGravity();
+        // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
+        // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
+        return (jumpMod * jumpMod) / (2 * gravity);
+    }
+
+    private static double buildBodySafeFallDistanceMod(Player player) {
+        double jumpMod = DragonStateProvider.getData(player).getBody().getJumpBonus();
+        double gravity = player.getGravity();
+        // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
+        // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
+        return (jumpMod * jumpMod) / (2 * gravity);
+    }
+
+    private static double buildHealthMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         if (!ServerConfig.healthAdjustments) return 0;
         double healthModifier;
         double size = handler.getSize();
@@ -137,7 +168,8 @@ public class DSModifiers {
         return healthModifier;
     }
 
-    public static double buildReachMod(DragonStateHandler handler) {
+    private static double buildReachMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         double reachModifier;
         double size = handler.getSize();
         if (ServerConfig.allowLargeScaling && size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
@@ -148,7 +180,8 @@ public class DSModifiers {
         return reachModifier;
     }
 
-    public static double buildDamageMod(DragonStateHandler handler) {
+    private static double buildDamageMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         if (!ServerConfig.attackDamage) return 0;
         double ageBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngBonusDamage : ServerConfig.newbornBonusDamage;
         if (ServerConfig.allowLargeScaling && handler.getSize() > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
@@ -157,16 +190,19 @@ public class DSModifiers {
         return ageBonus;
     }
 
-    public static double buildSwimSpeedMod(DragonStateHandler handler) {
+    private static double buildSwimSpeedMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         return DragonUtils.isDragonType(handler, DragonTypes.SEA) && ServerConfig.seaSwimmingBonuses ? 1 : 0;
     }
 
-    public static double buildLavaSwimSpeedMod(DragonStateHandler handler) {
+    private static double buildLavaSwimSpeedMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         // No extra config since it's basically already checked through 'ServerConfig#caveLavaSwimming'
         return DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 1 : 0;
     }
 
-    public static double buildStepHeightMod(DragonStateHandler handler) {
+    private static double buildStepHeightMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         double size = handler.getSize();
         double stepHeightBonus = handler.getLevel() == DragonLevel.ADULT ? ServerConfig.adultStepHeight : handler.getLevel() == DragonLevel.YOUNG ? ServerConfig.youngStepHeight : ServerConfig.newbornStepHeight;
         if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE && ServerConfig.allowLargeScaling) {
@@ -175,7 +211,8 @@ public class DSModifiers {
         return stepHeightBonus;
     }
 
-    public static double buildMovementSpeedMod(DragonStateHandler handler) {
+    private static double buildMovementSpeedMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         double moveSpeedMultiplier = 1;
         double size = handler.getSize();
         if (handler.getLevel() == DragonLevel.NEWBORN) {
@@ -194,7 +231,8 @@ public class DSModifiers {
         return moveSpeedMultiplier - 1;
     }
 
-    private static double buildJumpMod(DragonStateHandler handler) {
+    private static double buildJumpMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         double jumpBonus = 0;
         if (handler.getBody() != null) {
             jumpBonus = handler.getBody().getJumpBonus();
@@ -210,7 +248,8 @@ public class DSModifiers {
         return jumpBonus;
     }
 
-    public static double buildSubmergedMiningSpeedMod(DragonStateHandler handler) {
+    private static double buildSubmergedMiningSpeedMod(Player player) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
         return DragonUtils.isDragonType(handler, DragonTypes.SEA) ? (2 * (handler.getLevel().ordinal() + 1)) : 0;
     }
 
@@ -235,6 +274,19 @@ public class DSModifiers {
     public static void updateBodyModifiers(Player player) {
         for (ModifierBuilder builder : BODY_MODIFIER_BUILDERS) {
             builder.updateModifier(player);
+        }
+    }
+
+    public static void updateSafeFallDistanceModifiers(Player player) {
+        for (ModifierBuilder builder : SIZE_MODIFIER_BUILDERS) {
+            if (builder.modifier.equals(DRAGON_SAFE_FALL_DISTANCE)) {
+                builder.updateModifier(player);
+            }
+        }
+        for (ModifierBuilder builder : BODY_MODIFIER_BUILDERS) {
+            if (builder.modifier.equals(DRAGON_BODY_SAFE_FALL_DISTANCE)) {
+                builder.updateModifier(player);
+            }
         }
     }
 }

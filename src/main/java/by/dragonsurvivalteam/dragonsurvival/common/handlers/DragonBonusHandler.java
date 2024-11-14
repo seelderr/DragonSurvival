@@ -1,12 +1,9 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -22,7 +19,6 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.PlayLevelSoundEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
-import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.level.BlockDropsEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -71,33 +67,6 @@ public class DragonBonusHandler {
                     event.setCanceled(true);
                 }
             }
-        }
-    }
-
-    // TODO: This can be completely removed and have these events utilize Attributes.SAFE_FALL_DISTANCE
-    @SubscribeEvent
-    public static void reduceFallDistance(LivingFallEvent livingFallEvent) {
-        LivingEntity living = livingFallEvent.getEntity();
-
-        if (!(living instanceof Player player)) {
-            return;
-        }
-
-        DragonStateHandler data = DragonStateProvider.getData(player);
-
-        if (data.isDragon()) {
-            float distance = livingFallEvent.getDistance();
-
-            if (DragonUtils.isDragonType(data, DragonTypes.FOREST)) {
-                if (ServerConfig.bonusesEnabled) {
-                    distance -= ServerConfig.forestFallReduction.floatValue();
-                }
-
-                CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
-                distance -= ability.getHeight();
-            }
-
-            livingFallEvent.setDistance(distance);
         }
     }
 
