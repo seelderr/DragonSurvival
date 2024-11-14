@@ -139,7 +139,8 @@ public class DSModifiers {
     }
 
     private static double buildSafeFallDistanceMod(Player player) {
-        double jumpMod = buildJumpMod(player);
+        // Don't allow a jump penalty to cause a negative safe fall distance
+        double jumpMod = Math.max(buildJumpMod(player), 0.0);
         double gravity = player.getGravity();
         // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
         // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
@@ -147,7 +148,8 @@ public class DSModifiers {
     }
 
     private static double buildBodySafeFallDistanceMod(Player player) {
-        double jumpMod = DragonStateProvider.getData(player).getBody().getJumpBonus();
+        // Don't allow a jump penalty to cause a negative safe fall distance
+        double jumpMod = Math.max(DragonStateProvider.getData(player).getBody().getJumpBonus(), 0.0);
         double gravity = player.getGravity();
         // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
         // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
