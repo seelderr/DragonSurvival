@@ -5,8 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.particles.LargeLightningParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallFireParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SmallPoisonParticleOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
@@ -25,9 +24,6 @@ import java.util.Objects;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class ClientMagicHandler {
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "particles_on_dragons", comment = "Particles (from the dragon type effects) will be rendered on dragons if this is enabled")
-    public static Boolean particlesOnDragons = false;
-
     @SubscribeEvent
     public static void onFovEvent(ComputeFovModifierEvent event) {
         Player player = event.getPlayer();
@@ -59,7 +55,7 @@ public class ClientMagicHandler {
     @SubscribeEvent
     public static void livingTick(final EntityTickEvent.Post event) {
         if (event.getEntity() instanceof LivingEntity livingEntity) {
-            if (!particlesOnDragons && DragonStateProvider.isDragon(livingEntity)) {
+            if (!ClientConfig.particlesOnDragons && DragonStateProvider.isDragon(livingEntity)) {
                 return;
             }
 

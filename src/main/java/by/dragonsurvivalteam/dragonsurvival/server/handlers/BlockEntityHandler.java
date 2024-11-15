@@ -10,8 +10,8 @@ import net.neoforged.neoforge.event.BlockEntityTypeAddBlocksEvent;
 public class BlockEntityHandler {
     @SubscribeEvent
     public static void addToBlockEntityType(BlockEntityTypeAddBlocksEvent e) {
-        e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_FRIENDLY.get());
-        e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_ANGRY.get());
-        e.modify(BlockEntityType.VAULT, DSBlocks.DRAGON_VAULT_HUNTER.get());
+        e.modify(BlockEntityType.VAULT, DSBlocks.LIGHT_VAULT.get());
+        e.modify(BlockEntityType.VAULT, DSBlocks.DARK_VAULT.get());
+        e.modify(BlockEntityType.VAULT, DSBlocks.HUNTER_VAULT.get());
     }
 }

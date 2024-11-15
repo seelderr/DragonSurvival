@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
@@ -223,7 +224,7 @@ public class DSTrades {
             );
 
             trades.get(5).add(
-                    new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.GOOD_DRAGON_KEY, 1), 12, 35)
+                    new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.LIGHT_KEY, 1), 12, 35)
             );
 
             // Declare the leader trades in here, since this event only fires once and if we do it statically it might try to initialize in cases where we don't actually have a minecraft instance yet.
@@ -237,7 +238,7 @@ public class DSTrades {
             );
 
             final List<ItemListing> LEADER_TRADES_LEVEL_3 = Lists.newArrayList(
-                    new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.HUNTER_DRAGON_KEY, 1), 16, 1, 35)
+                    new ItemTrade(new ItemStack(Items.EMERALD, 32), new ItemStack(DSItems.HUNTER_KEY, 1), 16, 1, 35)
             );
 
             final List<ItemListing> LEADER_TRADES_LEVEL_4 = Lists.newArrayList(
@@ -258,7 +259,7 @@ public class DSTrades {
 
         if (event.getType() == VillagerProfession.CARTOGRAPHER) {
             Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
-            trades.get(2).add(new TreasureMapForEmeralds(15, ON_DRAGON_HUNTERS_CASTLE_MAPS, "ds.mapstructures.hunters_castle", DSMapDecorationTypes.DRAGON_HUNTER, 16, 30));
+            trades.get(2).add(new TreasureMapForEmeralds(15, ON_DRAGON_HUNTERS_CASTLE_MAPS, LangKey.ITEM_KINGDOM_EXPLORER_MAP, DSMapDecorationTypes.DRAGON_HUNTER, 16, 30));
         }
     }
 }

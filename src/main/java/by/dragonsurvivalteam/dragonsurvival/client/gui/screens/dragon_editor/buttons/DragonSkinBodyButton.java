@@ -10,16 +10,16 @@ import net.minecraft.resources.ResourceLocation;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DragonSkinBodyButton extends Button {
+    private static final ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_skintab.png");
+
     private final SkinsScreen screen;
     private final AbstractDragonBody dragonBody;
-    private final ResourceLocation location;
     private final int pos;
 
     public DragonSkinBodyButton(SkinsScreen screen, int x, int y, int xSize, int ySize, AbstractDragonBody body, int pos) {
         super(x, y, xSize, ySize, Component.literal(body.toString()), btn -> {
             screen.dragonBody = body;
         }, DEFAULT_NARRATION);
-        location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_skintab.png");
         this.screen = screen;
         this.dragonBody = body;
         this.pos = pos;

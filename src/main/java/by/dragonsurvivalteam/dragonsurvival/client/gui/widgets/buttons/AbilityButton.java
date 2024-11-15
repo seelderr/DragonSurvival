@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.magic.MagicDragonRender;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
@@ -25,21 +24,19 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AbilityButton extends Button {
-    public static final ResourceLocation BLANK_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank.png");
-    public static final ResourceLocation BLANK_1_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank1.png");
     public static final ResourceLocation BLANK_2_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank2.png");
-    public static final ResourceLocation BLANK_3_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank3.png");
 
-    private final Screen screen;
-    private AbstractDragonType type;
-    private final int slot;
+    private static final ResourceLocation BLANK_1_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank1.png");
+    private static final ResourceLocation BLANK_3_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/blank3.png");
+
     public int skillType;
-
     public DragonAbility ability;
 
+    private final Screen screen;
+    private final int slot;
+
     public AbilityButton(int x, int y, int skillType, int slot, Screen screen) {
-        super(x, y, 32, 32, Component.empty(), button -> {
-        }, DEFAULT_NARRATION);
+        super(x, y, 32, 32, Component.empty(), action -> { /* Nothing to do */ }, DEFAULT_NARRATION);
         this.slot = slot;
         this.skillType = skillType;
         this.screen = screen;
@@ -105,7 +102,6 @@ public class AbilityButton extends Button {
             if (ab != null)
                 ability = ab;
 
-            type = cap.getType();
         });
 
         boolean isDragging = false;

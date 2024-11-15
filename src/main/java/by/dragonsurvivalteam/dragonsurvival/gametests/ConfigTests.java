@@ -43,7 +43,7 @@ public class ConfigTests {
 
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void teat_food_config(final GameTestHelper helper) {
-        String configKey = "caveDragonFoods";
+        String configKey = "cave_foods";
 
         // Map as initial setup so the data can be easier accessed
         Map<Item, Pair<Integer, Float>> foodMap = Map.of(
@@ -118,7 +118,7 @@ public class ConfigTests {
 
         int damage = 2;
         List<ItemHurtConfig> configs = List.of(ItemHurtConfig.of(ConfigUtils.location(Items.POTION), damage));
-        TestUtils.setAndCheckConfig(helper, "caveDragonHurtfulItems", configs);
+        TestUtils.setAndCheckConfig(helper, "cave_hurtful_items", configs);
 
         float expectedHealth = player.getHealth() - damage;
         onItemUseFinish(player, Items.POTION.getDefaultInstance(), 20, Items.GLASS_BOTTLE.getDefaultInstance());
@@ -130,7 +130,7 @@ public class ConfigTests {
 
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void test_blacklist_config(final GameTestHelper helper) {
-        String configKey = "blacklistedItems";
+        String configKey = "blacklisted_items";
 
         List<String> value = List.of("minecraft:potion", "minecraft:swords", "minecraft:.*bow");
         TestUtils.setAndCheckConfig(helper, configKey, value);
@@ -152,7 +152,7 @@ public class ConfigTests {
 
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void test_invalid_config_list(final GameTestHelper helper) {
-        String configKey = "blacklistedItems";
+        String configKey = "blacklisted_items";
         List<String> defaultValue = List.of("minecraft:potion");
 
         List<List<String>> invalidValues = List.of(
@@ -179,7 +179,7 @@ public class ConfigTests {
 
     @GameTest(template = TestUtils.AIR_CUBE_1X, batch = "config_tests")
     public static void test_invalid_config(final GameTestHelper helper) {
-        String configKey = "bonusBreakSpeed";
+        String configKey = "break_speed_multiplier";
         float valueNotInRange = 0f;
         float defaultValue = 2f;
 

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -50,7 +51,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
     @Override
     public boolean canConsumeMana(Player player) {
         int manaCost = chargeTime < getSkillChargeTime() / 2 ? getManaCost() + getInitManaCost() : getManaCost();
-        return ManaHandler.canConsumeMana(player, manaCost);
+        return ManaHandler.hasEnoughMana(player, manaCost);
     }
 
     @Override
@@ -88,7 +89,7 @@ public abstract class ChannelingCastAbility extends ActiveDragonAbility {
         ArrayList<Component> components = super.getInfo();
 
         if (getSkillChargeTime() > 0)
-            components.add(Component.translatable("ds.skill.cast_time", Functions.ticksToSeconds(getSkillChargeTime())));
+            components.add(Component.translatable(LangKey.ABILITY_CAST_TIME, Functions.ticksToSeconds(getSkillChargeTime())));
 
         return components;
     }

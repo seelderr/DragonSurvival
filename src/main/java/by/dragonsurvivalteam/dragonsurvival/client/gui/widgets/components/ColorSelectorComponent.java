@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -23,18 +24,18 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public class ColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
+    public boolean visible;
+
     private final ExtendedButton colorPicker;
     private final ExtendedCheckbox glowing;
-    private final DragonEditorScreen screen;
+    private final Supplier<LayerSettings> settings;
+
     private final int x;
     private final int y;
     private final int xSize;
     private final int ySize;
-    private final Supplier<LayerSettings> settings;
-    public boolean visible;
 
     public ColorSelectorComponent(DragonEditorScreen screen, int x, int y, int xSize, int ySize, EnumSkinLayer layer) {
-        this.screen = screen;
         this.x = x;
         this.y = y;
         this.xSize = xSize;
@@ -43,15 +44,15 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         settings = () -> screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get();
 
         LayerSettings set = settings.get();
-        DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonTextureMetadata texture = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
-        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable("ds.gui.dragon_editor.glowing"), set.glowing, box -> {
+        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), set.glowing, box -> {
             settings.get().glowing = !settings.get().glowing;
             box.selected = settings.get().glowing;
             DragonEditorScreen.HANDLER.getSkinData().compileSkin();
         });
 
-        Color defaultC = Color.decode(text.defaultColor);
+        Color defaultC = Color.decode(texture.defaultColor);
 
         if (set.modifiedColor) {
             defaultC = Color.getHSBColor(set.hue, set.saturation, set.brightness);
@@ -76,7 +77,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
     }
 
     @Override
-    public List<? extends GuiEventListener> children() {
+    public @NotNull List<? extends GuiEventListener> children() {
         return ImmutableList.of(colorPicker, glowing);
     }
 

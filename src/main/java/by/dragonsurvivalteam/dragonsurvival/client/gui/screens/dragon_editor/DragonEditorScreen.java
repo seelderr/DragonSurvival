@@ -30,10 +30,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.Sk
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -49,7 +54,6 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -78,48 +82,94 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class DragonEditorScreen extends Screen {
-    private static final ResourceLocation backgroundTexture = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
-    private static final ResourceLocation SAVE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
-    private static final ResourceLocation RANDOM = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/random_icon.png");
-    private static final ResourceLocation RESET = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_button.png");
-    private final Screen source;
-    private final String[] animations = {"sit_dentist",
-            "sit_head_locked",
-            "idle_head_locked",
-            "fly_head_locked",
-            "swim_fast_head_locked",
-            "run_head_locked",
-            "spinning_on_back"};
-    public int guiLeft;
-    public int guiTop;
-    public boolean confirmation = false;
-    public boolean showUi = true;
+    @Translation(type = Translation.Type.MISC, comments = "In the depths of your soul, lava has begun to roar. You have chosen to become a §cCave dragon.§r")
+    private static final String CAVE_DRAGON_CHOICE = Translation.Type.GUI.wrap("dragon_editor.cave_dragon_choice");
 
-    public DragonUIRenderComponent dragonRender;
+    @Translation(type = Translation.Type.MISC, comments = "You feel the need for raw meat, and are covered in grassy scales. You have chosen to become a §aForest dragon.§r")
+    private static final String SEA_DRAGON_CHOICE = Translation.Type.GUI.wrap("dragon_editor.sea_dragon_choice");
+
+    @Translation(type = Translation.Type.MISC, comments = "The stormy sea beckons you. You have chosen to become a §3Sea dragon.§r")
+    private static final String FOREST_DRAGON_CHOICE = Translation.Type.GUI.wrap("dragon_editor.forest_dragon_choice");
+
+    @Translation(type = Translation.Type.MISC, comments = "Randomize")
+    private static final String RANDOMIZE = Translation.Type.GUI.wrap("dragon_editor.randomize");
+
+    @Translation(type = Translation.Type.MISC, comments = "Undo changes")
+    private static final String UNDO = Translation.Type.GUI.wrap("dragon_editor.undo");
+
+    @Translation(type = Translation.Type.MISC, comments = "Redo changes")
+    private static final String REDO = Translation.Type.GUI.wrap("dragon_editor.redo");
+
+    @Translation(type = Translation.Type.MISC, comments = "You can select any slot here and the result will be automatically saved.")
+    private static final String SAVE_SLOT = Translation.Type.GUI.wrap("dragon_editor.save_slot");
+
+    @Translation(type = Translation.Type.MISC, comments = "Click here to copy your current settings to the other growth stages.")
+    private static final String COPY = Translation.Type.GUI.wrap("dragon_editor.copy");
+
+    @Translation(type = Translation.Type.MISC, comments = "UI")
+    private static final String SHOW_UI = Translation.Type.GUI.wrap("dragon_editor.show_ui");
+
+    @Translation(type = Translation.Type.MISC, comments = "Reset to default")
+    private static final String RESET = Translation.Type.GUI.wrap("dragon_editor.reset");
+
+    @Translation(type = Translation.Type.MISC, comments = "Show wings")
+    private static final String WINGS = Translation.Type.GUI.wrap("dragon_editor.wings");
+
+    @Translation(type = Translation.Type.MISC, comments = "Visual only. Not available for Western and Central body types.")
+    private static final String WINGS_INFO = Translation.Type.GUI.wrap("dragon_editor.wings_info");
+
+    @Translation(type = Translation.Type.MISC, comments = "Old texture")
+    private static final String DEFAULT_SKIN = Translation.Type.GUI.wrap("dragon_editor.default_skin");
+
+    @Translation(type = Translation.Type.MISC, comments = "If you are using a §6texture pack§r to test your custom skin before submitting it, check this box.")
+    private static final String DEFAULT_SKIN_INFO = Translation.Type.GUI.wrap("dragon_editor.default_skin_info");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ You chose a dragon species! Now it's time to §6customize§r your dragon. You can select different parts, and change their color freely.",
+            "■ You can use §6Preset slots§r to save different appearances. Don't forget to apply your looks to all stages of growth!",
+            "■ If you don't know where to start, use the \"§6randomize§r\" button on the top right.§r",
+            "§r-§7 Shaders can affect the result. This is especially noticeable on glowing textures.§r",
+            "§r-§7 The texture from this editor is only visible if your custom skins are turned off in Skin Tab (dragon inventory). You can learn how to create your own custom skins on the Wiki or Dragon Survival discord."
+    })
+    private static final String CUSTOMIZATION = Translation.Type.GUI.wrap("dragon_editor.customization");
 
     public static final DragonStateHandler HANDLER = new DragonStateHandler();
+
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.withDefaultNamespace("textures/block/black_concrete.png");
+    private static final ResourceLocation SAVE_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/save_icon.png");
+    private static final ResourceLocation RANDOM_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/random_icon.png");
+    private static final ResourceLocation RESET_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_button.png");
+
+    public int guiTop;
+    public boolean confirmation;
+    public boolean showUi = true;
 
     public DragonLevel level;
     public AbstractDragonType dragonType;
     public AbstractDragonBody dragonBody;
     public SkinPreset preset;
     public int currentSelected;
-    private final HashMap<DragonLevel, Integer> presetSelections = new HashMap<>();
-
-    private final List<ColorSelectorButton> colorButtons = new ArrayList<>();
-    public ExtendedCheckbox defaultSkinCheckbox;
-    private ExtendedCheckbox showUiCheckbox;
 
     public int backgroundColor = -804253680;
-    float tick;
+
+    private final Screen source;
+    private int guiLeft;
+
+    private final String[] animations = {"sit_dentist", "sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "spinning_on_back"};
+    private final HashMap<DragonLevel, Integer> presetSelections = new HashMap<>();
+    private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
+    private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
+    private DragonUIRenderComponent dragonRender;
+    private ExtendedCheckbox defaultSkinCheckbox;
+    private ExtendedCheckbox showUiCheckbox;
+    private DragonEditorConfirmComponent confirmComponent;
+    private ExtendedCheckbox wingsCheckbox;
+
+    private float tick;
     private int curAnimation;
     private int lastSelected;
     private boolean hasInit;
-    private DragonEditorConfirmComponent conf;
     private boolean isEditor;
-    private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
-    private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
-    private ExtendedCheckbox wingsCheckbox;
 
     public DragonEditorScreen(Screen source) {
         this(source, null);
@@ -127,24 +177,24 @@ public class DragonEditorScreen extends Screen {
     }
 
     public DragonEditorScreen(Screen source, AbstractDragonType dragonType) {
-        super(Component.translatable("ds.gui.dragon_editor"));
+        super(Component.translatable(LangKey.GUI_DRAGON_EDITOR));
         this.source = source;
         this.dragonType = dragonType;
     }
 
     public record EditorAction<T>(Function<T, T> action, T value) {
-
         public T run() {
             return action.apply(value);
         }
 
         @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof EditorAction<?> action) {
-                if (action.action != null && action.value != null) {
-                    return action.action.equals(this.action) && action.value.equals(this.value);
+        public boolean equals(Object object) {
+            if (object instanceof EditorAction<?> editorAction) {
+                if (editorAction.action != null && editorAction.value != null) {
+                    return editorAction.action.equals(action) && editorAction.value.equals(this.value);
                 }
             }
+
             return false;
         }
     }
@@ -167,7 +217,6 @@ public class DragonEditorScreen extends Screen {
     };
 
     // setHueAction, setSaturationAction, setBrightnessAction in HueSelectorComponent.Java
-
     // setDragonSlotAction in DragonEditorSlotButton.Java
 
     public final Function<CompoundTag, CompoundTag> setSkinPresetAction = (tag) -> {
@@ -281,13 +330,12 @@ public class DragonEditorScreen extends Screen {
     public final UndoRedoList actionHistory = new UndoRedoList(200);
 
     @Override
-    public void render(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTicks) {
-        if (dragonRender == null) {
-            // TODO :: Can happen with the dragon-editor command before using the altar first
+    public void render(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+        if (dragonRender == null) { // In the past this could occur when using the dragon editor command before using the dragon altar first
             init();
         }
 
-        tick += pPartialTicks;
+        tick += partialTick;
         if (tick >= 60 * 20) {
             save();
             tick = 0;
@@ -304,34 +352,31 @@ public class DragonEditorScreen extends Screen {
         }
 
         FakeClientPlayerUtils.getFakePlayer(0, HANDLER).animationSupplier = () -> animations[curAnimation];
-
-        renderBackground(guiGraphics, pMouseX, pMouseY, pPartialTicks);
-        children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent) s).render(guiGraphics, pMouseX, pMouseY, pPartialTicks));
-
-        DragonAltarScreen.renderBorders(guiGraphics, backgroundTexture, 0, width, 32, height - 32, width, height);
-
-        TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
+        renderBackground(graphics, mouseX, mouseY, partialTick);
+        children().stream().filter(DragonUIRenderComponent.class::isInstance).toList().forEach(s -> ((DragonUIRenderComponent) s).render(graphics, mouseX, mouseY, partialTick));
+        DragonAltarScreen.renderBorders(graphics, BACKGROUND_TEXTURE, 0, width, 32, height - 32, width, height);
+        TextRenderUtil.drawCenteredScaledText(graphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
 
         if (showUi) {
             int i = 0;
             for (EnumSkinLayer layers : EnumSkinLayer.values()) {
                 String name = layers.name;
-                SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.translatable("ds.gui.dragon_editor.part." + name.toLowerCase(Locale.ENGLISH)), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
+                SkinsScreen.drawNonShadowLineBreak(graphics, font, Component.translatable(Translation.Type.SKIN_PART.wrap(name.toLowerCase(Locale.ENGLISH))), (i < 5 ? width / 2 - 100 - 100 : width / 2 + 83) + 45, guiTop + 10 + (i >= 5 ? (i - 5) * 30 : i * 30) - 12, DyeColor.WHITE.getTextColor());
                 i++;
             }
         }
 
         if (showUi) {
-            SkinsScreen.drawNonShadowLineBreak(guiGraphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 75 - 22, DyeColor.GRAY.getTextColor());
+            SkinsScreen.drawNonShadowLineBreak(graphics, font, Component.empty().append(WordUtils.capitalize(animations[curAnimation].replace("_", " "))), width / 2, height / 2 + 75 - 22, DyeColor.GRAY.getTextColor());
         }
 
         for (Renderable widget : new CopyOnWriteArrayList<>(renderables)) {
-            widget.render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+            widget.render(graphics, mouseX, mouseY, partialTick);
         }
 
         for (GuiEventListener child : children()) {
             if (!(child instanceof DragonUIRenderComponent)) {
-                ((Renderable) child).render(guiGraphics, pMouseX, pMouseY, pPartialTicks);
+                ((Renderable) child).render(graphics, mouseX, mouseY, partialTick);
             }
         }
 
@@ -455,7 +500,7 @@ public class DragonEditorScreen extends Screen {
         guiLeft = (width - 256) / 2;
         guiTop = (height - 120) / 2;
 
-        conf = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
+        confirmComponent = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
         initDragonRender();
 
         Minecraft minecraft = getMinecraft();
@@ -497,7 +542,7 @@ public class DragonEditorScreen extends Screen {
             DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers);
             dropdownButtons.put(layers, btn);
             addRenderableWidget(btn);
-            addRenderableWidget(new ArrowButton(btn.getX() - 15, btn.getY() + 1, 16, 16, false, s -> {
+            addRenderableWidget(new ArrowButton(btn.getX() - 15, btn.getY() + 1, 16, 16, false, action -> {
                 int index = 0;
 
                 for (int i1 = 0; i1 < btn.values.length; i1++) {
@@ -519,7 +564,7 @@ public class DragonEditorScreen extends Screen {
                 }
             }));
 
-            addRenderableWidget(new ArrowButton(btn.getX() + btn.getWidth() - 1, btn.getY() + 1, 16, 16, true, s -> {
+            addRenderableWidget(new ArrowButton(btn.getX() + btn.getWidth() - 1, btn.getY() + 1, 16, 16, true, action -> {
                 int index = 0;
 
                 for (int i1 = 0; i1 < btn.values.length; i1++) {
@@ -541,14 +586,13 @@ public class DragonEditorScreen extends Screen {
                 }
             }));
 
-            ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight(), s -> {
-            });
+            ColorSelectorButton colorButton = new ColorSelectorButton(this, layers, btn.getX() + 14 + btn.getWidth() + 2, btn.getY(), btn.getHeight(), btn.getHeight());
             colorSelectorButtons.put(layers, colorButton);
             addRenderableWidget(colorButton);
             i++;
         }
 
-        addRenderableWidget(new Button(width / 2 + 45, height / 2 + 75 - 27, 15, 15, Component.empty(), btn -> {
+        addRenderableWidget(new Button(width / 2 + 45, height / 2 + 75 - 27, 15, 15, Component.empty(), action -> {
             curAnimation += 1;
 
             if (curAnimation >= animations.length) {
@@ -556,16 +600,16 @@ public class DragonEditorScreen extends Screen {
             }
         }, Supplier::get) {
             @Override
-            public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
+            public void renderWidget(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
                 if (isHoveredOrFocused()) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    graphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 } else {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    graphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 }
             }
         });
 
-        addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 + 75 - 27, 15, 15, Component.empty(), btn -> {
+        addRenderableWidget(new Button(width / 2 - 45 - 20, height / 2 + 75 - 27, 15, 15, Component.empty(), action -> {
             curAnimation -= 1;
 
             if (curAnimation < 0) {
@@ -574,12 +618,12 @@ public class DragonEditorScreen extends Screen {
         }, Supplier::get) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-                RenderSystem.setShaderTexture(0, MagicHUD.widgetTextures);
+                RenderSystem.setShaderTexture(0, MagicHUD.WIDGET_TEXTURES);
 
                 if (isHoveredOrFocused()) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 } else {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
                 }
             }
         });
@@ -588,18 +632,16 @@ public class DragonEditorScreen extends Screen {
             addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
         }
 
-
-        wingsCheckbox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.wings"), preset.skinAges.get(level).get().wings, p -> actionHistory.add(new EditorAction<>(checkWingsButtonAction, p.selected())));
-        wingsCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.wings.tooltip")));
+        wingsCheckbox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable(WINGS), preset.skinAges.get(level).get().wings, p -> actionHistory.add(new EditorAction<>(checkWingsButtonAction, p.selected())));
+        wingsCheckbox.setTooltip(Tooltip.create(Component.translatable(WINGS_INFO)));
         wingsCheckbox.selected = preset.skinAges.get(level).get().wings;
         addRenderableWidget(wingsCheckbox);
 
-        defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable("ds.gui.dragon_editor.default_skin"), preset.skinAges.get(level).get().defaultSkin, p -> actionHistory.add(new EditorAction<>(checkDefaultSkinAction, p.selected())));
-        defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.default_skin.tooltip")));
+        defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable(DEFAULT_SKIN), preset.skinAges.get(level).get().defaultSkin, p -> actionHistory.add(new EditorAction<>(checkDefaultSkinAction, p.selected())));
+        defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable(DEFAULT_SKIN_INFO)));
         addRenderableWidget(defaultSkinCheckbox);
 
-        ExtendedButton saveButton = new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.save"), pButton -> {
-        }) {
+        ExtendedButton saveButton = new ExtendedButton(width / 2 - 75 - 10, height - 25, 75, 20, Component.translatable(LangKey.GUI_CONFIRM), action -> { /* Nothing to do */ }) {
             Renderable renderButton;
             boolean toggled;
 
@@ -609,7 +651,7 @@ public class DragonEditorScreen extends Screen {
                 if (toggled && (!visible || !confirmation)) {
                     toggled = false;
                     Screen screen = Minecraft.getInstance().screen;
-                    screen.children().removeIf(s -> s == conf);
+                    screen.children().removeIf(s -> s == confirmComponent);
                     screen.renderables.removeIf(s -> s == renderButton);
                 }
             }
@@ -623,7 +665,7 @@ public class DragonEditorScreen extends Screen {
                 if (handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved) {
                     confirmation = true;
                     showUi = false;
-                    conf.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
+                    confirmComponent.isBodyTypeChange = dragonBodyWouldChange(handler) && !dragonTypeWouldChange(handler);
                 } else {
                     confirm();
                 }
@@ -634,32 +676,31 @@ public class DragonEditorScreen extends Screen {
                         }) {
                             @Override
                             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                                if (conf != null && confirmation) {
-                                    conf.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
+                                if (confirmComponent != null && confirmation) {
+                                    confirmComponent.render(guiGraphics, pMouseX, pMouseY, pPartialTick);
                                 }
 
                                 super.renderWidget(guiGraphics, pMouseX, pMouseY, pPartialTick);
                             }
                         };
-                        ((ScreenAccessor) DragonEditorScreen.this).dragonSurvival$children().add(conf);
+                        ((ScreenAccessor) DragonEditorScreen.this).dragonSurvival$children().add(confirmComponent);
                         renderables.add(renderButton);
                     }
                     toggled = !toggled;
                 } else {
-                    children().removeIf(s -> s == conf);
+                    children().removeIf(s -> s == confirmComponent);
                     renderables.removeIf(s -> s == renderButton);
                 }
             }
         };
-        saveButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.done")));
+
         addRenderableWidget(saveButton);
 
-        ExtendedButton discardButton = new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable("ds.gui.dragon_editor.back"), btn -> Minecraft.getInstance().setScreen(source));
-        discardButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.tooltip.back")));
+        ExtendedButton discardButton = new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable(LangKey.GUI_CANCEL), btn -> Minecraft.getInstance().setScreen(source));
         addRenderableWidget(discardButton);
 
         ExtendedButton resetButton = new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
-            // Don't actually modify the skin preset here, do it inside of setSkinPresetAction
+            // Don't actually modify the skin preset here, do it inside setSkinPresetAction
             SkinPreset preset = new SkinPreset();
             preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), this.preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
             preset.skinAges.put(level, Lazy.of(() -> new SkinAgeGroup(level, dragonType)));
@@ -668,10 +709,10 @@ public class DragonEditorScreen extends Screen {
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                guiGraphics.blit(RESET, getX(), getY(), 0, 0, width, height, width, height);
+                guiGraphics.blit(RESET_ICON, getX(), getY(), 0, 0, width, height, width, height);
             }
         };
-        resetButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.reset")));
+        resetButton.setTooltip(Tooltip.create(Component.translatable(RESET)));
         addRenderableWidget(resetButton);
 
 
@@ -681,13 +722,13 @@ public class DragonEditorScreen extends Screen {
             extraKeys.removeIf(s -> {
                 DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA, s, dragonType);
                 if (text == null) {
-                    DragonSurvival.LOGGER.error("Key " + s + " not found!");
+                    DragonSurvival.LOGGER.error("Key {} not found!", s);
                     return true;
                 }
                 return !text.random;
             });
 
-            // Don't actually modify the skin preset here, do it inside of setSkinPresetAction
+            // Don't actually modify the skin preset here, do it inside setSkinPresetAction
             SkinPreset preset = new SkinPreset();
             preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), this.preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
             for (EnumSkinLayer layer : EnumSkinLayer.values()) {
@@ -733,36 +774,35 @@ public class DragonEditorScreen extends Screen {
         }) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-                guiGraphics.blit(RANDOM, getX(), getY(), 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(RANDOM_ICON, getX(), getY(), 0, 0, 16, 16, 16, 16);
             }
         };
-        randomButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.random")));
+        randomButton.setTooltip(Tooltip.create(Component.translatable(RANDOMIZE)));
         addRenderableWidget(randomButton);
 
         UndoRedoButton undoButton = new UndoRedoButton(guiLeft + 318, 11, 18, 18, false, button -> actionHistory.undo());
-        undoButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.undo")));
+        undoButton.setTooltip(Tooltip.create(Component.translatable(UNDO)));
         addRenderableWidget(undoButton);
 
         UndoRedoButton redoButton = new UndoRedoButton(guiLeft + 340, 11, 18, 18, true, button -> actionHistory.redo());
-        redoButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.redo")));
+        redoButton.setTooltip(Tooltip.create(Component.translatable(REDO)));
         addRenderableWidget(redoButton);
 
         ExtendedButton saveSlotButton = new ExtendedButton(width / 2 + 213, guiTop + 10, 18, 18, Component.empty(), button -> { /* Nothing to do */ }) {
             @Override
             public void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                guiGraphics.blit(SAVE, getX(), getY(), 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(SAVE_ICON, getX(), getY(), 0, 0, 16, 16, 16, 16);
             }
         };
-        saveSlotButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.save_slot")));
+        saveSlotButton.setTooltip(Tooltip.create(Component.translatable(SAVE_SLOT)));
         addRenderableWidget(saveSlotButton);
 
-        addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.translatable("ds.gui.dragon_editor.copy"), button -> { /* Nothing to do */ }));
+        addRenderableWidget(new CopySettingsButton(this, guiLeft + 230, 11, 18, 18, Component.translatable(COPY), button -> { /* Nothing to do */ }));
 
-        showUiCheckbox = new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable("ds.gui.dragon_editor.show_ui"), showUi, p -> showUi = p.selected());
+        showUiCheckbox = new ExtendedCheckbox(guiLeft - 15, 11, 40, 18, 18, Component.translatable(SHOW_UI), showUi, p -> showUi = p.selected());
         addRenderableWidget(showUiCheckbox);
-        addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), s -> {
-        }, this));
-        addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, "ds.help.customization", 1));
+        addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), action -> { /* Nothing to do */ }, this));
+        addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, CUSTOMIZATION, 1));
     }
 
     public void update() {
@@ -811,44 +851,52 @@ public class DragonEditorScreen extends Screen {
     }
 
     public void confirm() {
-        DragonStateProvider.getOptional(minecraft.player).ifPresent(cap -> {
-            minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
+        //noinspection DataFlowIssue -> player should be present
+        DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
 
-            if (!cap.isDragon() || dragonWouldChange(cap)) {
-                minecraft.player.sendSystemMessage(Component.translatable("ds." + dragonType.getTypeNameLowerCase() + "_dragon_choice"));
+        minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
 
-                if (dragonType == null && cap.getType() != null) {
-                    DragonCommand.reInsertClawTools(minecraft.player, cap);
-                }
+        if (!data.isDragon() || dragonWouldChange(data)) {
+            String translationKey = switch (dragonType) {
+                case CaveDragonType ignored -> CAVE_DRAGON_CHOICE;
+                case SeaDragonType ignored -> SEA_DRAGON_CHOICE;
+                case ForestDragonType ignored -> FOREST_DRAGON_CHOICE;
+                default -> throw new IllegalStateException("Invalid dragon type [" + dragonType + "]");
+            };
 
-                cap.setType(dragonType, minecraft.player);
-                cap.setBody(dragonBody, minecraft.player);
+            minecraft.player.sendSystemMessage(Component.translatable(translationKey));
 
-                double size = cap.getSavedDragonSize(cap.getTypeName());
-
-                if (!ServerConfig.saveGrowthStage || size == 0) {
-                    cap.setSize(DragonLevel.NEWBORN.size, minecraft.player);
-                } else {
-                    cap.setSize(size, minecraft.player);
-                }
-
-                cap.setHasFlight(ServerConfig.saveGrowthStage ? cap.hasFlight() || ServerFlightHandler.startWithLevitation : ServerFlightHandler.startWithLevitation);
-                cap.setIsHiding(false);
-                cap.getMovementData().spinLearned = ServerConfig.saveGrowthStage && cap.getMovementData().spinLearned;
-
-                HANDLER.getSkinData().skinPreset = save();
-                cap.getSkinData().renderAdult = ClientDragonRenderer.renderAdultSkin;
-                cap.getSkinData().renderYoung = ClientDragonRenderer.renderYoungSkin;
-                cap.getSkinData().renderNewborn = ClientDragonRenderer.renderNewbornSkin;
-
-                cap.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
-                cap.hasUsedAltar = true;
-
-                PacketDistributor.sendToServer(new SyncComplete.Data(minecraft.player.getId(), cap.serializeNBT(minecraft.player.registryAccess())));
-            } else {
-                PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(minecraft.player.getId(), save().serializeNBT(minecraft.player.registryAccess())));
+            if (dragonType == null && data.getType() != null) {
+                DragonCommand.reInsertClawTools(minecraft.player, data);
             }
-        });
+
+            data.setType(dragonType, minecraft.player);
+            data.setBody(dragonBody, minecraft.player);
+
+            double size = data.getSavedDragonSize(data.getTypeName());
+
+            if (!ServerConfig.saveGrowthStage || size == 0) {
+                data.setSize(DragonLevel.NEWBORN.size, minecraft.player);
+            } else {
+                data.setSize(size, minecraft.player);
+            }
+
+            data.setHasFlight(ServerFlightHandler.startWithFlight || ServerConfig.saveGrowthStage && data.hasFlight());
+            data.setIsHiding(false);
+            data.getMovementData().spinLearned = ServerConfig.saveGrowthStage && data.getMovementData().spinLearned;
+
+            HANDLER.getSkinData().skinPreset = save();
+            data.getSkinData().renderAdult = ClientDragonRenderer.renderAdultSkin;
+            data.getSkinData().renderYoung = ClientDragonRenderer.renderYoungSkin;
+            data.getSkinData().renderNewborn = ClientDragonRenderer.renderNewbornSkin;
+
+            data.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
+            data.hasUsedAltar = true;
+
+            PacketDistributor.sendToServer(new SyncComplete.Data(minecraft.player.getId(), data.serializeNBT(minecraft.player.registryAccess())));
+        } else {
+            PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(minecraft.player.getId(), save().serializeNBT(minecraft.player.registryAccess())));
+        }
 
         minecraft.player.closeContainer();
     }
@@ -863,17 +911,11 @@ public class DragonEditorScreen extends Screen {
     }
 
     public static String partToTranslation(final String part) {
-        String text = "ds.skin_part." + DragonEditorScreen.HANDLER.getTypeNameLowerCase() + "." + part.toLowerCase(Locale.ENGLISH);
-
-        if (I18n.exists(text)) {
-            return text;
-        }
-
-        return part;
+        return Translation.Type.SKIN_PART.wrap(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + "." + part.toLowerCase(Locale.ENGLISH));
     }
 
-    public static String partToTechnical(final String part) {
-        return part.replace("ds.skin_part.", "").replace(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + ".", "");
+    public static String partToTechnical(final String key) {
+        return Translation.Type.SKIN_PART.unwrap(key).replace(DragonEditorScreen.HANDLER.getTypeNameLowerCase() + ".", "");
     }
 
     @SubscribeEvent

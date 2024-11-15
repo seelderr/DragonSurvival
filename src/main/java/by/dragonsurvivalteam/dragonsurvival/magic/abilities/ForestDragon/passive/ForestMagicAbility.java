@@ -6,13 +6,23 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Magic points (Mana) are used for dragon magic. Restores under direct sunlight and on grass.\n",
+        "■ Current amount of §2%s§r mana:",
+        " - §2%s§r from «Forest Magic»",
+        " - §2%s§r from body type",
+        " - §2%s§r from experience"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Forest Magic")
 @RegisterDragonAbility
 public class ForestMagicAbility extends MagicAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "forestMagic", comment = "Whether the forest magic ability should be enabled")
+    @Translation(key = "forest_magic", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the forest magic ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "forest_magic")
     public static Boolean forestMagic = true;
 
     @Override
@@ -32,7 +42,8 @@ public class ForestMagicAbility extends MagicAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/forest_magic_3.png"),

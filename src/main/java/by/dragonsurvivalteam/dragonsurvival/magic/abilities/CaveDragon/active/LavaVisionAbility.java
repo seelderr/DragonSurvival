@@ -10,6 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -23,25 +25,32 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Personal buff: makes lava more §2transparent§r while active.")
+@Translation(type = Translation.Type.ABILITY, comments = "Lava Vision")
 @RegisterDragonAbility
 public class LavaVisionAbility extends ChargeCastAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionEnabled", comment = "Whether the lava vision ability should be enabled")
+    @Translation(key = "lava_vision", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the lava vision ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "lava_vision"}, key = "lava_vision")
     public static Boolean lavaVisionEnabled = true;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionDuration", comment = "The duration in seconds of the lava vision effect given when the ability is used")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "lava_vision_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "lava_vision"}, key = "lava_vision_duration")
     public static Double lavaVisionDuration = 100.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCooldown", comment = "The cooldown in seconds of the lava vision ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "lava_vision_cooldown", type = Translation.Type.CONFIGURATION, comments = "The cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "lava_vision"}, key = "lava_vision_cooldown")
     public static Double lavaVisionCooldown = 30.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionCasttime", comment = "The cast time in seconds of the lava vision ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "lava_vision_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "lava_vision"}, key = "lava_vision_cast_time")
     public static Double lavaVisionCasttime = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "lava_vision"}, key = "lavaVisionManaCost", comment = "The mana cost for using the lava vision ability")
+    @Translation(key = "lava_vision_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "lava_vision"}, key = "lava_vision_mana_cost")
     public static Integer lavaVisionManaCost = 1;
 
     @Override
@@ -52,7 +61,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.duration.seconds", Functions.ticksToSeconds(getDuration())));
+        components.add(Component.translatable(LangKey.ABILITY_DURATION, Functions.ticksToSeconds(getDuration())));
 
         if (!Keybind.ABILITY4.get().isUnbound()) {
             String key = Keybind.ABILITY4.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
@@ -60,7 +69,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
             if (key.isEmpty()) {
                 key = Keybind.ABILITY4.getKey().getDisplayName().getString();
             }
-            components.add(Component.translatable("ds.skill.keybind", key));
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -112,17 +121,19 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/lava_vision_4.png")
+        };
     }
 
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.duration.seconds", "+" + lavaVisionDuration));
+        list.add(Component.translatable(LangKey.ABILITY_DURATION, "+" + lavaVisionDuration));
         return list;
     }
 
@@ -152,7 +163,7 @@ public class LavaVisionAbility extends ChargeCastAbility {
 
     @Override
     public void castingComplete(Player player) {
-        player.addEffect(new MobEffectInstance(DSEffects.LAVA_VISION, getDuration()));
+        player.addEffect(new MobEffectInstance(DSEffects.LAVA_VISION, getDuration(), 0, false, false));
         player.level().playLocalSound(player.position().x, player.position().y + 0.5, player.position().z, SoundEvents.UI_TOAST_IN, SoundSource.PLAYERS, 5F, 0.1F, false);
     }
 }

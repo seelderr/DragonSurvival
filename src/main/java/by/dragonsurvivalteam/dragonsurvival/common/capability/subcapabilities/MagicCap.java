@@ -84,7 +84,7 @@ public class MagicCap extends SubCap {
     }
 
     public void setCurrentMana(int currentMana) {
-        this.currentMana = currentMana;
+        this.currentMana = Math.max(0, currentMana);
     }
 
     public void setSelectedAbilitySlot(int newSlot) {

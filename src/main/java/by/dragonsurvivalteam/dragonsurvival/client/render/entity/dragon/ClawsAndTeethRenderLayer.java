@@ -108,7 +108,7 @@ public class ClawsAndTeethRenderLayer extends GeoRenderLayer<DragonEntity> {
             return null;
         }
 
-        ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().slotForBonus);
+        ItemStack clawItem = handler.getClawToolData().getClawsInventory().getItem(handler.getType().clawTextureSlot);
 
         if (!clawItem.isEmpty()) {
             texturePath = getMaterial(texturePath, clawItem);

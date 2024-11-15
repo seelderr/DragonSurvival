@@ -1,0 +1,32 @@
+{
+  "parent": "dragonsurvival:collect_dust",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "size": 19.9
+      },
+      "trigger": "dragonsurvival:be_dragon"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "dragonsurvival.advancement.be_young_dragon.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:heart_element"
+    },
+    "title": {
+      "translate": "dragonsurvival.advancement.be_young_dragon"
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 12
+  },
+  "sends_telemetry_event": true
+}

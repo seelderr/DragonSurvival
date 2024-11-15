@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.common.util.Lazy;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.HashMap;
@@ -28,13 +29,17 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     }
 
     public void initDefaults(AbstractDragonType type) {
+        if (type == null) {
+            return;
+        }
+
         for (DragonLevel level : DragonLevel.values()) {
             skinAges.put(level, Lazy.of(() -> new SkinAgeGroup(level, type)));
         }
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public @UnknownNullability CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         CompoundTag nbt = new CompoundTag();
 
         for (DragonLevel level : DragonLevel.values()) {
@@ -45,7 +50,7 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag base) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, @NotNull CompoundTag base) {
         for (DragonLevel level : DragonLevel.values()) {
             skinAges.put(level,
                     Lazy.of(() -> {

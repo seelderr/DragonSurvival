@@ -2,16 +2,14 @@ package by.dragonsurvivalteam.dragonsurvival.config;
 
 import by.dragonsurvivalteam.dragonsurvival.common.entity.creatures.AmbusherEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.*;
-import by.dragonsurvivalteam.dragonsurvival.config.types.BlockStateConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 import java.util.List;
-
 
 public class ServerConfig {
     public static final Double DEFAULT_MAX_GROWTH_SIZE = 60.0;
@@ -20,351 +18,342 @@ public class ServerConfig {
         ConfigHandler.createConfigEntries(builder, ConfigSide.SERVER);
     }
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "forceStateUpdatingOnVaults", comment = "Debug only config. Forces the state updating to resume on vaults always.")
+    @Translation(key = "force_vault_state_updates", type = Translation.Type.CONFIGURATION, comments = "If enabled vaults will immediately update their state")
+    @ConfigOption(side = ConfigSide.SERVER, category = "debug", key = "force_vault_state_updates")
     public static Boolean forceStateUpdatingOnVaults = false;
 
     @ConfigRange(min = 0, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "altarUsageCooldown", comment = "How long of a cooldown in seconds the altar has after each use.")
+    @Translation(key = "altar_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using an altar")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "altar_cooldown")
     public static Integer altarUsageCooldown = 0;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "altarCraftable", comment = "Whether dragon altars are craftable or not. When disabled you can only use the command or creative mode to become a dragon.")
-    public static Boolean altarCraftable = true;
+    @Translation(key = "transform_altar", type = Translation.Type.CONFIGURATION, comments = "Enables the transformation of certain blocks into dragon altars when using an elder dragon bone item on them")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "transform_altar")
+    public static Boolean transformAltar = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "keepClawItems", comment = "Whether to keep items in the claw slots on death otherwise they will drop on death.")
-    public static Boolean keepClawItems = false;
+    @Translation(key = "retain_claw_items", type = Translation.Type.CONFIGURATION, comments = "If enabled the items in the claw inventory will not drop on death")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "retain_claw_items")
+    public static Boolean retainClawItems = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "syncClawRender", comment = "If players are allowed to hide their claws and teeth from other players. If it is important to you to see your opponent's weapon during pvp, set false.")
+    @Translation(key = "sync_claw_render", type = Translation.Type.CONFIGURATION, comments = {
+            "If enabled dragon claw and teeth (which indicate the currently equipped claw tools) will be synchronized to other players",
+            "This may be relevant for any sort of PvP content"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "sync_claw_render")
     public static Boolean syncClawRender = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "canMoveInEmote", comment = "If players are allowed to move while performing emotes")
+    @Translation(key = "can_move_in_emotes", type = Translation.Type.CONFIGURATION, comments = "If enabled players will be able to move while performing emotes")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "can_move_in_emotes")
     public static Boolean canMoveInEmote = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "canMoveWhileCasting", comment = "If you should be able to move while casting certain skills or if player movement can be prevented.")
+    @Translation(key = "can_move_while_casting", type = Translation.Type.CONFIGURATION, comments = "If enabled the movement restrictions from casting certain abilities will be ignored")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "can_move_while_casting")
     public static Boolean canMoveWhileCasting = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "startWithDragonChoice", comment = "Should the dragon altar interface be opened when the player first joins the world?")
+    @Translation(key = "start_with_dragon_choice", type = Translation.Type.CONFIGURATION, comments = "If enabled players will be giving a choice to select a dragon type when first joining the world")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "start_with_dragon_choice")
     public static Boolean startWithDragonChoice = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "allowDragonChoiceFromInventory", comment = "Should the dragon altar be accessible from the vanilla inventory if the player has not made a choice yet?")
+    @Translation(key = "allow_dragon_choice_from_inventory", type = Translation.Type.CONFIGURATION, comments = "If enabled players that have not yet chosen a dragon type will be able to do so from the vanilla inventory")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "allow_dragon_choice_from_inventory")
     public static Boolean allowDragonChoiceFromInventory = true;
 
-    @ConfigOption( side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "useBlacklistForDestructibleBlocks", comment = "Use a blacklist for destructible blocks instead of a whitelist.")
-    public static Boolean useBlacklistForDestructibleBlocks = false;
+    @Translation(key = "disable_dragon_suffocation", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will not take suffocation damage")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "disable_dragon_suffocation")
+    public static Boolean disableDragonSuffocation = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeBlockDestruction", comment = "Allow a dragon to instantly destroy certain colliding blocks if they are above a certain size.")
-    public static Boolean allowLargeBlockDestruction = false;
+    // --- Large dragon scaling --- //
+
+    @Translation(key = "destructible_blocks_blacklist", type = Translation.Type.CONFIGURATION, comments = "If enabled the destructible block tag for is used as a blacklist - if disabled it will be used as a whitelist")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "destructible_blocks_blacklist")
+    public static Boolean destructibleBlocksIsBlacklist = false;
+
+    @Translation(key = "allow_block_destruction", type = Translation.Type.CONFIGURATION, comments = "If enabled certain blocks will be automatically destroyed when dragons above a certain size collide with them - not active while crouching")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allow_block_destruction")
+    public static Boolean allowBlockDestruction = false;
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeBlockDestructionRemovePercentage", comment = "The percentage of blocks removed instead of destroyed when a dragon instantly destroys blocks. If a block is removed, it doesn't make a sound or particle effect. This is to minimize lag from particle VFX and audio spam.")
-    public static Double largeBlockDestructionRemovePercentage = 0.96;
+    @Translation(key = "block_destruction_removal", type = Translation.Type.CONFIGURATION, comments = {
+            "Determines the percentage chance that a block is removed, bypassing sound or particle effects",
+            "This is to avoid potential lag issues due to large amounts of sound effects or particles"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "block_destruction_removal")
+    public static Double blockDestructionRemoval = 0.96;
 
-    @ConfigRange(min = 14.0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeBlockDestructionSize", comment = "The size threshold for a dragon to start instantly destroying blocks. Crouching prevents destruction from occurring.")
+    @ConfigRange(min = 14.0, max = 1_000_000.0)
+    @Translation(key = "block_destruction_size", type = Translation.Type.CONFIGURATION, comments = "Determines at which size a dragon destroys blocks")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "block_destruction_size")
     public static Double largeBlockDestructionSize = 120.0;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowCrushing", comment = "Allow a dragon to crush entities beneath it after being above a certain size. Crouching prevents crushing from occurring.")
+    @Translation(key = "allow_crushing", type = Translation.Type.CONFIGURATION, comments = "If enabled entities beneath dragons above a certain size will be crushed - not active while crouching")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allow_crushing")
     public static Boolean allowCrushing = false;
 
-    @ConfigRange(min = 14.0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushingSize", comment = "The size at which a dragon can begin to crush entities.")
+    @ConfigRange(min = 14.0, max = 1_000_000.0)
+    @Translation(key = "crushing_size", type = Translation.Type.CONFIGURATION, comments = "Determines at which size a dragon crushes entities")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_size")
     public static Double crushingSize = 120.0;
 
     @ConfigRange(min = 0.0, max = 20.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushingDamageScalar", comment = "The amount damage dealt per dragon size when crushing entities.")
+    @Translation(key = "crushing_damage_scaling", type = Translation.Type.CONFIGURATION, comments = "Scales the dragon size to determine the damage dealt to crushed entities")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_damage_scaling")
     public static Double crushingDamageScalar = 0.05;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushingTickDelay", comment = "The amount of ticks before entities can be crushed again after they were already crushed.")
+    @Translation(key = "crushing_interval", type = Translation.Type.CONFIGURATION, comments = "The amount of ticks (20 ticks = 1 second) before an entity can be crushed again")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "crushing_interval")
     public static Integer crushingTickDelay = 20;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allowLargeScaling", comment = "Allow a dragon's max health, damage, reach, step height, and jump height to continue to scale with growth beyond its normal limits.")
+    @Translation(key = "allow_large_scaling", type = Translation.Type.CONFIGURATION, comments = "Dragon bonuses can scale beyond the normal dragon size limit if enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "allow_large_scaling")
     public static Boolean allowLargeScaling = false;
 
-    @ConfigRange(min = 1, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMaxHealthScalar", comment = "The bonus max health given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+    @ConfigRange(min = 1, max = 1000) // FIXME :: change comment if formula is changed
+    @Translation(key = "large_max_health_scaling", type = Translation.Type.CONFIGURATION, comments = {
+            "Determines max. health scaling for large dragons",
+            "With default values this would grant ~72 additional max. health at size 120 (on top of the normal max. health bonus of 40 for dragons)",
+            "The intention is to grant the specified health per 60 size"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_max_health_scaling")
     public static Integer largeMaxHealthScalar = 40;
+
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeMovementSpeedScalar", comment = "The bonus movement speed multiplier per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
+    @Translation(key = "large_movement_speed_multiplier_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the movement speed multiplier at max. growth - the intention is to grant the specified value per 60 size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_movement_speed_multiplier_scaling")
     public static Double largeMovementSpeedScalar = 0.0;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeDamageBonus", comment = "The bonus damage per 60 size when the dragon is at maximum growth size if large scaling is enabled.")
+    @Translation(key = "large_damage_bonus_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the damage at max. growth - the intention is to grant the specified value per 60 size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_damage_bonus_scaling")
     public static Double largeDamageBonus = 3.0;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeReachScalar", comment = "The bonus reach given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+    @Translation(key = "large_reach_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the reach bonus at max. growth - the intention is to grant the specified value per 60 size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_reach_scaling")
     public static Double largeReachScalar = 0.5;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeStepHeightScalar", comment = "The bonus step height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+    @Translation(key = "large_step_height_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the step height bonus at max. growth - the intention is to grant the specified value per 60 size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_step_height_scaling")
     public static Double largeStepHeightScalar = 1.0;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeJumpHeightScalar", comment = "The bonus jump height given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled.")
+    @Translation(key = "large_jump_height_scaling", type = Translation.Type.CONFIGURATION, comments = "Determines the jump height bonus at max. growth - the intention is to grant the specified value per 60 size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_jump_height_scaling")
     public static Double largeJumpHeightScalar = 0.05;
 
     @ConfigRange(min = 0.0, max = 10.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "largeBlockBreakRadiusScalar", comment = "The bonus block break radius given per 60 size once the dragon is above the default growth size of 60 if large scaling is enabled. A block radius of 0 disables this feature. Crouching allows you to mine one block at a time.")
+    @Translation(key = "large_block_break_radius_scaling", type = Translation.Type.CONFIGURATION, comments = {
+            "Determines the block break radius bonus at max. growth - the intention is to grant the specified value per 60 size - disabled if set to 0",
+            "This bonus is not active while crouching"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "big_dragon"}, key = "large_block_break_radius_scaling")
     public static Double largeBlockBreakRadiusScalar = 0.0;
 
-    @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growNewborn", validation = Validation.RESOURCE_LOCATION, comment = "List of items to grow newborn dragon. Format: item/modid:id")
+    // --- Growth items --- //
+
+    @ConfigType(Item.class) // TODO :: tag or custom with id:growth_value
+    @Translation(key = "newborn_growth_items", type = Translation.Type.CONFIGURATION, comments = "Items which can be used to grow the a newborn dragon - Format: namespace:path")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "newborn_growth_items", validation = Validation.RESOURCE_LOCATION)
     public static List<String> growNewborn = List.of("dragonsurvival:heart_element", "dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
 
-    @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growYoung", validation = Validation.RESOURCE_LOCATION, comment = "List of items to grow young dragon. Format: item/modid:id")
+    @ConfigType(Item.class) // TODO :: tag or custom with id:growth_value
+    @Translation(key = "young_growth_items", type = Translation.Type.CONFIGURATION, comments = "Items which can be used to grow the a young dragon - Format: namespace:path")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "young_growth_items", validation = Validation.RESOURCE_LOCATION)
     public static List<String> growYoung = List.of("dragonsurvival:weak_dragon_heart", "dragonsurvival:elder_dragon_heart");
 
-    @ConfigType(Item.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "growAdult", validation = Validation.RESOURCE_LOCATION, comment = "List of items to grow adult dragon. Format: item/modid:id")
+    @ConfigType(Item.class) // TODO :: tag or custom with id:growth_value
+    @Translation(key = "adult_growth_items", type = Translation.Type.CONFIGURATION, comments = "Items which can be used to grow the an adult dragon - Format: namespace:path")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "adult_growth_items", validation = Validation.RESOURCE_LOCATION)
     public static List<String> growAdult = List.of("dragonsurvival:elder_dragon_heart");
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "alternateGrowing", comment = "If true, dragons will grow without the use of catalyst grow items. Does not broker the use of items. Just an additional type of growth.")
-    public static Boolean alternateGrowing = true;
+    // --- Standard dragon scaling --- //
 
-    @ConfigRange(min = 14.0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "maxGrowthSize", comment = "Defines the max size your dragon can grow to. Values that are too high can break your game. It is not advisable to set a number higher than 60.")
-    public static Double maxGrowthSize = DEFAULT_MAX_GROWTH_SIZE;
+    @Translation(key = "natural_growth", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will also naturally grow over time")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "natural_growth")
+    public static Boolean naturalGrowth = true;
 
-    @ConfigRange(min = 0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "moveSpeedNewborn", comment = "The movement speed multiplier for newborn dragons. Default is 1.0.")
-    public static Double moveSpeedNewborn = 1.0;
-
-    @ConfigRange(min = 0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "moveSpeedYoung", comment = "The movement speed multiplier for young dragons. Default is 1.0.")
-    public static Double moveSpeedYoung = 1.0;
-
-    @ConfigRange(min = 0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "moveSpeedAdult", comment = "The movement speed multiplier for adult dragons. Default is 1.0.")
-    public static Double moveSpeedAdult = 1.0;
-
-    @ConfigRange(min = 0, max = 1000000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "reachBonus", comment = "The bonus that is given to dragons at 60 size. The bonus gradually scales up to the maximum size. Human players have 1.0x reach and a size 60 dragon will have 1.5x distance with default values.")
-    public static Double reachBonus = 0.5;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "saveGrowthStage", comment = "Should the growth stage of a dragon be saved even when you change. Does not affect the saving progress of magic (use saveAllAbilities). The author does not approve of weredragons, but if you insist...")
+    @Translation(key = "save_growth_stage", type = Translation.Type.CONFIGURATION, comments = "If enabled the current growth will be saved for the current dragon type when changing types or reverting back to being a human")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "save_growth_stage")
     public static Boolean saveGrowthStage = false;
 
+    @ConfigRange(min = 14.0, max = 300)
+    @Translation(key = "max_growth_size", type = Translation.Type.CONFIGURATION, comments = "Determines the maximum size dragons can grow to")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth"}, key = "max_growth_size")
+    public static Double maxGrowthSize = DEFAULT_MAX_GROWTH_SIZE;
+
+    @ConfigRange(min = 0, max = 100)
+    @Translation(key = "newborn_movement_speed", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier for newborn dragons")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "newborn_movement_speed")
+    public static Double moveSpeedNewborn = 1.0;
+
+    @ConfigRange(min = 0, max = 100)
+    @Translation(key = "young_movement_speed", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier for young dragons")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "young_movement_speed")
+    public static Double moveSpeedYoung = 1.0;
+
+    @ConfigRange(min = 0, max = 100)
+    @Translation(key = "adult_movement_speed", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier for adult dragons")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "adult_movement_speed")
+    public static Double moveSpeedAdult = 1.0;
+
+    @ConfigRange(min = 0, max = 100)
+    @Translation(key = "reach_bonus", type = Translation.Type.CONFIGURATION, comments = "The reach bonus for dragons - the bonus is scaled depending on the dragon size, this value being reached at size 60")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "reachBonus")
+    public static Double reachBonus = 0.5;
+
     @ConfigRange(min = 1, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "minHealth", comment = "Dragon starting health. Minimum health dragons will start off with.")
+    @Translation(key = "starting_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health dragons start at (A normal human player has 20 health by default)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "starting_health")
     public static Integer minHealth = 14;
 
     @ConfigRange(min = 1, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maxHealth", comment = "The maximum health when the dragon is fully grown.")
+    @Translation(key = "maximum_health", type = Translation.Type.CONFIGURATION, comments = "Maximum amount of dragons can have when fully grown")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maximum_health")
     public static Integer maxHealth = 40;
 
     @ConfigRange(min = 1, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maxHealthSize", comment = "The size at which the maximum health is reached.")
+    @Translation(key = "maximum_health_reached", type = Translation.Type.CONFIGURATION, comments = "Determines the size at which the maximum amount of health is reached")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maximum_health_reached")
     public static Integer maxHealthSize = 40;
 
     @ConfigRange(min = 0.0, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "newbornGrowthModifier", comment = "A multiplier to change the growth rate from newborn to young. At 1.0 it takes about 3 hours to turn a newborn dragon into a young dragon.")
+    @Translation(key = "newborn_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier for newborn dragons - with a value of 1 it takes 3 real-time hours to turn into a young dragon")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "newborn_growth_multiplier")
     public static Double newbornGrowthModifier = 0.3;
 
     @ConfigRange(min = 0.0, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "youngGrowthModifier", comment = "A multiplier to change the growth rate from young to adult. At 1.0 it takes about 1 day to turn a young dragon into a adult dragon.")
+    @Translation(key = "young_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier for young dragons - with a value of 1 it takes 24 real-time hours to turn into an adult dragon")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "young_growth_multiplier")
     public static Double youngGrowthModifier = 0.5;
 
     @ConfigRange(min = 0.0, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "adultGrowthModifier", comment = "A multiplier to change the growth rate from adult to a full sized adult. At 1.0 it takes about 3 days to become a dragon of maximum adult size.")
+    @Translation(key = "adult_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier for adult dragons - with a value of 1 it takes 3 real-time days to reach the maximum adult size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "adult_growth_multiplier")
     public static Double adultGrowthModifier = 0.9;
 
     @ConfigRange(min = 0.0, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "maxGrowthModifier", comment = "A multiplier to change the growth rate from full sized adult to max size. The change in growth after the maximum adult size is measured in months and years.")
+    @Translation(key = "max_growth_multiplier", type = Translation.Type.CONFIGURATION, comments = "Growth multiplier to reach the maximum size - with a value of 1 it takes 30 real-time days to reach the maximum adult size")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"growth", "standard_dragon"}, key = "max_growth_multiplier")
     public static Double maxGrowthModifier = 1.0;
 
+    // --- Item drops --- //
+
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragonHeartShardChance", comment = "The chance for dragon heart shards to drop from any mobs with max health between 14-20")
+    @Translation(key = "dragon_heart_shard_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of dragon heart shards dropping from entities with a maximum health between 14 and 20")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragon_heart_shard_chance")
     public static Double dragonHeartShardChance = 0.03;
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartChance", comment = "The chance for weak dragon heart to drop from any mobs with max health between 20-50")
+    @Translation(key = "weak_dragon_heart_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of weak dragon hearts dropping from entities with a maximum health between 20 and 50")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weak_dragon_heart_chance")
     public static Double weakDragonHeartChance = 0.01;
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartChance", comment = "The chance for dragon heart to drop from any mobs with max health above 50")
+    @Translation(key = "elder_dragon_heart_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of elder dragon hearts dropping from entities with a maximum health above 50")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elder_dragon_heart_chance")
     public static Double elderDragonHeartChance = 0.01;
 
-    @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragonHeartEntityList", validation = Validation.RESOURCE_LOCATION, comment = "Decide which entities can drop dragon hearts")
+    @ConfigType(EntityType.class) // FIXME :: tag
+    @Translation(key = "dragon_heart_entity_list", type = Translation.Type.CONFIGURATION, comments = "Determines either which entities cannot drop dragon hearts or which entities are allowed to drop dragon hearts")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragon_heart_entity_list", validation = Validation.RESOURCE_LOCATION)
     public static List<String> dragonHeartEntityList = List.of();
 
-    @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartEntityList", validation = Validation.RESOURCE_LOCATION, comment = "Decide which entities can drop weak dragon hearts")
+    @ConfigType(EntityType.class) // FIXME :: tag
+    @Translation(key = "weak_dragon_heart_entity_list", type = Translation.Type.CONFIGURATION, comments = "Determines either which entities cannot drop weak dragon hearts or which entities are allowed to drop weak dragon hearts")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weak_dragon_heart_entity_list", validation = Validation.RESOURCE_LOCATION)
     public static List<String> weakDragonHeartEntityList = List.of();
 
-    @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartEntityList", validation = Validation.RESOURCE_LOCATION, comment = "Decide which entities can drop elder dragon hearts")
+    @ConfigType(EntityType.class) // FIXME :: tag
+    @Translation(key = "elder_dragon_heart_entity_list", type = Translation.Type.CONFIGURATION, comments = "Determines either which entities cannot drop elder dragon hearts or which entities are allowed to drop elder dragon hearts")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elder_dragon_heart_entity_list", validation = Validation.RESOURCE_LOCATION)
     public static List<String> elderDragonHeartEntityList = List.of();
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragonHeartWhiteList", comment = "Should the dragonHeartEntityList be treated as an allowlist rather than a block list?")
+    @Translation(key = "dragon_heart_white_list", type = Translation.Type.CONFIGURATION, comments = "If enabled the entity list for dragon hearts acts as a whitelist - if disabled it acts as a blacklist")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "dragon_heart_white_list")
     public static Boolean dragonHeartWhiteList = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weakDragonHeartWhiteList", comment = "Should the weakDragonHeartEntityList be treated as an allowlist rather than a block list?")
+    @Translation(key = "weak_dragon_heart_white_list", type = Translation.Type.CONFIGURATION, comments = "If enabled the entity list for weak dragon hearts acts as a whitelist - if disabled it acts as a blacklist")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "weak_dragon_heart_white_list")
     public static Boolean weakDragonHeartWhiteList = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elderDragonHeartWhiteList", comment = "Should the elderDragonHeartEntityList be treated as an allowlist rather than a block list?")
+    @Translation(key = "elder_dragon_heart_white_list", type = Translation.Type.CONFIGURATION, comments = "If enabled the entity list for elder dragon hearts acts as a whitelist - if disabled it acts as a blacklist")
+    @ConfigOption(side = ConfigSide.SERVER, category = "drops", key = "elder_dragon_heart_white_list")
     public static Boolean elderDragonHeartWhiteList = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "treasureHealthRegen", comment = "Whether sleeping on treasure will recover health or not. ")
+    // --- Treasure blocks --- //
+
+    @Translation(key = "treasure_health_regeneration", type = Translation.Type.CONFIGURATION, comments = "Sleeping on treasure blocks will regenerate health if enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "treasure_health_regeneration")
     public static Boolean treasureHealthRegen = true;
 
-    @ConfigRange(min = 1, max = 10000000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicks", comment = "The time in ticks it takes to recover 1hp while sleeping on one treasure. A large number of treasures in one place reduces time.")
-    public static Integer treasureRegenTicks = 280;
+    @ConfigRange(min = 1, max = /* 1 hour */ 72_000)
+    @Translation(key = "treasure_health_regeneration_rate", type = Translation.Type.CONFIGURATION, comments = "The time in ticks (20 ticks = 1 second) it takes to recover 1 health while sleeping on treasure")
+    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "treasure_health_regeneration_rate")
+    public static Integer treasureRegenTicks = Functions.secondsToTicks(14);
 
-    @ConfigRange(min = 1, max = 10000000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "treasureRegenTicksReduce", comment = "The amount of ticks each additional treasure reduces the regen time by")
+    @ConfigRange(min = 1, max = /* 1 hour */ 72_000)
+    @Translation(key = "nearby_treasure_rate_reduction", type = Translation.Type.CONFIGURATION, comments = "The amount of ticks (20 ticks = 1 second) each nearby treasure reduces the health regeneration time by")
+    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "nearby_treasure_rate_reduction")
     public static Integer treasureRegenTicksReduce = 1;
 
-    @ConfigRange(min = 1, max = 10000000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "maxTreasures", comment = "The max amount of additional treasure that can be used to reduce the regen time")
+    @ConfigRange(min = 1, max = /* 16 x 9 x 16 hardcoded radius */ 2304)
+    @Translation(key = "max_treasure_for_rate_reduction", type = Translation.Type.CONFIGURATION, comments = {
+            "The maximum amount of additional treasure that can affect the health regeneration reduction",
+            "Only treasure within a 16 x 9 x 16 radius is considered"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = "treasure", key = "max_treasure_for_rate_reduction")
     public static Integer maxTreasures = 240;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "damageWrongSourceOfMagic", comment = "Whether using the the source of magic intended for another dragon type will hurt you.")
+    // --- Source of magic --- //
+
+    @Translation(key = "damage_on_wrong_source_of_magic", type = Translation.Type.CONFIGURATION, comments = "Source of magic that does not match the dragon type will damage the player if enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "damage_on_wrong_source_of_magic")
     public static Boolean damageWrongSourceOfMagic = true;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonDustTime", comment = "How long duration of the infinite magic effect using elder dragon dust gives in seconds. Note that you also spend 10 seconds while waiting.")
+    @ConfigRange(min = 1, max = 10_000)
+    @Translation(key = "elder_dragon_dust_time", type = Translation.Type.CONFIGURATION, comments = "Duration (in seconds) of the infinite magic effect when using the elder dragon dust at a source of magic - Note that 10 seconds are spent waiting")
+    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elder_dragon_dust_time")
     public static Integer elderDragonDustTime = 20;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonBoneTime", comment = "How long duration of the infinite magic effect using elder dragon bone gives in seconds. Note that you also spend 10 seconds while waiting.")
+    @ConfigRange(min = 1, max = 10_000)
+    @Translation(key = "elder_dragon_bone_time", type = Translation.Type.CONFIGURATION, comments = "Duration (in seconds) of the infinite magic effect when using the elder dragon bone at a source of magic - Note that 10 seconds are spent waiting")
+    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elder_dragon_bone_time")
     public static Integer elderDragonBoneTime = 60;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "weakHeartShardTime", comment = "How long duration of the infinite magic effect using weak heart shard gives in seconds. Note that you also spend 10 seconds while waiting.")
+    @ConfigRange(min = 1, max = 10_000)
+    @Translation(key = "weak_heart_shard_time", type = Translation.Type.CONFIGURATION, comments = "Duration (in seconds) of the infinite magic effect when using the weak heart shard at a source of magic - Note that 10 seconds are spent waiting")
+    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "weak_heart_shard_time")
     public static Integer weakHeartShardTime = 110;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "weakDragonHeartTime", comment = "How long duration of the infinite magic effect using weak dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
+    @ConfigRange(min = 1, max = 10_000)
+    @Translation(key = "weak_dragon_heart_time", type = Translation.Type.CONFIGURATION, comments = "Duration (in seconds) of the infinite magic effect when using the weak dragon heart at a source of magic - Note that 10 seconds are spent waiting")
+    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "weak_dragon_heart_time")
     public static Integer weakDragonHeartTime = 310;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elderDragonHeartTime", comment = "How long duration of the infinite magic effect using elder dragon heart gives in seconds. Note that you also spend 10 seconds while waiting.")
+    @ConfigRange(min = 1, max = 100_00)
+    @Translation(key = "elder_dragon_heart_time", type = Translation.Type.CONFIGURATION, comments = "Duration (in seconds) of the infinite magic effect when using the elder dragon heart at a source of magic - Note that 10 seconds are spent waiting")
+    @ConfigOption(side = ConfigSide.SERVER, category = "source_of_magic", key = "elder_dragon_heart_time")
     public static Integer elderDragonHeartTime = 1010;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "disableDragonSuffocation", comment = "Should suffocation damage be disabled for dragon players?")
-    public static Boolean disableDragonSuffocation = true;
+    // --- Penalties --- //
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "healthAdjustments", comment = "Apply a health modifier for dragons. The older the dragon, the more health it has.")
-    public static Boolean healthAdjustments = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusesEnabled", comment = "Set too false to toggle off all dragon bonuses and play as human.")
-    public static Boolean bonusesEnabled = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "attackDamage", comment = "Apply an attack damage modifier for dragons.")
-    public static Boolean attackDamage = true;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "newbornBonusDamage", comment = "Attack modifier for newborn dragons.")
-    public static Double newbornBonusDamage = 1.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "youngAttackMod", comment = "Attack modifier for young dragons.")
-    public static Double youngBonusDamage = 2.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "adultAttackMod", comment = "Attack modifier for adult dragons.")
-    public static Double adultBonusDamage = 3.0;
-
-    @ConfigRange(min = 0.0, max = 0.9)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "newbornJump", comment = "Jumping height bonus for a newborn dragon.")
-    public static Double newbornJump = 0.025;
-
-    @ConfigRange(min = 0.0, max = 0.9)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "youngJump", comment = "Jumping height bonus for a young dragon.")
-    public static Double youngJump = 0.05;
-
-    @ConfigRange(min = 0.0, max = 0.9)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "adultJump", comment = "Jumping height bonus for an adult dragon.")
-    public static Double adultJump = 0.1;
-
-    @ConfigRange(min = 0.0, max = 10.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "newbornStepHeight", comment = "Step height for a newborn dragon. Default is 1 block.")
-    public static Double newbornStepHeight = 0.0;
-
-    @ConfigRange(min = 0.0, max = 10.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "youngStepHeight", comment = "Step height for a young dragon. Default is 1.25 block.")
-    public static Double youngStepHeight = 0.25;
-
-    @ConfigRange(min = 0.0, max = 10.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "adultStepHeight", comment = "Step height for a adult dragon. Default is 1.5 block.")
-    public static Double adultStepHeight = 0.5;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "clawsAreTools", comment = "Whether dragon claws function as tools.")
-    public static Boolean clawsAreTools = true;
-
-    @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "baseHarvestLevel", comment = "The harvest level to apply when dragons breaks a block, regardless of dragon/tool type.")
-    public static Integer baseHarvestLevel = 0;
-
-    @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusHarvestLevel", comment = "The harvest level to apply to a dragons specific tool type once unlocked.")
-    public static Integer bonusHarvestLevel = 1;
-
-    @ConfigRange(min = 1, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusBreakSpeed", comment = "Bonus break speed against blocks which are effective for the dragon type (break speed * bonus) - only applied if the bonus is unlocked")
-    public static Float bonusBreakSpeed = 2f;
-
-    @ConfigRange(min = 1, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusBreakSpeedAdult", comment = "Bonus break speed against blocks which are effective for the dragon type (break speed * bonus) - only applied if the bonus is unlocked and the dragon is fully grown")
-    public static Float bonusBreakSpeedAdult = 2.5f;
-
-    @ConfigRange(min = 1, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "baseBreakSpeedAdult", comment = "Bonus break speed against all blocks (break speed * bonus) - only applied if the dragon is fully grown (unlocked bonus value will overwrite this one for effective blocks)")
-    public static Float baseBreakSpeedAdult = 1.5f;
-
-    @ConfigRange(min = 1, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusBreakSpeedReduction", comment = "Value the bonus will be divided by if an effective claw tool is present for the block")
-    public static Float bonusBreakSpeedReduction = 2f;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "bonusUnlockedAt", comment = "The stage that dragons unlock the bonus harvest level.")
-    public static DragonLevel bonusUnlockedAt = DragonLevel.YOUNG;
-
-    @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "speedupEffectLevel", comment = "The speed effect level for dragon block-specific speedups. Set to 0 to disable.")
-    public static Integer speedupEffectLevel = 2;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveFireImmunity", comment = "Whether cave dragons are immune to fire damage types.")
-    public static Boolean caveFireImmunity = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveLavaSwimming", comment = "Set to false to disable cave dragon fast lava swimming.")
-    public static Boolean caveLavaSwimming = true;
-
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "cave_dragon"}, key = "caveLavaSwimmingTicks", comment = "The maximum number of ticks a cave dragon can swim in lava. Set to 0 to allow unlimited air while under lava.")
-    public static Integer caveLavaSwimmingTicks = 3600;
-
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestFallReduction", comment = "How many blocks of fall damage is mitigated for forest dragons. Set to 0.0 to disable.")
-    public static Double forestFallReduction = 5.0;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestBushImmunity", comment = "Whether forest dragons are immune to Sweet Berry Bush damage.")
-    public static Boolean forestBushImmunity = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "forest_dragon"}, key = "forestCactiImmunity", comment = "Whether forest dragons are immune to Cactus damage.")
-    public static Boolean forestCactiImmunity = true;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "sea_dragon"}, key = "seaSwimmingBonuses", comment = "Whether sea dragons gain bonus swim speed and unlimited air.")
-    public static Boolean seaSwimmingBonuses = true;
-
-    //Dragon Penalties
-    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "penaltiesEnabled", comment = "Set to false to toggle off all dragon penalties." )
+    // FIXME :: is this checked in all places? should we have these global "turn off all" configs at all? seems easy to miss
+    @Translation(key = "penalties_enabled", type = Translation.Type.CONFIGURATION, comments = "If disabled all penalties will be turned off")
+    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "penalties_enabled")
     public static Boolean penaltiesEnabled = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "dragonsAreScary", comment = "Whether dragons are scary for animals or not.")
+    @Translation(key = "dragons_are_scary", type = Translation.Type.CONFIGURATION, comments = "If enabled animals will try run away from dragons")
+    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "dragons_are_scary")
     public static Boolean dragonsAreScary = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "limitedRiding", comment = "Should dragons be limited by which entities they can ride")
+    @Translation(key = "limited_riding", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will be limited to riding the entities in the entity tag 'dragonsurvival:vehicle_whitelist'")
+    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "limited_riding")
     public static Boolean limitedRiding = true;
 
     @ConfigType(Item.class) // FIXME :: handle with tag (and keep this config for regex-only)
-    @ConfigOption( side = ConfigSide.SERVER, category = "penalties", key = "blacklistedItems", validation = Validation.RESOURCE_LOCATION_REGEX, comment = "List of items that are disallowed to be used by dragons. Format: item/modid:id" )
+    @Translation(key = "blacklisted_items", type = Translation.Type.CONFIGURATION, comments = "Items which dragons are not allowed to use - Format: namespace:path (the path allows regular expressions, e.g. '.*bow')")
+    @ConfigOption(side = ConfigSide.SERVER, category = "penalties", key = "blacklisted_items", validation = Validation.RESOURCE_LOCATION_REGEX)
     public static List<String> blacklistedItems = List.of(
             "c:tools/shield",
             "c:tools/bow",
@@ -500,300 +489,277 @@ public class ServerConfig {
             "spartanweaponry:longbow_.*"
     );
 
-    // Cave Dragon Penalties
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "cave_dragon"}, key = "caveWaterDamage", comment = "The amount of damage taken per water damage tick (once every 10 ticks). Set to 0.0 to disable water damage.")
-    public static Double caveWaterDamage = 1.0;
+    // --- Ore loot --- //
 
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "cave_dragon"}, key = "caveRainDamage", comment = "The amount of damage taken per rain damage tick (once every 40 ticks). Set to 0.0 to disable rain damage.")
-    public static Double caveRainDamage = 1.0;
-
-    @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "cave_dragon"}, key = "caveSplashDamage", comment = "The amount of damage taken when hit with a snowball or a water bottle. Set to 0.0 to disable splash damage.")
-    public static Double caveSplashDamage = 2.0;
-
-    // Forest Dragon Penalties
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "forest_dragon"}, key = "forestStressTicks", comment = "The number of ticks in darkness before the forest dragon gets Stress effect. Set to 0 to disable to stress effect.")
-    public static Integer forestStressTicks = 100;
-
-    @ConfigRange(min = 2, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "forest_dragon"}, key = "forestStressEffectDuration", comment = "The number of seconds the stress effect lasts for.")
-    public static Integer forestStressEffectDuration = 10;
-
-    @ConfigRange(min = 0.1, max = 4.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "forest_dragon"}, key = "forestStressExhaustion", comment = "The amount of exhaustion applied per 10 ticks during the stress effect.")
-    public static Double forestStressExhaustion = 1.0;
-
-    // Sea Dragon Penalties
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaTicksBasedOnTemperature", comment = "The number of ticks out of water before the sea dragon will start taking dehydration damage. Set to 0 to disable. Note: This value can stack up to double while dehydrated.")
-    public static Integer seaTicksWithoutWater = 1000;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "waterConsumptionDependsOnTemperature", comment = "Whether the sea dragon should lose more water in warmer biomes and less during the night.")
-    public static Boolean seaTicksBasedOnTemperature = true;
-
-    @ConfigRange(min = 0.5, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaDehydrationDamage", comment = "The amount of damage taken per tick while dehydrated (once every 40 ticks unless fully dehydrated, then once every 20 ticks).")
-    public static Double seaDehydrationDamage = 1.0;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaAllowWaterBottles", comment = "Set to false to disable sea dragons using vanilla water bottles to avoid dehydration.")
-    public static Boolean seaAllowWaterBottles = true;
-
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"penalties", "sea_dragon"}, key = "seaTicksWithoutWaterRestored", comment = "How many ticks do water restoration items restore when used. Set to 0 to disable.")
-    public static Integer seaTicksWithoutWaterRestored = 5000;
-
-
-    // Ore Loot
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "humanOreDustChance", comment = "The odds of dust dropping when a human harvests an ore.")
+    @Translation(key = "human_ore_dust_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of dust dropping when a human harvests an ore block")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "human_ore_dust_chance")
     public static Double humanOreDustChance = 0.1;
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreDustChance", comment = "The odds of dust dropping when a dragon harvests an ore.")
+    @Translation(key = "dragon_ore_dust_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of dust dropping when a dragon harvests an ore block")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragon_ore_dust_chance")
     public static Double dragonOreDustChance = 0.2;
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "humanOreBoneChance", comment = "The odds of a bone dropping when a human harvests an ore.")
+    @Translation(key = "human_ore_bone_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of bones dropping when a human harvests an ore block")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "human_ore_bone_chance")
     public static Double humanOreBoneChance = 0.0;
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragonOreBoneChance", comment = "The odds of a bone dropping when a dragon harvests an ore.")
+    @Translation(key = "dragon_ore_bone_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of bones dropping when a dragon harvests an ore block")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"drops", "ore"}, key = "dragon_ore_bone_chance")
     public static Double dragonOreBoneChance = 0.01;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "caveDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to cave dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
-    public static List<ItemHurtConfig> caveDragonHurtfulItems = List.of(
-            ItemHurtConfig.of("minecraft:potion:2"),
-            ItemHurtConfig.of("minecraft:water_bottle:2"),
-            ItemHurtConfig.of("minecraft:milk_bucket:2")
-    );
+    // --- Magic --- //
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "sea_dragon"}, key = "seaDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to sea dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
-    public static List<ItemHurtConfig> seaDragonHurtfulItems = List.of();
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "forest_dragon"}, key = "forestDragonHurtfulItems", validation = Validation.RESOURCE_LOCATION_NUMBER, comment = "Items which will cause damage to forest dragons when consumed - Formatting: namespace:path:damage (prefix namespace with # for tags)")
-    public static List<ItemHurtConfig> forestDragonHurtfulItems = List.of();
-
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"food", "cave_dragon"}, key = "chargedSoupBuffDuration", comment = "How long in seconds should the cave fire effect from charged soup last. Set to 0 to disable.")
-    public static Integer chargedSoupBuffDuration = 300;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "cave_conditional_mana_blocks", comment = "Blocks that restore mana or cave dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
-    public static List<BlockStateConfig> caveConditionalManaBlocks = List.of(
-            BlockStateConfig.of("#minecraft:campfires:lit=true"),
-            BlockStateConfig.of("#c:player_workstations/furnaces:lit=true"),
-            BlockStateConfig.of("minecraft:smoker:lit=true"),
-            BlockStateConfig.of("minecraft:blast_furnace:lit=true")
-    );
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "sea_conditional_mana_blocks", comment = "Blocks that restore mana for sea dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
-    public static List<BlockStateConfig> seaConditionalManaBlocks = List.of();
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic"}, key = "forest_conditional_mana_blocks", comment = "Blocks that restore mana for forest dragons when under certain conditions (block states) - Formatting: namespace:path:key=value,key=value (prefix namespace with # for tags)")
-    public static List<BlockStateConfig> forestConditionalManaBlocks = List.of();
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "dragonAbilities", comment = "Whether dragon abilities should be enabled")
+    @Translation(key = "dragon_abilities", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable dragon abilities")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "dragon_abilities")
     public static Boolean dragonAbilities = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon"}, key = "caveDragonAbilities", comment = "Whether cave dragon abilities should be enabled")
-    public static Boolean caveDragonAbilities = true;
+    // TODO :: make the required experience configurable -> probably only when the system gets reworked into datapack registries
+    @Translation(key = "no_experience_requirements", type = Translation.Type.CONFIGURATION, comments = "If enabled abilities will be unlocked at their max. level at all times")
+    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "no_experience_requirements")
+    public static Boolean noExperienceRequirements = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon"}, key = "forestDragonAbilities", comment = "Whether forest dragon abilities should be enabled")
-    public static Boolean forestDragonAbilities = true;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon"}, key = "seaDragonAbilities", comment = "Whether sea dragon abilities should be enabled")
-    public static Boolean seaDragonAbilities = true;
-
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "noEXPRequirements", comment = "Disable the exp requirements for leveling up active skills")
-    public static Boolean noEXPRequirements = false;
-
-    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "consumeEXPAsMana", comment = "Whether to use exp instead of mana if mana is empty")
-    public static Boolean consumeEXPAsMana = true;
+    @Translation(key = "consume_experience_as_mana", type = Translation.Type.CONFIGURATION, comments = "If enabled experience will be used to substitute for missing mana (10 experience points equals 1 mana point)")
+    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "consume_experience_as_mana")
+    public static Boolean consumeExperienceAsMana = true;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "initialPassiveCost", comment = "The initial exp cost for leveling passive skills.")
+    @Translation(key = "passive_ability_initial_cost", type = Translation.Type.CONFIGURATION, comments = "The initial experience cost for leveling passive abilities")
+    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "passive_ability_initial_cost")
     public static Integer initialPassiveCost = 1;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "passiveScalingCost", comment = "The multiplier that is used to increase the passive skill costs per level")
+    @Translation(key = "passive_ability_cost_multiplier", type = Translation.Type.CONFIGURATION, comments = "Multiplier to the experience cost of passive skills")
+    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "passive_ability_cost_multiplier")
     public static Double passiveScalingCost = 4.0;
 
-
     @ConfigRange(min = 1, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "favorableManaRegen", comment = "How fast in ticks should mana be recovered in favorable conditions")
+    @Translation(key = "favorable_mana_regeneration", type = Translation.Type.CONFIGURATION, comments = "Determines how fast (in ticks) (20 ticks = 1 second) mana is restored in favorable conditions")
+    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "favorable_mana_regeneration")
     public static Integer favorableManaTicks = 1;
 
     @ConfigRange(min = 1, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "normalManaRegen", comment = "How fast in ticks should mana be recovered in normal conditions")
+    @Translation(key = "normal_mana_regeneration", type = Translation.Type.CONFIGURATION, comments = "Determines how fast (in ticks) (20 ticks = 1 second) mana is restored in normal conditions")
+    @ConfigOption(side = ConfigSide.SERVER, category = "magic", key = "normal_mana_regeneration")
     public static Integer normalManaTicks = 10;
 
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "saveAllAbilities", comment = "Whether to save passives skills when changing dragon type")
+    @Translation(key = "save_all_abilities", type = Translation.Type.CONFIGURATION, comments = {
+            "If enabled all abilities will remain when changing dragon types",
+            "This does not mean that the other dragon type gains these abilities",
+            "It means that when turning to the previous type the abilities will have the same levels"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities"}, key = "save_all_abilities")
     public static Boolean saveAllAbilities = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "endVoidTeleport", comment = "Should the player be teleported to the overworld when they fall in the end?")
+    @Translation(key = "end_void_teleport", type = Translation.Type.CONFIGURATION, comments = "If enabled the player will be teleported to the overworld when they fall into the void in the end dimension")
+    @ConfigOption(side = ConfigSide.SERVER, category = "general", key = "end_void_teleport")
     public static Boolean endVoidTeleport = true;
 
+    // --- Dragon hunters --- //
+
     @ConfigRange(min = 1, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_hunters", key = "pillageXPGain", comment = "How many experience points does the villager gain each time you steal from him?")
+    @Translation(key = "pillager_experience_gain", type = Translation.Type.CONFIGURATION, comments = "How many experience points are gained when stealing from villagers")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_hunters", key = "pillager_experience_gain")
     public static Integer pillageXPGain = 4;
 
-    @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_hunters", key = "hunterOmenStatusGivers", validation = Validation.RESOURCE_LOCATION, comment = "Entities which give 'Hunter Omen' status on death in addition to villagers.")
+    @ConfigType(EntityType.class) // FIXME :: use tag
+    @Translation(key = "gives_hunter_omen_status", type = Translation.Type.CONFIGURATION, comments = "Determines which entities give the 'Hunter Omen' status when killed (aside from villagers)")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_hunters", key = "gives_hunter_omen_status", validation = Validation.RESOURCE_LOCATION)
     public static List<String> hunterOmenStatusGivers = List.of("minecraft:iron_golem");
 
-    @ConfigRange(min = 10d, max = 80d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightHealth", comment = "Dragon Knight health")
+    @ConfigRange(min = 10d, max = 100)
+    @Translation(key = "knight_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health the knight has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knight_health")
     public static Double knightHealth = 40d;
 
-    @ConfigRange(min = 1d, max = 32d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightDamage", comment = "Dragon Knight base damage")
+    @ConfigRange(min = 1d, max = 40)
+    @Translation(key = "knight_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage the knight deals")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knight_damage")
     public static Double knightDamage = 12d;
 
     @ConfigRange(min = 0d, max = 30d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightArmor", comment = "Dragon Knight armor")
+    @Translation(key = "knight_armor", type = Translation.Type.CONFIGURATION, comments = "Amount of armor the knight has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knight_armor")
     public static Double knightArmor = 10d;
 
-    @ConfigRange(min = 0.1d, max = 0.6d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightSpeed", comment = "Dragon Knight speed")
+    @ConfigRange(min = 0.1d, max = 1)
+    @Translation(key = "knight_speed", type = Translation.Type.CONFIGURATION, comments = "Knight speed")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knight_speed")
     public static Double knightSpeed = 0.3d;
 
     @ConfigRange(min = 0.0d, max = 1d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knightShieldChance", comment = "Chance of having shield")
+    @Translation(key = "knight_shield_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of knights having a shield")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "knight"}, key = "knight_shield_chance")
     public static Double knightShieldChance = 0.1d;
 
-    @ConfigRange(min = 60, max = 1200000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpawnAttemptFrequency", comment = "How often the ambusher attempts to spawn.")
-    public static int ambusherSpawnAttemptFrequency = 12000;
+    @ConfigRange(min = 60, max = 1_200_000)
+    @Translation(key = "ambusher_spawn_frequency", type = Translation.Type.CONFIGURATION, comments = "Determines the amount of time (in ticks) (20 ticks = 1 second) that needs to pass be fore another ambusher spawn attempt is made")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusher_spawn_frequency")
+    public static int ambusherSpawnAttemptFrequency = Functions.minutesToTicks(10);
 
     @ConfigRange(min = 0.0, max = 1.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpawnChance", comment = "Chance of the ambusher spawning when the spawn attempt is made.")
+    @Translation(key = "amusher_spawn_chance", type = Translation.Type.CONFIGURATION, comments = {
+            "Determines the chance (in %) of an ambusher spawning",
+            "The spawn frequency will reset even if no actual spawn occurs due to this chance not being met"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "amusher_spawn_chance")
     public static double ambusherSpawnChance = 0.2;
 
-    @ConfigRange(min = 10d, max = 80d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHealth", comment = "Dragon Ambusher health")
+    @ConfigRange(min = 10d, max = 100)
+    @Translation(key = "ambusher_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health the ambusher has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusher_health")
     public static Double ambusherHealth = 40d;
 
-    @ConfigRange(min = 1, max = 32)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherDamage", comment = "Dragon Ambusher base damage")
+    @ConfigRange(min = 1, max = 20)
+    @Translation(key = "ambusher_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage the ambusher deals")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusher_damage")
     public static Integer ambusherDamage = 12;
 
     @ConfigRange(min = 0d, max = 30d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherArmor", comment = "Dragon Ambusher armor")
+    @Translation(key = "ambusher_armor", type = Translation.Type.CONFIGURATION, comments = "Amount of armor the ambusher has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusher_armor")
     public static Double ambusherArmor = 10d;
 
-    @ConfigRange(min = 0.1d, max = 0.6d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpeed", comment = "Dragon Ambusher speed")
+    @ConfigRange(min = 0.1d, max = 1)
+    @Translation(key = "ambusher_speed", type = Translation.Type.CONFIGURATION, comments = "Speed of the ambusher")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusher_speed")
     public static Double ambusherSpeed = 0.3d;
 
     @ConfigRange(min = AmbusherEntity.CROSSBOW_SHOOT_AND_RELOAD_TIME + 5, max = 1000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherAttackInterval", comment = "How often the ambusher attacks with their crossbow")
+    @Translation(key = "ambusher_attack_interval", type = Translation.Type.CONFIGURATION, comments = "Determines the crossbow attack rate (in ticks) (20 ticks = 1 second) of the ambusher")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusher_attack_interval")
     public static Integer ambusherAttackInterval = 65;
 
     @ConfigRange(min = 0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherSpearmanReinforcementCount", comment = "How many spearman reinforce the ambusher when he is attacked")
+    @Translation(key = "spearman_reinforcement_count", type = Translation.Type.CONFIGURATION, comments = "Determines how many spearman reinforce the ambusher when he is attacked")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "spearman_reinforcement_count")
     public static Integer ambusherSpearmanReinforcementCount = 4;
 
     @ConfigRange(min = 0, max = 10)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "ambusherHoundReinforcementCount", comment = "How many hounds reinforce the ambusher when he is attacked")
+    @Translation(key = "hound_reinforcement_count", type = Translation.Type.CONFIGURATION, comments = "Determines how many hounds reinforce the ambusher when he is attacked")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "ambusher"}, key = "hound_reinforcement_count")
     public static Integer ambusherHoundReinforcementCount = 2;
 
-    @ConfigRange(min = 8d, max = 40d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndHealth", comment = "Knight Hound health")
+    @ConfigRange(min = 8d, max = 100)
+    @Translation(key = "hound_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health the knight hound has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "hound_health")
     public static Double houndHealth = 10d;
 
-    @ConfigRange(min = 1d, max = 10d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndDamage", comment = "Knight Hound damage")
+    @ConfigRange(min = 1d, max = 20)
+    @Translation(key = "hound_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage the knight hound deals")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "hound_damage")
     public static Double houndDamage = 2d;
 
-    @ConfigRange(min = 0.1d, max = 0.6d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndSpeed", comment = "Knight Hound speed")
+    @ConfigRange(min = 0.1d, max = 1)
+    @Translation(key = "hound_speed", type = Translation.Type.CONFIGURATION, comments = "Knight hound speed")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "hound_speed")
     public static Double houndSpeed = 0.45d;
 
     @ConfigRange(min = 0.1d, max = 1.0d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "houndSlowdownChance", comment = "Probably of the hound applying slowdown with their attack")
+    @Translation(key = "hound_slowdown_chance", type = Translation.Type.CONFIGURATION, comments = "Determines the chance (in %) of the knight hound applying the slowness effect when they attack")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "hound"}, key = "hound_slowdown_chance")
     public static Double houndSlowdownChance = 0.5d;
 
-    @ConfigRange(min = 8d, max = 40d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinHealth", comment = "Griffin health")
+    @ConfigRange(min = 8d, max = 100)
+    @Translation(key = "griffin_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health of the griffin")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffin_health")
     public static Double griffinHealth = 10d;
 
-    @ConfigRange(min = 1d, max = 10d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinDamage", comment = "Griffin damage")
+    @ConfigRange(min = 1d, max = 20d)
+    @Translation(key = "griffin_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage the griffin deals")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffin_damage")
     public static Double griffinDamage = 2d;
 
-    @ConfigRange(min = 0.1d, max = 1.0d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinSpeed", comment = "Griffin speed")
+    @ConfigRange(min = 0.1d, max = 1)
+    @Translation(key = "griffin_speed", type = Translation.Type.CONFIGURATION, comments = "Speed of the griffin")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffin_speed")
     public static Double griffinSpeed = 0.2d;
 
     @ConfigRange(min = 0.1d, max = 2.0d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffinRange", comment = "Griffin attack range (how much the attack hitbox is expanded in all directions)")
+    @Translation(key = "griffin_range", type = Translation.Type.CONFIGURATION, comments = "Determines the attack radius of the griffin")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "griffin"}, key = "griffin_range")
     public static Double griffinRange = 0.9d;
 
-
     @ConfigRange(min = 1.0, max = 60.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters"}, key = "hunterTrappedDebuffDuration", comment = "How long does the trapped debuff last?")
+    @Translation(key = "trapped_effect_duration", type = Translation.Type.CONFIGURATION, comments = "Determines how long (in seconds) the trapped effect lasts")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters"}, key = "trapped_effect_duration")
     public static Double hunterTrappedDebuffDuration = 5.0;
 
-    @ConfigRange(min = 10d, max = 60d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanHealth", comment = "Dragon Spearman health")
+    @ConfigRange(min = 10d, max = 100)
+    @Translation(key = "spearman_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health the spearman has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearman_health")
     public static Double spearmanHealth = 24d;
 
     @ConfigRange(min = 2d, max = 20d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanDamage", comment = "Dragon Spearman damage")
+    @Translation(key = "spearman_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage the spearman deals")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearman_damage")
     public static Double spearmanDamage = 6d;
 
-    @ConfigRange(min = 0.1d, max = 0.6d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanSpeed", comment = "Dragon Spearman speed")
+    @ConfigRange(min = 0.1d, max = 1)
+    @Translation(key = "spearman_speed", type = Translation.Type.CONFIGURATION, comments = "Speed of the spearman")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearman_speed")
     public static Double spearmanSpeed = 0.35d;
 
     @ConfigRange(min = 0d, max = 20d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanArmor", comment = "Dragon Spearman armor")
+    @Translation(key = "spearman_armor", type = Translation.Type.CONFIGURATION, comments = "Amount of armor the spearman has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearman_armor")
     public static Double spearmanArmor = 2d;
 
     @ConfigRange(min = 0d, max = 20d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusHorizontalReach", comment = "Additional horizontal reach that the spearman gets over normal mobs.")
+    @Translation(key = "spearman_bonus_horizontal_reach", type = Translation.Type.CONFIGURATION, comments = "Additional horizontal reach for the spearman")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearman_bonus_horizontal_reach")
     public static Double spearmanBonusHorizontalReach = 0.5d;
 
     @ConfigRange(min = 0d, max = 20d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearmanBonusVerticalReach", comment = "Additional vertical reach that the spearman gets over normal mobs.")
+    @Translation(key = "spearman_bonus_vertical_reach", type = Translation.Type.CONFIGURATION, comments = "Additional vertical reach for the spearman")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "spearman"}, key = "spearman_bonus_vertical_reach")
     public static Double spearmanBonusVerticalReach = 2.5d;
 
-    @ConfigRange(min = 0.1d, max = 0.6d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "leader"}, key = "leaderSpeed", comment = "Dragon Leader speed")
+    @ConfigRange(min = 0.1d, max = 1)
+    @Translation(key = "leader_speed", type = Translation.Type.CONFIGURATION, comments = "Speed of the leader")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "leader"}, key = "leader_speed")
     public static Double leaderSpeed = 0.35d;
 
-    @ConfigRange(min = 10d, max = 60d)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "leader"}, key = "leaderHealth", comment = "Dragon Leader health")
+    @ConfigRange(min = 10d, max = 100)
+    @Translation(key = "leader_health", type = Translation.Type.CONFIGURATION, comments = "Amount of health the leader has")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"dragon_hunters", "leader"}, key = "leader_health")
     public static Double leaderHealth = 24d;
 
+    // --- Dragon beacons --- //
+
     @ConfigRange(min = 1, max = 60 * 60)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "secondsOfBeaconEffect", comment = "Duration of effect given by beacon constantly in seconds")
+    @Translation(key = "beacon_effect_seconds", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effects the beacon is constantly applying")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "beacon_effect_seconds")
     public static Integer secondsOfBeaconEffect = 20;
 
     @ConfigRange(min = 1, max = 60 * 2)
-    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "minutesOfDragonEffect", comment = "Duration of effect given in exchange for experience in minutes")
+    @Translation(key = "beacon_effect_minutes", type = Translation.Type.CONFIGURATION, comments = "The duration (in minutes) of the effect when exchanging experience points")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "beacon_effect_minutes")
     public static Integer minutesOfDragonEffect = 10;
-    //Please help me to fix this config. It doesn't work for buying in exchange for experience in beacon. My fix doesn't help, so I think the problem is deeper than I can solve it.
+    // FIXME Please help me to fix this config. It doesn't work for buying in exchange for experience in beacon. My fix doesn't help, so I think the problem is deeper than I can solve it.
 
-    @ConfigType(MobEffect.class)
-    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "peaceBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Peace beacon" )
-    public static List<String> peaceBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
+    @ConfigType(MobEffect.class) // FIXME :: tag
+    @Translation(key = "forest_dragon_beacon", type = Translation.Type.CONFIGURATION, comments = "The effects which are granted by the forest dragon beacon")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "forest_dragon_beacon", validation = Validation.RESOURCE_LOCATION)
+    public static List<String> forestDragonBeaconEffects = List.of("dragonsurvival:peace", "dragonsurvival:animal_peace");
 
-    @ConfigType(MobEffect.class)
-    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "magicBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Magic beacon" )
-    public static List<String> magicBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
+    @ConfigType(MobEffect.class) // FIXME :: tag
+    @Translation(key = "sea_dragon_beacon", type = Translation.Type.CONFIGURATION, comments = "The effects which are granted by the sea dragon beacon")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "sea_dragon_beacon", validation = Validation.RESOURCE_LOCATION)
+    public static List<String> seaDragonBeaconEffects = List.of("dragonsurvival:magic", "minecraft:haste");
 
-    @ConfigType(MobEffect.class)
-    @ConfigOption( side = ConfigSide.SERVER, category = "dragon_beacons", key = "fireBeaconEffects", validation = Validation.RESOURCE_LOCATION, comment = "Effects of Fire beacon" )
-    public static List<String> fireBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
+    @ConfigType(MobEffect.class) // FIXME :: tag
+    @Translation(key = "fire_beacon_effects", type = Translation.Type.CONFIGURATION, comments = "The effects which are granted by the cave dragon beacon")
+    @ConfigOption(side = ConfigSide.SERVER, category = "dragon_beacons", key = "fire_beacon_effects", validation = Validation.RESOURCE_LOCATION)
+    public static List<String> caveDragonBeaconEffects = List.of("dragonsurvival:fire", "dragonsurvival:strong_leather");
+
+    // --- Misc --- //
 
     @ConfigRange(min = 0, max = 60)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitationAfterEffect", comment = "For how many seconds wings are disabled after the levitation effect has ended")
+    @Translation(key = "levitation_after_effect", type = Translation.Type.CONFIGURATION, comments = "Determines how long wings stay disabled after the levitation effect has ended")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "levitation_after_effect")
     public static Integer levitationAfterEffect = 3;
 }

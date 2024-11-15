@@ -6,9 +6,13 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.SkillProg
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonFoodHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
@@ -21,6 +25,7 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.EnchantedBookItem;
@@ -39,46 +44,100 @@ import java.awt.*;
 import java.util.List;
 import java.util.Objects;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 @EventBusSubscriber(Dist.CLIENT)
 public class ToolTipHandler {
-    private static final ResourceLocation TOOLTIP_BLINKING = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_1.png");
-    private static final ResourceLocation TOOLTIP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_tips_0.png");
+    private static final ResourceLocation TOOLTIP_BLINKING = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/magic_tips_1.png");
+    private static final ResourceLocation TOOLTIP = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/magic_tips_0.png");
+    private static final ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "food_tooltip_icon_font");
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltipChanges", comment = "Should the mod be allowed ot change the color and appearance of tooltips?")
+    @Translation(type = Translation.Type.MISC, comments = "§c■ Cave dragon food: §r")
+    private static final String CAVE_DRAGON_FOOD = Translation.Type.DESCRIPTION.wrap("cave_dragon_food");
+
+    @Translation(type = Translation.Type.MISC, comments = "§3■ Sea dragon food: §r")
+    private static final String SEA_DRAGON_FOOD = Translation.Type.DESCRIPTION.wrap("sea_dragon_food");
+
+    @Translation(type = Translation.Type.MISC, comments = "§a■ Forest dragon food: §r")
+    private static final String FOREST_DRAGON_FOOD = Translation.Type.DESCRIPTION.wrap("forest_dragon_food");
+
+    @Translation(key = "tooltip_changes", type = Translation.Type.CONFIGURATION, comments = "If enabled certain modifications to some tooltips will be made (e.g. dragon food items)")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "tooltip_changes")
     public static Boolean tooltipChanges = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hideUnsafeFood", comment = "Should the tooltip be hidden for unsafe (negative effects) food?")
+    @Translation(key = "hide_unsafe_food", type = Translation.Type.CONFIGURATION, comments = "If enabled dragon food items with negative effects will not have the dragon food tooltips")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "hide_unsafe_food")
     public static Boolean hideUnsafeFood = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragonFoodTooltips", comment = "Should dragon foods have their tooltip color changed to show which type of dragon can consume it?")
+    @Translation(key = "dragon_food_tooltips", type = Translation.Type.CONFIGURATION, comments = "If enabled the color of dragon food item tooltips will change to match the dragon")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "dragon_food_tooltips")
     public static Boolean dragonFoodTooltips = true;
 
-    private final static ResourceLocation ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "food_tooltip_icon_font");
+    @Translation(key = "enchantment_descriptions", type = Translation.Type.CONFIGURATION, comments = "Adds enchantment descriptions to enchanted books which contain 1 enchantment (and said enchantment is from this mod)")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "tooltips", key = "enchantment_descriptions")
+    public static Boolean enchantmentDescriptions = true;
+
+    private static boolean isBlinking;
+    private static int tick;
 
     @SubscribeEvent
-    public static void checkIfDragonFood(ItemTooltipEvent tooltipEvent) {
+    public static void addDragonFoodTooltip(ItemTooltipEvent tooltipEvent) {
         if (tooltipEvent.getEntity() != null) {
             Item item = tooltipEvent.getItemStack().getItem();
             List<Component> toolTip = tooltipEvent.getToolTip();
 
-            if (DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)) {
-                toolTip.add(createFoodTooltip(item, DragonTypes.CAVE, ChatFormatting.RED, "\uEA02", "\uEA05"));
+            if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
+                toolTip.add(createFoodTooltip(item, DragonTypes.FOREST));
             }
 
-            if (DragonFoodHandler.getEdibleFoods(DragonTypes.FOREST).contains(item)) {
-                toolTip.add(createFoodTooltip(item, DragonTypes.FOREST, ChatFormatting.GREEN, "\uEA01", "\uEA04"));
+            if (DragonFoodHandler.getEdibleFoods(DragonTypes.CAVE).contains(item)) {
+                toolTip.add(createFoodTooltip(item, DragonTypes.CAVE));
             }
 
             if (DragonFoodHandler.getEdibleFoods(DragonTypes.SEA).contains(item)) {
-                toolTip.add(createFoodTooltip(item, DragonTypes.SEA, ChatFormatting.DARK_AQUA, "\uEA03", "\uEA06"));
+                toolTip.add(createFoodTooltip(item, DragonTypes.SEA));
             }
         }
     }
 
-    private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type, final ChatFormatting color, final String nutritionIcon, final String saturationIcon) {
-        MutableComponent component = Component.translatable("ds." + type.getTypeName() + ".dragon.food");
+    private static MutableComponent createFoodTooltip(final Item item, final AbstractDragonType type) {
+        String translationKey = switch (type) {
+            case CaveDragonType ignored -> CAVE_DRAGON_FOOD;
+            case SeaDragonType ignored -> SEA_DRAGON_FOOD;
+            case ForestDragonType ignored -> FOREST_DRAGON_FOOD;
+            default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
+        };
+
+        return Component.translatable(translationKey).append(getFoodTooltipData(item, type));
+    }
+
+    /** Returns a tooltip component in the format of '1.0 nutrition_icon / 0.5 saturation_icon' (color and icon depend on the dragon type) */
+    public static MutableComponent getFoodTooltipData(final Item item, final AbstractDragonType type) {
+        if (type == null) {
+            return Component.empty();
+        }
+
+        String nutritionIcon;
+        String saturationIcon;
+        ChatFormatting color;
+
+        switch (type) {
+            case ForestDragonType ignored -> {
+                nutritionIcon = "\uEA01";
+                saturationIcon = "\uEA04";
+                color = ChatFormatting.GREEN;
+            }
+            case CaveDragonType ignored -> {
+                nutritionIcon = "\uEA02";
+                saturationIcon = "\uEA05";
+                color = ChatFormatting.RED;
+            }
+            case SeaDragonType ignored -> {
+                nutritionIcon = "\uEA03";
+                saturationIcon = "\uEA06";
+                color = ChatFormatting.DARK_AQUA;
+            }
+            default -> throw new IllegalArgumentException("Invalid dragon type [" + type + "]");
+        }
+
         FoodProperties properties = DragonFoodHandler.getDragonFoodProperties(item, type);
 
         String nutrition = "0";
@@ -93,31 +152,36 @@ public class ToolTipHandler {
             saturation = String.format("%.1f", saturationValue / 2);
         }
 
-        MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withFont(ICONS));
-        MutableComponent nutritionComponent = Component.literal(": " + nutrition + " ").withStyle(color);
+        // Use white color to reset the color (i.e. don't color the icons)
+        MutableComponent nutritionIconComponent = Component.literal(nutritionIcon).withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withFont(ICONS));
+        MutableComponent nutritionComponent = Component.literal(nutrition + " ").withStyle(color);
 
-        MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withFont(ICONS));
+        MutableComponent saturationIconComponent = Component.literal(saturationIcon).withStyle(Style.EMPTY.withColor(ChatFormatting.WHITE).withFont(ICONS));
         MutableComponent saturationComponent = Component.literal(" / " + saturation + " ").withStyle(color);
 
-        return component.append(nutritionComponent).append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
+        return nutritionComponent.append(nutritionIconComponent).append(saturationComponent).append(saturationIconComponent);
     }
 
     @SubscribeEvent // Add certain descriptions to our items which use generic classes
+    @SuppressWarnings("DataFlowIssue") // resource key should be present
     public static void addCustomItemDescriptions(ItemTooltipEvent event) {
         if (event.getEntity() != null && event.getEntity().level().isClientSide() && event.getItemStack() != ItemStack.EMPTY) {
-            ResourceLocation location = event.getItemStack().getItem().builtInRegistryHolder().key().location();
-            String languageKey = "";
+            ResourceLocation location = event.getItemStack().getItemHolder().getKey().location();
+            MutableComponent description = null;
 
-            if (event.getItemStack().getItem() instanceof EnchantedBookItem) {
+            if (enchantmentDescriptions && event.getItemStack().getItem() instanceof EnchantedBookItem) {
                 ItemEnchantments enchantments = event.getItemStack().get(DataComponents.STORED_ENCHANTMENTS);
 
                 // Only add it to single-entry enchanted books since the text is longer than usual enchantment descriptions
                 if (enchantments != null && enchantments.size() == 1) {
                     Holder<Enchantment> holder = enchantments.entrySet().iterator().next().getKey();
-                    //noinspection DataFlowIssue -> would only be null for 'Holder$Direct' which shouldn't be used here
-                    languageKey = "ds.description." + holder.getKey().location().getPath();
+                    ResourceKey<Enchantment> resourceKey = holder.getKey();
+
+                    if (resourceKey.location().getNamespace().equals(DragonSurvival.MODID)) {
+                        description = Component.translatable(Translation.Type.ENCHANTMENT_DESCRIPTION.wrap(resourceKey.location().getPath())).withStyle(ChatFormatting.DARK_GRAY);
+                    }
                 }
-            } else if (location.getNamespace().equals(MODID)) {
+            } else if (location.getNamespace().equals(DragonSurvival.MODID)) {
                 /* TODO
                     do this via mixin in 'ItemStack#getTooltipLines' at the point below?
                     so that the tooltip behaves the same as a regular tooltip
@@ -128,17 +192,18 @@ public class ToolTipHandler {
                 }
                 */
 
-                languageKey = "ds.description.add." + location.getPath();
+                String translationKey = Translation.Type.DESCRIPTION_ADDITION.wrap(location.getPath());
+
+                if (I18n.exists(translationKey)) {
+                    description = Component.translatable(translationKey);
+                }
             }
 
-            if (!languageKey.isEmpty() && I18n.exists(languageKey)) {
-                event.getToolTip().add(Component.translatable(languageKey));
+            if (description != null) {
+                event.getToolTip().add(description);
             }
         }
     }
-
-    private static boolean isBlinking;
-    private static int tick;
 
     @SubscribeEvent
     public static void renderHelpTextCornerElements(RenderTooltipEvent.Pre event) {

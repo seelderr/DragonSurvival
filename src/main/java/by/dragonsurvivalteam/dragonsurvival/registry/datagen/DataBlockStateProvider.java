@@ -139,7 +139,7 @@ public class DataBlockStateProvider extends BlockStateProvider {
                             BlockModelBuilder builder = layers != 8 ? models()
                                     .withExistingParent(name + layers * 2, BLOCK_FOLDER + "/" + "snow_height" + layers * 2)
                                     .texture("particle", modLoc(BLOCK_FOLDER + "/" + name))
-                                    .texture("texture", modLoc(BLOCK_FOLDER + "/" + name))
+                                    .texture("texture", modLoc(BLOCK_FOLDER + "/" + name)) // TODO :: why isn't this particle added to the full block type?
                                     : /* 8 layers */ models().cubeAll(name, modLoc(BLOCK_FOLDER + "/" + name));
                             return ConfiguredModel.builder().modelFile(builder).build();
                         }, TreasureBlock.WATERLOGGED);

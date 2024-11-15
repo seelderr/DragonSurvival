@@ -2,6 +2,9 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.DSAdvancements;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
@@ -13,6 +16,7 @@ import net.minecraft.data.loot.LootTableProvider;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.data.AdvancementProvider;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -26,44 +30,46 @@ import java.util.concurrent.CompletableFuture;
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public class NeoForgedDataGen {
     @SubscribeEvent
-    public static void dataGen(final GatherDataEvent event) {
+    public static void generateData(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
-        PackOutput packOutput = generator.getPackOutput();
-        ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
-        CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
+        PackOutput output = generator.getPackOutput();
+        ExistingFileHelper helper = event.getExistingFileHelper();
+        CompletableFuture<HolderLookup.Provider> lookup = event.getLookupProvider();
 
         // Client
-        generator.addProvider(event.includeClient(), new DataBlockStateProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new DataItemModelProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(event.includeClient(), new DataBlockStateProvider(output, helper));
+        generator.addProvider(event.includeClient(), new DataItemModelProvider(output, helper));
+        generator.addProvider(event.includeClient(), new DataSpriteSourceProvider(output, lookup, helper));
+        generator.addProvider(event.includeClient(), new DSLanguageProvider(output, "en_us"));
 
         // Server
         LootTableProvider.SubProviderEntry blockLootTableSubProvider = new LootTableProvider.SubProviderEntry(
                 BlockLootTableSubProvider::new,
                 LootContextParamSets.BLOCK);
-        generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) output -> new LootTableProvider(output, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
+        generator.addProvider(event.includeServer(), (DataProvider.Factory<LootTableProvider>) lootTableOutput -> new LootTableProvider(lootTableOutput, Collections.emptySet(), List.of(blockLootTableSubProvider), event.getLookupProvider()));
 
-        DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(
-                packOutput,
-                lookupProvider,
-                new RegistrySetBuilder().add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes),
-                Set.of(DragonSurvival.MODID)
-        );
-
+        // built-in registries
+        RegistrySetBuilder builder = new RegistrySetBuilder();
+        builder.add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes);
+        builder.add(Registries.ENCHANTMENT, DSEnchantments::registerEnchantments);
+        DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);
 
         // Update the lookup provider with our datapack entries
-        lookupProvider = datapackProvider.getRegistryProvider();
+        lookup = datapackProvider.getRegistryProvider();
 
-        BlockTagsProvider blockTagsProvider = new DSBlockTags(packOutput, lookupProvider, existingFileHelper);
+        BlockTagsProvider blockTagsProvider = new DSBlockTags(output, lookup, helper);
         generator.addProvider(event.includeServer(), blockTagsProvider);
+        generator.addProvider(event.includeServer(), new DSItemTags(output, lookup, blockTagsProvider.contentsGetter(), helper));
+        generator.addProvider(event.includeServer(), new DSDamageTypeTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSEntityTypeTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSEffectTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSPoiTypeTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSEnchantmentTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DataBlockModelProvider(output, helper));
+        generator.addProvider(event.includeServer(), new AdvancementProvider(output, lookup, helper, List.of(new DSAdvancements())));
 
-        generator.addProvider(event.includeServer(), new DSItemTags(packOutput, lookupProvider, blockTagsProvider.contentsGetter(), existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSDamageTypeTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSEntityTypeTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSEffectTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSPoiTypeTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DSEnchantmentTags(packOutput, lookupProvider, existingFileHelper));
-        generator.addProvider(event.includeServer(), new DataBlockModelProvider(packOutput, existingFileHelper));
+        // Should run last due to doing weird registry things
+        generator.addProvider(event.includeServer(), new DSRecipes(output, lookup));
     }
 }

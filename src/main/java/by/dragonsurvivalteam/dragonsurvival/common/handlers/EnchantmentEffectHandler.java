@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
-import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -17,7 +16,6 @@ import net.minecraft.world.item.ArrowItem;
 import net.minecraft.world.item.CrossbowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ChargedProjectiles;
-import net.minecraft.world.item.enchantment.Enchantment;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDeathEvent;
@@ -30,18 +28,22 @@ import java.util.List;
 public class EnchantmentEffectHandler {
     @SubscribeEvent
     public static void fireCrossbow(ArrowLooseEvent event) {
-        Holder<Enchantment> bolas = EnchantmentUtils.getHolder(DSEnchantments.BOLAS);
-        if (bolas != null && !event.isCanceled() && event.getBow().getEnchantmentLevel(bolas) > 0) {
-            if (event.getBow().getItem() instanceof CrossbowItem) {
-                ChargedProjectiles p = event.getBow().get(DataComponents.CHARGED_PROJECTILES);
-                if (p != null) {
-                    List<ItemStack> ammo = p.getItems();
-                    List<ItemStack> projectiles = new ArrayList<>(List.of());
-                    for (ItemStack itemStack : ammo) {
-                        projectiles.add(itemStack.getItem() instanceof ArrowItem ? new ItemStack(DSItems.BOLAS.value()) : itemStack);
-                    }
-                    event.getBow().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
+        if (!(event.getBow().getItem() instanceof CrossbowItem)) {
+            return;
+        }
+
+        if (EnchantmentUtils.getLevel(event.getLevel(), DSEnchantments.BOLAS, event.getBow()) > 0) {
+            ChargedProjectiles charged = event.getBow().get(DataComponents.CHARGED_PROJECTILES);
+
+            if (charged != null) {
+                List<ItemStack> ammo = charged.getItems();
+                List<ItemStack> projectiles = new ArrayList<>();
+
+                for (ItemStack itemStack : ammo) {
+                    projectiles.add(itemStack.getItem() instanceof ArrowItem ? new ItemStack(DSItems.BOLAS.value()) : itemStack);
                 }
+
+                event.getBow().set(DataComponents.CHARGED_PROJECTILES, ChargedProjectiles.of(projectiles));
             }
         }
     }
@@ -69,13 +71,13 @@ public class EnchantmentEffectHandler {
         double ticksToSteal = 36000; // Steal 30 minutes per enchantment level
         return switch (handler.getLevel()) {
             case NEWBORN ->
-                    (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.newbornToYoung * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
+                    (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.NEWBORN_TO_YOUNG * 20.0) * ticksToSteal * ServerConfig.newbornGrowthModifier;
             case YOUNG ->
-                    (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.youngToAdult * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
+                    (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.YOUNG_TO_ADULT * 20.0) * ticksToSteal * ServerConfig.youngGrowthModifier;
             case ADULT -> {
                 if (handler.getSize() > DragonLevel.ADULT.maxSize)
-                    yield (60 - 40) / (DragonGrowthHandler.ancient * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
-                yield (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.adultToAncient * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
+                    yield (60 - 40) / (DragonGrowthHandler.ANCIENT * 20.0) * ticksToSteal * ServerConfig.maxGrowthModifier;
+                yield (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.ADULT_TO_ANCIENT * 20.0) * ticksToSteal * ServerConfig.adultGrowthModifier;
             }
         };
     }

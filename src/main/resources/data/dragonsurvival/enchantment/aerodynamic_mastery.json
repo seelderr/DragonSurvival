@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.aerodynamic_mastery"
+    "translate": "enchantment.dragonsurvival.aerodynamic_mastery"
   },
   "comment": [
     {
@@ -16,13 +16,12 @@
     }
   ],
   "effects": {
-    "minecraft:attributes":
-    [
+    "minecraft:attributes": [
       {
         "amount": {
-            "type": "minecraft:linear",
-            "base": 0.5,
-            "per_level_above_first": 0.25
+          "type": "minecraft:linear",
+          "base": 0.5,
+          "per_level_above_first": 0.25
         },
         "attribute": "dragonsurvival:flight_stamina_cost",
         "id": "dragonsurvival:enchantment.aerodynamic_mastery",
@@ -30,8 +29,7 @@
       }
     ]
   },
-
-  "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
+  "exclusive_set": "#dragonsurvival:exclusive_set/dark_dragon",
   "max_cost": {
     "base": 21,
     "per_level_above_first": 11

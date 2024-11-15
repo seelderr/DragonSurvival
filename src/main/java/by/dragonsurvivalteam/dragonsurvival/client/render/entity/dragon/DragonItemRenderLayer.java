@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon;
 
+import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
@@ -31,7 +32,7 @@ public class DragonItemRenderLayer extends BlockAndItemGeoLayer<DragonEntity> {
 
     @Override
     protected void renderStackForBone(PoseStack poseStack, GeoBone bone, ItemStack stack, DragonEntity animatable, MultiBufferSource bufferSource, float partialTick, int packedLight, int packedOverlay) {
-        if (DragonRenderer.renderHeldItem && (animatable.getPlayer() != Minecraft.getInstance().player || !Minecraft.getInstance().options.getCameraType().isFirstPerson())) {
+        if (ClientDragonRenderer.renderHeldItem && (animatable.getPlayer() != Minecraft.getInstance().player || !Minecraft.getInstance().options.getCameraType().isFirstPerson())) {
             poseStack.pushPose();
             if (bone.getName().equals("RightItem")) {
                 Quaternionf rotation = new Quaternionf();

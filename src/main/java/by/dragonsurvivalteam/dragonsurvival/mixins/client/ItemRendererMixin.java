@@ -27,7 +27,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public abstract class ItemRendererMixin { // FIXME :: doesn't work with sodium since they replace item rendering
     @Inject(method = "renderStatic(Lnet/minecraft/world/entity/LivingEntity;Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;Lnet/minecraft/world/level/Level;III)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/ItemRenderer;render(Lnet/minecraft/world/item/ItemStack;Lnet/minecraft/world/item/ItemDisplayContext;ZLcom/mojang/blaze3d/vertex/PoseStack;Lnet/minecraft/client/renderer/MultiBufferSource;IILnet/minecraft/client/resources/model/BakedModel;)V", shift = At.Shift.BEFORE))
     private void dragonSurvival$storeAlpha(final LivingEntity entity, final ItemStack stack, final ItemDisplayContext context, boolean leftHand, final PoseStack poseStack, final MultiBufferSource bufferSource, final Level level, int combinedLight, int combinedOverlay, int seed, final CallbackInfo callback) {
-        if (HunterAbility.translucentItems && dragonSurvival$isRelevantDisplayContext(context)) {
+        if (dragonSurvival$isThirdPerson(context) || HunterAbility.translucentItemsFirstPerson && dragonSurvival$isFirstPerson(context)) {
             Player player = dragonSurvival$getPlayerWithHunterStacks(entity);
 
             if (player != null) {
@@ -53,8 +53,12 @@ public abstract class ItemRendererMixin { // FIXME :: doesn't work with sodium s
         HunterHandler.itemTranslucency = -1;
     }
 
-    @Unique private static boolean dragonSurvival$isRelevantDisplayContext(final ItemDisplayContext context) {
-        return context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND || context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+    @Unique private static boolean dragonSurvival$isThirdPerson(final ItemDisplayContext context) {
+        return context == ItemDisplayContext.THIRD_PERSON_LEFT_HAND || context == ItemDisplayContext.THIRD_PERSON_RIGHT_HAND;
+    }
+
+    @Unique private static boolean dragonSurvival$isFirstPerson(final ItemDisplayContext context) {
+        return context == ItemDisplayContext.FIRST_PERSON_LEFT_HAND || context == ItemDisplayContext.FIRST_PERSON_RIGHT_HAND;
     }
 
     @Unique private static @Nullable Player dragonSurvival$getPlayerWithHunterStacks(final LivingEntity entity) {

@@ -14,6 +14,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSSounds;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -54,113 +56,82 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 import static by.dragonsurvivalteam.dragonsurvival.registry.DSPotions.STORM_BREATH;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Elemental breath: a stream of sparks. Targets become §c«Electrified»§r and deal electric damage to everything nearby.\n",
+        "■ Charges creepers, and may summon thunderbolts during a storm.\n",
+        "■ Range depends on the age of the dragon."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Storm Breath")
 @RegisterDragonAbility
 public class StormBreathAbility extends BreathAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreath", comment = "Whether the storm breath ability should be enabled")
-    public static Boolean stormBreath = true;
+    @Translation(key = "storm_breath", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the storm breath ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath")
+    public static Boolean isEnabled = true;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathDamage", comment = "The amount of damage the storm breath ability deals. This value is multiplied by the skill level.")
-    public static Double stormBreathDamage = 1.0;
+    @Translation(key = "storm_breath_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (multiplied by the ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_damage")
+    public static Double damage = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathInitialMana", comment = "The mana cost for starting the storm breath ability")
-    public static Integer stormBreathInitialMana = 2;
+    @Translation(key = "storm_breath_initial_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for starting the cast")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_initial_mana_cost")
+    public static Integer initialManaCost = 2;
 
-    @ConfigRange(min = 0.05, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathCooldown", comment = "The cooldown in seconds of the storm breath ability")
-    public static Double stormBreathCooldown = 10.0;
+    @ConfigRange(min = 0.05, max = 10_000)
+    @Translation(key = "storm_breath_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_cooldown")
+    public static Double cooldown = 10.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathCasttime", comment = "The cast time in seconds of the storm breath ability")
-    public static Double stormBreathCasttime = 1.0;
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "storm_breath_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_cast_time")
+    public static Double castTime = 1.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathOvertimeMana", comment = "The mana cost of sustaining the storm breath ability")
-    public static Integer stormBreathOvertimeMana = 1;
+    @Translation(key = "storm_breath_sustaining_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost for sustaining the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_sustaining_mana_cost")
+    public static Integer sustainedManaCost = 1;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathManaTicks", comment = "How often in seconds, mana is consumed while using storm breath")
-    public static Double stormBreathManaTicks = 2.0;
+    @Translation(key = "storm_breath_mana_cost_tick_rate", type = Translation.Type.CONFIGURATION, comments = "Time (in seconds) between ticks of the sustained mana cost being applied")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_mana_cost_tick_rate")
+    public static Double sustainedManaCostTickRate = 2.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "stormBreathChainCount", comment = "How many mobs stormbreath is able to chain to at once")
-    public static Integer stormBreathChainCount = 2;
+    @Translation(key = "storm_breath_chain_count", type = Translation.Type.CONFIGURATION, comments = "Amount of entities the storm breath can chain to at once")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "storm_breath_chain_count")
+    public static Integer chainCount = 2;
 
+    // TODO :: move to effect class?
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "chargedEffectChainCount", comment = "How many mobs the charged effect is able to chain to at once")
+    @Translation(key = "charged_effect_chain_count", type = Translation.Type.CONFIGURATION, comments = "Amount of entities the charged effect can chain to at once")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_chain_count")
     public static Integer chargedEffectChainCount = 2;
 
     @ConfigRange(max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "chargedEffectMaxChain", comment = "How many times the charged effect is able to chain.")
+    @Translation(key = "charged_effect_max_chain", type = Translation.Type.CONFIGURATION, comments = "Determines the max. amount of times the charged effect can chain")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_max_chain")
     public static Integer chargedEffectMaxChain = 5;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "chargedChainRange", comment = "The max distance in blocks the storm breath and charged effect is able to chain to mobs")
+    @Translation(key = "charged_effect_chain_range", type = Translation.Type.CONFIGURATION, comments = "Determines the max. distance (in blocks) the storm breath and charged effect can chain (between entities)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_chain_range")
     public static Integer chargedChainRange = 4;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "actives", "storm_breath"}, key = "chargedEffectDamageMultiplier", comment = "The charged effect damage (starts at 1, scaling with effect level) will get multiplied by this amount")
+    @Translation(key = "charged_effect_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (scales with ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_damage_multiplier")
     public static Double chargedEffectDamageMultiplier = 1.0;
 
-    @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "chargedSpreadBlacklist", validation = Validation.RESOURCE_LOCATION, comment = "List of entities that will not spread the charged effect. Format: modid:id")
+    @ConfigType(EntityType.class) // FIXME :: use tag
+    @Translation(key = "charged_effect_spread_blacklist", type = Translation.Type.CONFIGURATION, comments = "Entities which will not spread the charged effect - Format: namespace:path")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_spread_blacklist", validation = Validation.RESOURCE_LOCATION)
     public static List<String> chargedSpreadBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
 
-    @ConfigType(EntityType.class)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic",
-            "abilities",
-            "sea_dragon",
-            "actives",
-            "storm_breath"}, key = "chargedBlacklist", validation = Validation.RESOURCE_LOCATION, comment = "List of entities that will not receive the charged effect at all Format: modid:id")
+    @ConfigType(EntityType.class) // FIXME :: use tag
+    @Translation(key = "charged_effect_blacklist", type = Translation.Type.CONFIGURATION, comments = "Entities which are not affected by the charged effect - Format: namespace:path")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "active", "storm_breath"}, key = "charged_effect_blacklist", validation = Validation.RESOURCE_LOCATION)
     public static List<String> chargedBlacklist = List.of("minecraft:armor_stand", "minecraft:cat", "minecraft:cart", "minecraft:guardian", "minecraft:elder_guardian", "minecraft:enderman", "upgrade_aquatic:thrasher", "upgrade_aquatic:great_thrasher");
 
     public static void onDamageChecks(LivingEntity entity) {
@@ -199,7 +170,7 @@ public class StormBreathAbility extends BreathAbility {
 
     @Override
     public int getManaCost() {
-        return stormBreathOvertimeMana;
+        return sustainedManaCost;
     }
 
     @Override
@@ -212,7 +183,7 @@ public class StormBreathAbility extends BreathAbility {
 
     @Override
     public int getSkillCooldown() {
-        return Functions.secondsToTicks(stormBreathCooldown);
+        return Functions.secondsToTicks(cooldown);
     }
 
     public static void chargedEffectSparkle(Player player, LivingEntity source, int chainRange, int maxChainTargets, double damage) {
@@ -265,7 +236,7 @@ public class StormBreathAbility extends BreathAbility {
     }
 
     public static float getDamage(int level) {
-        return (float) (stormBreathDamage * level);
+        return (float) (damage * level);
     }
 
     public static boolean isValidTarget(LivingEntity attacker, LivingEntity target) {
@@ -326,18 +297,20 @@ public class StormBreathAbility extends BreathAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/storm_breath_4.png")
+        };
     }
 
 
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + stormBreathDamage));
+        list.add(Component.translatable(LangKey.ABILITY_DAMAGE, "+" + damage));
         return list;
     }
 
@@ -353,7 +326,7 @@ public class StormBreathAbility extends BreathAbility {
 
     @Override
     public boolean isDisabled() {
-        return super.isDisabled() || !stormBreath;
+        return super.isDisabled() || !isEnabled;
     }
 
 
@@ -487,7 +460,7 @@ public class StormBreathAbility extends BreathAbility {
     @Override
     public void onEntityHit(LivingEntity entityHit) {
         hurtTarget(entityHit);
-        chargedEffectSparkle(player, entityHit, chargedChainRange, stormBreathChainCount, chargedEffectDamageMultiplier);
+        chargedEffectSparkle(player, entityHit, chargedChainRange, chainCount, chargedEffectDamageMultiplier);
     }
 
 
@@ -498,17 +471,17 @@ public class StormBreathAbility extends BreathAbility {
 
     @Override
     public int getSkillChargeTime() {
-        return Functions.secondsToTicks(stormBreathCasttime);
+        return Functions.secondsToTicks(castTime);
     }
 
     @Override
     public int getContinuousManaCostTime() {
-        return Functions.secondsToTicks(stormBreathManaTicks);
+        return Functions.secondsToTicks(sustainedManaCostTickRate);
     }
 
     @Override
     public int getInitManaCost() {
-        return stormBreathInitialMana;
+        return initialManaCost;
     }
 
     @Override

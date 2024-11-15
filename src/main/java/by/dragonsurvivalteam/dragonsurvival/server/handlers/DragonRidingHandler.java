@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonPassengerID;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
@@ -21,6 +22,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber
 public class DragonRidingHandler {
+    @Translation(type = Translation.Type.MISC, comments = "You are too big to mount on this dragon. You must be at least half the size of the dragon you are trying to ride or smaller, but you are size %s and the dragon is size %s.")
+    private static final String SELF_TOO_BIG = Translation.Type.GUI.wrap("message.self_too_big");
+
+    @Translation(type = Translation.Type.MISC, comments = "The dragon you are riding is too young. To ride a dragon as a human, the dragon must be an adult.")
+    private static final String TARGET_TOO_SMALL = Translation.Type.GUI.wrap("message.target_too_small");
+
+    @Translation(type = Translation.Type.MISC, comments = "The dragon you are trying to ride must be crouching for you to mount them.")
+    private static final String NOT_CROUCHING = Translation.Type.GUI.wrap("message.not_crouching");
 
     private enum DragonRideAttemptResult {
         SELF_TOO_BIG,
@@ -31,17 +40,24 @@ public class DragonRidingHandler {
     }
 
     private static DragonRideAttemptResult playerCanRideDragon(Player rider, Player mount) {
-        DragonStateHandler riderCap = DragonStateProvider.getData(rider);
-        DragonStateHandler mountCap = DragonStateProvider.getData(mount);
-        if (!mountCap.isDragon() || rider.isSpectator() || mount.isSpectator() || rider.isSleeping() || mount.isSleeping()) {
+        if (rider.isSpectator() || mount.isSpectator() || rider.isSleeping() || mount.isSleeping()) {
             return DragonRideAttemptResult.OTHER;
         }
 
-        double sizeRatio = riderCap.getSize() / mountCap.getSize();
+        DragonStateHandler mountData = DragonStateProvider.getData(mount);
+
+        if (!mountData.isDragon()) {
+            return DragonRideAttemptResult.OTHER;
+        }
+
+        DragonStateHandler riderData = DragonStateProvider.getData(rider);
+
+        double sizeRatio = riderData.getSize() / mountData.getSize();
         boolean dragonIsTooSmallToRide = sizeRatio >= 0.5;
+
         if (dragonIsTooSmallToRide) {
             return DragonRideAttemptResult.SELF_TOO_BIG;
-        } else if (!riderCap.isDragon() && mountCap.getLevel() == DragonLevel.ADULT) {
+        } else if (!riderData.isDragon() && mountData.getLevel() == DragonLevel.ADULT) {
             return DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN;
         } else if (mount.getPose() != Pose.CROUCHING) {
             return DragonRideAttemptResult.NOT_CROUCHING;
@@ -50,42 +66,41 @@ public class DragonRidingHandler {
         return DragonRideAttemptResult.SUCCESS;
     }
 
-    /**
-     * Mounting a dragon
-     */
+    /** Mounting a dragon */
     @SubscribeEvent
     public static void onRideAttempt(PlayerInteractEvent.EntityInteractSpecific event) {
-        Entity ent = event.getTarget();
+        Entity entity = event.getTarget();
 
         if (event.getHand() != InteractionHand.MAIN_HAND) {
             return;
         }
 
-
-        if (ent instanceof ServerPlayer target) {
+        if (entity instanceof ServerPlayer target) {
             Player self = event.getEntity();
 
-            DragonStateProvider.getOptional(target).ifPresent(targetCap -> {
-                DragonStateProvider.getOptional(self).ifPresent(selfCap -> {
-                    DragonRideAttemptResult result = playerCanRideDragon(self, target);
-                    if (result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
-                        self.startRiding(target);
-                        target.connection.send(new ClientboundSetPassengersPacket(target));
-                        targetCap.setPassengerId(self.getId());
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonPassengerID.Data(target.getId(), self.getId()));
-                        event.setCancellationResult(InteractionResult.SUCCESS);
-                        event.setCanceled(true);
-                    } else {
-                        if (result == DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN) {
-                            self.sendSystemMessage(Component.translatable("ds.riding.target_too_small_as_human"));
-                        } else if (result == DragonRideAttemptResult.SELF_TOO_BIG) {
-                            self.sendSystemMessage(Component.translatable("ds.riding.self_too_big", String.format("%.0f", selfCap.getSize()), String.format("%.0f", targetCap.getSize())));
-                        } else if (result == DragonRideAttemptResult.NOT_CROUCHING) {
-                            self.sendSystemMessage(Component.translatable("ds.riding.target_not_crouching"));
-                        }
-                    }
-                });
-            });
+            DragonRideAttemptResult result = playerCanRideDragon(self, target);
+
+            if (result == DragonRideAttemptResult.SUCCESS && !target.isVehicle()) {
+                self.startRiding(target);
+                target.connection.send(new ClientboundSetPassengersPacket(target));
+
+                DragonStateProvider.getData(target).setPassengerId(self.getId());
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(target, new SyncDragonPassengerID.Data(target.getId(), self.getId()));
+
+                event.setCancellationResult(InteractionResult.SUCCESS);
+                event.setCanceled(true);
+            } else {
+                if (result == DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN) {
+                    self.sendSystemMessage(Component.translatable(TARGET_TOO_SMALL));
+                } else if (result == DragonRideAttemptResult.SELF_TOO_BIG) {
+                    DragonStateHandler targetData = DragonStateProvider.getData(target);
+                    DragonStateHandler selfData = DragonStateProvider.getData(self);
+
+                    self.sendSystemMessage(Component.translatable(SELF_TOO_BIG, String.format("%.0f", selfData.getSize()), String.format("%.0f", targetData.getSize())));
+                } else if (result == DragonRideAttemptResult.NOT_CROUCHING) {
+                    self.sendSystemMessage(Component.translatable(NOT_CROUCHING));
+                }
+            }
         }
     }
 

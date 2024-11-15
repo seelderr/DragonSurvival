@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -24,7 +25,7 @@ public class UpgradeAbilityTrigger extends SimpleCriterionTrigger<UpgradeAbility
     }
 
     @Override
-    public Codec<UpgradeAbilityInstance> codec() {
+    public @NotNull Codec<UpgradeAbilityInstance> codec() {
         return UpgradeAbilityInstance.CODEC;
     }
 

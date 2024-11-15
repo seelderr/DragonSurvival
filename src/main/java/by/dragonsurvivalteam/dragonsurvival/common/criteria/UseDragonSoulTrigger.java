@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class UseDragonSoulTrigger extends SimpleCriterionTrigger<UseDragonSoulTr
     }
 
     @Override
-    public Codec<UseDragonSoulTrigger.UseDragonSoulInstance> codec() {
+    public @NotNull Codec<UseDragonSoulTrigger.UseDragonSoulInstance> codec() {
         return UseDragonSoulTrigger.UseDragonSoulInstance.CODEC;
     }
 

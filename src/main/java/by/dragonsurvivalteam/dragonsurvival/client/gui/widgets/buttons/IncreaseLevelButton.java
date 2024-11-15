@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -16,14 +17,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class IncreaseLevelButton extends ArrowButton {
-    private PassiveDragonAbility ability;
+    @Translation(type = Translation.Type.MISC, comments = "§aUpgrade the skill for§r %s §alevels§r")
+    private static final String LEVEL_UP = Translation.Type.GUI.wrap("level_up");
 
     public int skillCost;
+
+    private PassiveDragonAbility ability;
     private final int slot;
 
     public IncreaseLevelButton(int x, int y, int slot) {
         super(x, y, 16, 16, true, Button::onPress);
-
         this.slot = slot;
     }
 
@@ -54,7 +57,7 @@ public class IncreaseLevelButton extends ArrowButton {
                 ability = cap.getMagicData().getPassiveAbilityFromSlot(slot);
 
                 if (ability != null) {
-                    ArrayList<Component> description = new ArrayList<>(List.of(Component.translatable("ds.skill.level.up", skillCost)));
+                    ArrayList<Component> description = new ArrayList<>(List.of(Component.translatable(LEVEL_UP, skillCost)));
 
                     if (!ability.getLevelUpInfo().isEmpty()) {
                         description.add(Component.empty());

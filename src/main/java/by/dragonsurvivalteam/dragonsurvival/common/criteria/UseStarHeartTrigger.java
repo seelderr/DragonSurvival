@@ -6,6 +6,7 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -15,7 +16,7 @@ public class UseStarHeartTrigger extends SimpleCriterionTrigger<UseStarHeartTrig
     }
 
     @Override
-    public Codec<UseStarHeartTrigger.UseStarHeartInstance> codec() {
+    public @NotNull Codec<UseStarHeartTrigger.UseStarHeartInstance> codec() {
         return UseStarHeartTrigger.UseStarHeartInstance.CODEC;
     }
 

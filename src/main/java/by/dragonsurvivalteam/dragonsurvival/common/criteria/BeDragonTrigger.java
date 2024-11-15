@@ -7,6 +7,7 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public class BeDragonTrigger extends SimpleCriterionTrigger<BeDragonTrigger.BeDr
     }
 
     @Override
-    public Codec<BeDragonInstance> codec() {
+    public @NotNull Codec<BeDragonInstance> codec() {
         return BeDragonInstance.CODEC;
     }
 

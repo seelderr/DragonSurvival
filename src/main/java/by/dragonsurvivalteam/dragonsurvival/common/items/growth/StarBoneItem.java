@@ -3,59 +3,49 @@ package by.dragonsurvivalteam.dragonsurvival.common.items.growth;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.items.TooltipItem;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.List;
-
-public class StarBoneItem extends Item {
-    public StarBoneItem(Properties p_i48487_1_) {
-        super(p_i48487_1_);
+public class StarBoneItem extends TooltipItem {
+    public StarBoneItem(final Properties properties, final String key) {
+        super(properties, key);
     }
 
     @Override
-    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level worldIn, @NotNull Player playerIn, @NotNull InteractionHand handIn) {
-        DragonStateHandler handler = DragonStateProvider.getData(playerIn);
+    public @NotNull InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (handler.isDragon()) {
             double size = handler.getSize();
             if (size > 14) {
                 size -= 2;
                 size = Math.max(size, DragonLevel.NEWBORN.size);
-                handler.setSize(size, playerIn);
+                handler.setSize(size, player);
 
-                if (!playerIn.isCreative()) {
-                    playerIn.getItemInHand(handIn).shrink(1);
+                if (!player.isCreative()) {
+                    player.getItemInHand(hand).shrink(1);
                 }
 
-                if (!worldIn.isClientSide) {
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(playerIn, new SyncSize.Data(playerIn.getId(), size));
-                    DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) playerIn, handler.getSize(), handler.getTypeName());
+                if (!level.isClientSide) {
+                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
+                    DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) player, handler.getSize(), handler.getTypeName());
                 }
 
-                playerIn.refreshDimensions();
-                return InteractionResultHolder.consume(playerIn.getItemInHand(handIn));
+                player.refreshDimensions();
+                return InteractionResultHolder.consume(player.getItemInHand(hand));
             }
         }
 
-        return super.use(worldIn, playerIn, handIn);
-    }
-
-    @Override
-    public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTooltipComponents, @NotNull TooltipFlag pTooltipFlag) {
-        super.appendHoverText(pStack, pContext, pTooltipComponents, pTooltipFlag);
-        pTooltipComponents.add(Component.translatable("ds.description.starBone"));
+        return super.use(level, player, hand);
     }
 }

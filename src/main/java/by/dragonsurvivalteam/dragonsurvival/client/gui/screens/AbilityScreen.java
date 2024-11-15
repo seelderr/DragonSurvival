@@ -1,15 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -30,18 +31,35 @@ import java.util.Objects;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class AbilityScreen extends Screen {
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ §6Active skills§r are used in combat.",
+            "- §9Skill power§r scales off your current experience level. The higher your EXP level, the stronger your active skills.",
+            "- §9Experience or mana§r points are used to cast spells.",
+            "- §9Controls§r - check in-game Minecraft control settings! You can drag and drop skill icons around."
+    })
+    private static final String HELP_ACTIVE = Translation.Type.GUI.wrap("help.active_abilities");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ §aPassive skills§r are upgraded by spending experience levels.",
+            "- §9Mana§r - do not forget use the Source of Magic and Dragons Treats for an infinite supply of mana!",
+            "- §9More information§r can be found on our Wiki and in our Discord. Check the Curseforge mod page."
+    })
+    private static final String HELP_PASSIVE = Translation.Type.GUI.wrap("help.passive_abilities");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ §dInnate skills§r are a dragon's quirks, and represent the benefits and drawbacks of each dragon type.")
+    private static final String HELP_INNATE = Translation.Type.GUI.wrap("help.innate_abilities");
+
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_interface.png");
 
-    private final int xSize = 256;
-    private final int ySize = 256;
     public Screen sourceScreen;
-    public ArrayList<ActiveDragonAbility> unlockAbleSkills = new ArrayList<>();
+    public ArrayList<ActiveDragonAbility> unlockableAbilities = new ArrayList<>();
+
     private int guiLeft;
     private int guiTop;
     private AbstractDragonType type;
 
     public AbilityScreen(Screen sourceScreen) {
-        super(Component.empty().append("AbilityScreen"));
+        super(Component.empty().append("AbilityScreen")); // FIXME :: what is this component used for
         this.sourceScreen = sourceScreen;
     }
 
@@ -65,16 +83,17 @@ public class AbilityScreen extends Screen {
         if (type != null) {
             int barYPos = Objects.equals(type, DragonTypes.SEA) ? 198 : Objects.equals(type, DragonTypes.FOREST) ? 186 : 192;
 
+            //noinspection DataFlowIssue -> player should not be null
             float progress = Mth.clamp(minecraft.player.experienceLevel / 50F, 0, 1);
             float progress1 = Math.min(1F, Math.min(0.5F, progress) * 2F);
             float progress2 = Math.min(1F, Math.min(0.5F, progress - 0.5F) * 2F);
 
-            guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
-            guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress1), 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 180 / 2, 105, 3, 128, 128);
+            guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress1), 3, 128, 128);
 
             if (progress > 0.5) {
-                guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress2), 3, 128, 128);
+                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) barYPos / 2, (int) (105 * progress2), 3, 128, 128);
             }
 
             int expChange = -1;
@@ -95,10 +114,10 @@ public class AbilityScreen extends Screen {
                 float Changeprogress1 = Math.min(1F, Math.min(0.5F, Changeprogress) * 2F);
                 float Changeprogress2 = Math.min(1F, Math.min(0.5F, Changeprogress - 0.5F) * 2F);
 
-                guiGraphics.blit(MagicHUD.widgetTextures, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress1), 3, 128, 128);
+                guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 23 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress1), 3, 128, 128);
 
                 if (Changeprogress2 > 0.5) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress2), 3, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, startX + 254 / 2, startY + 28, 0, (float) 174 / 2, (int) (105 * Changeprogress2), 3, 128, 128);
                 }
             }
 
@@ -127,6 +146,9 @@ public class AbilityScreen extends Screen {
 
     @Override
     public void init() {
+        int xSize = 256;
+        int ySize = 256;
+
         guiLeft = (width - xSize) / 2;
         guiTop = (height - ySize / 2) / 2;
 
@@ -134,10 +156,10 @@ public class AbilityScreen extends Screen {
         int startY = guiTop;
 
         //Inventory
-        addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, TabButton.TabType.INVENTORY, this));
-        addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, TabButton.TabType.ABILITY, this));
-        addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.TabType.GITHUB_REMINDER, this));
-        addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.TabType.SKINS, this));
+        addRenderableWidget(new TabButton(startX + 5 + 10, startY - 26 - 30, TabButton.Type.INVENTORY_TAB, this));
+        addRenderableWidget(new TabButton(startX + 34 + 10, startY - 28 - 30, TabButton.Type.ABILITY_TAB, this));
+        addRenderableWidget(new TabButton(startX + 62 + 10, startY - 26 - 30, TabButton.Type.GITHUB_REMINDER_TAB, this));
+        addRenderableWidget(new TabButton(startX + 91 + 10, startY - 26 - 30, TabButton.Type.SKINS_TAB, this));
 
         addRenderableWidget(new SkillProgressButton(guiLeft + 10 + (int) (219 / 2F), startY + 8 - 30, 4, this));
 
@@ -162,35 +184,34 @@ public class AbilityScreen extends Screen {
             }
         });
 
-        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 - 55, startY + 263 / 2 + 28, 9, 9, "ds.skill.help_1", 0));
-        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 2, startY + 263 / 2 + 28, 9, 9, "ds.skill.help_2", 0));
-        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 60, startY + 263 / 2 + 28, 9, 9, "ds.skill.help_3", 0));
+        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 - 55, startY + 263 / 2 + 28, 9, 9, HELP_ACTIVE, 0));
+        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 2, startY + 263 / 2 + 28, 9, 9, HELP_PASSIVE, 0));
+        addRenderableWidget(new HelpButton(startX + 218 / 2 + 3 + 10 + 60, startY + 263 / 2 + 28, 9, 9, HELP_INNATE, 0));
     }
 
 
     @Override
     public void tick() {
-        DragonStateProvider.getOptional(Minecraft.getInstance().player).ifPresent(cap -> {
-            type = cap.getType();
-            unlockAbleSkills.clear();
+        //noinspection DataFlowIssue -> players should be present
+        DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
+        unlockableAbilities.clear();
+        type = data.getType();
 
-            for (ActiveDragonAbility ab : cap.getMagicData().getActiveAbilities()) {
-                ActiveDragonAbility ability = DragonAbilities.getSelfAbility(minecraft.player, ab.getClass());
-                ActiveDragonAbility db = ability != null ? ability : ab;
+        for (ActiveDragonAbility ability : data.getMagicData().getActiveAbilities()) {
+            int level = DragonAbilities.getAbility(minecraft.player, ability.getClass()).map(ActiveDragonAbility::getLevel).orElse(ability.level);
 
-                for (int i = db.getLevel(); i < db.getMaxLevel(); i++) {
-                    try {
-                        ActiveDragonAbility newActivty = db.getClass().newInstance();
-                        newActivty.setLevel(i + 1);
-                        unlockAbleSkills.add(newActivty);
-                    } catch (InstantiationException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
+            for (int i = level; i < ability.getMaxLevel(); i++) {
+                try {
+                    ActiveDragonAbility instance = ability.getClass().getDeclaredConstructor().newInstance();
+                    instance.setLevel(i + 1);
+                    unlockableAbilities.add(instance);
+                } catch (ReflectiveOperationException exception) {
+                    throw new RuntimeException(exception);
                 }
             }
+        }
 
-            unlockAbleSkills.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
-        });
+        unlockableAbilities.sort(Comparator.comparingInt(ActiveDragonAbility::getCurrentRequiredLevel));
     }
 
     @Override
