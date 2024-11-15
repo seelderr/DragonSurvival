@@ -99,6 +99,7 @@ public class RotatingKeyItem extends TooltipItem implements GeoItem {
             return;
         }
 
+        // TODO :: as long as the player is within a certain distance of the current target don't re-check
         if (serverLevel.getGameTime() % 20 == 0) {
             Optional<HolderSet.Named<Structure>> structure = serverLevel.registryAccess().registryOrThrow(Registries.STRUCTURE).getTag(this.target);
 
