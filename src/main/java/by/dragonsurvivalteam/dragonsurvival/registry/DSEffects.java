@@ -37,15 +37,15 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
 
     /** Some effects are handled in {@link by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler} */
     @Translation(type = Translation.Type.EFFECT, comments = "Broken Wings")
-    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> WINGS_BROKEN = DS_MOB_EFFECTS.register("broken_wings", () -> new WingDisablingEffect(MobEffectCategory.HARMFUL, 0x0, true));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Magic Disabled")
-    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> MAGIC_DISABLED = DS_MOB_EFFECTS.register("magic_disabled", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Hunter Omen")
-    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> HUNTER_OMEN = DS_MOB_EFFECTS.register("hunter_omen", () -> new ModifiableMobEffect(MobEffectCategory.NEUTRAL, 0x0, true));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Sea Peace")
@@ -69,7 +69,7 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
     public static Holder<MobEffect> SOURCE_OF_MAGIC = DS_MOB_EFFECTS.register("source_of_magic", () -> new ModifiableMobEffect(MobEffectCategory.BENEFICIAL, 0x0, false));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Royal Departure")
-    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> ROYAL_DEPARTURE = DS_MOB_EFFECTS.register("royal_departure", () -> new TradeEffect(MobEffectCategory.HARMFUL, -3407617));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Water Vision")
@@ -112,11 +112,11 @@ public class DSEffects { // TODO :: add descriptions for the missing N/A marked 
     );
 
     @Translation(type = Translation.Type.EFFECT, comments = "Blood Siphon")
-    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> BLOOD_SIPHON = DS_MOB_EFFECTS.register("blood_siphon", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, false));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Regeneration Delay")
-    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A")
+    @Translation(type = Translation.Type.EFFECT_DESCRIPTION, comments = "N/A") // TODO
     public static Holder<MobEffect> REGENERATION_DELAY = DS_MOB_EFFECTS.register("regeneration_delay", () -> new ModifiableMobEffect(MobEffectCategory.HARMFUL, 0x0, true));
 
     @Translation(type = Translation.Type.EFFECT, comments = "Cave Dragon Wings")

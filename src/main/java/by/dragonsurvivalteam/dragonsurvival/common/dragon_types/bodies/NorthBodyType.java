@@ -79,7 +79,7 @@ public class NorthBodyType extends AbstractDragonBody {
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_experience_multiplier")
     public static Double northExpMult = 1.0;
 
-    @ConfigRange(min = 1.0, max = 10)
+    @ConfigRange(min = 0, max = 10)
     @Translation(key = "north_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "north"}, key = "north_flight_multiplier")
     public static Double northFlightMult = 1.0;

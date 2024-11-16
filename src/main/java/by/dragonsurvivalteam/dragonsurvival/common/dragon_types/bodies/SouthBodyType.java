@@ -22,7 +22,7 @@ public class SouthBodyType extends AbstractDragonBody {
     @ConfigRange(min = -1.0, max = 100)
     @Translation(key = "south_jump_bonus", type = Translation.Type.CONFIGURATION, comments = "Jump bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_jump_bonus")
-    public static Double southJumpBonus = 0.0;
+    public static Double southJumpBonus = 0.2;
 
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "south_step_height_bonus", type = Translation.Type.CONFIGURATION, comments = "Step height bonus (additive)")
@@ -32,7 +32,7 @@ public class SouthBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "south_damage_bonus", type = Translation.Type.CONFIGURATION, comments = "Damage bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_damage_bonus")
-    public static Double southDamageBonus = 0.0;
+    public static Double southDamageBonus = 0.5;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "south_damage_multiplier", type = Translation.Type.CONFIGURATION, comments = "Damage multiplier (multiply total)")
@@ -52,7 +52,7 @@ public class SouthBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "south_swim_speed_bonus", type = Translation.Type.CONFIGURATION, comments = "Swim speed bonus (additive)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_swim_speed_bonus")
-    public static Double southSwimSpeedBonus = 0.0;
+    public static Double southSwimSpeedBonus = -0.2;
 
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "south_health_bonus", type = Translation.Type.CONFIGURATION, comments = "Health bonus (additive)")
@@ -72,17 +72,17 @@ public class SouthBodyType extends AbstractDragonBody {
     @ConfigRange(min = -10.0, max = 100)
     @Translation(key = "south_movement_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Movement speed multiplier (multiply total)")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_movement_speed_multiplier")
-    public static Double southRunMult = 1.0;
+    public static Double southRunMult = 1.2;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "south_experience_multiplier", type = Translation.Type.CONFIGURATION, comments = "Experience multiplier")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_experience_multiplier")
     public static Double southExpMult = 1.0;
 
-    @ConfigRange(min = 1.0, max = 10)
+    @ConfigRange(min = 0, max = 10)
     @Translation(key = "south_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_flight_multiplier")
-    public static Double southFlightMult = 1.2;
+    public static Double southFlightMult = 0.8;
 
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "south_flight_stamina_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight stamina multiplier (multiply total) - higher values increase the exhaustion rate")
@@ -92,7 +92,7 @@ public class SouthBodyType extends AbstractDragonBody {
     @ConfigRange(min = 0.0, max = 100)
     @Translation(key = "south_gravity_multiplier", type = Translation.Type.CONFIGURATION, comments = "Gravity multiplier (multiply total) - higher values increase fall speed while flying and cause faster drowning")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "south"}, key = "south_gravity_multiplier")
-    public static Double southGravityMult = 1.0;
+    public static Double southGravityMult = 1.2;
 
     @Override
     public CompoundTag writeNBT() {

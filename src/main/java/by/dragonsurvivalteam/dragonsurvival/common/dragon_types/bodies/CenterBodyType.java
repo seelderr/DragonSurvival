@@ -79,7 +79,7 @@ public class CenterBodyType extends AbstractDragonBody {
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "center"}, key = "center_experience_multiplier")
     public static Double centerExpMult = 1.0;
 
-    @ConfigRange(min = 1.0, max = 10)
+    @ConfigRange(min = 0, max = 10)
     @Translation(key = "center_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "center"}, key = "center_flight_multiplier")
     public static Double centerFlightMult = 1.2;

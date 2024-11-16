@@ -175,6 +175,7 @@ public class DSLanguageProvider extends LanguageProvider {
         }
     }
 
+    /** Currently only intended to be used for the configuration fields */
     public static List<Translation> getTranslations(final Field field) {
         Translation translation = field.getAnnotation(Translation.class);
 

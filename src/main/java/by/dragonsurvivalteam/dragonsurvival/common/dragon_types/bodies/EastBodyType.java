@@ -79,7 +79,7 @@ public class EastBodyType extends AbstractDragonBody {
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_experience_multiplier")
     public static Double eastExpMult = 1.0;
 
-    @ConfigRange(min = 1.0, max = 10)
+    @ConfigRange(min = 0, max = 10)
     @Translation(key = "east_flight_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight multiplier - values below 1 will cause the dragon to fall instead of flying")
     @ConfigOption(side = ConfigSide.SERVER, category = {"bonuses", "body", "east"}, key = "east_flight_multiplier")
     public static Double eastFlightMult = 1.0;
