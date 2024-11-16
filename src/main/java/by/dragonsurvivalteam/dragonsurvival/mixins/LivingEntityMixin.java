@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -21,6 +22,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -244,6 +246,18 @@ public abstract class LivingEntityMixin extends Entity {
 
             player.calculateEntityAnimation(false);
             callback.cancel();
+        }
+    }
+
+    // If the player's gravity changes, we need to update the dragon-related safe fall distance modifiers, as they depend on gravity
+    @Inject(method = "onAttributeUpdated", at = @At("TAIL"))
+    private void updateSafeFallDistanceIfGravityIsModified(CallbackInfo ci, @Local(argsOnly = true) Holder<Attribute> attribute) {
+        if ((Object) this instanceof Player player) {
+            DragonStateProvider.getOptional(player).ifPresent(data -> {
+                if (attribute.is(Attributes.GRAVITY)) {
+                    DSModifiers.updateSafeFallDistanceModifiers(player);
+                }
+            });
         }
     }
 

@@ -28,6 +28,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
@@ -104,7 +105,8 @@ public class ServerFlightHandler {
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enable_flight_fall_damage")
     public static boolean enableFlightFallDamage = true;
 
-    @SubscribeEvent
+    // Even if the event is ultimately cancelled, we still want to trigger this, so make it highest priority.
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void foldWingsOnLand(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntity();
 
@@ -224,7 +226,7 @@ public class ServerFlightHandler {
         } else {
             clearAllFlightEffects(player);
         }
-
+  
         if (isGliding(player)) {
             // Gather collision data
             handler.preCollisionDeltaMovement = player.getDeltaMovement();
