@@ -75,6 +75,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public boolean hasUsedAltar;
     public boolean isInAltar;
     public boolean refreshBody;
+    public boolean isJumping = false;
 
     /** Last timestamp the server synchronized the player */
     public int lastSync = 0;
@@ -617,6 +618,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         tag.putInt("lastAfflicted", lastAfflicted);
+        tag.putBoolean("isJumping", isJumping);
 
         return tag;
     }
@@ -716,6 +718,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         lastAfflicted = tag.getInt("lastAfflicted");
         refreshBody = true;
+        isJumping = tag.getBoolean("isJumping");
 
         getSkinData().compileSkin();
     }
@@ -746,6 +749,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
         this.hasUsedAltar = true;
+        this.isJumping = false;
     }
 
     // --- Hunter handler --- //

@@ -108,8 +108,7 @@ public class DSModifiers {
             new ModifierBuilder(DRAGON_REACH_MODIFIER, Attributes.BLOCK_INTERACTION_RANGE, Operation.ADD_MULTIPLIED_BASE, DSModifiers::buildReachMod),
             new ModifierBuilder(DRAGON_STEP_HEIGHT_MODIFIER, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, DSModifiers::buildStepHeightMod),
             new ModifierBuilder(DRAGON_MOVEMENT_SPEED_MODIFIER, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildMovementSpeedMod),
-            new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod),
-            new ModifierBuilder(DRAGON_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildSafeFallDistanceMod)
+            new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod)
     );
 
     private static final List<ModifierBuilder> BODY_MODIFIER_BUILDERS = List.of(
@@ -124,7 +123,6 @@ public class DSModifiers {
             new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getHealthBonus()),
             new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getHealthMult() - 1),
             new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getJumpBonus()),
-            new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildBodySafeFallDistanceMod),
             new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getFlightStaminaMult())
     );
 
@@ -136,24 +134,6 @@ public class DSModifiers {
         }
 
         return distance;
-    }
-
-    private static double buildSafeFallDistanceMod(Player player) {
-        // Don't allow a jump penalty to cause a negative safe fall distance
-        double jumpMod = Math.max(buildJumpMod(player), 0.0);
-        double gravity = player.getGravity();
-        // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
-        // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
-        return (jumpMod * jumpMod) / (2 * gravity);
-    }
-
-    private static double buildBodySafeFallDistanceMod(Player player) {
-        // Don't allow a jump penalty to cause a negative safe fall distance
-        double jumpMod = Math.max(DragonStateProvider.getData(player).getBody().getJumpBonus(), 0.0);
-        double gravity = player.getGravity();
-        // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
-        // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
-        return (jumpMod * jumpMod) / (2 * gravity);
     }
 
     private static double buildHealthMod(Player player) {
@@ -233,7 +213,8 @@ public class DSModifiers {
         return moveSpeedMultiplier - 1;
     }
 
-    private static double buildJumpMod(Player player) {
+    // Needs to be public for fall damage math in DragonBonusHandler
+    public static double buildJumpMod(Player player) {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         double jumpBonus = 0;
         if (handler.getBody() != null) {

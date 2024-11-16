@@ -26,6 +26,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingFallEvent;
@@ -62,7 +63,7 @@ public class ServerFlightHandler {
     public static Integer foldWingsThreshold = 0;
 
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsOnLand", comment = "Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually.")
-    public static Boolean foldWingsOnLand = false;
+    public static Boolean foldWingsOnLand = true;
 
     @ConfigRange(min = 0, max = 100000)
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight")
@@ -83,7 +84,8 @@ public class ServerFlightHandler {
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Dragons will take fall damage from colliding whilst glide-flying (similar to elytra).")
     public static boolean enableFlightFallDamage = true;
 
-    @SubscribeEvent
+    // Even if the event is ultimately cancelled, we still want to trigger this, so make it highest priority.
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void foldWingsOnLand(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntity();
         double flightSpeed = event.getDistance();
@@ -169,19 +171,18 @@ public class ServerFlightHandler {
     @SubscribeEvent
     public static void showFlightIcon(PlayerTickEvent.Pre playerTickEvent) {
         Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon() && handler.isWingsSpread()) {
-                if (!hasCorrectFlightEffect(player)) {
-                    clearAllFlightEffects(player);
-                    Holder<MobEffect> flightEffect = getFlightEffectForType(handler.getType());
-                    if(flightEffect != null) {
-                        player.addEffect(new MobEffectInstance(flightEffect, -1, 0, true, false, true));
-                    }
-                }
-            } else {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+        if (handler.isDragon() && handler.isWingsSpread()) {
+            if (!hasCorrectFlightEffect(player)) {
                 clearAllFlightEffects(player);
+                Holder<MobEffect> flightEffect = getFlightEffectForType(handler.getType());
+                if(flightEffect != null) {
+                    player.addEffect(new MobEffectInstance(flightEffect, -1, 0, true, false, true));
+                }
             }
-        });
+        } else {
+            clearAllFlightEffects(player);
+        }
     }
 
     @SubscribeEvent
