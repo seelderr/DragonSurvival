@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -24,7 +25,6 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
         if (castTime >= getSkillCastingTime() && castStartTime != -1 && !castFinished) {
             castingComplete(player);
             startCooldown();
-            castStartTime = clientTime;
             castFinished = true;
 
             ManaHandler.consumeMana(player, getManaCost());
@@ -63,7 +63,7 @@ public abstract class ChargeCastAbility extends ActiveDragonAbility {
         ArrayList<Component> components = super.getInfo();
 
         if (getSkillCastingTime() > 0)
-            components.add(Component.translatable("ds.skill.cast_time", Functions.ticksToSeconds(getSkillCastingTime())));
+            components.add(Component.translatable(LangKey.ABILITY_CAST_TIME, Functions.ticksToSeconds(getSkillCastingTime())));
 
         return components;
     }

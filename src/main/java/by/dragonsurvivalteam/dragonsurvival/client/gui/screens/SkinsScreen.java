@@ -18,6 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
@@ -51,39 +52,77 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Supplier;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 public class SkinsScreen extends Screen {
-    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_interface.png");
+    @Translation(type = Translation.Type.MISC, comments = "Skin Settings")
+    private static final String SETTINGS = Translation.Type.GUI.wrap("skin_screen.settings");
 
-    private static final ResourceLocation UNCHECKED = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/unchecked.png");
-    private static final ResourceLocation CHECKED = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_claws_checked.png");
+    @Translation(type = Translation.Type.MISC, comments = "Enable / disable skins")
+    private static final String TOGGLE = Translation.Type.GUI.wrap("skin_screen.toggle");
 
-    private static final ResourceLocation DISCORD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/discord_button.png");
-    private static final ResourceLocation WIKI = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/wiki_button.png");
-    private static final ResourceLocation HELP = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/skin_help.png");
+    @Translation(type = Translation.Type.MISC, comments = "This author does not have a skin for this stage.")
+    private static final String NO_SKIN = Translation.Type.GUI.wrap("skin_screen.no_skin");
+
+    @Translation(type = Translation.Type.MISC, comments = "You do not have a skin for this stage.")
+    private static final String NO_SKIN_SELF = Translation.Type.GUI.wrap("skin_screen.no_skin_self");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ Join our §6discord server§r!§7 Read the Rules, FAQ and Wiki before you ask anything.")
+    private static final String DISCORD = Translation.Type.GUI.wrap("skin_screen.discord");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ This is a link to our §6Wiki§r dedicated to making your own skin!§7 Remember that this will be very difficult, and requires knowledge of graphic editors.")
+    private static final String WIKI = Translation.Type.GUI.wrap("skin_screen.wiki");
+
+    @Translation(type = Translation.Type.MISC, comments = {
+            "■ A §6Skin§r is a self-made texture for your dragon. In this tab, you can disable the display of your skin for your dragon at different stages, as well as skins of other players.",
+            "■ Skins are not built in the Dragon Editor, but created using outside tools.",
+            "§7■ If you are interested in how to make your own skin or take a commission, use the buttons on the right."
+    })
+    private static final String HELP = Translation.Type.GUI.wrap("skin_screen.help");
+
+    @Translation(type = Translation.Type.MISC, comments = "Your dragon")
+    private static final String SELF = Translation.Type.GUI.wrap("skin_screen.self");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ This is what §6you§r look like now.")
+    private static final String SELF_INFO = Translation.Type.GUI.wrap("skin_screen.self_info");
+
+    @Translation(type = Translation.Type.MISC, comments = "Random")
+    private static final String RANDOM = Translation.Type.GUI.wrap("skin_screen.random");
+
+    @Translation(type = Translation.Type.MISC, comments = "■ Shows a randomly selected §6other player§r§f who uploaded a skin. You §ccan't use§r§f their appearance for yourself!§7 Only look and admire! >:D")
+    private static final String RANDOM_INFO = Translation.Type.GUI.wrap("skin_screen.random_info");
+
+    @Translation(type = Translation.Type.MISC, comments = "Show player skins")
+    private static final String OTHERS = Translation.Type.GUI.wrap("skin_screen.others");
+
+    private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/skin_interface.png");
+    private static final ResourceLocation DISCORD_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/discord_button.png");
+    private static final ResourceLocation WIKI_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/wiki_button.png");
+    private static final ResourceLocation UNCHECKED = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/unchecked.png");
+    private static final ResourceLocation CHECKED = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/dragon_claws_checked.png");
 
     private static final String DISCORD_URL = "https://discord.gg/8SsB8ar";
     private static final String WIKI_URL = "https://github.com/DragonSurvivalTeam/DragonSurvival/wiki/3.-Customization";
-    private static final ArrayList<String> seenSkins = new ArrayList<>();
-    public final DragonStateHandler handler = new DragonStateHandler();
-    public static ResourceLocation skinTexture = null;
-    public static ResourceLocation glowTexture = null;
-    private static String playerName = null;
-    private static String lastPlayerName = null;
+    private static final ArrayList<String> SEEN_SKINS = new ArrayList<>();
+
     private static DragonLevel level = DragonLevel.ADULT;
+    private static ResourceLocation skinTexture;
+    private static ResourceLocation glowTexture;
+    private static String playerName;
+    private static String lastPlayerName;
+    private static boolean noSkin;
+    private static boolean loading;
+
+    public final DragonStateHandler handler = new DragonStateHandler();
     public AbstractDragonBody dragonBody = DragonBodies.getStatic("center");
-    private static boolean noSkin = false;
-    private static boolean loading = false;
     public Screen sourceScreen;
+
+    private final int imageWidth = 164;
+    private final int imageHeight = 128;
     private int guiLeft;
     private int guiTop;
     private float yRot = -3;
     private float xRot = -5;
     private float zoom = 0;
     private URI clickedLink;
-    protected int imageWidth = 164;
-    protected int imageHeight = 128;
 
     // To avoid having to retrieve the player capabilities every render tick
     private boolean renderNewborn;
@@ -95,6 +134,7 @@ public class SkinsScreen extends Screen {
         this.sourceScreen = sourceScreen;
 
         LocalPlayer localPlayer = sourceScreen.getMinecraft().player;
+        //noinspection DataFlowIssue -> player should not be null
         SkinCap skinData = DragonStateProvider.getData(localPlayer).getSkinData();
         renderNewborn = skinData.renderNewborn;
         renderYoung = skinData.renderYoung;
@@ -156,16 +196,16 @@ public class SkinsScreen extends Screen {
         ((DragonRenderer) dragonRenderer).glowTexture = null;
 
         guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
-        drawNonShadowString(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins").withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
-        guiGraphics.drawCenteredString(minecraft.font, Component.translatable("ds.gui.skins.toggle"), startX + 128 + imageWidth / 2, startY + 30, -1);
-        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(Component.translatable(level.getName())).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
+        drawNonShadowString(guiGraphics, minecraft.font, Component.translatable(SETTINGS).withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
+        guiGraphics.drawCenteredString(minecraft.font, Component.translatable(TOGGLE), startX + 128 + imageWidth / 2, startY + 30, -1);
+        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(level.translatableName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
         if (!loading) {
             if (noSkin) {
                 if (playerName.equals(minecraft.player.getGameProfile().getName())) {
-                    drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins.noskin.yours").withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
+                    drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable(NO_SKIN_SELF).withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
                 } else {
-                    drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable("ds.gui.skins.noskin").withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
+                    drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable(NO_SKIN).withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
                 }
             }
         }
@@ -173,9 +213,8 @@ public class SkinsScreen extends Screen {
         super.render(guiGraphics, mouseX, mouseY, partialTick);
     }
 
-    // We override this to not blur the background
-    @Override
-    public void renderBackground(GuiGraphics pGuiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+    @Override // We override this to not blur the background
+    public void renderBackground(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         // Don't render the vanilla background, it darkens the UI in an undesirable way
     }
 
@@ -210,23 +249,23 @@ public class SkinsScreen extends Screen {
 
         setTextures();
 
-        addRenderableWidget(new TabButton(startX + 128 + 4, startY - 26, TabButton.TabType.INVENTORY, this));
-        addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, TabButton.TabType.ABILITY, this));
-        addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, TabButton.TabType.GITHUB_REMINDER, this));
-        addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, TabButton.TabType.SKINS, this));
+        addRenderableWidget(new TabButton(startX + 128 + 4, startY - 26, TabButton.Type.INVENTORY_TAB, this));
+        addRenderableWidget(new TabButton(startX + 128 + 33, startY - 26, TabButton.Type.ABILITY_TAB, this));
+        addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, TabButton.Type.GITHUB_REMINDER_TAB, this));
+        addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, TabButton.Type.SKINS_TAB, this));
 
         for (int i = 0; i < DragonBodies.ORDER.length; i++) {
             addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (i * 27), height / 2 + 90, 25, 25, DragonBodies.getStatic(DragonBodies.ORDER[i]), i));
         }
 
         // Button to enable / disable rendering of the newborn dragon skin
-        addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, Component.translatable("ds.level.newborn"), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, DragonLevel.NEWBORN.translatableName(), button -> {
             DragonStateHandler handler = DragonStateProvider.getData(player);
             boolean newValue = !handler.getSkinData().renderNewborn;
 
             handler.getSkinData().renderNewborn = newValue;
             renderNewborn = newValue;
-            ConfigHandler.updateConfigValue("renderNewbornSkin", handler.getSkinData().renderNewborn);
+            ConfigHandler.updateConfigValue("render_newborn_skin", handler.getSkinData().renderNewborn);
             PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
             setTextures();
         }, Supplier::get) {
@@ -238,13 +277,13 @@ public class SkinsScreen extends Screen {
         });
 
         // Button to enable / disable rendering of the young dragon skin
-        addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable("ds.level.young"), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, DragonLevel.YOUNG.translatableName(), button -> {
             DragonStateHandler handler = DragonStateProvider.getData(player);
             boolean newValue = !handler.getSkinData().renderYoung;
 
             handler.getSkinData().renderYoung = newValue;
             renderYoung = newValue;
-            ConfigHandler.updateConfigValue("renderYoungSkin", handler.getSkinData().renderYoung);
+            ConfigHandler.updateConfigValue("render_young_skin", handler.getSkinData().renderYoung);
             PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
             setTextures();
         }, Supplier::get) {
@@ -256,13 +295,13 @@ public class SkinsScreen extends Screen {
         });
 
         // Button to enable / disable rendering of the adult dragon skin
-        addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, Component.translatable("ds.level.adult"), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 45 + 46, imageWidth, 20, DragonLevel.ADULT.translatableName(), button -> {
             DragonStateHandler handler = DragonStateProvider.getData(getMinecraft().player);
             boolean newValue = !handler.getSkinData().renderAdult;
 
             handler.getSkinData().renderAdult = newValue;
             renderAdult = newValue;
-            ConfigHandler.updateConfigValue("renderAdultSkin", handler.getSkinData().renderAdult);
+            ConfigHandler.updateConfigValue("render_adult_skin", handler.getSkinData().renderAdult);
             PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(getMinecraft().player.getId(), handler.getSkinData().renderNewborn, handler.getSkinData().renderYoung, handler.getSkinData().renderAdult));
             setTextures();
         }, Supplier::get) {
@@ -274,9 +313,9 @@ public class SkinsScreen extends Screen {
         });
 
         // Button to enable / disable the rendering of customized skins (of other players)
-        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable("ds.gui.skins.other_skins"), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable(OTHERS), button -> {
             ClientDragonRenderer.renderOtherPlayerSkins = !ClientDragonRenderer.renderOtherPlayerSkins;
-            ConfigHandler.updateConfigValue("renderOtherPlayerSkins", ClientDragonRenderer.renderOtherPlayerSkins);
+            ConfigHandler.updateConfigValue("render_other_players_custom_skins", ClientDragonRenderer.renderOtherPlayerSkins);
             setTextures();
         }, Supplier::get) {
             @Override
@@ -285,8 +324,6 @@ public class SkinsScreen extends Screen {
                 guiGraphics.blit(ClientDragonRenderer.renderOtherPlayerSkins ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
             }
         });
-
-        int screenWidth = width;
 
         Button discordURLButton = new Button(startX + 128 + imageWidth / 2 - 8 - 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
             try {
@@ -298,10 +335,10 @@ public class SkinsScreen extends Screen {
         }, Supplier::get) {
             @Override
             protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                guiGraphics.blit(DISCORD, getX(), getY(), 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(DISCORD_TEXTURE, getX(), getY(), 0, 0, 16, 16, 16, 16);
             }
         };
-        discordURLButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.discord")));
+        discordURLButton.setTooltip(Tooltip.create(Component.translatable(DISCORD)));
         addRenderableWidget(discordURLButton);
 
         Button wikiButton = new Button(startX + 128 + imageWidth / 2 - 8 + 25, startY + 128 + 30, 16, 16, Component.empty(), button -> {
@@ -315,20 +352,20 @@ public class SkinsScreen extends Screen {
         }, Supplier::get) {
             @Override
             protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                guiGraphics.blit(WIKI, getX(), getY(), 0, 0, 16, 16, 16, 16);
+                guiGraphics.blit(WIKI_TEXTURE, getX(), getY(), 0, 0, 16, 16, 16, 16);
             }
         };
-        wikiButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.wiki")));
+        wikiButton.setTooltip(Tooltip.create(Component.translatable(WIKI)));
         addRenderableWidget(wikiButton);
 
-        addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, "ds.gui.skins.tooltip.help", 1));
+        addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, HELP, 1));
 
-        addRenderableWidget(Button.builder(Component.translatable("ds.gui.skins.yours"), button -> {
+        addRenderableWidget(Button.builder(Component.translatable(SELF), button -> {
             playerName = minecraft.player.getGameProfile().getName();
             setTextures();
-        }).bounds(startX - 60, startY + 128, 90, 20).tooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.yours"))).build());
+        }).bounds(startX - 60, startY + 128, 90, 20).tooltip(Tooltip.create(Component.translatable(SELF_INFO))).build());
 
-        addRenderableWidget(Button.builder(Component.translatable("ds.gui.skins.random"), button -> {
+        addRenderableWidget(Button.builder(Component.translatable(RANDOM), button -> {
             ArrayList<Pair<DragonLevel, String>> skins = new ArrayList<>();
             HashSet<String> users = new HashSet<>();
             Random random = new Random();
@@ -342,7 +379,7 @@ public class SkinsScreen extends Screen {
                 }
             }
 
-            skins.removeIf(c -> seenSkins.contains(c.second));
+            skins.removeIf(c -> SEEN_SKINS.contains(c.second));
             if (!skins.isEmpty()) {
                 Pair<DragonLevel, String> skin = skins.get(random.nextInt(skins.size()));
 
@@ -350,16 +387,16 @@ public class SkinsScreen extends Screen {
                     level = skin.first;
                     playerName = skin.second;
 
-                    seenSkins.add(skin.second);
+                    SEEN_SKINS.add(skin.second);
 
-                    if (seenSkins.size() >= users.size() / 2) {
-                        seenSkins.remove(0);
+                    if (SEEN_SKINS.size() >= users.size() / 2) {
+                        SEEN_SKINS.remove(0);
                     }
 
                     setTextures();
                 }
             }
-        }).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable("ds.gui.skins.tooltip.random"))).build());
+        }).bounds(startX + 35, startY + 128, 60, 20).tooltip(Tooltip.create(Component.translatable(RANDOM_INFO))).build());
 
         addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
             int pos = level.ordinal() + 1;
@@ -372,9 +409,9 @@ public class SkinsScreen extends Screen {
             @Override
             protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 if (isHovered()) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 66 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 } else {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 44 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 }
             }
         });
@@ -390,9 +427,9 @@ public class SkinsScreen extends Screen {
             @Override
             protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 if (isHovered()) {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), (float) 22 / 2, (float) 222 / 2, 11, 17, 128, 128);
                 } else {
-                    guiGraphics.blit(MagicHUD.widgetTextures, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
+                    guiGraphics.blit(MagicHUD.WIDGET_TEXTURES, getX(), getY(), 0, (float) 222 / 2, 11, 17, 128, 128);
                 }
             }
         });
@@ -435,8 +472,8 @@ public class SkinsScreen extends Screen {
         minecraft.setScreen(this);
     }
 
-    private void openLink(URI p_231156_1_) {
-        Util.getPlatform().openUri(p_231156_1_);
+    private void openLink(URI uri) {
+        Util.getPlatform().openUri(uri);
     }
 
     @Override

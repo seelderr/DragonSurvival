@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.InnateDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
@@ -21,8 +22,24 @@ import java.util.List;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class MagicDragonRender {
-    public static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
+    @Translation(type = Translation.Type.MISC, comments = "Active Ability")
+    private static final String ACTIVE = Translation.Type.ABILITY.wrap("general.active");
+
+    @Translation(type = Translation.Type.MISC, comments = "Passive Ability")
+    private static final String PASSIVE = Translation.Type.ABILITY.wrap("general.passive");
+
+    @Translation(type = Translation.Type.MISC, comments = "Innate Ability")
+    private static final String INNATE = Translation.Type.ABILITY.wrap("general.innate");
+
+    @Translation(type = Translation.Type.MISC, comments = "Info")
+    private static final String INFO = Translation.Type.ABILITY.wrap("general.info");
+
+    @Translation(type = Translation.Type.MISC, comments = "Hold ‘Shift’ for info")
+    private static final String INFO_SHIFT = Translation.Type.ABILITY.wrap("general.info_shift");
+
     public static final ResourceLocation INVALID_ICON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/disabled.png");
+
+    private static final ResourceLocation BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widget_bars.png");
 
     public static void drawAbilityHover(@NotNull final GuiGraphics guiGraphics, int x, int y, final DragonAbility ability) {
         int colorXPos = ability instanceof ActiveDragonAbility ? 0 : ability instanceof InnateDragonAbility ? 20 : 0;
@@ -54,7 +71,7 @@ public class MagicDragonRender {
                 guiGraphics.blitWithBorder(BARS, x - (Screen.hasShiftDown() ? extraWidth : 10) + 3, y + 9, colorXPos, colorYPos, Screen.hasShiftDown() ? extraWidth : 15, 20, 20, 20, 3);
 
                 if (Screen.hasShiftDown()) {
-                    guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable("ds.skill.info"), x - extraWidth + 10, y + 15, -1);
+                    guiGraphics.drawString(Minecraft.getInstance().font, Component.translatable(INFO), x - extraWidth + 10, y + 15, -1);
 
                     for (int k1 = 0; k1 < text.size(); ++k1) {
                         guiGraphics.drawString(Minecraft.getInstance().font, text.get(k1), x - extraWidth + 5, y + 5 + 18 + k1 * 9, -5592406);
@@ -68,11 +85,16 @@ public class MagicDragonRender {
         guiGraphics.blitWithBorder(BARS, x, y + 3, colorXPos, colorYPos, 150, 20, 20, 20, 3);
         guiGraphics.blitWithBorder(BARS, x, y, 0, 100, 26, 26, 24, 24, 3);
 
-        String skillType = ability instanceof ActiveDragonAbility ? "active" : ability instanceof InnateDragonAbility ? "innate" : ability instanceof PassiveDragonAbility ? "passive" : null;
+        String translationKey = switch (ability) {
+            case ActiveDragonAbility ignored -> ACTIVE;
+            case PassiveDragonAbility ignored -> PASSIVE;
+            case InnateDragonAbility ignored -> INNATE;
+            default -> null;
+        };
 
-        if (skillType != null) {
+        if (translationKey != null) {
             Color c = ability instanceof ActiveDragonAbility ? Color.ofRGB(200, 143, 31) : ability instanceof InnateDragonAbility ? Color.ofRGB(150, 56, 175) : Color.ofRGB(127, 145, 46);
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.skill.type." + skillType), x + 150 / 2, y + 30, c.getColor());
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(translationKey), x + 150 / 2, y + 30, c.getColor());
         }
 
         if (ability.getMaxLevel() > 1) {
@@ -87,7 +109,7 @@ public class MagicDragonRender {
         }
 
         if (!ability.getInfo().isEmpty()) {
-            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.skill.info.hold_shift").withStyle(ChatFormatting.DARK_GRAY), x + 150 / 2, y + 47 + (description.size() - 1) * 9, 0);
+            guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(INFO_SHIFT).withStyle(ChatFormatting.DARK_GRAY), x + 150 / 2, y + 47 + (description.size() - 1) * 9, 0);
         }
 
         guiGraphics.blit(ability.getIcon(), x + 5, y + 5, 0, 0, 16, 16, 16, 16);

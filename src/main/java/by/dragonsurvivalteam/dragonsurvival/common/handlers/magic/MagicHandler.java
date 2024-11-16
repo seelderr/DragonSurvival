@@ -186,7 +186,7 @@ public class MagicHandler {
             amplifier = Mth.clamp(amplifier, 0, 255);
 
             if (amplifier != instance.getAmplifier()) {
-                MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier);
+                MobEffectInstance modifiedInstance = new MobEffectInstance(instance.getEffect(), instance.getDuration(), amplifier, instance.isAmbient(), instance.isVisible(), instance.showIcon());
 
                 if (affected.hasEffect(instance.getEffect())) {
                     affected.removeEffect(instance.getEffect());
@@ -234,8 +234,9 @@ public class MagicHandler {
                 }
 
                 if (DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
-                    SpectralImpactAbility spectralImpact = DragonAbilities.getSelfAbility(player, SpectralImpactAbility.class);
-                    boolean hit = player.getRandom().nextInt(100) <= spectralImpact.getChance(); // TODO Check :: Can the next int be 0? In that case the effect would trigger
+                    int chance = DragonAbilities.getAbility(player, SpectralImpactAbility.class).map(SpectralImpactAbility::getChance).orElse(0);
+                    // rolls between 1 and 100 (incl.) (chance of 0 means the ability should not trigger)
+                    boolean hit = 1 + player.getRandom().nextInt(101) < chance;
 
                     if (hit) {
                         event.getEntity().hurt(new DamageSource(DSDamageTypes.get(player.level(), DSDamageTypes.SPECTRAL_IMPACT), player), (float) (event.getAmount() * 0.15));
@@ -247,8 +248,9 @@ public class MagicHandler {
                         }
                     }
                 } else if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
-                    BurnAbility burnAbility = DragonAbilities.getSelfAbility(player, BurnAbility.class);
-                    boolean hit = player.getRandom().nextInt(100) < burnAbility.getChance();
+                    int chance = DragonAbilities.getAbility(player, BurnAbility.class).map(BurnAbility::getChance).orElse(0);
+                    // rolls between 1 and 100 (incl.) (chance of 0 means the ability should not trigger)
+                    boolean hit = 1 + player.getRandom().nextInt(101) < chance;
 
                     if (hit) {
                         event.getEntity().getData(DragonSurvival.ENTITY_HANDLER).lastAfflicted = player.getId();

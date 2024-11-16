@@ -6,13 +6,20 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.AthleticsAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Standing on stone surfaces will give you §2Speed %s§r\n",
+        "■ Duration: §2%s§rs"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Cave Athletics")
 @RegisterDragonAbility
 public class CaveAthleticsAbility extends AthleticsAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "caveAthletics", comment = "Whether the cave athletics ability should be enabled")
+    @Translation(key = "cave_athletics", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the cave athletics ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "passive"}, key = "cave_athletics")
     public static Boolean caveAthletics = true;
 
     @Override
@@ -32,12 +39,14 @@ public class CaveAthleticsAbility extends AthleticsAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_3.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_5.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/cave_athletics_5.png")
+        };
     }
 
     @Override

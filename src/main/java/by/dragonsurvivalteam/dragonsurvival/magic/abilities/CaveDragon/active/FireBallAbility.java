@@ -9,6 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -21,26 +23,32 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out a fireball that §cexplodes§r and sets the area on fire.")
+@Translation(type = Translation.Type.ABILITY, comments = "Fireball")
 @RegisterDragonAbility
 public class FireBallAbility extends ChargeCastAbility {
-
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballEnabled", comment = "Whether the fireball ability should be enabled")
+    @Translation(key = "fireball", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the fireball ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fireball"}, key = "fireball")
     public static Boolean fireballEnabled = true;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCooldown", comment = "The cooldown in seconds of the fireball ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "fireball_cooldown", type = Translation.Type.CONFIGURATION, comments = "The cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fireball"}, key = "fireball_cooldown")
     public static Double fireballCooldown = 7.0;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballCasttime", comment = "The cast time in seconds of the fireball ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "fireball_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fireball"}, key = "fireball_cast_time")
     public static Double fireballCasttime = 2.0;
 
     @ConfigRange(min = 0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballDamage", comment = "The amount of damage the fireball ability deals. This value is multiplied by the skill level.")
+    @Translation(key = "fireball_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (scales with ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fireball"}, key = "fireball_damage")
     public static Double fireballDamage = 5.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "fireball"}, key = "fireballManaCost", comment = "The mana cost for using the fireball ball ability")
+    @Translation(key = "fireball_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "fireball"}, key = "fireball_mana_cost")
     public static Integer fireballManaCost = 1;
 
     @Override
@@ -55,10 +63,7 @@ public class FireBallAbility extends ChargeCastAbility {
 
     @Override
     public Integer[] getRequiredLevels() {
-        return new Integer[]{0,
-                20,
-                40,
-                45};
+        return new Integer[]{0, 20, 40, 45};
     }
 
     @Override
@@ -69,14 +74,16 @@ public class FireBallAbility extends ChargeCastAbility {
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.damage", getDamage()));
+        components.add(Component.translatable(LangKey.ABILITY_DAMAGE, getDamage()));
 
         if (!Keybind.ABILITY2.get().isUnbound()) {
             String key = Keybind.ABILITY2.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
-            if (key.isEmpty())
+            if (key.isEmpty()) {
                 key = Keybind.ABILITY2.getKey().getDisplayName().getString();
-            components.add(Component.translatable("ds.skill.keybind", key));
+            }
+
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -102,18 +109,20 @@ public class FireBallAbility extends ChargeCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/fireball_4.png")
+        };
     }
 
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + fireballDamage.floatValue()));
-        list.add(Component.translatable("ds.skill.aoe", "+1"));
+        list.add(Component.translatable(LangKey.ABILITY_DAMAGE, "+" + fireballDamage.floatValue()));
+        list.add(Component.translatable(LangKey.ABILITY_AOE, "+1"));
         return list;
     }
 

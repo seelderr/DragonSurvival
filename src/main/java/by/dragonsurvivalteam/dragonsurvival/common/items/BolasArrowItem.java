@@ -19,12 +19,12 @@ public class BolasArrowItem extends ArrowItem {
         super(pProperties);
     }
 
-    public AbstractArrow createArrow(Level pLevel, ItemStack pAmmo, LivingEntity pShooter, @Nullable ItemStack pWeapon) {
-        return new Bolas(pShooter.getX(), pShooter.getEyeY() - 0.1F, pShooter.getZ(), pShooter.level(), new ItemStack(Items.ARROW), pWeapon);
+    public @NotNull AbstractArrow createArrow(@NotNull Level level, @NotNull ItemStack ammo, LivingEntity shooter, @Nullable ItemStack weapon) {
+        return new Bolas(shooter.getX(), shooter.getEyeY() - 0.1F, shooter.getZ(), shooter.level(), new ItemStack(Items.ARROW), weapon);
     }
 
     @Override
-    public @NotNull Projectile asProjectile(@NotNull Level pLevel, Position pPos, @NotNull ItemStack pStack, @NotNull Direction pDirection) {
-        return new Bolas(pPos.x(), pPos.y(), pPos.z(), pLevel, pStack, null);
+    public @NotNull Projectile asProjectile(@NotNull Level level, Position position, @NotNull ItemStack stack, @NotNull Direction direction) {
+        return new Bolas(position.x(), position.y(), position.z(), level, stack, null);
     }
 }

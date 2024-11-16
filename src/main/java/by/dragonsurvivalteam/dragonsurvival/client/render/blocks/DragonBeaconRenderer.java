@@ -28,7 +28,7 @@ public class DragonBeaconRenderer implements BlockEntityRenderer<DragonBeaconTil
         PoseStack.pushPose();
         DragonBeaconTileEntity.Type type = dragonBeaconEntity.type;
 
-        Item item = DSBlocks.DRAGON_BEACON.get().asItem();
+        Item item = DSBlocks.EMPTY_DRAGON_BEACON.get().asItem();
 
         ClientLevel clientWorld = (ClientLevel) dragonBeaconEntity.getLevel();
         Minecraft minecraft = Minecraft.getInstance();

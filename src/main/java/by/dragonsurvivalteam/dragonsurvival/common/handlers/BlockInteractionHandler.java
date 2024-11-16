@@ -24,7 +24,7 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 public class BlockInteractionHandler {
     @SubscribeEvent
     public static void createAltar(PlayerInteractEvent.RightClickBlock rightClickBlock) {
-        if (!ServerConfig.altarCraftable) {
+        if (!ServerConfig.transformAltar) {
             return;
         }
 
@@ -42,32 +42,32 @@ public class BlockInteractionHandler {
                 rightClickBlock.getEntity().isCreative();
                 BlockPlaceContext direction = new BlockPlaceContext(rightClickBlock.getLevel(), rightClickBlock.getEntity(), rightClickBlock.getHand(), rightClickBlock.getItemStack(), new BlockHitResult(new Vec3(0, 0, 0), rightClickBlock.getEntity().getDirection(), blockPos, false));
                 if (block == Blocks.STONE) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_STONE.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.STONE_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (block == Blocks.MOSSY_COBBLESTONE) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.MOSSY_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (block == Blocks.SANDSTONE) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_SANDSTONE.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.SANDSTONE_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (block == Blocks.RED_SANDSTONE) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_RED_SANDSTONE.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.RED_SANDSTONE_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (ResourceHelper.getKey(block).getPath().contains(ResourceHelper.getKey(Blocks.OAK_LOG).getPath())) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_OAK_LOG.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.OAK_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (ResourceHelper.getKey(block).getPath().contains(ResourceHelper.getKey(Blocks.BIRCH_LOG).getPath())) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BIRCH_LOG.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.BIRCH_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (block == Blocks.PURPUR_BLOCK) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.PURPUR_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (block == Blocks.NETHER_BRICKS) {
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_NETHER_BRICKS.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.NETHER_BRICK_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 } else if (block == Blocks.BLACKSTONE) {
                     rightClickBlock.getEntity().getDirection();
-                    world.setBlockAndUpdate(blockPos, DSBlocks.DRAGON_ALTAR_BLACKSTONE.get().getStateForPlacement(direction));
+                    world.setBlockAndUpdate(blockPos, DSBlocks.BLACKSTONE_DRAGON_ALTAR.get().getStateForPlacement(direction));
                     replace = true;
                 }
 

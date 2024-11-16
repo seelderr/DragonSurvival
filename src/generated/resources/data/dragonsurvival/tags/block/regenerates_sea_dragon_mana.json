@@ -4,7 +4,6 @@
     "#minecraft:ice",
     "minecraft:water_cauldron",
     "minecraft:wet_sponge",
-    "minecraft:water",
     "dragonsurvival:sea_source_of_magic",
     {
       "id": "immersive_weathering:thin_ice",

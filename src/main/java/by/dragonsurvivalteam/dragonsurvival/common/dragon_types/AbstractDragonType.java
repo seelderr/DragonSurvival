@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.dragon_types;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.NBTInterface;
 import com.mojang.datafixers.util.Pair;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.player.Player;
@@ -13,35 +14,32 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 
 public abstract class AbstractDragonType implements NBTInterface, Comparable<AbstractDragonType> {
-    public int slotForBonus;
+    /** Determines which claw tool slot affects the claw texture */
+    public int clawTextureSlot;
 
     public abstract String getTypeName();
 
     public abstract void onPlayerUpdate(Player player, DragonStateHandler handler);
 
-    public abstract boolean isInManaCondition(Player player, DragonStateHandler cap);
+    public abstract boolean isInManaCondition(Player player);
 
     public abstract void onPlayerDeath();
 
-    //Not implemented
+    // TODO :: unused
     public abstract List<Pair<ItemStack, FoodData>> validFoods(Player player, DragonStateHandler handler);
 
-    public abstract List<TagKey<Block>> mineableBlocks();
+    public abstract TagKey<Block> harvestableBlocks();
 
     @Override
-    public int compareTo(@NotNull AbstractDragonType o) {
-        return getTypeName().compareTo(o.getTypeName());
+    public int compareTo(@NotNull AbstractDragonType type) {
+        return getTypeName().compareTo(type.getTypeName());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof AbstractDragonType type) {
-            return Objects.equals(type.getSubtypeName(), getSubtypeName());
-        }
-        return super.equals(obj);
+    public boolean equals(Object object) {
+        return super.equals(object) || object instanceof AbstractDragonType type && type.getSubtypeName().equals(getSubtypeName());
     }
 
     @Override
@@ -66,5 +64,8 @@ public abstract class AbstractDragonType implements NBTInterface, Comparable<Abs
     }
 
     public abstract ResourceLocation getFoodIcons();
+
     public abstract ResourceLocation getManaIcons();
+
+    public abstract Component translatableName();
 }

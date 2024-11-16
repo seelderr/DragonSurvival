@@ -8,8 +8,8 @@ import org.checkerframework.checker.nullness.qual.NonNull;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class UndoRedoButton extends ArrowButton {
-    public static final ResourceLocation undo = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_undo.png");
-    public static final ResourceLocation redo = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_redo.png");
+    private static final ResourceLocation UNDO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_undo.png");
+    private static final ResourceLocation REDO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/arrow_redo.png");
 
     public UndoRedoButton(int x, int y, int xSize, int ySize, boolean next, OnPress pressable) {
         super(x, y, xSize, ySize, next, pressable);
@@ -18,9 +18,9 @@ public class UndoRedoButton extends ArrowButton {
     @Override
     public void renderWidget(@NonNull final GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
         if (next) {
-            guiGraphics.blit(redo, getX(), getY(), 0, 0, width, height, width, height);
+            guiGraphics.blit(REDO, getX(), getY(), 0, 0, width, height, width, height);
         } else {
-            guiGraphics.blit(undo, getX(), getY(), 0, 0, width, height, width, height);
+            guiGraphics.blit(UNDO, getX(), getY(), 0, 0, width, height, width, height);
         }
     }
 }

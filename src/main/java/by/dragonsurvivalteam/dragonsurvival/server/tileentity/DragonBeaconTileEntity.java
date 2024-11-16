@@ -56,19 +56,19 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 
             switch (beacon.type) {
                 case PEACE ->
-                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.peaceBeaconEffects).forEach(effect -> {
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.forestDragonBeaconEffects).forEach(effect -> {
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
                 case MAGIC ->
-                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.magicBeaconEffects).forEach(effect -> {
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.seaDragonBeaconEffects).forEach(effect -> {
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
                         }));
                 case FIRE ->
-                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.fireBeaconEffects).forEach(effect -> {
+                        dragons.forEach(player -> ConfigHandler.getResourceElements(MobEffect.class, ServerConfig.caveDragonBeaconEffects).forEach(effect -> {
                             if (effect != null) {
                                 player.addEffect(new MobEffectInstance(BuiltInRegistries.MOB_EFFECT.getHolder(BuiltInRegistries.MOB_EFFECT.getId(effect)).get(), Functions.secondsToTicks(ServerConfig.secondsOfBeaconEffect) + 5, 0, true, true));
                             }
@@ -84,11 +84,11 @@ public class DragonBeaconTileEntity extends BaseBlockTileEntity {
 
     private static void setType(final DragonBeaconTileEntity beaconTileEntity, final Block beacon) {
         if (beaconTileEntity.type == Type.NONE) {
-            if (beacon == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
-                beaconTileEntity.type = Type.MAGIC;
-            } else if (beacon == DSBlocks.PEACE_DRAGON_BEACON.get()) {
+            if (beacon == DSBlocks.SEA_DRAGON_BEACON.get()) {
                 beaconTileEntity.type = Type.PEACE;
-            } else if (beacon == DSBlocks.FIRE_DRAGON_BEACON.get()) {
+            } else if (beacon == DSBlocks.FOREST_DRAGON_BEACON.get()) {
+                beaconTileEntity.type = Type.MAGIC;
+            } else if (beacon == DSBlocks.CAVE_DRAGON_BEACON.get()) {
                 beaconTileEntity.type = Type.FIRE;
             }
         }

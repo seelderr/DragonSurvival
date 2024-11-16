@@ -6,13 +6,23 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.MagicAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Magic points (Mana) are used for dragon magic. Restores on wet blocks.\n",
+        "■ Current amount of §2%s§r mana:",
+        " - §2%s§r from «Sea Magic»",
+        " - §2%s§r body type",
+        " - §2%s§r from experience"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Sea Magic")
 @RegisterDragonAbility
 public class SeaMagicAbility extends MagicAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "seaMagic", comment = "Whether the sea magic ability should be enabled")
+    @Translation(key = "sea_magic", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the sea magic ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "passive"}, key = "sea_magic")
     public static Boolean seaMagic = true;
 
     @Override
@@ -37,7 +47,8 @@ public class SeaMagicAbility extends MagicAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/sea_magic_3.png"),

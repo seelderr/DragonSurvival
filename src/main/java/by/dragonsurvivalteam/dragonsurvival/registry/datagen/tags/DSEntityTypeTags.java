@@ -66,7 +66,7 @@ public class DSEntityTypeTags extends EntityTypeTagsProvider {
                 .add(EntityType.WITHER)
                 .addOptionalTag(ResourceLocation.fromNamespaceAndPath("zombiemobs", "zombie_animals"));
 
-        // TODO :: currently unused
+        // Used in 'curse_of_kindness' enchantment
         tag(key("hunter_faction"))
                 .add(EntityType.VILLAGER)
                 .add(DSEntities.HUNTER_AMBUSHER.value())

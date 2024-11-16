@@ -10,14 +10,17 @@
     "BlockMixin",
     "EntityMixin",
     "FireworkRocketItemMixin",
+    "Holder$ReferenceAccess",
     "IItemExtensionMixin",
     "ILivingEntityExtensionMixin",
     "ItemEntityMixin",
     "ItemStackMixin",
     "LivingEntityMixin",
+    "MaceItemMixin",
     "PlayerEndMixin",
     "PlayerMixin",
     "PlayerStartMixin",
+    "ServerGamePacketListenerImplMixin",
     "ServerPlayerGameModeMixin",
     "SleepStatusMixin",
     "SwellGoalMixin",
@@ -55,5 +58,8 @@
     "sodium.ClientNeoForgeModMixin",
     "tool_swap.MultiPlayerGameModeEndMixin",
     "tool_swap.MultiPlayerGameModeStartMixin"
-  ]
+  ],
+  "injectors": {
+    "maxShiftBy": 2
+  }
 }

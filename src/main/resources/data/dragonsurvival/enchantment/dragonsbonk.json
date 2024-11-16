@@ -1,7 +1,7 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.dragonsbonk"
+    "translate": "enchantment.dragonsurvival.dragonsbonk"
   },
   "effects": {
     "minecraft:post_attack": [
@@ -51,7 +51,6 @@
       }
     ]
   },
-
   "exclusive_set": "#dragonsurvival:exclusive_set/anti_dragon",
   "max_cost": {
     "base": 21,

@@ -87,9 +87,7 @@ public class DragonUtils {
         return false;
     }
 
-    /**
-     * Converts the supplied harvest level to a corresponding vanilla tier
-     */
+    /** Converts the supplied harvest level to a corresponding vanilla tier */
     public static @Nullable Tier levelToVanillaTier(int level) {
         if (level < 0) {
             return null;

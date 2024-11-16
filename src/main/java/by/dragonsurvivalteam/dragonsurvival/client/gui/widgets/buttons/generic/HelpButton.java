@@ -18,11 +18,13 @@ import java.util.Objects;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class HelpButton extends ExtendedButton {
-    public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
-    public String text;
-    public int variation;
-    public AbstractDragonType type;
-    boolean usesVanillaTooltip = false;
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/help_button.png");
+
+    private final String text;
+    private final int variation;
+    private final AbstractDragonType type;
+
+    private boolean usesVanillaTooltip;
 
     public HelpButton(int x, int y, int sizeX, int sizeY, String text, int variation) {
         this(DragonUtils.getDragonType(Minecraft.getInstance().player), x, y, sizeX, sizeY, text, variation);
@@ -38,8 +40,7 @@ public class HelpButton extends ExtendedButton {
     }
 
     public HelpButton(AbstractDragonType type, int x, int y, int sizeX, int sizeY, String text, int variation) {
-        super(x, y, sizeX, sizeY, Component.empty(), s -> {
-        });
+        super(x, y, sizeX, sizeY, Component.empty(), action -> { /* Nothing to do */ });
         this.text = text;
         this.variation = variation;
         this.type = type;
@@ -47,7 +48,7 @@ public class HelpButton extends ExtendedButton {
 
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.setShaderTexture(0, TEXTURE);
 
         float size = variation == 0 ? 18f : 22f;
         float xSize = (float) (width + (variation == 0 ? 0 : 2)) / size;
@@ -56,7 +57,6 @@ public class HelpButton extends ExtendedButton {
         int i = 0;
         if (isHovered() && !usesVanillaTooltip) {
             i += (int) ((Objects.equals(type, DragonTypes.CAVE) ? 1 : Objects.equals(type, DragonTypes.FOREST) ? 2 : Objects.equals(type, DragonTypes.SEA) ? 3 : 4) * size);
-
             // Render the tooltip manually since minecraft's tooltip positioner often fails with this button type
             guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, List.of(Component.translatable(text)), mouseX, mouseY);
         }
@@ -66,16 +66,16 @@ public class HelpButton extends ExtendedButton {
         guiGraphics.pose().scale(xSize, ySize, 0);
 
         if (variation == 0) {
-            guiGraphics.blit(texture, getX(), getY(), 0, (float) i, 18, 18, 256, 256);
+            guiGraphics.blit(TEXTURE, getX(), getY(), 0, (float) i, 18, 18, 256, 256);
         } else {
-            guiGraphics.blit(texture, getX() - 1, getY() - 1, 18, (float) i, 22, 22, 256, 256);
+            guiGraphics.blit(TEXTURE, getX() - 1, getY() - 1, 18, (float) i, 22, 22, 256, 256);
         }
 
         guiGraphics.pose().popPose();
     }
 
     @Override
-    public boolean mouseClicked(double p_231044_1_, double p_231044_3_, int p_231044_5_) {
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
         return false;
     }
 }

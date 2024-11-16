@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncBrokenTool;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -12,9 +13,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -22,12 +21,12 @@ import net.minecraft.world.item.DiggerItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.Enchantments;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -76,26 +75,20 @@ public class ClawToolHandler {
         });
     }
 
-    // This needs to happen as early as possible to make sure drops are added before other mods interact with them
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST) // In order to add the drops early for other mods (e.g. grave mods)
     public static void playerDieEvent(LivingDropsEvent event) {
-        Entity ent = event.getEntity();
+        if (!ServerConfig.retainClawItems && event.getEntity() instanceof Player player && !player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY)) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        if (ent instanceof Player player) {
-            if (!player.level().getGameRules().getBoolean(GameRules.RULE_KEEPINVENTORY) && !ServerConfig.keepClawItems) {
-                DragonStateHandler handler = DragonStateProvider.getData(player);
+            for (int i = 0; i < ClawInventory.Slot.size(); i++) {
+                ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
 
-                for (int i = 0; i < ClawInventory.Slot.size(); i++) {
-                    ItemStack stack = handler.getClawToolData().getClawsInventory().getItem(i);
-
-                    if (!stack.isEmpty()) {
-                        Holder<Enchantment> vanishingCurse = player.level().registryAccess().registry(Registries.ENCHANTMENT).get().getHolderOrThrow(Enchantments.VANISHING_CURSE);
-                        if (EnchantmentHelper.getTagEnchantmentLevel(vanishingCurse, stack) == 0) {
-                            event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
-                        }
-
-                        handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
+                if (!stack.isEmpty()) {
+                    if (!EnchantmentHelper.has(stack, EnchantmentEffectComponents.PREVENT_EQUIPMENT_DROP)) {
+                        event.getDrops().add(new ItemEntity(player.level(), player.getX(), player.getY(), player.getZ(), stack));
                     }
+
+                    handler.getClawToolData().getClawsInventory().setItem(i, ItemStack.EMPTY);
                 }
             }
         }
@@ -103,19 +96,23 @@ public class ClawToolHandler {
 
     @SubscribeEvent
     public static void dropBlocksMinedByPaw(PlayerEvent.HarvestCheck harvestCheck) {
-        if (!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools) {
+        if (!DragonBonusConfig.bonusesEnabled || !DragonBonusConfig.clawsAreTools) {
             return;
         }
-        Player playerEntity = harvestCheck.getEntity();
-        DragonStateProvider.getOptional(playerEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon()) {
-                ItemStack stack = playerEntity.getMainHandItem();
-                BlockState blockState = harvestCheck.getTargetBlock();
-                if (ToolUtils.shouldUseDragonTools(stack) && !harvestCheck.canHarvest()) {
-                    harvestCheck.setCanHarvest(dragonStateHandler.canHarvestWithPaw(blockState));
-                }
-            }
-        });
+
+        Player player = harvestCheck.getEntity();
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (!data.isDragon()) {
+            return;
+        }
+
+        ItemStack stack = player.getMainHandItem();
+        BlockState state = harvestCheck.getTargetBlock();
+
+        if (!harvestCheck.canHarvest() && ToolUtils.shouldUseDragonTools(stack)) {
+            harvestCheck.setCanHarvest(data.canHarvestWithPaw(state));
+        }
     }
 
     public static ItemStack getDragonHarvestTool(final Player player, final BlockState state) {
@@ -194,7 +191,6 @@ public class ClawToolHandler {
 
         if (result.getType() != HitResult.Type.MISS) {
             BlockState state = world.getBlockState(result.getBlockPos());
-
             return getDragonHarvestTool(player, state);
         }
 
@@ -216,14 +212,10 @@ public class ClawToolHandler {
             return ItemStack.EMPTY;
         }
 
-        DragonStateHandler cap = DragonStateProvider.getData(player);
-
-        return cap.getClawToolData().getClawsInventory().getItem(0);
+        return DragonStateProvider.getData(player).getClawToolData().getSword();
     }
 
-    /**
-     * Handle tool breaking for the dragon
-     */
+    /** Handle tool breaking for the dragon */
     @SubscribeEvent
     public static void onToolBreak(final PlayerDestroyItemEvent event) {
         if (event.getHand() == null) return;
@@ -239,7 +231,7 @@ public class ClawToolHandler {
                     DragonStateHandler handler = DragonStateProvider.getData(player);
 
                     if (handler.switchedTool || handler.switchedWeapon) {
-                        player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
+                        player.level().playSound(null, player.blockPosition(), SoundEvents.ITEM_BREAK, SoundSource.PLAYERS, 1, 1);
                         player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
                         PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncBrokenTool.Data(player.getId(), handler.switchedTool ? handler.switchedToolSlot : ClawInventory.Slot.SWORD.ordinal()));
                     }
@@ -250,7 +242,7 @@ public class ClawToolHandler {
 
     @SubscribeEvent
     public static void modifyBreakSpeed(final PlayerEvent.BreakSpeed event) {
-        if (!ServerConfig.bonusesEnabled || !ServerConfig.clawsAreTools) {
+        if (!DragonBonusConfig.bonusesEnabled || !DragonBonusConfig.clawsAreTools) {
             return;
         }
 
@@ -272,32 +264,28 @@ public class ClawToolHandler {
         float bonus = 0;
         float unlockedBonus = 0;
 
-        if (handler.getLevel() == DragonLevel.NEWBORN && ServerConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-            unlockedBonus = ServerConfig.bonusBreakSpeed;
-        } else if (handler.getLevel() == DragonLevel.YOUNG && ServerConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-            unlockedBonus = ServerConfig.bonusBreakSpeed;
+        if (handler.getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
+            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
+        } else if (handler.getLevel() == DragonLevel.YOUNG && DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
+            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
         } else if (handler.getLevel() == DragonLevel.ADULT) {
-            unlockedBonus = ServerConfig.bonusBreakSpeedAdult;
-            bonus = ServerConfig.baseBreakSpeedAdult;
+            unlockedBonus = DragonBonusConfig.bonusBreakSpeedAdult;
+            bonus = DragonBonusConfig.baseBreakSpeedAdult;
+        }
+
+        if (unlockedBonus > bonus && state.is(handler.getType().harvestableBlocks())) {
+            bonus = unlockedBonus;
         }
 
         for (int i = 0; i < ClawInventory.Slot.size(); i++) {
             ItemStack clawTool = handler.getClawToolData().getClawsInventory().getItem(i);
 
             if (state.requiresCorrectToolForDrops() && clawTool.isCorrectToolForDrops(state) || clawTool.getDestroySpeed(state) > 1) {
-                bonus /= ServerConfig.bonusBreakSpeedReduction;
+                bonus /= DragonBonusConfig.bonusBreakSpeedReduction;
                 break;
             }
         }
 
-        for (TagKey<Block> tagKey : handler.getType().mineableBlocks()) {
-            if (state.is(tagKey) && unlockedBonus > bonus) {
-                bonus = unlockedBonus;
-                break;
-            }
-        }
-
-        // Don't discard the changes other mods already did to the harvest speed
         event.setNewSpeed(event.getNewSpeed() * Math.max(1, bonus));
     }
 }

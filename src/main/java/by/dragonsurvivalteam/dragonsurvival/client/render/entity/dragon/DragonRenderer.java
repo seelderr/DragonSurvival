@@ -6,8 +6,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
-import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.Minecraft;
@@ -28,9 +26,6 @@ import java.util.HashSet;
 import java.util.List;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
-    @ConfigOption(side = ConfigSide.CLIENT, key = "renderHeldItem", comment = "Should items be rendered in third person for dragon players?", category = "rendering")
-    public static boolean renderHeldItem = true;
-
     public ResourceLocation glowTexture = null;
 
     public boolean shouldRenderLayers = true;
@@ -46,8 +41,10 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         magicAnimations.add("cast_self_buff");
         magicAnimations.add("self_buff");
         magicAnimations.add("fly_head_locked_magic");
-        magicAnimations.add("sit_dentist_on_magic_source");
         magicAnimations.add("flapping_wings_standing");
+        magicAnimations.add("fly_head_locked");
+        magicAnimations.add("sit_on_magic_source");
+        magicAnimations.add("sit_dentist");
     }
 
     public DragonRenderer(final EntityRendererProvider.Context context, final GeoModel<DragonEntity> model) {
@@ -132,7 +129,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
             GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
             GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
 
-            if (animations.stream().anyMatch(magicAnimations::contains)) {
+            if (!animations.stream().anyMatch(magicAnimations::contains)) {
                 magic.setHidden(true);
                 magicCircle.setHidden(true);
             } else {

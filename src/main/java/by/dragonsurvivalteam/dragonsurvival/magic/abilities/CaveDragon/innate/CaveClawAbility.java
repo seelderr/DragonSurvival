@@ -4,10 +4,16 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.innate.DragonClawsAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.resources.ResourceLocation;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ Cave dragons §2can§r deal increased damage, and may mine stone blocks without tools. This ability gets stronger as you grow.\n",
+        "■ §cCannot§r ride horses and use several items."
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Claws and Teeth")
 @RegisterDragonAbility
 public class CaveClawAbility extends DragonClawsAbility {
     @Override

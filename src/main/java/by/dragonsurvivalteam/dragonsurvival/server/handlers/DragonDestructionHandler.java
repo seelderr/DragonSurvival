@@ -30,7 +30,7 @@ public class DragonDestructionHandler {
     public static float boundingBoxSizeRatioForCrushing = 4.0f;
 
     private static void checkAndDestroyCollidingBlocks(DragonStateHandler dragonStateHandler, PlayerTickEvent event, AABB boundingBox) {
-        if (!ServerConfig.allowLargeBlockDestruction) {
+        if (!ServerConfig.allowBlockDestruction) {
             return;
         }
 
@@ -58,14 +58,14 @@ public class DragonDestructionHandler {
                     if (!blockstate.isAir()) {
                         boolean isInTag = blockstate.is(DSBlockTags.GIANT_DRAGON_DESTRUCTIBLE);
 
-                        if (!isInTag && ServerConfig.useBlacklistForDestructibleBlocks) {
-                            if (random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
+                        if (!isInTag && ServerConfig.destructibleBlocksIsBlacklist) {
+                            if (random.nextFloat() > ServerConfig.blockDestructionRemoval) {
                                 player.level().destroyBlock(blockpos, false);
                             } else {
                                 player.level().removeBlock(blockpos, false);
                             }
                         } else if (isInTag) {
-                            if (random.nextFloat() > ServerConfig.largeBlockDestructionRemovePercentage) {
+                            if (random.nextFloat() > ServerConfig.blockDestructionRemoval) {
                                 player.level().destroyBlock(blockpos, false);
                             } else {
                                 player.level().removeBlock(blockpos, false);
@@ -130,7 +130,7 @@ public class DragonDestructionHandler {
 
     @SubscribeEvent
     public static void checkAndDestroyCollidingBlocksAndCrushedEntities(PlayerTickEvent.Post event) {
-        if (!ServerConfig.allowLargeBlockDestruction && !ServerConfig.allowCrushing) {
+        if (!ServerConfig.allowBlockDestruction && !ServerConfig.allowCrushing) {
             return;
         }
 

@@ -1,21 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonTraitHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.WaterAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.player.Player;
@@ -30,29 +33,33 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
+import java.util.Optional;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class SeaDragonType extends AbstractDragonType {
-    public ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
-    public static ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
+    @Translation(type = Translation.Type.MISC, comments = "Sea Dragon")
+    private static final String NAME = Translation.Type.DESCRIPTION.wrap("sea_dragon");
+
+    private static final ResourceLocation SEA_FOOD = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_food_icons.png");
+    private static final ResourceLocation SEA_MANA = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/sea_magic_icons.png");
 
     public double timeWithoutWater;
 
     public SeaDragonType() {
-        slotForBonus = 3;
+        clawTextureSlot = ClawInventory.Slot.SHOVEL.ordinal();
     }
 
     @Override
     public CompoundTag writeNBT() {
         CompoundTag tag = new CompoundTag();
-        tag.putDouble("timeWithoutWater", timeWithoutWater);
+        tag.putDouble("time_without_water", timeWithoutWater);
         return tag;
     }
 
     @Override
     public void readNBT(CompoundTag base) {
-        timeWithoutWater = base.getDouble("timeWithoutWater");
+        timeWithoutWater = base.getDouble("time_without_water");
     }
 
     @Override
@@ -64,11 +71,11 @@ public class SeaDragonType extends AbstractDragonType {
     public void onPlayerUpdate(Player player, DragonStateHandler dragonStateHandler) {
         Level level = player.level();
         boolean isInSeaBlock = DragonTraitHandler.isInCauldron(player, Blocks.WATER_CAULDRON) || player.getBlockStateOn().is(DSBlockTags.HYDRATES_SEA_DRAGON);
-        int maxTicksOutofWater = ServerConfig.seaTicksWithoutWater;
-        WaterAbility waterAbility = DragonAbilities.getSelfAbility(player, WaterAbility.class);
+        int maxTicksOutofWater = SeaDragonConfig.seaTicksWithoutWater;
+        Optional<WaterAbility> waterAbility = DragonAbilities.getAbility(player, WaterAbility.class);
 
-        if (waterAbility != null) {
-            maxTicksOutofWater += Functions.secondsToTicks(waterAbility.getDuration());
+        if (waterAbility.isPresent()) {
+            maxTicksOutofWater += Functions.secondsToTicks(waterAbility.get().getDuration());
         }
 
         double oldWaterTime = timeWithoutWater;
@@ -88,7 +95,7 @@ public class SeaDragonType extends AbstractDragonType {
                         Biome biome = level.getBiome(player.blockPosition()).value();
                         boolean hotBiome = biome.getPrecipitationAt(player.blockPosition()) == Precipitation.NONE && biome.getBaseTemperature() > 1.0;
                         double timeIncrement = (level.isNight() ? 0.5F : 1.0) * (hotBiome ? biome.getBaseTemperature() : 1F);
-                        timeWithoutWater += ServerConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
+                        timeWithoutWater += SeaDragonConfig.seaTicksBasedOnTemperature ? timeIncrement : 1;
                     }
 
                     if (player.isInWaterRainOrBubble() || isInSeaBlock) {
@@ -99,7 +106,7 @@ public class SeaDragonType extends AbstractDragonType {
 
 
                     if (!player.level().isClientSide()) {
-                        float hydrationDamage = ServerConfig.seaDehydrationDamage.floatValue();
+                        float hydrationDamage = SeaDragonConfig.seaDehydrationDamage.floatValue();
 
                         if (timeWithoutWater > maxTicksOutofWater && timeWithoutWater < maxTicksOutofWater * 2) {
                             if (player.tickCount % 40 == 0) {
@@ -129,7 +136,7 @@ public class SeaDragonType extends AbstractDragonType {
 
 
     @Override
-    public boolean isInManaCondition(final Player player, final DragonStateHandler cap) {
+    public boolean isInManaCondition(final Player player) {
         return player.isInWaterRainOrBubble() || player.hasEffect(DSEffects.CHARGED) || player.hasEffect(DSEffects.PEACE);
     }
 
@@ -154,7 +161,12 @@ public class SeaDragonType extends AbstractDragonType {
     }
 
     @Override
-    public List<TagKey<Block>> mineableBlocks(){
-        return List.of(BlockTags.MINEABLE_WITH_SHOVEL);
+    public TagKey<Block> harvestableBlocks(){
+        return DSBlockTags.SEA_DRAGON_HARVESTABLE;
+    }
+
+    @Override
+    public Component translatableName() {
+        return Component.translatable(NAME);
     }
 }

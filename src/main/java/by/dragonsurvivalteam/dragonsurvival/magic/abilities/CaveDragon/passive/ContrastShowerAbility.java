@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -14,9 +15,15 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = {
+        "■ You are resistant to Rain, snow and snowfall for: §2%s§rs\n",
+        "■ Water, potions and snowballs are still dangerous"
+})
+@Translation(type = Translation.Type.ABILITY, comments = "Contrast Shower")
 @RegisterDragonAbility
 public class ContrastShowerAbility extends PassiveDragonAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "passives"}, key = "contrastShower", comment = "Whether the contrast shower ability should be enabled")
+    @Translation(key = "contrast_shower", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the contrast shower ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "passive"}, key = "contrast_shower")
     public static Boolean contrastShower = true;
 
     @Override
@@ -26,7 +33,7 @@ public class ContrastShowerAbility extends PassiveDragonAbility {
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDuration());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDuration());
     }
 
     @Override
@@ -41,12 +48,14 @@ public class ContrastShowerAbility extends PassiveDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_3.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_4.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_5.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/contrast_shower_5.png")
+        };
     }
 
 
@@ -57,7 +66,7 @@ public class ContrastShowerAbility extends PassiveDragonAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.duration.seconds", "+30"));
+        list.add(Component.translatable(LangKey.ABILITY_DURATION, "+30"));
         return list;
     }
 

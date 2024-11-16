@@ -33,14 +33,15 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public class DragonEditorRegistry {
-    public static final String SAVED_FILE_NAME = "saved_customizations.json";
-    public static final ResourceLocation CUSTOMIZATION = ResourceLocation.fromNamespaceAndPath(MODID, "customization.json");
     public static final HashMap<String, HashMap<EnumSkinLayer, DragonTextureMetadata[]>> CUSTOMIZATIONS = new HashMap<>();
-    private static boolean init = false;
-    private static SavedSkinPresets savedCustomizations = null;
-    public static HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
-    public static File folder;
     public static File savedFile;
+
+    private static final ResourceLocation CUSTOMIZATION = ResourceLocation.fromNamespaceAndPath(MODID, "customization.json");
+    private static final String SAVED_FILE_NAME = "saved_customizations.json";
+    private static boolean init = false;
+
+    private static SavedSkinPresets savedCustomizations;
+    private static HashMap<String, HashMap<DragonLevel, HashMap<EnumSkinLayer, String>>> defaultSkinValues = new HashMap<>();
 
     public static String getDefaultPart(AbstractDragonType type, DragonLevel level, EnumSkinLayer layer) {
         return defaultSkinValues.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(level, new HashMap<>()).getOrDefault(layer, SkinCap.defaultSkinValue);
@@ -70,7 +71,7 @@ public class DragonEditorRegistry {
 
         reload(Minecraft.getInstance().getResourceManager(), CUSTOMIZATION);
 
-        folder = new File(FMLPaths.GAMEDIR.get().toFile(), "dragon-survival");
+        File folder = new File(FMLPaths.GAMEDIR.get().toFile(), "dragon-survival");
         savedFile = new File(folder, SAVED_FILE_NAME);
 
         if (!folder.exists()) {
@@ -127,7 +128,7 @@ public class DragonEditorRegistry {
                     DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
                 }
             } catch (FileNotFoundException exception) {
-                DragonSurvival.LOGGER.error("Saved customization [" + savedFile.getName() + "] could not be found", exception);
+                DragonSurvival.LOGGER.error("Saved customization [{}] could not be found", savedFile.getName(), exception);
             }
         }
 
@@ -157,7 +158,7 @@ public class DragonEditorRegistry {
                 DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvival.LOGGER.error("Resource [" + location + "] could not be opened", exception);
+            DragonSurvival.LOGGER.error("Resource [{}] could not be opened", location, exception);
         }
     }
 

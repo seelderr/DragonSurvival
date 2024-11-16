@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.active;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -11,6 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.AoeBuffAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSParticles;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -22,30 +23,40 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "Grants additional armor points to all entities in an area around the dragon.")
+@Translation(type = Translation.Type.ABILITY, comments = "Sturdy Skin") // TODO :: strong leather, tough skin or sturdy skin?
 @RegisterDragonAbility
 public class ToughSkinAbility extends AoeBuffAbility {
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Defense:§r %s")
+    private static final String DEFENSE = Translation.Type.ABILITY_DESCRIPTION.wrap("tough_skin.defense");
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinEnabled", comment = "Whether the tough skin ability should be enabled")
+    @Translation(key = "tough_skin", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the tough skin ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin")
     public static Boolean toughSkinEnabled = true;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinDuration", comment = "The duration in seconds of the tough skin effect given when the ability is used")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "tough_skin_duration", type = Translation.Type.CONFIGURATION, comments = "The duration (in seconds) of the effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_duration")
     public static Double toughSkinDuration = 200.0;
 
-    @ConfigRange(min = 1.0, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCooldown", comment = "The cooldown in seconds of the tough skin ability")
+    @ConfigRange(min = 1.0, max = 10_000.0)
+    @Translation(key = "tough_skin_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_cooldown")
     public static Double toughSkinCooldown = 30.0;
 
-    @ConfigRange(min = 1, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinCasttime", comment = "The cast time in seconds of the tough skin ability")
-    public static Double toughSkinCasttime = 1.0;
+    @ConfigRange(min = 1, max = 10_000)
+    @Translation(key = "tough_skin_cast_time", type = Translation.Type.CONFIGURATION, comments = "Cast time (in seconds)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_cast_time")
+    public static Double toughSkinCasttime = 2.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinManaCost", comment = "The mana cost for using the tough skin ability")
+    @Translation(key = "tough_skin_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_mana_cost")
     public static Integer toughSkinManaCost = 1;
 
-    @ConfigRange(min = 0, max = 10000)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "cave_dragon", "actives", "tough_skin"}, key = "toughSkinArmorValue", comment = "The amount of extra armor given per level of tough skin effect")
+    @ConfigRange(min = 0, max = 10_000)
+    @Translation(key = "tough_skin_armor_scaling", type = Translation.Type.CONFIGURATION, comments = "Amount of extra armor per level of tough skin effect")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"cave_dragon", "magic", "abilities", "active", "tough_skin"}, key = "tough_skin_armor_scaling")
     public static Double toughSkinArmorValue = 3.0;
 
     @Override
@@ -66,16 +77,16 @@ public class ToughSkinAbility extends AoeBuffAbility {
             components = new ArrayList<>(components.subList(0, components.size() - 1));
         }
 
-        components.add(Component.translatable("ds.skill.duration.seconds", toughSkinDuration));
+        components.add(Component.translatable(LangKey.ABILITY_DURATION, toughSkinDuration));
 
         if (!Keybind.ABILITY3.get().isUnbound()) {
-
             String key = Keybind.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
             if (key.isEmpty()) {
                 key = Keybind.ABILITY3.getKey().getDisplayName().getString();
             }
-            components.add(Component.translatable("ds.skill.keybind", key));
+
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -108,12 +119,12 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @Override
     public MobEffectInstance getEffect() {
-        return new MobEffectInstance(DSEffects.STRONG_LEATHER, Functions.secondsToTicks(toughSkinDuration), getLevel() - 1);
+        return new MobEffectInstance(DSEffects.STRONG_LEATHER, Functions.secondsToTicks(toughSkinDuration), getLevel() - 1, false, false);
     }
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), toughSkinDuration, getDefence(getLevel()));
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), toughSkinDuration, getDefence(getLevel()));
     }
 
     @Override
@@ -128,10 +139,12 @@ public class ToughSkinAbility extends AoeBuffAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_2.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/cave/strong_leather_3.png")
+        };
     }
 
 
@@ -142,7 +155,7 @@ public class ToughSkinAbility extends AoeBuffAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.defence", "+" + toughSkinArmorValue));
+        list.add(Component.translatable(DEFENSE, "+" + toughSkinArmorValue));
         return list;
     }
 

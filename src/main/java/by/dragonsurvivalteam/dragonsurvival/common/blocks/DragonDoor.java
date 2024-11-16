@@ -82,25 +82,26 @@ public class DragonDoor extends Block implements SimpleWaterloggedBlock {
     }
 
     @Override
-    public BlockState updateShape(BlockState stateIn, Direction facing, BlockState facingState, LevelAccessor worldIn, BlockPos currentPos, BlockPos facingPos) {
-        Part part = stateIn.getValue(PART);
-        //TODO
-
-        if (stateIn.getValue(WATERLOGGED)) {
-            worldIn.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(worldIn));
+    public @NotNull BlockState updateShape(BlockState state, @NotNull Direction facing, @NotNull BlockState facingState, @NotNull LevelAccessor level, @NotNull BlockPos position, @NotNull BlockPos facingPosition) {
+        if (state.getValue(WATERLOGGED)) {
+            level.scheduleTick(position, Fluids.WATER, Fluids.WATER.getTickDelay(level));
         }
 
-        if (facing.getAxis() == Direction.Axis.Y && (part == Part.BOTTOM == (facing == Direction.UP) || part == Part.MIDDLE == (facing == Direction.UP))) {
-            return facingState.getBlock() == this && facingState.getValue(PART) != part ? stateIn.setValue(FACING, facingState.getValue(FACING)).setValue(OPEN, facingState.getValue(OPEN)).setValue(HINGE, facingState.getValue(HINGE)).setValue(POWERED, facingState.getValue(POWERED)) : Blocks.AIR.defaultBlockState();
-        } else {
-            return part == Part.BOTTOM && facing == Direction.DOWN && !stateIn.canSurvive(worldIn, currentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(stateIn, facing, facingState, worldIn, currentPos, facingPos);
+        if (facing.getAxis() == Direction.Axis.Y && state.is(facingState.getBlock())) {
+            // Update the other door parts to match the changed door part
+            return state.setValue(FACING, facingState.getValue(FACING))
+                    .setValue(OPEN, facingState.getValue(OPEN))
+                    .setValue(HINGE, facingState.getValue(HINGE))
+                    .setValue(POWERED, facingState.getValue(POWERED));
         }
+
+        return canSurvive(state, level, position) ? super.updateShape(state, facing, facingState, level, position, facingPosition) : Blocks.AIR.defaultBlockState();
     }
 
     @Override
     public void neighborChanged(BlockState state, Level worldIn, BlockPos pos, Block blockIn, BlockPos fromPos, boolean isMoving) {
         boolean validPower = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.NONE || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.POWER;
-        boolean validType = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.SEA_PRESSURE_PLATE.get() || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.FOREST_PRESSURE_PLATE.get() || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.CAVE_PRESSURE_PLATE.get();
+        boolean validType = state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.SEA && blockIn == DSBlocks.SEA_DRAGON_PRESSURE_PLATE.get() || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.FOREST && blockIn == DSBlocks.FOREST_DRAGON_PRESSURE_PLATE.get() || state.getValue(OPEN_REQ) == DragonDoorOpenRequirement.CAVE && blockIn == DSBlocks.CAVE_DRAGON_PRESSURE_PLATE.get();
         if (validPower || validType) {
             boolean flag = worldIn.hasNeighborSignal(pos) || worldIn.hasNeighborSignal(pos.relative(state.getValue(PART) == Part.BOTTOM ? Direction.UP : Direction.DOWN));
             if (blockIn != this && flag != state.getValue(POWERED)) {

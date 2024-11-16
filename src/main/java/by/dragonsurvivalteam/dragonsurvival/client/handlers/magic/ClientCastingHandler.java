@@ -35,7 +35,7 @@ public class ClientCastingHandler {
             Keybind.ABILITY4
     };
 
-    @SubscribeEvent
+    @SubscribeEvent // FIXME :: why isnt this using the keybind event
     public static void onTick(ClientTickEvent.Post clientTickEvent) {
         Minecraft instance = Minecraft.getInstance();
         if (instance.player == null || instance.level == null)
@@ -67,7 +67,7 @@ public class ClientCastingHandler {
         if (Keybind.NEXT_ABILITY.consumeClick()) {
             selectedSlot = (selectedSlot + 1) % slotKeybinds.length;
         }
-        if (Keybind.PREV_ABILITY.consumeClick()) {
+        if (Keybind.PREVIOUS_ABILITY.consumeClick()) {
             // Add length because % can return a negative remainder
             selectedSlot = (selectedSlot - 1 + slotKeybinds.length) % slotKeybinds.length;
         }

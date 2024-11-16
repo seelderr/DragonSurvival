@@ -3,8 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.hud;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -15,10 +13,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
 public class FoodBar {
-    private static final ResourceLocation FOOD_ICONS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/dragon_hud.png");
     private static final RandomSource RANDOM = RandomSource.create();
 
     public static boolean render(final Gui gui, final GuiGraphics guiGraphics, int width, int height) {
@@ -69,9 +64,5 @@ public class FoodBar {
         Minecraft.getInstance().getProfiler().pop();
 
         return true;
-    }
-
-    public static int getFoodOffset(DragonStateHandler handler) {
-        return DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 9 : 18;
     }
 }

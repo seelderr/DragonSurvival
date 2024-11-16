@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.active;
 
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.AbilityAnimation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.network.chat.Component;
@@ -16,12 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-
 public abstract class AoeBuffAbility extends ChargeCastAbility {
     @Override
-    public void onCasting(Player player, int currentCastTime) {
-
-    }
+    public void onCasting(Player player, int currentCastTime) { }
 
     @Override
     public void castingComplete(Player player) {
@@ -56,15 +54,17 @@ public abstract class AoeBuffAbility extends ChargeCastAbility {
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.duration.seconds", Functions.ticksToSeconds(getEffect().getDuration())));
-        components.add(Component.translatable("ds.skill.aoe", getRange() + "x" + getRange()));
+        components.add(Component.translatable(LangKey.ABILITY_DURATION, Functions.ticksToSeconds(getEffect().getDuration())));
+        components.add(Component.translatable(LangKey.ABILITY_AOE, getRange() + "x" + getRange()));
 
         if (!Keybind.ABILITY3.get().isUnbound()) {
             String key = Keybind.ABILITY3.getKey().getDisplayName().getString().toUpperCase(Locale.ROOT);
 
-            if (key.isEmpty())
+            if (key.isEmpty()) {
                 key = Keybind.ABILITY3.getKey().getDisplayName().getString();
-            components.add(Component.translatable("ds.skill.keybind", key));
+            }
+
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;

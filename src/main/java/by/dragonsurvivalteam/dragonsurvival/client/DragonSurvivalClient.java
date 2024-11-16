@@ -2,6 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.extensions.ShakeWhenUsedExtension;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.ClientDietComponent;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.DietComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonBoots;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonChestplate;
 import by.dragonsurvivalteam.dragonsurvival.client.models.aligned_armor.DragonHelmet;
@@ -35,6 +37,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
@@ -53,6 +56,7 @@ public class DragonSurvivalClient {
 
         bus.addListener(this::setup);
         bus.addListener(this::registerItemExtensions);
+        bus.addListener(this::registerTooltips);
     }
 
     private void setup(final FMLClientSetupEvent event) {
@@ -79,69 +83,75 @@ public class DragonSurvivalClient {
         });
     }
 
+    private void registerTooltips(final RegisterClientTooltipComponentFactoriesEvent event) {
+        event.register(DietComponent.class, ClientDietComponent::new);
+    }
+
     private void registerItemExtensions(RegisterClientExtensionsEvent event) {
         event.registerItem(new ShakeWhenUsedExtension(), DSItems.DRAGON_SOUL.value());
 
-        // Good dragon armor
+        // --- Light dragon armor --- //
+
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, true, false, false, false);
             }
-        }, DSItems.GOOD_DRAGON_HELMET.get());
+        }, DSItems.LIGHT_DRAGON_HELMET.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, true, false, false);
             }
-        }, DSItems.GOOD_DRAGON_CHESTPLATE.get());
+        }, DSItems.LIGHT_DRAGON_CHESTPLATE.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, true, false);
             }
-        }, DSItems.GOOD_DRAGON_LEGGINGS.get());
+        }, DSItems.LIGHT_DRAGON_LEGGINGS.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, false, true);
             }
-        }, DSItems.GOOD_DRAGON_BOOTS.get());
+        }, DSItems.LIGHT_DRAGON_BOOTS.value());
 
-        // Evil dragon armor
+        // --- Dark dragon armor --- //
+
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, true, false, false, false);
             }
-        }, DSItems.EVIL_DRAGON_HELMET.get());
+        }, DSItems.DARK_DRAGON_HELMET.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, true, false, false);
             }
-        }, DSItems.EVIL_DRAGON_CHESTPLATE.get());
+        }, DSItems.DARK_DRAGON_CHESTPLATE.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, true, false);
             }
-        }, DSItems.EVIL_DRAGON_LEGGINGS.get());
+        }, DSItems.DARK_DRAGON_LEGGINGS.value());
 
         event.registerItem(new IClientItemExtensions() {
             @Override
             public @NotNull HumanoidModel<?> getHumanoidArmorModel(@NotNull LivingEntity entity, @NotNull ItemStack stack, @NotNull EquipmentSlot slot, @NotNull HumanoidModel<?> defaultModel) {
                 return createModel(entity, defaultModel, false, false, false, true);
             }
-        }, DSItems.EVIL_DRAGON_BOOTS.get());
+        }, DSItems.DARK_DRAGON_BOOTS.value());
 
         // TODO: This is part of the way to get the helmet block to render in hand correctly, not sure how to fix some of the other issues though
-        /*event.registerItem(new IClientItemExtensions(){
+        /* event.registerItem(new IClientItemExtensions(){
             private final HelmetStackTileEntityRenderer renderer = new HelmetStackTileEntityRenderer();
 
             @Override

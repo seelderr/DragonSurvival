@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.mixins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.objects.DragonMovementData;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSEntityTypeTags;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -17,7 +18,6 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,7 +26,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
-public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, DragonStateHandler> {
+public abstract class EntityMixin {
     /** Correctly position the passenger when riding a player dragon */
     @Inject(method = "positionRider(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/entity/Entity$MoveFunction;)V", at = @At(value = "HEAD"), cancellable = true)
     private void dragonSurvival$positionRider(Entity entity, Entity.MoveFunction move, CallbackInfo callback) {
@@ -144,23 +144,18 @@ public abstract class EntityMixin implements ICapabilityProvider<Entity, Void, D
         return false;
     }
 
-    @Shadow
-    public boolean hasPassenger(Entity entity) {
-        throw new IllegalStateException("Mixin failed to shadow hasPassenger()");
+    @ModifyReturnValue(method = "fireImmune", at = @At("RETURN"))
+    private boolean dragonSurvival$caveDragonFireImmunity(boolean isFireImmune) {
+        if (isFireImmune) {
+            return true;
+        }
+
+        //noinspection ConstantValue -> the condition is not always false
+        return DragonBonusConfig.bonusesEnabled && CaveDragonConfig.caveFireImmunity && (Object) this instanceof Player player && DragonUtils.isDragonType(player, DragonTypes.CAVE);
     }
 
-    @Shadow
-    public double getX() {
-        throw new IllegalStateException("Mixin failed to shadow getX()");
-    }
-
-    @Shadow
-    public double getY() {
-        throw new IllegalStateException("Mixin failed to shadow getY()");
-    }
-
-    @Shadow
-    public double getZ() {
-        throw new IllegalStateException("Mixin failed to shadow getZ()");
-    }
+    @Shadow public abstract double getX();
+    @Shadow public abstract double getY();
+    @Shadow public abstract double getZ();
+    @Shadow public abstract boolean hasPassenger(Entity entity);
 }

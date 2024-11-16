@@ -6,7 +6,9 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBlockTags;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
@@ -21,7 +23,7 @@ import java.util.ArrayList;
 public abstract class AthleticsAbility extends TickablePassiveAbility {
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getLevel() == getMaxLevel() ? "III" : "II", getDuration());
     }
 
     public int getDuration() {
@@ -55,9 +57,9 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
 
         boolean isSpeedBlock = player.getBlockStateOn().is(speedUpBlockTag);
 
-        if (ServerConfig.bonusesEnabled && ServerConfig.speedupEffectLevel > 0 && isSpeedBlock) {
+        if (DragonBonusConfig.bonusesEnabled && DragonBonusConfig.speedupEffectLevel > 0 && isSpeedBlock) {
             if (getDuration() > 0) {
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), ServerConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
+                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, Functions.secondsToTicks(getDuration()), DragonBonusConfig.speedupEffectLevel - 1 + (getLevel() == getMaxLevel() ? 1 : 0), false, false));
             }
         }
     }
@@ -65,7 +67,7 @@ public abstract class AthleticsAbility extends TickablePassiveAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.duration.seconds", "+1"));
+        list.add(Component.translatable(LangKey.ABILITY_DURATION, "+1"));
         return list;
     }
 }

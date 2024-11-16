@@ -9,6 +9,7 @@ import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import org.jetbrains.annotations.NotNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -25,16 +26,16 @@ public class DragonBodyButton extends Button {
                 dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonBodySelectAction, dragonBody));
             }
         }, DEFAULT_NARRATION);
-        location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeNameLowerCase() + ".png");
+        location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_" + dragonEditorScreen.dragonType.getTypeNameLowerCase() + ".png"); // TODO :: add final field to dragon bodies
         this.dragonEditorScreen = dragonEditorScreen;
         this.dragonBody = dragonBody;
         this.pos = pos;
         this.locked = locked;
-        this.setTooltip(Tooltip.create(Component.translatable("ds.gui.body_types." + dragonBody.getBodyName().toLowerCase() + ".tooltip")));
+        this.setTooltip(Tooltip.create(dragonBody.translatableInfo()));
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
+    public void renderWidget(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         active = visible = dragonEditorScreen.showUi;
         RenderSystem.setShaderTexture(0, location);
         RenderSystem.setShader(GameRenderer::getRendertypeTranslucentShader);
@@ -47,6 +48,6 @@ public class DragonBodyButton extends Button {
         } else if (this.isHoveredOrFocused()) {
             i = 1;
         }
-        guiGraphics.blit(this.location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height, 256, 256);
+        graphics.blit(this.location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height, 256, 256);
     }
 }

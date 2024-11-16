@@ -24,7 +24,7 @@ public class VisualEffectSync {
             DSEffects.CHARGED,
             DSEffects.BURN,
             DSEffects.BLOOD_SIPHON,
-            DSEffects.REGEN_DELAY,
+            DSEffects.REGENERATION_DELAY,
             DSEffects.TRAPPED
     );
 

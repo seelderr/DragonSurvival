@@ -1,10 +1,10 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.sacred_scales"
+    "translate": "enchantment.dragonsurvival.sacred_scales"
   },
   "effects": {
-    "minecraft:damage_protection" : [
+    "minecraft:damage_protection": [
       {
         "effect": {
           "type": "minecraft:add",
@@ -38,8 +38,7 @@
       }
     ]
   },
-
-  "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
+  "exclusive_set": "#dragonsurvival:exclusive_set/dark_dragon",
   "max_cost": {
     "base": 21,
     "per_level_above_first": 11

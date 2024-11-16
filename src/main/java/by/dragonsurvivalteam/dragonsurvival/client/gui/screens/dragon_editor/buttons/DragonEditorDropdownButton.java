@@ -41,7 +41,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
         String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skinAges.get(dragonEditorScreen.level).get().layerSettings.get(layers).get().selectedSkin);
 
         if (!Objects.equals(currentValue, current)) {
-            current = DragonEditorScreen.partToTranslation(currentValue);
+            current = currentValue;
             updateMessage();
         }
 
@@ -70,12 +70,11 @@ public class DragonEditorDropdownButton extends DropDownButton {
             list = new DropdownList(getX(), getY() + height + Math.min(offset, 0), width, (int) (Math.max(1, Math.min(values.length, maxItems)) * (height * 1.5f)), 16);
             DropdownEntry center = null;
 
-            for (int i = 0; i < values.length; i++) {
-                String val = values[i];
-                DropdownEntry ent = createEntry(i, val, val);
+            for (String translationKey : values) {
+                DropdownEntry ent = createEntry(translationKey);
                 list.addEntry(ent);
 
-                if (Objects.equals(val, current))
+                if (Objects.equals(translationKey, current))
                     center = ent;
             }
 
@@ -106,7 +105,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
             renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {
             }) {
                 @Override
-                public void renderWidget(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+                public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
                     active = visible = false;
                     list.visible = DragonEditorDropdownButton.this.visible;
 
@@ -131,7 +130,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
         updateMessage();
     }
 
-    public DropdownEntry createEntry(int pos, String val, String localeString) {
-        return new DragonDropdownValueEntry(this, pos, val, localeString, setter);
+    public DropdownEntry createEntry(String translationKEy) {
+        return new DragonDropdownValueEntry(this, translationKEy, setter);
     }
 }

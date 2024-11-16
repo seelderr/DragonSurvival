@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.AbilityScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -21,62 +22,67 @@ import java.util.List;
 import java.util.Objects;
 
 public class SkillProgressButton extends Button {
+    @Translation(type = Translation.Type.MISC, comments = "§6■ Requires level:§r %s")
+    private static final String REQUIRED_LEVEL = Translation.Type.GUI.wrap("required_level");
+
+    private static final ResourceLocation BLANK_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/blank.png");
+
     private final int slot;
     private final AbilityScreen screen;
-    private ActiveDragonAbility ability;
+    private ActiveDragonAbility buttonAbility;
 
     public SkillProgressButton(int x, int y, int slot, AbilityScreen screen) {
-        super(x, y, 16, 16, Component.empty(), button -> {
-        }, DEFAULT_NARRATION);
+        super(x, y, 16, 16, Component.empty(), button -> {}, DEFAULT_NARRATION);
         this.slot = slot;
         this.screen = screen;
     }
 
     @Override
-    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float p_230431_4_) {
-        ResourceLocation texture = ability != null ? ability.getIcon() : AbilityButton.BLANK_TEXTURE;
+    public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+        ResourceLocation texture = buttonAbility != null ? buttonAbility.getIcon() : BLANK_TEXTURE;
 
-        if (screen.unlockAbleSkills.size() > slot) {
-            ActiveDragonAbility ability1 = screen.unlockAbleSkills.get(slot);
+        if (screen.unlockableAbilities.size() > slot) {
+            ActiveDragonAbility ability1 = screen.unlockableAbilities.get(slot);
 
             if (ability1 != null && ability1.getIcon() != null) {
                 texture = ability1.getIcon();
-                ability = ability1;
+                buttonAbility = ability1;
             }
         } else {
-            texture = AbilityButton.BLANK_TEXTURE;
+            texture = BLANK_TEXTURE;
         }
 
-        if (texture == AbilityButton.BLANK_TEXTURE) {
-            ability = null;
+        if (texture == BLANK_TEXTURE) {
+            buttonAbility = null;
         }
 
         guiGraphics.blit(AbilityButton.BLANK_2_TEXTURE, getX() - 1, getY() - 1, 0, 0, 18, 18, 18, 18);
         guiGraphics.blit(texture, getX(), getY(), 0, 0, 16, 16, 16, 16);
 
-        if (ability != null) {
+        if (buttonAbility != null) {
+            //noinspection DataFlowIssue -> player should not be null
             DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
             if (handler.isDragon()) {
-                DragonAbility playerAbility = DragonAbilities.getSelfAbility(Minecraft.getInstance().player, ability.getClass());
+                int level = DragonAbilities.getAbility(Minecraft.getInstance().player, buttonAbility.getClass(), handler.getType()).map(ActiveDragonAbility::getLevel).orElse(0);
 
-                if (ability.getLevel() > playerAbility.getLevel() + 1) {
+                if (buttonAbility.getLevel() > level + 1) {
                     guiGraphics.fill(getX(), getY(), getX() + 16, getY() + 16, new Color(0.25F, 0.25F, 0.25F, 0.75F).getRGB());
                 }
 
                 if (isHoveredOrFocused()) {
                     ChatFormatting format = Objects.equals(handler.getType(), DragonTypes.CAVE) ? ChatFormatting.DARK_RED : Objects.equals(handler.getType(), DragonTypes.SEA) ? ChatFormatting.AQUA : Objects.equals(handler.getType(), DragonTypes.FOREST) ? ChatFormatting.GREEN : ChatFormatting.WHITE;
-                    Component component = ability.getTitle();
-                    ArrayList<Component> description = new ArrayList<>(List.of(Component.empty().append(component).append(" (" + ability.getLevel() + " / " + ability.getMaxLevel() + ")").withStyle(format)));
+                    Component component = buttonAbility.getTitle();
+                    ArrayList<Component> description = new ArrayList<>(List.of(Component.empty().append(component).append(" (" + buttonAbility.getLevel() + " / " + buttonAbility.getMaxLevel() + ")").withStyle(format)));
 
-                    if (!ability.getLevelUpInfo().isEmpty()) {
-                        description.addAll(ability.getLevelUpInfo());
+                    if (!buttonAbility.getLevelUpInfo().isEmpty()) {
+                        description.addAll(buttonAbility.getLevelUpInfo());
                     }
 
-                    int requiredLevel = ability.getCurrentRequiredLevel();
+                    int requiredLevel = buttonAbility.getCurrentRequiredLevel();
 
                     if (requiredLevel != -1) {
-                        description.add(Component.translatable("ds.skill.required_level", requiredLevel).withStyle(ChatFormatting.WHITE));
+                        description.add(Component.translatable(REQUIRED_LEVEL, requiredLevel).withStyle(ChatFormatting.WHITE));
                     }
 
                     guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, description, mouseX, mouseY);

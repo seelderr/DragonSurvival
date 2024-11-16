@@ -1,13 +1,14 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,14 +17,17 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Allows you to stay longer in dark areas. Delay before you gain §c«Stress»§r while in low light level: §2%ss§r.")
+@Translation(type = Translation.Type.ABILITY, comments = "Light the Dark")
 @RegisterDragonAbility
 public class LightInDarknessAbility extends PassiveDragonAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "lightInDarkness", comment = "Whether the light in darkness ability should be enabled")
+    @Translation(key = "light_in_darkness", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the light in darkness ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "passive"}, key = "light_in_darkness")
     public static Boolean lightInDarkness = true;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDuration() + Functions.ticksToSeconds(ServerConfig.forestStressTicks));
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDuration() + Functions.ticksToSeconds(ForestDragonConfig.stressTicks));
     }
 
     @Override
@@ -43,7 +47,8 @@ public class LightInDarknessAbility extends PassiveDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_3.png"),
@@ -51,7 +56,8 @@ public class LightInDarknessAbility extends PassiveDragonAbility {
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_5.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_6.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_7.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_8.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/light_in_darkness_8.png")
+        };
     }
 
     public int getDuration() {
@@ -61,7 +67,7 @@ public class LightInDarknessAbility extends PassiveDragonAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.duration.seconds", "+10"));
+        list.add(Component.translatable(LangKey.ABILITY_DURATION, "+10"));
         return list;
     }
 

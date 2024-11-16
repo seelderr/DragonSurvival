@@ -32,8 +32,8 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.res;
 public class DSEquipment {
     public static final DeferredRegister<ArmorMaterial> DS_ARMOR_MATERIALS = DeferredRegister.create(BuiltInRegistries.ARMOR_MATERIAL, MODID);
 
-    public static final Holder<ArmorMaterial> GOOD_DRAGON_ARMOR_MATERIAL =
-            DS_ARMOR_MATERIALS.register("good_dragon", () -> new ArmorMaterial(
+    public static final Holder<ArmorMaterial> LIGHT_DRAGON_ARMOR_MATERIAL =
+            DS_ARMOR_MATERIALS.register("light_dragon", () -> new ArmorMaterial(
                     Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
                         map.put(ArmorItem.Type.BOOTS, 3);
                         map.put(ArmorItem.Type.LEGGINGS, 6);
@@ -44,17 +44,13 @@ public class DSEquipment {
                     30,
                     Holder.direct(SoundEvents.BELL_BLOCK),
                     () -> Ingredient.of(Tags.Items.BARRELS),
-                    List.of(
-                            new ArmorMaterial.Layer(
-                                    res("dragon_light")
-                            )
-                    ),
-                    3.0F,
-                    0.1F
+                    List.of(new ArmorMaterial.Layer(res("light_dragon"))),
+                    3,
+                    0.1f
             ));
 
-    public static final Holder<ArmorMaterial> EVIL_DRAGON_ARMOR_MATERIAL =
-            DS_ARMOR_MATERIALS.register("evil_dragon", () -> new ArmorMaterial(
+    public static final Holder<ArmorMaterial> DARK_DRAGON_ARMOR_MATERIAL =
+            DS_ARMOR_MATERIALS.register("dark_dragon", () -> new ArmorMaterial(
                     Util.make(new EnumMap<>(ArmorItem.Type.class), map -> {
                         map.put(ArmorItem.Type.BOOTS, 3);
                         map.put(ArmorItem.Type.LEGGINGS, 6);
@@ -65,20 +61,16 @@ public class DSEquipment {
                     30,
                     Holder.direct(SoundEvents.FOX_SCREECH),
                     () -> Ingredient.of(Tags.Items.BARRELS),
-                    List.of(
-                            new ArmorMaterial.Layer(
-                                    res("dragon_dark")
-                            )
-                    ),
-                    3.0F,
-                    0.1F
+                    List.of(new ArmorMaterial.Layer(res("dark_dragon"))),
+                    3,
+                    0.1f
             ));
 
     public static final Tier DRAGON_HUNTER = new SimpleTier(
             BlockTags.INCORRECT_FOR_NETHERITE_TOOL,
             2031,
-            9.0f,
-            5.0f,
+            9,
+            5,
             15,
             () -> Ingredient.of(Items.NETHERITE_INGOT)
     );

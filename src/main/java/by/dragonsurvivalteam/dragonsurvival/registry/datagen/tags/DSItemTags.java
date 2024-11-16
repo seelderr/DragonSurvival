@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.EvilDragonArmorItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.armor.GoodDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DarkDragonArmorItem;
+import by.dragonsurvivalteam.dragonsurvival.common.items.armor.LightDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -25,9 +25,20 @@ import java.util.concurrent.CompletableFuture;
 public class DSItemTags extends ItemTagsProvider {
     public static final TagKey<Item> KEEP_EFFECTS = key("keep_effects");
     public static final TagKey<Item> SEA_DRAGON_HYDRATION = key("sea_dragon_hydration");
-    public static final TagKey<Item> IS_GOOD_DRAGON = key("is_good_dragon");
-    public static final TagKey<Item> IS_EVIL_DRAGON = key("is_evil_dragon");
+    public static final TagKey<Item> LIGHT_ARMOR = key("light_armor");
+    public static final TagKey<Item> DARK_ARMOR = key("dark_armor");
     public static final TagKey<Item> CLAW_WEAPONS = key("claw_weapons");
+
+    // Used in recipes
+    public static final TagKey<Item> DRAGON_ALTARS = key("dragon_altars");
+    public static final TagKey<Item> DRAGON_TREASURES = key("dragon_treasures");
+    public static final TagKey<Item> DRAGON_BEACONS = key("dragon_beacons");
+
+    public static final TagKey<Item> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
+    public static final TagKey<Item> SMALL_WOODEN_DRAGON_DOORS = key("small_wooden_dragon_doors");
+
+    public static final TagKey<Item> CHARRED_FOOD = key("charred_food");
+    public static final TagKey<Item> COLD_ITEMS = key("cold_items");
 
     public DSItemTags(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, CompletableFuture<TagLookup<Block>> blockTags, @Nullable ExistingFileHelper helper) {
         super(output, provider, blockTags, DragonSurvival.MODID, helper);
@@ -40,10 +51,10 @@ public class DSItemTags extends ItemTagsProvider {
         DSItems.DS_ITEMS.getEntries().forEach(holder -> {
             Item item = holder.value();
 
-            if (item instanceof GoodDragonArmorItem) {
-                tag(IS_GOOD_DRAGON).add(item);
-            } else if (item instanceof EvilDragonArmorItem) {
-                tag(IS_EVIL_DRAGON).add(item);
+            if (item instanceof LightDragonArmorItem) {
+                tag(LIGHT_ARMOR).add(item);
+            } else if (item instanceof DarkDragonArmorItem) {
+                tag(DARK_ARMOR).add(item);
             }
         });
 
@@ -62,8 +73,7 @@ public class DSItemTags extends ItemTagsProvider {
                 .addTag(ItemTags.SWORDS)
                 .addTag(Tags.Items.MELEE_WEAPON_TOOLS);
 
-        // Used in recipes
-        tag(key("charred_food"))
+        tag(CHARRED_FOOD)
                 .add(DSItems.CHARGED_COAL.value())
                 .add(DSItems.CHARGED_SOUP.value())
                 .add(DSItems.CHARRED_MEAT.value())
@@ -71,8 +81,7 @@ public class DSItemTags extends ItemTagsProvider {
                 .add(DSItems.CHARRED_SEAFOOD.value())
                 .add(DSItems.CHARRED_VEGETABLE.value());
 
-        // Used in recipes
-        tag(key("cold_items"))
+        tag(COLD_ITEMS)
                 .add(Items.SNOWBALL)
                 .add(Items.ICE)
                 .add(Items.PACKED_ICE)
@@ -86,10 +95,12 @@ public class DSItemTags extends ItemTagsProvider {
                 .addTag(ItemTags.CHEST_ARMOR_ENCHANTABLE)
                 .add(Items.ELYTRA);
 
-        copy(DSBlockTags.DRAGON_ALTARS, key("dragon_altars"));
-        copy(DSBlockTags.DRAGON_TREASURES, key("dragon_treasures"));
-        copy(DSBlockTags.WOODEN_DRAGON_DOORS_SMALL, key("wooden_dragon_doors_small"));
-        copy(DSBlockTags.WOODEN_DRAGON_DOORS, key("wooden_dragon_doors"));
+        copy(DSBlockTags.DRAGON_ALTARS, DRAGON_ALTARS);
+        copy(DSBlockTags.DRAGON_TREASURES, DRAGON_TREASURES);
+        copy(DSBlockTags.DRAGON_BEACONS, DRAGON_BEACONS);
+
+        copy(DSBlockTags.SMALL_WOODEN_DRAGON_DOORS, SMALL_WOODEN_DRAGON_DOORS);
+        copy(DSBlockTags.WOODEN_DRAGON_DOORS, WOODEN_DRAGON_DOORS);
     }
 
     private void addToVanillaTags() {

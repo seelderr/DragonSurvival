@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSMapDecorationTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTrades;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.EnchantmentUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ResourceHelper;
@@ -110,7 +111,7 @@ public class HunterOmenHandler {
                     ItemStack itemstack = MapItem.create(serverlevel, blockpos.getX(), blockpos.getZ(), (byte) 2, true, true);
                     MapItem.renderBiomePreviewMap(serverlevel, itemstack);
                     MapItemSavedData.addTargetDecoration(itemstack, blockpos, "+", DSMapDecorationTypes.DRAGON_HUNTER);
-                    itemstack.set(DataComponents.ITEM_NAME, Component.translatable("ds.mapstructures.hunters_castle"));
+                    itemstack.set(DataComponents.ITEM_NAME, Component.translatable(LangKey.ITEM_KINGDOM_EXPLORER_MAP));
                     boolean lootHasMapOfSameType = loot.stream().anyMatch(stack -> {
                         if (stack.getItem() == itemstack.getItem()) {
                             MapDecorations mapDecorations = stack.get(DataComponents.MAP_DECORATIONS);
