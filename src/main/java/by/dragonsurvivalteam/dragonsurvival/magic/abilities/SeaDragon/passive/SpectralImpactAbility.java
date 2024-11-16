@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
@@ -8,6 +7,8 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -15,18 +16,22 @@ import java.util.ArrayList;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Gives a §c%s%%§r chance to make your attack ignore enemy armor.")
+@Translation(type = Translation.Type.ABILITY, comments = "Spectral Impact")
 @RegisterDragonAbility
 public class SpectralImpactAbility extends PassiveDragonAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "spectralImpact", comment = "Whether the spectralImpact ability should be enabled")
+    @Translation(key = "spectral_impact", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the spectral ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "passive"}, key = "spectral_impact")
     public static Boolean spectralImpact = true;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "sea_dragon", "passives"}, key = "spectralImpactProcChance", comment = "The percentage chance that spectral impact will proc. This is multiplied by the level of the skill.")
+    @Translation(key = "spectral_impact_chance", type = Translation.Type.CONFIGURATION, comments = "Chance (in %) for this effect to occur (multiplied by the ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"sea_dragon", "magic", "abilities", "passive"}, key = "spectral_impact_chance")
     public static Integer spectralImpactProcChance = 15;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getChance());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getChance());
     }
 
     @Override
@@ -46,7 +51,8 @@ public class SpectralImpactAbility extends PassiveDragonAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/sea/spectral_impact_3.png")};
@@ -59,7 +65,7 @@ public class SpectralImpactAbility extends PassiveDragonAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.chance", "+" + spectralImpactProcChance));
+        list.add(Component.translatable(LangKey.ABILITY_CHANCE, "+" + spectralImpactProcChance));
         return list;
     }
 

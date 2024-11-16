@@ -8,6 +8,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenDragonInventory;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -32,15 +33,28 @@ import static by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpen
 
 @EventBusSubscriber(Dist.CLIENT)
 public class InventoryScreenHandler {
-    public static final ResourceLocation DS_LOGO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ds_logo.png");
-    public static ExtendedButton altarOpenButton;
-    public static ExtendedButton creativeModeDragonInventoryButton;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragonInventory", comment = "Should the default inventory be replaced as a dragon?")
+    @Translation(type = Translation.Type.MISC, comments = "Open dragon inventory screen")
+    private static final String TOGGLE_DRAGON_INVENTORY = Translation.Type.GUI.wrap("inventory.toggle_dragon_inventory");
+
+    @Translation(type = Translation.Type.MISC, comments = "Open dragon altar")
+    private static final String TOGGLE_DRAGON_ALTAR = Translation.Type.GUI.wrap("inventory.toggle_dragon_altar");
+
+    @Translation(key = "dragon_inventory", type = Translation.Type.CONFIGURATION, comments = "If enabled the default inventory is replaced with a custom inventory")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragon_inventory")
     public static Boolean dragonInventory = true;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragonTabs", comment = "Should dragon tabs be added to the default player inventory?")
+
+    @Translation(key = "dragon_tabs", type = Translation.Type.CONFIGURATION, comments = "If enabled tabs will be added to the vanilla inventory")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "dragon_tabs")
     public static Boolean dragonTabs = true;
-    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "inventoryToggle", comment = "Should the buttons for toggling between dragon and normal inventory be added?")
+
+    @Translation(key = "inventory_toggle", type = Translation.Type.CONFIGURATION, comments = "If enabled there will be a button that lets you switch between the custom and vanilla inventory")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "inventory", key = "inventory_toggle")
     public static Boolean inventoryToggle = true;
+
+    private static final ResourceLocation DS_LOGO = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/ds_logo.png");
+
+    private static ExtendedButton altarOpenButton;
+    private static ExtendedButton creativeModeDragonInventoryButton;
 
     @SubscribeEvent
     public static void onOpenScreen(ScreenEvent.Opening openEvent) {
@@ -102,7 +116,7 @@ public class InventoryScreenHandler {
                         guiGraphics.blit(DS_LOGO, getX(), getY(), 0, 0, 20, 20, 20, 20);
                     }
                 };
-                altarOpenButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.open_dragon_altar")));
+                altarOpenButton.setTooltip(Tooltip.create(Component.translatable(TOGGLE_DRAGON_ALTAR)));
                 initGuiEvent.addListener(altarOpenButton);
             }
         }
@@ -114,13 +128,10 @@ public class InventoryScreenHandler {
         // Dragon only UI
         if (sc instanceof InventoryScreen screen) {
             if (dragonTabs) {
-                initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, TabButton.TabType.INVENTORY, screen));
-
-                initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, TabButton.TabType.ABILITY, screen));
-
-                initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, TabButton.TabType.GITHUB_REMINDER, screen));
-
-                initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, TabButton.TabType.SKINS, screen));
+                initGuiEvent.addListener(new TabButton(screen.getGuiLeft(), screen.getGuiTop() - 28, TabButton.Type.INVENTORY_TAB, screen));
+                initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 28, screen.getGuiTop() - 26, TabButton.Type.ABILITY_TAB, screen));
+                initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 57, screen.getGuiTop() - 26, TabButton.Type.GITHUB_REMINDER_TAB, screen));
+                initGuiEvent.addListener(new TabButton(screen.getGuiLeft() + 86, screen.getGuiTop() - 26, TabButton.Type.SKINS_TAB, screen));
             }
 
             if (inventoryToggle) {
@@ -134,7 +145,7 @@ public class InventoryScreenHandler {
                         guiGraphics.blit(DragonInventoryScreen.INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
                     }
                 };
-                inventoryToggle.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.dragon")));
+                inventoryToggle.setTooltip(Tooltip.create(Component.translatable(TOGGLE_DRAGON_INVENTORY)));
                 initGuiEvent.addListener(inventoryToggle);
             }
         }
@@ -151,14 +162,14 @@ public class InventoryScreenHandler {
                         guiGraphics.blit(DragonInventoryScreen.INVENTORY_TOGGLE_BUTTON, getX(), getY(), u, v, 20, 18, 256, 256);
                     }
                 };
-                creativeModeDragonInventoryButton.setTooltip(Tooltip.create(Component.translatable("ds.gui.toggle_inventory.dragon")));
+                creativeModeDragonInventoryButton.setTooltip(Tooltip.create(Component.translatable(TOGGLE_DRAGON_INVENTORY)));
                 initGuiEvent.addListener(creativeModeDragonInventoryButton);
             }
         }
     }
 
     @SubscribeEvent
-    public static void onTick(ClientTickEvent.Post clientTickEvent) {
+    public static void onTick(ClientTickEvent.Post clientTickEvent) { // FIXME :: use key press event
         Minecraft minecraft = Minecraft.getInstance();
         LocalPlayer player = Minecraft.getInstance().player;
 

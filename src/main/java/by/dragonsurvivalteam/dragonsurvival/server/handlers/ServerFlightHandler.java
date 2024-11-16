@@ -12,7 +12,10 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncFlyingStatus;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncSpinStatus;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -21,7 +24,6 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap.Types;
 import net.minecraft.world.phys.AABB;
@@ -35,71 +37,91 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.List;
 
-/**
- * Used in pair with {@link ClientFlightHandler}
- */
-@EventBusSubscriber()
-@SuppressWarnings("unused")
+/** Used in pair with {@link ClientFlightHandler} */
+@EventBusSubscriber
 public class ServerFlightHandler {
-
-    public static final int spinDuration = (int) Math.round(0.76 * 20);
+    public static final int SPIN_DURATION = Functions.secondsToTicks(0.76);
 
     @ConfigRange(min = 0.1, max = 1)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "maxFlightSpeed", comment = "Maximum acceleration fly speed up and down. Take into account the chunk load speed. A speed of 0.3 is optimal.")
+    @Translation(key = "flight_speed_multiplier", type = Translation.Type.CONFIGURATION, comments = "Flight speed multiplier")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_speed_multiplier")
     public static Double maxFlightSpeed = 0.3;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "startWithLevitation", comment = "Whether dragons can use levitation magic from birth.")
-    public static Boolean startWithLevitation = true;
+    @Translation(key = "start_with_flight", type = Translation.Type.CONFIGURATION, comments = {
+            "If enabled dragons can fly from the start",
+            "If disabled players will have to use the item that grants wings or interact with the ender dragon"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "start_with_flight")
+    public static Boolean startWithFlight = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin", comment = "Whether you should be able to obtain the spin ability from the ender dragon or take special item.")
-    public static Boolean enderDragonGrantsSpin = true;
+    @Translation(key = "ender_dragon_interaction", type = Translation.Type.CONFIGURATION, comments = {
+            "The ender dragon will be able to grant flight and the spin attack if enabled",
+            "If disabled special items will have to be used"
+    })
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin")
+    public static Boolean enderDragonInteraction = true;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightHungerThreshold", comment = "If the player's hunger is below this parameter, he can't open his wings.")
+    @Translation(key = "flight_hunger_threshold", type = Translation.Type.CONFIGURATION, comments = "Determines the required food values to be able to fly")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_hunger_threshold")
     public static Integer flightHungerThreshold = 6;
 
     @ConfigRange(min = 0, max = 20)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsThreshold", comment = "If the player's hunger is less then or equal to this parameter, the wings will be folded even during flight.")
+    @Translation(key = "fold_wings_threshold", type = Translation.Type.CONFIGURATION, comments = "Determines the food values at which the dragon will stop being able to fly mid-flight")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "fold_wings_threshold")
     public static Integer foldWingsThreshold = 0;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "foldWingsOnLand", comment = "Whether your wings will fold automatically when landing. Has protection against accidental triggering, so the wings do not always close. If False you must close the wings manually.")
-    public static Boolean foldWingsOnLand = true;
+    @Translation(key = "fold_wings_on_land", type = Translation.Type.CONFIGURATION, comments = "If enabled dragons will automatically stop fold their wings (i.e. stop flying) when landing")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "fold_wings_on_land")
+    public static Boolean foldWingsOnLand = false;
 
-    @ConfigRange(min = 0, max = 100000)
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flightSpinCooldown", comment = "The cooldown in seconds in between uses of the spin attack in flight")
+    @ConfigRange(min = 0, max = /* 1 hour */ 3600)
+    @Translation(key = "flight_spin_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) of the spin attack during flifght")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_spin_cooldown")
     public static Integer flightSpinCooldown = 5;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "stableHover", comment = "Should hovering be completely stable similar to creative flight?")
+    @ConfigRange(min = 1, max = /* 1 hour */ 72_000)
+    @Translation(key = "flight_hunger_ticks", type = Translation.Type.CONFIGURATION, comments = "Determines the amount of ticks (20 ticks = 1 second) it takes for one hunger point to be drained while flying")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_hunger_ticks")
+    public static int flightHungerTicks = 50;
+
+    @Translation(key = "stable_hover", type = Translation.Type.CONFIGURATION, comments = "If enabled hovering will behave the same as creative flight (i.e. stable flight)")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "stable_hover")
     public static boolean stableHover = false;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collisionDamageSpeedFactor", comment = "How much does the change in horizontal speed impact the damage taken from a collision whilst flying?")
+    @Translation(key = "collision_damage_speed_factor", type = Translation.Type.CONFIGURATION, comments = "How much does the change in horizontal speed impact the damage taken from a collision whilst flying?")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collision_damage_speed_factor")
     public static float collisionDamageSpeedFactor = 10.0f;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collisionDamageThreshold", comment = "The amount of damage subtracted from the base damage when a collision occurs whilst flying.")
+    @Translation(key = "collision_damage_threshold", type = Translation.Type.CONFIGURATION, comments = "The amount of damage subtracted from the base damage when a collision occurs whilst flying.")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "collision_damage_threshold")
     public static float collisionDamageThreshold = 3.0f;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableCollisionDamage", comment = "Dragons will take damage from colliding whilst glide-flying (similar to elytra).")
+    @Translation(key = "enable_collision_damage", type = Translation.Type.CONFIGURATION, comments = "Dragons will take damage from colliding whilst glide-flying (similar to elytra).")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enable_collision_damage")
     public static boolean enableCollisionDamage = true;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enableFlightFallDamage", comment = "Dragons will take fall damage from colliding whilst glide-flying (similar to elytra).")
+    @Translation(key = "enable_flight_fall_damage", type = Translation.Type.CONFIGURATION, comments = "Dragons will take fall damage from colliding whilst glide-flying (similar to elytra).")
+    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enable_flight_fall_damage")
     public static boolean enableFlightFallDamage = true;
 
     // Even if the event is ultimately cancelled, we still want to trigger this, so make it highest priority.
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void foldWingsOnLand(LivingFallEvent event) {
         LivingEntity livingEntity = event.getEntity();
-        double flightSpeed = event.getDistance();
 
-        DragonStateProvider.getOptional(livingEntity).ifPresent(dragonStateHandler -> {
-            if (dragonStateHandler.isDragon() && dragonStateHandler.hasFlight()) {
-                if (!livingEntity.level().isClientSide()) {
-                    if (foldWingsOnLand) {
-                        if (dragonStateHandler.isWingsSpread()) {
-                            dragonStateHandler.setWingsSpread(false);
-                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncFlyingStatus.Data(livingEntity.getId(), false));
-                        }
-                    }
-                }
+        if (livingEntity.level().isClientSide()) {
+            return;
+        }
+
+        DragonStateProvider.getOptional(livingEntity).ifPresent(handler -> {
+            if (!foldWingsOnLand || !handler.isDragon() || !handler.hasFlight()) {
+                return;
+            }
+
+            if (handler.isWingsSpread()) {
+                handler.setWingsSpread(false);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(livingEntity, new SyncFlyingStatus.Data(livingEntity.getId(), false));
             }
         });
     }
@@ -141,12 +163,12 @@ public class ServerFlightHandler {
     }
 
     private static Holder<MobEffect> getFlightEffectForType(AbstractDragonType type) {
-        if (type.equals(DragonTypes.SEA)) {
-            return DSEffects.sea_wings;
-        } else if (type.equals(DragonTypes.CAVE)) {
-            return DSEffects.cave_wings;
-        } else if (type.equals(DragonTypes.FOREST)) {
-            return DSEffects.forest_wings;
+        if (DragonUtils.isDragonType(type, DragonTypes.SEA)) {
+            return DSEffects.SEA_DRAGON_WINGS;
+        } else if (DragonUtils.isDragonType(type, DragonTypes.CAVE)) {
+            return DSEffects.CAVE_DRAGON_WINGS;
+        } else if (DragonUtils.isDragonType(type, DragonTypes.FOREST)) {
+            return DSEffects.FOREST_DRAGON_WINGS;
         }
 
         return null;
@@ -163,119 +185,137 @@ public class ServerFlightHandler {
     }
 
     private static void clearAllFlightEffects(Player player) {
-        player.removeEffect(DSEffects.sea_wings);
-        player.removeEffect(DSEffects.cave_wings);
-        player.removeEffect(DSEffects.forest_wings);
+        // Check for effect first to avoid unnecessary event spam etc.
+        if (player.hasEffect(DSEffects.SEA_DRAGON_WINGS)) {
+            player.removeEffect(DSEffects.SEA_DRAGON_WINGS);
+        }
+
+        if (player.hasEffect(DSEffects.CAVE_DRAGON_WINGS)) {
+            player.removeEffect(DSEffects.CAVE_DRAGON_WINGS);
+        }
+
+        if (player.hasEffect(DSEffects.FOREST_DRAGON_WINGS)) {
+            player.removeEffect(DSEffects.FOREST_DRAGON_WINGS);
+        }
     }
 
     @SubscribeEvent
-    public static void showFlightIcon(PlayerTickEvent.Pre playerTickEvent) {
-        Player player = playerTickEvent.getEntity();
+    public static void handleEarlyFlightLogic(PlayerTickEvent.Pre event) {
+        if (event.getEntity().level().isClientSide()) {
+            return;
+        }
+
+        Player player = event.getEntity();
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        if (handler.isDragon() && handler.isWingsSpread()) {
+
+        if (!handler.isDragon()) {
+            clearAllFlightEffects(player);
+            return;
+        }
+
+        // Handle flight icon
+        if (handler.isWingsSpread()) {
             if (!hasCorrectFlightEffect(player)) {
                 clearAllFlightEffects(player);
                 Holder<MobEffect> flightEffect = getFlightEffectForType(handler.getType());
-                if(flightEffect != null) {
+
+                if (flightEffect != null) {
                     player.addEffect(new MobEffectInstance(flightEffect, -1, 0, true, false, true));
                 }
             }
         } else {
             clearAllFlightEffects(player);
         }
+  
+        if (isGliding(player)) {
+            // Gather collision data
+            handler.preCollisionDeltaMovement = player.getDeltaMovement();
+        } else if (isFlying(player)) {
+            // Handle fall distance
+            player.resetFallDistance();
+        }
     }
 
     @SubscribeEvent
-    public static void getPreCollisionData(PlayerTickEvent.Pre playerTickEvent) {
-        if(playerTickEvent.getEntity().level().isClientSide()) return;
+    public static void handleWallCollisionsWhenFlying(PlayerTickEvent.Post event) {
+        if (event.getEntity().level().isClientSide()) {
+            return;
+        }
 
-        Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (isGliding(player)) {
-                handler.preCollisionDeltaMovement = player.getDeltaMovement();
+        Player player = event.getEntity();
+
+        // This collision code is from Elytra flying. See isFallFlying() section in LivingEntity#travel()
+        if (player.horizontalCollision && isGliding(player) && enableCollisionDamage) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+
+            double lostSpeed = handler.preCollisionDeltaMovement.horizontalDistance() - player.getDeltaMovement().horizontalDistance();
+            float damage = (float) (lostSpeed * collisionDamageSpeedFactor - collisionDamageThreshold);
+
+            if (damage > 0) {
+                player.playSound(player.getFallDamageSound((int) damage), 1, 1);
+                player.hurt(player.damageSources().flyIntoWall(), damage);
+                handler.setWingsSpread(false);
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
             }
-        });
+        }
     }
 
     @SubscribeEvent
-    public static void handleWallCollisionsWhenFlying(PlayerTickEvent.Post playerTickEvent) {
-        if(playerTickEvent.getEntity().level().isClientSide()) return;
+    public static void playerFlightAttacks(PlayerTickEvent.Pre event) {
+        Player player = event.getEntity();
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
-        Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            // This collision code is from Elytra flying. See isFallFlying() section in LivingEntity#travel()
-            if (player.horizontalCollision && isGliding(player) && enableCollisionDamage) {
-                double lostSpeed = handler.preCollisionDeltaMovement.horizontalDistance() - player.getDeltaMovement().horizontalDistance();
-                float damage = (float)(lostSpeed * collisionDamageSpeedFactor - collisionDamageThreshold);
-                if (damage > 0.0F) {
-                    player.playSound(player.getFallDamageSound((int)damage), 1.0F, 1.0F);
-                    player.hurt(player.damageSources().flyIntoWall(), damage);
-                    handler.setWingsSpread(false);
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
-                }
+        if (!handler.isDragon()) {
+            return;
+        }
+
+        if (handler.getMovementData().spinAttack > 0 && !player.level().isClientSide()) {
+            if (!isFlying(player) && !canSwimSpin(player)) {
+                handler.getMovementData().spinAttack = 0;
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
             }
-        });
-    }
+        }
 
-    @SubscribeEvent
-    public static void resetFallDistanceWhenFlying(PlayerTickEvent.Pre playerTickEvent) {
-        if(playerTickEvent.getEntity().level().isClientSide()) return;
+        if (isSpin(player)) {
+            int range = 5;
+            List<Entity> entities = player.level().getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
 
-        Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon() && isFlying(player) && !isGliding(player)) {
-                player.resetFallDistance();
-            }
-        });
-    }
-
-    @SubscribeEvent
-    public static void playerFlightAttacks(PlayerTickEvent.Pre playerTickEvent) {
-
-        Player player = playerTickEvent.getEntity();
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.isDragon()) {
-                if (handler.getMovementData().spinAttack > 0) {
-                    if (!isFlying(player) && !canSwimSpin(player)) {
-                        if (!player.level().isClientSide()) {
-                            handler.getMovementData().spinAttack = 0;
-                            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                        }
-                    }
+            for (Entity target : entities) {
+                if (target == player) {
+                    continue;
                 }
 
-                if (isSpin(player)) {
-                    int range = 5;
-                    List<Entity> entities = player.level().getEntities(null, new AABB(player.position().x - range, player.position().y - range, player.position().z - range, player.position().x + range, player.position().y + range, player.position().z + range));
-                    entities.removeIf(e -> e.distanceTo(player) > range);
-                    entities.remove(player);
-                    entities.removeIf(e -> e instanceof Player && !player.canHarmPlayer((Player) e));
-                    for (Entity ent : entities) {
-                        if (player.hasPassenger(ent)) {
-                            continue;
-                        }
-                        if (ent instanceof LivingEntity entity) {
-                            //Don't hit the same mob multiple times
-                            if (entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20) {
-                                continue;
-                            }
-                        }
-                        player.attack(ent);
-                    }
+                if (target instanceof Player otherPlayer && !player.canHarmPlayer(otherPlayer)) {
+                    continue;
+                }
 
-                    handler.getMovementData().spinAttack--;
+                if (target.distanceTo(player) > range) {
+                    continue;
+                }
 
-                    if (!player.level().isClientSide()) {
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
-                    }
-                } else if (handler.getMovementData().spinCooldown > 0) {
-                    if (!player.level().isClientSide()) {
-                        handler.getMovementData().spinCooldown--;
-                        PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+                if (player.hasPassenger(target)) {
+                    continue;
+                }
+
+                if (target instanceof LivingEntity entity) {
+                    // Don't hit the same mob multiple times
+                    if (entity.getLastHurtByMob() == player && entity.getLastHurtByMobTimestamp() <= entity.tickCount + 5 * 20) {
+                        continue;
                     }
                 }
+
+                player.attack(target);
             }
-        });
+
+            handler.getMovementData().spinAttack--;
+
+            if (!player.level().isClientSide()) {
+                PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+            }
+        } else if (handler.getMovementData().spinCooldown > 0 && !player.level().isClientSide()) {
+            handler.getMovementData().spinCooldown--;
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSpinStatus.Data(player.getId(), handler.getMovementData().spinAttack, handler.getMovementData().spinCooldown, handler.getMovementData().spinLearned));
+        }
     }
 
     public static boolean isSpin(Player entity) {
@@ -294,10 +334,6 @@ public class ServerFlightHandler {
         return validSwim && dragonStateHandler.hasFlight() && !player.onGround();
     }
 
-    @ConfigRange(min = 1, max = 60 * 60 * 20)
-    @ConfigOption(side = ConfigSide.SERVER, key = "flightHungerTicks", category = "wings", comment = "How many ticks it takes for one hunger point to be drained while flying, this is based on hover flight.")
-    public static int flightHungerTicks = 50;
-
     @SubscribeEvent
     public static void playerFoodExhaustion(PlayerTickEvent.Post playerTickEvent) {
         Player player = playerTickEvent.getEntity();
@@ -310,7 +346,7 @@ public class ServerFlightHandler {
                     if (isFlying(player)) {
                         if (!player.level().isClientSide()) {
                             if (player.getFoodData().getFoodLevel() <= foldWingsThreshold && !player.isCreative()) {
-                                player.sendSystemMessage(Component.translatable("ds.wings.nohunger"));
+                                player.sendSystemMessage(Component.translatable(LangKey.MESSAGE_NO_HUNGER));
                                 dragonStateHandler.setWingsSpread(false);
                                 PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncFlyingStatus.Data(player.getId(), false));
                                 return;
@@ -322,9 +358,11 @@ public class ServerFlightHandler {
                         float moveSpeedReq = 1.0F;
                         float minFoodReq = l / 10f;
                         float drain = Math.max(minFoodReq, (float) (Math.min(1.0, Math.max(0, Math.max(moveSpeedReq - moveSpeed, 0) / moveSpeedReq)) * l));
-                        AttributeInstance flightStamina;
-                        if ((flightStamina = player.getAttribute(DSAttributes.FLIGHT_STAMINA_COST)) != null && flightStamina.getValue() != 0) {
-                            drain /= (float) flightStamina.getValue();
+
+                        double flightStamina = player.getAttributeValue(DSAttributes.FLIGHT_STAMINA_COST);
+
+                        if (flightStamina > 0) {
+                            drain /= (float) flightStamina;
                         }
 
                         player.causeFoodExhaustion(drain);
@@ -335,7 +373,6 @@ public class ServerFlightHandler {
     }
 
     public static boolean isGliding(Player player) {
-        DragonStateHandler dragonStateHandler = DragonStateProvider.getData(player);
         boolean hasFood = player.getFoodData().getFoodLevel() > flightHungerThreshold || player.isCreative();
         return hasFood && player.isSprinting() && isFlying(player);
     }

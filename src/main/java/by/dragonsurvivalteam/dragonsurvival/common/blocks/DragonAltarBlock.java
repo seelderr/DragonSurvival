@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -32,11 +32,15 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-
 public class DragonAltarBlock extends Block {
+    @Translation(type = Translation.Type.MISC, comments = "The altar is on cooldown for: %s")
+    private static final String ALTAR_COOLDOWN = Translation.Type.GUI.wrap("message.altar_cooldown");
+
+    @Translation(type = Translation.Type.MISC, comments = "■§7 An altar that allows you to turn into a dragon.")
+    private static final String ALTAR = Translation.Type.DESCRIPTION.wrap("dragon_altar");
+
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private final VoxelShape SHAPE = Shapes.block();
-
 
     public DragonAltarBlock(Properties properties) {
         super(properties);
@@ -56,22 +60,21 @@ public class DragonAltarBlock extends Block {
     @Override
     public void appendHoverText(@NotNull ItemStack pStack, Item.@NotNull TooltipContext pContext, @NotNull List<Component> pTootipComponents, @NotNull TooltipFlag pTooltipFlag) {
         super.appendHoverText(pStack, pContext, pTootipComponents, pTooltipFlag);
-        pTootipComponents.add(Component.translatable("ds.description.dragonAltar"));
+        pTootipComponents.add(Component.translatable(ALTAR));
     }
 
     @Override
-    public InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player pPlayer, @NotNull BlockHitResult pHitResult) {
-        DragonStateHandler handler = DragonStateProvider.getData(pPlayer);
+    public @NotNull InteractionResult useWithoutItem(@NotNull BlockState pState, @NotNull Level pLevel, @NotNull BlockPos pPos, @NotNull Player player, @NotNull BlockHitResult pHitResult) {
+        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!pLevel.isClientSide()) {
-            if (handler.altarCooldown > 0) {
-                //Show the current cooldown in minutes and seconds in cases where the cooldown is set high in the config
-                int mins = (int) (Functions.ticksToMinutes(handler.altarCooldown));
-                int secs = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(mins)));
-                pPlayer.sendSystemMessage(Component.translatable("ds.cooldown.active", (mins > 0 ? mins + "m" : "") + secs + (mins > 0 ? "s" : "")));
+            if (ServerConfig.altarUsageCooldown > 0 && handler.altarCooldown > 0) {
+                int minutes = (int) (Functions.ticksToMinutes(handler.altarCooldown));
+                int seconds = (int) (Functions.ticksToSeconds(handler.altarCooldown - Functions.minutesToTicks(minutes)));
+                player.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, (minutes > 0 ? minutes + "m " : "") + seconds + "s"));
                 return InteractionResult.FAIL;
             } else {
-                PacketDistributor.sendToPlayer((ServerPlayer) pPlayer, new AllowOpenDragonAltar.Data());
+                PacketDistributor.sendToPlayer((ServerPlayer) player, AllowOpenDragonAltar.INSTANCE);
                 handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
                 handler.hasUsedAltar = true;
                 handler.isInAltar = true;
@@ -83,7 +86,7 @@ public class DragonAltarBlock extends Block {
     }
 
     @Override
-    public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
+    public @NotNull VoxelShape getShape(@NotNull BlockState state, @NotNull BlockGetter worldIn, @NotNull BlockPos pos, @NotNull CollisionContext context) {
         return SHAPE;
     }
 }

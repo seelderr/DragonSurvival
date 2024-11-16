@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonAltarBlock;
+import by.dragonsurvivalteam.dragonsurvival.common.blocks.DragonBeacon;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.SkeletonPieceBlock;
 import by.dragonsurvivalteam.dragonsurvival.common.blocks.TreasureBlock;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSBlocks;
@@ -32,17 +33,23 @@ public class DSBlockTags extends BlockTagsProvider {
     public static final TagKey<Block> REGENERATES_SEA_DRAGON_MANA = key("regenerates_sea_dragon_mana");
     public static final TagKey<Block> REGENERATES_FOREST_DRAGON_MANA = key("regenerates_forest_dragon_mana");
 
-    public static final TagKey<Block> NETHER_BREATH_DESTRUCTIBLE = key("nether_breath_destructible");
-    public static final TagKey<Block> STORM_BREATH_DESTRUCTIBLE = key("storm_breath_destructible");
-    public static final TagKey<Block> FOREST_BREATH_DESTRUCTIBLE = key("forest_breath_destructible");
+    public static final TagKey<Block> CAVE_DRAGON_BREATH_DESTRUCTIBLE = key("cave_dragon_breath_destructible");
+    public static final TagKey<Block> SEA_DRAGON_BREATH_DESTRUCTIBLE = key("sea_dragon_breath_destructible");
+    public static final TagKey<Block> FOREST_DRAGON_BREATH_DESTRUCTIBLE = key("forest_dragon_breath_destructible");
+
+    public static final TagKey<Block> CAVE_DRAGON_HARVESTABLE = key("cave_dragon_harvestable");
+    public static final TagKey<Block> SEA_DRAGON_HARVESTABLE = key("sea_dragon_harvestable");
+    public static final TagKey<Block> FOREST_DRAGON_HARVESTABLE = key("forest_dragon_harvestable");
 
     public static final TagKey<Block> HYDRATES_SEA_DRAGON = key("hydrates_sea_dragon");
     public static final TagKey<Block> FOREST_BREATH_GROW_BLACKLIST = key("forest_breath_grow_blacklist");
 
     public static final TagKey<Block> DRAGON_ALTARS = key("dragon_altars");
     public static final TagKey<Block> DRAGON_TREASURES = key("dragon_treasures");
+    public static final TagKey<Block> DRAGON_BEACONS = key("dragon_beacons");
+
     public static final TagKey<Block> WOODEN_DRAGON_DOORS = key("wooden_dragon_doors");
-    public static final TagKey<Block> WOODEN_DRAGON_DOORS_SMALL = key("wooden_dragon_doors_small");
+    public static final TagKey<Block> SMALL_WOODEN_DRAGON_DOORS = key("small_wooden_dragon_doors");
 
     public DSBlockTags(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
         super(output, lookupProvider, DragonSurvival.MODID, existingFileHelper);
@@ -54,6 +61,7 @@ public class DSBlockTags extends BlockTagsProvider {
         addToDragonSpeedUpBlocks();
         addToDragonManaBlocks();
         addToBreathDestructibleBlocks();
+        addToHarvestableBlocks();
 
         DSBlocks.DS_BLOCKS.getEntries().forEach(holder -> {
             Block block = holder.value();
@@ -61,13 +69,13 @@ public class DSBlockTags extends BlockTagsProvider {
             switch (block) {
                 case DragonAltarBlock ignored -> tag(DRAGON_ALTARS).add(block);
                 case TreasureBlock ignored -> tag(DRAGON_TREASURES).add(block);
-                // TODO :: Currently not used anywhere?
-                case SkeletonPieceBlock ignored -> tag(key("dragon_bones")).add(block);
+                case DragonBeacon ignored -> tag(DRAGON_BEACONS).add(block);
+                case SkeletonPieceBlock ignored -> tag(key("dragon_bones")).add(block); // TODO :: Currently not used anywhere?
                 default -> { /* Nothing to do */ }
             }
         });
 
-        // FIXME :: give cave dragon it's own tag
+        // FIXME :: give cave dragon its own tag
         // Blocks that hydrate sea dragons (or damage cave dragons) when standing on them
         tag(HYDRATES_SEA_DRAGON)
                 .addTag(REGENERATES_SEA_DRAGON_MANA)
@@ -89,20 +97,18 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addTag(BlockTags.FLOWERS)
                 .addTag(BlockTags.REPLACEABLE); // Potentially has no entries?
 
-        tag(WOODEN_DRAGON_DOORS_SMALL)
-                .add(DSBlocks.OAK_SMALL_DOOR.value())
-                .add(DSBlocks.SPRUCE_SMALL_DOOR.value())
-                .add(DSBlocks.ACACIA_SMALL_DOOR.value())
-                .add(DSBlocks.BIRCH_SMALL_DOOR.value())
-                .add(DSBlocks.JUNGLE_SMALL_DOOR.value())
-                .add(DSBlocks.DARK_OAK_SMALL_DOOR.value())
-                .add(DSBlocks.WARPED_SMALL_DOOR.value())
-                .add(DSBlocks.CRIMSON_SMALL_DOOR.value());
+        tag(SMALL_WOODEN_DRAGON_DOORS)
+                .add(DSBlocks.SMALL_OAK_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_SPRUCE_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_ACACIA_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_BIRCH_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_JUNGLE_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_DARK_OAK_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_WARPED_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_CRIMSON_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_FOREST_DRAGON_DOOR.value());
 
         tag(WOODEN_DRAGON_DOORS)
-                .addTag(WOODEN_DRAGON_DOORS_SMALL)
-                .add(DSBlocks.DRAGON_ALTAR_OAK_LOG.value())
-                .add(DSBlocks.DRAGON_ALTAR_BIRCH_LOG.value())
                 .add(DSBlocks.OAK_DRAGON_DOOR.value())
                 .add(DSBlocks.SPRUCE_DRAGON_DOOR.value())
                 .add(DSBlocks.ACACIA_DRAGON_DOOR.value())
@@ -163,19 +169,25 @@ public class DSBlockTags extends BlockTagsProvider {
                 .add(Blocks.LANTERN);
     }
 
+    private void addToHarvestableBlocks() {
+        tag(CAVE_DRAGON_HARVESTABLE).addTag(BlockTags.MINEABLE_WITH_PICKAXE);
+        tag(SEA_DRAGON_HARVESTABLE).addTag(BlockTags.MINEABLE_WITH_SHOVEL);
+        tag(FOREST_DRAGON_HARVESTABLE).addTag(BlockTags.MINEABLE_WITH_AXE);
+    }
+
     /** These blocks can be destroyed by the respective dragon breath */
     private void addToBreathDestructibleBlocks() {
-        tag(NETHER_BREATH_DESTRUCTIBLE)
+        tag(CAVE_DRAGON_BREATH_DESTRUCTIBLE)
                 .addTag(BlockTags.IMPERMEABLE) // Glass
                 .addTag(BlockTags.CROPS)
                 .addTag(BlockTags.FLOWERS)
                 .add(Blocks.COBWEB);
 
-        tag(STORM_BREATH_DESTRUCTIBLE)
+        tag(SEA_DRAGON_BREATH_DESTRUCTIBLE)
                 .addTag(BlockTags.IMPERMEABLE) // Glass
                 .addTag(BlockTags.FLOWERS);
 
-        tag(FOREST_BREATH_DESTRUCTIBLE)
+        tag(FOREST_DRAGON_BREATH_DESTRUCTIBLE)
                 .addTag(BlockTags.BANNERS);
     }
 
@@ -183,9 +195,7 @@ public class DSBlockTags extends BlockTagsProvider {
     private void addToDragonManaBlocks() {
         tag(REGENERATES_CAVE_DRAGON_MANA)
                 .addTag(BlockTags.FIRE)
-                .add(Blocks.LAVA_CAULDRON)
                 .add(Blocks.MAGMA_BLOCK)
-                .add(Blocks.LAVA)
                 .add(DSBlocks.CAVE_SOURCE_OF_MAGIC.value())
                 .addOptionalTag(DragonSurvival.location("immersive_weathering", "charred_blocks"))
                 .addOptionalTag(DragonSurvival.location("regions_unexplored", "ash"))
@@ -197,7 +207,6 @@ public class DSBlockTags extends BlockTagsProvider {
                 .addTag(BlockTags.ICE)
                 .add(Blocks.WATER_CAULDRON)
                 .add(Blocks.WET_SPONGE)
-                .add(Blocks.WATER)
                 .add(DSBlocks.SEA_SOURCE_OF_MAGIC.value())
                 .addOptional(DragonSurvival.location("immersive_weathering", "thin_ice"))
                 .addOptional(DragonSurvival.location("immersive_weathering", "cryosol"))
@@ -287,71 +296,72 @@ public class DSBlockTags extends BlockTagsProvider {
     private void addToVanillaTags() {
         tag(BlockTags.MINEABLE_WITH_AXE)
                 .addTag(WOODEN_DRAGON_DOORS)
-                .add(DSBlocks.FOREST_PRESSURE_PLATE.value());
+                .addTag(SMALL_WOODEN_DRAGON_DOORS)
+                .add(DSBlocks.FOREST_DRAGON_PRESSURE_PLATE.value());
 
         tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                .add(DSBlocks.DRAGON_ALTAR_STONE.value())
-                .add(DSBlocks.DRAGON_ALTAR_SANDSTONE.value())
-                .add(DSBlocks.DRAGON_ALTAR_RED_SANDSTONE.value())
-                .add(DSBlocks.DRAGON_ALTAR_PURPUR_BLOCK.value())
-                .add(DSBlocks.DRAGON_ALTAR_NETHER_BRICKS.value())
-                .add(DSBlocks.DRAGON_ALTAR_MOSSY_COBBLESTONE.value())
-                .add(DSBlocks.DRAGON_ALTAR_BLACKSTONE.value())
+                .add(DSBlocks.STONE_DRAGON_ALTAR.value())
+                .add(DSBlocks.SANDSTONE_DRAGON_ALTAR.value())
+                .add(DSBlocks.RED_SANDSTONE_DRAGON_ALTAR.value())
+                .add(DSBlocks.PURPUR_DRAGON_ALTAR.value())
+                .add(DSBlocks.NETHER_BRICK_DRAGON_ALTAR.value())
+                .add(DSBlocks.MOSSY_DRAGON_ALTAR.value())
+                .add(DSBlocks.BLACKSTONE_DRAGON_ALTAR.value())
                 .add(DSBlocks.CAVE_DRAGON_DOOR.value())
                 .add(DSBlocks.SEA_DRAGON_DOOR.value())
                 .add(DSBlocks.IRON_DRAGON_DOOR.value())
-                .add(DSBlocks.STONE_SMALL_DOOR.value())
-                .add(DSBlocks.SLEEPER_SMALL_DOOR.value())
-                .add(DSBlocks.CAVE_SMALL_DOOR.value())
-                .add(DSBlocks.SEA_SMALL_DOOR.value())
-                .add(DSBlocks.IRON_SMALL_DOOR.value())
-                .add(DSBlocks.MURDERER_SMALL_DOOR.value())
-                .add(DSBlocks.MURDERER_DRAGON_DOOR.value())
-                .add(DSBlocks.SLEEPER_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_STONE_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_GOTHIC_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_CAVE_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_SEA_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_IRON_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_SKYRIM_DRAGON_DOOR.value())
+                .add(DSBlocks.SKYRIM_DRAGON_DOOR.value())
+                .add(DSBlocks.GOTHIC_DRAGON_DOOR.value())
                 .add(DSBlocks.STONE_DRAGON_DOOR.value())
                 .add(DSBlocks.CAVE_SOURCE_OF_MAGIC.value())
                 .add(DSBlocks.FOREST_SOURCE_OF_MAGIC.value())
                 .add(DSBlocks.SEA_SOURCE_OF_MAGIC.value())
-                .add(DSBlocks.TREASURE_DEBRIS.value())
-                .add(DSBlocks.TREASURE_DIAMOND.value())
-                .add(DSBlocks.TREASURE_EMERALD.value())
-                .add(DSBlocks.TREASURE_COPPER.value())
-                .add(DSBlocks.TREASURE_GOLD.value())
-                .add(DSBlocks.TREASURE_IRON.value())
-                .add(DSBlocks.HELMET_BLOCK_1.value())
-                .add(DSBlocks.HELMET_BLOCK_2.value())
-                .add(DSBlocks.HELMET_BLOCK_3.value())
-                .add(DSBlocks.DRAGON_BEACON.value())
+                .add(DSBlocks.DEBRIS_DRAGON_TREASURE.value())
+                .add(DSBlocks.DIAMOND_DRAGON_TREASURE.value())
+                .add(DSBlocks.EMERALD_DRAGON_TREASURE.value())
+                .add(DSBlocks.COPPER_DRAGON_TREASURE.value())
+                .add(DSBlocks.GOLD_DRAGON_TREASURE.value())
+                .add(DSBlocks.IRON_DRAGON_TREASURE.value())
+                .add(DSBlocks.GRAY_KNIGHT_HELMET.value())
+                .add(DSBlocks.GOLDEN_KNIGHT_HELMET.value())
+                .add(DSBlocks.BLACK_KNIGHT_HELMET.value())
+                .add(DSBlocks.EMPTY_DRAGON_BEACON.value())
                 .add(DSBlocks.DRAGON_MEMORY_BLOCK.value())
-                .add(DSBlocks.PEACE_DRAGON_BEACON.value())
-                .add(DSBlocks.MAGIC_DRAGON_BEACON.value())
-                .add(DSBlocks.FIRE_DRAGON_BEACON.value())
+                .add(DSBlocks.FOREST_DRAGON_BEACON.value())
+                .add(DSBlocks.SEA_DRAGON_BEACON.value())
+                .add(DSBlocks.CAVE_DRAGON_BEACON.value())
                 .add(DSBlocks.DRAGON_PRESSURE_PLATE.value())
                 .add(DSBlocks.HUMAN_PRESSURE_PLATE.value())
-                .add(DSBlocks.SEA_PRESSURE_PLATE.value())
-                .add(DSBlocks.CAVE_PRESSURE_PLATE.value());
+                .add(DSBlocks.SEA_DRAGON_PRESSURE_PLATE.value())
+                .add(DSBlocks.CAVE_DRAGON_PRESSURE_PLATE.value());
         
         tag(BlockTags.NEEDS_STONE_TOOL)
-                .add(DSBlocks.TREASURE_GOLD.value())
-                .add(DSBlocks.TREASURE_EMERALD.value())
-                .add(DSBlocks.TREASURE_DIAMOND.value())
-                .add(DSBlocks.TREASURE_DEBRIS.value())
+                .add(DSBlocks.GOLD_DRAGON_TREASURE.value())
+                .add(DSBlocks.EMERALD_DRAGON_TREASURE.value())
+                .add(DSBlocks.DIAMOND_DRAGON_TREASURE.value())
+                .add(DSBlocks.DEBRIS_DRAGON_TREASURE.value())
                 .add(DSBlocks.IRON_DRAGON_DOOR.value())
-                .add(DSBlocks.IRON_SMALL_DOOR.value())
-                .add(DSBlocks.MURDERER_DRAGON_DOOR.value())
-                .add(DSBlocks.MURDERER_SMALL_DOOR.value())
-                .add(DSBlocks.TREASURE_COPPER.value())
-                .add(DSBlocks.TREASURE_IRON.value())
-                .add(DSBlocks.HELMET_BLOCK_1.value())
-                .add(DSBlocks.HELMET_BLOCK_2.value())
-                .add(DSBlocks.HELMET_BLOCK_3.value());
+                .add(DSBlocks.SMALL_IRON_DRAGON_DOOR.value())
+                .add(DSBlocks.SKYRIM_DRAGON_DOOR.value())
+                .add(DSBlocks.SMALL_SKYRIM_DRAGON_DOOR.value())
+                .add(DSBlocks.COPPER_DRAGON_TREASURE.value())
+                .add(DSBlocks.IRON_DRAGON_TREASURE.value())
+                .add(DSBlocks.GRAY_KNIGHT_HELMET.value())
+                .add(DSBlocks.GOLDEN_KNIGHT_HELMET.value())
+                .add(DSBlocks.BLACK_KNIGHT_HELMET.value());
         
         tag(BlockTags.NEEDS_IRON_TOOL)
-                .add(DSBlocks.DRAGON_BEACON.value())
+                .add(DSBlocks.EMPTY_DRAGON_BEACON.value())
                 .add(DSBlocks.DRAGON_MEMORY_BLOCK.value())
-                .add(DSBlocks.PEACE_DRAGON_BEACON.value())
-                .add(DSBlocks.MAGIC_DRAGON_BEACON.value())
-                .add(DSBlocks.FIRE_DRAGON_BEACON.value());
+                .add(DSBlocks.FOREST_DRAGON_BEACON.value())
+                .add(DSBlocks.SEA_DRAGON_BEACON.value())
+                .add(DSBlocks.CAVE_DRAGON_BEACON.value());
     }
 
     private static TagKey<Block> key(@NotNull final String name) {

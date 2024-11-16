@@ -17,9 +17,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(Block.class)
 public abstract class BlockMixin {
     @Inject(method = "playerDestroy", at = @At(value = "HEAD"))
-    public void dragonSurvival$triggerAdvancement(Level pLevel, Player pPlayer, BlockPos pPos, BlockState pState, BlockEntity pBlockEntity, ItemStack pTool, CallbackInfo ci) {
-        if (pPlayer instanceof ServerPlayer serverPlayer && pPlayer.isInLava()) {
-            DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().trigger(serverPlayer, (Block) (Object) (this));
+    public void dragonSurvival$triggerAdvancement(Level level, Player player, BlockPos position, BlockState state, BlockEntity blockEntity, ItemStack tool, CallbackInfo callback) {
+        if (player instanceof ServerPlayer serverPlayer && player.isInLava()) {
+            DSAdvancementTriggers.MINE_BLOCK_UNDER_LAVA.get().trigger(serverPlayer, state);
         }
     }
 }

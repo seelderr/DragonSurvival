@@ -1,16 +1,28 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+
 import java.util.Locale;
 
 public enum EnumSkinLayer {
+    // The translation is empty because currently the text is shown behind the dropdown elements for the skin part selections
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     BASE("Base", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     BOTTOM("Bottom", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     EYES("Eyes", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     HORNS("Horns", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     SPIKES("Spikes", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     CLAWS("Claws", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     TEETH("Teeth", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     MAGIC("Magic", true),
+    @Translation(type = Translation.Type.SKIN_PART, comments = "")
     EXTRA("Extra", false),
     EXTRA1("Extra", false),
     EXTRA2("Extra", false),

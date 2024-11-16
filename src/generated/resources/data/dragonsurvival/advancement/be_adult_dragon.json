@@ -1,0 +1,29 @@
+{
+  "parent": "dragonsurvival:be_young_dragon",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "size": 29.9
+      },
+      "trigger": "dragonsurvival:be_dragon"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "dragonsurvival.advancement.be_adult_dragon.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:weak_dragon_heart"
+    },
+    "title": {
+      "translate": "dragonsurvival.advancement.be_adult_dragon"
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

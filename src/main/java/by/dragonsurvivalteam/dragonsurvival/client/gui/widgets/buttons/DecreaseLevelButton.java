@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.passive.PassiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.network.magic.SyncSkillLevelChangeCost;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
@@ -13,12 +14,14 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class DecreaseLevelButton extends ArrowButton {
+    @Translation(type = Translation.Type.MISC, comments = "§aDowngrade the skill")
+    private static final String LEVEL_DOWN = Translation.Type.GUI.wrap("level_down");
+
     private final int slot;
     private PassiveDragonAbility ability;
 
     public DecreaseLevelButton(int x, int y, int slot) {
         super(x, y, 16, 16, false, Button::onPress);
-
         this.slot = slot;
     }
 
@@ -48,7 +51,7 @@ public class DecreaseLevelButton extends ArrowButton {
 
                 if (ability != null) {
                     if (ability.getLevel() > ability.getMinLevel()) {
-                        guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable("ds.skill.level.down", (int) Math.max(0, ability.getLevelCost() * 0.0F)), pMouseX, pMouseY);
+                        guiGraphics.renderTooltip(Minecraft.getInstance().font, Component.translatable(LEVEL_DOWN, (int) Math.max(0, ability.getLevelCost() * 0.0F)), pMouseX, pMouseY);
                     }
                 }
             });

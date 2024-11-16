@@ -9,7 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class ArrowButton extends Button {
-    public static final ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_gui.png");
+    private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/magic_gui.png");
+
     public boolean next;
 
     public ArrowButton(int x, int y, int xSize, int ySize, boolean next, OnPress pressable) {
@@ -19,7 +20,7 @@ public class ArrowButton extends Button {
 
     @Override
     public void renderWidget(GuiGraphics guiGraphics, int p_230431_2_, int p_230431_3_, float p_230431_4_) {
-        RenderSystem.setShaderTexture(0, texture);
+        RenderSystem.setShaderTexture(0, TEXTURE);
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 0);
@@ -31,14 +32,14 @@ public class ArrowButton extends Button {
 
         if (next)
             if (isHovered) {
-                guiGraphics.blit(texture, getX(), getY(), 34, 34, 34, 34);
+                guiGraphics.blit(TEXTURE, getX(), getY(), 34, 34, 34, 34);
             } else {
-                guiGraphics.blit(texture, getX(), getY(), 0, 34, 34, 34);
+                guiGraphics.blit(TEXTURE, getX(), getY(), 0, 34, 34, 34);
             }
         else if (isHovered) {
-            guiGraphics.blit(texture, getX(), getY(), 34, 0, 34, 34);
+            guiGraphics.blit(TEXTURE, getX(), getY(), 34, 0, 34, 34);
         } else {
-            guiGraphics.blit(texture, getX(), getY(), 0, 0, 34, 34);
+            guiGraphics.blit(TEXTURE, getX(), getY(), 0, 0, 34, 34);
         }
         guiGraphics.pose().popPose();
     }

@@ -11,6 +11,7 @@ import net.minecraft.world.item.enchantment.ItemEnchantments;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class EnchantmentUtils {
     public static int getLevel(@NotNull final LivingEntity entity, @NotNull final ResourceKey<Enchantment> enchantment) {
@@ -21,14 +22,21 @@ public class EnchantmentUtils {
         return level.registryAccess().registryOrThrow(Registries.ENCHANTMENT).getHolder(enchantment).map(stack::getEnchantmentLevel).orElse(0);
     }
 
-    public static Holder.Reference<Enchantment> getHolder(ResourceKey<Enchantment> resourceKey) {
+    public static @Nullable Holder.Reference<Enchantment> getHolder(final ResourceKey<Enchantment> enchantment) {
         var lookup = CommonHooks.resolveLookup(Registries.ENCHANTMENT);
-        return lookup == null ? null : lookup.getOrThrow(resourceKey);
+
+        if (lookup == null) {
+            return null;
+        }
+
+        return lookup.get(enchantment).orElse(null);
     }
 
-    public static void addEnchantment(ResourceKey<Enchantment> resourceKey, ItemEnchantments.Mutable temp, int level) {
-        Holder<Enchantment> holder = EnchantmentUtils.getHolder(resourceKey);
-        if (holder != null)
-            temp.set(holder, level);
+    public static void set(final ItemEnchantments.Mutable enchantments, final ResourceKey<Enchantment> enchantment, int level) {
+        Holder<Enchantment> holder = EnchantmentUtils.getHolder(enchantment);
+
+        if (holder != null) {
+            enchantments.set(holder, level);
+        }
     }
 }

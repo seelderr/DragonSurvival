@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components.BackgroundColorSelectorComponent;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
@@ -16,22 +17,20 @@ import org.jetbrains.annotations.NotNull;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class BackgroundColorButton extends ExtendedButton {
-    public static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/textbox.png");
-    public static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/background_color_button.png");
+    @Translation(type = Translation.Type.MISC, comments = "Change the background color")
+    private static final String BACKGROUND_COLOR = Translation.Type.GUI.wrap("dragon_editor.background_color");
+
+    private static final ResourceLocation BUTTON_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/background_color_button.png");
 
     private final DragonEditorScreen screen;
-    public boolean toggled;
-    public int xSize, ySize;
     private BackgroundColorSelectorComponent colorComponent;
     private Renderable renderButton;
-
+    private boolean toggled;
 
     public BackgroundColorButton(int xPos, int yPos, int width, int height, Component displayString, OnPress handler, DragonEditorScreen dragonEditorScreen) {
         super(xPos, yPos, width, height, displayString, handler);
-        xSize = width;
-        ySize = height;
         screen = dragonEditorScreen;
-        setTooltip(Tooltip.create(Component.translatable("ds.gui.dragon_editor.background_color")));
+        setTooltip(Tooltip.create(Component.translatable(BACKGROUND_COLOR)));
     }
 
     @Override

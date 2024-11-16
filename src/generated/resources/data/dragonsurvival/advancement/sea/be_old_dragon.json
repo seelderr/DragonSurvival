@@ -1,0 +1,33 @@
+{
+  "parent": "dragonsurvival:collect_heart_from_monster",
+  "criteria": {
+    "criterion_0": {
+      "conditions": {
+        "type": "sea",
+        "size": 59.9
+      },
+      "trigger": "dragonsurvival:be_dragon"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "dragonsurvival.advancement.sea/be_old_dragon.desc"
+    },
+    "icon": {
+      "count": 1,
+      "id": "dragonsurvival:sea_dragon_beacon"
+    },
+    "title": {
+      "translate": "dragonsurvival.advancement.sea/be_old_dragon"
+    }
+  },
+  "requirements": [
+    [
+      "criterion_0"
+    ]
+  ],
+  "rewards": {
+    "experience": 120
+  },
+  "sends_telemetry_event": true
+}

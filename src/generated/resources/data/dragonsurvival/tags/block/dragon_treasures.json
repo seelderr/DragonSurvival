@@ -1,10 +1,10 @@
 {
   "values": [
-    "dragonsurvival:treasure_debris",
-    "dragonsurvival:treasure_diamond",
-    "dragonsurvival:treasure_emerald",
-    "dragonsurvival:treasure_copper",
-    "dragonsurvival:treasure_gold",
-    "dragonsurvival:treasure_iron"
+    "dragonsurvival:debris_dragon_treasure",
+    "dragonsurvival:diamond_dragon_treasure",
+    "dragonsurvival:emerald_dragon_treasure",
+    "dragonsurvival:copper_dragon_treasure",
+    "dragonsurvival:gold_dragon_treasure",
+    "dragonsurvival:iron_dragon_treasure"
   ]
 }

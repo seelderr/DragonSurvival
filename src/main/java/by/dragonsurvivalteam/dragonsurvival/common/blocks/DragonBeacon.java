@@ -61,12 +61,12 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
     }
 
     private List<String> getEffectsForBeacon(Block block, Level pLevel) {
-        if (block == DSBlocks.PEACE_DRAGON_BEACON.get()) {
-            return ServerConfig.peaceBeaconEffects;
-        } else if (block == DSBlocks.MAGIC_DRAGON_BEACON.get()) {
-            return ServerConfig.magicBeaconEffects;
-        } else if (block == DSBlocks.FIRE_DRAGON_BEACON.get()) {
-            return ServerConfig.fireBeaconEffects;
+        if (block == DSBlocks.FOREST_DRAGON_BEACON.get()) {
+            return ServerConfig.forestDragonBeaconEffects;
+        } else if (block == DSBlocks.SEA_DRAGON_BEACON.get()) {
+            return ServerConfig.seaDragonBeaconEffects;
+        } else if (block == DSBlocks.CAVE_DRAGON_BEACON.get()) {
+            return ServerConfig.caveDragonBeaconEffects;
         }
 
         return null;
@@ -121,9 +121,9 @@ public class DragonBeacon extends Block implements SimpleWaterloggedBlock, Entit
 
     private static Block beaconTypeToBlock(DragonBeaconTileEntity.Type type) {
         return switch (type) {
-            case DragonBeaconTileEntity.Type.PEACE -> DSBlocks.PEACE_DRAGON_BEACON.get();
-            case DragonBeaconTileEntity.Type.MAGIC -> DSBlocks.MAGIC_DRAGON_BEACON.get();
-            case DragonBeaconTileEntity.Type.FIRE -> DSBlocks.FIRE_DRAGON_BEACON.get();
+            case DragonBeaconTileEntity.Type.PEACE -> DSBlocks.SEA_DRAGON_BEACON.get();
+            case DragonBeaconTileEntity.Type.MAGIC -> DSBlocks.FOREST_DRAGON_BEACON.get();
+            case DragonBeaconTileEntity.Type.FIRE -> DSBlocks.CAVE_DRAGON_BEACON.get();
             case DragonBeaconTileEntity.Type.NONE -> null;
         };
     }

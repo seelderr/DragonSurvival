@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.input;
 
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.neoforged.api.distmarker.Dist;
@@ -9,42 +10,68 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.settings.IKeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.common.util.Lazy;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.glfw.GLFW;
 
+import java.util.Locale;
+
+/** Implementation is inspired from Create */
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public enum Keybind {
-    // Implementation inspired by Create
+    @Translation(type = Translation.Type.KEYBIND, comments = "Toggle flight")
+    TOGGLE_FLIGHT(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_G),
 
-    TOGGLE_WINGS("ds.keybind.wings", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_G),
-    DRAGON_INVENTORY("ds.keybind.dragon_inv", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_UNKNOWN),
+    @Translation(type = Translation.Type.KEYBIND, comments = "Dragon inventory")
+    DRAGON_INVENTORY(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_UNKNOWN),
 
-    USE_ABILITY("ds.keybind.use_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_C),
-    TOGGLE_ABILITIES("ds.keybind.toggle_abilities", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_X),
+    @Translation(type = Translation.Type.KEYBIND, comments = "Use ability")
+    USE_ABILITY(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_C),
 
-    NEXT_ABILITY("ds.keybind.next_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_R),
-    PREV_ABILITY("ds.keybind.prev_ability", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_F),
+    @Translation(type = Translation.Type.KEYBIND, comments = "Toggle ability bar")
+    TOGGLE_ABILITIES(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_X),
 
-    ABILITY1("ds.keybind.ability1", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_1),
-    ABILITY2("ds.keybind.ability2", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_2),
-    ABILITY3("ds.keybind.ability3", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_3),
-    ABILITY4("ds.keybind.ability4", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_4),
+    @Translation(type = Translation.Type.KEYBIND, comments = "Next ability")
+    NEXT_ABILITY(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_R),
 
-    SPIN_ABILITY("ds.keybind.spin", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_V),
-    FREE_LOOK("ds.keybind.free_look", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
-    DISABLE_DESTRUCTION("ds.keybind.toggle_destruction", KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_RIGHT_ALT);
+    @Translation(type = Translation.Type.KEYBIND, comments = "Previous ability")
+    PREVIOUS_ABILITY(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_F),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Skill #1")
+    ABILITY1(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_1),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Skill #2")
+    ABILITY2(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_2),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Skill #3")
+    ABILITY3(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_3),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Skill #4")
+    ABILITY4(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_KP_4),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Use the Spin ability")
+    SPIN_ABILITY(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_V),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Activate free look (hold)")
+    FREE_LOOK(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_LEFT_ALT),
+
+    @Translation(type = Translation.Type.KEYBIND, comments = "Toggle Large Dragon Destruction")
+    TOGGLE_DESTRUCTION(KeyConflictContext.IN_GAME, GLFW.GLFW_KEY_RIGHT_ALT);
+
+    @Translation(type = Translation.Type.MISC, comments = "Dragon Survival")
+    private static final String CATEGORY = Translation.Type.KEYBIND.wrap("category");
 
     public static final int KEY_RELEASED = 0;
     public static final int KEY_PRESSED = 1;
     public static final int KEY_HELD = 2;
 
-    private final Lazy<KeyMapping> keyMapping;
+    private final IKeyConflictContext keyConflictContext;
+    private final int defaultKey;
 
-    Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey) {
-        this(description, keyConflictContext, defaultKey, "ds.keybind.category");
-    }
+    private @Nullable Lazy<KeyMapping> keyMapping;
 
-    Keybind(String description, IKeyConflictContext keyConflictContext, int defaultKey, String category) {
-        keyMapping = Lazy.of(() -> new KeyMapping(description, keyConflictContext, InputConstants.Type.KEYSYM, defaultKey, category));
+    Keybind(final IKeyConflictContext keyConflictContext, int defaultKey) {
+        this.keyConflictContext = keyConflictContext;
+        this.defaultKey = defaultKey;
     }
 
     @SubscribeEvent
@@ -55,6 +82,11 @@ public enum Keybind {
     }
 
     public KeyMapping get() {
+        if (keyMapping == null) {
+            // Initialize here due to needing access to the category
+            keyMapping = Lazy.of(() -> new KeyMapping(Translation.Type.KEYBIND.wrap(toString().toLowerCase(Locale.ENGLISH)), keyConflictContext, InputConstants.Type.KEYSYM, defaultKey, CATEGORY));
+        }
+
         return keyMapping.get();
     }
 

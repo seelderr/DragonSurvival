@@ -3,9 +3,14 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -34,11 +39,11 @@ public abstract class DragonAbility {
     }
 
     public Component getTitle() {
-        return Component.translatable("ds.skill." + getName());
+        return Component.translatable(Translation.Type.ABILITY.wrap(getName()));
     }
 
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()));
     }
 
     public abstract String getName();
@@ -81,13 +86,13 @@ public abstract class DragonAbility {
         if(!ServerConfig.dragonAbilities){
             return true;
         }
-        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.CAVE) && !ServerConfig.caveDragonAbilities){
+        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.CAVE) && !CaveDragonConfig.caveDragonAbilities){
             return true;
         }
-        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.SEA) && !ServerConfig.seaDragonAbilities){
+        if(DragonUtils.isDragonType(getDragonType(), DragonTypes.SEA) && !SeaDragonConfig.seaDragonAbilities){
             return true;
         }
-        return DragonUtils.isDragonType(getDragonType(), DragonTypes.FOREST) && !ServerConfig.forestDragonAbilities;
+        return DragonUtils.isDragonType(getDragonType(), DragonTypes.FOREST) && !ForestDragonConfig.areAbilitiesEnabled;
     }
 
     public int getLevel() {
@@ -99,5 +104,9 @@ public abstract class DragonAbility {
 
     public void setLevel(int level) {
         this.level = Mth.clamp(level, getMinLevel(), getMaxLevel());
+    }
+
+    public MutableComponent description() {
+        return Component.empty();
     }
 }

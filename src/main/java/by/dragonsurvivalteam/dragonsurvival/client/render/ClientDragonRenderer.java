@@ -23,6 +23,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -74,36 +75,47 @@ public class ClientDragonRenderer {
      */
     public static boolean isOverridingMovementData = false;
 
-    /**
-     * Instances used for rendering third-person dragon models
-     */
+    /** Instances used for rendering third-person dragon models */
     public static ConcurrentHashMap<Integer, AtomicReference<DragonEntity>> playerDragonHashMap = new ConcurrentHashMap<>(20);
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderFirstPerson", comment = "Render dragon model in first person. If your own tail scares you, write false")
+    @Translation(key = "render_dragon_in_first_person", type = Translation.Type.CONFIGURATION, comments = "If enabled the dragon body will be visible in first person")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_dragon_in_first_person")
     public static Boolean renderInFirstPerson = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderFirstPersonFlight", comment = "Render dragon model in first person while gliding. We don't advise you to turn it on.")
+    @Translation(key = "render_first_person_flight", type = Translation.Type.CONFIGURATION, comments = "If enabled the dragon body will be visible in first person while flying")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_first_person_flight")
     public static Boolean renderFirstPersonFlight = false;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderItemsInMouth", comment = "Should items be rendered near the mouth of dragons rather then hovering by their side?")
+    @Translation(key = "render_items_in_mouth", type = Translation.Type.CONFIGURATION, comments = {"If enabled held items will be rendered neat the mouth of the dragon", "If disabled held items will be displayed on the side of the dragon"})
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_items_in_mouth")
     public static Boolean renderItemsInMouth = false;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderDragonClaws", comment = "Should the tools on the claws and teeth be rendered for your dragon?")
+    @Translation(key = "render_held_item", type = Translation.Type.CONFIGURATION, comments = "If enabled items will be rendered for dragons while in third person mode")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_held_item")
+    public static boolean renderHeldItem = true;
+
+    @Translation(key = "render_dragon_claws", type = Translation.Type.CONFIGURATION, comments = "If enabled dragon claws and teeth will have an overlay depending on the items in the claw slots")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_dragon_claws")
     public static Boolean renderDragonClaws = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderNewbornSkin", comment = "Do you want your dragon skin to be rendered as a newborn dragon?")
+    @Translation(key = "render_newborn_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom newborn dragon skin will be rendered")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_newborn_skin")
     public static Boolean renderNewbornSkin = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderYoungSkin", comment = "Do you want your dragon skin to be rendered as a young dragon?")
+    @Translation(key = "render_young_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom young dragon skin will be rendered")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_young_skin")
     public static Boolean renderYoungSkin = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderAdultSkin", comment = "Do you want your dragon skin to be rendered as a adult dragon?")
+    @Translation(key = "render_adult_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom adult dragon skin will be rendered")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_adult_skin")
     public static Boolean renderAdultSkin = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "renderOtherPlayerSkins", comment = "Should other player skins be rendered?")
+    @Translation(key = "render_other_players_custom_skins", type = Translation.Type.CONFIGURATION, comments = "If enabled custom skins of other players will be rendered")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_other_players_custom_skins")
     public static Boolean renderOtherPlayerSkins = true;
 
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "dragonNameTags", comment = "Show name tags for dragons.")
+    @Translation(key = "dragon_name_tags", type = Translation.Type.CONFIGURATION, comments = "If enabled name tags will be shown for dragons")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "dragon_name_tags")
     public static Boolean dragonNameTags = false;
 
     /** Show breath hit range when hitboxes are being rendered */

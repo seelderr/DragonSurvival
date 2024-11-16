@@ -6,24 +6,25 @@ import net.minecraft.advancements.critereon.ContextAwarePredicate;
 import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.advancements.critereon.SimpleCriterionTrigger;
 import net.minecraft.server.level.ServerPlayer;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 
 public class SleepOnTreasureTrigger extends SimpleCriterionTrigger<SleepOnTreasureTrigger.SleepOnTreasureInstance> {
     public void trigger(ServerPlayer player, int count) {
-        this.trigger(player, triggerInstance -> triggerInstance.count.map(integer -> integer < count).orElse(true));
+        this.trigger(player, triggerInstance -> triggerInstance.nearbyTreasureAmount.map(integer -> integer < count).orElse(true));
     }
 
     @Override
-    public Codec<SleepOnTreasureInstance> codec() {
+    public @NotNull Codec<SleepOnTreasureInstance> codec() {
         return SleepOnTreasureInstance.CODEC;
     }
 
     public record SleepOnTreasureInstance(Optional<ContextAwarePredicate> player,
-                                        Optional<Integer> count) implements SimpleCriterionTrigger.SimpleInstance {
+                                        Optional<Integer> nearbyTreasureAmount) implements SimpleCriterionTrigger.SimpleInstance {
         public static final Codec<SleepOnTreasureInstance> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 EntityPredicate.ADVANCEMENT_CODEC.optionalFieldOf("player").forGetter(SleepOnTreasureInstance::player),
-                Codec.INT.optionalFieldOf("count").forGetter(SleepOnTreasureInstance::count)
+                Codec.INT.optionalFieldOf("nearby_treasure_amount").forGetter(SleepOnTreasureInstance::nearbyTreasureAmount)
         ).apply(instance, SleepOnTreasureInstance::new));
     }
 }

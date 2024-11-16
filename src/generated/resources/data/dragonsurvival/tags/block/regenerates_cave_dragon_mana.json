@@ -1,9 +1,7 @@
 {
   "values": [
     "#minecraft:fire",
-    "minecraft:lava_cauldron",
     "minecraft:magma_block",
-    "minecraft:lava",
     "dragonsurvival:cave_source_of_magic",
     {
       "id": "#immersive_weathering:charred_blocks",

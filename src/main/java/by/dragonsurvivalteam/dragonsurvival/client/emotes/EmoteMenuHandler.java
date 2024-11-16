@@ -10,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigRange;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.network.emotes.SyncEmote;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEmotes;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.blaze3d.platform.InputConstants.Key;
 import com.mojang.blaze3d.platform.InputConstants.Type;
 import net.minecraft.client.Minecraft;
@@ -44,7 +45,22 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(Dist.CLIENT)
 public class EmoteMenuHandler {
-    private static final int PER_PAGE = 10;
+    @Translation(type = Translation.Type.MISC, comments = " ■ §6Emotes§r ■")
+    private static final String TOGGLE = Translation.Type.GUI.wrap("emotes.toggle");
+
+    @Translation(type = Translation.Type.MISC, comments = "Keybinds")
+    private static final String KEYBINDS = Translation.Type.GUI.wrap("emotes.keybinds");
+
+    @ConfigRange(min = -1000, max = 1000)
+    @Translation(key = "emote_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the emote button")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emote_x_offset")
+    public static Integer emoteXOffset = 0;
+
+    @ConfigRange(min = -1000, max = 1000)
+    @Translation(key = "emote_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the y position of the emote button")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emote_y_offset")
+    public static Integer emoteYOffset = 0;
+
     private static final ResourceLocation EMPTY_SLOT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/empty_slot.png");
     private static final ResourceLocation PLAY_ONCE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/play_once.png");
     private static final ResourceLocation PLAY_LOOPED = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/play_looped.png");
@@ -54,15 +70,9 @@ public class EmoteMenuHandler {
     private static final ResourceLocation BUTTON_DOWN = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_down.png");
     private static final ResourceLocation BUTTON_LEFT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_left.png");
     private static final ResourceLocation BUTTON_RIGHT = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/emote/button_right.png");
-    public static final ResourceLocation resetTexture = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
+    private static final ResourceLocation RESET_TEXTURE = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/reset_icon.png");
 
-    @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteXOffset", comment = "Offset the x position of the emote button in relation to its normal position")
-    public static Integer emoteXOffset = 0;
-
-    @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "emotes"}, key = "emoteYOffset", comment = "Offset the y position of the emote button in relation to its normal position")
-    public static Integer emoteYOffset = 0;
+    private static final int PER_PAGE = 10;
 
     private static int emotePage = 0;
     private static boolean keybinding = false;
@@ -72,15 +82,15 @@ public class EmoteMenuHandler {
 
     @SubscribeEvent
     public static void toggleEmoteButtons(ScreenEvent.Render.Pre renderGuiEvent) {
-        if (renderGuiEvent.getScreen() instanceof ChatScreen chatScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
+        if (renderGuiEvent.getScreen() instanceof ChatScreen && DragonStateProvider.isDragon(Minecraft.getInstance().player)) {
             DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
 
-            for (ExtendedButton b : emoteButtons) {
-                b.visible = handler.getEmoteData().emoteMenuOpen;
+            for (ExtendedButton button : emoteButtons) {
+                button.visible = handler.getEmoteData().emoteMenuOpen;
             }
 
-            for (ExtendedButton b : keybindingButtons) {
-                b.visible = handler.getEmoteData().emoteMenuOpen && keybinding;
+            for (ExtendedButton button : keybindingButtons) {
+                button.visible = handler.getEmoteData().emoteMenuOpen && keybinding;
             }
         }
     }
@@ -183,7 +193,7 @@ public class EmoteMenuHandler {
                     guiGraphics.fill(getX(), getY(), getX() + width, getY() + height, color);
 
                     int j = getFGColor();
-                    guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.emote.toggle"), getX() + width / 2, getY() + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
+                    guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(TOGGLE), getX() + width / 2, getY() + (height - 8) / 2, j | Mth.ceil(alpha * 255.0F) << 24);
 
                     DragonStateHandler handler = DragonStateProvider.getData(Minecraft.getInstance().player);
                     if (handler.getEmoteData().emoteMenuOpen) {
@@ -304,7 +314,7 @@ public class EmoteMenuHandler {
 
                         int color = isHovered && emotes.size() > finalIndex ? new Color(0.1F, 0.1F, 0.1F, 0.8F).getRGB() : new Color(0.1F, 0.1F, 0.1F, 0.5F).getRGB();
                         guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
-                        guiGraphics.blit(resetTexture, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
+                        guiGraphics.blit(RESET_TEXTURE, getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
                     }
                 };
                 keybindingButtons.add(resetEmoteKeybind);
@@ -330,7 +340,7 @@ public class EmoteMenuHandler {
                     guiGraphics.fill(getX(), getY(), getX() + getWidth(), getY() + getHeight(), color);
 
                     int foregroundColor = getFGColor();
-                    guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable("ds.emote.keybinds"), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, foregroundColor | Mth.ceil(alpha * 255.0F) << 24);
+                    guiGraphics.drawCenteredString(Minecraft.getInstance().font, Component.translatable(KEYBINDS), getX() + getWidth() / 2, getY() + (getHeight() - 8) / 2, foregroundColor | Mth.ceil(alpha * 255.0F) << 24);
                 }
             };
             emoteButtons.add(toggleKeybinds);

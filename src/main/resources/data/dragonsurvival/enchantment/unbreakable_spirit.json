@@ -1,10 +1,10 @@
 {
   "anvil_cost": 2,
   "description": {
-    "translate": "ds.enchantment.unbreakable_spirit"
+    "translate": "enchantment.dragonsurvival.unbreakable_spirit"
   },
   "effects": {},
-  "exclusive_set": "#dragonsurvival:exclusive_set/evil_dragon",
+  "exclusive_set": "#dragonsurvival:exclusive_set/dark_dragon",
   "max_cost": {
     "base": 21,
     "per_level_above_first": 11

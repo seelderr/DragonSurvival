@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.active;
 
-
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.projectiles.DragonSpikeEntity;
@@ -11,6 +10,8 @@ import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.RegisterDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.InstantCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,33 +25,41 @@ import java.util.Locale;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
+@Translation(type = Translation.Type.ABILITY_DESCRIPTION, comments = "■ Ranged attack: shoots out sharp §cdarts§r, which fly a large distance to pierce your target. Less effective underwater.")
+@Translation(type = Translation.Type.ABILITY, comments = "Spike")
 @RegisterDragonAbility
 public class SpikeAbility extends InstantCastAbility {
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeEnabled", comment = "Whether the spike ability should be enabled")
+    @Translation(key = "spike", type = Translation.Type.CONFIGURATION, comments = "Enable / Disable the spike ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike")
     public static Boolean spikeEnabled = true;
 
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeSpread", comment = "The amount each additional spike fired will add to its inaccuracy")
+    @Translation(key = "spike_spread", type = Translation.Type.CONFIGURATION, comments = "The amount of spread each additionally fired spike will have - spikes will have no spread if set to 0")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_spread")
     public static Float spikeSpread = 1.5F;
 
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeMultishot", comment = "Whether the spike ability will fire an additional shot per level")
+    @Translation(key = "spike_additional_projectiles", type = Translation.Type.CONFIGURATION, comments = "The spike ability will fire additional projectiles based on the ability level if enabled")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_additional_projectiles")
     public static Boolean spikeMultishot = true;
 
-    @ConfigRange(min = 0.05, max = 10000.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeCooldown", comment = "The cooldown in seconds of the spike ability")
+    @ConfigRange(min = 0.05, max = 10_000.0)
+    @Translation(key = "spike_cooldown", type = Translation.Type.CONFIGURATION, comments = "Cooldown (in seconds) after using the ability")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_cooldown")
     public static Double spikeCooldown = 3.0;
 
     @ConfigRange(min = 0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeDamage", comment = "The amount of damage the spike ability deals. This value is multiplied by the skill level.")
+    @Translation(key = "spike_damage", type = Translation.Type.CONFIGURATION, comments = "Amount of damage (multiplied by the ability level)")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_damage")
     public static Double spikeDamage = 2.0;
 
     @ConfigRange(min = 0, max = 100)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "actives", "spike"}, key = "spikeManaCost", comment = "The mana cost for using the spike ability")
+    @Translation(key = "spike_mana_cost", type = Translation.Type.CONFIGURATION, comments = "Mana cost")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"forest_dragon", "magic", "abilities", "active", "spike"}, key = "spike_mana_cost")
     public static Integer spikeManaCost = 1;
 
     @Override
     public Component getDescription() {
-        return Component.translatable("ds.skill.description." + getName(), getDamage());
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), getDamage());
     }
 
     @Override
@@ -70,11 +79,13 @@ public class SpikeAbility extends InstantCastAbility {
 
     @Override
     public ResourceLocation[] getSkillTextures() {
-        return new ResourceLocation[]{ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_0.png"),
+        return new ResourceLocation[]{
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_0.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_1.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_2.png"),
                 ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_3.png"),
-                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_4.png")};
+                ResourceLocation.fromNamespaceAndPath(MODID, "textures/skills/forest/spike_4.png")
+        };
     }
 
 
@@ -85,7 +96,7 @@ public class SpikeAbility extends InstantCastAbility {
     @Override
     public ArrayList<Component> getLevelUpInfo() {
         ArrayList<Component> list = super.getLevelUpInfo();
-        list.add(Component.translatable("ds.skill.damage", "+" + spikeDamage));
+        list.add(Component.translatable(LangKey.ABILITY_DAMAGE, "+" + spikeDamage));
         return list;
     }
 
@@ -122,7 +133,7 @@ public class SpikeAbility extends InstantCastAbility {
     @Override
     public ArrayList<Component> getInfo() {
         ArrayList<Component> components = super.getInfo();
-        components.add(Component.translatable("ds.skill.damage", getDamage()));
+        components.add(Component.translatable(LangKey.ABILITY_DAMAGE, getDamage()));
 
         if (!Keybind.ABILITY2.get().isUnbound()) {
 
@@ -131,7 +142,7 @@ public class SpikeAbility extends InstantCastAbility {
             if (key.isEmpty()) {
                 key = Keybind.ABILITY2.getKey().getDisplayName().getString();
             }
-            components.add(Component.translatable("ds.skill.keybind", key));
+            components.add(Component.translatable(LangKey.ABILITY_KEYBIND, key));
         }
 
         return components;
@@ -157,8 +168,10 @@ public class SpikeAbility extends InstantCastAbility {
             entity.shootFromRotation(player, player.getXRot(), player.getYRot(), 0.0F, speed, i * spikeSpread);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ARROW_SHOOT, entity.getSoundSource(), 1.0F, 2.0F);
             player.level().addFreshEntity(entity);
-            if (!spikeMultishot)
+
+            if (!spikeMultishot) {
                 break;
+            }
         }
     }
 }

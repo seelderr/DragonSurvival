@@ -13,6 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChannelingCastAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ChargeCastAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.Window;
@@ -30,34 +31,41 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class MagicHUD {
     // 1.20.6 moved a whole bunch of widgets around, so to keep compatibiltiy with older versions, we need to use the old widgets texture
-    public static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
-    public static final ResourceLocation widgetTextures = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
-    public static final ResourceLocation castBars = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cast_bars.png");
+    public static final ResourceLocation WIDGET_TEXTURES = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/widgets.png");
+
+    private static final ResourceLocation VANILLA_WIDGETS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/pre-1.20.1-widgets.png");
+    private static final ResourceLocation CAST_BARS = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cast_bars.png");
 
     public static final Color COLOR = new Color(243, 48, 59);
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarXPos", comment = "Offset the x position of the cast bar in relation to its normal position")
+    @Translation(key = "cast_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the cast bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "cast_bar_x_offset")
     public static Integer castbarXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos", comment = "Offset the y position of the cast bar in relation to its normal position")
+    @Translation(key = "cast_bar_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the y position of the cast bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "casterBarYPos")
     public static Integer castbarYOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarXOffset", comment = "Offset the x position of the magic skill bar in relation to its normal position")
+    @Translation(key = "skill_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the skill bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skill_bar_x_offset")
     public static Integer skillbarXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skillbarYOffset", comment = "Offset the y position of the magic skill bar in relation to its normal position")
+    @Translation(key = "skill_bar_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the skill bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "skill_bar_y_offset")
     public static Integer skillbarYOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarXOffset", comment = "Offset the x position of the mana bar in relation to its normal position")
+    @Translation(key = "mana_bar_x_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the x position of the mana bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "mana_bar_x_offset")
     public static Integer manabarXOffset = 0;
 
     @ConfigRange(min = -1000, max = 1000)
-    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "manabarYOffset", comment = "Offset the y position of the mana bar in relation to its normal position")
+    @Translation(key = "mana_bar_y_offset", type = Translation.Type.CONFIGURATION, comments = "Offset for the y position of the mana bar")
+    @ConfigOption(side = ConfigSide.CLIENT, category = {"ui", "magic"}, key = "mana_bar_y_offset")
     public static Integer manabarYOffset = 0;
 
     public static boolean renderExperienceBar(GuiGraphics guiGraphics, int screenWidth) {
@@ -90,10 +98,10 @@ public class MagicHUD {
 
             int experienceProgress = (int) (localPlayer.experienceProgress * 183.0F);
             int height = guiScaledHeight - 32 + 3;
-            guiGraphics.blit(widgetTextures, width, height, 0, 0, 164, 182, 5, 256, 256);
+            guiGraphics.blit(WIDGET_TEXTURES, width, height, 0, 0, 164, 182, 5, 256, 256);
 
             if (experienceProgress > 0) {
-                guiGraphics.blit(widgetTextures, width, height, 0, 0, 169, experienceProgress, 5, 256, 256);
+                guiGraphics.blit(WIDGET_TEXTURES, width, height, 0, 0, 169, experienceProgress, 5, 256, 256);
             }
         }
 
@@ -168,8 +176,10 @@ public class MagicHUD {
 
             guiGraphics.blit(VANILLA_WIDGETS, posX + sizeX * handler.getMagicData().getSelectedAbilitySlot() - 1, posY - 3, 2, 0, 22, 24, 24, 256, 256);
 
-            int maxMana = ManaHandler.getMaxMana(localPlayer);
-            int curMana = ManaHandler.getCurrentMana(localPlayer);
+            // Don't render more than two rows (1 icon = 1 mana point)
+            // This makes the mana bars also stop just before the emote button when the chat window is open
+            int maxMana = Math.min(20, ManaHandler.getMaxMana(localPlayer));
+            int currentMana = Math.min(maxMana, ManaHandler.getCurrentMana(localPlayer));
 
             int manaX = i1;
             int manaY = height - sizeY;
@@ -182,13 +192,13 @@ public class MagicHUD {
                     int manaSlot = i * 10 + x;
                     if (manaSlot < maxMana) {
                         int xPos;
-                        if (curMana <= manaSlot) {
+
+                        if (currentMana <= manaSlot) {
                             xPos = ManaHandler.isPlayerInGoodConditions(localPlayer) ? 19 : 37;
                         } else {
                             xPos = 0;
                         }
-                        //int condiXPos = DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
-                        //int xPos = curMana <= manaSlot ? goodCondi ? condiXPos + 72 : 54 : DragonUtils.isDragonType(handler, DragonTypes.SEA) ? 0 : DragonUtils.isDragonType(handler, DragonTypes.FOREST) ? 18 : 36;
+
                         float rescale = 2.15F;
                         guiGraphics.blit(handler.getType().getManaIcons(), manaX + x * (int) (18 / rescale), manaY - 12 - i * ((int) (18 / rescale) + 1), xPos / rescale, 0, (int) (18 / rescale), (int) (18 / rescale), (int) (256 / rescale), (int) (256 / rescale));
                     }
@@ -223,8 +233,8 @@ public class MagicHUD {
 
                 guiGraphics.pose().translate(startX, startY, 0);
 
-                guiGraphics.blit(castBars, startX, startY, 0, yPos1, 196, 47, 256, 256);
-                guiGraphics.blit(castBars, startX + 2, startY + 41, 0, yPos2, (int) (191 * perc), 4, 256, 256);
+                guiGraphics.blit(CAST_BARS, startX, startY, 0, yPos1, 196, 47, 256, 256);
+                guiGraphics.blit(CAST_BARS, startX + 2, startY + 41, 0, yPos2, (int) (191 * perc), 4, 256, 256);
 
                 guiGraphics.blit(ability.getIcon(), startX + 78, startY + 3, 0, 0, 36, 36, 36, 36);
 

@@ -3,7 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.handlers;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
+import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LevelRendererAccess;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDestructionEnabled;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -15,14 +18,18 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.BlockDestructionProgress;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderLevelStageEvent;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.joml.Matrix4f;
 
 import java.util.SortedSet;
@@ -30,6 +37,12 @@ import java.util.SortedSet;
 /** See {@link by.dragonsurvivalteam.dragonsurvival.server.handlers.DragonDestructionHandler} for server-specific handling */
 @EventBusSubscriber(Dist.CLIENT)
 public class DragonDestructionHandler {
+    @Translation(type = Translation.Type.MISC, comments = "Destruction mode enabled")
+    private static final String ENABLED = Translation.Type.GUI.wrap("destruction.enabled");
+
+    @Translation(type = Translation.Type.MISC, comments = "Destruction mode disabled")
+    private static final String DISABLED = Translation.Type.GUI.wrap("destruction.disabled");
+
     /** Currently this is only tracked for the local player */
     public static BlockPos centerOfDestruction = BlockPos.ZERO;
 
@@ -83,5 +96,33 @@ public class DragonDestructionHandler {
                 });
             }
         }
+    }
+
+    @SubscribeEvent
+    public static void toggleDestructionMode(final InputEvent.Key event) {
+        if (!ServerConfig.allowBlockDestruction && !ServerConfig.allowCrushing) {
+            return;
+        }
+
+        if (Minecraft.getInstance().screen != null || event.getAction() != Keybind.KEY_PRESSED || !Keybind.TOGGLE_DESTRUCTION.isKey(event.getKey())) {
+            return;
+        }
+
+        Player player = Minecraft.getInstance().player;
+
+        if (player == null) {
+            return;
+        }
+
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (!data.isDragon()) {
+            return;
+        }
+
+        Keybind.TOGGLE_DESTRUCTION.consumeClick();
+        data.setDestructionEnabled(!data.getDestructionEnabled());
+        PacketDistributor.sendToServer(new SyncDestructionEnabled.Data(player.getId(), data.getDestructionEnabled()));
+        player.displayClientMessage(Component.translatable(data.getDestructionEnabled() ? ENABLED : DISABLED), true);
     }
 }
