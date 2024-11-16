@@ -26,13 +26,13 @@ public class CliffhangerAbility extends PassiveDragonAbility {
     public static Boolean cliffHanger = true;
 
     @Translation(key = "cliff_hanger_base_fall_reduction", type = Translation.Type.CONFIGURATION, comments = "How many blocks of fall damage is mitigated for cliffhanger level 0.")
-    @ConfigRange(min = 0.0, max = 100.0)
+    @ConfigRange(min = 0, max = 100)
     @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHangerFallReduction")
-    public static Double cliffHangerBaseFallReduction = 5.0;
+    public static Integer cliffHangerBaseFallReduction = 5;
 
     @Override
     public Component getDescription() {
-        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), 3 + getHeight() + ForestDragonConfig.fallReduction);
+        return Component.translatable(Translation.Type.ABILITY_DESCRIPTION.wrap(getName()), 3 + getHeight());
     }
 
     @Override
@@ -62,7 +62,7 @@ public class CliffhangerAbility extends PassiveDragonAbility {
     }
 
     public int getHeight() {
-        return getLevel() + cliffHangerBaseFallReduction.intValue();
+        return getLevel() + cliffHangerBaseFallReduction;
     }
 
     @Override

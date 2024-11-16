@@ -107,44 +107,4 @@ public class DragonBonusHandler {
             dropsEvent.getDrops().forEach(drop -> drop.getData(DragonSurvival.ENTITY_HANDLER).isFireImmune = true);
         }
     }
-
-    // We *need* this event to trigger last so that if other mods cancel the event, we don't set the player as jumping
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public static void flagPlayersAsJumping(PlayerTickEvent.LivingJumpEvent event) {
-        if (event.getEntity() instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
-            if (handler.isDragon()) {
-                handler.isJumping = true;
-            }
-        }
-    }
-
-    // TODO: This could potentially be more efficient by putting some hook where the player gets detected as being on the ground
-    @SubscribeEvent
-    public static void flagPlayersAsNotJumping(PlayerTickEvent.Post event) {
-        DragonStateHandler handler = DragonStateProvider.getData(event.getEntity());
-        if(handler.isDragon() && event.getEntity().onGround()) {
-            handler.isJumping = false;
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.HIGH)
-    public static void reduceFallDamageFromExtraJumpHeight(LivingFallEvent event) {
-        if(event.getEntity() instanceof Player player) {
-            DragonStateHandler handler = DragonStateProvider.getData(player);
-            if(handler.isDragon() && handler.isJumping) {
-                double gravity = player.getGravity();
-                if(gravity <= 0) return;
-
-                // Don't allow a negative jump penalty to cause a negative safe fall distance
-                double jumpMod = DSModifiers.buildJumpMod(player) + handler.getBody().getJumpBonus();
-                if(jumpMod <= 0) return;
-
-                // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity
-                // The jumpMod directly relates to the deltaY of the jump, so the height is (h = v^2 / 2g) where v = jumpMod
-                float extraJumpHeight = (float)((jumpMod * jumpMod) / (2 * gravity));
-                event.setDistance(event.getDistance() - extraJumpHeight);
-            }
-        }
-    }
 }
