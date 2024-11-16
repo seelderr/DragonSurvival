@@ -6,6 +6,8 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig;
+import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
+import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;
@@ -20,6 +22,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
@@ -129,8 +132,10 @@ public class DSModifiers {
     private static double buildForestSafeFallDistanceMod(Player player) {
         double distance = 0;
         if (DragonUtils.isDragonType(player, DragonTypes.FOREST)) {
-            CliffhangerAbility ability = DragonAbilities.getSelfAbility(player, CliffhangerAbility.class);
-            distance += ability.getHeight();
+            Optional<CliffhangerAbility> ability = DragonAbilities.getAbility(player, CliffhangerAbility.class);
+            if (ability.isPresent()) {
+                distance = ability.get().getHeight();
+            }
         }
 
         return distance;
@@ -164,7 +169,7 @@ public class DSModifiers {
         return reachModifier;
     }
 
-    private static double buildDamageMod(DragonStateHandler handler) {
+    private static double buildDamageMod(Player player) {
         if (!DragonBonusConfig.isDamageBonusEnabled) return 0;
         DragonStateHandler handler = DragonStateProvider.getData(player);
         double ageBonus = handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage;
