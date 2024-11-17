@@ -118,12 +118,14 @@ public class DragonBonusHandler {
         }
     }
 
-    // TODO: This could potentially be more efficient by putting some hook where the player gets detected as being on the ground. LivingFallEvent doesn't work since it only gets called when actual damage would occur (landing whilst flying fails to trigger this).
-    @SubscribeEvent
-    public static void flagPlayersAsNotJumping(PlayerTickEvent.Post event) {
-        DragonStateHandler handler = DragonStateProvider.getData(event.getEntity());
-        if(handler.isDragon() && event.getEntity().onGround()) {
-            handler.isJumping = false;
+    // We want to make sure this fires last so that we do the jump handling first before we set the flag to false again
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.LOWEST)
+    public static void flagPlayersAsNotJumping(LivingFallEvent event) {
+        if(event.getEntity() instanceof Player player) {
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+            if(handler.isDragon() && handler.isJumping) {
+                handler.isJumping = false;
+            }
         }
     }
 
