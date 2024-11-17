@@ -69,7 +69,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public boolean hasUsedAltar;
     public boolean isInAltar;
     public boolean refreshBody;
-    public boolean isJumping = false;
+    public boolean isJumping;
 
     /** Last timestamp the server synchronized the player */
     public int lastSync = 0;

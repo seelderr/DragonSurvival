@@ -27,7 +27,7 @@ public class CliffhangerAbility extends PassiveDragonAbility {
 
     @Translation(key = "cliff_hanger_base_fall_reduction", type = Translation.Type.CONFIGURATION, comments = "How many blocks of fall damage is mitigated for cliffhanger level 0.")
     @ConfigRange(min = 0.0, max = 100.0)
-    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliffHangerFallReduction")
+    @ConfigOption(side = ConfigSide.SERVER, category = {"magic", "abilities", "forest_dragon", "passives"}, key = "cliff_hanger_base_fall_reduction")
     public static Double cliffHangerBaseFallReduction = 5.0;
 
     @Override
