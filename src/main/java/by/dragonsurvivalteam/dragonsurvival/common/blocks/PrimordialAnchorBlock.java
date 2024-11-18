@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
 import com.mojang.logging.LogUtils;
-import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -44,23 +43,18 @@ import javax.annotation.Nullable;
 @SuppressWarnings({"removal", "deprecation"})
 public class PrimordialAnchorBlock extends Block {
     private static final Logger LOGGER = LogUtils.getLogger();
-    public static final MapCodec<PrimordialAnchorBlock> CODEC = simpleCodec(PrimordialAnchorBlock::new);
     public static final BooleanProperty CHARGED = BooleanProperty.create("charged");
 
     public PrimordialAnchorBlock(Properties properties) {
         super(properties);
-    }
-
-    @Override
-    public @NotNull MapCodec<PrimordialAnchorBlock> codec() {
-        return CODEC;
+        registerDefaultState(stateDefinition.any().setValue(CHARGED, false));
     }
 
     private static boolean canBeCharged(BlockState state) {
         return !state.getValue(CHARGED);
     }
 
-    public static void charge(@Nullable Entity entity, Level level, BlockPos pos, BlockState state) {
+    private static void charge(@Nullable Entity entity, Level level, BlockPos pos, BlockState state) {
         BlockState blockstate = state.setValue(CHARGED, true);
         level.setBlock(pos, blockstate, 3);
         level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(entity, blockstate));
@@ -106,29 +100,6 @@ public class PrimordialAnchorBlock extends Block {
         return blockState.getValue(CHARGED) ? 15 : 0;
     }
 
-    private static boolean isChargeFuel(ItemStack stack) {
-        return stack.is(Items.ENDER_PEARL);
-    }
-
-    @Override
-    protected @NotNull ItemInteractionResult useItemOn(
-            @NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult
-    ) {
-        if (isChargeFuel(stack) && canBeCharged(state)) {
-            charge(player, level, pos, state);
-            stack.consume(1, player);
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-        } else {
-            return hand == InteractionHand.MAIN_HAND && isChargeFuel(player.getItemInHand(InteractionHand.OFF_HAND)) && canBeCharged(state)
-                    ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
-                    : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        }
-    }
-
-    private static boolean canUseTeleport(Level level) {
-        return level.dimension() == Level.END;
-    }
-
     private static boolean isWaterThatWouldFlow(BlockPos pos, Level level) {
         FluidState fluidstate = level.getFluidState(pos);
         if (!fluidstate.is(FluidTags.WATER)) {
@@ -144,26 +115,6 @@ public class PrimordialAnchorBlock extends Block {
                 return !fluidstate1.is(FluidTags.WATER);
             }
         }
-    }
-
-    private void explode(Level level, final BlockPos pos) {
-        level.removeBlock(pos, false);
-        boolean flag = Direction.Plane.HORIZONTAL.stream().map(pos::relative).anyMatch(blockPos -> isWaterThatWouldFlow(blockPos, level));
-        final boolean flag1 = flag || level.getFluidState(pos.above()).is(FluidTags.WATER);
-        ExplosionDamageCalculator explosiondamagecalculator = new ExplosionDamageCalculator() {
-            @Override
-            public @NotNull Optional<Float> getBlockExplosionResistance(
-                    @NotNull Explosion explosion, @NotNull BlockGetter blockGetter, @NotNull BlockPos blockPos, @NotNull BlockState blockState, @NotNull FluidState fluidState
-            ) {
-                return blockPos.equals(pos) && flag1
-                        ? Optional.of(Blocks.WATER.getExplosionResistance())
-                        : super.getBlockExplosionResistance(explosion, blockGetter, blockPos, blockState, fluidState);
-            }
-        };
-        Vec3 vec3 = pos.getCenter();
-        level.explode(
-                null, level.damageSources().badRespawnPointExplosion(vec3), explosiondamagecalculator, vec3, 5.0F, true, Level.ExplosionInteraction.BLOCK
-        );
     }
 
     private static BlockPos findTallestBlock(BlockGetter level, BlockPos pos, int radius, boolean allowBedrock) {
@@ -260,19 +211,25 @@ public class PrimordialAnchorBlock extends Block {
         return findTallestBlock(level, validSpawn, 16, true);
     }
 
+    private static boolean isChargeFuel(ItemStack stack) {
+        return stack.is(Items.ENDER_PEARL);
+    }
+
+    private static boolean canUseTeleport(Level level) {
+        return level.dimension() == Level.END;
+    }
+
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult hitResult) {
         if (!state.getValue(CHARGED)) {
             return InteractionResult.PASS;
         } else if (!canUseTeleport(level)) {
-            if (!level.isClientSide) {
-                this.explode(level, pos);
-            }
-
-            return InteractionResult.sidedSuccess(level.isClientSide);
+            return InteractionResult.PASS;
         } else {
             if (!level.isClientSide) {
+                state.setValue(CHARGED, false);
                 BlockPos blockpos = findOrCreateValidTeleportPos((ServerLevel)level, pos);
+                blockpos = blockpos.above(5);
                 DimensionTransition transition = new DimensionTransition((ServerLevel)level, blockpos.getCenter(), player.getDeltaMovement(), player.getYRot(), player.getXRot(), DimensionTransition.PLAY_PORTAL_SOUND);
                 player.changeDimension(transition);
 
@@ -289,6 +246,21 @@ public class PrimordialAnchorBlock extends Block {
             }
 
             return InteractionResult.CONSUME;
+        }
+    }
+
+    @Override
+    protected @NotNull ItemInteractionResult useItemOn(
+            @NotNull ItemStack stack, @NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull InteractionHand hand, @NotNull BlockHitResult hitResult
+    ) {
+        if (isChargeFuel(stack) && canBeCharged(state)) {
+            charge(player, level, pos, state);
+            stack.consume(1, player);
+            return ItemInteractionResult.sidedSuccess(level.isClientSide);
+        } else {
+            return hand == InteractionHand.MAIN_HAND && isChargeFuel(player.getItemInHand(InteractionHand.OFF_HAND)) && canBeCharged(state)
+                    ? ItemInteractionResult.SKIP_DEFAULT_BLOCK_INTERACTION
+                    : ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
     }
 

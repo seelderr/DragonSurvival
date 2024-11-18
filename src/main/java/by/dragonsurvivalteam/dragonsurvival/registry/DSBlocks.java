@@ -830,7 +830,7 @@ public class DSBlocks {
     );
 
     @Translation(type = Translation.Type.BLOCK, comments = "Primordial Anchor")
-    public static final DeferredHolder<Block, PrimordialAnchorBlock> PRIMORDIAL_ANCHOR = DS_BLOCKS.register("primordial_anchor",
+    public static final DeferredHolder<Block, PrimordialAnchorBlock> PRIMORDIAL_ANCHOR = register("primordial_anchor",
             () -> new PrimordialAnchorBlock(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_BLACK)
                     .instrument(NoteBlockInstrument.BASEDRUM)
