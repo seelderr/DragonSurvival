@@ -111,22 +111,24 @@ public class DSModifiers {
             new ModifierBuilder(DRAGON_REACH_MODIFIER, Attributes.BLOCK_INTERACTION_RANGE, Operation.ADD_MULTIPLIED_BASE, DSModifiers::buildReachMod),
             new ModifierBuilder(DRAGON_STEP_HEIGHT_MODIFIER, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, DSModifiers::buildStepHeightMod),
             new ModifierBuilder(DRAGON_MOVEMENT_SPEED_MODIFIER, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildMovementSpeedMod),
-            new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod)
+            new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod),
+            new ModifierBuilder(DRAGON_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildJumpMod)
     );
 
     private static final List<ModifierBuilder> BODY_MODIFIER_BUILDERS = List.of(
-            new ModifierBuilder(DRAGON_BODY_MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, handler ->  handler.getBody().getRunMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_ARMOR, Attributes.ARMOR, Operation.ADD_VALUE, handler ->  handler.getBody().getArmorBonus()),
-            new ModifierBuilder(DRAGON_BODY_STRENGTH, Attributes.ATTACK_DAMAGE, Operation.ADD_VALUE, handler ->  handler.getBody().getDamageBonus()),
-            new ModifierBuilder(DRAGON_BODY_STRENGTH_MULT, Attributes.ATTACK_DAMAGE, Operation.ADD_MULTIPLIED_TOTAL, handler ->  handler.getBody().getDamageMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_KNOCKBACK_BONUS, Attributes.ATTACK_KNOCKBACK, Operation.ADD_VALUE, handler ->  handler.getBody().getKnockbackBonus()),
-            new ModifierBuilder(DRAGON_BODY_SWIM_SPEED_BONUS, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, handler -> handler.getBody().getSwimSpeedBonus()),
-            new ModifierBuilder(DRAGON_BODY_STEP_HEIGHT_BONUS, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, handler ->  handler.getBody().getStepBonus()),
-            new ModifierBuilder(DRAGON_BODY_GRAVITY_MULT, Attributes.GRAVITY, Operation.ADD_MULTIPLIED_TOTAL, handler ->  handler.getBody().getGravityMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, handler ->  handler.getBody().getHealthBonus()),
-            new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, handler ->  handler.getBody().getHealthMult() - 1),
-            new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, handler ->  handler.getBody().getJumpBonus()),
-            new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, handler ->  handler.getBody().getFlightStaminaMult())
+            new ModifierBuilder(DRAGON_BODY_MOVEMENT_SPEED, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getRunMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_ARMOR, Attributes.ARMOR, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getArmorBonus()),
+            new ModifierBuilder(DRAGON_BODY_STRENGTH, Attributes.ATTACK_DAMAGE, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getDamageBonus()),
+            new ModifierBuilder(DRAGON_BODY_STRENGTH_MULT, Attributes.ATTACK_DAMAGE, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getDamageMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_KNOCKBACK_BONUS, Attributes.ATTACK_KNOCKBACK, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getKnockbackBonus()),
+            new ModifierBuilder(DRAGON_BODY_SWIM_SPEED_BONUS, NeoForgeMod.SWIM_SPEED, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getSwimSpeedBonus()),
+            new ModifierBuilder(DRAGON_BODY_STEP_HEIGHT_BONUS, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getStepBonus()),
+            new ModifierBuilder(DRAGON_BODY_GRAVITY_MULT, Attributes.GRAVITY, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getGravityMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getHealthBonus()),
+            new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getHealthMult() - 1),
+            new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getJumpBonus()),
+            new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, player -> DragonStateProvider.getData(player).getBody().getSafeFallBonus()),
+            new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getFlightStaminaMult())
     );
   
     private static double buildForestSafeFallDistanceMod(DragonStateHandler handler) {
