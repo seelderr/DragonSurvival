@@ -3,7 +3,6 @@ package by.dragonsurvivalteam.dragonsurvival.registry;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
@@ -11,6 +10,7 @@ import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.SeaDragonConfig
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.passive.CliffhangerAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.AttributeMapAccessor;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.Holder;

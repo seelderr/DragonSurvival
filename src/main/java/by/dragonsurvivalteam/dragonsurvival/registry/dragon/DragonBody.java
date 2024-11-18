@@ -1,4 +1,4 @@
-package by.dragonsurvivalteam.dragonsurvival.common.dragon;
+package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DSAttributeModifier;
@@ -36,7 +36,7 @@ public record DragonBody(List<DSAttributeModifier> modifiers, double heightMulti
     public static final Codec<DragonBody> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             DSAttributeModifier.CODEC.listOf().fieldOf("modifiers").forGetter(DragonBody::modifiers),
             Codec.DOUBLE.optionalFieldOf("height_multiplier", 1.0).forGetter(DragonBody::heightMultiplier),
-            Codec.BOOL.optionalFieldOf("has_extended_crouch", false).forGetter(DragonBody::canHideWings),
+            Codec.BOOL.optionalFieldOf("has_extended_crouch", false).forGetter(DragonBody::hasExtendedCrouch),
             Codec.BOOL.optionalFieldOf("can_hide_wings", true).forGetter(DragonBody::canHideWings)
     ).apply(instance, instance.stable(DragonBody::new)));
 

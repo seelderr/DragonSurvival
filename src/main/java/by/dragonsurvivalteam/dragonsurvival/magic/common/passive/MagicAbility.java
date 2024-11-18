@@ -3,11 +3,11 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.passive;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DSAttributeModifier;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;

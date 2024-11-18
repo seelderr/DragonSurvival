@@ -2,11 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.network.player;
 
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.IMessage;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import net.minecraft.core.Holder;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;

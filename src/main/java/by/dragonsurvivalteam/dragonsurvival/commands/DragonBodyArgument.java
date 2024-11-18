@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;

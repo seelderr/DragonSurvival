@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.DSAdvancements;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;

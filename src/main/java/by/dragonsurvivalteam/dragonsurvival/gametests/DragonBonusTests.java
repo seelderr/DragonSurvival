@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.gametests;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.BeforeBatch;

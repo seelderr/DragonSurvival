@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons;
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.TextureManagerAccess;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;

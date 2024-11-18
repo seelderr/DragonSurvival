@@ -2,10 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.commands;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
