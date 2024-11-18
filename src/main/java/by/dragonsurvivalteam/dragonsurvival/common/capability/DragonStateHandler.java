@@ -462,15 +462,14 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag, boolean isLoadingForSoul) {
-        if (tag.getAllKeys().contains("subtype"))
+        if (tag.getAllKeys().contains("subtype")) {
             dragonType = DragonTypes.newDragonTypeInstance(tag.getString("subtype"));
-        else
+        } else {
             dragonType = DragonTypes.newDragonTypeInstance(tag.getString("type"));
+        }
 
-        if (dragonType != null) {
-            if (tag.contains("typeData")) {
-                dragonType.readNBT(tag.getCompound("typeData"));
-            }
+        if (dragonType != null && tag.contains("typeData")) {
+            dragonType.readNBT(tag.getCompound("typeData"));
         }
 
         try {
@@ -480,6 +479,11 @@ public class DragonStateHandler extends EntityStateHandler {
         } catch (ResourceLocationException ignored) {}
 
         if (isDragon()) {
+            if (dragonBody == null) {
+                // This can happen if a dragon body gets removed
+                dragonBody = DragonBody.random(provider);
+            }
+
             setBite(tag.getBoolean("bite"));
             getMovementData().headYawLastFrame = getMovementData().headYaw;
             getMovementData().bodyYawLastFrame = getMovementData().bodyYaw;

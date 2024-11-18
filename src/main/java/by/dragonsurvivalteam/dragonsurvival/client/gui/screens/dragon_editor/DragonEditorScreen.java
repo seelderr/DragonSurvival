@@ -518,15 +518,7 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new YoungEditorButton(this));
         addRenderableWidget(new AdultEditorButton(this));
 
-        int offset = 0;
-        // FIXME :: limit shown bodies and add arrow buttons to navigate through them
-        // TODO :: vanilla uses a tag to order the registry entries - could do the same here
-        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
-
-        for (Holder.Reference<DragonBody> body : bodies) {
-            addRenderableWidget(new DragonBodyButton(this, width / 2 - 71 + (offset * 27), height / 2 + 69, 25, 25, body, isEditor));
-            offset++;
-        }
+        addDragonBodyButtons();
 
         int maxWidth = -1;
 
@@ -810,6 +802,28 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(showUiCheckbox);
         addRenderableWidget(new BackgroundColorButton(guiLeft - 45, 11, 18, 18, Component.empty(), action -> { /* Nothing to do */ }, this));
         addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, CUSTOMIZATION, 1));
+    }
+
+    // FIXME :: limit shown bodies and add arrow buttons to navigate through them
+    // TODO :: vanilla uses a tag to order the registry entries - could do the same here
+    private void addDragonBodyButtons() {
+        //noinspection DataFlowIssue -> player is present
+        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
+
+        int buttonWidth = 25;
+        int gap = 3;
+
+        int elements = Math.min(5, bodies.size());
+        int requiredWidth = elements * buttonWidth + (elements - 1) * gap;
+
+        int index = 0;
+
+        for (Holder.Reference<DragonBody> body : bodies) {
+            // To make sure the buttons are centered if there are less than 5 (default)
+            int x = (width - requiredWidth - /* offset to the left */ 10) / 2 + (index * (buttonWidth + gap));
+            addRenderableWidget(new DragonBodyButton(this, x, height / 2 + 69, 25, 25, body, isEditor));
+            index++;
+        }
     }
 
     public void update() {

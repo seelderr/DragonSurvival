@@ -208,13 +208,11 @@ public class SkinsScreen extends Screen {
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable(TOGGLE), startX + 128 + imageWidth / 2, startY + 30, -1);
         drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(level.translatableName()).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
-        if (!loading) {
-            if (noSkin) {
-                if (playerName.equals(minecraft.player.getGameProfile().getName())) {
-                    drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable(NO_SKIN_SELF).withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
-                } else {
-                    drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable(NO_SKIN).withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
-                }
+        if (!loading && noSkin) {
+            if (playerName.equals(minecraft.player.getGameProfile().getName())) {
+                drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable(NO_SKIN_SELF).withStyle(ChatFormatting.DARK_GRAY), startX + 40, startY + imageHeight - 20, -1);
+            } else {
+                drawNonShadowLineBreak(guiGraphics, minecraft.font, Component.translatable(NO_SKIN).withStyle(ChatFormatting.DARK_GRAY), startX + 65, startY + imageHeight - 20, -1);
             }
         }
 
@@ -262,14 +260,7 @@ public class SkinsScreen extends Screen {
         addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, TabButton.Type.GITHUB_REMINDER_TAB, this));
         addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, TabButton.Type.SKINS_TAB, this));
 
-        int offset = 0;
-        // FIXME :: limit shown bodies and add arrow buttons to navigate through them
-        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
-
-        for (Holder.Reference<DragonBody> body : bodies) {
-            addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (offset * 27), height / 2 + 90, 25, 25, body));
-            offset++;
-        }
+        addDragonBodyButtons();
 
         // Button to enable / disable rendering of the newborn dragon skin
         addRenderableWidget(new Button(startX + 128, startY + 45, imageWidth, 20, DragonLevel.NEWBORN.translatableName(), button -> {
@@ -446,6 +437,27 @@ public class SkinsScreen extends Screen {
                 }
             }
         });
+    }
+
+    // FIXME :: limit shown bodies and add arrow buttons to navigate through them
+    private void addDragonBodyButtons() {
+        //noinspection DataFlowIssue -> player is present
+        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
+
+        int buttonWidth = 25;
+        int gap = 3;
+
+        int elements = Math.min(5, bodies.size());
+        int requiredWidth = elements * buttonWidth + (elements - 1) * gap;
+
+        int index = 0;
+
+        for (Holder.Reference<DragonBody> body : bodies) {
+            // To make sure the buttons are centered if there are less than 5 (default)
+            int x = (width - requiredWidth - /* offset to the left */ 225) / 2 + (index * (buttonWidth + gap));
+            addRenderableWidget(new DragonSkinBodyButton(this, x, height / 2 + 90, 25, 25, body));
+            index++;
+        }
     }
 
     public void setTextures() {
