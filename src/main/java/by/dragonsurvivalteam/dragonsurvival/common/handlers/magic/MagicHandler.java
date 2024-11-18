@@ -1,10 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers.magic;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.EntityStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.MagicCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.particles.SeaSweepParticleOption;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
@@ -14,6 +14,7 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.active.Sto
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.passive.SpectralImpactAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.DragonAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.common.active.ActiveDragonAbility;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSDamageTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEnchantments;
@@ -51,19 +52,17 @@ import java.util.Optional;
 
 @EventBusSubscriber
 public class MagicHandler {
-    @SubscribeEvent // TODO :: is this needed?
+    @SubscribeEvent // TODO :: is it needed to set the player here?
     public static void setPlayerForAbilities(PlayerTickEvent.Pre event) {
-        Player player = event.getEntity();
+        DragonStateHandler data = DragonStateProvider.getData(event.getEntity());
 
-        DragonStateProvider.getOptional(player).ifPresent(data -> {
-            if (!data.isDragon()) {
-                return;
-            }
+        if (!data.isDragon()) {
+            return;
+        }
 
-            for (DragonAbility ability : data.getMagicData().abilities.values()) {
-                ability.player = player;
-            }
-        });
+        for (DragonAbility ability : data.getMagicData().abilities.values()) {
+            ability.player = event.getEntity();
+        }
     }
 
     @SubscribeEvent
@@ -269,22 +268,13 @@ public class MagicHandler {
         Player player = event.getAttackingPlayer();
 
         if (player != null) {
-            DragonStateProvider.getOptional(player).ifPresent(cap -> {
-                if (!cap.isDragon()) {
-                    return;
-                }
+            int droppedExperience = event.getDroppedExperience();
 
-                double expMult = 1.0;
-                AbstractDragonBody body = DragonUtils.getDragonBody(player);
-                if (body != null) {
-                    expMult = body.getExpMult();
-                }
+            if (player.hasEffect(DSEffects.REVEALING_THE_SOUL)) {
+                droppedExperience += (int) Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
+            }
 
-                if (player.hasEffect(DSEffects.REVEALING_THE_SOUL)) {
-                    int extra = (int) Math.min(RevealingTheSoulAbility.revealingTheSoulMaxEXP, event.getDroppedExperience() * RevealingTheSoulAbility.revealingTheSoulMultiplier);
-                    event.setDroppedExperience((int) ((event.getDroppedExperience() + extra) * expMult));
-                }
-            });
+            event.setDroppedExperience((int) (droppedExperience * player.getAttributeValue(DSAttributes.EXPERIENCE)));
         }
     }
 }

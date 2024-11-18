@@ -3,8 +3,8 @@ package by.dragonsurvivalteam.dragonsurvival.server.handlers;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -39,7 +39,9 @@ public class PlayerLoginHandler {
             DragonStateProvider.getOptional(player).ifPresent(handler -> {
                 if (handler.getType() != null && handler.getBody() == null) {
                     // Otherwise players won't be able to join the world
-                    handler.setBody(DragonBodies.CENTER);
+                    // TODO :: not the best idea - any default body could be removed by datapacks
+                    // TODO :: maybe better to revert the player to non-dragon
+                    handler.setBody(entity.registryAccess().holderOrThrow(DragonBody.center));
                     DragonSurvival.LOGGER.error("Player {} was a dragon but had an invalid dragon body type", player);
                 }
 

@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConf
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.ForestDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.status.SyncPlayerJump;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.DamageTypeTags;
@@ -138,7 +137,8 @@ public class DragonBonusHandler {
                 if(gravity <= 0) return;
 
                 // Don't allow a negative jump penalty to cause a negative safe fall distance
-                double jumpMod = DSModifiers.buildJumpMod(DragonStateProvider.getData(player)) + handler.getBody().getJumpBonus();
+//                double jumpMod = DSModifiers.buildJumpMod(DragonStateProvider.getData(player)) + handler.getBody().getJumpBonus(); // FIXME
+                double jumpMod = 0;
                 if(jumpMod <= 0) return;
 
                 // Calculate the extra jump height that the dragon gains based off of the jumpMod and gravity

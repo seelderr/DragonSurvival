@@ -48,28 +48,24 @@ public class DragonSizeHandler {
         AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
         double height = calculateRawDragonHeight(handler.getSize());
-        boolean squish = false;
 
         if (handler.getBody() != null) {
-            height *= handler.getBody().getHeightMult();
-            squish = handler.getBody().isSquish();
+            height *= handler.getBody().value().heightMultiplier();
         }
 
-        return applyPoseToHeight(height * scale, overridePose(player), squish);
+        return applyPose(height * scale, overridePose(player));
     }
 
     public static double calculateDragonEyeHeight(DragonStateHandler handler, Player player) {
         AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
         double eyeHeight = calculateRawDragonEyeHeight(handler.getSize());
-        boolean squish = false;
 
         if (handler.getBody() != null) {
-            eyeHeight *= handler.getBody().getEyeHeightMult();
-            squish = handler.getBody().isSquish();
+            eyeHeight *= handler.getBody().value().eyeHeightMultiplier();
         }
 
-        return applyPoseToEyeHeight(eyeHeight * scale, overridePose(player), squish);
+        return applyPose(eyeHeight * scale, overridePose(player));
     }
 
     public static EntityDimensions calculateDimensions(DragonStateHandler handler, Player player, Pose overridePose) {
@@ -79,16 +75,14 @@ public class DragonSizeHandler {
         double height = calculateRawDragonHeight(size);
         double width = calculateRawDragonWidth(size);
         double eyeHeight = calculateRawDragonEyeHeight(size);
-        boolean squish = false;
 
         if (handler.getBody() != null) {
-            height *= handler.getBody().getHeightMult();
-            eyeHeight *= handler.getBody().getEyeHeightMult();
-            squish = handler.getBody().isSquish();
+            height *= handler.getBody().value().heightMultiplier();
+            eyeHeight *= handler.getBody().value().eyeHeightMultiplier();
         }
 
-        height = applyPoseToHeight(height, overridePose, squish);
-        eyeHeight = applyPoseToEyeHeight(eyeHeight, overridePose, squish);
+        height = applyPose(height, overridePose);
+        eyeHeight = applyPose(eyeHeight, overridePose);
 
         return EntityDimensions.scalable((float) (width * scale), (float) (height * scale)).withEyeHeight((float) (eyeHeight * scale));
     }
@@ -105,15 +99,14 @@ public class DragonSizeHandler {
         return (11.0D * size + 54.0D) / 260.0D; // 0.8 -> Config Dragon Max
     }
 
-    public static double applyPoseToEyeHeight(double eyeHeight, Pose pose, boolean squish) {
-        if (pose == Pose.CROUCHING && !squish) {
-            eyeHeight *= 5.0D / 6.0D;
-        } else if (pose == Pose.CROUCHING) {
-            eyeHeight *= 3.0D / 6.0D;
+    // TODO :: what exactly do these numbers mean?
+    public static double applyPose(double height, Pose pose) {
+        if (pose == Pose.CROUCHING) {
+            height *= 5.0D / 6.0D;
         } else if (pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) {
-            eyeHeight *= 7.0D / 12.0D;
+            height *= 7.0D / 12.0D;
         }
-        return eyeHeight;
+        return height;
     }
 
     public static Pose overridePose(final Player player) {
@@ -166,19 +159,6 @@ public class DragonSizeHandler {
         }
 
         return false;
-    }
-
-    public static double applyPoseToHeight(double height, Pose pose, boolean squish) {
-        if (pose == Pose.CROUCHING) {
-            if (squish) {
-                height *= 3.0D / 6.0D;
-            } else {
-                height *= 5.0D / 6.0D;
-            }
-        } else if (pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) {
-            height *= 7.0D / 12.0D;
-        }
-        return height;
     }
 
     @SubscribeEvent

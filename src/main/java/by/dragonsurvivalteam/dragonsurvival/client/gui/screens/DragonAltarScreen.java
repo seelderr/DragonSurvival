@@ -7,7 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
@@ -94,14 +94,12 @@ public class DragonAltarScreen extends Screen {
             animation1++;
             animation2++;
 
-            int randBody = (int) (Math.random() * (DragonBodies.bodyMappings.size()));
-
             if (handler1.getBody() == null) {
-                handler1.setBody(DragonBodies.CENTER);
+                handler1.setBody(DragonBody.random(null));
             }
 
-            handler2.setBody(DragonBodies.staticBodies.get(handler1.getBody().getBodyName()));
-            handler1.setBody(DragonBodies.staticBodies.get(DragonBodies.bodyMappings.keySet().toArray(new String[0])[randBody]));
+            handler2.setBody(handler1.getBody());
+            handler1.setBody(DragonBody.random(null));
 
             if (animation1 >= animations.length) {
                 animation1 = 0;

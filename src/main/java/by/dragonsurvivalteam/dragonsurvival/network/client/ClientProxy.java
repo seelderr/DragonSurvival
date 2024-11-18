@@ -355,7 +355,6 @@ public class ClientProxy {
     public static void handleSynchronizeDragonCap(final SyncDragonHandler.Data message) {
         Player localPlayer = Minecraft.getInstance().player;
 
-        // TODO :: use string uuid?
         if (localPlayer != null) {
             Entity entity = localPlayer.level().getEntity(message.playerId());
 

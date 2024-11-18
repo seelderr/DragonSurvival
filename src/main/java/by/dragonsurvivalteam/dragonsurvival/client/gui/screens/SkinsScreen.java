@@ -13,8 +13,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
@@ -35,6 +34,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.core.Holder;
 import net.minecraft.locale.Language;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
@@ -112,7 +112,7 @@ public class SkinsScreen extends Screen {
     private static boolean loading;
 
     public final DragonStateHandler handler = new DragonStateHandler();
-    public AbstractDragonBody dragonBody = DragonBodies.getStatic("center");
+    public Holder<DragonBody> dragonBody;
     public Screen sourceScreen;
 
     private final int imageWidth = 164;
@@ -175,7 +175,7 @@ public class SkinsScreen extends Screen {
             handler.setHasFlight(true);
             handler.setSize(level.size);
             handler.setType(DragonUtils.getDragonType(minecraft.player));
-            handler.setBody(dragonBody);
+            handler.setBody(DragonBody.random(minecraft.player.registryAccess()));
 
             handler.getSkinData().skinPreset.initDefaults(handler);
 
@@ -254,8 +254,13 @@ public class SkinsScreen extends Screen {
         addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, TabButton.Type.GITHUB_REMINDER_TAB, this));
         addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, TabButton.Type.SKINS_TAB, this));
 
-        for (int i = 0; i < DragonBodies.ORDER.length; i++) {
-            addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (i * 27), height / 2 + 90, 25, 25, DragonBodies.getStatic(DragonBodies.ORDER[i]), i));
+        int i = 0;
+        // FIXME :: limit shown bodies and add arrow buttons to navigate through them
+        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
+
+        for (Holder.Reference<DragonBody> body : bodies) {
+            addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (i * 27), height / 2 + 90, 25, 25, body, i));
+            i++;
         }
 
         // Button to enable / disable rendering of the newborn dragon skin

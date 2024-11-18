@@ -6,6 +6,7 @@
   "plugin": "by.dragonsurvivalteam.dragonsurvival.mixins.ApplyMixinPlugin",
   "refmap": "dragonsurvival.refmap.json",
   "mixins": [
+    "AttributeMapAccessor",
     "AttributesMixin",
     "BlockMixin",
     "EndPortalBlockMixin",

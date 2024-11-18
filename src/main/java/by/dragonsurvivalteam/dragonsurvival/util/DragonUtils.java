@@ -2,9 +2,10 @@ package by.dragonsurvivalteam.dragonsurvival.util;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import com.google.common.base.Objects;
+import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Tier;
@@ -23,28 +24,32 @@ public class DragonUtils {
         return handler.getType();
     }
 
-    public static AbstractDragonBody getDragonBody(Player entity) {
-        return DragonStateProvider.getData(entity).getBody();
+    public static Holder<DragonBody> getDragonBody(Player player) {
+        return getDragonBody(DragonStateProvider.getData(player));
     }
 
-    public static AbstractDragonBody getDragonBody(DragonStateHandler handler) {
+    public static Holder<DragonBody> getDragonBody(DragonStateHandler handler) {
         return handler.getBody();
     }
 
-    public static boolean isBodyType(final DragonStateHandler data, final AbstractDragonBody typeToCheck) {
-        if (data == null || typeToCheck == null) {
+    public static boolean isBody(final DragonStateHandler data, final Holder<DragonBody> typeToCheck) {
+        if (data == null) {
             return false;
         }
 
-        return isBodyType(data.getBody(), typeToCheck);
+        return isBody(data.getBody(), typeToCheck);
     }
 
-    public static boolean isBodyType(final AbstractDragonBody playerType, final AbstractDragonBody typeToCheck) {
-        if (playerType == null || typeToCheck == null) {
+    public static boolean isBody(final Holder<DragonBody> playerBody, final Holder<DragonBody> typeToCheck) {
+        if (playerBody == typeToCheck) {
+            return true;
+        }
+
+        if (playerBody == null || typeToCheck == null) {
             return false;
         }
 
-        return Objects.equal(playerType, typeToCheck);
+        return playerBody.is(typeToCheck);
     }
 
     public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
@@ -56,7 +61,7 @@ public class DragonUtils {
     }
 
     public static boolean isDragonType(final DragonStateHandler data, final AbstractDragonType typeToCheck) {
-        if (data == null || typeToCheck == null || data.getType() == null) {
+        if (data == null) {
             return false;
         }
 
@@ -64,6 +69,10 @@ public class DragonUtils {
     }
 
     public static boolean isDragonType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
+        if (playerType == typeToCheck) {
+            return true;
+        }
+
         if (playerType == null || typeToCheck == null) {
             return false;
         }

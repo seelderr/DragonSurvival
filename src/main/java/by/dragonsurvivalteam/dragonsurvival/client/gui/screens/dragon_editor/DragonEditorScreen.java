@@ -27,9 +27,8 @@ import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonBody;
+import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.CaveDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
@@ -54,6 +53,7 @@ import net.minecraft.client.gui.components.Renderable;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.core.Holder;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -146,7 +146,7 @@ public class DragonEditorScreen extends Screen {
 
     public DragonLevel level;
     public AbstractDragonType dragonType;
-    public AbstractDragonBody dragonBody;
+    public Holder<DragonBody> dragonBody;
     public SkinPreset preset;
     public int currentSelected;
 
@@ -227,8 +227,8 @@ public class DragonEditorScreen extends Screen {
         return prevTag;
     };
 
-    public final Function<AbstractDragonBody, AbstractDragonBody> dragonBodySelectAction = (body) -> {
-        AbstractDragonBody prevBody = dragonBody;
+    public final Function<Holder<DragonBody>, Holder<DragonBody>> dragonBodySelectAction = (body) -> {
+        Holder<DragonBody> prevBody = dragonBody;
         dragonBody = body;
         update();
         return prevBody;
@@ -444,8 +444,9 @@ public class DragonEditorScreen extends Screen {
 
         if (dragonBody == null) {
             dragonBody = localHandler.getBody();
+
             if (dragonBody == null) {
-                dragonBody = DragonBodies.getStatic("center");
+                dragonBody = DragonBody.random(null);
             }
         }
 
@@ -517,8 +518,14 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new YoungEditorButton(this));
         addRenderableWidget(new AdultEditorButton(this));
 
-        for (int i1 = 0; i1 < DragonBodies.ORDER.length; i1++) {
-            addRenderableWidget(new DragonBodyButton(this, width / 2 - 71 + (i1 * 27), height / 2 + 69, 25, 25, DragonBodies.getStatic(DragonBodies.ORDER[i1]), i1, isEditor));
+        int bodyIndex = 0;
+        // FIXME :: limit shown bodies and add arrow buttons to navigate through them
+        // TODO :: vanilla uses a tag to order the registry entries - could do the same here
+        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
+
+        for (Holder.Reference<DragonBody> body : bodies) {
+            addRenderableWidget(new DragonBodyButton(this, width / 2 - 71 + (bodyIndex * 27), height / 2 + 69, 25, 25, body, bodyIndex, isEditor));
+            bodyIndex++;
         }
 
         int maxWidth = -1;

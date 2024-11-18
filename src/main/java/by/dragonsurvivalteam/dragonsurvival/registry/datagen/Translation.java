@@ -62,6 +62,8 @@ public @interface Translation {
         GUI(DragonSurvival.MODID + ".gui.", ""),
         KEYBIND(DragonSurvival.MODID + ".keybind.", ""),
         EMOTE(DragonSurvival.MODID + ".emote.", ""),
+        BODY(DragonSurvival.MODID + ".body.", ""),
+        BODY_DESCRIPTION(DragonSurvival.MODID + ".body.", ".desc"),
         /** When used on {@link String} and no specified key it's expected that the string contains the translation key */
         MISC("", "");
 
