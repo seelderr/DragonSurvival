@@ -168,6 +168,7 @@ public class DragonEditorScreen extends Screen {
     private float tick;
     private int curAnimation;
     private int lastSelected;
+    private int bodySelectionOffset;
     private boolean hasInit;
     private boolean isEditor;
 
@@ -518,7 +519,7 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new YoungEditorButton(this));
         addRenderableWidget(new AdultEditorButton(this));
 
-        addDragonBodyButtons();
+        addDragonBodyWidgets();
 
         int maxWidth = -1;
 
@@ -804,26 +805,59 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, CUSTOMIZATION, 1));
     }
 
-    // FIXME :: limit shown bodies and add arrow buttons to navigate through them
-    // TODO :: vanilla uses a tag to order the registry entries - could do the same here
-    private void addDragonBodyButtons() {
+    private final List<AbstractWidget> dragonBodyWidgets = new ArrayList<>();
+
+    private void addDragonBodyWidgets() {
+        // TODO :: Vanilla uses a tag to order enchantments - the same could be used here if needed
         //noinspection DataFlowIssue -> player is present
-        List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
+        Object[] bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toArray();
 
         int buttonWidth = 25;
         int gap = 3;
 
-        int elements = Math.min(5, bodies.size());
+        boolean cannotFit = bodies.length > 5;
+        int elements = Math.min(5, bodies.length);
         int requiredWidth = elements * buttonWidth + (elements - 1) * gap;
 
-        int index = 0;
-
-        for (Holder.Reference<DragonBody> body : bodies) {
-            // To make sure the buttons are centered if there are less than 5 (default)
+        for (int index = 0; index < 5; index++) {
+            // To make sure the buttons are centered if there are less than 5 elements (max. supported by the current GUI)
             int x = (width - requiredWidth - /* offset to the left */ 10) / 2 + (index * (buttonWidth + gap));
-            addRenderableWidget(new DragonBodyButton(this, x, height / 2 + 69, 25, 25, body, isEditor));
-            index++;
+            int y = height / 2 + 69;
+
+            AbstractWidget widget;
+
+            if (cannotFit && /* leftmost element */ index == 0) {
+                widget = new ArrowButton(x, y, 25, 25, false, button -> {
+                    if (bodySelectionOffset > 0) {
+                        bodySelectionOffset--;
+                        removeDragonBodyWidgets();
+                        addDragonBodyWidgets();
+                    }
+                });
+            } else if (cannotFit && /* rightmost element */ index == 4) {
+                widget = new ArrowButton(x, y, 25, 25, true, button -> {
+                    // If there are 5 bodies we can navigate next two times, showing 0 - 2,  1 - 3 and 2 - 4
+                    if (bodySelectionOffset < bodies.length - /* shown elements */ 3) {
+                        bodySelectionOffset++;
+                        removeDragonBodyWidgets();
+                        addDragonBodyWidgets();
+                    }
+                });
+            } else {
+                // Subtract 1 since index 0 is an arrow button (otherwise we would skip the first body)
+                //noinspection unchecked -> cast is okay
+                Holder<DragonBody> body = (Holder<DragonBody>) bodies[index - 1 + bodySelectionOffset];
+                widget = new DragonBodyButton(this, x, y, 25, 25, body, isEditor);
+            }
+
+            dragonBodyWidgets.add(widget);
+            addRenderableWidget(widget);
         }
+    }
+
+    private void removeDragonBodyWidgets() {
+        dragonBodyWidgets.forEach(this::removeWidget);
+        dragonBodyWidgets.clear();
     }
 
     public void update() {

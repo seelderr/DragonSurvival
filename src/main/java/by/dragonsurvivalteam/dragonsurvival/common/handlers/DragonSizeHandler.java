@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.entity.EntityDimensions;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
@@ -19,7 +18,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.EntityEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @EventBusSubscriber
@@ -47,11 +45,7 @@ public class DragonSizeHandler {
     public static double calculateDragonHeight(DragonStateHandler handler, Player player) {
         AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
-        double height = calculateRawDragonHeight(handler.getSize());
-
-        if (handler.getBody() != null) {
-            height *= handler.getBody().value().heightMultiplier();
-        }
+        double height = calculateRawDragonHeight(handler.getSize()) * handler.getBody().value().heightMultiplier();
 
         return applyPose(height * scale, overridePose(player));
     }
@@ -61,10 +55,6 @@ public class DragonSizeHandler {
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
         double eyeHeight = calculateRawDragonEyeHeight(handler.getSize());
 
-        if (handler.getBody() != null) {
-            eyeHeight *= handler.getBody().value().eyeHeightMultiplier();
-        }
-
         return applyPose(eyeHeight * scale, overridePose(player));
     }
 
@@ -72,14 +62,9 @@ public class DragonSizeHandler {
         AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
         double size = handler.getSize();
-        double height = calculateRawDragonHeight(size);
+        double height = calculateRawDragonHeight(size) * handler.getBody().value().heightMultiplier();
         double width = calculateRawDragonWidth(size);
         double eyeHeight = calculateRawDragonEyeHeight(size);
-
-        if (handler.getBody() != null) {
-            height *= handler.getBody().value().heightMultiplier();
-            eyeHeight *= handler.getBody().value().eyeHeightMultiplier();
-        }
 
         height = applyPose(height, overridePose);
         eyeHeight = applyPose(eyeHeight, overridePose);
@@ -147,18 +132,8 @@ public class DragonSizeHandler {
         return Pose.STANDING;
     }
 
-    public static boolean canPoseFit(LivingEntity entity, Pose pose) {
-        Optional<DragonStateHandler> capability = DragonStateProvider.getOptional(entity);
-
-        if (capability.isEmpty()) {
-            return false;
-        }
-
-        if (entity instanceof Player player) {
-            return player.level().noCollision(calculateDimensions(capability.get(), player, pose).makeBoundingBox(player.position()));
-        }
-
-        return false;
+    public static boolean canPoseFit(Player player, Pose pose) {
+        return player.level().noCollision(calculateDimensions(DragonStateProvider.getData(player), player, pose).makeBoundingBox(player.position()));
     }
 
     @SubscribeEvent
