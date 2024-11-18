@@ -79,6 +79,11 @@ public @interface Translation {
             return prefix + key + suffix;
         }
 
+        /** To replace the default {@link DragonSurvival#MODID} with an external one */
+        public String wrap(final String modid, final String key) {
+            return prefix.replace(DragonSurvival.MODID, modid) + key + suffix;
+        }
+
         /** Expects the key in the format of {@link Translation.Type#wrap(String)} */
         public String unwrap(final String key) {
             return key.substring(prefix.length(), key.length() - suffix.length());

@@ -112,7 +112,6 @@ public class SkinsScreen extends Screen {
     private static boolean loading;
 
     public final DragonStateHandler handler = new DragonStateHandler();
-    public Holder<DragonBody> dragonBody;
     public Screen sourceScreen;
 
     private final int imageWidth = 164;
@@ -175,7 +174,10 @@ public class SkinsScreen extends Screen {
             handler.setHasFlight(true);
             handler.setSize(level.size);
             handler.setType(DragonUtils.getDragonType(minecraft.player));
-            handler.setBody(DragonBody.random(minecraft.player.registryAccess()));
+
+            if (handler.getBody() == null) {
+                handler.setBody(DragonBody.random(minecraft.player.registryAccess()));
+            }
 
             handler.getSkinData().skinPreset.initDefaults(handler);
 
@@ -254,13 +256,13 @@ public class SkinsScreen extends Screen {
         addRenderableWidget(new TabButton(startX + 128 + 62, startY - 26, TabButton.Type.GITHUB_REMINDER_TAB, this));
         addRenderableWidget(new TabButton(startX + 128 + 91, startY - 28, TabButton.Type.SKINS_TAB, this));
 
-        int i = 0;
+        int offset = 0;
         // FIXME :: limit shown bodies and add arrow buttons to navigate through them
         List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
 
         for (Holder.Reference<DragonBody> body : bodies) {
-            addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (i * 27), height / 2 + 90, 25, 25, body, i));
-            i++;
+            addRenderableWidget(new DragonSkinBodyButton(this, width / 2 - 176 + (offset * 27), height / 2 + 90, 25, 25, body));
+            offset++;
         }
 
         // Button to enable / disable rendering of the newborn dragon skin

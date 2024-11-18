@@ -156,7 +156,7 @@ public record DragonBody(List<DSAttributeModifier> modifiers, double heightMulti
             registry = provider.lookupOrThrow(REGISTRY);
         }
 
-        //noinspection DataFlowIssue -> expected to be present
+        //noinspection DataFlowIssue -> registry expected to be present
         Object[] bodies = registry.listElements().toArray();
 
         if (bodies.length == 0) {

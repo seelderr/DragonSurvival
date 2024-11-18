@@ -2,38 +2,40 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+import org.jetbrains.annotations.NotNull;
 
 public class DragonSkinBodyButton extends Button {
-    private static final ResourceLocation location = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/body_type_icon_skintab.png");
-
     private final SkinsScreen screen;
     private final Holder<DragonBody> dragonBody;
-    private final int pos;
+    private final ResourceLocation location;
 
-    public DragonSkinBodyButton(SkinsScreen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> body, int pos) {
-        super(x, y, xSize, ySize, Component.literal(body.toString()), action -> screen.dragonBody = body, DEFAULT_NARRATION);
+    public DragonSkinBodyButton(SkinsScreen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> body) {
+        super(x, y, xSize, ySize, Component.literal(body.toString()), action -> screen.handler.setBody(body), DEFAULT_NARRATION);
         this.screen = screen;
         this.dragonBody = body;
-        this.pos = pos;
+
+        //noinspection DataFlowIssue -> key is present
+        ResourceLocation bodyLocation = dragonBody.getKey().location();
+
+        this.location = ResourceLocation.fromNamespaceAndPath(bodyLocation.getNamespace(), DragonBodyButton.LOCATION_PREFIX + bodyLocation.getPath() + "/default.png");
     }
 
     @Override
-    public void renderWidget(GuiGraphics guiGraphics, int pMouseX, int pMouseY, float pPartialTick) {
-        int i = 0;
+    public void renderWidget(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
+        int state = 0;
 
-        if (dragonBody.is(screen.handler.getBody())) {
-            i = 2;
+        if (DragonUtils.isBody(dragonBody, screen.handler.getBody())) {
+            state = DragonBodyButton.SELECTED;
         } else if (this.isHoveredOrFocused()) {
-            i = 1;
+            state = DragonBodyButton.HOVERED;
         }
 
-        guiGraphics.blit(location, getX(), getY(), pos * this.width, i * this.height, this.width, this.height);
+        graphics.blit(location, getX(), getY(), 0, state * this.height, this.width, this.height, 32, 104);
     }
 }

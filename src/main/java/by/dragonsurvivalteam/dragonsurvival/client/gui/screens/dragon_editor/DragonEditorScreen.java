@@ -518,14 +518,14 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new YoungEditorButton(this));
         addRenderableWidget(new AdultEditorButton(this));
 
-        int bodyIndex = 0;
+        int offset = 0;
         // FIXME :: limit shown bodies and add arrow buttons to navigate through them
         // TODO :: vanilla uses a tag to order the registry entries - could do the same here
         List<Holder.Reference<DragonBody>> bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toList();
 
         for (Holder.Reference<DragonBody> body : bodies) {
-            addRenderableWidget(new DragonBodyButton(this, width / 2 - 71 + (bodyIndex * 27), height / 2 + 69, 25, 25, body, bodyIndex, isEditor));
-            bodyIndex++;
+            addRenderableWidget(new DragonBodyButton(this, width / 2 - 71 + (offset * 27), height / 2 + 69, 25, 25, body, isEditor));
+            offset++;
         }
 
         int maxWidth = -1;
