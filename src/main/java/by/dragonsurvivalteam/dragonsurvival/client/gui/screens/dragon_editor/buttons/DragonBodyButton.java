@@ -2,14 +2,17 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.TextureManagerAccess;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonBodyButton extends Button {
@@ -34,8 +37,14 @@ public class DragonBodyButton extends Button {
         //noinspection DataFlowIssue -> key is present
         ResourceLocation bodyLocation = dragonBody.getKey().location();
         setTooltip(Tooltip.create(Component.translatable(Translation.Type.BODY_DESCRIPTION.wrap(bodyLocation.getNamespace(), bodyLocation.getPath()))));
+        ResourceLocation iconLocation = ResourceLocation.fromNamespaceAndPath(bodyLocation.getNamespace(), LOCATION_PREFIX + bodyLocation.getPath() + "/" + screen.dragonType.getTypeNameLowerCase() + ".png");
+        ResourceManager manager = ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).dragonSurvival$getResourceManager();
 
-        this.location = ResourceLocation.fromNamespaceAndPath(bodyLocation.getNamespace(), LOCATION_PREFIX + bodyLocation.getPath() + "/" + screen.dragonType.getTypeNameLowerCase() + ".png");
+        if (manager.getResource(iconLocation).isEmpty()) {
+            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBody.center.location().getNamespace(), LOCATION_PREFIX + DragonBody.center.location().getPath() + "/" + screen.dragonType.getTypeNameLowerCase() + ".png");
+        }
+
+        this.location = iconLocation;
         this.screen = screen;
         this.dragonBody = dragonBody;
         this.locked = locked;
@@ -44,8 +53,8 @@ public class DragonBodyButton extends Button {
     @Override
     public void renderWidget(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
         active = visible = screen.showUi;
-
         int state = 0;
+
         if (DragonUtils.isBody(dragonBody, screen.dragonBody)) {
             state = SELECTED;
         } else if (locked) {
@@ -53,6 +62,7 @@ public class DragonBodyButton extends Button {
         } else if (isHoveredOrFocused()) {
             state = HOVERED;
         }
+
         graphics.blit(location, getX(), getY(), 0, state * this.height, this.width, this.height, 32, 104);
     }
 }

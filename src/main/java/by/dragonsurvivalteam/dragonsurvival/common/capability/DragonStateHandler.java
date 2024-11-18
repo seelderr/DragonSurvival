@@ -41,6 +41,8 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
+    public static final String DRAGON_BODY = "dragon_body";
+
     @SuppressWarnings("unchecked")
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
@@ -172,11 +174,12 @@ public class DragonStateHandler extends EntityStateHandler {
         savedDragonSize.put(type, size);
     }
 
-    public AbstractDragonType getType() {
+    // TODO :: use optional for these?
+    public @Nullable AbstractDragonType getType() {
         return dragonType;
     }
 
-    public Holder<DragonBody> getBody() {
+    public @Nullable Holder<DragonBody> getBody() {
         return dragonBody;
     }
 
@@ -354,7 +357,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public boolean isDragon() {
-        return dragonType != null;
+        return dragonType != null && dragonBody != null;
     }
 
     public int getPassengerId() {
@@ -389,7 +392,7 @@ public class DragonStateHandler extends EntityStateHandler {
         CompoundTag tag = new CompoundTag();
         tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
         tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
-        tag.putString("dragonBody", dragonBody != null ? dragonBody.getKey().location().toString() : "none");
+        tag.putString(DRAGON_BODY, dragonBody != null ? dragonBody.getKey().location().toString() : "none");
 
         if (isDragon()) {
             tag.put("typeData", dragonType.writeNBT());
@@ -473,7 +476,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
 
         try {
-            ResourceLocation bodyLocation = ResourceLocation.parse(tag.getString("dragonBody"));
+            ResourceLocation bodyLocation = ResourceLocation.parse(tag.getString(DRAGON_BODY));
             Optional<Holder.Reference<DragonBody>> optionalBody = provider.lookupOrThrow(DragonBody.REGISTRY).get(DragonBody.key(bodyLocation));
             optionalBody.ifPresent(body -> dragonBody = body);
         } catch (ResourceLocationException ignored) {}

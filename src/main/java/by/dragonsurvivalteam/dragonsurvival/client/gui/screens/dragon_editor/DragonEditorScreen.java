@@ -38,6 +38,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkin
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
+import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBodyTags;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -159,16 +160,23 @@ public class DragonEditorScreen extends Screen {
     private final HashMap<DragonLevel, Integer> presetSelections = new HashMap<>();
     private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
     private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
+
     private DragonUIRenderComponent dragonRender;
     private ExtendedCheckbox defaultSkinCheckbox;
     private ExtendedCheckbox showUiCheckbox;
     private DragonEditorConfirmComponent confirmComponent;
     private ExtendedCheckbox wingsCheckbox;
 
+    /**
+     * Widgets which belong to the dragon body logic <br>
+     * (they are stored to properly reference (and remove) them when using the arrow buttons to navigate through the bodies)
+     */
+    private final List<AbstractWidget> dragonBodyWidgets = new ArrayList<>();
+    private int bodySelectionOffset;
+
     private float tick;
     private int curAnimation;
     private int lastSelected;
-    private int bodySelectionOffset;
     private boolean hasInit;
     private boolean isEditor;
 
@@ -805,18 +813,14 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, CUSTOMIZATION, 1));
     }
 
-    private final List<AbstractWidget> dragonBodyWidgets = new ArrayList<>();
-
     private void addDragonBodyWidgets() {
-        // TODO :: Vanilla uses a tag to order enchantments - the same could be used here if needed
-        //noinspection DataFlowIssue -> player is present
-        Object[] bodies = minecraft.player.registryAccess().registryOrThrow(DragonBody.REGISTRY).holders().toArray();
+        List<Holder<DragonBody>> bodies = DSBodyTags.getOrdered(null);
 
         int buttonWidth = 25;
         int gap = 3;
 
-        boolean cannotFit = bodies.length > 5;
-        int elements = Math.min(5, bodies.length);
+        boolean cannotFit = bodies.size() > 5;
+        int elements = Math.min(5, bodies.size());
         int requiredWidth = elements * buttonWidth + (elements - 1) * gap;
 
         for (int index = 0; index < 5; index++) {
@@ -837,7 +841,7 @@ public class DragonEditorScreen extends Screen {
             } else if (cannotFit && /* rightmost element */ index == 4) {
                 widget = new ArrowButton(x, y, 25, 25, true, button -> {
                     // If there are 5 bodies we can navigate next two times, showing 0 - 2,  1 - 3 and 2 - 4
-                    if (bodySelectionOffset < bodies.length - /* shown elements */ 3) {
+                    if (bodySelectionOffset < bodies.size() - /* shown elements */ 3) {
                         bodySelectionOffset++;
                         removeDragonBodyWidgets();
                         addDragonBodyWidgets();
@@ -845,8 +849,8 @@ public class DragonEditorScreen extends Screen {
                 });
             } else {
                 // Subtract 1 since index 0 is an arrow button (otherwise we would skip the first body)
-                //noinspection unchecked -> cast is okay
-                Holder<DragonBody> body = (Holder<DragonBody>) bodies[index - 1 + bodySelectionOffset];
+                int selectionIndex = index + bodySelectionOffset - (cannotFit ? 1 : 0);
+                Holder<DragonBody> body = bodies.get(selectionIndex);
                 widget = new DragonBodyButton(this, x, y, 25, 25, body, isEditor);
             }
 

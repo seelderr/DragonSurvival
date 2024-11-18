@@ -26,7 +26,7 @@ runs {
 	}
 
 	client {
-		arguments '--username', 'Dev'
+		arguments '--username', 'Dev####'
 	}
 
 	client_static_username { // To be able to start a second client in parallel

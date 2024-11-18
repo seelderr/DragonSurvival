@@ -105,7 +105,7 @@ public class DragonCommand {
 
     private static int runCommand(String type, @Nullable Holder<DragonBody> dragonBody, int stage, boolean flight, ServerPlayer player){
         DragonStateHandler cap = DragonStateProvider.getData(player);
-        AbstractDragonType dragonType = type.equalsIgnoreCase("human") ? null : DragonTypes.getStaticSubtype(type);
+        AbstractDragonType dragonType = DragonTypes.getStaticSubtype(type);
 
         if (dragonType != null && dragonBody == null) {
             // TODO :: setting a null dragon body causes issue (when building modifiers e.g.), not sure why it's an option here

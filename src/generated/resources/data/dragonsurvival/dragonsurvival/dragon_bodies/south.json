@@ -1,4 +1,5 @@
 {
+  "has_extended_crouch": true,
   "modifiers": [
     {
       "attribute": "minecraft:generic.attack_damage",

@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
-public class NeoForgedDataGen {
+public class DataGeneration {
     @SubscribeEvent
     public static void generateData(final GatherDataEvent event) {
         DataGenerator generator = event.getGenerator();
@@ -68,6 +68,7 @@ public class NeoForgedDataGen {
         generator.addProvider(event.includeServer(), new DSEffectTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DSPoiTypeTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DSEnchantmentTags(output, lookup, helper));
+        generator.addProvider(event.includeServer(), new DSBodyTags(output, lookup, helper));
         generator.addProvider(event.includeServer(), new DataBlockModelProvider(output, helper));
         generator.addProvider(event.includeServer(), new AdvancementProvider(output, lookup, helper, List.of(new DSAdvancements())));
 

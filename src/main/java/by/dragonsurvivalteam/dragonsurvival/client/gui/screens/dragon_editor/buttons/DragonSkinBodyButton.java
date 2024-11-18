@@ -2,12 +2,15 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.bu
 
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.mixins.client.TextureManagerAccess;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 
 public class DragonSkinBodyButton extends Button {
@@ -22,8 +25,14 @@ public class DragonSkinBodyButton extends Button {
 
         //noinspection DataFlowIssue -> key is present
         ResourceLocation bodyLocation = dragonBody.getKey().location();
+        ResourceLocation iconLocation = ResourceLocation.fromNamespaceAndPath(bodyLocation.getNamespace(), DragonBodyButton.LOCATION_PREFIX + bodyLocation.getPath() + "/default.png");
+        ResourceManager manager = ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).dragonSurvival$getResourceManager();
 
-        this.location = ResourceLocation.fromNamespaceAndPath(bodyLocation.getNamespace(), DragonBodyButton.LOCATION_PREFIX + bodyLocation.getPath() + "/default.png");
+        if (manager.getResource(iconLocation).isEmpty()) {
+            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBody.center.location().getNamespace(), DragonBodyButton.LOCATION_PREFIX + DragonBody.center.location().getPath() + "/default.png");
+        }
+
+        this.location = iconLocation;
     }
 
     @Override

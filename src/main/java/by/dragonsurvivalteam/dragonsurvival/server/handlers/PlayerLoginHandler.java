@@ -114,7 +114,7 @@ public class PlayerLoginHandler {
             data.altarCooldown--;
         }
 
-        if (!ServerConfig.startWithDragonChoice || data.hasUsedAltar || serverPlayer.tickCount < Functions.secondsToTicks(5)) {
+        if (!ServerConfig.startWithDragonChoice || data.hasUsedAltar || data.isInAltar || serverPlayer.tickCount < Functions.secondsToTicks(5)) {
             return;
         }
 

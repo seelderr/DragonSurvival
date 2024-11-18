@@ -47,7 +47,7 @@ public class DragonSizeHandler {
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
         double height = calculateRawDragonHeight(handler.getSize()) * handler.getBody().value().heightMultiplier();
 
-        return applyPose(height * scale, overridePose(player));
+        return applyPose(height * scale, overridePose(player), handler.getBody().value().hasExtendedCrouch());
     }
 
     public static double calculateDragonEyeHeight(DragonStateHandler handler, Player player) {
@@ -55,7 +55,7 @@ public class DragonSizeHandler {
         double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
         double eyeHeight = calculateRawDragonEyeHeight(handler.getSize());
 
-        return applyPose(eyeHeight * scale, overridePose(player));
+        return applyPose(eyeHeight * scale, overridePose(player), handler.getBody().value().hasExtendedCrouch());
     }
 
     public static EntityDimensions calculateDimensions(DragonStateHandler handler, Player player, Pose overridePose) {
@@ -66,8 +66,8 @@ public class DragonSizeHandler {
         double width = calculateRawDragonWidth(size);
         double eyeHeight = calculateRawDragonEyeHeight(size);
 
-        height = applyPose(height, overridePose);
-        eyeHeight = applyPose(eyeHeight, overridePose);
+        height = applyPose(height, overridePose, handler.getBody().value().hasExtendedCrouch());
+        eyeHeight = applyPose(eyeHeight, overridePose, handler.getBody().value().hasExtendedCrouch());
 
         return EntityDimensions.scalable((float) (width * scale), (float) (height * scale)).withEyeHeight((float) (eyeHeight * scale));
     }
@@ -85,9 +85,9 @@ public class DragonSizeHandler {
     }
 
     // TODO :: what exactly do these numbers mean?
-    public static double applyPose(double height, Pose pose) {
+    public static double applyPose(double height, Pose pose, boolean hasExtendedCrouch) {
         if (pose == Pose.CROUCHING) {
-            height *= 5.0D / 6.0D;
+            height *= (hasExtendedCrouch ? 3d / 6d : 5d / 6d);
         } else if (pose == Pose.SWIMMING || pose == Pose.FALL_FLYING || pose == Pose.SPIN_ATTACK) {
             height *= 7.0D / 12.0D;
         }
