@@ -53,13 +53,6 @@ public class ServerFlightHandler {
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "start_with_flight")
     public static Boolean startWithFlight = true;
 
-    @Translation(key = "ender_dragon_interaction", type = Translation.Type.CONFIGURATION, comments = {
-            "The ender dragon will be able to grant flight and the spin attack if enabled",
-            "If disabled special items will have to be used"
-    })
-    @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "enderDragonGrantsSpin")
-    public static Boolean enderDragonInteraction = true;
-
     @ConfigRange(min = 0, max = 20)
     @Translation(key = "flight_hunger_threshold", type = Translation.Type.CONFIGURATION, comments = "Determines the required food values to be able to fly")
     @ConfigOption(side = ConfigSide.SERVER, category = "wings", key = "flight_hunger_threshold")
