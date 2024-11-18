@@ -111,7 +111,8 @@ public class DSModifiers {
             new ModifierBuilder(DRAGON_REACH_MODIFIER, Attributes.BLOCK_INTERACTION_RANGE, Operation.ADD_MULTIPLIED_BASE, DSModifiers::buildReachMod),
             new ModifierBuilder(DRAGON_STEP_HEIGHT_MODIFIER, Attributes.STEP_HEIGHT, Operation.ADD_VALUE, DSModifiers::buildStepHeightMod),
             new ModifierBuilder(DRAGON_MOVEMENT_SPEED_MODIFIER, Attributes.MOVEMENT_SPEED, Operation.ADD_MULTIPLIED_TOTAL, DSModifiers::buildMovementSpeedMod),
-            new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod)
+            new ModifierBuilder(DRAGON_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, DSModifiers::buildJumpMod),
+            new ModifierBuilder(DRAGON_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, DSModifiers::buildJumpMod)
     );
 
     private static final List<ModifierBuilder> BODY_MODIFIER_BUILDERS = List.of(
