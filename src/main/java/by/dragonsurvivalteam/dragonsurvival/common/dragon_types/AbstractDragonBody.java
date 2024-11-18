@@ -54,6 +54,8 @@ public abstract class AbstractDragonBody implements NBTInterface, Comparable<Abs
         return 0.0;
     }
 
+    public Double getSafeFallBonus() { return 0.0; }
+
     public Double getStepBonus() {
         return 0.0;
     }

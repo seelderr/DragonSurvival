@@ -127,6 +127,7 @@ public class DSModifiers {
             new ModifierBuilder(DRAGON_BODY_HEALTH_BONUS, Attributes.MAX_HEALTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getHealthBonus()),
             new ModifierBuilder(DRAGON_BODY_HEALTH_MULT, Attributes.MAX_HEALTH, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getHealthMult() - 1),
             new ModifierBuilder(DRAGON_BODY_JUMP_BONUS, Attributes.JUMP_STRENGTH, Operation.ADD_VALUE, player ->  DragonStateProvider.getData(player).getBody().getJumpBonus()),
+            new ModifierBuilder(DRAGON_BODY_SAFE_FALL_DISTANCE, Attributes.SAFE_FALL_DISTANCE, Operation.ADD_VALUE, player -> DragonStateProvider.getData(player).getBody().getSafeFallBonus()),
             new ModifierBuilder(DRAGON_BODY_FLIGHT_STAMINA, DSAttributes.FLIGHT_STAMINA_COST, Operation.ADD_MULTIPLIED_TOTAL, player ->  DragonStateProvider.getData(player).getBody().getFlightStaminaMult())
     );
   
