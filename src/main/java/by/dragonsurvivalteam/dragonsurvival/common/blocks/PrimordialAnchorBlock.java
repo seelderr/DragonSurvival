@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import com.mojang.logging.LogUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -14,6 +16,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.damagesource.DamageSources;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -225,22 +228,53 @@ public class PrimordialAnchorBlock extends Block {
             return InteractionResult.PASS;
         } else {
             if (!level.isClientSide) {
+                DragonStateHandler handler = DragonStateProvider.getData(player);
+                if (!handler.isDragon()) {
+                    level.playSound(
+                            null,
+                            (double) pos.getX() + 0.5,
+                            (double) pos.getY() + 0.5,
+                            (double) pos.getZ() + 0.5,
+                            SoundEvents.FIRE_EXTINGUISH,
+                            SoundSource.BLOCKS,
+                            1.0F,
+                            1.0F);
+
+                    player.hurt(level.damageSources().magic(), 1.0F);
+
+                    return InteractionResult.PASS;
+                }
+
                 state.setValue(CHARGED, false);
-                BlockPos blockpos = findOrCreateValidTeleportPos((ServerLevel)level, pos);
+
+                BlockPos blockpos = findOrCreateValidTeleportPos((ServerLevel) level, pos);
                 blockpos = blockpos.above(5);
-                DimensionTransition transition = new DimensionTransition((ServerLevel)level, blockpos.getCenter(), player.getDeltaMovement(), player.getYRot(), player.getXRot(), DimensionTransition.PLAY_PORTAL_SOUND);
+                DimensionTransition transition = new DimensionTransition((ServerLevel) level, blockpos.getCenter(), player.getDeltaMovement(), player.getYRot(), player.getXRot(), DimensionTransition.PLAY_PORTAL_SOUND);
                 player.changeDimension(transition);
 
                 level.playSound(
                         null,
-                        (double)pos.getX() + 0.5,
-                        (double)pos.getY() + 0.5,
-                        (double)pos.getZ() + 0.5,
+                        (double) pos.getX() + 0.5,
+                        (double) pos.getY() + 0.5,
+                        (double) pos.getZ() + 0.5,
                         SoundEvents.RESPAWN_ANCHOR_SET_SPAWN,
                         SoundSource.BLOCKS,
                         1.0F,
                         1.0F
                 );
+            }
+
+            DragonStateHandler handler = DragonStateProvider.getData(player);
+            if (!handler.isDragon()) {
+                for (int i = 0; i < 10; i++) {
+                    double d0 = (double)pos.getX() + 0.5 + (0.5 - level.random.nextDouble());
+                    double d1 = (double)pos.getY() + 1.0;
+                    double d2 = (double)pos.getZ() + 0.5 + (0.5 - level.random.nextDouble());
+                    double d3 = (double)level.random.nextFloat() * 0.04;
+                    level.addParticle(ParticleTypes.LARGE_SMOKE, d0, d1, d2, 0.0, d3, 0.0);
+                }
+
+                return InteractionResult.PASS;
             }
 
             return InteractionResult.CONSUME;
