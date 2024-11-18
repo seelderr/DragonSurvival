@@ -56,8 +56,7 @@ public class EndPortalBlockMixin {
         return original;
     }
 
-    @Unique
-    private static ResourceLocation dragonSurvival$getDragonSpawnPlatformStructure(ServerLevelAccessor serverLevelAccessor, Entity entity) {
+    @Unique private static ResourceLocation dragonSurvival$getDragonSpawnPlatformStructure(ServerLevelAccessor serverLevelAccessor, Entity entity) {
         if(DragonUtils.isDragonType(entity, DragonTypes.CAVE)) {
             return ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "end_spawn_platforms/cave_end_spawn_platform");
         } else if(DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
@@ -69,8 +68,7 @@ public class EndPortalBlockMixin {
         }
     }
 
-    @Unique
-    private static StructureBlockEntity dragonSurvival$createStructureBlock(ResourceLocation structure, BlockPos pos, Rotation rotation, ServerLevel level) {
+    @Unique private static StructureBlockEntity dragonSurvival$createStructureBlock(ResourceLocation structure, BlockPos pos, Rotation rotation, ServerLevel level) {
         level.setBlockAndUpdate(pos, Blocks.STRUCTURE_BLOCK.defaultBlockState());
         StructureBlockEntity structureblockentity = (StructureBlockEntity)level.getBlockEntity(pos);
         structureblockentity.setMode(StructureMode.LOAD);
@@ -84,16 +82,14 @@ public class EndPortalBlockMixin {
         return structureblockentity;
     }
 
-    @Unique
-    private static void dragonSurvival$clearBlock(BlockPos pos, ServerLevel serverLevel) {
+    @Unique private static void dragonSurvival$clearBlock(BlockPos pos, ServerLevel serverLevel) {
         BlockState blockstate = Blocks.AIR.defaultBlockState();
         BlockInput blockinput = new BlockInput(blockstate, Collections.emptySet(), null);
         blockinput.place(serverLevel, pos, 2);
         serverLevel.blockUpdated(pos, blockstate.getBlock());
     }
 
-    @Unique
-    private static void dragonSurvival$clearSpaceForStructure(BoundingBox boundingBox, ServerLevel level) {
+    @Unique private static void dragonSurvival$clearSpaceForStructure(BoundingBox boundingBox, ServerLevel level) {
         BlockPos.betweenClosedStream(boundingBox).forEach(blockPos -> dragonSurvival$clearBlock(blockPos, level));
         level.getBlockTicks().clearArea(boundingBox);
         level.clearBlockEvents(boundingBox);
