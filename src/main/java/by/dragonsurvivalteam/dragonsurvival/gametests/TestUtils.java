@@ -59,7 +59,7 @@ public class TestUtils {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         data.setType(dragonType, player);
-        helper.assertTrue(DragonUtils.isDragonType(data, dragonType), String.format("Dragon type was [%s] - expected [%s]", data.getType(), dragonType));
+        helper.assertTrue(DragonUtils.isType(data, dragonType), String.format("Dragon type was [%s] - expected [%s]", data.getType(), dragonType));
 
         Holder.Reference<DragonBody> body = player.registryAccess().lookupOrThrow(DragonBody.REGISTRY).getOrThrow(dragonBody);
 

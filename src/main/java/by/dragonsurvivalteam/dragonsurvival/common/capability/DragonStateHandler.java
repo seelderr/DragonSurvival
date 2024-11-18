@@ -208,7 +208,7 @@ public class DragonStateHandler extends EntityStateHandler {
         AbstractDragonType oldType = dragonType;
         setType(type);
 
-        if (!DragonUtils.isDragonType(oldType, dragonType)) {
+        if (!DragonUtils.isType(oldType, dragonType)) {
             DSModifiers.updateTypeModifiers(player, this);
             skinData.skinPreset.initDefaults(dragonType);
         }
@@ -221,7 +221,7 @@ public class DragonStateHandler extends EntityStateHandler {
             return;
         }
 
-        if (DragonUtils.isDragonType(dragonType, type)) {
+        if (DragonUtils.isType(dragonType, type)) {
             return;
         }
 

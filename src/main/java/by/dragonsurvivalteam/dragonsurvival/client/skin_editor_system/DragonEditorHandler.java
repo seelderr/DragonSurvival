@@ -77,7 +77,7 @@ public class DragonEditorHandler {
         }
 
         if (layer == EnumSkinLayer.BASE && (key.equalsIgnoreCase("Skin") || key.equalsIgnoreCase(SkinCap.defaultSkinValue))) {
-            return getSkinTextureMetadata(player, layer, type.getTypeNameLowerCase() + "_base_" + DragonUtils.getDragonLevel(player).ordinal(), type);
+            return getSkinTextureMetadata(player, layer, type.getTypeNameLowerCase() + "_base_" + DragonUtils.getLevel(player).ordinal(), type);
         }
 
         DragonTextureMetadata[] texts = DragonEditorRegistry.CUSTOMIZATIONS.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(layer, new DragonTextureMetadata[0]);
@@ -110,7 +110,7 @@ public class DragonEditorHandler {
     }
 
     public static ArrayList<String> getKeys(Player player, EnumSkinLayer layers) {
-        return getKeys(DragonUtils.getDragonType(player), DragonUtils.getDragonBody(player), layers);
+        return getKeys(DragonUtils.getType(player), DragonUtils.getBody(player), layers);
     }
 
     public static CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> generateSkinTextures(final DragonEntity dragon) {

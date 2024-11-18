@@ -8,27 +8,24 @@ import com.google.common.base.Objects;
 import net.minecraft.core.Holder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Tier;
-import net.minecraft.world.item.Tiers;
 import net.minecraft.world.level.Level;
 
 import java.util.List;
-import javax.annotation.Nullable;
 
 public class DragonUtils {
-    public static AbstractDragonType getDragonType(Player entity) {
+    public static AbstractDragonType getType(Player entity) {
         return DragonStateProvider.getData(entity).getType();
     }
 
-    public static AbstractDragonType getDragonType(DragonStateHandler handler) {
+    public static AbstractDragonType getType(DragonStateHandler handler) {
         return handler.getType();
     }
 
-    public static Holder<DragonBody> getDragonBody(Player player) {
-        return getDragonBody(DragonStateProvider.getData(player));
+    public static Holder<DragonBody> getBody(Player player) {
+        return getBody(DragonStateProvider.getData(player));
     }
 
-    public static Holder<DragonBody> getDragonBody(DragonStateHandler handler) {
+    public static Holder<DragonBody> getBody(DragonStateHandler handler) {
         return handler.getBody();
     }
 
@@ -52,23 +49,23 @@ public class DragonUtils {
         return playerBody.is(typeToCheck);
     }
 
-    public static boolean isDragonType(final Entity entity, final AbstractDragonType typeToCheck) {
+    public static boolean isType(final Entity entity, final AbstractDragonType typeToCheck) {
         if (!(entity instanceof Player player)) {
             return false;
         }
 
-        return isDragonType(DragonStateProvider.getData(player), typeToCheck);
+        return isType(DragonStateProvider.getData(player), typeToCheck);
     }
 
-    public static boolean isDragonType(final DragonStateHandler data, final AbstractDragonType typeToCheck) {
+    public static boolean isType(final DragonStateHandler data, final AbstractDragonType typeToCheck) {
         if (data == null) {
             return false;
         }
 
-        return isDragonType(data.getType(), typeToCheck);
+        return isType(data.getType(), typeToCheck);
     }
 
-    public static boolean isDragonType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
+    public static boolean isType(final AbstractDragonType playerType, final AbstractDragonType typeToCheck) {
         if (playerType == typeToCheck) {
             return true;
         }
@@ -81,7 +78,7 @@ public class DragonUtils {
         return Objects.equal(playerType.getTypeName(), typeToCheck.getTypeName());
     }
 
-    public static DragonLevel getDragonLevel(Player entity) {
+    public static DragonLevel getLevel(Player entity) {
         return DragonStateProvider.getData(entity).getLevel();
     }
 
@@ -94,22 +91,5 @@ public class DragonUtils {
             }
         }
         return false;
-    }
-
-    /** Converts the supplied harvest level to a corresponding vanilla tier */
-    public static @Nullable Tier levelToVanillaTier(int level) {
-        if (level < 0) {
-            return null;
-        } else if (level == 0) {
-            return Tiers.WOOD;
-        } else if (level == 1) {
-            return Tiers.STONE;
-        } else if (level == 2) {
-            return Tiers.IRON;
-        } else if (level == 3) {
-            return Tiers.DIAMOND;
-        }
-
-        return Tiers.NETHERITE;
     }
 }

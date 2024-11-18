@@ -141,6 +141,7 @@ public class SkinsScreen extends Screen {
     }
 
     @Override
+    @SuppressWarnings("DataFlowIssue") // player is present
     public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         if (minecraft == null) {
             return;
@@ -171,18 +172,23 @@ public class SkinsScreen extends Screen {
         float scale = zoom;
 
         if (!loading) {
+            DragonStateHandler playerData = DragonStateProvider.getData(minecraft.player);
+
             handler.setHasFlight(true);
             handler.setSize(level.size);
-            handler.setType(DragonUtils.getDragonType(minecraft.player));
+
+            if (!DragonUtils.isType(handler, playerData.getType())) {
+                handler.setType(playerData.getType());
+            }
 
             if (handler.getBody() == null) {
-                handler.setBody(DragonBody.random(minecraft.player.registryAccess()));
+                handler.setBody(playerData.getBody());
             }
 
             handler.getSkinData().skinPreset.initDefaults(handler);
 
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
-                handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), DragonStateProvider.getData(minecraft.player).getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
+                handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), playerData.getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
             } else {
                 handler.getSkinData().skinPreset.skinAges.get(level).get().defaultSkin = true;
             }

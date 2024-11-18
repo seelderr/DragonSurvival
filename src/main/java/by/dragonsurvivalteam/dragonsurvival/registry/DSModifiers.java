@@ -120,7 +120,7 @@ public class DSModifiers {
 
     private static double buildForestSafeFallDistanceMod(DragonStateHandler handler) {
         double distance = 0;
-        if (DragonUtils.isDragonType(handler, DragonTypes.FOREST)) {
+        if (DragonUtils.isType(handler, DragonTypes.FOREST)) {
             Optional<CliffhangerAbility> ability = DragonAbilities.getAbility(handler, CliffhangerAbility.class);
             if (ability.isPresent()) {
                 distance = ability.get().getHeight();
@@ -166,12 +166,12 @@ public class DSModifiers {
     }
 
     public static double buildSwimSpeedMod(DragonStateHandler handler) {
-        return DragonUtils.isDragonType(handler, DragonTypes.SEA) && SeaDragonConfig.seaSwimmingBonuses ? 1 : 0;
+        return DragonUtils.isType(handler, DragonTypes.SEA) && SeaDragonConfig.seaSwimmingBonuses ? 1 : 0;
     }
 
     private static double buildLavaSwimSpeedMod(DragonStateHandler handler) {
         // No extra config since it's basically already checked through 'ServerConfig#caveLavaSwimming'
-        return DragonUtils.isDragonType(handler, DragonTypes.CAVE) ? 1 : 0;
+        return DragonUtils.isType(handler, DragonTypes.CAVE) ? 1 : 0;
     }
 
     private static double buildStepHeightMod(DragonStateHandler handler) {
@@ -220,7 +220,7 @@ public class DSModifiers {
     }
 
     private static double buildSubmergedMiningSpeedMod(DragonStateHandler handler) {
-        return DragonUtils.isDragonType(handler, DragonTypes.SEA) ? (2 * (handler.getLevel().ordinal() + 1)) : 0;
+        return DragonUtils.isType(handler, DragonTypes.SEA) ? (2 * (handler.getLevel().ordinal() + 1)) : 0;
     }
 
     public static void updateAllModifiers(Player player) {

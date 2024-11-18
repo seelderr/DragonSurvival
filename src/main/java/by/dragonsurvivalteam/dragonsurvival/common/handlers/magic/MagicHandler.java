@@ -101,7 +101,7 @@ public class MagicHandler {
                 MobEffectInstance drainEffect = entity.getEffect(DSEffects.DRAIN);
 
                 if (drainEffect != null) {
-                    if (!DragonUtils.isDragonType(entity, DragonTypes.FOREST)) {
+                    if (!DragonUtils.isType(entity, DragonTypes.FOREST)) {
                         Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
 
                         if (player != null) {
@@ -116,7 +116,7 @@ public class MagicHandler {
 
                 if (chargedEffect != null) {
                     Player player = data.lastAfflicted != -1 && entity.level().getEntity(data.lastAfflicted) instanceof Player ? (Player) entity.level().getEntity(data.lastAfflicted) : null;
-                    if (!DragonUtils.isDragonType(entity, DragonTypes.SEA)) {
+                    if (!DragonUtils.isType(entity, DragonTypes.SEA)) {
                         StormBreathAbility.chargedEffectSparkle(player, entity, StormBreathAbility.chargedChainRange, StormBreathAbility.chargedEffectChainCount, (chargedEffect.getAmplifier() + 1) * StormBreathAbility.chargedEffectDamageMultiplier);
                     }
                 }
@@ -159,7 +159,7 @@ public class MagicHandler {
                     return;
                 }
 
-                if(DragonUtils.isDragonType(cap, DragonTypes.SEA)){
+                if(DragonUtils.isType(cap, DragonTypes.SEA)){
                     event.setCanceled(true);
                 }
             });
@@ -232,7 +232,7 @@ public class MagicHandler {
                     return;
                 }
 
-                if (DragonUtils.isDragonType(handler, DragonTypes.SEA)) {
+                if (DragonUtils.isType(handler, DragonTypes.SEA)) {
                     int chance = DragonAbilities.getAbility(player, SpectralImpactAbility.class).map(SpectralImpactAbility::getChance).orElse(0);
                     // rolls between 1 and 100 (incl.) (chance of 0 means the ability should not trigger)
                     boolean hit = 1 + player.getRandom().nextInt(101) < chance;
@@ -246,7 +246,7 @@ public class MagicHandler {
                             serverLevel.sendParticles(new SeaSweepParticleOption(0), player.getX() + d0, player.getY(0.5D), player.getZ() + d1, 0, d0, 0.0D, d1, 0.0D);
                         }
                     }
-                } else if (DragonUtils.isDragonType(handler, DragonTypes.CAVE)) {
+                } else if (DragonUtils.isType(handler, DragonTypes.CAVE)) {
                     int chance = DragonAbilities.getAbility(player, BurnAbility.class).map(BurnAbility::getChance).orElse(0);
                     // rolls between 1 and 100 (incl.) (chance of 0 means the ability should not trigger)
                     boolean hit = 1 + player.getRandom().nextInt(101) < chance;
