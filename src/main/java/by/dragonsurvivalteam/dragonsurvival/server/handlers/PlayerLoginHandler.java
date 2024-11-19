@@ -9,7 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.ForestDrag
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.types.SeaDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
@@ -118,7 +118,7 @@ public class PlayerLoginHandler {
             return;
         }
 
-        PacketDistributor.sendToPlayer(serverPlayer, AllowOpenDragonAltar.INSTANCE);
+        PacketDistributor.sendToPlayer(serverPlayer, OpenDragonAltar.INSTANCE);
         data.isInAltar = true;
     }
 }

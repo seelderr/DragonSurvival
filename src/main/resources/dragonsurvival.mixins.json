@@ -34,7 +34,6 @@
     "tool_swap.ServerPlayerGameModeStartMixin"
   ],
   "client": [
-    "SmithingScreenMixin",
     "client.AbstractContainerEventHandlerMixin",
     "client.ClientLevelMixin",
     "client.EntityRenderDispatcherMixin",
@@ -56,6 +55,7 @@
     "client.PlayerRendererMixin",
     "client.RenderTypeHelperMixin",
     "client.ScreenAccessor",
+    "client.SmithingScreenMixin",
     "client.TextureManagerAccess",
     "iris.GameRendererMixin",
     "sodium.ClientNeoForgeModMixin",

@@ -20,6 +20,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -27,6 +28,7 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class SyncComplete implements IMessage<SyncComplete.Data> {
     public static void handleClient(final Data message, final IPayloadContext context) {
         Entity entity = context.player().level().getEntity(message.playerId);
+
         if (entity instanceof Player player) {
             context.enqueueWork(() -> {
                 DragonStateHandler handler = DragonStateProvider.getData(player);
@@ -56,10 +58,12 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
             dropAllItemsInList(player, player.getInventory().armor);
             dropAllItemsInList(player, player.getInventory().offhand);
             ItemStack mainHandItem = player.getMainHandItem();
+
             if (DragonPenaltyHandler.itemIsBlacklisted(mainHandItem.getItem())) {
                 player.getInventory().removeItem(mainHandItem);
                 player.drop(mainHandItem, false);
             }
+
             if (player instanceof ServerPlayer serverPlayer) {
                 DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, handler.getSize(), handler.getTypeName());
             }
@@ -74,23 +78,20 @@ public class SyncComplete implements IMessage<SyncComplete.Data> {
                     handleDragonSync(player);
                 })
                 .thenRun(() -> PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, message))
-                .thenAccept(v -> context.reply(new RequestClientData.Data()));
+                .thenAccept(v -> context.reply(RequestClientData.INSTANCE));
     }
 
     public record Data(int playerId, CompoundTag nbt) implements CustomPacketPayload {
-
         public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "complete_data"));
 
         public static final StreamCodec<FriendlyByteBuf, Data> STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.VAR_INT,
-                Data::playerId,
-                ByteBufCodecs.COMPOUND_TAG,
-                Data::nbt,
+                ByteBufCodecs.VAR_INT, Data::playerId,
+                ByteBufCodecs.COMPOUND_TAG, Data::nbt,
                 Data::new
         );
 
         @Override
-        public Type<? extends CustomPacketPayload> type() {
+        public @NotNull Type<? extends CustomPacketPayload> type() {
             return TYPE;
         }
     }

@@ -458,7 +458,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     }
 
     @Override
-    public int getDragonBodyButtonOffset() {
+    public int getDragonBodyButtonXOffset() {
         return 225;
     }
 

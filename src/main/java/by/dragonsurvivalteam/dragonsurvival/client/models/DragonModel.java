@@ -214,14 +214,15 @@ public class DragonModel extends GeoModel<DragonEntity> {
         return getAnimationResource(player);
     }
 
-    @Override
+    @Override // GeoEntityRenderer#getRenderType handles invisible and glowing
     public RenderType getRenderType(final DragonEntity animatable, final ResourceLocation texture) {
         Player player = animatable.getPlayer();
 
         if (player != null) {
             DragonStateHandler data = DragonStateProvider.getData(player);
 
-            if (data.hasHunterStacks() && !data.isBeingRenderedInInventory) {
+            if (!data.isBeingRenderedInInventory && data.hasHunterStacks()) {
+                // Transparent rendering in inventory causes the entity to be invisible
                 return RenderType.itemEntityTranslucentCull(texture);
             }
         }

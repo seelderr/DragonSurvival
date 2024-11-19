@@ -21,7 +21,6 @@ import net.minecraft.ResourceLocationException;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.ListTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
@@ -449,14 +448,9 @@ public class DragonStateHandler extends EntityStateHandler {
         tag.putInt("altarCooldown", altarCooldown);
         tag.putBoolean("usedAltar", hasUsedAltar);
 
-        if (lastPos != null) {
-            tag.put("lastPos", Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
-        }
-
-        tag.putInt("lastAfflicted", lastAfflicted);
         tag.putBoolean("isJumping", isJumping);
 
-        return tag;
+        return super.serializeNBT(provider);
     }
 
     @Override
@@ -550,15 +544,11 @@ public class DragonStateHandler extends EntityStateHandler {
         altarCooldown = tag.getInt("altarCooldown");
         hasUsedAltar = tag.getBoolean("usedAltar");
 
-        if (tag.contains("lastPos")) {
-            ListTag listnbt = tag.getList("lastPos", 6);
-            lastPos = new Vec3(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
-        }
-
-        lastAfflicted = tag.getInt("lastAfflicted");
-        refreshBody = true;
         isJumping = tag.getBoolean("isJumping");
 
+        super.deserializeNBT(provider, tag);
+
+        refreshBody = true;
         getSkinData().compileSkin();
     }
 

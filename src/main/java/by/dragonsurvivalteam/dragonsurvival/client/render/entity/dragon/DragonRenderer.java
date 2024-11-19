@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Player;
+import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.animation.AnimationProcessor;
 import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.cache.object.GeoBone;
@@ -32,6 +33,8 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public boolean isRenderLayers = false;
 
     private static final Color RENDER_COLOR = Color.ofRGB(255, 255, 255);
+    private static final Color TRANSPARENT_RENDER_COLOR = Color.ofRGBA(1, 1, 1, HunterHandler.MIN_ALPHA);
+    private static final Color INVISIBLE_RENDER_COLOR = Color.ofRGBA(1, 1, 1, 0);
 
     private static final HashSet<String> magicAnimations = new HashSet<>();
 
@@ -79,34 +82,55 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public void actuallyRender(final PoseStack poseStack, final DragonEntity animatable, final BakedGeoModel model, final RenderType renderType, final MultiBufferSource bufferSource, final VertexConsumer buffer, boolean isReRender, float partialTick, int packedLight, int packedOverlay, int color) {
         Player player = animatable.getPlayer();
 
-        if (player == null || player.isInvisible()) {
+        if (player == null) {
             return;
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-
-        boolean hasWings = handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
-        if (handler.getBody() != null)
-            hasWings = hasWings || !handler.getBody().value().canHideWings();
+        //noinspection DataFlowIssue -> body is present
+        boolean hasWings = !handler.getBody().value().canHideWings() || handler.getSkinData().skinPreset.skinAges.get(handler.getLevel()).get().wings;
 
         GeoBone leftWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("WingLeft");
         GeoBone rightWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("WingRight");
         GeoBone smallLeftWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("SmallWingLeft");
         GeoBone smallRightWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("SmallWingRight");
 
-        if (leftWing != null)
+        if (leftWing != null) {
             leftWing.setHidden(!hasWings);
+        }
 
-        if (rightWing != null)
+        if (rightWing != null) {
             rightWing.setHidden(!hasWings);
+        }
 
-        if (smallLeftWing != null)
+        if (smallLeftWing != null) {
             smallLeftWing.setHidden(!hasWings);
+        }
 
-        if (smallRightWing != null)
+        if (smallRightWing != null) {
             smallRightWing.setHidden(!hasWings);
+        }
 
-        // Hide the magic bones if we aren't using an animation that requires it. Prevents some jank from happening during animation transitions.
+        // Hide the magic bones if we aren't using an animation that requires it - prevents issues during animation transitions
+        List<String> animations = getAnimations(animatable);
+
+        if (!animations.isEmpty()) {
+            GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
+            GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
+
+            if (animations.stream().noneMatch(magicAnimations::contains)) {
+                magic.setHidden(true);
+                magicCircle.setHidden(true);
+            } else {
+                magic.setHidden(false);
+                magicCircle.setHidden(false);
+            }
+        }
+
+        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
+    }
+
+    private static @NotNull List<String> getAnimations(final DragonEntity animatable) {
         List<String> animations = new ArrayList<>();
 
         if (animatable.mainAnimationController != null) {
@@ -125,24 +149,21 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
             }
         }
 
-        if (!animations.isEmpty()) {
-            GeoBone magic = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Magic");
-            GeoBone magicCircle = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("MagicCircle");
-
-            if (!animations.stream().anyMatch(magicAnimations::contains)) {
-                magic.setHidden(true);
-                magicCircle.setHidden(true);
-            } else {
-                magic.setHidden(false);
-                magicCircle.setHidden(false);
-            }
-        }
-
-        super.actuallyRender(poseStack, animatable, model, renderType, bufferSource, buffer, isReRender, partialTick, packedLight, packedOverlay, color);
+        return animations;
     }
 
     @Override // Also used by the layers
     public Color getRenderColor(final DragonEntity animatable, float partialTick, int packedLight) {
-        return HunterHandler.modifyAlpha(animatable.getPlayer(), RENDER_COLOR);
+        boolean isInvisible = animatable.isInvisible();
+        Color color;
+
+        //noinspection DataFlowIssue -> player is present
+        if (isInvisible && !animatable.isInvisibleTo(Minecraft.getInstance().player)) {
+            color = TRANSPARENT_RENDER_COLOR;
+        } else {
+            color = RENDER_COLOR;
+        }
+
+        return HunterHandler.modifyAlpha(animatable.getPlayer(), color);
     }
 }

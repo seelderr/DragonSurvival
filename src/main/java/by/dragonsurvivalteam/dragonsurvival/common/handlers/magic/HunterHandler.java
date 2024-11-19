@@ -34,7 +34,7 @@ import software.bernie.geckolib.util.Color;
  * There is no check whether the player is a dragon to make this effect re-usable for other scenarios
  */
 @EventBusSubscriber
-public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatcher#render | entities / water are can only be seen through translucency with fabulous graphics enabled -> how to handle?
+public class HunterHandler { // FIXME :: disable shadows in EntityRenderDispatcher#render
     public static final int MAX_HUNTER_STACKS = Functions.secondsToTicks(2) * HunterAbility.maxLevel();
     // Lower values starts to just be invisible (vanilla uses ~0.15)
     public static final float MIN_ALPHA = 0.2f;

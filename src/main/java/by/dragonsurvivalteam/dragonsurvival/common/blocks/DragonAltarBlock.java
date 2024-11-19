@@ -3,7 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.blocks;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.core.BlockPos;
@@ -74,7 +74,7 @@ public class DragonAltarBlock extends Block {
                 player.sendSystemMessage(Component.translatable(ALTAR_COOLDOWN, (minutes > 0 ? minutes + "m " : "") + seconds + "s"));
                 return InteractionResult.FAIL;
             } else {
-                PacketDistributor.sendToPlayer((ServerPlayer) player, AllowOpenDragonAltar.INSTANCE);
+                PacketDistributor.sendToPlayer((ServerPlayer) player, OpenDragonAltar.INSTANCE);
                 handler.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
                 handler.hasUsedAltar = true;
                 handler.isInAltar = true;

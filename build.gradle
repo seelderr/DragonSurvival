@@ -29,13 +29,14 @@ runs {
 		arguments '--username', 'Dev####'
 	}
 
-	client_static_username { // To be able to start a second client in parallel
+	client_static {
 		runType 'client'
-		arguments '--username', 'Dev'
+		// The UUID is the one that will get assigned in multiplayer based on the name 'Dev'
+		arguments '--username', 'Dev', "--uuid", "380df991-f603-344c-a090-369bad2a924a"
 	}
 
 	server {
-		arguments '--nogui'
+		arguments
 	}
 
 	gameTestServer {}

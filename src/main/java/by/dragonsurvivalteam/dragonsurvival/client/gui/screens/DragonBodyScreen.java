@@ -30,7 +30,7 @@ public interface DragonBodyScreen {
 
         for (int index = 0; index < 5; index++) {
             // To make sure the buttons are centered if there are less than 5 elements (max. supported by the current GUI)
-            int x = (screen.width - requiredWidth - getDragonBodyButtonOffset()) / 2 + (index * (buttonWidth + gap));
+            int x = (screen.width - requiredWidth - getDragonBodyButtonXOffset()) / 2 + (index * (buttonWidth + gap));
             int y = screen.height / 2 + getDragonBodyButtonYOffset();
 
             AbstractWidget widget;
@@ -71,7 +71,7 @@ public interface DragonBodyScreen {
     DragonBodyButton createButton(final Holder<DragonBody> dragonBody, int x, int y);
     List<AbstractWidget> getDragonBodyWidgets();
 
-    int getDragonBodyButtonOffset();
+    int getDragonBodyButtonXOffset();
     int getDragonBodyButtonYOffset();
 
     void setDragonBodyButtonOffset(int offset);

@@ -10,12 +10,12 @@ import org.jetbrains.annotations.NotNull;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
-public record AllowOpenDragonAltar() implements CustomPacketPayload {
-    public static final AllowOpenDragonAltar INSTANCE = new AllowOpenDragonAltar();
-    public static final StreamCodec<ByteBuf, AllowOpenDragonAltar> STREAM_CODEC = StreamCodec.unit(INSTANCE);
-    public static final Type<AllowOpenDragonAltar> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_altar"));
+public record OpenDragonAltar() implements CustomPacketPayload {
+    public static final OpenDragonAltar INSTANCE = new OpenDragonAltar();
+    public static final StreamCodec<ByteBuf, OpenDragonAltar> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final Type<OpenDragonAltar> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "open_dragon_altar"));
 
-    public static void handleClient(final AllowOpenDragonAltar ignored, final IPayloadContext context) {
+    public static void handleClient(final OpenDragonAltar ignored, final IPayloadContext context) {
         context.enqueueWork(ClientProxy::handleOpenDragonAltar);
     }
 

@@ -22,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.scores.PlayerTeam;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderFrameEvent;
@@ -69,11 +70,14 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
     ActiveDragonAbility lastCast = null;
     public boolean started, ended;
     AnimationTimer animationTimer = new AnimationTimer();
-    private final double defaultPlayerWalkSpeed = 0.1;
-    private final double defaultPlayerSneakSpeed = 0.03;
-    private final double defaultPlayerFastSwimSpeed = 0.13;
-    private final double defaultPlayerSwimSpeed = 0.051;
-    private final double defaultPlayerSprintSpeed = 0.165;
+
+    // Default player values
+    private static final double DEFAULT_WALK_SPEED = 0.1; // Abilities#walkingSpeed
+    private static final double DEFAULT_SNEAK_SPEED = 0.03; // Attributes#SNEAKING_SPEED default value
+    private static final double DEFAULT_SPRINT_SPEED = 0.165;
+    private static final double DEFAULT_SWIM_SPEED = 0.051;
+    private static final double DEFAULT_FAST_SWIM_SPEED = 0.13;
+
     public AnimationController<DragonEntity> mainAnimationController;
 
     private static double globalTickCount = 0;
@@ -254,6 +258,37 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         }
     }
 
+    @Override
+    public @Nullable PlayerTeam getTeam() {
+        Player player = getPlayer();
+
+        if (player != null) {
+            return player.getTeam();
+        }
+
+        return super.getTeam();
+    }
+
+    @Override
+    public boolean isInvisible() {
+        if (super.isInvisible()) {
+            return true;
+        }
+
+        Player player = getPlayer();
+        return player != null && player.isInvisible();
+    }
+
+    @Override
+    public boolean isCurrentlyGlowing() {
+        if (super.isCurrentlyGlowing()) {
+            return true;
+        }
+
+        Player player = getPlayer();
+        return player != null && player.isCurrentlyGlowing();
+    }
+
     private void lockTailAndNeck() {
         neckLocked = true;
         tailLocked = true;
@@ -281,7 +316,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
         boolean useDynamicScaling = false;
         double animationSpeed = 1;
         double speedFactor = ClientConfig.movementAnimationSpeedFactor;
-        double baseSpeed = defaultPlayerWalkSpeed;
+        double baseSpeed = DEFAULT_WALK_SPEED;
         double smallSizeFactor = ClientConfig.smallSizeAnimationSpeedFactor;
         double bigSizeFactor = ClientConfig.largeSizeAnimationSpeedFactor;
         double baseSize = ServerConfig.DEFAULT_MAX_GROWTH_SIZE;
@@ -369,7 +404,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
                 lockTailAndNeck();
                 useDynamicScaling = true;
-                baseSpeed = defaultPlayerFastSwimSpeed; // Default base fast speed for the player
+                baseSpeed = DEFAULT_FAST_SWIM_SPEED; // Default base fast speed for the player
                 state.setAnimation(AnimationUtils.createAnimation(builder, SWIM_FAST));
                 animationController.transitionLength(2);
             }
@@ -387,7 +422,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
 
                 lockTailAndNeck();
                 useDynamicScaling = true;
-                baseSpeed = defaultPlayerSwimSpeed;
+                baseSpeed = DEFAULT_SWIM_SPEED;
                 state.setAnimation(AnimationUtils.createAnimation(builder, SWIM));
                 animationController.transitionLength(2);
             }
@@ -406,7 +441,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             // Player is Sneaking
             if (hasMoveInput) {
                 useDynamicScaling = true;
-                baseSpeed = defaultPlayerSneakSpeed;
+                baseSpeed = DEFAULT_SNEAK_SPEED;
                 state.setAnimation(AnimationUtils.createAnimation(builder, SNEAK_WALK));
                 animationController.transitionLength(5);
             } else if (handler.getMovementData().dig) {
@@ -418,7 +453,7 @@ public class DragonEntity extends LivingEntity implements GeoEntity {
             }
         } else if (player.isSprinting()) {
             useDynamicScaling = true;
-            baseSpeed = defaultPlayerSprintSpeed;
+            baseSpeed = DEFAULT_SPRINT_SPEED;
             state.setAnimation(AnimationUtils.createAnimation(builder, RUN));
             animationController.transitionLength(2);
         } else if (hasMoveInput) {

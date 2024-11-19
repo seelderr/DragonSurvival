@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +30,7 @@ public class SkinCap extends SubCap {
 
     public SkinCap(DragonStateHandler handler) {
         super(handler);
+
         for (String value : DragonTypes.getTypes()) {
             skinPreset.initDefaults(DragonTypes.getStatic(value));
         }
@@ -40,7 +42,7 @@ public class SkinCap extends SubCap {
     }
 
     @Override
-    public CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
 
         tag.putBoolean("renderNewborn", renderNewborn);
@@ -53,7 +55,7 @@ public class SkinCap extends SubCap {
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
         renderNewborn = tag.getBoolean("renderNewborn");
         renderYoung = tag.getBoolean("renderYoung");
         renderAdult = tag.getBoolean("renderAdult");

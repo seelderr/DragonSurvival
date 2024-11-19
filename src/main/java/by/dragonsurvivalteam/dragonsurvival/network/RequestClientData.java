@@ -1,39 +1,24 @@
 package by.dragonsurvivalteam.dragonsurvival.network;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
-import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import org.jetbrains.annotations.NotNull;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
+public record RequestClientData() implements CustomPacketPayload {
+    public static final RequestClientData INSTANCE = new RequestClientData();
+    public static final StreamCodec<ByteBuf, RequestClientData> STREAM_CODEC = StreamCodec.unit(INSTANCE);
+    public static final CustomPacketPayload.Type<RequestClientData> TYPE = new CustomPacketPayload.Type<>(DragonSurvival.res("request_client_data"));
 
-public class RequestClientData implements IMessage<RequestClientData.Data> {
-    public static void handleClient(final RequestClientData.Data message, final IPayloadContext context) {
-        context.enqueueWork(() -> {
-            ClientProxy.sendClientData(context);
-        });
+    public static void handleClient(final RequestClientData ignored, final IPayloadContext context) {
+        context.enqueueWork(() -> ClientProxy.sendClientData(context));
     }
 
-    public record Data() implements CustomPacketPayload {
-
-        public static final Type<Data> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(MODID, "request_client_data"));
-
-        public static final StreamCodec<ByteBuf, Data> STREAM_CODEC = new StreamCodec<>() {
-            @Override
-            public void encode(ByteBuf pBuffer, Data pValue) {
-            }
-
-            @Override
-            public Data decode(ByteBuf pBuffer) {
-                return new Data();
-            }
-        };
-
-        @Override
-        public Type<? extends CustomPacketPayload> type() {
-            return TYPE;
-        }
+    @Override
+    public @NotNull Type<? extends CustomPacketPayload> type() {
+        return TYPE;
     }
 }

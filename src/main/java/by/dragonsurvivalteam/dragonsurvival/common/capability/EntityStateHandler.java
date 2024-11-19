@@ -10,6 +10,10 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
 public class EntityStateHandler implements INBTSerializable<CompoundTag> {
+    public static final String LAST_AFFLICTED = "last_afflicted";
+    public static final String CHAIN_COUNT = "chain_count";
+    public static final String LAST_POSITION = "last_position";
+
     // To handle the burn effect damage
     public Vec3 lastPos;
     // Last entity this entity received a debuff from
@@ -22,11 +26,11 @@ public class EntityStateHandler implements INBTSerializable<CompoundTag> {
     @Override
     public @UnknownNullability CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
         CompoundTag tag = new CompoundTag();
-        tag.putInt("lastAfflicted", lastAfflicted);
-        tag.putInt("chainCount", chainCount);
+        tag.putInt(LAST_AFFLICTED, lastAfflicted);
+        tag.putInt(CHAIN_COUNT, chainCount);
 
         if (lastPos != null) {
-            tag.put("lastPos", Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
+            tag.put(LAST_POSITION, Functions.newDoubleList(lastPos.x, lastPos.y, lastPos.z));
         }
 
         return tag;
@@ -34,12 +38,12 @@ public class EntityStateHandler implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
-        lastAfflicted = tag.getInt("lastAfflicted");
-        chainCount = tag.getInt("chainCount");
+        lastAfflicted = tag.getInt(LAST_AFFLICTED);
+        chainCount = tag.getInt(CHAIN_COUNT);
 
-        if (tag.contains("lastPos")) {
-            ListTag listnbt = tag.getList("lastPos", ListTag.TAG_DOUBLE);
-            lastPos = new Vec3(listnbt.getDouble(0), listnbt.getDouble(1), listnbt.getDouble(2));
+        if (tag.contains(LAST_POSITION)) {
+            ListTag list = tag.getList(LAST_POSITION, ListTag.TAG_DOUBLE);
+            lastPos = new Vec3(list.getDouble(0), list.getDouble(1), list.getDouble(2));
         }
     }
 }

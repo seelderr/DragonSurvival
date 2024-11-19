@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.commands;
 
-import by.dragonsurvivalteam.dragonsurvival.network.container.AllowOpenDragonAltar;
+import by.dragonsurvivalteam.dragonsurvival.network.container.OpenDragonAltar;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
@@ -18,7 +18,7 @@ public class DragonAltarCommand {
     }
 
     private static int runCommand(ServerPlayer serverPlayer) {
-        PacketDistributor.sendToPlayer(serverPlayer, AllowOpenDragonAltar.INSTANCE);
+        PacketDistributor.sendToPlayer(serverPlayer, OpenDragonAltar.INSTANCE);
         return 1;
     }
 }
