@@ -34,7 +34,6 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
     private static final Color RENDER_COLOR = Color.ofRGB(255, 255, 255);
     private static final Color TRANSPARENT_RENDER_COLOR = Color.ofRGBA(1, 1, 1, HunterHandler.MIN_ALPHA);
-    private static final Color INVISIBLE_RENDER_COLOR = Color.ofRGBA(1, 1, 1, 0);
 
     private static final HashSet<String> magicAnimations = new HashSet<>();
 
