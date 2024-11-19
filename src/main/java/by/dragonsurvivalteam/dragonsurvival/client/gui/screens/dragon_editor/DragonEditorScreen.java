@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonAltarScreen;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.DragonBodyScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.*;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.ColorSelectorButton;
@@ -37,7 +38,6 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncPlayerSkin
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBodyTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
@@ -82,7 +82,7 @@ import java.util.function.Supplier;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 @EventBusSubscriber(Dist.CLIENT)
-public class DragonEditorScreen extends Screen {
+public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     @Translation(type = Translation.Type.MISC, comments = "In the depths of your soul, lava has begun to roar. You have chosen to become a §cCave dragon.§r")
     private static final String CAVE_DRAGON_CHOICE = Translation.Type.GUI.wrap("dragon_editor.cave_dragon_choice");
 
@@ -172,7 +172,7 @@ public class DragonEditorScreen extends Screen {
      * (they are stored to properly reference (and remove) them when using the arrow buttons to navigate through the bodies)
      */
     private final List<AbstractWidget> dragonBodyWidgets = new ArrayList<>();
-    private int bodySelectionOffset;
+    private int dragonBodySelectionOffset;
 
     private float tick;
     private int curAnimation;
@@ -813,55 +813,38 @@ public class DragonEditorScreen extends Screen {
         addRenderableWidget(new HelpButton(dragonType, guiLeft - 75, 11, 15, 15, CUSTOMIZATION, 1));
     }
 
-    private void addDragonBodyWidgets() {
-        List<Holder<DragonBody>> bodies = DSBodyTags.getOrdered(null);
-
-        int buttonWidth = 25;
-        int gap = 3;
-
-        boolean cannotFit = bodies.size() > 5;
-        int elements = Math.min(5, bodies.size());
-        int requiredWidth = elements * buttonWidth + (elements - 1) * gap;
-
-        for (int index = 0; index < 5; index++) {
-            // To make sure the buttons are centered if there are less than 5 elements (max. supported by the current GUI)
-            int x = (width - requiredWidth - /* offset to the left */ 10) / 2 + (index * (buttonWidth + gap));
-            int y = height / 2 + 69;
-
-            AbstractWidget widget;
-
-            if (cannotFit && /* leftmost element */ index == 0) {
-                widget = new ArrowButton(x, y, 25, 25, false, button -> {
-                    if (bodySelectionOffset > 0) {
-                        bodySelectionOffset--;
-                        removeDragonBodyWidgets();
-                        addDragonBodyWidgets();
-                    }
-                });
-            } else if (cannotFit && /* rightmost element */ index == 4) {
-                widget = new ArrowButton(x, y, 25, 25, true, button -> {
-                    // If there are 5 bodies we can navigate next two times, showing 0 - 2,  1 - 3 and 2 - 4
-                    if (bodySelectionOffset < bodies.size() - /* shown elements */ 3) {
-                        bodySelectionOffset++;
-                        removeDragonBodyWidgets();
-                        addDragonBodyWidgets();
-                    }
-                });
-            } else {
-                // Subtract 1 since index 0 is an arrow button (otherwise we would skip the first body)
-                int selectionIndex = index + bodySelectionOffset - (cannotFit ? 1 : 0);
-                Holder<DragonBody> body = bodies.get(selectionIndex);
-                widget = new DragonBodyButton(this, x, y, 25, 25, body, isEditor);
+    @Override
+    public DragonBodyButton createButton(Holder<DragonBody> dragonBody, int x, int y) {
+        return new DragonBodyButton(this, x, y, 25, 25, dragonBody, isEditor, button -> {
+            if (!((DragonBodyButton) button).isLocked()) {
+                actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonBodySelectAction, dragonBody));
             }
-
-            dragonBodyWidgets.add(widget);
-            addRenderableWidget(widget);
-        }
+        });
     }
 
-    private void removeDragonBodyWidgets() {
-        dragonBodyWidgets.forEach(this::removeWidget);
-        dragonBodyWidgets.clear();
+    @Override
+    public List<AbstractWidget> getDragonBodyWidgets() {
+        return dragonBodyWidgets;
+    }
+
+    @Override
+    public int getDragonBodyButtonOffset() {
+        return 10;
+    }
+
+    @Override
+    public int getDragonBodyButtonYOffset() {
+        return 69;
+    }
+
+    @Override
+    public void setDragonBodyButtonOffset(int dragonBodySelectionOffset) {
+        this.dragonBodySelectionOffset = dragonBodySelectionOffset;
+    }
+
+    @Override
+    public int getDragonBodySelectionOffset() {
+        return dragonBodySelectionOffset;
     }
 
     public void update() {

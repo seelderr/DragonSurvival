@@ -1,5 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.TextureManagerAccess;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -9,6 +11,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -22,40 +25,55 @@ public class DragonBodyButton extends Button {
     public static final int SELECTED = 2;
     private static final int LOCKED = 3;
 
-    private final DragonEditorScreen screen;
+    private final Screen screen;
     private final Holder<DragonBody> dragonBody;
-    private final ResourceLocation location;
+    private final ResourceLocation iconLocation;
     private final boolean locked;
 
-    public DragonBodyButton(DragonEditorScreen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, boolean locked) {
-        super(x, y, xSize, ySize, Component.literal(dragonBody.toString()), action -> {
-            if (!locked) {
-                screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(screen.dragonBodySelectAction, dragonBody));
-            }
-        }, DEFAULT_NARRATION);
-
+    public DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, boolean locked, OnPress action) {
         //noinspection DataFlowIssue -> key is present
-        ResourceLocation bodyLocation = dragonBody.getKey().location();
-        setTooltip(Tooltip.create(Component.translatable(Translation.Type.BODY_DESCRIPTION.wrap(bodyLocation.getNamespace(), bodyLocation.getPath()))));
-        ResourceLocation iconLocation = ResourceLocation.fromNamespaceAndPath(bodyLocation.getNamespace(), LOCATION_PREFIX + bodyLocation.getPath() + "/" + screen.dragonType.getTypeNameLowerCase() + ".png");
+        this(screen, x, y, xSize, ySize, dragonBody, dragonBody.getKey().location(), locked, action);
+    }
+
+    private DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, ResourceLocation location, boolean locked, OnPress action) {
+        super(x, y, xSize, ySize, Component.translatable(Translation.Type.BODY.wrap(location.getNamespace(), location.getPath())), action, DEFAULT_NARRATION);
+        setTooltip(Tooltip.create(Component.translatable(Translation.Type.BODY_DESCRIPTION.wrap(location.getNamespace(), location.getPath()))));
+
+        String iconLocationSuffix;
+
+        if (screen instanceof DragonEditorScreen dragonEditorScreen) {
+            iconLocationSuffix = "/" + dragonEditorScreen.dragonType.getTypeNameLowerCase() + ".png";
+        } else {
+            iconLocationSuffix = "/default.png";
+        }
+
+        ResourceLocation iconLocation = ResourceLocation.fromNamespaceAndPath(location.getNamespace(), LOCATION_PREFIX + location.getPath() + iconLocationSuffix);
         ResourceManager manager = ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).dragonSurvival$getResourceManager();
 
         if (manager.getResource(iconLocation).isEmpty()) {
-            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBody.center.location().getNamespace(), LOCATION_PREFIX + DragonBody.center.location().getPath() + "/" + screen.dragonType.getTypeNameLowerCase() + ".png");
+            DragonSurvival.LOGGER.warn("Icon [{}] does not exist - using icon from body type [{}] as fallback", iconLocation, DragonBody.center);
+            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBody.center.location().getNamespace(), LOCATION_PREFIX + DragonBody.center.location().getPath() + iconLocationSuffix);
         }
 
-        this.location = iconLocation;
+        this.iconLocation = iconLocation;
         this.screen = screen;
         this.dragonBody = dragonBody;
         this.locked = locked;
     }
 
+    public boolean isLocked() {
+        return locked;
+    }
+
     @Override
     public void renderWidget(@NotNull GuiGraphics graphics, int pMouseX, int pMouseY, float pPartialTick) {
-        active = visible = screen.showUi;
+        if (screen instanceof DragonEditorScreen dragonEditorScreen) {
+            active = visible = dragonEditorScreen.showUi;
+        }
+
         int state = 0;
 
-        if (DragonUtils.isBody(dragonBody, screen.dragonBody)) {
+        if (isSelected()) {
             state = SELECTED;
         } else if (locked) {
             state = LOCKED;
@@ -63,6 +81,18 @@ public class DragonBodyButton extends Button {
             state = HOVERED;
         }
 
-        graphics.blit(location, getX(), getY(), 0, state * this.height, this.width, this.height, 32, 104);
+        graphics.blit(iconLocation, getX(), getY(), 0, state * this.height, this.width, this.height, 32, 104);
+    }
+
+    private boolean isSelected() {
+        if (screen instanceof DragonEditorScreen dragonEditorScreen) {
+            return DragonUtils.isBody(dragonBody, dragonEditorScreen.dragonBody);
+        }
+
+        if (screen instanceof SkinsScreen skinsScreen) {
+            return DragonUtils.isBody(dragonBody, skinsScreen.handler.getBody());
+        }
+
+        return false;
     }
 }

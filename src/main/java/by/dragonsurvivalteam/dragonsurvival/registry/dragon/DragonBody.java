@@ -43,6 +43,7 @@ public record DragonBody(List<DSAttributeModifier> modifiers, double heightMulti
     public static final Codec<Holder<DragonBody>> CODEC = RegistryFixedCodec.create(REGISTRY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonBody>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
 
+    /** Required to be set for dragon body attributes, otherwise the modifiers cannot be removed when they body type changes */
     public static final String ATTRIBUTE_PATH = DragonSurvival.MODID + "/body/";
 
     private static final RandomSource RANDOM = RandomSource.create();
@@ -94,54 +95,55 @@ public record DragonBody(List<DSAttributeModifier> modifiers, double heightMulti
 
     public static void registerBodies(final BootstrapContext<DragonBody> context) {
         context.register(center, new DragonBody(List.of(
-                createModifier(center, DSAttributes.FLIGHT_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE)
+                createModifier(DSAttributes.FLIGHT_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE)
         ), 1, false, false));
 
         context.register(east, new DragonBody(List.of(
-                createModifier(east, Attributes.ARMOR, 2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, Attributes.ATTACK_KNOCKBACK, -1, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, Attributes.GRAVITY, 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(east, Attributes.JUMP_STRENGTH, 0.1, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, Attributes.MOVEMENT_SPEED, 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(east, NeoForgeMod.SWIM_SPEED, 1, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, DSAttributes.FLIGHT_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(east, DSAttributes.FLIGHT_STAMINA_COST, -0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                createModifier(Attributes.ARMOR, 2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.ATTACK_KNOCKBACK, -1, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.GRAVITY, 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(Attributes.JUMP_STRENGTH, 0.1, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.MOVEMENT_SPEED, 0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(NeoForgeMod.SWIM_SPEED, 1, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_STAMINA_COST, -0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 1, false, true));
 
         context.register(north, new DragonBody(List.of(
-                createModifier(north, Attributes.ATTACK_DAMAGE, -0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(north, Attributes.ATTACK_KNOCKBACK, -0.5, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(north, Attributes.MOVEMENT_SPEED, -0.3, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(north, NeoForgeMod.SWIM_SPEED, 0.5, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(north, DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(north, DSAttributes.FLIGHT_STAMINA_COST, -0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                createModifier(Attributes.ATTACK_DAMAGE, -0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(Attributes.ATTACK_KNOCKBACK, -0.5, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.MOVEMENT_SPEED, -0.3, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(NeoForgeMod.SWIM_SPEED, 0.5, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_STAMINA_COST, -0.1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 0.55, true, true));
 
         context.register(south, new DragonBody(List.of(
-                createModifier(south, Attributes.ATTACK_DAMAGE, 0.5, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(south, Attributes.GRAVITY, 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(south, Attributes.JUMP_STRENGTH, 0.2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(south, Attributes.MOVEMENT_SPEED, 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(south, NeoForgeMod.SWIM_SPEED, -0.2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(south, DSAttributes.FLIGHT_SPEED, -0.2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(south, DSAttributes.FLIGHT_STAMINA_COST, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                createModifier(Attributes.ATTACK_DAMAGE, 0.5, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.GRAVITY, 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(Attributes.JUMP_STRENGTH, 0.2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.MOVEMENT_SPEED, 0.2, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(NeoForgeMod.SWIM_SPEED, -0.2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_SPEED, -0.2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_STAMINA_COST, -0.5, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 1, false, true));
 
         context.register(west, new DragonBody(List.of(
-                createModifier(west, Attributes.ATTACK_KNOCKBACK, 0.5, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(west, Attributes.MOVEMENT_SPEED, -0.3, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                createModifier(west, Attributes.STEP_HEIGHT, 1, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(west, NeoForgeMod.SWIM_SPEED, -0.3, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(west, DSAttributes.FLIGHT_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE),
-                createModifier(west, DSAttributes.FLIGHT_STAMINA_COST, 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                createModifier(Attributes.ATTACK_KNOCKBACK, 0.5, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(Attributes.MOVEMENT_SPEED, -0.3, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                createModifier(Attributes.STEP_HEIGHT, 1, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(NeoForgeMod.SWIM_SPEED, -0.3, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_SPEED, 0.2, AttributeModifier.Operation.ADD_VALUE),
+                createModifier(DSAttributes.FLIGHT_STAMINA_COST, 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 1, false, false));
     }
 
-    public static DSAttributeModifier createModifier(final ResourceKey<DragonBody> body, final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation) {
+    /** Only one modifier can be set for each attribute type using this method - a custom id is required for more modifiers */
+    public static DSAttributeModifier createModifier(final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation) {
         //noinspection DataFlowIssue -> key is not null
-        String id = ATTRIBUTE_PATH + body.location().getPath() + "." + attribute.getKey().location().getPath();
+        String id = ATTRIBUTE_PATH + attribute.getKey().location().getPath();
         return new DSAttributeModifier(attribute, new AttributeModifier(DragonSurvival.res(id), amount, operation));
     }
 

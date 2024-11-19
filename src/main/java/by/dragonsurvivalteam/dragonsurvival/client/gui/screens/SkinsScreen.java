@@ -2,9 +2,8 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonSkinBodyButton;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
-import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ArrowButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.dragon.DragonRenderer;
@@ -18,7 +17,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkinSettings;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.DSBodyTags;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
@@ -55,7 +53,7 @@ import java.net.URISyntaxException;
 import java.util.*;
 import java.util.function.Supplier;
 
-public class SkinsScreen extends Screen {
+public class SkinsScreen extends Screen implements DragonBodyScreen {
     @Translation(type = Translation.Type.MISC, comments = "Skin Settings")
     private static final String SETTINGS = Translation.Type.GUI.wrap("skin_screen.settings");
 
@@ -122,7 +120,7 @@ public class SkinsScreen extends Screen {
      * (they are stored to properly reference (and remove) them when using the arrow buttons to navigate through the bodies)
      */
     private final List<AbstractWidget> dragonBodyWidgets = new ArrayList<>();
-    private int bodySelectionOffset;
+    private int dragonBodySelectionOffset;
 
     private final int imageWidth = 164;
     private final int imageHeight = 128;
@@ -449,55 +447,34 @@ public class SkinsScreen extends Screen {
         });
     }
 
-    private void addDragonBodyWidgets() {
-        List<Holder<DragonBody>> bodies = DSBodyTags.getOrdered(null);
-
-        int buttonWidth = 25;
-        int gap = 3;
-
-        boolean cannotFit = bodies.size() > 5;
-        int elements = Math.min(5, bodies.size());
-        int requiredWidth = elements * buttonWidth + (elements - 1) * gap;
-
-        for (int index = 0; index < 5; index++) {
-            // To make sure the buttons are centered if there are less than 5 elements (max. supported by the current GUI)
-            int x = (width - requiredWidth - /* offset to the left */ 225) / 2 + (index * (buttonWidth + gap));
-            int y = height / 2 + 90;
-
-            AbstractWidget widget;
-
-            if (cannotFit && /* leftmost element */ index == 0) {
-                widget = new ArrowButton(x, y, 25, 25, false, button -> {
-                    if (bodySelectionOffset > 0) {
-                        bodySelectionOffset--;
-                        removeDragonBodyWidgets();
-                        addDragonBodyWidgets();
-                    }
-                });
-            } else if (cannotFit && /* rightmost element */ index == 4) {
-                widget = new ArrowButton(x, y, 25, 25, true, button -> {
-                    // If there are 5 bodies we can navigate next two times, showing 0 - 2,  1 - 3 and 2 - 4
-                    if (bodySelectionOffset < bodies.size() - /* shown elements */ 3) {
-                        bodySelectionOffset++;
-                        removeDragonBodyWidgets();
-                        addDragonBodyWidgets();
-                    }
-                });
-            } else {
-                // Subtract 1 since index 0 is an arrow button (otherwise we would skip the first body)
-                int selectionIndex = index + bodySelectionOffset - (cannotFit ? 1 : 0);
-                Holder<DragonBody> body = bodies.get(selectionIndex);
-                widget = new DragonSkinBodyButton(this, x, y, 25, 25, body);
-            }
-
-            dragonBodyWidgets.add(widget);
-            addRenderableWidget(widget);
-        }
+    @Override
+    public DragonBodyButton createButton(Holder<DragonBody> dragonBody, int x, int y) {
+        return new DragonBodyButton(this, x, y, 25, 25, dragonBody, false, button -> handler.setBody(dragonBody));
     }
 
-    private void removeDragonBodyWidgets() {
-        dragonBodyWidgets.forEach(this::removeWidget);
-        dragonBodyWidgets.clear();
+    @Override
+    public List<AbstractWidget> getDragonBodyWidgets() {
+        return dragonBodyWidgets;
+    }
+
+    @Override
+    public int getDragonBodyButtonOffset() {
+        return 225;
+    }
+
+    @Override
+    public int getDragonBodyButtonYOffset() {
+        return 90;
+    }
+
+    @Override
+    public void setDragonBodyButtonOffset(int dragonBodySelectionOffset) {
+        this.dragonBodySelectionOffset = dragonBodySelectionOffset;
+    }
+
+    @Override
+    public int getDragonBodySelectionOffset() {
+        return dragonBodySelectionOffset;
     }
 
     public void setTextures() {
