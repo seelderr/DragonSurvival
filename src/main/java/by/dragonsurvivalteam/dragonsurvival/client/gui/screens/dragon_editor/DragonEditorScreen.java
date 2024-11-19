@@ -18,10 +18,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset.SkinAgeGroup;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.*;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.TextRenderUtil;
 import by.dragonsurvivalteam.dragonsurvival.commands.DragonCommand;
@@ -39,8 +36,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
@@ -145,11 +142,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     public boolean confirmation;
     public boolean showUi = true;
 
-    public DragonLevel level;
     public AbstractDragonType dragonType;
     public Holder<DragonBody> dragonBody;
+    public Holder<DragonLevel> dragonLevel;
+
     public SkinPreset preset;
-    public int currentSelected;
+    public int selectedSaveSlot;
 
     public int backgroundColor = -804253680;
 
@@ -157,7 +155,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     private int guiLeft;
 
     private final String[] animations = {"sit_dentist", "sit_head_locked", "idle_head_locked", "fly_head_locked", "swim_fast_head_locked", "run_head_locked", "spinning_on_back"};
-    private final HashMap<DragonLevel, Integer> presetSelections = new HashMap<>();
+    private final HashMap<Holder<DragonLevel>, Integer> presetSelections = new HashMap<>();
     private final Map<EnumSkinLayer, DropDownButton> dropdownButtons = new HashMap<>();
     private final Map<EnumSkinLayer, ColorSelectorButton> colorSelectorButtons = new HashMap<>();
 
@@ -208,27 +206,25 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         }
     }
 
-    private float zoomToSetForDragonLevel(DragonLevel level) {
-        return switch (level) {
-            case NEWBORN -> level.size * 3 - 5;
-            case YOUNG, ADULT -> level.size * 2;
-        };
+    private float zoomToSetForDragonLevel(Holder<DragonLevel> dragonLevel) {
+        return (float) (DragonLevel.max(dragonLevel) * 2); // TODO level :: check
     }
 
-    public final Function<DragonLevel, DragonLevel> selectLevelAction = (newLevel) -> {
-        DragonLevel prevLevel = level;
-        level = newLevel;
-        dragonRender.zoom = zoomToSetForDragonLevel(level);
+    public final Function<Holder<DragonLevel>, Holder<DragonLevel>> selectLevelAction = (newLevel) -> {
+        Holder<DragonLevel> previousLevel = dragonLevel;
+        dragonLevel = newLevel;
+        dragonRender.zoom = zoomToSetForDragonLevel(dragonLevel);
         HANDLER.getSkinData().compileSkin();
         update();
 
-        return prevLevel;
+        return previousLevel;
     };
 
     // setHueAction, setSaturationAction, setBrightnessAction in HueSelectorComponent.Java
     // setDragonSlotAction in DragonEditorSlotButton.Java
 
-    public final Function<CompoundTag, CompoundTag> setSkinPresetAction = (tag) -> {
+    public final Function<CompoundTag, CompoundTag> setSkinPresetAction = tag -> {
+        //noinspection DataFlowIssue -> player is present
         CompoundTag prevTag = HANDLER.getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess());
         HANDLER.getSkinData().skinPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), tag);
         HANDLER.getSkinData().compileSkin();
@@ -236,39 +232,40 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         return prevTag;
     };
 
-    public final Function<Holder<DragonBody>, Holder<DragonBody>> dragonBodySelectAction = (body) -> {
-        Holder<DragonBody> prevBody = dragonBody;
-        dragonBody = body;
+    public final Function<Holder<DragonBody>, Holder<DragonBody>> dragonBodySelectAction = dragonBody -> {
+        Holder<DragonBody> previousBody = this.dragonBody;
+        this.dragonBody = dragonBody;
         update();
-        return prevBody;
+        return previousBody;
     };
 
-    public final Function<Pair<EnumSkinLayer, String>, Pair<EnumSkinLayer, String>> dragonPartSelectAction = (pair) -> {
-        Pair<EnumSkinLayer, String> prevPair = new Pair<>(pair.getFirst(), preset.skinAges.get(level).get().layerSettings.get(pair.getFirst()).get().selectedSkin);
+    public final Function<Pair<EnumSkinLayer, String>, Pair<EnumSkinLayer, String>> dragonPartSelectAction = pair -> {
+        Pair<EnumSkinLayer, String> previousPair = new Pair<>(pair.getFirst(), preset.skins.get(dragonLevel.getKey()).get().settings.get(pair.getFirst()).get().selectedSkin);
 
         EnumSkinLayer layer = pair.getFirst();
         String value = pair.getSecond();
         dropdownButtons.get(layer).current = value;
         dropdownButtons.get(layer).updateMessage();
-        preset.skinAges.get(level).get().layerSettings.get(layer).get().selectedSkin = DragonEditorScreen.partToTechnical(value);
+        preset.skins.get(dragonLevel.getKey()).get().settings.get(layer).get().selectedSkin = DragonEditorScreen.partToTechnical(value);
 
         // Make sure that when we change a part, the color is properly updated to the default color of the new part
-        LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layer).get();
-        DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, dragonType);
-        if (text != null && !settings.modifiedColor) {
-            settings.hue = text.average_hue;
+        LayerSettings settings = preset.skins.get(dragonLevel.getKey()).get().settings.get(layer).get();
+
+        DragonPart text = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, dragonType);
+        if (text != null && !settings.isColorModified) {
+            settings.hue = text.averageHue();
         }
 
         HANDLER.getSkinData().compileSkin();
         update();
 
-        return prevPair;
+        return previousPair;
     };
 
     public final Function<Boolean, Boolean> checkWingsButtonAction = (selected) -> {
         boolean prevSelected = !wingsCheckbox.selected;
         wingsCheckbox.selected = selected;
-        preset.skinAges.get(level).get().wings = selected;
+        preset.skins.get(dragonLevel.getKey()).get().hasWings = selected;
         HANDLER.getSkinData().compileSkin();
         update();
         return prevSelected;
@@ -277,15 +274,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
     public final Function<Boolean, Boolean> checkDefaultSkinAction = (selected) -> {
         boolean prevSelected = !defaultSkinCheckbox.selected;
         defaultSkinCheckbox.selected = selected;
-        preset.skinAges.get(level).get().defaultSkin = selected;
+        preset.skins.get(dragonLevel.getKey()).get().isDefaultSkin = selected;
         HANDLER.getSkinData().compileSkin();
         update();
         return prevSelected;
     };
 
     public static class UndoRedoList {
-        private record UndoRedoPair(EditorAction<?> undo, EditorAction<?> redo) {
-        }
+        private record UndoRedoPair(EditorAction<?> undo, EditorAction<?> redo) { /* Nothing to do */ }
 
         private final List<UndoRedoPair> delegate = new ArrayList<>();
         private final int maxSize;
@@ -403,31 +399,36 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             }
 
             for (ColorSelectorButton colorSelectorButton : colorSelectorButtons.values()) {
-                DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), colorSelectorButton.layer, this.preset.skinAges.get(this.level).get().layerSettings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
+                DragonPart text = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), colorSelectorButton.layer, this.preset.skins.get(this.dragonLevel.getKey()).get().settings.get(colorSelectorButton.layer).get().selectedSkin, HANDLER.getType());
 
-                colorSelectorButton.visible = (text != null && text.colorable) && !defaultSkinCheckbox.selected;
+                colorSelectorButton.visible = (text != null && text.isColorable()) && !defaultSkinCheckbox.selected;
             }
         }
 
-        defaultSkinCheckbox.selected = preset.skinAges.get(level).get().defaultSkin;
+        defaultSkinCheckbox.selected = preset.skins.get(dragonLevel.getKey()).get().isDefaultSkin;
         showUiCheckbox.visible = true;
     }
 
     public SkinPreset save() {
         SkinPreset newPreset = new SkinPreset();
+        //noinspection DataFlowIssue -> player is present
         newPreset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
         String type = dragonType != null ? dragonType.getTypeNameUpperCase() : null;
 
-        DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(type, key -> new HashMap<>());
-        DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).put(currentSelected, newPreset);
-        for (DragonLevel dl : presetSelections.keySet()) {
-            DragonEditorRegistry.getSavedCustomizations().current.get(type).put(dl, presetSelections.get(dl));
+        SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(Minecraft.getInstance().player.registryAccess());
+
+        savedCustomizations.skinPresets.computeIfAbsent(type, key -> new HashMap<>());
+        savedCustomizations.skinPresets.get(type).put(selectedSaveSlot, newPreset);
+
+        for (Holder<DragonLevel> dragonLevel : presetSelections.keySet()) {
+            //noinspection DataFlowIssue -> key is present
+            savedCustomizations.current.get(type).put(dragonLevel.getKey().location().toString(), presetSelections.get(dragonLevel));
         }
 
         try {
             Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
             FileWriter writer = new FileWriter(DragonEditorRegistry.savedFile);
-            gson.toJson(DragonEditorRegistry.getSavedCustomizations(), writer);
+            gson.toJson(savedCustomizations, writer);
             writer.close();
         } catch (IOException e) {
             DragonSurvival.LOGGER.error("An error occurred while trying to save the dragon skin", e);
@@ -443,7 +444,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
     private void initDummyDragon(final DragonStateHandler localHandler) {
         if (dragonType == null && localHandler.isDragon()) {
-            level = localHandler.getLevel();
+            dragonLevel = localHandler.getLevel();
             dragonType = localHandler.getType();
         }
 
@@ -459,32 +460,37 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             }
         }
 
-        if (level == null) {
-            level = DragonLevel.NEWBORN;
+        if (dragonLevel == null) {
+            dragonLevel = DragonLevel.getLevel(null, 0);
         }
 
         String type = dragonType.getTypeNameUpperCase();
+        SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(null);
+        //noinspection DataFlowIssue -> key is present
+        String levelLocation = dragonLevel.getKey().location().toString();
 
-        DragonEditorRegistry.getSavedCustomizations().current.computeIfAbsent(type, key -> new HashMap<>());
-        DragonEditorRegistry.getSavedCustomizations().current.get(type).putIfAbsent(level, 0);
+        savedCustomizations.current.computeIfAbsent(type, key -> new HashMap<>());
+        savedCustomizations.current.get(type).putIfAbsent(levelLocation, 0);
 
-        currentSelected = DragonEditorRegistry.getSavedCustomizations().current.get(type).get(level);
+        selectedSaveSlot = savedCustomizations.current.get(type).get(levelLocation);
 
-        DragonEditorRegistry.getSavedCustomizations().skinPresets.computeIfAbsent(type, key -> new HashMap<>());
-        DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).computeIfAbsent(currentSelected, key -> {
+        savedCustomizations.skinPresets.computeIfAbsent(type, key -> new HashMap<>());
+        savedCustomizations.skinPresets.get(type).computeIfAbsent(selectedSaveSlot, key -> {
             SkinPreset newPreset = new SkinPreset();
             newPreset.initDefaults(dragonType);
             return newPreset;
         });
 
-        SkinPreset curPreset = DragonEditorRegistry.getSavedCustomizations().skinPresets.get(type).get(currentSelected);
+        SkinPreset currentPreset = savedCustomizations.skinPresets.get(type).get(selectedSaveSlot);
         preset = new SkinPreset();
-        preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), curPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
+        //noinspection DataFlowIssue -> player is present
+        preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), currentPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
 
         HANDLER.getSkinData().skinPreset = preset;
         HANDLER.getSkinData().compileSkin();
 
-        dragonRender.zoom = (float) (level.size * 4 - 5);
+        // TODO level :: check
+        dragonRender.zoom = (float) (DragonLevel.max(dragonLevel) * 2);
 
         HANDLER.setHasFlight(true);
         HANDLER.setType(dragonType);
@@ -513,19 +519,18 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         confirmComponent = new DragonEditorConfirmComponent(this, width / 2 - 130 / 2, height / 2 - 181 / 2, 130, 154);
         initDragonRender();
 
-        Minecraft minecraft = getMinecraft();
         if (!hasInit) {
-            DragonStateHandler dshandler = DragonStateProvider.getData(minecraft.player);
-
-            initDummyDragon(dshandler);
+            //noinspection DataFlowIssue -> player is present
+            DragonStateHandler data = DragonStateProvider.getData(minecraft.player);
+            initDummyDragon(data);
             update();
-
             hasInit = true;
         }
 
-        addRenderableWidget(new NewbornEditorButton(this));
-        addRenderableWidget(new YoungEditorButton(this));
-        addRenderableWidget(new AdultEditorButton(this));
+        // TODO level :: check if player level is within the "default" levels - if not add a single custom button
+        addRenderableWidget(new DragonLevelButton(this, DragonLevel.newborn, -180));
+        addRenderableWidget(new DragonLevelButton(this, DragonLevel.young, -60));
+        addRenderableWidget(new DragonLevelButton(this, DragonLevel.adult, 60));
 
         addDragonBodyWidgets();
 
@@ -538,14 +543,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         int i = 0;
         for (EnumSkinLayer layers : EnumSkinLayer.values()) {
-            ArrayList<String> valueList = DragonEditorHandler.getKeys(dragonType, dragonBody, layers);
+            ArrayList<String> valueList = DragonEditorHandler.getTextureKeys(dragonType, dragonBody, layers);
 
             if (layers != EnumSkinLayer.BASE) {
                 valueList.addFirst(SkinCap.defaultSkinValue);
             }
 
             String[] values = valueList.toArray(new String[0]);
-            String curValue = partToTranslation(preset.skinAges.get(level).get().layerSettings.get(layers).get().selectedSkin);
+            String curValue = partToTranslation(preset.skins.get(dragonLevel.getKey()).get().settings.get(layers).get().selectedSkin);
 
             DropDownButton btn = new DragonEditorDropdownButton(this, i < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (i >= 8 ? (i - 8) * 20 : i * 20), 100, 15, curValue, values, layers);
             dropdownButtons.put(layers, btn);
@@ -565,10 +570,10 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 btn.setter.accept(btn.current);
                 btn.updateMessage();
 
-                LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
-                DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
-                if (text != null && !settings.modifiedColor) {
-                    settings.hue = text.average_hue;
+                LayerSettings settings = preset.skins.get(dragonLevel.getKey()).get().settings.get(layers).get();
+                DragonPart text = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
+                if (text != null && !settings.isColorModified) {
+                    settings.hue = text.averageHue();
                 }
             }));
 
@@ -587,10 +592,10 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 btn.setter.accept(btn.current);
                 btn.updateMessage();
 
-                LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layers).get();
-                DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
-                if (text != null && !settings.modifiedColor) {
-                    settings.hue = text.average_hue;
+                LayerSettings settings = preset.skins.get(dragonLevel.getKey()).get().settings.get(layers).get();
+                DragonPart text = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layers, settings.selectedSkin, dragonType);
+                if (text != null && !settings.isColorModified) {
+                    settings.hue = text.averageHue();
                 }
             }));
 
@@ -640,12 +645,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             addRenderableWidget(new DragonEditorSlotButton(width / 2 + 200 + 15, guiTop + (num - 1) * 12 + 5 + 30, num, this));
         }
 
-        wingsCheckbox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable(WINGS), preset.skinAges.get(level).get().wings, p -> actionHistory.add(new EditorAction<>(checkWingsButtonAction, p.selected())));
+        wingsCheckbox = new ExtendedCheckbox(width / 2 - 220, height - 25, 120, 17, 17, Component.translatable(WINGS), preset.skins.get(dragonLevel.getKey()).get().hasWings, p -> actionHistory.add(new EditorAction<>(checkWingsButtonAction, p.selected())));
         wingsCheckbox.setTooltip(Tooltip.create(Component.translatable(WINGS_INFO)));
-        wingsCheckbox.selected = preset.skinAges.get(level).get().wings;
+        wingsCheckbox.selected = preset.skins.get(dragonLevel.getKey()).get().hasWings;
         addRenderableWidget(wingsCheckbox);
 
-        defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable(DEFAULT_SKIN), preset.skinAges.get(level).get().defaultSkin, p -> actionHistory.add(new EditorAction<>(checkDefaultSkinAction, p.selected())));
+        defaultSkinCheckbox = new ExtendedCheckbox(width / 2 + 100, height - 25, 120, 17, 17, Component.translatable(DEFAULT_SKIN), preset.skins.get(dragonLevel.getKey()).get().isDefaultSkin, p -> actionHistory.add(new EditorAction<>(checkDefaultSkinAction, p.selected())));
         defaultSkinCheckbox.setTooltip(Tooltip.create(Component.translatable(DEFAULT_SKIN_INFO)));
         addRenderableWidget(defaultSkinCheckbox);
 
@@ -666,10 +671,11 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
             @Override
             public void onPress() {
+                //noinspection DataFlowIssue -> player is present
                 DragonStateHandler handler = DragonStateProvider.getData(minecraft.player);
                 minecraft.player.level().playSound(minecraft.player, minecraft.player.blockPosition(), SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 1, 0.7f);
-
                 boolean dragonDataIsPreserved = ServerConfig.saveAllAbilities && ServerConfig.saveGrowthStage;
+
                 if (handler.isDragon() && dragonWouldChange(handler) && !dragonDataIsPreserved) {
                     confirmation = true;
                     showUi = false;
@@ -707,11 +713,12 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         ExtendedButton discardButton = new ExtendedButton(width / 2 + 10, height - 25, 75, 20, Component.translatable(LangKey.GUI_CANCEL), btn -> Minecraft.getInstance().setScreen(source));
         addRenderableWidget(discardButton);
 
-        ExtendedButton resetButton = new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), btn -> {
+        ExtendedButton resetButton = new ExtendedButton(guiLeft + 290, 11, 18, 18, Component.empty(), button -> {
             // Don't actually modify the skin preset here, do it inside setSkinPresetAction
             SkinPreset preset = new SkinPreset();
+            //noinspection DataFlowIssue -> player is present
             preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), this.preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
-            preset.skinAges.put(level, Lazy.of(() -> new SkinAgeGroup(level, dragonType)));
+            preset.skins.put(dragonLevel.getKey(), Lazy.of(() -> new DragonLevelCustomization(dragonLevel.getKey(), dragonType)));
             wingsCheckbox.selected = true;
             actionHistory.add(new EditorAction<>(setSkinPresetAction, preset.serializeNBT(Minecraft.getInstance().player.registryAccess())));
         }) {
@@ -725,22 +732,22 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
 
         ExtendedButton randomButton = new ExtendedButton(guiLeft + 260, 11, 18, 18, Component.empty(), btn -> {
-            ArrayList<String> extraKeys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA);
+            ArrayList<String> extraKeys = DragonEditorHandler.getTextureKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA);
 
             extraKeys.removeIf(s -> {
-                DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA, s, dragonType);
+                DragonPart text = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), EnumSkinLayer.EXTRA, s, dragonType);
                 if (text == null) {
                     DragonSurvival.LOGGER.error("Key {} not found!", s);
                     return true;
                 }
-                return !text.random;
+                return !text.isRandom();
             });
 
             // Don't actually modify the skin preset here, do it inside setSkinPresetAction
             SkinPreset preset = new SkinPreset();
             preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), this.preset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
             for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-                ArrayList<String> keys = DragonEditorHandler.getKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer);
+                ArrayList<String> keys = DragonEditorHandler.getTextureKeys(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer);
 
                 if (Objects.equals(layer.name, "Extra")) {
                     keys = extraKeys;
@@ -751,29 +758,30 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
                 }
 
                 if (!keys.isEmpty()) {
+                    //noinspection DataFlowIssue -> player is present
                     String key = keys.get(minecraft.player.getRandom().nextInt(keys.size()));
                     if (Objects.equals(layer.name, "Extra")) {
                         extraKeys.remove(key);
                     }
 
-                    LayerSettings settings = preset.skinAges.get(level).get().layerSettings.get(layer).get();
+                    LayerSettings settings = preset.skins.get(dragonLevel.getKey()).get().settings.get(layer).get();
                     settings.selectedSkin = key;
-                    DragonTextureMetadata text = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer, key, dragonType);
+                    DragonPart text = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, HANDLER), layer, key, dragonType);
 
-                    if (text != null && text.randomHue) {
+                    if (text != null && text.isHueRandom()) {
                         settings.hue = minecraft.player.getRandom().nextFloat();
                         settings.saturation = 0.25f + minecraft.player.getRandom().nextFloat() * 0.5f;
                         settings.brightness = 0.3f + minecraft.player.getRandom().nextFloat() * 0.3f;
-                        settings.modifiedColor = true;
+                        settings.isColorModified = true;
                     } else {
                         if (text != null) {
-                            settings.hue = text.average_hue;
+                            settings.hue = text.averageHue();
                         } else {
                             settings.hue = 0.0f;
                         }
                         settings.saturation = 0.5f;
                         settings.brightness = 0.5f;
-                        settings.modifiedColor = true;
+                        settings.isColorModified = true;
                     }
                 }
             }
@@ -854,20 +862,22 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         HANDLER.setBody(dragonBody);
         HANDLER.getSkinData().skinPreset = preset;
-        HANDLER.setSize(level.size);
+        HANDLER.setSize(DragonLevel.min(dragonLevel), null);
         HANDLER.setHasFlight(true);
 
-        if (currentSelected != lastSelected) {
+        if (selectedSaveSlot != lastSelected) {
             preset = new SkinPreset();
+            //noinspection DataFlowIssue -> player is present
+            SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(Minecraft.getInstance().player.registryAccess());
 
-            if (DragonEditorRegistry.getSavedCustomizations().skinPresets.containsKey(dragonType.getTypeNameUpperCase())) {
-                preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), DragonEditorRegistry.getSavedCustomizations().skinPresets.get(dragonType.getTypeNameUpperCase()).get(currentSelected).serializeNBT(Minecraft.getInstance().player.registryAccess()));
+            if (savedCustomizations.skinPresets.containsKey(dragonType.getTypeNameUpperCase())) {
+                preset.deserializeNBT(Minecraft.getInstance().player.registryAccess(), savedCustomizations.skinPresets.get(dragonType.getTypeNameUpperCase()).get(selectedSaveSlot).serializeNBT(Minecraft.getInstance().player.registryAccess()));
             }
             HANDLER.getSkinData().skinPreset = preset;
         }
-        presetSelections.put(level, currentSelected);
+        presetSelections.put(dragonLevel, selectedSaveSlot);
 
-        lastSelected = currentSelected;
+        lastSelected = selectedSaveSlot;
     }
 
     private void initDragonRender() {
@@ -918,7 +928,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             double size = data.getSavedDragonSize(data.getTypeName());
 
             if (!ServerConfig.saveGrowthStage || size == 0) {
-                data.setSize(DragonLevel.NEWBORN.size, minecraft.player);
+                data.setSize(0, minecraft.player);
             } else {
                 data.setSize(size, minecraft.player);
             }

@@ -20,6 +20,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.Bal
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.BolasEntityRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.DragonSpikeRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.render.entity.projectiles.FireBallRenderer;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSTileEntities;
@@ -41,6 +43,7 @@ import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.GeckoLibClient;
 
@@ -56,6 +59,7 @@ public class DragonSurvivalClient {
         bus.addListener(this::setup);
         bus.addListener(this::registerItemExtensions);
         bus.addListener(this::registerTooltips);
+        bus.addListener(this::addReloadListeners);
     }
 
     private void setup(final FMLClientSetupEvent event) {
@@ -78,6 +82,11 @@ public class DragonSurvivalClient {
             EntityRenderers.register(DSEntities.HUNTER_GRIFFIN.get(), manager -> new GriffinRenderer(manager, new GriffinModel()));
             EntityRenderers.register(DSEntities.HUNTER_LEADER.get(), manager -> new LeaderRenderer(manager, new LeaderModel()));
         });
+    }
+
+    private void addReloadListeners(final AddReloadListenerEvent event) {
+        event.addListener(new DragonPartLoader());
+        event.addListener(new DefaultPartLoader());
     }
 
     private void registerTooltips(final RegisterClientTooltipComponentFactoriesEvent event) {

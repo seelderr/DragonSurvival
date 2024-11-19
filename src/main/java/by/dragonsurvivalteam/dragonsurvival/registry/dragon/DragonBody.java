@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DSAttributeModifier;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import com.mojang.serialization.Codec;
@@ -42,9 +43,6 @@ public record DragonBody(List<DSAttributeModifier> modifiers, double heightMulti
 
     public static final Codec<Holder<DragonBody>> CODEC = RegistryFixedCodec.create(REGISTRY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonBody>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
-
-    /** Required to be set for dragon body attributes, otherwise the modifiers cannot be removed when they body type changes */
-    public static final String ATTRIBUTE_PATH = DragonSurvival.MODID + "/body/";
 
     private static final RandomSource RANDOM = RandomSource.create();
 
@@ -140,11 +138,8 @@ public record DragonBody(List<DSAttributeModifier> modifiers, double heightMulti
         ), 1, false, false));
     }
 
-    /** Only one modifier can be set for each attribute type using this method - a custom id is required for more modifiers */
     public static DSAttributeModifier createModifier(final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation) {
-        //noinspection DataFlowIssue -> key is not null
-        String id = ATTRIBUTE_PATH + attribute.getKey().location().getPath();
-        return new DSAttributeModifier(attribute, new AttributeModifier(DragonSurvival.res(id), amount, operation));
+        return DSAttributeModifier.createModifier(ModifierType.DRAGON_BODY, attribute, amount, operation);
     }
 
     public static ResourceKey<DragonBody> key(final ResourceLocation location) {

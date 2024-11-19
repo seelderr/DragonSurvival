@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.handlers.ClientFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.handlers.magic.ClientCastingHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorRegistry;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SavedSkinPresets;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
@@ -33,7 +34,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec2;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
@@ -71,23 +71,6 @@ public class ClientProxy {
         }
     }
 
-    public static void handleSyncDragonSkinSettings(final SyncDragonSkinSettings.Data message) {
-        Player player = Minecraft.getInstance().player;
-
-        if (player != null) {
-            Level world = player.level();
-            Entity entity = world.getEntity(message.playerId());
-
-            if (entity instanceof Player) {
-                DragonStateProvider.getOptional(entity).ifPresent(dragonStateHandler -> {
-                    dragonStateHandler.getSkinData().renderNewborn = message.newborn();
-                    dragonStateHandler.getSkinData().renderYoung = message.young();
-                    dragonStateHandler.getSkinData().renderAdult = message.adult();
-                });
-            }
-        }
-    }
-
     public static void sendClientData() {
         Player localPlayer = Minecraft.getInstance().player;
 
@@ -96,20 +79,23 @@ public class ClientProxy {
         }
 
         PacketDistributor.sendToServer(new SyncDragonClawRender.Data(localPlayer.getId(), ClientDragonRenderer.renderDragonClaws));
-        PacketDistributor.sendToServer(new SyncDragonSkinSettings.Data(localPlayer.getId(), ClientDragonRenderer.renderNewbornSkin, ClientDragonRenderer.renderYoungSkin, ClientDragonRenderer.renderAdultSkin));
+        PacketDistributor.sendToServer(new SyncDragonSkinSettings(localPlayer.getId(), ClientDragonRenderer.renderCustomSkin));
 
-        DragonStateProvider.getOptional(localPlayer).ifPresent(cap -> {
-            if (DragonEditorRegistry.getSavedCustomizations() != null) {
-                AbstractDragonType type = cap.getType();
-                if (type != null) {
-                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(cap.getLevel(), 0);
-                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
-                    PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
-                }
-            } else {
-                PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), new SkinPreset().serializeNBT(localPlayer.registryAccess())));
+        DragonStateHandler data = DragonStateProvider.getData(localPlayer);
+        SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(localPlayer.registryAccess());
+
+        if (savedCustomizations != null) {
+            AbstractDragonType type = data.getType();
+
+            if (type != null) {
+                //noinspection DataFlowIssue -> level and key are present
+                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
+                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
+                PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
             }
-        });
+        } else {
+            PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), new SkinPreset().serializeNBT(localPlayer.registryAccess())));
+        }
     }
 
     // For replying during the configuration stage
@@ -117,20 +103,23 @@ public class ClientProxy {
         Player sender = context.player();
 
         context.reply(new SyncDragonClawRender.Data(sender.getId(), ClientDragonRenderer.renderDragonClaws));
-        context.reply(new SyncDragonSkinSettings.Data(sender.getId(), ClientDragonRenderer.renderNewbornSkin, ClientDragonRenderer.renderYoungSkin, ClientDragonRenderer.renderAdultSkin));
+        context.reply(new SyncDragonSkinSettings(sender.getId(), ClientDragonRenderer.renderCustomSkin));
 
-        DragonStateProvider.getOptional(sender).ifPresent(cap -> {
-            if (DragonEditorRegistry.getSavedCustomizations() != null) {
-                AbstractDragonType type = cap.getType();
-                if (type != null) {
-                    int currentSelected = DragonEditorRegistry.getSavedCustomizations().current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(cap.getLevel(), 0);
-                    SkinPreset preset = DragonEditorRegistry.getSavedCustomizations().skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(currentSelected, new SkinPreset());
-                    context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), preset.serializeNBT(sender.registryAccess())));
-                }
-            } else {
-                context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), new SkinPreset().serializeNBT(sender.registryAccess())));
+        DragonStateHandler data = DragonStateProvider.getData(sender);
+        SavedSkinPresets savedCustomizations = DragonEditorRegistry.getSavedCustomizations(sender.registryAccess());
+
+        if (savedCustomizations != null) {
+            AbstractDragonType type = data.getType();
+
+            if (type != null) {
+                //noinspection DataFlowIssue -> level and key are present
+                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
+                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
+                context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), preset.serializeNBT(sender.registryAccess())));
             }
-        });
+        } else {
+            context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), new SkinPreset().serializeNBT(sender.registryAccess())));
+        }
     }
 
     public static void handleSyncPlayerSkinPreset(final SyncPlayerSkinPreset.Data message, HolderLookup.Provider provider) {

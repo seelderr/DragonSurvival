@@ -389,11 +389,11 @@ public class EmoteMenuHandler {
         HashMap<Integer, ArrayList<Emote>> list = new HashMap<>();
         ArrayList<Emote> emotes = new ArrayList<>(DSEmotes.EMOTES);
 
-        emotes.removeIf(em -> {
-            if (em.requirements != null) {
-                if (em.requirements.type != null) {
+        emotes.removeIf(emote -> {
+            if (emote.requirements != null) {
+                if (emote.requirements.type != null) {
                     boolean hasType = false;
-                    for (String t : em.requirements.type) {
+                    for (String t : emote.requirements.type) {
                         if (t.equalsIgnoreCase(handler.getTypeName())) {
                             hasType = true;
                             break;
@@ -405,10 +405,12 @@ public class EmoteMenuHandler {
                     }
                 }
 
-                if (em.requirements.age != null) {
+                if (emote.requirements.age != null) {
                     boolean hasAge = false;
-                    for (String t : em.requirements.age) {
-                        if (t.equalsIgnoreCase(handler.getLevel().name)) {
+                    for (String age : emote.requirements.age) {
+                        // FIXME level
+                        //noinspection DataFlowIssue -> level and key are present
+                        if (age.equalsIgnoreCase(handler.getLevel().getKey().location().getPath())) {
                             hasAge = true;
                             break;
                         }

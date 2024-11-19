@@ -15,8 +15,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
 import by.dragonsurvivalteam.dragonsurvival.network.container.RequestOpenInventory;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
@@ -103,7 +103,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             String prefix = "textures/gui/growth/";
             String suffix = ".png";
 
-            for (int i = 1; i <= DragonLevel.values().length; i++) {
+            for (int i = 1; i <= DragonLevel.keys(null).size(); i++) {
                 String growthResource = createTextureKey(type, "growth", "_" + i);
                 textures.put(growthResource, ResourceLocation.fromNamespaceAndPath(MODID, prefix + growthResource + suffix));
             }
@@ -255,15 +255,16 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         double curSize = handler.getSize();
         float progress = 0;
 
-        if (handler.getLevel() == DragonLevel.NEWBORN) {
-            progress = (float) ((curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size));
-        } else if (handler.getLevel() == DragonLevel.YOUNG) {
-            progress = (float) ((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
-        } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
-            progress = (float) ((curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size));
-        } else if (handler.getLevel() == DragonLevel.ADULT) {
-            progress = (float) ((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
-        }
+        // FIXME level
+//        if (handler.getLevel() == DragonLevel.NEWBORN) {
+//            progress = (float) ((curSize - DragonLevel.NEWBORN.size) / (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size));
+//        } else if (handler.getLevel() == DragonLevel.YOUNG) {
+//            progress = (float) ((curSize - DragonLevel.YOUNG.size) / (DragonLevel.ADULT.size - DragonLevel.YOUNG.size));
+//        } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
+//            progress = (float) ((curSize - DragonLevel.ADULT.size) / (40 - DragonLevel.ADULT.size));
+//        } else if (handler.getLevel() == DragonLevel.ADULT) {
+//            progress = (float) ((curSize - 40) / (ServerConfig.maxGrowthSize - 40));
+//        }
 
         int size = 34;
         int thickness = 5;
@@ -288,7 +289,8 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
-        guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
+        // FIXME :: add icon to registry?
+//        guiGraphics.blit(textures.get(createTextureKey(handler.getType(), "growth", "_" + (handler.getLevel().ordinal() + 1))), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
     }
 
     @Override
@@ -329,34 +331,34 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         if (isGrowthIconHovered) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
-
-            String age = (int) handler.getSize() - handler.getLevel().size + "/";
+            String age = (int) handler.getSize() - DragonLevel.min(handler.getLevel()) + "/";
             double seconds = 0;
 
-            if (handler.getLevel() == DragonLevel.NEWBORN) {
-                age += DragonLevel.YOUNG.size - handler.getLevel().size;
-                double missing = DragonLevel.YOUNG.size - handler.getSize();
-                double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.NEWBORN_TO_YOUNG * 20.0) * ServerConfig.newbornGrowthModifier;
-                seconds = missing / increment / 20;
-            } else if (handler.getLevel() == DragonLevel.YOUNG) {
-                age += DragonLevel.ADULT.size - handler.getLevel().size;
-
-                double missing = DragonLevel.ADULT.size - handler.getSize();
-                double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.YOUNG_TO_ADULT * 20.0) * ServerConfig.youngGrowthModifier;
-                seconds = missing / increment / 20;
-            } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
-                age += 40 - handler.getLevel().size;
-
-                double missing = 40 - handler.getSize();
-                double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.ADULT_TO_ANCIENT * 20.0) * ServerConfig.adultGrowthModifier;
-                seconds = missing / increment / 20;
-            } else if (handler.getLevel() == DragonLevel.ADULT) {
-                age += (int) (ServerConfig.maxGrowthSize - handler.getLevel().size);
-
-                double missing = ServerConfig.maxGrowthSize - handler.getSize();
-                double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.ANCIENT * 20.0) * ServerConfig.maxGrowthModifier;
-                seconds = missing / increment / 20;
-            }
+            // FIXME level
+//            if (handler.getLevel() == DragonLevel.NEWBORN) {
+//                age += DragonLevel.YOUNG.size - handler.getLevel().size;
+//                double missing = DragonLevel.YOUNG.size - handler.getSize();
+//                double increment = (DragonLevel.YOUNG.size - DragonLevel.NEWBORN.size) / (DragonGrowthHandler.NEWBORN_TO_YOUNG * 20.0) * ServerConfig.newbornGrowthModifier;
+//                seconds = missing / increment / 20;
+//            } else if (handler.getLevel() == DragonLevel.YOUNG) {
+//                age += DragonLevel.ADULT.size - handler.getLevel().size;
+//
+//                double missing = DragonLevel.ADULT.size - handler.getSize();
+//                double increment = (DragonLevel.ADULT.size - DragonLevel.YOUNG.size) / (DragonGrowthHandler.YOUNG_TO_ADULT * 20.0) * ServerConfig.youngGrowthModifier;
+//                seconds = missing / increment / 20;
+//            } else if (handler.getLevel() == DragonLevel.ADULT && handler.getSize() < 40) {
+//                age += 40 - handler.getLevel().size;
+//
+//                double missing = 40 - handler.getSize();
+//                double increment = (40 - DragonLevel.ADULT.size) / (DragonGrowthHandler.ADULT_TO_ANCIENT * 20.0) * ServerConfig.adultGrowthModifier;
+//                seconds = missing / increment / 20;
+//            } else if (handler.getLevel() == DragonLevel.ADULT) {
+//                age += (int) (ServerConfig.maxGrowthSize - handler.getLevel().size);
+//
+//                double missing = ServerConfig.maxGrowthSize - handler.getSize();
+//                double increment = (ServerConfig.maxGrowthSize - 40) / (DragonGrowthHandler.ANCIENT * 20.0) * ServerConfig.maxGrowthModifier;
+//                seconds = missing / increment / 20;
+//            }
 
             if (seconds != 0) {
                 int minutes = (int) (seconds / 60);
@@ -377,24 +379,25 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
             ArrayList<Item> allowedList = new ArrayList<>();
 
-            HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-            HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-            HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
-
-            if (handler.getSize() < DragonLevel.YOUNG.size) {
-                allowedList.addAll(newbornList);
-            } else if (handler.getSize() < DragonLevel.ADULT.size) {
-                allowedList.addAll(youngList);
-            } else {
-                allowedList.addAll(adultList);
-            }
+            // FIXME level :: add to registry
+//            HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+//            HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+//            HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+//
+//            if (handler.getSize() < DragonLevel.YOUNG.size) {
+//                allowedList.addAll(newbornList);
+//            } else if (handler.getSize() < DragonLevel.ADULT.size) {
+//                allowedList.addAll(youngList);
+//            } else {
+//                allowedList.addAll(adultList);
+//            }
 
             List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
             StringJoiner result = new StringJoiner(", ");
             displayData.forEach(result::add);
 
             List<Component> components = List.of(
-                    Component.translatable(GROWTH_STAGE).append(handler.getLevel().translatableName()),
+//                    Component.translatable(GROWTH_STAGE).append(handler.getLevel().translatableName()),
                     Component.translatable(GROWTH_AGE, age),
                     Component.translatable(GROWTH_INFO, result.toString())
             );

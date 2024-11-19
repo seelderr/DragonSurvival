@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.C
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.ExtendedCheckbox;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonEditorObject.DragonTextureMetadata;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
@@ -28,7 +28,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
 
     private final ExtendedButton colorPicker;
     private final ExtendedCheckbox glowing;
-    private final Supplier<LayerSettings> settings;
+    private final Supplier<LayerSettings> settingsSupplier;
 
     private final int x;
     private final int y;
@@ -41,30 +41,31 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settings = () -> screen.preset.skinAges.get(screen.level).get().layerSettings.get(layer).get();
+        settingsSupplier = () -> screen.preset.skins.get(screen.dragonLevel.getKey()).get().settings.get(layer).get();
 
-        LayerSettings set = settings.get();
-        DragonTextureMetadata texture = DragonEditorHandler.getSkinTextureMetadata(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, set.selectedSkin, DragonEditorScreen.HANDLER.getType());
+        LayerSettings settings = settingsSupplier.get();
+        DragonPart dragonPart = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
-        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), set.glowing, box -> {
-            settings.get().glowing = !settings.get().glowing;
-            box.selected = settings.get().glowing;
+        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.isGlowing, box -> {
+            settingsSupplier.get().isGlowing = !settingsSupplier.get().isGlowing;
+            box.selected = settingsSupplier.get().isGlowing;
             DragonEditorScreen.HANDLER.getSkinData().compileSkin();
         });
 
-        Color defaultC = Color.decode(texture.defaultColor);
+        //noinspection DataFlowIssue -> part is present
+        Color defaultC = Color.decode(dragonPart.defaultColor());
 
-        if (set.modifiedColor) {
-            defaultC = Color.getHSBColor(set.hue, set.saturation, set.brightness);
+        if (settings.isColorModified) {
+            defaultC = Color.getHSBColor(settings.hue, settings.saturation, settings.brightness);
         }
 
         colorPicker = new ColorPickerButton(x + 3, y + 24, xSize - 5, ySize - 11, defaultC, c -> {
             float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
 
-            settings.get().hue = hsb[0];
-            settings.get().saturation = hsb[1];
-            settings.get().brightness = hsb[2];
-            settings.get().modifiedColor = true;
+            settingsSupplier.get().hue = hsb[0];
+            settingsSupplier.get().saturation = hsb[1];
+            settingsSupplier.get().brightness = hsb[2];
+            settingsSupplier.get().isColorModified = true;
 
             DragonEditorScreen.HANDLER.getSkinData().compileSkin();
             screen.update();

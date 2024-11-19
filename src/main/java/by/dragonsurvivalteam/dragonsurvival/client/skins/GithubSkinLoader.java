@@ -1,9 +1,10 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
 import com.google.gson.Gson;
+import net.minecraft.resources.ResourceKey;
 import org.apache.logging.log4j.Level;
 
 import java.io.*;
@@ -82,15 +83,15 @@ public class GithubSkinLoader extends NetSkinLoader {
 
     private static final String GLOW = "_glow";
 
-    public InputStream querySkinImage(final String skinName, final DragonLevel level) {
+    public InputStream querySkinImage(final String skinName, final ResourceKey<DragonLevel> dragonLevel) {
         try {
             String fetchName;
 
             if (skinName.endsWith(GLOW)) {
                 fetchName = skinName.replace(GLOW, "");
-                fetchName = SKIN + fetchName + "_" + level.name + GLOW + ".png";
+                fetchName = SKIN + fetchName + "_" + dragonLevel.location().getPath() + GLOW + ".png"; // FIXME level
             } else {
-                fetchName = SKIN + skinName + "_" + level.name + ".png";
+                fetchName = SKIN + skinName + "_" + dragonLevel.location().getPath() + ".png"; // FIXME level
             }
 
             URL url = new URL(fetchName);

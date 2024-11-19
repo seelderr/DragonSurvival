@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate.Ca
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate.ForestClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate.SeaClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.Nullable;
 

@@ -8,8 +8,9 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
+import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -25,8 +26,6 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static by.dragonsurvivalteam.dragonsurvival.util.DragonLevel.*;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
@@ -65,32 +64,33 @@ public class DragonGrowthHandler {
 
             HashSet<Item> allowedItems = new HashSet<>();
 
-            switch (handler.getLevel()) {
-                case NEWBORN:
-                    if (newbornList.contains(item)) {
-                        canContinue = true;
-                    } else if (youngList.contains(item) || adultList.contains(item)) {
-                        allowedItems = newbornList;
-                    }
-
-                    break;
-                case YOUNG:
-                    if (youngList.contains(item)) {
-                        canContinue = true;
-                    } else if (newbornList.contains(item) || adultList.contains(item)) {
-                        allowedItems = youngList;
-                    }
-
-                    break;
-                case ADULT:
-                    if (adultList.contains(item)) {
-                        canContinue = true;
-                    } else if (newbornList.contains(item) || youngList.contains(item)) {
-                        allowedItems = adultList;
-                    }
-
-                    break;
-            }
+            // FIXME level :: add as part of the registry
+//            switch (handler.getLevel()) {
+//                case NEWBORN:
+//                    if (newbornList.contains(item)) {
+//                        canContinue = true;
+//                    } else if (youngList.contains(item) || adultList.contains(item)) {
+//                        allowedItems = newbornList;
+//                    }
+//
+//                    break;
+//                case YOUNG:
+//                    if (youngList.contains(item)) {
+//                        canContinue = true;
+//                    } else if (newbornList.contains(item) || adultList.contains(item)) {
+//                        allowedItems = youngList;
+//                    }
+//
+//                    break;
+//                case ADULT:
+//                    if (adultList.contains(item)) {
+//                        canContinue = true;
+//                    } else if (newbornList.contains(item) || youngList.contains(item)) {
+//                        allowedItems = adultList;
+//                    }
+//
+//                    break;
+//            }
 
             if (!canContinue) {
                 if (!allowedItems.isEmpty() && world.isClientSide()) {
@@ -126,7 +126,7 @@ public class DragonGrowthHandler {
         });
     }
 
-    public static int getIncrement(Item item, DragonLevel level) {
+    public static int getIncrement(Item item, Holder<DragonLevel> level) {
         HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
         HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
         HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
@@ -137,32 +137,32 @@ public class DragonGrowthHandler {
             return -2;
         }
 
-//TODO Add the ability to control this numbers with configs
+        // FIXME level :: add as part of the registry
+//        switch (level) {
+//            case NEWBORN:
+//                if (adultList.contains(item)) {
+//                    increment = 3;
+//                } else if (youngList.contains(item)) {
+//                    increment = 2;
+//                } else if (newbornList.contains(item)) {
+//                    increment = 1;
+//                }
+//                break;
+//            case YOUNG:
+//                if (adultList.contains(item)) {
+//                    increment = 2;
+//                } else if (youngList.contains(item)) {
+//                    increment = 1;
+//                }
+//                break;
+//
+//            case ADULT:
+//                if (adultList.contains(item)) {
+//                    increment = 1;
+//                }
+//                break;
+//        }
 
-        switch (level) {
-            case NEWBORN:
-                if (adultList.contains(item)) {
-                    increment = 3;
-                } else if (youngList.contains(item)) {
-                    increment = 2;
-                } else if (newbornList.contains(item)) {
-                    increment = 1;
-                }
-                break;
-            case YOUNG:
-                if (adultList.contains(item)) {
-                    increment = 2;
-                } else if (youngList.contains(item)) {
-                    increment = 1;
-                }
-                break;
-
-            case ADULT:
-                if (adultList.contains(item)) {
-                    increment = 1;
-                }
-                break;
-        }
         return increment;
     }
 
@@ -196,18 +196,19 @@ public class DragonGrowthHandler {
                     4. After maximum growth. = 30 days for max growth
                  */
 
-                double growth;
+                double growth = 10; // FIXME level
                 double timeIncrement = Functions.secondsToTicks(60);
 
-                if (handler.getSize() < YOUNG.size) {
-                    growth = (double) (YOUNG.size - NEWBORN.size) / Functions.secondsToTicks(NEWBORN_TO_YOUNG) * timeIncrement * ServerConfig.newbornGrowthModifier;
-                } else if (handler.getSize() < ADULT.size) {
-                    growth = (double) (ADULT.size - YOUNG.size) / Functions.secondsToTicks(YOUNG_TO_ADULT) * timeIncrement * ServerConfig.youngGrowthModifier;
-                } else if (handler.getSize() < ADULT.maxSize) {
-                    growth = (double) (40 - ADULT.size) / Functions.secondsToTicks(ADULT_TO_ANCIENT) * timeIncrement * ServerConfig.adultGrowthModifier;
-                } else {
-                    growth = (double) (60 - 40) / Functions.secondsToTicks(ANCIENT) * timeIncrement * ServerConfig.maxGrowthModifier;
-                }
+                // FIXME level :: add as part of the registry
+//                if (handler.getSize() < YOUNG.size) {
+//                    growth = (double) (YOUNG.size - NEWBORN.size) / Functions.secondsToTicks(NEWBORN_TO_YOUNG) * timeIncrement * ServerConfig.newbornGrowthModifier;
+//                } else if (handler.getSize() < ADULT.size) {
+//                    growth = (double) (ADULT.size - YOUNG.size) / Functions.secondsToTicks(YOUNG_TO_ADULT) * timeIncrement * ServerConfig.youngGrowthModifier;
+//                } else if (handler.getSize() < ADULT.maxSize) {
+//                    growth = (double) (40 - ADULT.size) / Functions.secondsToTicks(ADULT_TO_ANCIENT) * timeIncrement * ServerConfig.adultGrowthModifier;
+//                } else {
+//                    growth = (double) (60 - 40) / Functions.secondsToTicks(ANCIENT) * timeIncrement * ServerConfig.maxGrowthModifier;
+//                }
 
                 double size = handler.getSize() + growth;
                 size = Math.min(size, ServerConfig.maxGrowthSize);

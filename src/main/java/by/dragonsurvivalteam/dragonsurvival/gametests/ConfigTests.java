@@ -11,7 +11,6 @@ import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.config.types.FoodConfigCollector;
 import by.dragonsurvivalteam.dragonsurvival.config.types.ItemHurtConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.gametest.framework.BeforeBatch;

@@ -7,13 +7,12 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonTy
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -22,7 +21,6 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -33,11 +31,11 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.UnknownNullability;
 
+import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
-import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     public static final String DRAGON_BODY = "dragon_body";
@@ -86,6 +84,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
     private AbstractDragonType dragonType;
     private Holder<DragonBody> dragonBody;
+    private Holder<DragonLevel> dragonLevel;
 
     private int passengerId = -1;
     private boolean isHiding;
@@ -96,18 +95,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
     // Needed to calculate collision damage correctly when flying. See ServerFlightHandler.
     public Vec3 preCollisionDeltaMovement = Vec3.ZERO;
-
-    /** Sets the size, health and base damage */
-    public void setSize(double size, Player player) {
-        setSize(size);
-        DSModifiers.updateSizeModifiers(player, this);
-    }
-
-    private void checkAndRemoveModifier(@Nullable final AttributeInstance attribute, @Nullable final ResourceLocation modifier) {
-        if (attribute != null && modifier != null) {
-            attribute.removeModifier(modifier);
-        }
-    }
 
     public void setFreeLook(boolean isFreeLook) {
         movementData.wasFreeLook = movementData.isFreeLook;
@@ -138,22 +125,25 @@ public class DragonStateHandler extends EntityStateHandler {
         movementData.deltaMovement = deltaMovement;
     }
 
-    /** Only used for rendering related code - to properly set the size (and update modifiers) use {@link DragonStateHandler#setSize(double, Player)} */
-    public void setSize(double size) {
+    public void setSize(double size, @Nullable final Player player) {
         if (size != this.size) {
-            DragonLevel oldLevel = getLevel();
             this.size = size;
 
-            if (oldLevel != getLevel()) {
-                if (FMLEnvironment.dist == Dist.CLIENT) {
-                    ClientProxy.sendClientData();
-                }
+            if (dragonLevel == null || !dragonLevel.value().sizeRange().matches(size)) {
+                dragonLevel = DragonLevel.getLevel(null, size);
+            }
+
+            // TODO :: better way of doing this
+            if (FMLEnvironment.dist == Dist.CLIENT) {
+                ClientProxy.sendClientData();
             }
 
             if (dragonType != null) {
                 setSavedDragonSize(dragonType.getTypeName(), size);
             }
         }
+
+        DSModifiers.updateSizeModifiers(player, this);
     }
 
     public double getSavedDragonSize(final String type) {
@@ -254,18 +244,8 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    public static DragonLevel getLevel(double size) {
-        if (size < 20) {
-            return DragonLevel.NEWBORN;
-        } else if (size < 30) {
-            return DragonLevel.YOUNG;
-        } else {
-            return DragonLevel.ADULT;
-        }
-    }
-
-    public DragonLevel getLevel() {
-        return getLevel(size);
+    public @Nullable Holder<DragonLevel> getLevel() {
+        return dragonLevel;
     }
 
     /** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
@@ -299,24 +279,19 @@ public class DragonStateHandler extends EntityStateHandler {
      * The unlockable harvest level bonus is only considered if the supplied state is part of {@link AbstractDragonType#harvestableBlocks()} <br>
      * If the supplied state is 'null' then the unlockable bonuses are also considered
      */
+    @SuppressWarnings("DataFlowIssue") // values are present
     public int getDragonHarvestLevel(@Nullable final BlockState state) {
-        if (getType() == null) {
+        if (!isDragon()) {
             return -1;
         }
 
-        int bonusLevel = 0;
+        int harvestLevel = 0;
 
         if (state == null || state.is(getType().harvestableBlocks())) {
-            if (getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-                bonusLevel = DragonBonusConfig.bonusHarvestLevel;
-            } else if (getLevel() == DragonLevel.YOUNG && /* valid for NEWBORN & YOUNG */ DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-                bonusLevel = DragonBonusConfig.bonusHarvestLevel;
-            } else if (getLevel() == DragonLevel.ADULT) {
-                bonusLevel = DragonBonusConfig.bonusHarvestLevel;
-            }
+            harvestLevel = getLevel().value().harvestLevelBonus();
         }
 
-        return DragonBonusConfig.baseHarvestLevel + bonusLevel;
+        return harvestLevel;
     }
 
     public void setPassengerId(int passengerId) {
@@ -356,7 +331,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public boolean isDragon() {
-        return dragonType != null && dragonBody != null;
+        return dragonType != null && dragonBody != null && dragonLevel != null;
     }
 
     public int getPassengerId() {
@@ -391,6 +366,7 @@ public class DragonStateHandler extends EntityStateHandler {
         CompoundTag tag = new CompoundTag();
         tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
         tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
+        //noinspection DataFlowIssue -> key is present
         tag.putString(DRAGON_BODY, dragonBody != null ? dragonBody.getKey().location().toString() : "none");
 
         if (isDragon()) {
@@ -454,7 +430,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(@NotNull HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         return serializeNBT(provider, false);
     }
 
@@ -493,16 +469,12 @@ public class DragonStateHandler extends EntityStateHandler {
             getMovementData().spinCooldown = tag.getInt("spinCooldown");
             getMovementData().spinAttack = tag.getInt("spinAttack");
 
-            setSize(tag.getDouble("size"));
+            setSize(tag.getDouble("size"), null);
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
             growing = !tag.contains("growing") || tag.getBoolean("growing");
 
             treasureResting = tag.getBoolean("resting");
             treasureRestTimer = tag.getInt("restingTimer");
-
-            if (getSize() == 0) {
-                setSize(DragonLevel.NEWBORN.size);
-            }
         }
 
         if (isDragon() || ServerConfig.saveAllAbilities) {
@@ -553,7 +525,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     @Override
-    public void deserializeNBT(@NotNull HolderLookup.Provider provider, CompoundTag tag) {
+    public void deserializeNBT(@NotNull final HolderLookup.Provider provider, final CompoundTag tag) {
         deserializeNBT(provider, tag, false);
     }
 

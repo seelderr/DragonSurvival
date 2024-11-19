@@ -24,8 +24,8 @@ import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -41,6 +41,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.ParrotOnShoulderLayer;
+import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
@@ -98,17 +99,9 @@ public class ClientDragonRenderer {
     @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_dragon_claws")
     public static Boolean renderDragonClaws = true;
 
-    @Translation(key = "render_newborn_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom newborn dragon skin will be rendered")
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_newborn_skin")
-    public static Boolean renderNewbornSkin = true;
-
-    @Translation(key = "render_young_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom young dragon skin will be rendered")
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_young_skin")
-    public static Boolean renderYoungSkin = true;
-
-    @Translation(key = "render_adult_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom adult dragon skin will be rendered")
-    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_adult_skin")
-    public static Boolean renderAdultSkin = true;
+    @Translation(key = "render_custom_skin", type = Translation.Type.CONFIGURATION, comments = "If enabled your custom dragon skin will be rendered")
+    @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_custom_skin")
+    public static Boolean renderCustomSkin = true;
 
     @Translation(key = "render_other_players_custom_skins", type = Translation.Type.CONFIGURATION, comments = "If enabled custom skins of other players will be rendered")
     @ConfigOption(side = ConfigSide.CLIENT, category = "rendering", key = "render_other_players_custom_skins")
@@ -216,8 +209,9 @@ public class ClientDragonRenderer {
             float partialRenderTick = renderPlayerEvent.getPartialTick();
             float yaw = player.getViewYRot(partialRenderTick);
 
-            DragonLevel dragonStage = handler.getLevel();
-            ResourceLocation texture = DragonSkins.getPlayerSkin(player, handler.getType(), dragonStage);
+            Holder<DragonLevel> dragonLevel = handler.getLevel();
+            //noinspection DataFlowIssue -> key is present
+            ResourceLocation texture = DragonSkins.getPlayerSkin(player, handler.getType(), dragonLevel.getKey());
             PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
             try {
@@ -258,13 +252,15 @@ public class ClientDragonRenderer {
                     if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
                         poseStack.translate(0, 0.045, 0);
                     } else {
-                        poseStack.translate(0, 0.325 - size / DragonLevel.ADULT.size * 0.140, 0);
+                        // FIXME level
+                        poseStack.translate(0, 0.325 - size / /* DragonLevel.ADULT.size */ 40 * 0.140, 0);
                     }
                 } else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
                     if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
                         poseStack.translate(0, -0.55, 0);
                     } else {
-                        poseStack.translate(0, -0.15 - size / DragonLevel.ADULT.size * 0.2, 0);
+                        // FIXME level
+                        poseStack.translate(0, -0.15 - size / /* DragonLevel.ADULT.size */ 40 * 0.2, 0);
                     }
                 }
 

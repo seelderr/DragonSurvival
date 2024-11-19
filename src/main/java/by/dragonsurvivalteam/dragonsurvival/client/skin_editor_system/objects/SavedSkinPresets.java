@@ -1,11 +1,11 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
-import by.dragonsurvivalteam.dragonsurvival.util.DragonLevel;
-
 import java.util.HashMap;
 
 public class SavedSkinPresets {
-    public HashMap<String, HashMap<Integer, SkinPreset>> skinPresets = new HashMap<>();
-    public HashMap<String, HashMap<DragonLevel, Integer>> current = new HashMap<>();
-    public int version = 0;
+    /** The current 'saved_customizations.json' values */
+    public final HashMap</* Dragon type */ String, HashMap</* Save slot */ Integer, SkinPreset>> skinPresets = new HashMap<>();
+    public final HashMap</* Dragon type */ String, HashMap</* Dragon level */ String, /* Save slot */ Integer>> current = new HashMap<>();
+
+    public int version;
 }
