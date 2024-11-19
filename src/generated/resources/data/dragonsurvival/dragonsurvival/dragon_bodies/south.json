@@ -1,11 +1,10 @@
 {
-  "has_extended_crouch": true,
   "modifiers": [
     {
       "attribute": "minecraft:generic.attack_damage",
       "modifier": {
         "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/body/south.generic.attack_damage",
+        "id": "dragonsurvival:dragonsurvival/body/generic.attack_damage",
         "operation": "add_value"
       }
     },
@@ -13,7 +12,7 @@
       "attribute": "minecraft:generic.gravity",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/south.generic.gravity",
+        "id": "dragonsurvival:dragonsurvival/body/generic.gravity",
         "operation": "add_multiplied_total"
       }
     },
@@ -21,7 +20,7 @@
       "attribute": "minecraft:generic.jump_strength",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/south.generic.jump_strength",
+        "id": "dragonsurvival:dragonsurvival/body/generic.jump_strength",
         "operation": "add_value"
       }
     },
@@ -29,7 +28,7 @@
       "attribute": "minecraft:generic.movement_speed",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/south.generic.movement_speed",
+        "id": "dragonsurvival:dragonsurvival/body/generic.movement_speed",
         "operation": "add_multiplied_total"
       }
     },
@@ -37,7 +36,7 @@
       "attribute": "neoforge:swim_speed",
       "modifier": {
         "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/south.swim_speed",
+        "id": "dragonsurvival:dragonsurvival/body/swim_speed",
         "operation": "add_value"
       }
     },
@@ -45,7 +44,7 @@
       "attribute": "dragonsurvival:flight_speed",
       "modifier": {
         "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/south.flight_speed",
+        "id": "dragonsurvival:dragonsurvival/body/flight_speed",
         "operation": "add_value"
       }
     },
@@ -53,7 +52,7 @@
       "attribute": "dragonsurvival:flight_stamina_cost",
       "modifier": {
         "amount": -0.5,
-        "id": "dragonsurvival:dragonsurvival/body/south.flight_stamina_cost",
+        "id": "dragonsurvival:dragonsurvival/body/flight_stamina_cost",
         "operation": "add_multiplied_total"
       }
     }

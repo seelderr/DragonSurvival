@@ -1,11 +1,10 @@
 {
-  "has_extended_crouch": true,
   "modifiers": [
     {
       "attribute": "minecraft:generic.armor",
       "modifier": {
         "amount": 2.0,
-        "id": "dragonsurvival:dragonsurvival/body/east.generic.armor",
+        "id": "dragonsurvival:dragonsurvival/body/generic.armor",
         "operation": "add_value"
       }
     },
@@ -13,7 +12,7 @@
       "attribute": "minecraft:generic.attack_damage",
       "modifier": {
         "amount": -1.0,
-        "id": "dragonsurvival:dragonsurvival/body/east.generic.attack_damage",
+        "id": "dragonsurvival:dragonsurvival/body/generic.attack_damage",
         "operation": "add_value"
       }
     },
@@ -21,7 +20,7 @@
       "attribute": "minecraft:generic.attack_knockback",
       "modifier": {
         "amount": -1.0,
-        "id": "dragonsurvival:dragonsurvival/body/east.generic.attack_knockback",
+        "id": "dragonsurvival:dragonsurvival/body/generic.attack_knockback",
         "operation": "add_value"
       }
     },
@@ -29,7 +28,7 @@
       "attribute": "minecraft:generic.gravity",
       "modifier": {
         "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/body/east.generic.gravity",
+        "id": "dragonsurvival:dragonsurvival/body/generic.gravity",
         "operation": "add_multiplied_total"
       }
     },
@@ -37,7 +36,7 @@
       "attribute": "minecraft:generic.jump_strength",
       "modifier": {
         "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/body/east.generic.jump_strength",
+        "id": "dragonsurvival:dragonsurvival/body/generic.jump_strength",
         "operation": "add_value"
       }
     },
@@ -45,7 +44,7 @@
       "attribute": "minecraft:generic.movement_speed",
       "modifier": {
         "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/body/east.generic.movement_speed",
+        "id": "dragonsurvival:dragonsurvival/body/generic.movement_speed",
         "operation": "add_multiplied_total"
       }
     },
@@ -53,7 +52,7 @@
       "attribute": "neoforge:swim_speed",
       "modifier": {
         "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/body/east.swim_speed",
+        "id": "dragonsurvival:dragonsurvival/body/swim_speed",
         "operation": "add_value"
       }
     },
@@ -61,7 +60,7 @@
       "attribute": "dragonsurvival:mana",
       "modifier": {
         "amount": 2.0,
-        "id": "dragonsurvival:dragonsurvival/body/east.mana",
+        "id": "dragonsurvival:dragonsurvival/body/mana",
         "operation": "add_value"
       }
     },
@@ -69,7 +68,7 @@
       "attribute": "dragonsurvival:flight_speed",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/east.flight_speed",
+        "id": "dragonsurvival:dragonsurvival/body/flight_speed",
         "operation": "add_value"
       }
     },
@@ -77,7 +76,7 @@
       "attribute": "dragonsurvival:flight_stamina_cost",
       "modifier": {
         "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/east.flight_stamina_cost",
+        "id": "dragonsurvival:dragonsurvival/body/flight_stamina_cost",
         "operation": "add_multiplied_total"
       }
     }
