@@ -106,8 +106,7 @@ public class DragonEditorHandler {
         List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer);
 
         for (DragonPart part : parts) {
-            //noinspection DataFlowIssue -> key is present
-            if (part.bodies() == null || part.bodies().contains(body.getKey().location().toString())) {
+            if (part.bodies() == null || part.bodies().contains(Objects.requireNonNull(body.getKey()).location().toString())) {
                 keys.add(part.key());
             }
         }
@@ -153,14 +152,11 @@ public class DragonEditorHandler {
         normalTarget.clear(true);
         glowTarget.clear(true);
 
-        //noinspection DataFlowIssue -> level is present
-        ResourceKey<DragonLevel> levelKey = handler.getLevel().getKey();
-
+        ResourceKey<DragonLevel> levelKey = Objects.requireNonNull(handler.getLevel()).getKey();
         DragonLevelCustomization customization = handler.getSkinData().get(levelKey).get();
         String uuid = player.getStringUUID();
 
-        //noinspection DataFlowIssue -> key is present
-        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + levelKey.location().getPath());
+        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + Objects.requireNonNull(levelKey).location().getPath());
         ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + levelKey.location().getPath());
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
@@ -245,8 +241,7 @@ public class DragonEditorHandler {
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
         List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
-        //noinspection DataFlowIssue -> level is present
-        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
+        DragonLevelCustomization customization = handler.getSkinData().get(Objects.requireNonNull(handler.getLevel()).getKey()).get();
         NativeImage normal = new NativeImage(512, 512, true);
         NativeImage glow = new NativeImage(512, 512, true);
 

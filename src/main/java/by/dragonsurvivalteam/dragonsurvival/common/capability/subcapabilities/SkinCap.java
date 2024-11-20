@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
@@ -29,10 +30,8 @@ public class SkinCap extends SubCap {
         super(handler);
     }
 
-    public void compileSkin() { // FIXME level :: don't compile all levels
-        for (ResourceKey<DragonLevel> level : DragonLevel.keys(null)) {
-            recompileSkin.put(level, true);
-        }
+    public void compileSkin(final Holder<DragonLevel> dragonLevel) {
+        recompileSkin.put(dragonLevel.getKey(), true);
     }
 
     public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonLevel> dragonLevel) {

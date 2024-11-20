@@ -154,8 +154,7 @@ public class DSModifiers {
         }));
 
         if (handler.isDragon()) {
-            //noinspection DataFlowIssue -> body is present
-            handler.getBody().value().modifiers().forEach(modifier -> {
+            Objects.requireNonNull(handler.getBody()).value().modifiers().forEach(modifier -> {
                 AttributeInstance instance = player.getAttribute(modifier.attribute());
 
                 if (instance != null && (modifier.dragonType().isEmpty() || modifier.dragonType().get().equals(handler.getTypeNameLowerCase()))) {

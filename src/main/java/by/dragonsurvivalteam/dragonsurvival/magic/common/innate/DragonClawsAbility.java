@@ -13,6 +13,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Objects;
 
 public abstract class DragonClawsAbility extends InnateDragonAbility {
     @Translation(type = Translation.Type.MISC, comments = "Pickaxe")
@@ -45,8 +46,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
 
     @Override
     public ArrayList<Component> getInfo() {
-        //noinspection DataFlowIssue -> player is present
-        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
+        DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer()));
         ArrayList<Component> components = super.getInfo();
 
         Component tool = switch (this) {
@@ -63,8 +63,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
             components.add(Component.translatable(HARVEST_LEVEL, tier.translation()));
         }
 
-        //noinspection DataFlowIssue -> level is present
-        double damageBonus = handler.getLevel().value().getAttributeValue(handler.getTypeNameLowerCase(), handler.getSize(), Attributes.ATTACK_DAMAGE);
+        double damageBonus = Objects.requireNonNull(handler.getLevel()).value().getAttributeValue(handler.getTypeNameLowerCase(), handler.getSize(), Attributes.ATTACK_DAMAGE);
 
         if (damageBonus > 0) {
             components.add(Component.translatable(DAMAGE, "+" + damageBonus));
@@ -79,8 +78,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
     }
 
     public int getTier() {
-        //noinspection DataFlowIssue -> player is present
-        DragonStateHandler handler = DragonStateProvider.getData(DragonSurvival.PROXY.getLocalPlayer());
+        DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer()));
 
         if (handler.getType() == null) {
             return 0;

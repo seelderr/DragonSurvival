@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ColorSelectorComponent extends AbstractContainerEventHandler implements Renderable {
@@ -40,7 +41,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settingsSupplier = () -> screen.preset.get(screen.dragonLevel.getKey()).get().layerSettings.get(layer).get();
+        settingsSupplier = () -> screen.preset.get(Objects.requireNonNull(screen.dragonLevel.getKey())).get().layerSettings.get(layer).get();
 
         LayerSettings settings = settingsSupplier.get();
         DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
@@ -48,25 +49,24 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.glowing, box -> {
             settingsSupplier.get().glowing = !settingsSupplier.get().glowing;
             box.selected = settingsSupplier.get().glowing;
-            DragonEditorScreen.HANDLER.getSkinData().compileSkin();
+            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
         });
 
-        //noinspection DataFlowIssue -> part is present
-        Color defaultC = Color.decode(dragonPart.defaultColor());
+        Color defaultColor = Color.decode(Objects.requireNonNull(dragonPart).defaultColor());
 
         if (settings.modifiedColor) {
-            defaultC = Color.getHSBColor(settings.hue, settings.saturation, settings.brightness);
+            defaultColor = Color.getHSBColor(settings.hue, settings.saturation, settings.brightness);
         }
 
-        colorPicker = new ColorPickerButton(x + 3, y + 24, xSize - 5, ySize - 11, defaultC, c -> {
-            float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+        colorPicker = new ColorPickerButton(x + 3, y + 24, xSize - 5, ySize - 11, defaultColor, color -> {
+            float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
 
             settingsSupplier.get().hue = hsb[0];
             settingsSupplier.get().saturation = hsb[1];
             settingsSupplier.get().brightness = hsb[2];
             settingsSupplier.get().modifiedColor = true;
 
-            DragonEditorScreen.HANDLER.getSkinData().compileSkin();
+            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
             screen.update();
         });
     }

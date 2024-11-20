@@ -18,6 +18,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public class DragonBodyButton extends Button {
     public static final String LOCATION_PREFIX = "textures/gui/body/";
 
@@ -31,8 +33,7 @@ public class DragonBodyButton extends Button {
     private final boolean locked;
 
     public DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, boolean locked, OnPress action) {
-        //noinspection DataFlowIssue -> key is present
-        this(screen, x, y, xSize, ySize, dragonBody, dragonBody.getKey().location(), locked, action);
+        this(screen, x, y, xSize, ySize, dragonBody, Objects.requireNonNull(dragonBody.getKey()).location(), locked, action);
     }
 
     private DragonBodyButton(Screen screen, int x, int y, int xSize, int ySize, Holder<DragonBody> dragonBody, ResourceLocation location, boolean locked, OnPress action) {

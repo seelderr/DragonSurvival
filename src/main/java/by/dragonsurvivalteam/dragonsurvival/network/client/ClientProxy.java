@@ -39,6 +39,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -131,7 +132,10 @@ public class ClientProxy {
                     SkinPreset preset = new SkinPreset();
                     preset.deserializeNBT(provider, message.preset());
                     handler.getSkinData().skinPreset = preset;
-                    handler.getSkinData().compileSkin();
+
+                    if (handler.isDragon()) {
+                        handler.getSkinData().compileSkin(Objects.requireNonNull(handler.getLevel()));
+                    }
                 });
             }
         }

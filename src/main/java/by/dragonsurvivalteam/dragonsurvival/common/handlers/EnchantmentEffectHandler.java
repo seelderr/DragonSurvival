@@ -23,6 +23,7 @@ import net.neoforged.neoforge.event.entity.player.ArrowLooseEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @EventBusSubscriber
 public class EnchantmentEffectHandler {
@@ -87,8 +88,7 @@ public class EnchantmentEffectHandler {
 
     private static double getStolenTime(DragonStateHandler handler) {
         double ticksToSteal = Functions.minutesToTicks(30);
-        //noinspection DataFlowIssue -> level is present
-        DragonLevel level = handler.getLevel().value();
+        DragonLevel level = Objects.requireNonNull(handler.getLevel()).value();
         // TODO level :: check
         return (level.sizeRange().max() - level.sizeRange().min()) / Functions.secondsToTicks(level.ticksUntilGrown()) * ticksToSteal;
     }

@@ -29,6 +29,7 @@ import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -392,10 +393,8 @@ public class DragonStateHandler extends EntityStateHandler {
         CompoundTag tag = new CompoundTag();
         tag.putString("type", dragonType != null ? dragonType.getTypeName() : "none");
         tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
-        //noinspection DataFlowIssue -> key is present
-        tag.putString(DRAGON_BODY, dragonBody != null ? dragonBody.getKey().location().toString() : "none");
-        //noinspection DataFlowIssue -> key is present
-        tag.putString(DRAGON_LEVEL, dragonLevel != null ? dragonLevel.getKey().location().toString() : "none");
+        tag.putString(DRAGON_BODY, dragonBody != null ? Objects.requireNonNull(dragonBody.getKey()).location().toString() : "none");
+        tag.putString(DRAGON_LEVEL, dragonLevel != null ? Objects.requireNonNull(dragonLevel.getKey()).location().toString() : "none");
 
         if (isDragon()) {
             tag.put("typeData", dragonType.writeNBT());
@@ -562,7 +561,10 @@ public class DragonStateHandler extends EntityStateHandler {
         super.deserializeNBT(provider, tag.getCompound(ENTITY_STATE));
 
         refreshBody = true;
-        getSkinData().compileSkin();
+
+        if (isDragon()) {
+            getSkinData().compileSkin(Objects.requireNonNull(getLevel()));
+        }
     }
 
     @Override

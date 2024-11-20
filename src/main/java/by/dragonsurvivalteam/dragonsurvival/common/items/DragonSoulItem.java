@@ -35,6 +35,7 @@ import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 public class DragonSoulItem extends Item {
     @Translation(type = Translation.Type.MISC, comments = "Empty Dragon Soul")
@@ -193,8 +194,7 @@ public class DragonSoulItem extends Item {
 
             double size = tag.getDouble("size");
             Holder<DragonLevel> level = DragonLevel.getLevel(context.registries(), size);
-            //noinspection DataFlowIssue -> dragon level is present
-            tooltips.add(Component.translatable(INFO, dragonName, DragonLevel.translatableName(level.getKey()), String.format("%.0f", size)));
+            tooltips.add(Component.translatable(INFO, dragonName, DragonLevel.translatableName(Objects.requireNonNull(level.getKey())), String.format("%.0f", size)));
 
             if (tag.getBoolean("spinLearned")) {
                 tooltips.add(Component.translatable(HAS_SPIN));

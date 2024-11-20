@@ -28,6 +28,7 @@ import software.bernie.geckolib.loading.math.MathParser;
 import software.bernie.geckolib.model.GeoModel;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
@@ -176,8 +177,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        //noinspection DataFlowIssue -> level is present
-        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
+        DragonLevelCustomization customization = handler.getSkinData().get(Objects.requireNonNull(handler.getLevel()).getKey()).get();
 
         if (handler.getSkinData().blankSkin) {
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
@@ -206,13 +206,11 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
         // Show the default skin while we are compiling if we haven't already compiled the skin
         if (customization.defaultSkin || !handler.getSkinData().isCompiled.getOrDefault(levelKey, false)) {
-            //noinspection DataFlowIssue -> key is present
-            return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + levelKey.location().getPath() + ".png");
+            return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + Objects.requireNonNull(levelKey).location().getPath() + ".png");
         }
 
         String uuid = player.getStringUUID();
-        //noinspection DataFlowIssue -> key is present
-        return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + levelKey.location().getPath());
+        return ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + Objects.requireNonNull(levelKey).location().getPath());
     }
 
     @Override
@@ -247,8 +245,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
             Holder<DragonBody> body = handler.getBody();
 
             if (body != null) {
-                //noinspection DataFlowIssue -> key is present
-                ResourceLocation location = body.getKey().location();
+                ResourceLocation location = Objects.requireNonNull(body.getKey()).location();
                 return ResourceLocation.fromNamespaceAndPath(location.getNamespace(), String.format("animations/dragon_%s.json", location.getPath()));
             }
         }

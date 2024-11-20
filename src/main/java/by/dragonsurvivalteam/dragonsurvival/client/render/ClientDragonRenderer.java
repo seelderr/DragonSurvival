@@ -62,6 +62,7 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.animation.AnimationState;
 import software.bernie.geckolib.util.RenderUtil;
 
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -209,8 +210,7 @@ public class ClientDragonRenderer {
             float yaw = player.getViewYRot(partialRenderTick);
 
             Holder<DragonLevel> dragonLevel = handler.getLevel();
-            //noinspection DataFlowIssue -> key is present
-            ResourceLocation texture = DragonSkins.getPlayerSkin(player, dragonLevel.getKey());
+            ResourceLocation texture = DragonSkins.getPlayerSkin(player, Objects.requireNonNull(Objects.requireNonNull(dragonLevel).getKey()));
             PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
             try {

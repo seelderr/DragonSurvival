@@ -25,6 +25,7 @@ import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Objects;
 
 // TODO :: Currently this only supports the built-in types
 public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Renderable {
@@ -62,19 +63,16 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
             @Override
             public void onPress() {
-                //noinspection DataFlowIssue -> key is present
-                Lazy<DragonLevelCustomization> lazy = screen.preset.get(screen.dragonLevel.getKey());
+                Lazy<DragonLevelCustomization> lazy = screen.preset.get(Objects.requireNonNull(screen.dragonLevel.getKey()));
 
                 if (lazy == null) {
                     lazy = Lazy.of(DragonLevelCustomization::new);
                 }
 
                 DragonLevelCustomization preset = lazy.get();
+                RegistryAccess access = Objects.requireNonNull(Minecraft.getInstance().player).registryAccess();
 
-                //noinspection DataFlowIssue -> player is present
-                RegistryAccess access = Minecraft.getInstance().player.registryAccess();
-
-                if (newborn.active && newborn.selected()) {
+                if (newborn.active && newborn.selected()) { // FIXME :: level
                     Holder<DragonLevel> newborn = /* DragonLevel.getLevel(access, 0); */ access.holderOrThrow(DragonLevel.newborn);
 
                     screen.preset.put(newborn.getKey(), Lazy.of(() -> {

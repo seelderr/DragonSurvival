@@ -15,6 +15,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
 import java.util.List;
+import java.util.Objects;
 
 public abstract class MagicAbility extends PassiveDragonAbility {
     @Override
@@ -37,8 +38,7 @@ public abstract class MagicAbility extends PassiveDragonAbility {
         String manaFromAbility = abilityLevel > 0 ? "+" + abilityLevel : "0";
 
         Holder<DragonBody> body = DragonStateProvider.getData(player).getBody();
-        //noinspection DataFlowIssue -> body is present
-        List<DSAttributeModifier> manaModifiers = body.value().modifiers().stream().filter(modifier -> modifier.attribute().is(DSAttributes.MANA)).toList();
+        List<DSAttributeModifier> manaModifiers = Objects.requireNonNull(body).value().modifiers().stream().filter(modifier -> modifier.attribute().is(DSAttributes.MANA)).toList();
 
         AttributeInstance dummyInstance = new AttributeInstance(DSAttributes.MANA, instance -> { /* Nothing to do */ });
         manaModifiers.forEach(modifier -> dummyInstance.addTransientModifier(modifier.modifier()));

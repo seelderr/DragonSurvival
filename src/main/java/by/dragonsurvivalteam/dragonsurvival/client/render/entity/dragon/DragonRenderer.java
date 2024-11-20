@@ -25,6 +25,7 @@ import software.bernie.geckolib.util.Color;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
     public ResourceLocation glowTexture = null;
@@ -86,8 +87,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-        //noinspection DataFlowIssue -> body is present
-        boolean hasWings = !handler.getBody().value().canHideWings() || handler.getSkinData().get(handler.getLevel().getKey()).get().wings;
+        boolean hasWings = !Objects.requireNonNull(handler.getBody()).value().canHideWings() || handler.getSkinData().get(Objects.requireNonNull(handler.getLevel()).getKey()).get().wings;
 
         GeoBone leftWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("WingLeft");
         GeoBone rightWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("WingRight");
@@ -156,8 +156,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
         boolean isInvisible = animatable.isInvisible();
         Color color;
 
-        //noinspection DataFlowIssue -> player is present
-        if (isInvisible && !animatable.isInvisibleTo(Minecraft.getInstance().player)) {
+        if (isInvisible && !animatable.isInvisibleTo(Objects.requireNonNull(Minecraft.getInstance().player))) {
             color = TRANSPARENT_RENDER_COLOR;
         } else {
             color = RENDER_COLOR;

@@ -19,6 +19,8 @@ import software.bernie.geckolib.cache.object.BakedGeoModel;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 import software.bernie.geckolib.renderer.layer.GeoRenderLayer;
 
+import java.util.Objects;
+
 // TODO :: geckolib has an 'AutoGlowingGeoLayer' class, could that help here?
 // FIXME :: glow layer doesn't like translucency much (it goes dark once the alpha changes)
 public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
@@ -48,8 +50,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         SkinPreset preset = handler.getSkinData().skinPreset;
 
-        //noinspection DataFlowIssue -> level is present
-        DragonLevelCustomization customization = preset.get(handler.getLevel().getKey()).get();
+        DragonLevelCustomization customization = preset.get(Objects.requireNonNull(Objects.requireNonNull(handler.getLevel()).getKey())).get();
         ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getLevel().getKey());
 
         if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {

@@ -32,6 +32,8 @@ import org.joml.Quaternionf;
 import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 
+import java.util.Objects;
+
 public class DragonAltarScreen extends Screen {
     @Translation(type = Translation.Type.MISC, comments = "Choose a Dragon Species")
     private static final String CHOOSE_SPECIES = Translation.Type.GUI.wrap("altar.choose_species");
@@ -119,8 +121,7 @@ public class DragonAltarScreen extends Screen {
 
                     handler1.setHasFlight(true);
                     handler1.setSize(0, null);
-                    //noinspection DataFlowIssue -> level is present
-                    handler1.getSkinData().get(handler1.getLevel().getKey()).get().defaultSkin = true;
+                    handler1.getSkinData().get(Objects.requireNonNull(handler1.getLevel()).getKey()).get().defaultSkin = true;
 
                     handler2.setType(button.type);
 
@@ -130,8 +131,7 @@ public class DragonAltarScreen extends Screen {
 
                     handler2.setHasFlight(true);
                     handler2.setSize(button.type == null ? 0 : Double.MAX_VALUE, null);
-                    //noinspection DataFlowIssue -> level is present
-                    handler2.getSkinData().get(handler2.getLevel().getKey()).get().defaultSkin = true;
+                    handler2.getSkinData().get(Objects.requireNonNull(handler2.getLevel()).getKey()).get().defaultSkin = true;
 
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
                     FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
@@ -229,7 +229,6 @@ public class DragonAltarScreen extends Screen {
         addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable(LangKey.GUI_DRAGON_EDITOR), action -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                //noinspection DataFlowIssue -> player is present
                 visible = DragonStateProvider.isDragon(minecraft.player);
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
             }

@@ -146,9 +146,8 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     }
 
     @Override
-    @SuppressWarnings("DataFlowIssue") // player is present
     public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        if (minecraft == null) {
+        if (minecraft == null || minecraft.player == null) {
             return;
         }
 
@@ -193,7 +192,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             handler.getSkinData().skinPreset.initDefaults(handler);
 
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
-                handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), playerData.getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
+                handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), playerData.getSkinData().skinPreset.serializeNBT(minecraft.player.registryAccess()));
             } else {
                 handler.getSkinData().get(dragonLevel.getKey()).get().defaultSkin = true;
             }
@@ -245,9 +244,10 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
 
     @Override
     public void init() {
+        super.init();
+
         Minecraft minecraft = getMinecraft();
         LocalPlayer player = minecraft.player;
-        super.init();
 
         guiLeft = (width - 256) / 2;
         guiTop = (height - 128) / 2;
@@ -256,7 +256,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         int startY = guiTop;
 
         if (playerName == null) {
-            playerName = minecraft.player.getGameProfile().getName();
+            playerName = Objects.requireNonNull(player).getGameProfile().getName();
         }
 
         setTextures();
@@ -270,8 +270,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
 
         // Button to enable / disable the rendering of the custom dragon skin
         addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.literal("TODO - render skin"), button -> {
-            //noinspection DataFlowIssue -> player is present
-            DragonStateHandler handler = DragonStateProvider.getData(player);
+            DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(player));
             handler.getSkinData().renderCustomSkin = !handler.getSkinData().renderCustomSkin;
             ConfigHandler.updateConfigValue("render_custom_skin", handler.getSkinData().renderCustomSkin);
 
@@ -281,8 +280,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             @Override
             protected void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-                //noinspection DataFlowIssue -> player is present
-                guiGraphics.blit(DragonStateProvider.getData(player).getSkinData().renderCustomSkin ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
+                guiGraphics.blit(DragonStateProvider.getData(Objects.requireNonNull(player)).getSkinData().renderCustomSkin ? CHECKED : UNCHECKED, getX() + 3, getY() + 3, 0, 0, 13, 13, 13, 13);
             }
         });
 
@@ -334,8 +332,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         addRenderableWidget(new HelpButton(startX + 128 + imageWidth / 2 - 8, startY + 128 + 30, 16, 16, HELP, 1));
 
         addRenderableWidget(Button.builder(Component.translatable(SELF), button -> {
-            //noinspection DataFlowIssue -> player is present
-            playerName = player.getGameProfile().getName();
+            playerName = Objects.requireNonNull(player).getGameProfile().getName();
             setTextures();
         }).bounds(startX - 60, startY + 128, 90, 20).tooltip(Tooltip.create(Component.translatable(SELF_INFO))).build());
 
@@ -359,8 +356,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 Pair<ResourceKey<DragonLevel>, String> skin = skins.get(random.nextInt(skins.size()));
 
                 if (skin != null) {
-                    //noinspection DataFlowIssue -> player is present
-                    dragonLevel = player.registryAccess().holderOrThrow(skin.first);
+                    dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(skin.first);
                     playerName = skin.second;
 
                     SEEN_SKINS.add(skin.second);
@@ -385,8 +381,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 nextLevel = DragonLevel.newborn;
             }
 
-            //noinspection DataFlowIssue -> player is present / dragon level is expected to be present
-            dragonLevel = player.registryAccess().holderOrThrow(nextLevel);
+            dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
 
             setTextures();
         }, Supplier::get) {
@@ -411,8 +406,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
                 nextLevel = DragonLevel.adult;
             }
 
-            //noinspection DataFlowIssue -> player is present / dragon level is expected to be present
-            dragonLevel = player.registryAccess().holderOrThrow(nextLevel);
+            dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
 
             setTextures();
         }, Supplier::get) {
@@ -460,13 +454,11 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     public void setTextures() {
         loading = true;
 
-        //noinspection DataFlowIssue -> key is present
-        ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName, dragonLevel.getKey());
+        ResourceLocation skinTexture = DragonSkins.getPlayerSkin(playerName, Objects.requireNonNull(dragonLevel.getKey()));
         ResourceLocation glowTexture = null;
         boolean defaultSkin = false;
 
-        //noinspection DataFlowIssue -> minecraft is present
-        if (!DragonSkins.renderCustomSkin(minecraft.player) && playerName.equals(minecraft.player.getGameProfile().getName()) || skinTexture == null) {
+        if (!DragonSkins.renderCustomSkin(Objects.requireNonNull(minecraft).player) && playerName.equals(Objects.requireNonNull(minecraft.player).getGameProfile().getName()) || skinTexture == null) {
             skinTexture = null;
             defaultSkin = true;
         }

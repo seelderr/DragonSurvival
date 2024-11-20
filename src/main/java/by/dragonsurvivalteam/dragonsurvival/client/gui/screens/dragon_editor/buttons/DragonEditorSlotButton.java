@@ -35,7 +35,7 @@ public class DragonEditorSlotButton extends Button {
 
             this.screen.selectedSaveSlot = slot;
             this.screen.update();
-            DragonEditorScreen.HANDLER.getSkinData().compileSkin();
+            DragonEditorScreen.HANDLER.getSkinData().compileSkin(screen.dragonLevel);
             return prevSlot;
         };
     }

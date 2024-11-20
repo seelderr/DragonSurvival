@@ -124,8 +124,7 @@ public class GrowthHUD {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, 300);
-        //noinspection DataFlowIssue -> key is present
-        ResourceLocation levelLocation = dragonLevel.getKey().location();
+        ResourceLocation levelLocation = Objects.requireNonNull(dragonLevel.getKey()).location();
         guiGraphics.blit(getOrCreate(levelLocation.getNamespace(), "textures/gui/growth/" + handler.getTypeNameLowerCase() + "/" + levelLocation.getPath() + ".png"), circleX + 6, circleY + 6, 0, 0, 20, 20, 20, 20);
         guiGraphics.pose().popPose();
     }

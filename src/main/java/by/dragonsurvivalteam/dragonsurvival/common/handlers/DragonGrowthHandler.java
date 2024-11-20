@@ -25,6 +25,7 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
@@ -175,8 +176,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        //noinspection DataFlowIssue -> level is present
-        DragonLevel level = data.getLevel().value();
+        DragonLevel level = Objects.requireNonNull(data.getLevel()).value();
         double growth = (level.sizeRange().max() - level.sizeRange().min()) / Functions.secondsToTicks(level.ticksUntilGrown()) * increment;
 
         if (growth > 0) {

@@ -18,6 +18,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 
 public class TestUtils {
     public static final String AIR_CUBE_1X = "test_templates/1x1x1_air";
@@ -68,8 +69,7 @@ public class TestUtils {
 
         Holder<DragonLevel> level = player.registryAccess().holderOrThrow(dragonLevel);
         data.setSize(level, player);
-        //noinspection DataFlowIssue -> key is present
-        helper.assertTrue(data.getLevel().is(level), String.format("Dragon level was [%s] - expected [%s]", data.getLevel().getKey().location(), level.getKey().location()));
+        helper.assertTrue(data.getLevel().is(level), String.format("Dragon level was [%s] - expected [%s]", Objects.requireNonNull(data.getLevel().getKey()).location(), Objects.requireNonNull(level.getKey()).location()));
 
         helper.assertTrue(data.isDragon(), "Player is not a dragon - expected player to be a dragon");
     }
