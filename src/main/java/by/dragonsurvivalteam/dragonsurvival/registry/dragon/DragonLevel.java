@@ -35,7 +35,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
@@ -74,42 +76,43 @@ public record DragonLevel(
     @Translation(type = Translation.Type.LEVEL, comments = "Ancient")
     public static ResourceKey<DragonLevel> ancient = key("ancient");
 
-    public void applyModifiers(final Player player, final Holder<Attribute> attribute) {
-        AttributeInstance instance = player.getAttribute(attribute);
-
-        if (instance == null) {
-            return;
-        }
+    /** The player attribute map doesn't contain attributes that weren't accessed before */
+    public void applyModifiers(final Player player) {
+        Set<Holder<Attribute>> attributes = new HashSet<>();
+        modifiers.forEach(modifier -> attributes.add(modifier.attribute()));
+        scalingModifiers.forEach(modifier -> attributes.add(modifier.attribute()));
 
         DragonStateHandler data = DragonStateProvider.getData(player);
-        applyModifiers(data.getTypeNameLowerCase(), data.getSize(), instance);
+        attributes.forEach(attribute -> applyModifiers(data.getTypeNameLowerCase(), data.getSize(), player.getAttribute(attribute)));
     }
 
+    /** Intended for usage within descriptions */
     public double getAttributeValue(final String dragonType, double size, final Holder<Attribute> attribute) {
         AttributeInstance attributeInstance = new AttributeInstance(attribute, instance -> { /* Nothing to do */ });
         applyModifiers(dragonType, size, attributeInstance);
         return attributeInstance.getValue();
     }
 
-    private void applyModifiers(final String dragonType, double size, final AttributeInstance instance) {
-        List<DSAttributeModifier> modifiers = modifiers().stream().filter(modifier -> {
-            if (modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
-                return false;
+    private void applyModifiers(final String dragonType, double size, @Nullable final AttributeInstance instance) {
+        if (instance == null) {
+            return;
+        }
+
+        modifiers().forEach(modifier -> {
+            if (!modifier.attribute().is(instance.getAttribute()) || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
+                return;
             }
 
-            return modifier.attribute().is(instance.getAttribute());
-        }).toList();
+            instance.addPermanentModifier(modifier.modifier());
+        });
 
-        List<ScalingAttributeModifier> scalingModifiers = scalingModifiers().stream().filter(modifier -> {
-            if (modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
-                return false;
+        scalingModifiers().forEach(modifier -> {
+            if (!modifier.attribute().is(instance.getAttribute()) || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
+                return;
             }
 
-            return modifier.attribute().is(instance.getAttribute());
-        }).toList();
-
-        modifiers.forEach(modifier -> instance.addPermanentModifier(modifier.modifier()));
-        scalingModifiers.forEach(modifier -> instance.addPermanentModifier(modifier.getModifier(size)));
+            instance.addPermanentModifier(modifier.getModifier(size));
+        });
     }
 
     @SubscribeEvent
@@ -129,7 +132,7 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 1.5, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
@@ -146,7 +149,7 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 2.5, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
@@ -165,7 +168,7 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
@@ -184,7 +187,7 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.01f, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),

@@ -4,7 +4,7 @@
       "attribute": "minecraft:generic.attack_damage",
       "modifier": {
         "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/body/0.5/add_value/minecraft.generic.attack_damage",
+        "id": "dragonsurvival:dragonsurvival/body/347224317/minecraft.generic.attack_damage",
         "operation": "add_value"
       }
     },
@@ -12,7 +12,7 @@
       "attribute": "minecraft:generic.gravity",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/0.2/add_multiplied_total/minecraft.generic.gravity",
+        "id": "dragonsurvival:dragonsurvival/body/-977202717/minecraft.generic.gravity",
         "operation": "add_multiplied_total"
       }
     },
@@ -20,7 +20,7 @@
       "attribute": "minecraft:generic.jump_strength",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/0.2/add_value/minecraft.generic.jump_strength",
+        "id": "dragonsurvival:dragonsurvival/body/347224224/minecraft.generic.jump_strength",
         "operation": "add_value"
       }
     },
@@ -28,7 +28,7 @@
       "attribute": "minecraft:generic.movement_speed",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/0.2/add_multiplied_total/minecraft.generic.movement_speed",
+        "id": "dragonsurvival:dragonsurvival/body/-977202717/minecraft.generic.movement_speed",
         "operation": "add_multiplied_total"
       }
     },
@@ -36,7 +36,7 @@
       "attribute": "neoforge:swim_speed",
       "modifier": {
         "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/-0.2/add_value/neoforge.swim_speed",
+        "id": "dragonsurvival:dragonsurvival/body/388782669/neoforge.swim_speed",
         "operation": "add_value"
       }
     },
@@ -44,7 +44,7 @@
       "attribute": "dragonsurvival:flight_speed",
       "modifier": {
         "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/-0.2/add_value/dragonsurvival.flight_speed",
+        "id": "dragonsurvival:dragonsurvival/body/388782669/dragonsurvival.flight_speed",
         "operation": "add_value"
       }
     },
@@ -52,7 +52,7 @@
       "attribute": "dragonsurvival:flight_stamina_cost",
       "modifier": {
         "amount": -0.5,
-        "id": "dragonsurvival:dragonsurvival/body/-0.5/add_multiplied_total/dragonsurvival.flight_stamina_cost",
+        "id": "dragonsurvival:dragonsurvival/body/-935644179/dragonsurvival.flight_stamina_cost",
         "operation": "add_multiplied_total"
       }
     }

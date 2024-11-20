@@ -6,7 +6,7 @@
       "dragon_type": "sea",
       "modifier": {
         "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/level/1/add_value/minecraft.player.submerged_mining_speed",
+        "id": "dragonsurvival:dragonsurvival/level/345750019/minecraft.player.submerged_mining_speed",
         "operation": "add_value"
       }
     },
@@ -14,7 +14,7 @@
       "attribute": "minecraft:generic.max_health",
       "modifier": {
         "amount": -7.0,
-        "id": "dragonsurvival:dragonsurvival/level/-7/add_value/minecraft.generic.max_health",
+        "id": "dragonsurvival:dragonsurvival/level/345793450/minecraft.generic.max_health",
         "operation": "add_value"
       }
     },
@@ -22,7 +22,7 @@
       "attribute": "minecraft:generic.attack_damage",
       "modifier": {
         "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/level/1/add_value/minecraft.generic.attack_damage",
+        "id": "dragonsurvival:dragonsurvival/level/345750019/minecraft.generic.attack_damage",
         "operation": "add_value"
       }
     },
@@ -30,7 +30,7 @@
       "attribute": "dragonsurvival:dragon_breath_range",
       "modifier": {
         "amount": 1.5,
-        "id": "dragonsurvival:dragonsurvival/level/1.5/add_value/dragonsurvival.dragon_breath_range",
+        "id": "dragonsurvival:dragonsurvival/level/347254108/dragonsurvival.dragon_breath_range",
         "operation": "add_value"
       }
     }
@@ -38,17 +38,17 @@
   "scaling_modifiers": [
     {
       "attribute": "minecraft:generic.movement_speed",
-      "id": "dragonsurvival:dragonsurvival/level/0.01/add_value/minecraft.generic.movement_speed",
+      "id": "dragonsurvival:dragonsurvival/level/1359000882/minecraft.generic.movement_speed",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
-        "base": 0.01,
-        "per_level_above_first": 0.01
+        "base": 0.0015,
+        "per_level_above_first": 0.0015
       }
     },
     {
       "attribute": "minecraft:generic.max_health",
-      "id": "dragonsurvival:dragonsurvival/level/1/add_value/minecraft.generic.max_health",
+      "id": "dragonsurvival:dragonsurvival/level/345750019/minecraft.generic.max_health",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
@@ -58,7 +58,7 @@
     },
     {
       "attribute": "dragonsurvival:dragon_breath_range",
-      "id": "dragonsurvival:dragonsurvival/level/0.05/add_value/dragonsurvival.dragon_breath_range",
+      "id": "dragonsurvival:dragonsurvival/level/391495665/dragonsurvival.dragon_breath_range",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",

@@ -5,7 +5,7 @@
       "attribute": "dragonsurvival:flight_speed",
       "modifier": {
         "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/0.2/add_value/dragonsurvival.flight_speed",
+        "id": "dragonsurvival:dragonsurvival/body/347224224/dragonsurvival.flight_speed",
         "operation": "add_value"
       }
     }

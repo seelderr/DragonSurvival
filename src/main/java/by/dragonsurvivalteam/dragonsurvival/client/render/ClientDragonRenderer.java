@@ -210,7 +210,7 @@ public class ClientDragonRenderer {
 
             Holder<DragonLevel> dragonLevel = handler.getLevel();
             //noinspection DataFlowIssue -> key is present
-            ResourceLocation texture = DragonSkins.getPlayerSkin(player, handler.getType(), dragonLevel.getKey());
+            ResourceLocation texture = DragonSkins.getPlayerSkin(player, dragonLevel.getKey());
             PoseStack poseStack = renderPlayerEvent.getPoseStack();
 
             try {

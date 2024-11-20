@@ -3,10 +3,10 @@ package by.dragonsurvivalteam.dragonsurvival.client.skins;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.ResourceLocationException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -37,7 +37,7 @@ public class DragonSkins {
     private static int numSkinFetchAttempts = 0;
 
     public static ResourceLocation getPlayerSkin(String playerName, ResourceKey<DragonLevel> dragonLevel) {
-        String skinKey = playerName + "_" + dragonLevel.location().getPath(); // FIXME level :: unsure how this will work with modded variants
+        String skinKey = playerName + "_" + dragonLevel.location().getPath();
 
         if (playerSkinCache.containsKey(skinKey) && playerSkinCache.get(skinKey) != null) {
             return playerSkinCache.get(skinKey);
@@ -56,7 +56,7 @@ public class DragonSkins {
     }
 
     public static ResourceLocation getPlayerGlow(String playerName, ResourceKey<DragonLevel> dragonLevel) {
-        String skinKey = playerName + "_" + dragonLevel.location().getPath(); // FIXME level
+        String skinKey = playerName + "_" + dragonLevel.location().getPath();
 
         if (playerGlowCache.containsKey(skinKey)) {
             return playerGlowCache.get(skinKey);
@@ -68,12 +68,12 @@ public class DragonSkins {
     }
 
 
-    public static ResourceLocation getPlayerSkin(Player player, AbstractDragonType type, ResourceKey<DragonLevel> dragonLevel) {
+    public static ResourceLocation getPlayerSkin(Player player, ResourceKey<DragonLevel> dragonLevel) {
         ResourceLocation texture = null;
-        String playerKey = player.getGameProfile().getName() + "_" + dragonLevel.location().getPath(); // FIXME level
-        boolean renderStage = true; // FIXME level
+        String playerKey = player.getGameProfile().getName() + "_" + dragonLevel.location().getPath();
+        boolean renderCustomSkin = DragonStateProvider.getData(player).getSkinData().renderCustomSkin;
 
-        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && renderStage) {
+        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && renderCustomSkin) {
             if (playerSkinCache.containsKey(playerKey) && playerSkinCache.get(playerKey) != null) {
                 return playerSkinCache.get(playerKey);
             }
@@ -91,7 +91,7 @@ public class DragonSkins {
     }
 
     public static ResourceLocation fetchSkinFile(final String playerName, final ResourceKey<DragonLevel> level, final String... extra) {
-        String playerKey = playerName + "_" + level.location().getPath(); // FIXME level
+        String playerKey = playerName + "_" + level.location().getPath();
         String[] text = ArrayUtils.addAll(new String[]{playerKey}, extra);
 
         String resourceName = StringUtils.join(text, "_");
@@ -175,12 +175,12 @@ public class DragonSkins {
         return fetchSkinFile(playerEntity.getGameProfile().getName(), dragonLevel, extra);
     }
 
-    public static ResourceLocation getGlowTexture(Player player, AbstractDragonType type, ResourceKey<DragonLevel> dragonLevel) {
+    public static ResourceLocation getGlowTexture(Player player, ResourceKey<DragonLevel> dragonLevel) {
         ResourceLocation texture = null;
-        String playerKey = player.getGameProfile().getName() + "_" + dragonLevel.location().getPath(); // FIXME level
-        boolean renderStage = true; // FIXME level
+        String playerKey = player.getGameProfile().getName() + "_" + dragonLevel.location().getPath();
+        boolean renderCustomSkin = DragonStateProvider.getData(player).getSkinData().renderCustomSkin;
 
-        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && playerSkinCache.containsKey(playerKey) && renderStage) {
+        if ((ClientDragonRenderer.renderOtherPlayerSkins || player == DragonSurvival.PROXY.getLocalPlayer()) && playerSkinCache.containsKey(playerKey) && renderCustomSkin) {
             if (playerGlowCache.containsKey(playerKey)) {
                 return playerGlowCache.get(playerKey);
             } else {
@@ -256,10 +256,10 @@ public class DragonSkins {
                 }
 
                 String level = skinName.substring(skinName.lastIndexOf("_") + 1);
-                // FIXME level
-                ResourceKey<DragonLevel> dragonLevel = level.equalsIgnoreCase("adult") ? DragonLevel.adult : level.equalsIgnoreCase("young") ? DragonLevel.young : level.equalsIgnoreCase("newborn") ? DragonLevel.newborn : null;
 
-                if (dragonLevel != null) {
+                try {
+                    ResourceKey<DragonLevel> dragonLevel = ResourceKey.create(DragonLevel.REGISTRY, DragonSurvival.res(level));
+
                     if (!SKIN_USERS.containsKey(dragonLevel)) {
                         SKIN_USERS.put(dragonLevel, new HashMap<>());
                     }
@@ -267,6 +267,8 @@ public class DragonSkins {
                     skin.short_name = name;
                     skin.glow = isGlow;
                     SKIN_USERS.get(dragonLevel).putIfAbsent(name, skin);
+                } catch (ResourceLocationException exception) {
+                    DragonSurvival.LOGGER.warn("Could not parse dragon level from the skin [{}]", skin.name, exception);
                 }
             }
         }

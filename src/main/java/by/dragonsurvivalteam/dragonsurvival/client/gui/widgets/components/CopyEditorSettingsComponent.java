@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.components;
 
+import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.CopySettingsButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.DropdownList;
@@ -25,14 +26,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
-
+// TODO :: Currently this only supports the built-in types
 public class CopyEditorSettingsComponent extends AbstractContainerEventHandler implements Renderable {
     @Translation(type = Translation.Type.MISC, comments = "Copy to...")
     private static final String COPY_TO = Translation.Type.GUI.wrap("copy_to");
 
-    private static final ResourceLocation CONFIRM_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/confirm_button.png");
-    private static final ResourceLocation CANCEL_BUTTON = ResourceLocation.fromNamespaceAndPath(MODID, "textures/gui/cancel_button.png");
+    private static final ResourceLocation CONFIRM_BUTTON = DragonSurvival.res("textures/gui/confirm_button.png");
+    private static final ResourceLocation CANCEL_BUTTON = DragonSurvival.res("textures/gui/cancel_button.png");
 
     public boolean visible;
 
@@ -47,7 +47,6 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
     private final int xSize;
     private final int ySize;
 
-    // FIXME level :: need to make it dynamic
     public CopyEditorSettingsComponent(DragonEditorScreen screen, CopySettingsButton btn, int x, int y, int xSize, int ySize) {
         this.x = x;
         this.y = y;

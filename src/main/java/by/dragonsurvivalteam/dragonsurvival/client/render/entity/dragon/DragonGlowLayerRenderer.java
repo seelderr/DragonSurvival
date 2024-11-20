@@ -50,8 +50,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
 
         //noinspection DataFlowIssue -> level is present
         DragonLevelCustomization customization = preset.get(handler.getLevel().getKey()).get();
-        //noinspection DataFlowIssue -> level and key are present
-        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getType(), handler.getLevel().getKey());
+        ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getLevel().getKey());
 
         if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {
             if (dragonRenderer.glowTexture != null) {
@@ -60,7 +59,6 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         }
 
         if (glowTexture == null && handler.getSkinData().get(handler.getLevel().getKey()).get().defaultSkin) {
-            // FIXME level
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getKey().location().getPath() + "_glow.png");
 
             if (Minecraft.getInstance().getResourceManager().getResource(location).isPresent()) {

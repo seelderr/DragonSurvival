@@ -22,6 +22,7 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nullable;
@@ -29,9 +30,7 @@ import javax.annotation.Nullable;
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
 public class DSModifiers {
-
-    private record ModifierBuilder(ResourceLocation modifier, Holder<Attribute> attribute, Operation operation,
-                                Function<DragonStateHandler, Double> calculator) {
+    private record ModifierBuilder(ResourceLocation modifier, Holder<Attribute> attribute, Operation operation, Function<DragonStateHandler, Double> calculator) {
         private AttributeModifier buildModifier(DragonStateHandler handler) {
             return new AttributeModifier(modifier, calculator.apply(handler), operation);
         }
@@ -103,19 +102,20 @@ public class DSModifiers {
     }
 
     public static void updateAllModifiers(Player player) {
-        if (player.level().isClientSide()) {
+        if (player == null || player.level().isClientSide()) {
             return;
         }
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
-
         updateTypeModifiers(player, handler);
         updateSizeModifiers(player, handler);
         updateBodyModifiers(player, handler);
+
+        // TODO :: determine where it's best to handle max health
     }
 
     public static void updateTypeModifiers(Player player, DragonStateHandler handler) {
-        if (player.level().isClientSide()) {
+        if (player == null || player.level().isClientSide()) {
             return;
         }
 
@@ -129,7 +129,15 @@ public class DSModifiers {
             return;
         }
 
-        // FIXME
+        ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes().values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
+            if (modifier.id().getPath().startsWith(ModifierType.DRAGON_LEVEL.path())) {
+                instance.removeModifier(modifier);
+            }
+        }));
+
+        if (handler.isDragon()) {
+            Objects.requireNonNull(handler.getLevel()).value().applyModifiers(player);
+        }
     }
 
     public static void updateBodyModifiers(@Nullable Player player, DragonStateHandler handler) {

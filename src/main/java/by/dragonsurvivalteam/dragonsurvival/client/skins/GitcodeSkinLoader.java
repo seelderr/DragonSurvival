@@ -49,8 +49,8 @@ public class GitcodeSkinLoader extends NetSkinLoader {
                 ++page;
             }
             return result;
-        } catch (IOException e) {
-            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in Gitcode.");
+        } catch (IOException exception) {
+            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in Gitcode: [{}]", exception.getMessage());
             return null;
         }
     }

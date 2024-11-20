@@ -36,6 +36,7 @@ public class GithubSkinLoader extends NetSkinLoader {
     @Override
     public Collection<SkinObject> querySkinList() {
         ArrayList<SkinObject> result = new ArrayList<>();
+
         try {
             Gson gson = GsonFactory.getDefault();
             URL url = new URL(SKIN_LIST_API);
@@ -55,7 +56,7 @@ public class GithubSkinLoader extends NetSkinLoader {
                 DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
             }
         } catch (IOException exception) {
-            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub");
+            DragonSurvival.LOGGER.log(Level.WARN, "Failed to get skin information in GitHub: [{}]", exception.getMessage());
         }
 
         return null;
@@ -89,15 +90,15 @@ public class GithubSkinLoader extends NetSkinLoader {
 
             if (skinName.endsWith(GLOW)) {
                 fetchName = skinName.replace(GLOW, "");
-                fetchName = SKIN + fetchName + "_" + dragonLevel.location().getPath() + GLOW + ".png"; // FIXME level
+                fetchName = SKIN + fetchName + "_" + dragonLevel.location().getPath() + GLOW + ".png";
             } else {
-                fetchName = SKIN + skinName + "_" + dragonLevel.location().getPath() + ".png"; // FIXME level
+                fetchName = SKIN + skinName + "_" + dragonLevel.location().getPath() + ".png";
             }
 
             URL url = new URL(fetchName);
             return internetGetStream(url, 15 * 1000);
         } catch (IOException exception) {
-            DragonSurvival.LOGGER.error("Failed to get skin information in GitHub");
+            DragonSurvival.LOGGER.error("Failed to get skin information in GitHub: [{}]", exception.getMessage());
         }
 
         return null;

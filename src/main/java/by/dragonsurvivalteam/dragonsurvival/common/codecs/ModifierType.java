@@ -8,6 +8,7 @@ import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 
 import java.text.NumberFormat;
+import java.util.Objects;
 
 public enum ModifierType {
     DRAGON_TYPE("type"),
@@ -28,8 +29,8 @@ public enum ModifierType {
     public ResourceLocation randomId(final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation) {
         String attributeId = attribute.getRegisteredName().replace(":", ".");
         NumberFormat format = NumberFormat.getInstance();
-        format.setMaximumFractionDigits(2);
+        format.setMaximumFractionDigits(4);
         // Currently only relevant for data generation -> should be specific enough to avoid overlapping
-        return DragonSurvival.res(path() + format.format(amount) + "/" + operation.getSerializedName() + "/" + attributeId);
+        return DragonSurvival.res(path() + Objects.hash(format.format(amount), operation.getSerializedName()) + "/" + attributeId);
     }
 }
