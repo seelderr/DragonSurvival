@@ -6,7 +6,7 @@
       "attribute": "minecraft:generic.attack_damage",
       "modifier": {
         "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/66113/minecraft.generic.attack_damage",
+        "id": "dragonsurvival:dragonsurvival/body/-0.2/add_multiplied_total/minecraft.generic.attack_damage",
         "operation": "add_multiplied_total"
       }
     },
@@ -14,7 +14,7 @@
       "attribute": "minecraft:generic.attack_knockback",
       "modifier": {
         "amount": -0.5,
-        "id": "dragonsurvival:dragonsurvival/body/34794/minecraft.generic.attack_knockback",
+        "id": "dragonsurvival:dragonsurvival/body/-0.5/add_value/minecraft.generic.attack_knockback",
         "operation": "add_value"
       }
     },
@@ -22,7 +22,7 @@
       "attribute": "minecraft:generic.movement_speed",
       "modifier": {
         "amount": -0.3,
-        "id": "dragonsurvival:dragonsurvival/body/46492/minecraft.generic.movement_speed",
+        "id": "dragonsurvival:dragonsurvival/body/-0.3/add_multiplied_total/minecraft.generic.movement_speed",
         "operation": "add_multiplied_total"
       }
     },
@@ -30,7 +30,7 @@
       "attribute": "neoforge:swim_speed",
       "modifier": {
         "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/body/71842/neoforge.swim_speed",
+        "id": "dragonsurvival:dragonsurvival/body/0.5/add_value/neoforge.swim_speed",
         "operation": "add_value"
       }
     },
@@ -38,7 +38,7 @@
       "attribute": "dragonsurvival:mana",
       "modifier": {
         "amount": 2.0,
-        "id": "dragonsurvival:dragonsurvival/body/52014/dragonsurvival.mana",
+        "id": "dragonsurvival:dragonsurvival/body/2/add_value/dragonsurvival.mana",
         "operation": "add_value"
       }
     },
@@ -46,7 +46,7 @@
       "attribute": "dragonsurvival:flight_stamina_cost",
       "modifier": {
         "amount": -0.1,
-        "id": "dragonsurvival:dragonsurvival/body/58554/dragonsurvival.flight_stamina_cost",
+        "id": "dragonsurvival:dragonsurvival/body/-0.1/add_multiplied_total/dragonsurvival.flight_stamina_cost",
         "operation": "add_multiplied_total"
       }
     }

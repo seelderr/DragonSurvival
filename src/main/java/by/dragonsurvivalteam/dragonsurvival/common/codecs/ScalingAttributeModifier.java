@@ -32,7 +32,7 @@ public record ScalingAttributeModifier(ResourceLocation id, Holder<Attribute> at
     }
 
     public static ScalingAttributeModifier createModifier(final ModifierType type, final Holder<Attribute> attribute, final LevelBasedValue perSize, final AttributeModifier.Operation operation, String dragonType) {
-        return new ScalingAttributeModifier(type.randomId(attribute), attribute, perSize, operation, Optional.ofNullable(dragonType));
+        return new ScalingAttributeModifier(type.randomId(attribute, perSize.calculate(1), operation), attribute, perSize, operation, Optional.ofNullable(dragonType));
     }
 
     public AttributeModifier getModifier(double size) {

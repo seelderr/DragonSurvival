@@ -30,6 +30,6 @@ public record DSAttributeModifier(Holder<Attribute> attribute, AttributeModifier
     }
 
     public static DSAttributeModifier createModifier(final ModifierType type, final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation, String dragonType) {
-        return new DSAttributeModifier(attribute, new AttributeModifier(type.randomId(attribute), amount, operation), Optional.ofNullable(dragonType));
+        return new DSAttributeModifier(attribute, new AttributeModifier(type.randomId(attribute, amount, operation), amount, operation), Optional.ofNullable(dragonType));
     }
 }

@@ -27,9 +27,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
     private final EnumSkinLayer layers;
 
     public DragonEditorDropdownButton(DragonEditorScreen dragonEditorScreen, int x, int y, int xSize, int ySize, String current, String[] values, EnumSkinLayer layers) {
-        super(x, y, xSize, ySize, current, values, selected -> {
-            dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonPartSelectAction, new Pair<>(layers, selected)));
-        });
+        super(x, y, xSize, ySize, current, values, selected -> dragonEditorScreen.actionHistory.add(new DragonEditorScreen.EditorAction<>(dragonEditorScreen.dragonPartSelectAction, new Pair<>(layers, selected))));
         this.dragonEditorScreen = dragonEditorScreen;
         this.layers = layers;
     }
@@ -38,7 +36,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks) {
         active = visible = dragonEditorScreen.showUi;
         super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
-        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().layerSettings.get(layers).get().selectedSkin);
+        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(Objects.requireNonNull(dragonEditorScreen.dragonLevel.getKey())).get().layerSettings.get(layers).get().selectedSkin);
 
         if (!Objects.equals(currentValue, current)) {
             current = currentValue;
@@ -102,21 +100,25 @@ public class DragonEditorDropdownButton extends DropDownButton {
             }
 
             boolean finalHasBorder = hasBorder;
-            renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), pButton -> {
-            }) {
+            renderButton = new ExtendedButton(0, 0, 0, 0, Component.empty(), button -> {}) {
                 @Override
                 public void renderWidget(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
                     active = visible = false;
                     list.visible = DragonEditorDropdownButton.this.visible;
 
-                    if (finalHasBorder)
+                    if (!list.visible) {
+                        return;
+                    }
+
+                    if (finalHasBorder) {
                         RenderSystem.enableScissor(0, (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()), Minecraft.getInstance().getWindow().getScreenWidth(), Minecraft.getInstance().getWindow().getScreenHeight() - (int) (32 * Minecraft.getInstance().getWindow().getGuiScale()) * 2);
+                    }
 
-                    if (list.visible)
-                        list.render(graphics, mouseX, mouseY, partialTick);
+                    list.render(graphics, mouseX, mouseY, partialTick);
 
-                    if (finalHasBorder)
+                    if (finalHasBorder) {
                         RenderSystem.disableScissor();
+                    }
                 }
             };
             ((ScreenAccessor) screen).dragonSurvival$children().add(renderButton);

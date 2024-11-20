@@ -5,7 +5,7 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Part data read from the 'skin/customization.json' file */
+/** Part data read from the 'skin/parts/*.json' files */
 public record DragonPart(String key, String texture, List<String> bodies, String defaultColor, float averageHue, boolean isColorable, boolean isRandom, boolean isHueRandom) {
     public static final String KEY = "key";
     public static final String TEXTURE = "texture";

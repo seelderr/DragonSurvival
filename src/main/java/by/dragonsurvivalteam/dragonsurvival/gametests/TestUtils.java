@@ -35,22 +35,22 @@ public class TestUtils {
         return helper.getBlockState(position);
     }
 
+    public static boolean compare(final Object value, final Object fieldValue) {
+        if (value instanceof Number number && fieldValue instanceof Number fieldNumber) {
+            // 1 and 1.0 are otherwise not seen as equal
+            return Float.compare(number.floatValue(), fieldNumber.floatValue()) == 0;
+        } else {
+            return value.equals(fieldValue);
+        }
+    }
+
     public static void setAndCheckConfig(final GameTestHelper helper, final String configKey, final Object value) {
         ConfigHandler.updateConfigValue(configKey, value);
         Field field = ConfigHandler.getField(configKey);
 
         try {
             Object fieldValue = field.get(null);
-            boolean condition;
-
-            if (value instanceof Number number && fieldValue instanceof Number fieldNumber) {
-                // 1 and 1.0 are otherwise not seen as equal
-                condition = Float.compare(number.floatValue(), fieldNumber.floatValue()) == 0;
-            } else {
-                condition = value.equals(fieldValue);
-            }
-
-            helper.assertTrue(condition, "The field value [" + fieldValue + "] did not match the new value [" + value + "] after updating the config");
+            helper.assertTrue(compare(value, fieldValue), "The field value [" + fieldValue + "] did not match the new value [" + value + "] after updating the config");
         } catch (IllegalAccessException exception) {
             helper.fail("Failed trying to access a field for the config [" + configKey + "] to validate the config: [" + exception.getMessage() + "]");
         }

@@ -5,6 +5,9 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.ai.attributes.Attribute;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+
+import java.text.NumberFormat;
 
 public enum ModifierType {
     DRAGON_TYPE("type"),
@@ -22,8 +25,11 @@ public enum ModifierType {
         return path;
     }
 
-    public ResourceLocation randomId(final Holder<Attribute> attribute) {
+    public ResourceLocation randomId(final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation) {
         String attributeId = attribute.getRegisteredName().replace(":", ".");
-        return DragonSurvival.res(path() + RANDOM.nextInt(100_000) + "/" + attributeId);
+        NumberFormat format = NumberFormat.getInstance();
+        format.setMaximumFractionDigits(2);
+        // Currently only relevant for data generation -> should be specific enough to avoid overlapping
+        return DragonSurvival.res(path() + format.format(amount) + "/" + operation.getSerializedName() + "/" + attributeId);
     }
 }
