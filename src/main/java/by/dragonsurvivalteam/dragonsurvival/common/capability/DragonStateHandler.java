@@ -38,6 +38,7 @@ import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     public static final String DRAGON_BODY = "dragon_body";
+    public static final String ENTITY_STATE = "entity_state";
 
     @SuppressWarnings("unchecked")
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
@@ -431,7 +432,9 @@ public class DragonStateHandler extends EntityStateHandler {
 
         tag.putBoolean("isJumping", isJumping);
 
-        return super.serializeNBT(provider);
+        tag.put(ENTITY_STATE, super.serializeNBT(provider));
+
+        return tag;
     }
 
     @Override
@@ -523,7 +526,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         isJumping = tag.getBoolean("isJumping");
 
-        super.deserializeNBT(provider, tag);
+        super.deserializeNBT(provider, tag.getCompound(ENTITY_STATE));
 
         refreshBody = true;
         getSkinData().compileSkin();
