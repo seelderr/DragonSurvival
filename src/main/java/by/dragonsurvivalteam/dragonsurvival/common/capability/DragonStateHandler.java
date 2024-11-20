@@ -137,7 +137,7 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void setSize(double size, @Nullable final Player player) {
-        if (this.size == size) {
+        if (dragonLevel != null && this.size == size) {
             return;
         }
 

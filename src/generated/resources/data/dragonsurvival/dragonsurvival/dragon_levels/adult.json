@@ -1,4 +1,10 @@
 {
+  "growth_items": [
+    {
+      "growth_in_ticks": 36000,
+      "items": "dragonsurvival:elder_dragon_heart"
+    }
+  ],
   "harvest_level_bonus": 1,
   "modifiers": [
     {

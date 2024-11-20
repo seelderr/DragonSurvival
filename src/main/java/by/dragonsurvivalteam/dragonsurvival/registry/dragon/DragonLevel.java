@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ScalingAttributeModifier;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Codec;
@@ -37,6 +38,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 
@@ -46,7 +48,8 @@ public record DragonLevel(
         int ticksUntilGrown,
         List<DSAttributeModifier> modifiers,
         List<ScalingAttributeModifier> scalingModifiers,
-        int harvestLevelBonus
+        int harvestLevelBonus,
+        List<MiscCodecs.GrowthItem> growthItems
 ) {
     public static final ResourceKey<Registry<DragonLevel>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_levels"));
 
@@ -55,7 +58,8 @@ public record DragonLevel(
             ExtraCodecs.intRange(20, Functions.daysToTicks(30)).fieldOf("ticks_until_grown").forGetter(DragonLevel::ticksUntilGrown),
             DSAttributeModifier.CODEC.listOf().fieldOf("modifiers").forGetter(DragonLevel::modifiers),
             ScalingAttributeModifier.CODEC.listOf().fieldOf("scaling_modifiers").forGetter(DragonLevel::scalingModifiers),
-            ExtraCodecs.intRange(0, 4).fieldOf("harvest_level_bonus").forGetter(DragonLevel::harvestLevelBonus)
+            ExtraCodecs.intRange(0, 4).fieldOf("harvest_level_bonus").forGetter(DragonLevel::harvestLevelBonus),
+            MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonLevel::growthItems)
     ).apply(instance, instance.stable(DragonLevel::new)));
 
     public static final Codec<Holder<DragonLevel>> CODEC = RegistryFixedCodec.create(REGISTRY);
@@ -75,6 +79,14 @@ public record DragonLevel(
 
     @Translation(type = Translation.Type.LEVEL, comments = "Ancient")
     public static ResourceKey<DragonLevel> ancient = key("ancient");
+
+    public double ticksToSize(int ticks) {
+        return (sizeRange().max() - sizeRange().min()) / ticksUntilGrown() * ticks;
+    }
+
+    public double getProgress(double size) {
+        return ((size - sizeRange().min())) / (sizeRange().max() - sizeRange().min());
+    }
 
     /** The player attribute map doesn't contain attributes that weren't accessed before */
     public void applyModifiers(final Player player) {
@@ -136,7 +148,12 @@ public record DragonLevel(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
-                0
+                0,
+                List.of(
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.ELDER_DRAGON_HEART.value()),
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(20), DSItems.WEAK_DRAGON_HEART.value()),
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(10), DSItems.DRAGON_HEART_SHARD.value())
+                )
         ));
 
         context.register(young, new DragonLevel(
@@ -155,7 +172,11 @@ public record DragonLevel(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
-                1
+                1,
+                List.of(
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(45), DSItems.ELDER_DRAGON_HEART.value()),
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(25), DSItems.WEAK_DRAGON_HEART.value())
+                )
         ));
 
         context.register(adult, new DragonLevel(
@@ -174,7 +195,10 @@ public record DragonLevel(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
-                1
+                1,
+                List.of(
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.ELDER_DRAGON_HEART.value())
+                )
         ));
 
         context.register(ancient, new DragonLevel(
@@ -193,7 +217,8 @@ public record DragonLevel(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
-                1
+                1,
+                List.of()
         ));
     }
 
@@ -235,6 +260,46 @@ public record DragonLevel(
         return registry.listElementIds().toList();
     }
 
+    public static Holder<DragonLevel> getLargest(@Nullable final HolderLookup.Provider provider) {
+        HolderLookup.RegistryLookup<DragonLevel> registry;
+
+        if (provider == null) {
+            registry = CommonHooks.resolveLookup(REGISTRY);
+        } else {
+            registry = provider.lookupOrThrow(REGISTRY);
+        }
+
+        Holder<DragonLevel> dragonLevel = null;
+
+        for (Holder.Reference<DragonLevel> level : Objects.requireNonNull(registry).listElements().toList()) {
+            if (dragonLevel == null || level.value().sizeRange().max() > dragonLevel.value().sizeRange().max()) {
+                dragonLevel = level;
+            }
+        }
+
+        return dragonLevel;
+    }
+
+    public static Holder<DragonLevel> getSmallest(@Nullable final HolderLookup.Provider provider) {
+        HolderLookup.RegistryLookup<DragonLevel> registry;
+
+        if (provider == null) {
+            registry = CommonHooks.resolveLookup(REGISTRY);
+        } else {
+            registry = provider.lookupOrThrow(REGISTRY);
+        }
+
+        Holder<DragonLevel> dragonLevel = null;
+
+        for (Holder.Reference<DragonLevel> level : Objects.requireNonNull(registry).listElements().toList()) {
+            if (dragonLevel == null || level.value().sizeRange().min() < dragonLevel.value().sizeRange().min()) {
+                dragonLevel = level;
+            }
+        }
+
+        return dragonLevel;
+    }
+
     public static Holder<DragonLevel> getLevel(@Nullable final HolderLookup.Provider provider, double size) {
         HolderLookup.RegistryLookup<DragonLevel> registry;
 
@@ -256,12 +321,13 @@ public record DragonLevel(
             double difference = Math.abs(level.value().sizeRange().min() - size);
 
             if (fallback == null || difference < fallbackDifference) {
+                fallbackDifference = difference;
                 fallback = level;
             }
         }
 
         if (fallback != null) {
-            // If no level matches pick the closest one
+            DragonSurvival.LOGGER.warn("No matching dragon level found for size [{}] - using [{}] as fallback", size, fallback.getRegisteredName());
             return fallback;
         }
 

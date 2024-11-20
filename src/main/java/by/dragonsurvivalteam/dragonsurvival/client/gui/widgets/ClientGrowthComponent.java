@@ -1,5 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.widgets;
 
+import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent;
@@ -9,15 +10,36 @@ import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 
-public class ClientDietComponent implements ClientTooltipComponent {
+public class ClientGrowthComponent implements ClientTooltipComponent {
     private static final int ICON_SIZE = 20;
 
-    private final DietComponent component;
+    private final GrowthComponent component;
     private final Component tooltip;
 
-    public ClientDietComponent(final DietComponent component) {
+    public ClientGrowthComponent(final GrowthComponent component) {
         this.component = component;
-        this.tooltip = Component.translatable(component.item().getDescriptionId()).append(": ").append(ToolTipHandler.getFoodTooltipData(component.item(), component.type()));
+        this.tooltip = Component.translatable(component.item().getDescriptionId()).append(": ").append(time(component.growth()));
+    }
+
+    private Component time(int ticks) {
+        int hours = (int) (Functions.ticksToHours(ticks));
+        int minutes = (int) (Functions.ticksToMinutes(ticks - Functions.hoursToTicks(hours)));
+        int seconds = (int) (Functions.ticksToSeconds(ticks - Functions.hoursToTicks(hours) - Functions.minutesToTicks(minutes)));
+        StringBuilder builder = new StringBuilder();
+
+        if (hours > 0) {
+            builder.append(hours).append("h ");
+        }
+
+        if (minutes > 0) {
+            builder.append(minutes).append("m ");
+        }
+
+        if (seconds > 0) {
+            builder.append(seconds).append("s");
+        }
+
+        return Component.literal(builder.toString());
     }
 
     @Override

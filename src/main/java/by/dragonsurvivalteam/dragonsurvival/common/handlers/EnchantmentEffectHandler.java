@@ -87,9 +87,8 @@ public class EnchantmentEffectHandler {
     }
 
     private static double getStolenTime(DragonStateHandler handler) {
-        double ticksToSteal = Functions.minutesToTicks(30);
+        int ticksToSteal = Functions.minutesToTicks(30);
         DragonLevel level = Objects.requireNonNull(handler.getLevel()).value();
-        // TODO level :: check
-        return (level.sizeRange().max() - level.sizeRange().min()) / Functions.secondsToTicks(level.ticksUntilGrown()) * ticksToSteal;
+        return level.ticksToSize(ticksToSteal);
     }
 }

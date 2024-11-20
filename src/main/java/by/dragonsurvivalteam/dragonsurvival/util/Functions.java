@@ -14,28 +14,28 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.util.RenderUtil;
 
 public class Functions {
-    public static int daysToTicks(int days) {
+    public static int daysToTicks(double days) {
         return hoursToTicks(days) * 24;
     }
 
-    public static int hoursToTicks(int hours) {
+    public static int hoursToTicks(double hours) {
         return minutesToTicks(hours) * 60;
     }
 
-    public static int minutesToTicks(int minutes) {
+    public static int minutesToTicks(double minutes) {
         return secondsToTicks(minutes) * 60;
     }
 
     public static int secondsToTicks(double seconds) {
-        return (int) (seconds * 20);
+        return (int) seconds * 20;
     }
 
-    public static int secondsToTicks(int seconds) {
-        return seconds * 20;
+    public static double ticksToHours(int ticks) {
+        return ticksToMinutes(ticks) / 60d;
     }
 
     public static double ticksToMinutes(int ticks) {
-        return ticksToSeconds(ticks) / 60;
+        return ticksToSeconds(ticks) / 60d;
     }
 
     public static double ticksToSeconds(int ticks) {

@@ -1,12 +1,12 @@
 package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.GrowthHUD;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.GrowthComponent;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
@@ -18,6 +18,8 @@ import by.dragonsurvivalteam.dragonsurvival.server.containers.DragonContainer;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.datafixers.util.Either;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Tooltip;
@@ -26,10 +28,11 @@ import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FormattedText;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
+import net.minecraft.world.inventory.tooltip.TooltipComponent;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -40,7 +43,6 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.StringJoiner;
 
 import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 
@@ -67,9 +69,9 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
     private static final String GROWTH_AGE = Translation.Type.GUI.wrap("dragon_inventory.growth_age");
 
     @Translation(type = Translation.Type.MISC, comments = {
-            "\n■ All dragons will gradually grow as time passes, improving their attributes. At certain growth stages, your appearance will change, and your growth will slow. You can use these items to speed up growth:§r",
-            "§6■ %s\n",
-            "§7■ A Star Bone will revert your growth slightly, and a Star Heart will completely stop you from growing. The biggest dragons can take other players for a ride!"
+            "\n■ All dragons will gradually grow as time passes, improving their attributes. At certain growth stages, your appearance will change, and your growth will slow.§r",
+            "§7■ A Star Bone will revert your growth slightly, and a Star Heart will completely stop you from growing. The biggest dragons can take other players for a ride!§r",
+            "§7■ Growth items:§r"
     })
     private static final String GROWTH_INFO = Translation.Type.GUI.wrap("dragon_inventory.growth_info");
 
@@ -83,15 +85,15 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
     public static double mouseX = -1;
     public static double mouseY = -1;
 
+    private static final int MAX_SHOWN = 5;
+    private int scroll;
+    private boolean resetScroll;
+
     private boolean clawsMenu;
     private final Player player;
     private boolean buttonClicked;
     private boolean isGrowthIconHovered;
     private final List<ExtendedButton> clawMenuButtons = new ArrayList<>();
-
-    private static String createTextureKey(final AbstractDragonType type, final String textureType, final String addition) {
-        return textureType + "_" + type.getTypeNameLowerCase() + addition;
-    }
 
     public DragonInventoryScreen(DragonContainer screenContainer, Inventory inv, Component titleIn) {
         super(screenContainer, inv, titleIn);
@@ -197,7 +199,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
     }
 
     @Override
-    protected void renderLabels(@NotNull final GuiGraphics guiGraphics, int p_230451_2_, int p_230451_3_) { /* Nothing to do */ }
+    protected void renderLabels(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY) { /* Nothing to do */ }
 
     @Override
     protected void renderBg(@NotNull final GuiGraphics guiGraphics, float partialTick, int mouseX, int mouseY) {
@@ -234,7 +236,6 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         int sides = 6;
 
         int radius = size / 2;
-
         Color color = new Color(99, 99, 99);
 
         RenderSystem.setShaderColor(color.brighter().getRed() / 255f, color.brighter().getBlue() / 255f, color.brighter().getGreen() / 255f, 1);
@@ -242,8 +243,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        ResourceLocation circleTexture = DragonSurvival.res("textures/gui/growth/circle_" + handler.getTypeNameLowerCase() + ".png");
-        RenderSystem.setShaderTexture(0, circleTexture);
+        RenderSystem.setShaderTexture(0, GrowthHUD.getOrCreate(GrowthHUD.CIRCLE_TEXTURE.apply(handler.getTypeNameLowerCase())));
         RenderingUtils.drawTexturedCircle(guiGraphics, circleX + radius, circleY + radius, radius, 0.5, 0.5, 0.5, sides, progress, -0.5);
 
         RenderSystem.setShaderColor(color.getRed() / 255f, color.getBlue() / 255f, color.getGreen() / 255f, 1);
@@ -251,8 +251,8 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
         // TODO level :: use adult as fallback texture
-        ResourceLocation iconTexture = DragonSurvival.res("textures/gui/growth/" + handler.getType() + "/growth_" + Objects.requireNonNull(level.getKey()).location().getPath() + ".png");
-        guiGraphics.blit(iconTexture, circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
+        ResourceLocation levelLocation = Objects.requireNonNull(level.getKey()).location();
+        guiGraphics.blit(GrowthHUD.getOrCreate(levelLocation.getNamespace(), GrowthHUD.ICON.apply(handler.getTypeNameLowerCase(), levelLocation)), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
     }
 
     @Override
@@ -278,16 +278,31 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
     }
 
     @Override
-    public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
+        if (isGrowthIconHovered) {
+            scroll += (int) -scrollY; // invert the value so that scrolling down shows further entries
+            return true;
+        }
+
+        return super.mouseScrolled(mouseX, mouseY, scrollX, scrollY);
+    }
+
+    @Override
+    public void render(@NotNull final GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         clawMenuButtons.forEach(button -> button.visible = clawsMenu);
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
-        renderTooltip(guiGraphics, mouseX, mouseY);
+        super.render(graphics, mouseX, mouseY, partialTick);
+        renderTooltip(graphics, mouseX, mouseY);
 
         if (isGrowthIconHovered) {
+            if (resetScroll) {
+                resetScroll = false;
+                scroll = 0;
+            }
+
             DragonStateHandler handler = DragonStateProvider.getData(player);
             DragonLevel dragonLevel = Objects.requireNonNull(handler.getLevel()).value();
 
-            double percentage = Math.clamp((handler.getSize() - dragonLevel.sizeRange().min()) / (dragonLevel.sizeRange().max() - dragonLevel.sizeRange().min()), 0, 1);
+            double percentage = Math.clamp(dragonLevel.getProgress(handler.getSize()), 0, 1);
             String ageInformation = NumberFormat.getPercentInstance().format(percentage);
 
             double missing = dragonLevel.sizeRange().max() - handler.getSize();
@@ -309,32 +324,33 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                 }
             }
 
-            ArrayList<Item> allowedList = new ArrayList<>();
+            List<GrowthComponent> growthItems = new ArrayList<>();
 
-            // FIXME level :: add growth items to level codec + use clientcomponent and scroll behaviour
-//            HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-//            HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-//            HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
-//
-//            if (handler.getSize() < DragonLevel.YOUNG.size) {
-//                allowedList.addAll(newbornList);
-//            } else if (handler.getSize() < DragonLevel.ADULT.size) {
-//                allowedList.addAll(youngList);
-//            } else {
-//                allowedList.addAll(adultList);
-//            }
+            handler.getLevel().value().growthItems().forEach(growthItem -> {
+                // A bit of wasted processing since not all are shown
+                growthItem.items().forEach(item -> growthItems.add(new GrowthComponent(item.value(), growthItem.growthInTicks())));
+            });
 
-            List<String> displayData = allowedList.stream().map(i -> new ItemStack(i).getDisplayName().getString()).toList();
-            StringJoiner result = new StringJoiner(", ");
-            displayData.forEach(result::add);
+            if (growthItems.size() <= MAX_SHOWN) {
+                scroll = 0;
+            } else {
+                scroll = Math.clamp(scroll, 0, growthItems.size() - MAX_SHOWN);
+            }
 
-            List<Component> components = List.of(
-//                    Component.translatable(GROWTH_STAGE).append(handler.getLevel().translatableName()),
-                    Component.translatable(GROWTH_AGE, ageInformation),
-                    Component.translatable(GROWTH_INFO, result.toString())
-            );
+            int max = Math.min(growthItems.size(), scroll + MAX_SHOWN);
 
-            guiGraphics.renderComponentTooltip(Minecraft.getInstance().font, components, mouseX, mouseY);
+            List<Either<FormattedText, TooltipComponent>> components = new ArrayList<>();
+            components.add(Either.left(Component.translatable(GROWTH_STAGE).append(DragonLevel.translatableName(Objects.requireNonNull(handler.getLevel().getKey())))));
+            components.add(Either.left(Component.translatable(GROWTH_AGE, ageInformation)));
+            components.add(Either.left(Component.translatable(GROWTH_INFO).append(Component.literal(" [" + Math.min(growthItems.size(), scroll + MAX_SHOWN) + " / " + growthItems.size() + "]").withStyle(ChatFormatting.DARK_GRAY))));
+
+            for (int i = scroll; i < max; i++) {
+                components.add(Either.right(growthItems.get(i)));
+            }
+
+            graphics.renderComponentTooltipFromElements(Minecraft.getInstance().font, components, mouseX, mouseY, ItemStack.EMPTY);
+        } else {
+            resetScroll = true;
         }
     }
 }

@@ -130,7 +130,7 @@ public class DragonAltarScreen extends Screen {
                     }
 
                     handler2.setHasFlight(true);
-                    handler2.setSize(button.type == null ? 0 : Double.MAX_VALUE, null);
+                    handler2.setSize(button.type == null ? -1 : 0, null);
                     handler2.getSkinData().get(Objects.requireNonNull(handler2.getLevel()).getKey()).get().defaultSkin = true;
 
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
