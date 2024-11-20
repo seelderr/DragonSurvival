@@ -38,23 +38,23 @@ public class DragonEditorDropdownButton extends DropDownButton {
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks) {
         active = visible = dragonEditorScreen.showUi;
         super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
-        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().settings.get(layers).get().selectedSkin);
+        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().layerSettings.get(layers).get().selectedSkin);
 
         if (!Objects.equals(currentValue, current)) {
             current = currentValue;
             updateMessage();
         }
 
-        List<String> valueList = DragonEditorHandler.getTextureKeys(dragonEditorScreen.dragonType, dragonEditorScreen.dragonBody, layers);
+        List<String> valueList = DragonEditorHandler.getDragonPartKeys(dragonEditorScreen.dragonType, dragonEditorScreen.dragonBody, layers);
 
         if (layers != EnumSkinLayer.BASE) {
-            valueList.addFirst(DefaultPartLoader.DEFAULT_PART);
+            valueList.addFirst(DefaultPartLoader.NO_PART);
         }
 
         valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
 
         values = valueList.toArray(new String[0]);
-        active = !dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().isDefaultSkin;
+        active = !dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().defaultSkin;
     }
 
     @Override

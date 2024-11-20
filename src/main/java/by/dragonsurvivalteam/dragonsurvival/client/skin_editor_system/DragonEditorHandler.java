@@ -55,14 +55,14 @@ import static by.dragonsurvivalteam.dragonsurvival.DragonSurvival.MODID;
 public class DragonEditorHandler {
     private static ShaderInstance skinGenerationShader;
 
-    private static @Nullable ResourceLocation getDragonPartLocation(final Player player, final EnumSkinLayer layer, final String partKey, final AbstractDragonType type) {
+    private static @Nullable ResourceLocation getDragonPartLocation(final EnumSkinLayer layer, final String partKey, final AbstractDragonType type) {
         if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
-            return getDragonPartLocation(player, EnumSkinLayer.EXTRA, partKey, type);
+            return getDragonPartLocation(EnumSkinLayer.EXTRA, partKey, type);
         }
 
-        if (layer == EnumSkinLayer.BASE && (partKey.equalsIgnoreCase("Skin") || partKey.equalsIgnoreCase(DefaultPartLoader.DEFAULT_PART))) {
-            // Choose a random value between 1 and 9 (incl.) for the default value (the base cannot be empty)
-            return getDragonPartLocation(player, layer, type.getSubtypeNameLowerCase() + "_base_" + player.getRandom().nextInt(9) + 1, type);
+        if (layer == EnumSkinLayer.BASE && partKey.equalsIgnoreCase(DefaultPartLoader.NO_PART)) {
+            // Without a base the dragon will be invisible
+            return ResourceLocation.parse(DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer).getFirst().texture());
         }
 
         List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer);
@@ -76,14 +76,14 @@ public class DragonEditorHandler {
         return null;
     }
 
-    public static @Nullable DragonPart getDragonPart(final Player player, final EnumSkinLayer layer, final String partKey, final AbstractDragonType type) {
+    public static @Nullable DragonPart getDragonPart(final EnumSkinLayer layer, final String partKey, final AbstractDragonType type) {
         if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
-            return getDragonPart(player, EnumSkinLayer.EXTRA, partKey, type);
+            return getDragonPart(EnumSkinLayer.EXTRA, partKey, type);
         }
 
-        if (layer == EnumSkinLayer.BASE && (partKey.equalsIgnoreCase("Skin") || partKey.equalsIgnoreCase(DefaultPartLoader.DEFAULT_PART))) {
-            // Choose a random value between 1 and 9 (incl.) for the default value (the base cannot be empty)
-            return getDragonPart(player, layer, type.getTypeNameLowerCase() + "_base_" + player.getRandom().nextInt(9) + 1, type);
+        if (layer == EnumSkinLayer.BASE && partKey.equalsIgnoreCase(DefaultPartLoader.NO_PART)) {
+            // Without a base the dragon will be invisible
+            return DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer).getFirst();
         }
 
         List<DragonPart> parts = DragonPartLoader.DRAGON_PARTS.get(type.getTypeNameLowerCase()).get(layer);
@@ -97,9 +97,9 @@ public class DragonEditorHandler {
         return null;
     }
 
-    public static ArrayList<String> getTextureKeys(final AbstractDragonType type, final Holder<DragonBody> body, final EnumSkinLayer layer) {
+    public static ArrayList<String> getDragonPartKeys(final AbstractDragonType type, final Holder<DragonBody> body, final EnumSkinLayer layer) {
         if (Objects.equals(layer.name, "Extra") && layer != EnumSkinLayer.EXTRA) {
-            return getTextureKeys(type, body, EnumSkinLayer.EXTRA);
+            return getDragonPartKeys(type, body, EnumSkinLayer.EXTRA);
         }
 
         ArrayList<String> keys = new ArrayList<>();
@@ -115,8 +115,8 @@ public class DragonEditorHandler {
         return keys;
     }
 
-    public static ArrayList<String> getTextureKeys(final Player player, final EnumSkinLayer layer) {
-        return getTextureKeys(DragonUtils.getType(player), DragonUtils.getBody(player), layer);
+    public static ArrayList<String> getDragonPartKeys(final Player player, final EnumSkinLayer layer) {
+        return getDragonPartKeys(DragonUtils.getType(player), DragonUtils.getBody(player), layer);
     }
 
     public static CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> generateSkinTextures(final DragonEntity dragon) {
@@ -164,21 +164,21 @@ public class DragonEditorHandler {
         ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + levelKey.location().getPath());
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-            LayerSettings settings = customization.settings.get(layer).get();
+            LayerSettings settings = customization.layerSettings.get(layer).get();
             String selectedSkin = settings.selectedSkin;
 
             if (selectedSkin != null) {
-                DragonPart skinTexture = getDragonPart(player, layer, selectedSkin, handler.getType());
+                DragonPart skinTexture = getDragonPart(layer, selectedSkin, handler.getType());
 
                 if (skinTexture != null) {
                     float hueVal = settings.hue - skinTexture.averageHue();
                     float satVal = settings.saturation;
                     float brightVal = settings.brightness;
 
-                    ResourceLocation location = getDragonPartLocation(player, layer, selectedSkin, handler.getType());
+                    ResourceLocation location = getDragonPartLocation(layer, selectedSkin, handler.getType());
                     AbstractTexture texture = Minecraft.getInstance().getTextureManager().getTexture(location);
 
-                    if (settings.isGlowing) {
+                    if (settings.glowing) {
                         glowTarget.bindWrite(true);
                     } else {
                         normalTarget.bindWrite(true);
@@ -195,7 +195,7 @@ public class DragonEditorHandler {
                     skinGenerationShader.getUniform("SatVal").set(satVal);
                     skinGenerationShader.getUniform("BrightVal").set(brightVal);
                     skinGenerationShader.getUniform("Colorable").set(skinTexture.isColorable() ? 1.0f : 0.0f);
-                    skinGenerationShader.getUniform("Glowing").set(settings.isGlowing ? 1.0f : 0.0f);
+                    skinGenerationShader.getUniform("Glowing").set(settings.glowing ? 1.0f : 0.0f);
                     skinGenerationShader.apply();
 
                     BufferBuilder bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
@@ -205,7 +205,7 @@ public class DragonEditorHandler {
                     bufferbuilder.addVertex(0.0F, 1.0F, 0.0F);
                     BufferUploader.draw(bufferbuilder.buildOrThrow());
 
-                    if (settings.isGlowing && layer == EnumSkinLayer.BASE) {
+                    if (settings.glowing && layer == EnumSkinLayer.BASE) {
                         normalTarget.bindWrite(true);
                         bufferbuilder = RenderSystem.renderThreadTesselator().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.BLIT_SCREEN);
                         bufferbuilder.addVertex(0.0F, 0.0F, 0.0F);
@@ -217,7 +217,7 @@ public class DragonEditorHandler {
                     }
 
                     skinGenerationShader.clear();
-                    if (settings.isGlowing) {
+                    if (settings.glowing) {
                         glowTarget.unbindWrite();
                     } else {
                         normalTarget.unbindWrite();
@@ -251,34 +251,34 @@ public class DragonEditorHandler {
         NativeImage glow = new NativeImage(512, 512, true);
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-            LayerSettings settings = customization.settings.get(layer).get();
+            LayerSettings settings = customization.layerSettings.get(layer).get();
             String selectedSkin = settings.selectedSkin;
 
             if (selectedSkin != null) {
-                DragonPart skinTexture = getDragonPart(player, layer, selectedSkin, handler.getType());
+                DragonPart skinTexture = getDragonPart(layer, selectedSkin, handler.getType());
 
                 if (skinTexture != null) {
                     float hue = settings.hue - skinTexture.averageHue();
                     float saturation = settings.saturation;
                     float brightness = settings.brightness;
 
-                    ResourceLocation textureLocation = getDragonPartLocation(player, layer, selectedSkin, handler.getType());
+                    ResourceLocation textureLocation = getDragonPartLocation(layer, selectedSkin, handler.getType());
                     NativeImage skinImage = RenderingUtils.getImageFromResource(textureLocation);
 
                     for (int x = 0; x < skinImage.getWidth(); x++) {
                         for (int y = 0; y < skinImage.getHeight(); y++) {
                             Color baseColor = new Color(skinImage.getPixelRGBA(x, y), true);
-                            Color hueAdjustedColor = getHueAdjustedColor(settings.isGlowing, skinTexture.isColorable(), hue, saturation, brightness, baseColor);
+                            Color hueAdjustedColor = getHueAdjustedColor(settings.glowing, skinTexture.isColorable(), hue, saturation, brightness, baseColor);
 
                             if (hueAdjustedColor == null) {
                                 continue;
                             }
 
                             if (hueAdjustedColor.getAlpha() != 0) {
-                                Supplier<NativeImage> target = settings.isGlowing ? () -> glow : () -> normal;
+                                Supplier<NativeImage> target = settings.glowing ? () -> glow : () -> normal;
                                 target.get().setPixelRGBA(x, y, hueAdjustedColor.getRGB());
 
-                                if (settings.isGlowing && layer == EnumSkinLayer.BASE) {
+                                if (settings.glowing && layer == EnumSkinLayer.BASE) {
                                     normal.setPixelRGBA(x, y, hueAdjustedColor.getRGB());
                                 }
                             }

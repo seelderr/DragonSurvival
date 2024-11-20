@@ -15,17 +15,18 @@ public class LayerSettings implements INBTSerializable<CompoundTag> {
     public static final String IS_COLOR_MODIFIED = "modifiedColor";
     public static final String IS_GLOWING = "glowing";
 
+    // The field names currently affect the result of the 'saved_customizations.json' file
     public String selectedSkin;
 
     public float hue;
     public float saturation;
     public float brightness;
 
-    public boolean isColorModified;
-    public boolean isGlowing;
+    public boolean modifiedColor;
+    public boolean glowing;
 
     public LayerSettings() {
-        this(DefaultPartLoader.DEFAULT_PART, 0.5f);
+        this(DefaultPartLoader.NO_PART, 0.5f);
     }
 
     public LayerSettings(String selectedSkin, float defaultHue) {
@@ -44,8 +45,8 @@ public class LayerSettings implements INBTSerializable<CompoundTag> {
         nbt.putFloat(SATURATION, saturation);
         nbt.putFloat(BRIGHTNESS, brightness);
 
-        nbt.putBoolean(IS_COLOR_MODIFIED, isColorModified);
-        nbt.putBoolean(IS_GLOWING, isGlowing);
+        nbt.putBoolean(IS_COLOR_MODIFIED, modifiedColor);
+        nbt.putBoolean(IS_GLOWING, glowing);
         return nbt;
     }
 
@@ -57,7 +58,7 @@ public class LayerSettings implements INBTSerializable<CompoundTag> {
         saturation = tag.getFloat(SATURATION);
         brightness = tag.getFloat(BRIGHTNESS);
 
-        isColorModified = tag.getBoolean(IS_COLOR_MODIFIED);
-        isGlowing = tag.getBoolean(IS_GLOWING);
+        modifiedColor = tag.getBoolean(IS_COLOR_MODIFIED);
+        glowing = tag.getBoolean(IS_GLOWING);
     }
 }

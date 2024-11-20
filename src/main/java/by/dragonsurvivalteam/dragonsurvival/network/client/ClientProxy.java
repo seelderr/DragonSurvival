@@ -87,12 +87,10 @@ public class ClientProxy {
         if (savedCustomizations != null) {
             AbstractDragonType type = data.getType();
 
-            if (type != null) {
-                //noinspection DataFlowIssue -> level and key are present
-                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
-                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
-                PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
-            }
+            //noinspection DataFlowIssue -> level and key are present
+            int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
+            SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
+            PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), preset.serializeNBT(localPlayer.registryAccess())));
         } else {
             PacketDistributor.sendToServer(new SyncPlayerSkinPreset.Data(localPlayer.getId(), new SkinPreset().serializeNBT(localPlayer.registryAccess())));
         }
@@ -113,8 +111,8 @@ public class ClientProxy {
 
             if (type != null) {
                 //noinspection DataFlowIssue -> level and key are present
-                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
-                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameUpperCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
+                int selectedSaveSlot = savedCustomizations.current.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(data.getLevel().getKey().location().toString(), 0);
+                SkinPreset preset = savedCustomizations.skinPresets.getOrDefault(type.getTypeNameLowerCase(), new HashMap<>()).getOrDefault(selectedSaveSlot, new SkinPreset());
                 context.reply(new SyncPlayerSkinPreset.Data(sender.getId(), preset.serializeNBT(sender.registryAccess())));
             }
         } else {

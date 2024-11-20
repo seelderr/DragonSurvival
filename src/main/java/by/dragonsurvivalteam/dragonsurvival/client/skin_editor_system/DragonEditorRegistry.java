@@ -5,8 +5,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Sa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
-import by.dragonsurvivalteam.dragonsurvival.util.GsonFactory;
+import by.dragonsurvivalteam.dragonsurvival.util.json.GsonFactory;
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.ResourceKey;
 import net.neoforged.api.distmarker.Dist;
@@ -42,6 +43,7 @@ public class DragonEditorRegistry {
         loadSavedCustomizations(event.getLevel().registryAccess());
     }
 
+    // TODO :: Move away from GSON class parsing to have more control on which fields are stored and in which way
     @SuppressWarnings("ResultOfMethodCallIgnored") // ignore
     public static void loadSavedCustomizations(@Nullable final HolderLookup.Provider provider) {
         if (hasInitialized) {
@@ -70,8 +72,8 @@ public class DragonEditorRegistry {
                     SkinPortingSystem.upgrade(savedCustomizations);
                     hasInitialized = true;
                     return;
-                } catch (IOException exception) {
-                    DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
+                } catch (IOException | JsonSyntaxException exception) {
+                    DragonSurvival.LOGGER.warn("An error occurred while processing the [" + SAVED_CUSTOMIZATIONS + "] file", exception);
                 }
             } catch (FileNotFoundException exception) {
                 DragonSurvival.LOGGER.error("Saved customization [{}] could not be found", savedFile.getName(), exception);

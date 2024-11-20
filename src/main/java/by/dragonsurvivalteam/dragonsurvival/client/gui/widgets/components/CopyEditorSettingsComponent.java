@@ -63,10 +63,11 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
             @Override
             public void onPress() {
+                //noinspection DataFlowIssue -> key is present
                 Lazy<DragonLevelCustomization> lazy = screen.preset.get(screen.dragonLevel.getKey());
 
                 if (lazy == null) {
-                    lazy = Lazy.of(() -> new DragonLevelCustomization(screen.dragonLevel.getKey()));
+                    lazy = Lazy.of(DragonLevelCustomization::new);
                 }
 
                 DragonLevelCustomization preset = lazy.get();
@@ -78,7 +79,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                     Holder<DragonLevel> newborn = /* DragonLevel.getLevel(access, 0); */ access.holderOrThrow(DragonLevel.newborn);
 
                     screen.preset.put(newborn.getKey(), Lazy.of(() -> {
-                        DragonLevelCustomization customization = new DragonLevelCustomization(newborn.getKey());
+                        DragonLevelCustomization customization = new DragonLevelCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
                     }));
@@ -88,7 +89,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                     Holder<DragonLevel> young = access.holderOrThrow(DragonLevel.young);
 
                     screen.preset.put(young.getKey(), Lazy.of(() -> {
-                        DragonLevelCustomization customization = new DragonLevelCustomization(young.getKey());
+                        DragonLevelCustomization customization = new DragonLevelCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
                     }));
@@ -98,7 +99,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                     Holder<DragonLevel> adult = access.holderOrThrow(DragonLevel.adult);
 
                     screen.preset.put(adult.getKey(), Lazy.of(() -> {
-                        DragonLevelCustomization customization = new DragonLevelCustomization(adult.getKey());
+                        DragonLevelCustomization customization = new DragonLevelCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
                     }));

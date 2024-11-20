@@ -7,7 +7,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.google.common.collect.ImmutableList;
@@ -57,14 +56,14 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settingsSupplier = () -> screen.preset.get(screen.dragonLevel.getKey()).get().settings.get(layer).get();
+        settingsSupplier = () -> screen.preset.get(screen.dragonLevel.getKey()).get().layerSettings.get(layer).get();
         LayerSettings settings = settingsSupplier.get();
-        DragonPart dragonPart = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
-        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.isGlowing, action -> { /* Nothing to do */ }) {
+        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.glowing, action -> { /* Nothing to do */ }) {
             final Function<Boolean, Boolean> setGlowingAction = value -> {
-                settingsSupplier.get().isGlowing = value;
-                this.selected = settingsSupplier.get().isGlowing;
+                settingsSupplier.get().glowing = value;
+                this.selected = settingsSupplier.get().glowing;
                 DragonEditorScreen.HANDLER.getSkinData().compileSkin();
                 screen.update();
                 return !value;
@@ -72,7 +71,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
             @Override
             public void onPress() {
-                screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(setGlowingAction, !settingsSupplier.get().isGlowing));
+                screen.actionHistory.add(new DragonEditorScreen.EditorAction<>(setGlowingAction, !settingsSupplier.get().glowing));
             }
         };
 
@@ -82,7 +81,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
             hsb[0] = 0.5f;
             hsb[1] = 0.5f;
             hsb[2] = 0.5f;
-        } else if (!settings.isColorModified) {
+        } else if (!settings.modifiedColor) {
             hsb[0] = dragonPart.averageHue();
             hsb[1] = 0.5f;
             hsb[2] = 0.5f;
@@ -93,7 +92,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
             private final Function<Integer, Integer> setHueAction = value -> {
                 settingsSupplier.get().hue = value / 360f;
-                settingsSupplier.get().isColorModified = hasModifiedColor(dragonPart);
+                settingsSupplier.get().modifiedColor = hasModifiedColor(dragonPart);
 
                 DragonEditorScreen.HANDLER.getSkinData().compileSkin();
                 screen.update();
@@ -146,7 +145,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
 
             private final Function<Integer, Integer> setSaturationAction = value -> {
                 settingsSupplier.get().saturation = value / 360f;
-                settingsSupplier.get().isColorModified = hasModifiedColor(dragonPart);
+                settingsSupplier.get().modifiedColor = hasModifiedColor(dragonPart);
 
                 DragonEditorScreen.HANDLER.getSkinData().compileSkin();
                 screen.update();

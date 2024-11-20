@@ -205,7 +205,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
         }
 
         // Show the default skin while we are compiling if we haven't already compiled the skin
-        if (customization.isDefaultSkin || !handler.getSkinData().isCompiled.getOrDefault(levelKey, false)) {
+        if (customization.defaultSkin || !handler.getSkinData().isCompiled.getOrDefault(levelKey, false)) {
             //noinspection DataFlowIssue -> key is present
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + levelKey.location().getPath() + ".png");
         }

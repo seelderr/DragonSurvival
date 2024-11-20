@@ -59,7 +59,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             }
         }
 
-        if (glowTexture == null && handler.getSkinData().get(handler.getLevel().getKey()).get().isDefaultSkin) {
+        if (glowTexture == null && handler.getSkinData().get(handler.getLevel().getKey()).get().defaultSkin) {
             // FIXME level
             ResourceLocation location = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + handler.getLevel().getKey().location().getPath() + "_glow.png");
 
@@ -77,7 +77,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         } else {
             ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().getKey().location().getPath()); // FIXME level
 
-            if (customization.settings.values().stream().anyMatch(layerSettings -> layerSettings.get().isGlowing)) {
+            if (customization.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
                 RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);
                 VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
                 dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());

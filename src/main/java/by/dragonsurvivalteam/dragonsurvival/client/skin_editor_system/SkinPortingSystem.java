@@ -29,12 +29,12 @@ public class SkinPortingSystem {
                     Lazy<DragonLevelCustomization> lazy = presets.skinPresets.get(type).get(saveSlot).get(dragonLevel);
 
                     if (lazy == null) {
-                        lazy = Lazy.of(() -> new DragonLevelCustomization(dragonLevel));
+                        lazy = Lazy.of(DragonLevelCustomization::new);
                     }
 
                     DragonLevelCustomization customization = lazy.get();
 
-                    for (EnumSkinLayer layer : customization.settings.keySet()) {
+                    for (EnumSkinLayer layer : customization.layerSettings.keySet()) {
                         Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type.toLowerCase(Locale.ENGLISH));
 
                         // Convert the numbered 'EXTRA' layer to the generic 'EXTRA' layer
@@ -42,12 +42,12 @@ public class SkinPortingSystem {
                         List<DragonPart> parts = partMap.get(actualLayer);
 
                         if (parts != null) {
-                            String partKey = DefaultPartLoader.getDefaultPartKey(DragonTypes.getStatic(type), dragonLevel, layer);
-                            LayerSettings settings = customization.settings.get(layer).get();
+                            String partKey = DefaultPartLoader.getDefaultPartKey(DragonTypes.getStatic(type), dragonLevel.location(), layer);
+                            LayerSettings settings = customization.layerSettings.get(layer).get();
 
                             for (DragonPart part : parts) {
                                 if (part.key().equals(partKey)) {
-                                    settings.hue = settings.isColorModified ? part.averageHue() - settings.hue - 0.5f : part.averageHue();
+                                    settings.hue = settings.modifiedColor ? part.averageHue() - settings.hue - 0.5f : part.averageHue();
 
                                     if (settings.hue > 1) {
                                         settings.hue -= 1;

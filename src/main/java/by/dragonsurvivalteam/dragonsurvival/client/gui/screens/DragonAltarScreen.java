@@ -120,7 +120,7 @@ public class DragonAltarScreen extends Screen {
                     handler1.setHasFlight(true);
                     handler1.setSize(0, null);
                     //noinspection DataFlowIssue -> level is present
-                    handler1.getSkinData().get(handler1.getLevel().getKey()).get().isDefaultSkin = true;
+                    handler1.getSkinData().get(handler1.getLevel().getKey()).get().defaultSkin = true;
 
                     handler2.setType(button.type);
 
@@ -131,7 +131,7 @@ public class DragonAltarScreen extends Screen {
                     handler2.setHasFlight(true);
                     handler2.setSize(button.type == null ? 0 : Double.MAX_VALUE, null);
                     //noinspection DataFlowIssue -> level is present
-                    handler2.getSkinData().get(handler2.getLevel().getKey()).get().isDefaultSkin = true;
+                    handler2.getSkinData().get(handler2.getLevel().getKey()).get().defaultSkin = true;
 
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
                     FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];

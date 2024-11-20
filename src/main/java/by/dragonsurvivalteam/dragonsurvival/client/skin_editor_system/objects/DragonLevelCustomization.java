@@ -4,10 +4,9 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLa
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DragonPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
@@ -21,14 +20,14 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
     public static final String HAS_WINGS = "wings";
     public static final String IS_DEFAULT_SKIN = "defaultSkin";
 
-    public HashMap<EnumSkinLayer, Lazy<LayerSettings>> settings = new HashMap<>();
-    public ResourceKey<DragonLevel> dragonLevel;
+    // The field names currently affect the result of the 'saved_customizations.json' file
+    public HashMap<EnumSkinLayer, Lazy<LayerSettings>> layerSettings = new HashMap<>();
 
-    public boolean hasWings = true;
-    public boolean isDefaultSkin;
+    public boolean wings = true;
+    public boolean defaultSkin;
 
-    public DragonLevelCustomization(final ResourceKey<DragonLevel> dragonLevel, final AbstractDragonType type) {
-        this(dragonLevel);
+    public DragonLevelCustomization(final ResourceLocation dragonLevel, final AbstractDragonType type) {
+        this();
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
             // Convert the numbered 'EXTRA' layer to the generic 'EXTRA' layer
@@ -42,32 +41,30 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
             if (parts != null) {
                 for (DragonPart part : parts) {
                     if (part.key().equals(partKey)) {
-                        settings.put(layer, Lazy.of(() -> new LayerSettings(partKey, part.averageHue())));
+                        layerSettings.put(layer, Lazy.of(() -> new LayerSettings(partKey, part.averageHue())));
                         break;
                     }
                 }
             } else {
-                settings.put(layer, Lazy.of(() -> new LayerSettings(partKey, 0.5f)));
+                layerSettings.put(layer, Lazy.of(() -> new LayerSettings(partKey, 0.5f)));
             }
         }
     }
 
-    public DragonLevelCustomization(final ResourceKey<DragonLevel> dragonLevel) {
-        this.dragonLevel = dragonLevel;
-
+    public DragonLevelCustomization() {
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-            settings.computeIfAbsent(layer, key -> Lazy.of(LayerSettings::new));
+            layerSettings.computeIfAbsent(layer, key -> Lazy.of(LayerSettings::new));
         }
     }
 
     @Override
     public CompoundTag serializeNBT(@NotNull final HolderLookup.Provider provider) {
         CompoundTag layerData = new CompoundTag();
-        layerData.putBoolean(HAS_WINGS, hasWings);
-        layerData.putBoolean(IS_DEFAULT_SKIN, isDefaultSkin);
+        layerData.putBoolean(HAS_WINGS, wings);
+        layerData.putBoolean(IS_DEFAULT_SKIN, defaultSkin);
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-            layerData.put(layer.name(), settings.getOrDefault(layer, Lazy.of(LayerSettings::new)).get().serializeNBT(provider));
+            layerData.put(layer.name(), layerSettings.getOrDefault(layer, Lazy.of(LayerSettings::new)).get().serializeNBT(provider));
         }
 
         return layerData;
@@ -75,11 +72,11 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
 
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag tag) {
-        hasWings = tag.getBoolean(HAS_WINGS);
-        isDefaultSkin = tag.getBoolean(IS_DEFAULT_SKIN);
+        wings = tag.getBoolean(HAS_WINGS);
+        defaultSkin = tag.getBoolean(IS_DEFAULT_SKIN);
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
-            settings.put(layer, Lazy.of(() -> {
+            layerSettings.put(layer, Lazy.of(() -> {
                 LayerSettings group = new LayerSettings();
                 CompoundTag layerData = tag.getCompound(layer.name());
                 group.deserializeNBT(provider, layerData);

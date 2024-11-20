@@ -26,8 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
@@ -38,6 +36,7 @@ import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     public static final String DRAGON_BODY = "dragon_body";
+    public static final String DRAGON_LEVEL = "dragon_level";
     public static final String ENTITY_STATE = "entity_state";
 
     @SuppressWarnings("unchecked")
@@ -126,30 +125,51 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     public void setSize(final Holder<DragonLevel> dragonLevel, @Nullable final Player player) {
+        if (dragonLevel == null) {
+            setSize(-1, player);
+            return;
+        }
+
         if (this.dragonLevel == null || !this.dragonLevel.is(dragonLevel)) {
-            setSize(dragonLevel.value().sizeRange().min(), player);
+            setSize(dragonLevel, dragonLevel.value().sizeRange().min(), player);
         }
     }
 
     public void setSize(double size, @Nullable final Player player) {
-        if (dragonLevel == null || size != this.size) {
-            this.size = size;
-
-            if (dragonLevel == null || !dragonLevel.value().sizeRange().matches(size)) {
-                dragonLevel = DragonLevel.getLevel(player != null ? player.registryAccess() : null, size);
-            }
-
-            // TODO :: better way of doing this
-            if (FMLEnvironment.dist == Dist.CLIENT) {
-                ClientProxy.sendClientData();
-            }
-
-            if (dragonType != null) {
-                setSavedDragonSize(dragonType.getTypeName(), size);
-            }
-
-            DSModifiers.updateSizeModifiers(player, this);
+        if (this.size == size) {
+            return;
         }
+
+        if (size == -1) {
+            DSModifiers.updateSizeModifiers(player, this);
+            dragonLevel = null;
+            return;
+        }
+
+        Holder<DragonLevel> levelToSet = dragonLevel;
+
+        if (dragonLevel == null || !dragonLevel.value().sizeRange().matches(size)) {
+            levelToSet = DragonLevel.getLevel(player != null ? player.registryAccess() : null, size);
+        }
+
+        setSize(levelToSet, size, player);
+    }
+
+    public void setSize(@NotNull final Holder<DragonLevel> dragonLevel, double size, @Nullable final Player player) {
+        if (this.size == size && this.dragonLevel != null && this.dragonLevel.is(dragonLevel)) {
+            return;
+        }
+
+        this.size = size;
+        this.dragonLevel = dragonLevel;
+
+        if (player != null && player.level().isClientSide()) {
+            // FIXME :: why does this happen here?
+            ClientProxy.sendClientData();
+        }
+
+        setSavedDragonSize(dragonType.getTypeName(), size);
+        DSModifiers.updateSizeModifiers(player, this);
     }
 
     public double getSavedDragonSize(final String type) {
@@ -374,6 +394,8 @@ public class DragonStateHandler extends EntityStateHandler {
         tag.putString("subtype", dragonType != null ? dragonType.getSubtypeName() : "none");
         //noinspection DataFlowIssue -> key is present
         tag.putString(DRAGON_BODY, dragonBody != null ? dragonBody.getKey().location().toString() : "none");
+        //noinspection DataFlowIssue -> key is present
+        tag.putString(DRAGON_LEVEL, dragonLevel != null ? dragonLevel.getKey().location().toString() : "none");
 
         if (isDragon()) {
             tag.put("typeData", dragonType.writeNBT());
@@ -455,11 +477,17 @@ public class DragonStateHandler extends EntityStateHandler {
 
         try {
             ResourceLocation bodyLocation = ResourceLocation.parse(tag.getString(DRAGON_BODY));
-            Optional<Holder.Reference<DragonBody>> optionalBody = provider.lookupOrThrow(DragonBody.REGISTRY).get(DragonBody.key(bodyLocation));
+            Optional<Holder.Reference<DragonBody>> optionalBody = provider.holder(DragonBody.key(bodyLocation));
             optionalBody.ifPresent(body -> dragonBody = body);
         } catch (ResourceLocationException ignored) {}
 
-        if (isDragon()) {
+        try {
+            ResourceLocation levelLocation = ResourceLocation.parse(tag.getString(DRAGON_LEVEL));
+            Optional<Holder.Reference<DragonLevel>> optionalLevel = provider.holder(DragonLevel.key(levelLocation));
+            optionalLevel.ifPresent(level -> dragonLevel = level);
+        } catch (ResourceLocationException ignored) {}
+
+        if (dragonType != null) {
             if (dragonBody == null) {
                 // This can happen if a dragon body gets removed
                 dragonBody = DragonBody.random(provider);
@@ -477,7 +505,12 @@ public class DragonStateHandler extends EntityStateHandler {
             getMovementData().spinCooldown = tag.getInt("spinCooldown");
             getMovementData().spinAttack = tag.getInt("spinAttack");
 
-            setSize(tag.getDouble("size"), null);
+            if (dragonLevel == null) {
+                setSize(tag.getDouble("size"), null);
+            } else {
+                setSize(dragonLevel, tag.getDouble("size"), null);
+            }
+
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
             isGrowing = !tag.contains("growing") || tag.getBoolean("growing");
 
@@ -548,7 +581,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.setType(null);
         this.setBody(null, player);
-        this.setSize(20F, player);
+        this.setSize(-1, player);
         this.setIsHiding(false);
 
         if (!ServerConfig.saveAllAbilities) {

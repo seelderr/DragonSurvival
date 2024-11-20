@@ -8,7 +8,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEdit
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonPart;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.LayerSettings;
-import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.gui.GuiGraphics;
@@ -41,21 +40,21 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settingsSupplier = () -> screen.preset.get(screen.dragonLevel.getKey()).get().settings.get(layer).get();
+        settingsSupplier = () -> screen.preset.get(screen.dragonLevel.getKey()).get().layerSettings.get(layer).get();
 
         LayerSettings settings = settingsSupplier.get();
-        DragonPart dragonPart = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonPart dragonPart = DragonEditorHandler.getDragonPart(layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
 
-        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.isGlowing, box -> {
-            settingsSupplier.get().isGlowing = !settingsSupplier.get().isGlowing;
-            box.selected = settingsSupplier.get().isGlowing;
+        glowing = new ExtendedCheckbox(x + 3, y, 20, 20, 20, Component.translatable(LangKey.GUI_GLOWING), settings.glowing, box -> {
+            settingsSupplier.get().glowing = !settingsSupplier.get().glowing;
+            box.selected = settingsSupplier.get().glowing;
             DragonEditorScreen.HANDLER.getSkinData().compileSkin();
         });
 
         //noinspection DataFlowIssue -> part is present
         Color defaultC = Color.decode(dragonPart.defaultColor());
 
-        if (settings.isColorModified) {
+        if (settings.modifiedColor) {
             defaultC = Color.getHSBColor(settings.hue, settings.saturation, settings.brightness);
         }
 
@@ -65,7 +64,7 @@ public class ColorSelectorComponent extends AbstractContainerEventHandler implem
             settingsSupplier.get().hue = hsb[0];
             settingsSupplier.get().saturation = hsb[1];
             settingsSupplier.get().brightness = hsb[2];
-            settingsSupplier.get().isColorModified = true;
+            settingsSupplier.get().modifiedColor = true;
 
             DragonEditorScreen.HANDLER.getSkinData().compileSkin();
             screen.update();

@@ -195,7 +195,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             if (noSkin && Objects.equals(playerName, minecraft.player.getGameProfile().getName())) {
                 handler.getSkinData().skinPreset.deserializeNBT(minecraft.player.registryAccess(), playerData.getSkinData().skinPreset.serializeNBT(Minecraft.getInstance().player.registryAccess()));
             } else {
-                handler.getSkinData().get(dragonLevel.getKey()).get().isDefaultSkin = true;
+                handler.getSkinData().get(dragonLevel.getKey()).get().defaultSkin = true;
             }
 
             FakeClientPlayerUtils.getFakePlayer(0, handler).animationSupplier = () -> "fly_head_locked_magic";
