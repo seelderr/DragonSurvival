@@ -2,7 +2,6 @@ package by.dragonsurvivalteam.dragonsurvival.commands;
 
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import com.mojang.brigadier.CommandDispatcher;
@@ -12,7 +11,6 @@ import com.mojang.brigadier.tree.LiteralCommandNode;
 import com.mojang.brigadier.tree.RootCommandNode;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.util.Mth;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 import static net.minecraft.commands.Commands.argument;
@@ -24,7 +22,7 @@ public class DragonSizeCommand {
         LiteralCommandNode<CommandSourceStack> dragonSetSize = literal("dragon-set-size").requires(commandSource -> commandSource.hasPermission(2)).build();
 
         ArgumentCommandNode<CommandSourceStack, Double> dragonSize = argument("dragon_size", DoubleArgumentType.doubleArg(0, 1000)).requires(commandSource -> commandSource.hasPermission(2)).executes(context -> {
-            double size = Mth.clamp(context.getArgument("dragon_size", Double.TYPE), 1, ServerConfig.maxGrowthSize);
+            double size = context.getArgument("dragon_size", Double.TYPE);
             ServerPlayer serverPlayer = context.getSource().getPlayerOrException();
             DragonStateHandler handler = DragonStateProvider.getData(serverPlayer);
 

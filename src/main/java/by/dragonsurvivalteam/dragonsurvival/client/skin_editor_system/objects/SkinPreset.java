@@ -13,12 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 
 public class SkinPreset implements INBTSerializable<CompoundTag> {
-    public HashMap<ResourceKey<DragonLevel>, Lazy<DragonLevelCustomization>> skins = new HashMap<>();
+    private final Lazy<HashMap<ResourceKey<DragonLevel>, Lazy<DragonLevelCustomization>>> skins = Lazy.of(this::initialize);
 
-    public SkinPreset() {
-        for (ResourceKey<DragonLevel> dragonLevel : DragonLevel.keys(null)) {
-            skins.computeIfAbsent(dragonLevel, level -> Lazy.of(() -> new DragonLevelCustomization(level)));
-        }
+    public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonLevel> dragonLevel) {
+        return skins.get().get(dragonLevel);
+    }
+
+    public void put(final ResourceKey<DragonLevel> dragonLevel, final Lazy<DragonLevelCustomization> customization) {
+        skins.get().put(dragonLevel, customization);
     }
 
     public void initDefaults(final DragonStateHandler handler) {
@@ -31,8 +33,18 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
         }
 
         for (ResourceKey<DragonLevel> dragonLevel : DragonLevel.keys(null)) {
-            skins.put(dragonLevel, Lazy.of(() -> new DragonLevelCustomization(dragonLevel, type)));
+            skins.get().put(dragonLevel, Lazy.of(() -> new DragonLevelCustomization(dragonLevel, type)));
         }
+    }
+
+    public HashMap<ResourceKey<DragonLevel>, Lazy<DragonLevelCustomization>> initialize() {
+        HashMap<ResourceKey<DragonLevel>, Lazy<DragonLevelCustomization>> customizations = new HashMap<>();
+
+        for (ResourceKey<DragonLevel> dragonLevel : DragonLevel.keys(null)) {
+            customizations.computeIfAbsent(dragonLevel, level -> Lazy.of(() -> new DragonLevelCustomization(level)));
+        }
+
+        return customizations;
     }
 
     @Override
@@ -40,7 +52,7 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
         CompoundTag tag = new CompoundTag();
 
         for (ResourceKey<DragonLevel> dragonLevel : DragonLevel.keys(provider)) {
-            tag.put(DragonLevel.name(dragonLevel), skins.getOrDefault(dragonLevel, Lazy.of(() -> new DragonLevelCustomization(dragonLevel))).get().serializeNBT(provider));
+            tag.put(dragonLevel.location().toString(), skins.get().getOrDefault(dragonLevel, Lazy.of(() -> new DragonLevelCustomization(dragonLevel))).get().serializeNBT(provider));
         }
 
         return tag;
@@ -49,7 +61,7 @@ public class SkinPreset implements INBTSerializable<CompoundTag> {
     @Override
     public void deserializeNBT(@NotNull final HolderLookup.Provider provider, @NotNull final CompoundTag base) {
         for (ResourceKey<DragonLevel> level : DragonLevel.keys(provider)) {
-            skins.put(level, Lazy.of(() -> {
+            skins.get().put(level, Lazy.of(() -> {
                         DragonLevelCustomization group = new DragonLevelCustomization(level);
                         CompoundTag dragonLevelData = base.getCompound(level.location().toString());
                         group.deserializeNBT(provider, dragonLevelData);

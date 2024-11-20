@@ -5,14 +5,10 @@ import com.google.gson.GsonBuilder;
 import net.neoforged.neoforge.common.util.Lazy;
 
 final public class GsonFactory {
-    private static final Gson object;
-
-    static {
-        object = newBuilder().create();
-    }
+    private static final Gson GSON = newBuilder().create();
 
     public static Gson getDefault() {
-        return object;
+        return GSON;
     }
 
     public static GsonBuilder newBuilder() {

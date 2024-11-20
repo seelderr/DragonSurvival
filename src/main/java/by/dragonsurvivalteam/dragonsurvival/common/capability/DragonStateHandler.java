@@ -29,13 +29,12 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.UnknownNullability;
 
-import javax.annotation.Nullable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
+import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
     public static final String DRAGON_BODY = "dragon_body";
@@ -60,7 +59,7 @@ public class DragonStateHandler extends EntityStateHandler {
     /** Only needs to be updated on effect removal (server -> client) */
     private int hunterStacks;
 
-    public boolean growing = true;
+    public boolean isGrowing = true;
 
     public boolean treasureResting;
     public int treasureRestTimer;
@@ -125,12 +124,18 @@ public class DragonStateHandler extends EntityStateHandler {
         movementData.deltaMovement = deltaMovement;
     }
 
+    public void setSize(final Holder<DragonLevel> dragonLevel, @Nullable final Player player) {
+        if (this.dragonLevel == null || !this.dragonLevel.is(dragonLevel)) {
+            setSize(dragonLevel.value().sizeRange().min(), player);
+        }
+    }
+
     public void setSize(double size, @Nullable final Player player) {
-        if (size != this.size) {
+        if (dragonLevel == null || size != this.size) {
             this.size = size;
 
             if (dragonLevel == null || !dragonLevel.value().sizeRange().matches(size)) {
-                dragonLevel = DragonLevel.getLevel(null, size);
+                dragonLevel = DragonLevel.getLevel(player != null ? player.registryAccess() : null, size);
             }
 
             // TODO :: better way of doing this
@@ -141,9 +146,9 @@ public class DragonStateHandler extends EntityStateHandler {
             if (dragonType != null) {
                 setSavedDragonSize(dragonType.getTypeName(), size);
             }
-        }
 
-        DSModifiers.updateSizeModifiers(player, this);
+            DSModifiers.updateSizeModifiers(player, this);
+        }
     }
 
     public double getSavedDragonSize(final String type) {
@@ -217,7 +222,7 @@ public class DragonStateHandler extends EntityStateHandler {
             return;
         }
 
-        growing = true;
+        isGrowing = true;
         getMagicData().initAbilities(type);
         dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
     }
@@ -385,7 +390,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
             tag.putDouble("size", getSize());
             tag.putBoolean("destructionEnabled", getDestructionEnabled());
-            tag.putBoolean("growing", growing);
+            tag.putBoolean("growing", isGrowing);
 
             tag.putBoolean("isFlying", isWingsSpread());
 
@@ -471,7 +476,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
             setSize(tag.getDouble("size"), null);
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
-            growing = !tag.contains("growing") || tag.getBoolean("growing");
+            isGrowing = !tag.contains("growing") || tag.getBoolean("growing");
 
             treasureResting = tag.getBoolean("resting");
             treasureRestTimer = tag.getInt("restingTimer");

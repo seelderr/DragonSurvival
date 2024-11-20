@@ -37,6 +37,7 @@ public abstract class MagicAbility extends PassiveDragonAbility {
         String manaFromAbility = abilityLevel > 0 ? "+" + abilityLevel : "0";
 
         Holder<DragonBody> body = DragonStateProvider.getData(player).getBody();
+        //noinspection DataFlowIssue -> body is present
         List<DSAttributeModifier> manaModifiers = body.value().modifiers().stream().filter(modifier -> modifier.attribute().is(DSAttributes.MANA)).toList();
 
         AttributeInstance dummyInstance = new AttributeInstance(DSAttributes.MANA, instance -> { /* Nothing to do */ });

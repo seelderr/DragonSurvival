@@ -177,7 +177,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
         //noinspection DataFlowIssue -> level is present
-        DragonLevelCustomization customization = handler.getSkinData().skinPreset.skins.get(handler.getLevel().getKey()).get();
+        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
 
         if (handler.getSkinData().blankSkin) {
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/blank_skin_" + handler.getTypeNameLowerCase() + ".png");
@@ -185,7 +185,7 @@ public class DragonModel extends GeoModel<DragonEntity> {
 
         ResourceKey<DragonLevel> levelKey = handler.getLevel().getKey();
 
-        if (handler.getSkinData().recompileSkin.get(levelKey)) {
+        if (handler.getSkinData().recompileSkin.getOrDefault(levelKey, true)) {
             if (ClientConfig.forceCPUSkinGeneration) {
                 if (textureRegisterFuture.isDone()) {
                     CompletableFuture<List<Pair<NativeImage, ResourceLocation>>> imageGenerationFuture = DragonEditorHandler.generateSkinTextures(dragon);
@@ -204,10 +204,8 @@ public class DragonModel extends GeoModel<DragonEntity> {
             }
         }
 
-        // FIXME level :: need to incorporate namespace into this
-
         // Show the default skin while we are compiling if we haven't already compiled the skin
-        if (customization.isDefaultSkin || !handler.getSkinData().isCompiled.get(levelKey)) {
+        if (customization.isDefaultSkin || !handler.getSkinData().isCompiled.getOrDefault(levelKey, false)) {
             //noinspection DataFlowIssue -> key is present
             return ResourceLocation.fromNamespaceAndPath(MODID, "textures/dragon/" + handler.getTypeNameLowerCase() + "_" + levelKey.location().getPath() + ".png");
         }

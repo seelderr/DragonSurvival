@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.advancements.DSAdva
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.DSLanguageProvider;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags.*;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
@@ -54,6 +55,7 @@ public class DataGeneration {
         builder.add(Registries.DAMAGE_TYPE, DSDamageTypes::registerDamageTypes);
         builder.add(Registries.ENCHANTMENT, DSEnchantments::registerEnchantments);
         builder.add(DragonBody.REGISTRY, DragonBody::registerBodies);
+        builder.add(DragonLevel.REGISTRY, DragonLevel::registerLevels);
         DatapackBuiltinEntriesProvider datapackProvider = new DatapackBuiltinEntriesProvider(output, lookup, builder, Set.of(DragonSurvival.MODID));
         generator.addProvider(event.includeServer(), datapackProvider);
 

@@ -1,6 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects;
 
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -25,7 +25,7 @@ public class LayerSettings implements INBTSerializable<CompoundTag> {
     public boolean isGlowing;
 
     public LayerSettings() {
-        this(SkinCap.defaultSkinValue, 0.5f);
+        this(DefaultPartLoader.DEFAULT_PART, 0.5f);
     }
 
     public LayerSettings(String selectedSkin, float defaultHue) {

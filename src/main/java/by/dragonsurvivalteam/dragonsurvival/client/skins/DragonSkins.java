@@ -2,11 +2,13 @@ package by.dragonsurvivalteam.dragonsurvival.client.skins;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.render.ClientDragonRenderer;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import com.mojang.blaze3d.Blaze3D;
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.resources.ResourceKey;
@@ -275,5 +277,9 @@ public class DragonSkins {
         playerSkinCache.clear();
         playerGlowCache.clear();
         hasFailedFetch.clear();
+    }
+
+    public static boolean renderCustomSkin(final LocalPlayer player) {
+        return DragonStateProvider.getData(player).getSkinData().renderCustomSkin;
     }
 }

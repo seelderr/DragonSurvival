@@ -33,10 +33,10 @@ public class DefaultPartLoader extends SimpleJsonResourceReloadListener {
         DEFAULT_PARTS.put(DragonTypes.FOREST.getTypeNameLowerCase(), new HashMap<>());
         DEFAULT_PARTS.put(DragonTypes.SEA.getTypeNameLowerCase(), new HashMap<>());
 
-        map.forEach((location, value) -> value.getAsJsonArray().forEach(element -> {
-            // Get the file name which is equal to the dragon type
-            String dragonType = location.getPath().substring(location.getPath().lastIndexOf('/') + 1);
-            JsonObject dragonLevelMap = element.getAsJsonObject();
+        map.forEach((location, value) -> {
+            // Location path is without the specified directory
+            String dragonType = location.getPath();
+            JsonObject dragonLevelMap = value.getAsJsonObject();
 
             for (String dragonLevel : dragonLevelMap.keySet()) {
                 JsonObject partMap = dragonLevelMap.get(dragonLevel).getAsJsonObject();
@@ -45,11 +45,11 @@ public class DefaultPartLoader extends SimpleJsonResourceReloadListener {
                     DEFAULT_PARTS.get(dragonType).computeIfAbsent(dragonLevel, key -> new HashMap<>()).put(EnumSkinLayer.valueOf(part.toUpperCase(Locale.ENGLISH)), partMap.get(part).getAsString());
                 }
             }
-        }));
+        });
     }
 
     public static String getDefaultPartKey(final AbstractDragonType type, final ResourceKey<DragonLevel> dragonLevel, final EnumSkinLayer layer) {
         HashMap<EnumSkinLayer, String> partMap = DEFAULT_PARTS.get(type.getTypeNameLowerCase()).get(dragonLevel.location().toString());
-        return partMap.getOrDefault(layer, DEFAULT_PART);
+        return partMap != null ? partMap.getOrDefault(layer, DEFAULT_PART) : DEFAULT_PART;
     }
 }

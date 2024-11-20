@@ -63,14 +63,21 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
 
             @Override
             public void onPress() {
-                DragonLevelCustomization preset = screen.preset.skins.getOrDefault(screen.dragonLevel.getKey(), Lazy.of(() -> new DragonLevelCustomization(screen.dragonLevel.getKey()))).get();
+                Lazy<DragonLevelCustomization> lazy = screen.preset.get(screen.dragonLevel.getKey());
+
+                if (lazy == null) {
+                    lazy = Lazy.of(() -> new DragonLevelCustomization(screen.dragonLevel.getKey()));
+                }
+
+                DragonLevelCustomization preset = lazy.get();
+
                 //noinspection DataFlowIssue -> player is present
                 RegistryAccess access = Minecraft.getInstance().player.registryAccess();
 
                 if (newborn.active && newborn.selected()) {
                     Holder<DragonLevel> newborn = /* DragonLevel.getLevel(access, 0); */ access.holderOrThrow(DragonLevel.newborn);
 
-                    screen.preset.skins.put(newborn.getKey(), Lazy.of(() -> {
+                    screen.preset.put(newborn.getKey(), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization(newborn.getKey());
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
@@ -80,7 +87,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 if (young.active && young.selected()) {
                     Holder<DragonLevel> young = access.holderOrThrow(DragonLevel.young);
 
-                    screen.preset.skins.put(young.getKey(), Lazy.of(() -> {
+                    screen.preset.put(young.getKey(), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization(young.getKey());
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
@@ -90,7 +97,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 if (adult.active && adult.selected()) {
                     Holder<DragonLevel> adult = access.holderOrThrow(DragonLevel.adult);
 
-                    screen.preset.skins.put(adult.getKey(), Lazy.of(() -> {
+                    screen.preset.put(adult.getKey(), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization(adult.getKey());
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;

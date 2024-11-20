@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.ClawInventory;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -25,7 +26,7 @@ public class GeneralTests {
     @GameTest(template = TestUtils.AIR_CUBE_1X)
     public static void test_tool_swap(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.YOUNG.size);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.young);
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         ItemStack mainHandItem = Items.APPLE.getDefaultInstance();

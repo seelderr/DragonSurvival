@@ -3,12 +3,12 @@ package by.dragonsurvivalteam.dragonsurvival.magic.common.innate;
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.CaveDragon.innate.CaveClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.ForestDragon.innate.ForestClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.magic.abilities.SeaDragon.innate.SeaClawAbility;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -63,7 +63,8 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
             components.add(Component.translatable(HARVEST_LEVEL, tier.translation()));
         }
 
-        double damageBonus = handler.isDragon() && DragonBonusConfig.isDamageBonusEnabled ? handler.getLevel() == DragonLevel.ADULT ? DragonBonusConfig.adultBonusDamage : handler.getLevel() == DragonLevel.YOUNG ? DragonBonusConfig.youngBonusDamage : DragonBonusConfig.newbornBonusDamage : 0;
+        //noinspection DataFlowIssue -> level is present
+        double damageBonus = handler.getLevel().value().getAttributeValue(handler.getTypeNameLowerCase(), handler.getSize(), Attributes.ATTACK_DAMAGE);
 
         if (damageBonus > 0) {
             components.add(Component.translatable(DAMAGE, "+" + damageBonus));

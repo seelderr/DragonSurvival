@@ -9,10 +9,8 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.Dr
 import by.dragonsurvivalteam.dragonsurvival.client.util.FakeClientPlayerUtils;
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Renderable;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +41,7 @@ public class ColorSelectorButton extends ExtendedButton {
     @Override
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
         super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
-        active = !screen.preset.skins.get(screen.dragonLevel.getKey()).get().isDefaultSkin;
+        active = !screen.preset.get(screen.dragonLevel.getKey()).get().isDefaultSkin;
 
         if (visible) {
             RenderingUtils.drawGradientRect(guiGraphics.pose().last().pose(), 100, getX() + 2, getY() + 2, getX() + xSize - 2, getY() + ySize - 2, new int[]{Color.red.getRGB(), Color.GREEN.getRGB(), Color.BLUE.getRGB(), Color.yellow.getRGB()});
@@ -56,7 +54,7 @@ public class ColorSelectorButton extends ExtendedButton {
             screen.renderables.removeIf(s -> s == renderButton);
         }
 
-        DragonPart part = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skins.get(screen.dragonLevel.getKey()).get().settings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+        DragonPart part = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.get(screen.dragonLevel.getKey()).get().settings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
         visible = part != null && part.isColorable();
     }
 
@@ -68,7 +66,7 @@ public class ColorSelectorButton extends ExtendedButton {
     @Override
     public void onPress() {
         if (!toggled) {
-            DragonPart part = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.skins.get(screen.dragonLevel.getKey()).get().settings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
+            DragonPart part = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, screen.preset.get(screen.dragonLevel.getKey()).get().settings.get(layer).get().selectedSkin, DragonEditorScreen.HANDLER.getType());
 
             if (part == null) {
                 return;

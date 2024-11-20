@@ -11,16 +11,15 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonSizeHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ClientConfig;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigOption;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.magic.DragonAbilities;
-import by.dragonsurvivalteam.dragonsurvival.magic.common.active.BreathAbility;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.EntityRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.LivingRendererAccessor;
 import by.dragonsurvivalteam.dragonsurvival.network.flight.SyncDeltaMovement;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonMovement;
+import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEffects;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSEntities;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -134,7 +133,7 @@ public class ClientDragonRenderer {
             poseStack.pushPose();
             poseStack.translate(-camera.x(), -camera.y(), -camera.z());
 
-            int range = BreathAbility.calculateCurrentBreathRange(handler.getSize());
+            int range = (int) localPlayer.getAttributeValue(DSAttributes.DRAGON_BREATH_RANGE);
             AbstractDragonType dragonType = handler.getType();
 
             int red = DragonUtils.isType(dragonType, DragonTypes.CAVE) ? 1 : 0;
@@ -249,14 +248,14 @@ public class ClientDragonRenderer {
                 if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
                     poseStack.translate(0, -0.15, 0);
                 } else if (player.isCrouching()) {
-                    if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+                    if (size > DragonLevel.MAX_HANDLED_SIZE) {
                         poseStack.translate(0, 0.045, 0);
                     } else {
                         // FIXME level
                         poseStack.translate(0, 0.325 - size / /* DragonLevel.ADULT.size */ 40 * 0.140, 0);
                     }
                 } else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
-                    if (size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE) {
+                    if (size > DragonLevel.MAX_HANDLED_SIZE) {
                         poseStack.translate(0, -0.55, 0);
                     } else {
                         // FIXME level

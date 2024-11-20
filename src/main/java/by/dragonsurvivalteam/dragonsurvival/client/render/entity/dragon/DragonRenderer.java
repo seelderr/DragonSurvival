@@ -87,7 +87,7 @@ public class DragonRenderer extends GeoEntityRenderer<DragonEntity> {
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
         //noinspection DataFlowIssue -> body is present
-        boolean hasWings = !handler.getBody().value().canHideWings() || handler.getSkinData().skinPreset.skins.get(handler.getLevel()).get().hasWings;
+        boolean hasWings = !handler.getBody().value().canHideWings() || handler.getSkinData().get(handler.getLevel().getKey()).get().hasWings;
 
         GeoBone leftWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("WingLeft");
         GeoBone rightWing = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("WingRight");

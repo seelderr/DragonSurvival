@@ -52,7 +52,7 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
         }
     }
 
-    public DragonLevelCustomization(ResourceKey<DragonLevel> dragonLevel) {
+    public DragonLevelCustomization(final ResourceKey<DragonLevel> dragonLevel) {
         this.dragonLevel = dragonLevel;
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {

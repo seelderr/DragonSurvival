@@ -34,9 +34,9 @@ public class StarHeartItem extends TooltipItem {
             DragonStateHandler handler = DragonStateProvider.getData(player);
 
             if (handler.isDragon()) {
-                handler.growing = !handler.growing;
-                player.sendSystemMessage(Component.translatable(handler.growing ? GROWTH : NO_GROWTH));
-                PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(handler.growing));
+                handler.isGrowing = !handler.isGrowing;
+                player.sendSystemMessage(Component.translatable(handler.isGrowing ? GROWTH : NO_GROWTH));
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(handler.isGrowing));
                 return InteractionResultHolder.success(player.getItemInHand(hand));
             }
         }

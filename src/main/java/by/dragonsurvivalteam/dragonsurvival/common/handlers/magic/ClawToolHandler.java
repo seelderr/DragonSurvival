@@ -263,14 +263,16 @@ public class ClawToolHandler {
         float bonus = 0;
         float unlockedBonus = 0;
 
-        if (handler.getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
-            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
-        } else if (handler.getLevel() == DragonLevel.YOUNG && DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
-            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
-        } else if (handler.getLevel() == DragonLevel.ADULT) {
-            unlockedBonus = DragonBonusConfig.bonusBreakSpeedAdult;
-            bonus = DragonBonusConfig.baseBreakSpeedAdult;
-        }
+        // FIXME level :: handle bonus through attribute? if yes then it would also apply when holding tools
+        //  have a new attribute that relates to "non-tool-break-speed"?
+//        if (handler.getLevel() == DragonLevel.NEWBORN && DragonBonusConfig.bonusUnlockedAt == DragonLevel.NEWBORN) {
+//            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
+//        } else if (handler.getLevel() == DragonLevel.YOUNG && DragonBonusConfig.bonusUnlockedAt != DragonLevel.ADULT) {
+//            unlockedBonus = DragonBonusConfig.bonusBreakSpeed;
+//        } else if (handler.getLevel() == DragonLevel.ADULT) {
+//            unlockedBonus = DragonBonusConfig.bonusBreakSpeedAdult;
+//            bonus = DragonBonusConfig.baseBreakSpeedAdult;
+//        }
 
         if (unlockedBonus > bonus && state.is(handler.getType().harvestableBlocks())) {
             bonus = unlockedBonus;

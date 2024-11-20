@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvide
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -55,19 +56,20 @@ public class TestUtils {
         }
     }
 
-    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, double size) {
+    public static void setToDragon(final GameTestHelper helper, final Player player, final AbstractDragonType dragonType, final ResourceKey<DragonBody> dragonBody, final ResourceKey<DragonLevel> dragonLevel) {
         DragonStateHandler data = DragonStateProvider.getData(player);
 
         data.setType(dragonType, player);
         helper.assertTrue(DragonUtils.isType(data, dragonType), String.format("Dragon type was [%s] - expected [%s]", data.getType(), dragonType));
 
-        Holder.Reference<DragonBody> body = player.registryAccess().lookupOrThrow(DragonBody.REGISTRY).getOrThrow(dragonBody);
-
+        Holder<DragonBody> body = player.registryAccess().holderOrThrow(dragonBody);
         data.setBody(body, player);
         helper.assertTrue(DragonUtils.isBody(data, body), String.format("Dragon type was [%s] - expected [%s]", data.getBody(), dragonBody));
 
-        data.setSize(size, player);
-        helper.assertTrue(data.getSize() == size, String.format("Size was [%f] - expected [%f]", data.getSize(), size));
+        Holder<DragonLevel> level = player.registryAccess().holderOrThrow(dragonLevel);
+        data.setSize(level, player);
+        //noinspection DataFlowIssue -> key is present
+        helper.assertTrue(data.getLevel().is(level), String.format("Dragon level was [%s] - expected [%s]", data.getLevel().getKey().location(), level.getKey().location()));
 
         helper.assertTrue(data.isDragon(), "Player is not a dragon - expected player to be a dragon");
     }

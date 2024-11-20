@@ -1,0 +1,77 @@
+{
+  "harvest_level_bonus": 1,
+  "modifiers": [
+    {
+      "attribute": "minecraft:player.submerged_mining_speed",
+      "dragon_type": "sea",
+      "modifier": {
+        "amount": 3.0,
+        "id": "dragonsurvival:dragonsurvival/level/92474/minecraft.player.submerged_mining_speed",
+        "operation": "add_value"
+      }
+    },
+    {
+      "attribute": "minecraft:generic.step_height",
+      "modifier": {
+        "amount": 0.5,
+        "id": "dragonsurvival:dragonsurvival/level/6869/minecraft.generic.step_height",
+        "operation": "add_value"
+      }
+    },
+    {
+      "attribute": "minecraft:generic.attack_damage",
+      "modifier": {
+        "amount": 3.0,
+        "id": "dragonsurvival:dragonsurvival/level/35328/minecraft.generic.attack_damage",
+        "operation": "add_value"
+      }
+    }
+  ],
+  "scaling_modifiers": [
+    {
+      "attribute": "minecraft:generic.movement_speed",
+      "id": "dragonsurvival:dragonsurvival/level/3262/minecraft.generic.movement_speed",
+      "operation": "add_value",
+      "per_size": {
+        "type": "minecraft:linear",
+        "base": 0.01,
+        "per_level_above_first": 0.01
+      }
+    },
+    {
+      "attribute": "minecraft:player.entity_interaction_range",
+      "id": "dragonsurvival:dragonsurvival/level/21227/minecraft.player.entity_interaction_range",
+      "operation": "add_value",
+      "per_size": {
+        "type": "minecraft:linear",
+        "base": 0.01,
+        "per_level_above_first": 0.01
+      }
+    },
+    {
+      "attribute": "minecraft:player.block_interaction_range",
+      "id": "dragonsurvival:dragonsurvival/level/59338/minecraft.player.block_interaction_range",
+      "operation": "add_value",
+      "per_size": {
+        "type": "minecraft:linear",
+        "base": 0.01,
+        "per_level_above_first": 0.01
+      }
+    },
+    {
+      "attribute": "minecraft:generic.max_health",
+      "id": "dragonsurvival:dragonsurvival/level/17507/minecraft.generic.max_health",
+      "operation": "add_value",
+      "per_size": {
+        "type": "minecraft:linear",
+        "base": 1.0,
+        "per_level_above_first": 1.0
+      }
+    }
+  ],
+  "size_range": {
+    "max": 60.0,
+    "min": 40.0
+  },
+  "ticks_until_grown": 51840000
+}

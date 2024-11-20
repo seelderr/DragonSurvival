@@ -21,6 +21,7 @@ public class DSCommands {
 
     static {
         ARGUMENT_TYPES.register("dragon_body", () -> ArgumentTypeInfos.registerByClass(DragonBodyArgument.class, SingletonArgumentInfo.contextAware(DragonBodyArgument::new)));
+        ARGUMENT_TYPES.register("dragon_level", () -> ArgumentTypeInfos.registerByClass(DragonLevelArgument.class, SingletonArgumentInfo.contextAware(DragonLevelArgument::new)));
     }
 
     @SubscribeEvent

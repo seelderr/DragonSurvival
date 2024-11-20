@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.BeforeBatch;
 import net.minecraft.gametest.framework.GameTest;
@@ -28,7 +29,7 @@ public class DragonBonusTests {
     @GameTest(template = TestUtils.AIR_CUBE_3X, batch = "dragon_bonus_tests")
     public static void test_break_speed_and_harvest_level_bonus(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.NEWBORN.size);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.newborn);
 
         float bonusSpeed = 2f;
         float defaultSpeed = 1f;
@@ -43,7 +44,7 @@ public class DragonBonusTests {
         player.setOnGround(true);
 
         // Check that the bonus is not yet unlocked
-        TestUtils.setAndCheckConfig(helper, "bonus_unlocks_at", DragonLevel.YOUNG);
+        TestUtils.setAndCheckConfig(helper, "bonus_unlocks_at", DragonLevel.young);
         float speed = player.getDigSpeed(state, position);
         helper.assertTrue(speed == defaultSpeed, String.format("Dig speed for [%s] was [%f] - expected [%f]", state, speed, defaultSpeed));
 
@@ -51,7 +52,7 @@ public class DragonBonusTests {
         helper.assertTrue(!canHarvest, String.format("[%s] can be harvested - expected block to not be harvestable", state));
 
         // Check that the bonus gets unlocked at the correct level
-        TestUtils.setAndCheckConfig(helper, "bonus_unlocks_at", DragonLevel.NEWBORN);
+        TestUtils.setAndCheckConfig(helper, "bonus_unlocks_at", DragonLevel.newborn);
         canHarvest = player.hasCorrectToolForDrops(state, helper.getLevel(), position);
         helper.assertTrue(canHarvest, String.format("[%s] cannot be harvested - expected block to be harvestable", state));
 

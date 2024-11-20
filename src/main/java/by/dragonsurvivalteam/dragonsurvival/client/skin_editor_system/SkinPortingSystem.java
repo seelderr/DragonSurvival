@@ -26,7 +26,13 @@ public class SkinPortingSystem {
         for (String type : presets.skinPresets.keySet()) {
             for (int saveSlot : presets.skinPresets.get(type).keySet()) {
                 for (ResourceKey<DragonLevel> dragonLevel : DragonLevel.keys(null)) {
-                    DragonLevelCustomization customization = presets.skinPresets.get(type).get(saveSlot).skins.getOrDefault(dragonLevel, Lazy.of(() -> new DragonLevelCustomization(dragonLevel))).get();
+                    Lazy<DragonLevelCustomization> lazy = presets.skinPresets.get(type).get(saveSlot).get(dragonLevel);
+
+                    if (lazy == null) {
+                        lazy = Lazy.of(() -> new DragonLevelCustomization(dragonLevel));
+                    }
+
+                    DragonLevelCustomization customization = lazy.get();
 
                     for (EnumSkinLayer layer : customization.settings.keySet()) {
                         Map<EnumSkinLayer, List<DragonPart>> partMap = DragonPartLoader.DRAGON_PARTS.get(type.toLowerCase(Locale.ENGLISH));

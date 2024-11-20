@@ -7,9 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
-import by.dragonsurvivalteam.dragonsurvival.common.handlers.DragonGrowthHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
-import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.input.Keybind;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawRender;
 import by.dragonsurvivalteam.dragonsurvival.network.claw.SyncDragonClawsMenuToggle;
@@ -88,10 +86,6 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
     private static HashMap<String, ResourceLocation> textures;
 
-    static {
-        initResources();
-    }
-
     private static void initResources() {
         textures = new HashMap<>();
 
@@ -125,6 +119,10 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         imageWidth = 203;
         imageHeight = 166;
+
+        if (textures == null) {
+            initResources();
+        }
     }
 
     @Override
@@ -237,7 +235,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         int scissorY0 = topPos + 8;
 
         // In order to scale up the smaller dragon sizes, since they are too small otherwise
-        int scale = (int) (20 + ((ServerConfig.DEFAULT_MAX_GROWTH_SIZE - handler.getSize()) * 0.25));
+        int scale = (int) (20 + ((DragonLevel.MAX_HANDLED_SIZE - handler.getSize()) * 0.25));
         scale = Math.clamp(scale, 10, 40); // Very large dragon sizes (above the default max. size) will have a < 20 scale value
 
         InventoryScreen.renderEntityInInventoryFollowsMouse(guiGraphics, scissorX0, scissorY0, scissorX1, scissorY1, scale, 0, mouseX, mouseY, player);
@@ -317,9 +315,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
     @Override
     public void render(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        clawMenuButtons.forEach(
-                button -> button.visible = clawsMenu
-        );
+        clawMenuButtons.forEach(button -> button.visible = clawsMenu);
 
         super.render(guiGraphics, mouseX, mouseY, partialTick);
 
@@ -331,7 +327,8 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         if (isGrowthIconHovered) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
-            String age = (int) handler.getSize() - DragonLevel.min(handler.getLevel()) + "/";
+            //noinspection DataFlowIssue -> level is present
+            String age = (int) handler.getSize() - handler.getLevel().value().sizeRange().min() + "/";
             double seconds = 0;
 
             // FIXME level
@@ -370,7 +367,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
                 String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
                 String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
 
-                if (handler.growing) {
+                if (handler.isGrowing) {
                     age += " (" + hourString + ":" + minuteString + ")";
                 } else {
                     age += " (§4--:--§r)";

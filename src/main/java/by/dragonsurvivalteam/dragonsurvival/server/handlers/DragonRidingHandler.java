@@ -4,6 +4,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncDragonPassengerID;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetPassengersPacket;
 import net.minecraft.server.level.ServerPlayer;
@@ -56,7 +57,7 @@ public class DragonRidingHandler {
 
         if (dragonIsTooSmallToRide) {
             return DragonRideAttemptResult.SELF_TOO_BIG;
-        } else if (!riderData.isDragon() && mountData.getLevel() == DragonLevel.ADULT) {
+        } else if (!riderData.isDragon() && !mountData.getLevel().is(DragonLevel.adult)) { // FIXME level :: need to dynamically handle this?
             return DragonRideAttemptResult.MOUNT_TOO_SMALL_HUMAN;
         } else if (mount.getPose() != Pose.CROUCHING) {
             return DragonRideAttemptResult.NOT_CROUCHING;

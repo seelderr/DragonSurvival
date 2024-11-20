@@ -221,13 +221,9 @@ public class DragonAbilities {
 
     public static AABB calculateBreathArea(@NotNull final Player player, final DragonStateHandler handler, double range) {
         Vec3 viewVector = player.getLookAngle().scale(range);
+        double defaultRadius = handler.getSize() * 0.03;
 
-        double defaultRadius = switch (handler.getLevel()) {
-            case NEWBORN -> 0.3;
-            case YOUNG -> 0.7;
-            case ADULT -> 1;
-        };
-
+        // Set the radius (value will be at least the default radius)
         double xOffset = getOffset(viewVector.x(), defaultRadius);
         double yOffset = Math.abs(viewVector.y());
         double zOffset = getOffset(viewVector.z(), defaultRadius);

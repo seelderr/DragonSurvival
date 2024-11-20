@@ -57,7 +57,7 @@ public class HueSelectorComponent extends AbstractContainerEventHandler implemen
         this.xSize = xSize;
         this.ySize = ySize;
 
-        settingsSupplier = () -> screen.preset.skins.get(screen.dragonLevel).get().settings.get(layer).get();
+        settingsSupplier = () -> screen.preset.get(screen.dragonLevel.getKey()).get().settings.get(layer).get();
         LayerSettings settings = settingsSupplier.get();
         DragonPart dragonPart = DragonEditorHandler.getDragonPart(FakeClientPlayerUtils.getFakePlayer(0, DragonEditorScreen.HANDLER), layer, settings.selectedSkin, DragonEditorScreen.HANDLER.getType());
 

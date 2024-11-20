@@ -1,12 +1,13 @@
 package by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities;
 
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.DragonLevelCustomization;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.SkinPreset;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceKey;
+import net.neoforged.neoforge.common.util.Lazy;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -24,23 +25,18 @@ public class SkinCap extends SubCap {
     public boolean renderCustomSkin;
     public boolean blankSkin;
 
+    public SkinCap(DragonStateHandler handler) {
+        super(handler);
+    }
+
     public void compileSkin() { // FIXME level :: don't compile all levels
         for (ResourceKey<DragonLevel> level : DragonLevel.keys(null)) {
             recompileSkin.put(level, true);
         }
     }
 
-    public SkinCap(DragonStateHandler handler) {
-        super(handler);
-
-        for (String value : DragonTypes.getTypes()) {
-            skinPreset.initDefaults(DragonTypes.getStatic(value));
-        }
-
-        for (ResourceKey<DragonLevel> level : DragonLevel.keys(null)) {
-            recompileSkin.put(level, true);
-            isCompiled.put(level, false);
-        }
+    public Lazy<DragonLevelCustomization> get(final ResourceKey<DragonLevel> dragonLevel) {
+        return skinPreset.get(dragonLevel);
     }
 
     @Override

@@ -9,7 +9,6 @@ import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.objects.La
 import by.dragonsurvivalteam.dragonsurvival.client.util.RenderingUtils;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.entity.DragonEntity;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
@@ -31,6 +30,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ShaderInstance;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.Holder;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
@@ -61,7 +61,7 @@ public class DragonEditorHandler {
         }
 
         if (layer == EnumSkinLayer.BASE && (partKey.equalsIgnoreCase("Skin") || partKey.equalsIgnoreCase(DefaultPartLoader.DEFAULT_PART))) {
-            // Choose a random value between 1 and 9 (incl.) for the default base
+            // Choose a random value between 1 and 9 (incl.) for the default value (the base cannot be empty)
             return getDragonPartLocation(player, layer, type.getSubtypeNameLowerCase() + "_base_" + player.getRandom().nextInt(9) + 1, type);
         }
 
@@ -81,8 +81,8 @@ public class DragonEditorHandler {
             return getDragonPart(player, EnumSkinLayer.EXTRA, partKey, type);
         }
 
-        if (layer == EnumSkinLayer.BASE && (partKey.equalsIgnoreCase("Skin") || partKey.equalsIgnoreCase(SkinCap.defaultSkinValue))) {
-            // Choose a random value between 1 and 9 (incl.) for the default base
+        if (layer == EnumSkinLayer.BASE && (partKey.equalsIgnoreCase("Skin") || partKey.equalsIgnoreCase(DefaultPartLoader.DEFAULT_PART))) {
+            // Choose a random value between 1 and 9 (incl.) for the default value (the base cannot be empty)
             return getDragonPart(player, layer, type.getTypeNameLowerCase() + "_base_" + player.getRandom().nextInt(9) + 1, type);
         }
 
@@ -154,11 +154,14 @@ public class DragonEditorHandler {
         glowTarget.clear(true);
 
         //noinspection DataFlowIssue -> level is present
-        DragonLevelCustomization customization = handler.getSkinData().skinPreset.skins.get(handler.getLevel().getKey()).get();
+        ResourceKey<DragonLevel> levelKey = handler.getLevel().getKey();
+
+        DragonLevelCustomization customization = handler.getSkinData().get(levelKey).get();
         String uuid = player.getStringUUID();
 
-        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + DragonLevel.name(handler.getLevel()));
-        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + DragonLevel.name(handler.getLevel()));
+        //noinspection DataFlowIssue -> key is present
+        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + levelKey.location().getPath());
+        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + levelKey.location().getPath());
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
             LayerSettings settings = customization.settings.get(layer).get();
@@ -243,7 +246,7 @@ public class DragonEditorHandler {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
         //noinspection DataFlowIssue -> level is present
-        DragonLevelCustomization customization = handler.getSkinData().skinPreset.skins.get(handler.getLevel().getKey()).get();
+        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
         NativeImage normal = new NativeImage(512, 512, true);
         NativeImage glow = new NativeImage(512, 512, true);
 
@@ -289,8 +292,9 @@ public class DragonEditorHandler {
 
         String uuid = player.getStringUUID();
 
-        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + DragonLevel.name(handler.getLevel()));
-        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + DragonLevel.name(handler.getLevel()));
+        //noinspection DataFlowIssue -> level and key are present
+        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + handler.getLevel().getKey().location().getPath());
+        ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + handler.getLevel().getKey().location().getPath());
 
         texturesToRegister.add(new Pair<>(normal, dynamicNormalKey));
         texturesToRegister.add(new Pair<>(glow, dynamicGlowKey));

@@ -38,12 +38,12 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+import net.neoforged.neoforge.client.event.RegisterClientReloadListenersEvent;
 import net.neoforged.neoforge.client.event.RegisterClientTooltipComponentFactoriesEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 import org.jetbrains.annotations.NotNull;
 import software.bernie.geckolib.GeckoLibClient;
 
@@ -84,9 +84,9 @@ public class DragonSurvivalClient {
         });
     }
 
-    private void addReloadListeners(final AddReloadListenerEvent event) {
-        event.addListener(new DragonPartLoader());
-        event.addListener(new DefaultPartLoader());
+    private void addReloadListeners(final RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener(new DragonPartLoader());
+        event.registerReloadListener(new DefaultPartLoader());
     }
 
     private void registerTooltips(final RegisterClientTooltipComponentFactoriesEvent event) {

@@ -14,6 +14,14 @@ import org.joml.Vector3f;
 import software.bernie.geckolib.util.RenderUtil;
 
 public class Functions {
+    public static int daysToTicks(int days) {
+        return hoursToTicks(days) * 24;
+    }
+
+    public static int hoursToTicks(int hours) {
+        return minutesToTicks(hours) * 60;
+    }
+
     public static int minutesToTicks(int minutes) {
         return secondsToTicks(minutes) * 60;
     }

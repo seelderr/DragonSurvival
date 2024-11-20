@@ -41,7 +41,10 @@ public abstract class EntityMixin {
             DragonMovementData movementData = handler.getMovementData();
             Vec3 originalPassPos = player.getPassengerRidingPosition(player);
             double size = DragonStateProvider.getData(passenger).getSize();
-            double heightOffset = size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE ? -0.55 : -0.15 - size / DragonLevel.ADULT.size * 0.2;
+
+            // FIxME level
+            // double heightOffset = size > ServerConfig.DEFAULT_MAX_GROWTH_SIZE ? -0.55 : -0.15 - size / DragonLevel.ADULT.size * 0.2;
+            double heightOffset = -0.55;
 
             Vec3 offsetFromBb = new Vec3(0, heightOffset, -1.4 * player.getBbWidth());
             Vec3 offsetFromCenter = originalPassPos.subtract(player.position());

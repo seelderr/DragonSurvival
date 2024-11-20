@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.MagicHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.CaveDragonConfig;
 import by.dragonsurvivalteam.dragonsurvival.config.server.dragon.DragonBonusConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
-import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
@@ -255,7 +254,8 @@ public abstract class LivingEntityMixin extends Entity {
         if ((Object) this instanceof Player player) {
             if (attribute.is(Attributes.GRAVITY)) {
                 if(DragonStateProvider.isDragon(player)) {
-                    DSModifiers.updateSafeFallDistanceModifiers(player);
+                    // FIXME level
+//                    DSModifiers.updateSafeFallDistanceModifiers(player);
                 }
             }
         }

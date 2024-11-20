@@ -6,7 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.dropdown.
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.DropDownButton;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.DragonEditorHandler;
 import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.EnumSkinLayer;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.SkinCap;
+import by.dragonsurvivalteam.dragonsurvival.client.skin_editor_system.loader.DefaultPartLoader;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.ScreenAccessor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.datafixers.util.Pair;
@@ -38,7 +38,7 @@ public class DragonEditorDropdownButton extends DropDownButton {
     public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float pPartialTicks) {
         active = visible = dragonEditorScreen.showUi;
         super.renderWidget(guiGraphics, mouseX, mouseY, pPartialTicks);
-        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.skins.get(dragonEditorScreen.dragonLevel).get().settings.get(layers).get().selectedSkin);
+        String currentValue = DragonEditorScreen.partToTranslation(dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().settings.get(layers).get().selectedSkin);
 
         if (!Objects.equals(currentValue, current)) {
             current = currentValue;
@@ -48,13 +48,13 @@ public class DragonEditorDropdownButton extends DropDownButton {
         List<String> valueList = DragonEditorHandler.getTextureKeys(dragonEditorScreen.dragonType, dragonEditorScreen.dragonBody, layers);
 
         if (layers != EnumSkinLayer.BASE) {
-            valueList.addFirst(SkinCap.defaultSkinValue);
+            valueList.addFirst(DefaultPartLoader.DEFAULT_PART);
         }
 
         valueList = valueList.stream().map(DragonEditorScreen::partToTranslation).toList();
 
         values = valueList.toArray(new String[0]);
-        active = !dragonEditorScreen.preset.skins.get(dragonEditorScreen.dragonLevel).get().isDefaultSkin;
+        active = !dragonEditorScreen.preset.get(dragonEditorScreen.dragonLevel.getKey()).get().isDefaultSkin;
     }
 
     @Override

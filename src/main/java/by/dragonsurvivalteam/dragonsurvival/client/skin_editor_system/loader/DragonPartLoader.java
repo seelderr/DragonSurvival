@@ -28,11 +28,11 @@ public class DragonPartLoader extends SimpleJsonResourceReloadListener {
         DRAGON_PARTS.put(DragonTypes.SEA.getTypeNameLowerCase(), new HashMap<>());
 
         map.forEach((location, value) -> value.getAsJsonArray().forEach(element -> {
-            // Format example: dragonsurvival:skin/parts/cave/base.json
+            // Location path is without the specified directory
             String[] elements = location.getPath().split("/");
 
-            String dragonType = elements[2];
-            EnumSkinLayer layer = EnumSkinLayer.valueOf(elements[3].toUpperCase(Locale.ENGLISH));
+            String dragonType = elements[0];
+            EnumSkinLayer layer = EnumSkinLayer.valueOf(elements[1].toUpperCase(Locale.ENGLISH));
 
             DRAGON_PARTS.get(dragonType).computeIfAbsent(layer, key -> new ArrayList<>()).add(DragonPart.load(element.getAsJsonObject()));
         }));

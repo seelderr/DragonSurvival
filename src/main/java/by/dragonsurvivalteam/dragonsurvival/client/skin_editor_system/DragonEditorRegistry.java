@@ -15,20 +15,19 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 
-import javax.annotation.Nullable;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Locale;
+import javax.annotation.Nullable;
 
-@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+@EventBusSubscriber(value = Dist.CLIENT)
 public class DragonEditorRegistry {
     private static final String SAVED_CUSTOMIZATIONS = "saved_customizations.json";
     private static final int MAX_SAVE_SLOTS = 9;
 
-    public static File savedFile;
-
-    private static boolean hasInitialized;
+    private static File savedFile;
     private static SavedSkinPresets savedCustomizations;
+    private static boolean hasInitialized;
 
     public static SavedSkinPresets getSavedCustomizations(@Nullable final HolderLookup.Provider provider) {
         if (!hasInitialized) {
@@ -44,7 +43,7 @@ public class DragonEditorRegistry {
     }
 
     @SuppressWarnings("ResultOfMethodCallIgnored") // ignore
-    private static void loadSavedCustomizations(@Nullable final HolderLookup.Provider provider) {
+    public static void loadSavedCustomizations(@Nullable final HolderLookup.Provider provider) {
         if (hasInitialized) {
             return;
         }
@@ -62,47 +61,71 @@ public class DragonEditorRegistry {
                 InputStream input = new FileInputStream(savedFile);
 
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(input))) {
-                    DragonEditorRegistry.savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
-                    SkinPortingSystem.upgrade(DragonEditorRegistry.savedCustomizations);
+                    savedCustomizations = gson.fromJson(reader, SavedSkinPresets.class);
+
+                    if (savedCustomizations == null) {
+                        throw new IOException("Customization file [" + SAVED_CUSTOMIZATIONS + "] file could not be read");
+                    }
+
+                    SkinPortingSystem.upgrade(savedCustomizations);
+                    hasInitialized = true;
+                    return;
                 } catch (IOException exception) {
                     DragonSurvival.LOGGER.warn("Reader could not be closed", exception);
                 }
             } catch (FileNotFoundException exception) {
                 DragonSurvival.LOGGER.error("Saved customization [{}] could not be found", savedFile.getName(), exception);
             }
-        } else {
-            try {
-                savedFile.createNewFile();
-                Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
-                DragonEditorRegistry.savedCustomizations = new SavedSkinPresets();
+        }
 
-                for (String dragonType : DragonTypes.getTypes()) {
-                    String typeKey = dragonType.toUpperCase(Locale.ENGLISH);
-                    DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(typeKey, key -> new HashMap<>());
-                    DragonEditorRegistry.savedCustomizations.current.computeIfAbsent(typeKey, key -> new HashMap<>());
+        // File either doesn't exist or is in a broken state
 
-                    for (int slot = 0; slot < MAX_SAVE_SLOTS; slot++) {
-                        DragonEditorRegistry.savedCustomizations.skinPresets.get(typeKey).computeIfAbsent(slot, key -> {
-                            SkinPreset preset = new SkinPreset();
-                            preset.initDefaults(DragonTypes.getStatic(typeKey));
-                            return preset;
-                        });
-                    }
+        try {
+            if (savedFile.exists()) {
+                savedFile.delete();
+            }
 
-                    for (ResourceKey<DragonLevel> level : DragonLevel.keys(provider)) {
-                        DragonEditorRegistry.savedCustomizations.current.get(typeKey).put(level.location().toString(), 0);
-                    }
+            savedFile.createNewFile();
+            Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
+            DragonEditorRegistry.savedCustomizations = new SavedSkinPresets();
+
+            for (String dragonType : DragonTypes.getTypes()) {
+                String typeKey = dragonType.toUpperCase(Locale.ENGLISH);
+                DragonEditorRegistry.savedCustomizations.skinPresets.computeIfAbsent(typeKey, key -> new HashMap<>());
+                DragonEditorRegistry.savedCustomizations.current.computeIfAbsent(typeKey, key -> new HashMap<>());
+
+                for (int slot = 0; slot < MAX_SAVE_SLOTS; slot++) {
+                    DragonEditorRegistry.savedCustomizations.skinPresets.get(typeKey).computeIfAbsent(slot, key -> {
+                        SkinPreset preset = new SkinPreset();
+                        preset.initDefaults(DragonTypes.getStatic(typeKey));
+                        return preset;
+                    });
                 }
 
-                FileWriter writer = new FileWriter(savedFile);
-                gson.toJson(DragonEditorRegistry.savedCustomizations, writer);
-
-                writer.close();
-            } catch (IOException exception) {
-                DragonSurvival.LOGGER.error(exception);
+                for (ResourceKey<DragonLevel> level : DragonLevel.keys(provider)) {
+                    DragonEditorRegistry.savedCustomizations.current.get(typeKey).put(level.location().toString(), 0);
+                }
             }
+
+            FileWriter writer = new FileWriter(savedFile);
+            gson.toJson(DragonEditorRegistry.savedCustomizations, writer);
+
+            writer.close();
+        } catch (IOException exception) {
+            DragonSurvival.LOGGER.error(exception);
         }
 
         hasInitialized = true;
+    }
+
+    public static void save(final SavedSkinPresets savedCustomizations) {
+        try {
+            Gson gson = GsonFactory.newBuilder().setPrettyPrinting().create();
+            FileWriter writer = new FileWriter(DragonEditorRegistry.savedFile);
+            gson.toJson(savedCustomizations, writer);
+            writer.close();
+        } catch (IOException exception) {
+            DragonSurvival.LOGGER.error("An error occurred while trying to save the dragon skin", exception);
+        }
     }
 }

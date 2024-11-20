@@ -1,8 +1,8 @@
 package by.dragonsurvivalteam.dragonsurvival.common.handlers;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
@@ -25,17 +25,11 @@ import net.neoforged.neoforge.network.PacketDistributor;
 
 import java.util.HashSet;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
     @Translation(type = Translation.Type.MISC, comments = "§6You need another type of growth artifact:§r %1$s")
     private static final String INVALID_ITEM = Translation.Type.GUI.wrap("growth_hud.invalid_item");
-
-    public static final long NEWBORN_TO_YOUNG = TimeUnit.SECONDS.convert(3, TimeUnit.HOURS);
-    public static final long YOUNG_TO_ADULT = TimeUnit.SECONDS.convert(15, TimeUnit.HOURS);
-    public static final long ADULT_TO_ANCIENT = TimeUnit.SECONDS.convert(24, TimeUnit.HOURS);
-    public static final long ANCIENT = TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
 
     @SubscribeEvent
     public static void onItemUse(PlayerInteractEvent.RightClickItem event) {
@@ -51,16 +45,11 @@ public class DragonGrowthHandler {
             }
 
             double size = handler.getSize();
-
-            if (size >= ServerConfig.maxGrowthSize) {
-                return;
-            }
-
             boolean canContinue = false;
 
-            HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-            HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-            HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+//            HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+//            HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+//            HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
             HashSet<Item> allowedItems = new HashSet<>();
 
@@ -127,9 +116,9 @@ public class DragonGrowthHandler {
     }
 
     public static int getIncrement(Item item, Holder<DragonLevel> level) {
-        HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
-        HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
-        HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
+//        HashSet<Item> newbornList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growNewborn);
+//        HashSet<Item> youngList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growYoung);
+//        HashSet<Item> adultList = ConfigHandler.getResourceElements(Item.class, ServerConfig.growAdult);
 
         int increment = 0;
 
@@ -168,60 +157,33 @@ public class DragonGrowthHandler {
 
     @SubscribeEvent
     public static void onPlayerUpdate(PlayerTickEvent.Pre event) {
-        if (!ServerConfig.naturalGrowth) {
-            return;
-        }
-
         Player player = event.getEntity();
-        Level world = player.getCommandSenderWorld();
 
-        if (world.isClientSide()) {
+        if (!ServerConfig.naturalGrowth || player.level().isClientSide()) {
             return;
         }
 
-        if (!DragonStateProvider.isDragon(player)) {
+        DragonStateHandler data = DragonStateProvider.getData(player);
+
+        if (!data.isDragon() || !data.isGrowing) {
             return;
         }
 
-        if (player.tickCount % (Functions.secondsToTicks(60)) != 0) {
+        int increment = Functions.secondsToTicks(60);
+
+        if (player.tickCount % increment != 0) {
             return;
         }
 
-        DragonStateProvider.getOptional(player).ifPresent(handler -> {
-            if (handler.growing) {
-                /*
-                    1. Newborn - young = 3-4 h
-                    2. Young - adult = 15-20h
-                    3. Adult - maximum growth = 24h
-                    4. After maximum growth. = 30 days for max growth
-                 */
+        //noinspection DataFlowIssue -> level is present
+        DragonLevel level = data.getLevel().value();
+        double growth = (level.sizeRange().max() - level.sizeRange().min()) / Functions.secondsToTicks(level.ticksUntilGrown()) * increment;
 
-                double growth = 10; // FIXME level
-                double timeIncrement = Functions.secondsToTicks(60);
-
-                // FIXME level :: add as part of the registry
-//                if (handler.getSize() < YOUNG.size) {
-//                    growth = (double) (YOUNG.size - NEWBORN.size) / Functions.secondsToTicks(NEWBORN_TO_YOUNG) * timeIncrement * ServerConfig.newbornGrowthModifier;
-//                } else if (handler.getSize() < ADULT.size) {
-//                    growth = (double) (ADULT.size - YOUNG.size) / Functions.secondsToTicks(YOUNG_TO_ADULT) * timeIncrement * ServerConfig.youngGrowthModifier;
-//                } else if (handler.getSize() < ADULT.maxSize) {
-//                    growth = (double) (40 - ADULT.size) / Functions.secondsToTicks(ADULT_TO_ANCIENT) * timeIncrement * ServerConfig.adultGrowthModifier;
-//                } else {
-//                    growth = (double) (60 - 40) / Functions.secondsToTicks(ANCIENT) * timeIncrement * ServerConfig.maxGrowthModifier;
-//                }
-
-                double size = handler.getSize() + growth;
-                size = Math.min(size, ServerConfig.maxGrowthSize);
-
-                if (handler.getSize() != size) {
-                    handler.setSize(size, player);
-
-                    PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), size));
-                    DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) player, handler.getSize(), handler.getTypeName());
-
-                    player.refreshDimensions();
-                }
-            }
-        });
+        if (growth > 0) {
+            data.setSize(data.getSize() + growth, player);
+            PacketDistributor.sendToPlayersTrackingEntityAndSelf(player, new SyncSize.Data(player.getId(), data.getSize()));
+            DSAdvancementTriggers.BE_DRAGON.get().trigger((ServerPlayer) player, data.getSize(), data.getTypeName());
+            player.refreshDimensions();
+        }
     }
 }

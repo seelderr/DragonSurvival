@@ -324,7 +324,7 @@ public class ClientProxy {
         Player localPlayer = Minecraft.getInstance().player;
 
         if (localPlayer != null) {
-            DragonStateProvider.getOptional(localPlayer).ifPresent(handler -> handler.growing = message.growing());
+            DragonStateProvider.getOptional(localPlayer).ifPresent(handler -> handler.isGrowing = message.growing());
         }
     }
 
