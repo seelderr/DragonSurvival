@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.gametests;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
@@ -81,14 +80,17 @@ public class TestUtils {
     }
 
     public static void resetPlayer(final GameTestHelper helper, final Player player) {
-        player.setData(DragonSurvival.DRAGON_HANDLER, new DragonStateHandler());
         DragonStateHandler data = DragonStateProvider.getData(player);
+        data.revertToHumanForm(player, false);
 
         AbstractDragonType dragonType = data.getType();
         helper.assertTrue(dragonType == null, String.format("Dragon type was [%s] - expected [null]", dragonType));
 
         Holder<DragonBody> dragonBody = data.getBody();
         helper.assertTrue(dragonBody == null, String.format("Dragon body was [%s] - expected [null]", dragonBody));
+
+        Holder<DragonLevel> dragonLevel = data.getLevel();
+        helper.assertTrue(dragonLevel == null, String.format("Dragon level was [%s] - expected [null]", dragonLevel));
 
         double size = data.getSize();
         helper.assertTrue(size == DragonStateHandler.NO_SIZE, String.format("Size was [%f] - expected [0]", size));
