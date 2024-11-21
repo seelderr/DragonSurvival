@@ -91,6 +91,6 @@ public class TestUtils {
         helper.assertTrue(dragonBody == null, String.format("Dragon body was [%s] - expected [null]", dragonBody));
 
         double size = data.getSize();
-        helper.assertTrue(size == 0, String.format("Size was [%f] - expected [0]", size));
+        helper.assertTrue(size == DragonStateHandler.NO_SIZE, String.format("Size was [%f] - expected [0]", size));
     }
 }
