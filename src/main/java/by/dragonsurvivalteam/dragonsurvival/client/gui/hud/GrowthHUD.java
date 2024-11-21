@@ -65,7 +65,7 @@ public class GrowthHUD {
             return;
         }
 
-        Holder<DragonLevel> dragonLevel = Objects.requireNonNull(handler.getLevel());
+        Holder<DragonLevel> dragonLevel = handler.getLevel();
         float progress = (float) dragonLevel.value().getProgress(handler.getSize());
         float nextProgress = (float) dragonLevel.value().getProgress(handler.getSize() + growth);
 

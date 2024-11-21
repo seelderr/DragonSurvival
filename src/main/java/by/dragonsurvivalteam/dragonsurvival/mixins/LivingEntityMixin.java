@@ -21,7 +21,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
@@ -144,9 +143,7 @@ public abstract class LivingEntityMixin extends Entity {
         return original;
     }
 
-    /**
-     * There is no event to actually modify the effect when it's being applied
-     */
+    /** There is no event to actually modify the effect when it's being applied */
     @ModifyVariable(method = "addEffect(Lnet/minecraft/world/effect/MobEffectInstance;Lnet/minecraft/world/entity/Entity;)Z", at = @At("HEAD"), argsOnly = true)
     private MobEffectInstance dragonSurvival$modifyEffect(final MobEffectInstance instance, final @Local(argsOnly = true) Entity applier) {
         if ((Object) this instanceof Player affected) {
@@ -245,19 +242,6 @@ public abstract class LivingEntityMixin extends Entity {
 
             player.calculateEntityAnimation(false);
             callback.cancel();
-        }
-    }
-
-    // If the player's gravity changes, we need to update the dragon-related safe fall distance modifiers, as they depend on gravity
-    @Inject(method = "onAttributeUpdated", at = @At("TAIL"))
-    private void updateSafeFallDistanceIfGravityIsModified(CallbackInfo ci, @Local(argsOnly = true) Holder<Attribute> attribute) {
-        if ((Object) this instanceof Player player) {
-            if (attribute.is(Attributes.GRAVITY)) {
-                if(DragonStateProvider.isDragon(player)) {
-                    // FIXME level
-//                    DSModifiers.updateSafeFallDistanceModifiers(player);
-                }
-            }
         }
     }
 

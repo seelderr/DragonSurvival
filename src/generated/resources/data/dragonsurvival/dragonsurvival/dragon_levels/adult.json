@@ -46,6 +46,14 @@
       }
     },
     {
+      "attribute": "minecraft:generic.safe_fall_distance",
+      "modifier": {
+        "amount": 1.0,
+        "id": "dragonsurvival:dragonsurvival/level/345750019/minecraft.generic.safe_fall_distance",
+        "operation": "add_value"
+      }
+    },
+    {
       "attribute": "dragonsurvival:dragon_breath_range",
       "modifier": {
         "amount": 4.0,

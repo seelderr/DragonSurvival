@@ -19,7 +19,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.Objects;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
@@ -62,7 +61,7 @@ public class DragonGrowthHandler {
     public static double getGrowth(final Holder<DragonLevel> dragonLevel, final Item item) {
         int growth = 0;
 
-        for (MiscCodecs.GrowthItem growthItem : Objects.requireNonNull(dragonLevel).value().growthItems()) {
+        for (MiscCodecs.GrowthItem growthItem : dragonLevel.value().growthItems()) {
             // Select the largest number (independent on positive / negative)
             if ((growth == 0 || Math.abs(growthItem.growthInTicks()) > Math.abs(growth)) && growthItem.items().contains(item.builtInRegistryHolder())) {
                 growth = growthItem.growthInTicks();
@@ -92,7 +91,7 @@ public class DragonGrowthHandler {
             return;
         }
 
-        DragonLevel level = Objects.requireNonNull(data.getLevel()).value();
+        DragonLevel level = data.getLevel().value();
         double growth = level.ticksToSize(increment);
 
         if (growth > 0) {

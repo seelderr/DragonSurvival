@@ -33,4 +33,16 @@ public enum ModifierType {
         // Currently only relevant for data generation -> should be specific enough to avoid overlapping
         return DragonSurvival.res(path() + Objects.hash(format.format(amount), operation.getSerializedName()) + "/" + attributeId);
     }
+
+    public static boolean isRelevant(final ResourceLocation id) {
+        String path = id.getPath();
+
+        for (ModifierType type : values()) {
+            if (path.startsWith(type.path())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

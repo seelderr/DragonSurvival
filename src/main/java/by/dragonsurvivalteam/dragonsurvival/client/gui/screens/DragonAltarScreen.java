@@ -163,9 +163,9 @@ public class DragonAltarScreen extends Screen {
         }
 
         handler.setHasFlight(true);
-        //noinspection DataFlowIssue -> registyr is expected to be present
+        //noinspection DataFlowIssue -> registry is expected to be present
         handler.setSize(CommonHooks.resolveLookup(DragonLevel.REGISTRY).getOrThrow(DragonLevel.adult), null);
-        handler.getSkinData().get(Objects.requireNonNull(handler.getLevel()).getKey()).get().defaultSkin = true;
+        handler.getSkinData().get(handler.getLevel().getKey()).get().defaultSkin = true;
     }
 
     @Override

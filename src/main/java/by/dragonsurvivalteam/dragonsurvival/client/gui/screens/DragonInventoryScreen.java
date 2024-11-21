@@ -226,7 +226,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
 
         guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 
-        Holder<DragonLevel> level = Objects.requireNonNull(handler.getLevel());
+        Holder<DragonLevel> level = handler.getLevel();
         float progress = (float) level.value().getProgress(handler.getSize());
 
         int size = 34;
@@ -250,7 +250,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius - thickness, sides, 1, 0);
 
         RenderSystem.setShaderColor(1, 1, 1, 1);
-        // TODO level :: use adult as fallback texture
+        // TODO level :: use adult as fallback texture?
         ResourceLocation levelLocation = Objects.requireNonNull(level.getKey()).location();
         guiGraphics.blit(GrowthHUD.getOrCreate(levelLocation.getNamespace(), GrowthHUD.ICON.apply(handler.getTypeNameLowerCase(), levelLocation)), circleX + 6, circleY + 6, 150, 0, 0, 20, 20, 20, 20);
     }
@@ -300,7 +300,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             }
 
             DragonStateHandler handler = DragonStateProvider.getData(player);
-            DragonLevel dragonLevel = Objects.requireNonNull(handler.getLevel()).value();
+            DragonLevel dragonLevel = handler.getLevel().value();
 
             double percentage = Math.clamp(dragonLevel.getProgress(handler.getSize()), 0, 1);
             String ageInformation = NumberFormat.getPercentInstance().format(percentage);

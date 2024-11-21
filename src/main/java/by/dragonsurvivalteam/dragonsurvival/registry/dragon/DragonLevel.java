@@ -103,13 +103,14 @@ public record DragonLevel(
 
     public static void registerLevels(final BootstrapContext<DragonLevel> context) {
         context.register(newborn, new DragonLevel(
-                new MiscCodecs.Bounds(1, 20), // TODO level :: set back to min 14
+                new MiscCodecs.Bounds(14, 20),
                 Functions.hoursToTicks(3),
                 List.of(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, -7, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 1, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.025, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 0.25, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 1.5, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
@@ -135,6 +136,7 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.25, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 2, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.05, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 0.5, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 2.5, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
@@ -161,6 +163,7 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.5, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.1, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
@@ -179,13 +182,14 @@ public record DragonLevel(
         ));
 
         context.register(ancient, new DragonLevel(
-                new MiscCodecs.Bounds(40, 200), // TODO level :: set back to max 200
+                new MiscCodecs.Bounds(40, 60),
                 Functions.daysToTicks(30),
                 List.of(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.5, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.1, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SAFE_FALL_DISTANCE, 1, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(

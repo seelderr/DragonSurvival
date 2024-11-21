@@ -72,7 +72,6 @@ public class DragonStateHandler extends EntityStateHandler {
     public boolean hasUsedAltar;
     public boolean isInAltar;
     public boolean refreshBody;
-    public boolean isJumping;
 
     /** Last timestamp the server synchronized the player */
     public int lastSync = 0;
@@ -130,6 +129,7 @@ public class DragonStateHandler extends EntityStateHandler {
     public void setSize(final Holder<DragonLevel> dragonLevel, @Nullable final Player player) {
         if (dragonLevel == null) {
             setSize(DragonStateHandler.NO_SIZE, player);
+            DSModifiers.updateSizeModifiers(player, this);
             return;
         }
 
@@ -466,8 +466,6 @@ public class DragonStateHandler extends EntityStateHandler {
         tag.putInt("altarCooldown", altarCooldown);
         tag.putBoolean("usedAltar", hasUsedAltar);
 
-        tag.putBoolean("isJumping", isJumping);
-
         tag.put(ENTITY_STATE, super.serializeNBT(provider));
 
         return tag;
@@ -571,14 +569,11 @@ public class DragonStateHandler extends EntityStateHandler {
         altarCooldown = tag.getInt("altarCooldown");
         hasUsedAltar = tag.getBoolean("usedAltar");
 
-        isJumping = tag.getBoolean("isJumping");
-
         super.deserializeNBT(provider, tag.getCompound(ENTITY_STATE));
 
-        refreshBody = true;
-
         if (isDragon()) {
-            getSkinData().compileSkin(Objects.requireNonNull(getLevel()));
+            refreshBody = true;
+            getSkinData().compileSkin(getLevel());
         }
     }
 
@@ -608,7 +603,6 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.altarCooldown = Functions.secondsToTicks(ServerConfig.altarUsageCooldown);
         this.hasUsedAltar = true;
-        this.isJumping = false;
     }
 
     // --- Hunter handler --- //

@@ -152,11 +152,11 @@ public class DragonEditorHandler {
         normalTarget.clear(true);
         glowTarget.clear(true);
 
-        ResourceKey<DragonLevel> levelKey = Objects.requireNonNull(handler.getLevel()).getKey();
+        ResourceKey<DragonLevel> levelKey = Objects.requireNonNull(handler.getLevel().getKey());
         DragonLevelCustomization customization = handler.getSkinData().get(levelKey).get();
         String uuid = player.getStringUUID();
 
-        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + Objects.requireNonNull(levelKey).location().getPath());
+        ResourceLocation dynamicNormalKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_normal_" + uuid + "_" + levelKey.location().getPath());
         ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(MODID, "dynamic_glow_" + uuid + "_" + levelKey.location().getPath());
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
@@ -241,7 +241,7 @@ public class DragonEditorHandler {
 
         DragonStateHandler handler = DragonStateProvider.getData(player);
         List<Pair<NativeImage, ResourceLocation>> texturesToRegister = new ArrayList<>();
-        DragonLevelCustomization customization = handler.getSkinData().get(Objects.requireNonNull(handler.getLevel()).getKey()).get();
+        DragonLevelCustomization customization = handler.getSkinData().get(handler.getLevel().getKey()).get();
         NativeImage normal = new NativeImage(512, 512, true);
         NativeImage glow = new NativeImage(512, 512, true);
 

@@ -50,7 +50,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
         DragonStateHandler handler = DragonStateProvider.getData(player);
         SkinPreset preset = handler.getSkinData().skinPreset;
 
-        DragonLevelCustomization customization = preset.get(Objects.requireNonNull(Objects.requireNonNull(handler.getLevel()).getKey())).get();
+        DragonLevelCustomization customization = preset.get(Objects.requireNonNull(handler.getLevel().getKey())).get();
         ResourceLocation glowTexture = DragonSkins.getGlowTexture(player, handler.getLevel().getKey());
 
         if (glowTexture == null || glowTexture.getPath().contains("/" + handler.getTypeNameLowerCase() + "_")) {

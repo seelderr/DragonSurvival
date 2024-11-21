@@ -20,8 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nullable;
 
@@ -59,7 +57,6 @@ public class DSModifiers {
     }
 
     private static final ResourceLocation DRAGON_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_swim_speed_modifier");
-    private static final ResourceLocation DRAGON_SAFE_FALL_DISTANCE = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_safe_fall_distance");
     private static final ResourceLocation DRAGON_LAVA_SWIM_SPEED_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_lava_swim_speed_modifier");
     private static final ResourceLocation DRAGON_FOREST_SAFE_FALL_DISTANCE_MODIFIER = ResourceLocation.fromNamespaceAndPath(MODID, "dragon_forest_safe_fall_distance_modifier");
 
@@ -79,15 +76,7 @@ public class DSModifiers {
     );
 
     private static double buildForestSafeFallDistanceMod(DragonStateHandler handler) {
-        double distance = 0;
-        if (DragonUtils.isType(handler, DragonTypes.FOREST)) {
-            Optional<CliffhangerAbility> ability = DragonAbilities.getAbility(handler, CliffhangerAbility.class);
-            if (ability.isPresent()) {
-                distance = ability.get().getHeight();
-            }
-        }
-
-        return distance;
+        return DragonAbilities.getAbility(handler, CliffhangerAbility.class).map(CliffhangerAbility::getHeight).orElse(0);
     }
 
     public static double buildSwimSpeedMod(DragonStateHandler handler) {
@@ -134,7 +123,7 @@ public class DSModifiers {
         }));
 
         if (handler.isDragon()) {
-            Objects.requireNonNull(handler.getLevel()).value().applyModifiers(player);
+            handler.getLevel().value().applyModifiers(player);
         }
     }
 
@@ -150,7 +139,7 @@ public class DSModifiers {
         }));
 
         if (handler.isDragon()) {
-            Objects.requireNonNull(handler.getBody()).value().applyModifiers(player);
+            handler.getBody().value().applyModifiers(player);
         }
     }
 }
