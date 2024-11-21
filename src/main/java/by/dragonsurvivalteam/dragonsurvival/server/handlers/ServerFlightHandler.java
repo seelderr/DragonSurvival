@@ -192,12 +192,21 @@ public class ServerFlightHandler {
 
     @SubscribeEvent
     public static void handleEarlyFlightLogic(PlayerTickEvent.Pre event) {
+        Player player = event.getEntity();
+        DragonStateHandler handler = DragonStateProvider.getData(player);
+
+        // Handle this on both the client and server so that the fall damage sound effects are correctly handled
+        if (isGliding(player)) {
+            // Gather collision data
+            handler.preCollisionDeltaMovement = player.getDeltaMovement();
+        } else if (isFlying(player)) {
+            // Handle fall distance
+            player.resetFallDistance();
+        }
+
         if (event.getEntity().level().isClientSide()) {
             return;
         }
-
-        Player player = event.getEntity();
-        DragonStateHandler handler = DragonStateProvider.getData(player);
 
         if (!handler.isDragon()) {
             clearAllFlightEffects(player);
@@ -216,14 +225,6 @@ public class ServerFlightHandler {
             }
         } else {
             clearAllFlightEffects(player);
-        }
-  
-        if (isGliding(player)) {
-            // Gather collision data
-            handler.preCollisionDeltaMovement = player.getDeltaMovement();
-        } else if (isFlying(player)) {
-            // Handle fall distance
-            player.resetFallDistance();
         }
     }
 
