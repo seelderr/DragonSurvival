@@ -59,8 +59,7 @@ public class DragonSizeHandler {
     }
 
     public static EntityDimensions calculateDimensions(DragonStateHandler handler, Player player, Pose overridePose) {
-        AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
-        double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
+        double scale = player.getAttributeValue(Attributes.SCALE);
         double size = handler.getSize();
         double height = calculateRawDragonHeight(size) * handler.getBody().value().heightMultiplier();
         double width = calculateRawDragonWidth(size);
@@ -104,7 +103,6 @@ public class DragonSizeHandler {
         if (player.getForcedPose() != overridePose) {
             player.setForcedPose(overridePose);
 
-            // FIXME :: use proxy?
             if (player.level().isClientSide() && Minecraft.getInstance().getCameraEntity() != player) {
                 player.refreshDimensions();
             }

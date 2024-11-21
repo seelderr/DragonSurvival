@@ -64,6 +64,7 @@ public abstract class DragonClawsAbility extends InnateDragonAbility {
         }
 
         double damageBonus = Objects.requireNonNull(handler.getLevel()).value().getAttributeValue(handler.getTypeNameLowerCase(), handler.getSize(), Attributes.ATTACK_DAMAGE);
+        damageBonus -= Objects.requireNonNull(DragonSurvival.PROXY.getLocalPlayer().getAttribute(Attributes.ATTACK_DAMAGE)).getBaseValue();
 
         if (damageBonus > 0) {
             components.add(Component.translatable(DAMAGE, "+" + damageBonus));

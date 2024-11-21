@@ -204,7 +204,7 @@ public class RenderingUtils {
         GL11.glEnable(GL11.GL_LINE_SMOOTH);
         GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
 
-        buffer.addVertex(matrix4f, (float) x, (float) y, (float) z).setColor(colors[0], colors[1], colors[2], 1f);
+        buffer.addVertex(matrix4f, (float) x, (float) y, (float) z).setColor(colors[0], colors[1], colors[2], colors[3]);
 
         for (int i = 0; i <= percent * sides; i++) {
             rad = PI_TWO * ((double) i / (double) sides + startAngle);
@@ -213,13 +213,13 @@ public class RenderingUtils {
 
             float xPos = (float) (x + sin * radius);
             float yPos = (float) (y + cos * radius);
-            buffer.addVertex(matrix4f, xPos, yPos, (float) z).setColor(colors[0], colors[1], colors[2], 1f);
+            buffer.addVertex(matrix4f, xPos, yPos, (float) z).setColor(colors[0], colors[1], colors[2], colors[3]);
         }
 
         rad = PI_TWO * (percent + startAngle);
         sin = Math.sin(rad);
         cos = Math.cos(rad);
-        buffer.addVertex(matrix4f, (float) (x + sin * radius), (float) (y + cos * radius), (float) z).setColor(colors[0], colors[1], colors[2], 1f);
+        buffer.addVertex(matrix4f, (float) (x + sin * radius), (float) (y + cos * radius), (float) z).setColor(colors[0], colors[1], colors[2], colors[3]);
 
         RenderSystem.disableBlend();
         GL11.glDisable(GL11.GL_LINE_SMOOTH);

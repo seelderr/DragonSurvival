@@ -74,7 +74,7 @@ public class DragonGlowLayerRenderer extends GeoRenderLayer<DragonEntity> {
             VertexConsumer vertexConsumer = bufferSource.getBuffer(type);
             dragonRenderer.actuallyRender(poseStack, animatable, bakedModel, type, bufferSource, vertexConsumer, true, partialTick, packedLight, OverlayTexture.NO_OVERLAY, renderer.getRenderColor(animatable, partialTick, packedLight).getColor());
         } else {
-            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().getKey().location().getPath()); // FIXME level
+            ResourceLocation dynamicGlowKey = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "dynamic_glow_" + animatable.getPlayer().getStringUUID() + "_" + handler.getLevel().getKey().location().getPath());
 
             if (customization.layerSettings.values().stream().anyMatch(layerSettings -> layerSettings.get().glowing)) {
                 RenderType type = RenderType.EYES.apply(dynamicGlowKey, RenderType.LIGHTNING_TRANSPARENCY);

@@ -38,7 +38,14 @@ public class DragonGrowthHandler {
             return;
         }
 
-        data.setSize(data.getSize() + growth, player); // TODO :: check if size can be reduced / increased
+        double newSize = DragonLevel.getBoundedSize(data.getSize() + growth);
+
+        if (data.getSize() == newSize) {
+            // TODO :: send system message?
+            return;
+        }
+
+        data.setSize(newSize, player);
 
         if (!player.isCreative()) {
             event.getItemStack().shrink(1);
@@ -56,7 +63,7 @@ public class DragonGrowthHandler {
         int growth = 0;
 
         for (MiscCodecs.GrowthItem growthItem : Objects.requireNonNull(dragonLevel).value().growthItems()) {
-            //noinspection deprecation -> ignore
+            // Select the largest number (independent on positive / negative)
             if ((growth == 0 || Math.abs(growthItem.growthInTicks()) > Math.abs(growth)) && growthItem.items().contains(item.builtInRegistryHolder())) {
                 growth = growthItem.growthInTicks();
             }

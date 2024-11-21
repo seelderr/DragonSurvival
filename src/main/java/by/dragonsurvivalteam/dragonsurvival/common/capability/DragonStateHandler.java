@@ -40,6 +40,8 @@ public class DragonStateHandler extends EntityStateHandler {
     public static final String DRAGON_LEVEL = "dragon_level";
     public static final String ENTITY_STATE = "entity_state";
 
+    public static final int NO_SIZE = -1;
+
     @SuppressWarnings("unchecked")
     public final Supplier<SubCap>[] caps = new Supplier[]{this::getSkinData, this::getMagicData, this::getEmoteData, this::getClawToolData};
 
@@ -90,7 +92,7 @@ public class DragonStateHandler extends EntityStateHandler {
     private boolean isHiding;
     private boolean hasFlight;
     private boolean areWingsSpread;
-    private double size;
+    private double size = NO_SIZE;
     private boolean destructionEnabled;
 
     // Needed to calculate collision damage correctly when flying. See ServerFlightHandler.
@@ -127,7 +129,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public void setSize(final Holder<DragonLevel> dragonLevel, @Nullable final Player player) {
         if (dragonLevel == null) {
-            setSize(-1, player);
+            setSize(DragonStateHandler.NO_SIZE, player);
             return;
         }
 
@@ -141,7 +143,7 @@ public class DragonStateHandler extends EntityStateHandler {
             return;
         }
 
-        if (size == -1) {
+        if (size == DragonStateHandler.NO_SIZE) {
             DSModifiers.updateSizeModifiers(player, this);
             dragonLevel = null;
             return;
@@ -150,7 +152,7 @@ public class DragonStateHandler extends EntityStateHandler {
         Holder<DragonLevel> levelToSet = dragonLevel;
 
         if (dragonLevel == null || !dragonLevel.value().sizeRange().matches(size)) {
-            levelToSet = DragonLevel.getLevel(player != null ? player.registryAccess() : null, size);
+            levelToSet = DragonLevel.get(player != null ? player.registryAccess() : null, size);
         }
 
         setSize(levelToSet, size, player);
@@ -161,7 +163,13 @@ public class DragonStateHandler extends EntityStateHandler {
             return;
         }
 
-        this.size = size;
+        double oldSize = this.size;
+        this.size = DragonLevel.getBoundedSize(size);
+
+        if (this.size == oldSize) {
+            return;
+        }
+
         this.dragonLevel = dragonLevel;
 
         if (player != null && player.level().isClientSide()) {
@@ -175,7 +183,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
     public double getSavedDragonSize(final String type) {
         Double value = savedDragonSize.get(type);
-        value = value == null ? 0 : value;
+        value = value == null ? DragonStateHandler.NO_SIZE : value;
 
         return value;
     }
@@ -191,11 +199,15 @@ public class DragonStateHandler extends EntityStateHandler {
     }
 
     // TODO :: use optional for these?
-    public @Nullable AbstractDragonType getType() {
+    public AbstractDragonType getType() {
         return dragonType;
     }
 
-    public @Nullable Holder<DragonBody> getBody() {
+    public Holder<DragonLevel> getLevel() {
+        return dragonLevel;
+    }
+
+    public Holder<DragonBody> getBody() {
         return dragonBody;
     }
 
@@ -271,12 +283,7 @@ public class DragonStateHandler extends EntityStateHandler {
         }
     }
 
-    public @Nullable Holder<DragonLevel> getLevel() {
-        return dragonLevel;
-    }
-
-    /** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
-    public boolean canHarvestWithPaw(final BlockState state) {
+    public boolean hasValidClawTool(final BlockState state) {
         if (!isDragon()) {
             return false;
         }
@@ -284,9 +291,18 @@ public class DragonStateHandler extends EntityStateHandler {
         for (int i = 0; i < 4; i++) {
             ItemStack stack = getClawToolData().getClawsInventory().getItem(i);
 
-            if (stack.isCorrectToolForDrops(state)) {
+            if (stack.isCorrectToolForDrops(state) || stack.getDestroySpeed(state) > 1) {
                 return true;
             }
+        }
+
+        return false;
+    }
+
+    /** Determines if the current dragon type can harvest the supplied block (with or without tools) (configured harvest bonuses are taken into account) */
+    public boolean canHarvestWithPaw(final BlockState state) {
+        if (hasValidClawTool(state)) {
+            return true;
         }
 
         return canHarvestWithPawNoTools(state);
@@ -306,7 +322,6 @@ public class DragonStateHandler extends EntityStateHandler {
      * The unlockable harvest level bonus is only considered if the supplied state is part of {@link AbstractDragonType#harvestableBlocks()} <br>
      * If the supplied state is 'null' then the unlockable bonuses are also considered
      */
-    @SuppressWarnings("DataFlowIssue") // values are present
     public int getDragonHarvestLevel(@Nullable final BlockState state) {
         if (!isDragon()) {
             return -1;
@@ -583,7 +598,7 @@ public class DragonStateHandler extends EntityStateHandler {
 
         this.setType(null);
         this.setBody(null, player);
-        this.setSize(-1, player);
+        this.setSize(DragonStateHandler.NO_SIZE, player);
         this.setIsHiding(false);
 
         if (!ServerConfig.saveAllAbilities) {

@@ -175,8 +175,9 @@ public class AltarTypeButton extends Button {
     private void initiateDragonForm(AbstractDragonType type) {
         LocalPlayer player = Minecraft.getInstance().player;
 
-        if (player == null)
+        if (player == null) {
             return;
+        }
 
         if (type == null) {
             Minecraft.getInstance().player.sendSystemMessage(Component.translatable(CHOICE_HUMAN));
@@ -186,6 +187,7 @@ public class AltarTypeButton extends Button {
                 cap.revertToHumanForm(player, false);
                 PacketDistributor.sendToServer(new SyncComplete.Data(player.getId(), cap.serializeNBT(player.registryAccess())));
             });
+
             player.closeContainer();
         } else {
             Minecraft.getInstance().setScreen(new DragonEditorScreen(parent, type));

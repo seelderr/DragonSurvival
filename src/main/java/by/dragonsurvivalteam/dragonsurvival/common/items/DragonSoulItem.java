@@ -193,7 +193,7 @@ public class DragonSoulItem extends Item {
             }
 
             double size = tag.getDouble("size");
-            Holder<DragonLevel> level = DragonLevel.getLevel(context.registries(), size);
+            Holder<DragonLevel> level = DragonLevel.get(context.registries(), size);
             tooltips.add(Component.translatable(INFO, dragonName, DragonLevel.translatableName(Objects.requireNonNull(level.getKey())), String.format("%.0f", size)));
 
             if (tag.getBoolean("spinLearned")) {

@@ -30,5 +30,16 @@
     "TEETH": "teeth_3",
     "MAGIC": "sea_magic_3",
     "EXTRA": "sea_extra_2"
+  },
+  "dragonsurvival:ancient": {
+    "BASE": "base_4",
+    "BOTTOM": "bottom_3",
+    "EYES": "eyes_12",
+    "HORNS": "horns_21",
+    "SPIKES": "spikes_3",
+    "CLAWS": "claw_3_sea_3",
+    "TEETH": "teeth_3",
+    "MAGIC": "sea_magic_3",
+    "EXTRA": "sea_extra_2"
   }
 }

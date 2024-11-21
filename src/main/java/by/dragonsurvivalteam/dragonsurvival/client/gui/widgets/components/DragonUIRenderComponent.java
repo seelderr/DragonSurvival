@@ -22,9 +22,9 @@ import java.util.function.Supplier;
 public class DragonUIRenderComponent extends AbstractContainerEventHandler implements Renderable {
     private final Screen screen;
     private final Supplier<DragonEntity> getter;
-    public float yRot = 0, xRot = 0;
-    public float xOffset = 0, yOffset = 0;
-    public float zoom = 0;
+    public float yRot, xRot;
+    public float xOffset, yOffset;
+    public float zoom;
     public int x, y, width, height;
 
     public DragonUIRenderComponent(Screen screen, int x, int y, int xSize, int ySize, Supplier<DragonEntity> dragonGetter) {
@@ -42,10 +42,10 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
             screen.setFocused(this);
         }
 
-        final GeoBone neckandHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
+        final GeoBone neckAndHead = ClientDragonRenderer.dragonModel.getAnimationProcessor().getBone("Neck");
 
-        if (neckandHead != null) {
-            neckandHead.setHidden(false);
+        if (neckAndHead != null) {
+            neckAndHead.setHidden(false);
         }
 
         float scale = zoom;
@@ -54,8 +54,8 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
         guiGraphics.pose().pushPose();
         guiGraphics.pose().translate(0, 0, -200); // We chose -200 here as the background is translated -300 and we don't want to clip with it
 
-        Quaternionf quaternion = Axis.ZP.rotationDegrees(180.0F);
-        quaternion.mul(Axis.XP.rotationDegrees(yRot * 10.0F));
+        Quaternionf quaternion = Axis.ZP.rotationDegrees(180);
+        quaternion.mul(Axis.XP.rotationDegrees(yRot * 10));
         quaternion.rotateY((float) Math.toRadians(180 - xRot * 10));
         InventoryScreen.renderEntityInInventory(guiGraphics, x + (float) width / 2 + xOffset, y + height - 30 + yOffset, (int) scale, new Vector3f(0, 0, 0), quaternion, null, getter.get());
 
@@ -101,6 +101,7 @@ public class DragonUIRenderComponent extends AbstractContainerEventHandler imple
             zoom = Mth.clamp(zoom, 10, 100);
             return true;
         }
+
         return super.mouseScrolled(pMouseX, pMouseY, pScrollX, pScrollY);
     }
 }

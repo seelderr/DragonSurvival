@@ -59,18 +59,9 @@ public class GrowthHUD {
         }
 
         double growth = DragonGrowthHandler.getGrowth(handler.getLevel(), stack.getItem());
+        double newSize = DragonLevel.getBoundedSize(handler.getSize() + growth);
 
-        if (growth < 0) {
-            DragonLevel min = DragonLevel.getSmallest(localPlayer.registryAccess()).value();
-            double difference = Math.min(0, handler.getSize() - min.sizeRange().min());
-            growth = Math.max(growth, -difference);
-        } else if (growth > 0) {
-            DragonLevel max = DragonLevel.getLargest(localPlayer.registryAccess()).value();
-            double difference = Math.max(0, max.sizeRange().max() - handler.getSize());
-            growth = Math.min(growth, difference);
-        }
-
-        if (growth == 0) {
+        if (handler.getSize() == newSize) {
             return;
         }
 
@@ -89,17 +80,15 @@ public class GrowthHUD {
         circleX += growthXOffset;
         circleY += growthYOffset;
 
-        RenderSystem.setShaderColor(0f, 0f, 0f, 1f);
-
-        RenderSystem.setShaderColor(BRIGHTER_COLOR.getRed() / 255.0f, BRIGHTER_COLOR.getBlue() / 255.0f, BRIGHTER_COLOR.getGreen() / 255.0f, 1.0f);
+        RenderSystem.setShaderColor(BRIGHTER_COLOR.getRed() / 255f, BRIGHTER_COLOR.getBlue() / 255f, BRIGHTER_COLOR.getGreen() / 255f, 1);
         RenderingUtils.drawSmoothCircle(guiGraphics, circleX + radius, circleY + radius, radius, 6, 1, 0);
 
         RenderSystem.setShader(GameRenderer::getPositionTexShader);
         RenderSystem.setShaderColor(1F, 1F, 1F, 1.0f);
 
-        if (nextProgress > progress) {
-            int number = 1;
+        if (nextProgress >= progress) {
             double perSide = 1.0 / 6.0;
+            int number = 1;
 
             if (nextProgress < progress + perSide) {
                 nextProgress = (float) (progress + perSide);

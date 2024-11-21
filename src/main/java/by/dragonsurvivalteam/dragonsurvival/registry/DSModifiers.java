@@ -1,6 +1,5 @@
 package by.dragonsurvivalteam.dragonsurvival.registry;
 
-import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
@@ -21,7 +20,6 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
@@ -145,24 +143,14 @@ public class DSModifiers {
             return;
         }
 
-        Map<Holder<Attribute>, AttributeInstance> attributes = ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes();
-
-        attributes.values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
+        ((AttributeMapAccessor) player.getAttributes()).dragonSurvival$getAttributes().values().forEach(instance -> instance.getModifiers().forEach(modifier -> {
             if (modifier.id().getPath().startsWith(ModifierType.DRAGON_BODY.path())) {
                 instance.removeModifier(modifier);
             }
         }));
 
         if (handler.isDragon()) {
-            Objects.requireNonNull(handler.getBody()).value().modifiers().forEach(modifier -> {
-                AttributeInstance instance = player.getAttribute(modifier.attribute());
-
-                if (instance != null && (modifier.dragonType().isEmpty() || modifier.dragonType().get().equals(handler.getTypeNameLowerCase()))) {
-                    instance.addPermanentModifier(modifier.modifier());
-                } else {
-                    DragonSurvival.LOGGER.error("Player does not have the attribute [{}] - bonus from dragon body [{}] cannot be applied", modifier.attribute(), handler.getBody());
-                }
-            });
+            Objects.requireNonNull(handler.getBody()).value().applyModifiers(player);
         }
     }
 }

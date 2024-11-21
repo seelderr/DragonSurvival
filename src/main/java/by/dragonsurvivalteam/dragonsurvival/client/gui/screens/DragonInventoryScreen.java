@@ -227,7 +227,7 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
         guiGraphics.blit(CLAWS_TEXTURE, leftPos - 80, topPos, 0, 0, 77, 170);
 
         Holder<DragonLevel> level = Objects.requireNonNull(handler.getLevel());
-        float progress = (float) ((handler.getSize() - level.value().sizeRange().min()) / (level.value().sizeRange().max() - level.value().sizeRange().min()));
+        float progress = (float) level.value().getProgress(handler.getSize());
 
         int size = 34;
         int thickness = 5;

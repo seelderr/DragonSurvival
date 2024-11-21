@@ -92,8 +92,11 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     @Translation(type = Translation.Type.MISC, comments = "■ Shows a randomly selected §6other player§r§f who uploaded a skin. You §ccan't use§r§f their appearance for yourself!§7 Only look and admire! >:D")
     private static final String RANDOM_INFO = Translation.Type.GUI.wrap("skin_screen.random_info");
 
-    @Translation(type = Translation.Type.MISC, comments = "Show player skins")
-    private static final String OTHERS = Translation.Type.GUI.wrap("skin_screen.others");
+    @Translation(type = Translation.Type.MISC, comments = "Show custom player skins")
+    private static final String SHOW_OTHER_CUSTOM_SKINS = Translation.Type.GUI.wrap("skin_screen.show_other_custom_skins");
+
+    @Translation(type = Translation.Type.MISC, comments = "Show your custom skin")
+    private static final String SHOW_CUSTOM_SKIN = Translation.Type.GUI.wrap("skin_screen.show_custom_skin");
 
     private static final ResourceLocation BACKGROUND_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/skin_interface.png");
     private static final ResourceLocation DISCORD_TEXTURE = ResourceLocation.fromNamespaceAndPath(DragonSurvival.MODID, "textures/gui/discord_button.png");
@@ -141,7 +144,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         SkinCap skinData = DragonStateProvider.getData(localPlayer).getSkinData();
 
         if (dragonLevel == null) {
-            dragonLevel = DragonLevel.getLevel(localPlayer.registryAccess(), Double.MAX_VALUE);
+            dragonLevel = DragonLevel.get(localPlayer.registryAccess(), Double.MAX_VALUE);
         }
     }
 
@@ -210,8 +213,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         guiGraphics.blit(BACKGROUND_TEXTURE, startX + 128, startY, 0, 0, 164, 256);
         drawNonShadowString(guiGraphics, minecraft.font, Component.translatable(SETTINGS).withStyle(ChatFormatting.BLACK), startX + 128 + imageWidth / 2, startY + 7, -1);
         guiGraphics.drawCenteredString(minecraft.font, Component.translatable(TOGGLE), startX + 128 + imageWidth / 2, startY + 30, -1);
-        // FIXME level
-        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append("TODO").withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
+        drawNonShadowString(guiGraphics, minecraft.font, Component.empty().append(playerName + " - ").append(DragonLevel.translatableName(Objects.requireNonNull(dragonLevel.getKey()))).withStyle(ChatFormatting.GRAY), startX + 15, startY - 15, -1);
 
         if (!loading && noSkin) {
             if (playerName.equals(minecraft.player.getGameProfile().getName())) {
@@ -269,7 +271,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         addDragonBodyWidgets();
 
         // Button to enable / disable the rendering of the custom dragon skin
-        addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.literal("TODO - render skin"), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 45 + 23, imageWidth, 20, Component.translatable(SHOW_CUSTOM_SKIN), button -> {
             DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(player));
             handler.getSkinData().renderCustomSkin = !handler.getSkinData().renderCustomSkin;
             ConfigHandler.updateConfigValue("render_custom_skin", handler.getSkinData().renderCustomSkin);
@@ -285,7 +287,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         });
 
         // Button to enable / disable the rendering of custom dragon skin of other players
-        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable(OTHERS), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable(SHOW_OTHER_CUSTOM_SKINS), button -> {
             ClientDragonRenderer.renderOtherPlayerSkins = !ClientDragonRenderer.renderOtherPlayerSkins;
             ConfigHandler.updateConfigValue("render_other_players_custom_skins", ClientDragonRenderer.renderOtherPlayerSkins);
             setTextures();

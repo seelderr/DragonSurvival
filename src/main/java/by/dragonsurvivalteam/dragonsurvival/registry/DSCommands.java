@@ -22,6 +22,7 @@ public class DSCommands {
     static {
         ARGUMENT_TYPES.register("dragon_body", () -> ArgumentTypeInfos.registerByClass(DragonBodyArgument.class, SingletonArgumentInfo.contextAware(DragonBodyArgument::new)));
         ARGUMENT_TYPES.register("dragon_level", () -> ArgumentTypeInfos.registerByClass(DragonLevelArgument.class, SingletonArgumentInfo.contextAware(DragonLevelArgument::new)));
+        ARGUMENT_TYPES.register("dragon_size", () -> ArgumentTypeInfos.registerByClass(DragonSizeArgument.class, SingletonArgumentInfo.contextAware(DragonSizeArgument::new)));
     }
 
     @SubscribeEvent
@@ -30,7 +31,7 @@ public class DSCommands {
         DragonCommand.register(event);
         DragonEditorCommand.register(commandDispatcher);
         DragonAltarCommand.register(commandDispatcher);
-        DragonSizeCommand.register(commandDispatcher);
+        DragonSizeCommand.register(event);
         LOGGER.info("Registered commands");
     }
 }

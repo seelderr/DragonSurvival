@@ -7,7 +7,6 @@ import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import org.joml.Vector3f;
@@ -219,17 +218,21 @@ public class Functions {
 
         if (entity instanceof Player player) {
             DragonStateHandler handler = DragonStateProvider.getData(player);
-            if (handler.isDragon()) {
-                float f1 = -(float) handler.getMovementData().bodyYaw * ((float) Math.PI / 180F);
 
-                float f4 = Mth.sin(f1);
-                float f5 = Mth.cos(f1);
-                AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
-                double scale = attributeInstance != null ? attributeInstance.getValue() : 1.0d;
-                lookVector.set((float) (f4 * (handler.getSize() * scale / 40)), 0, (float) (f5 * (handler.getSize() * scale / 40)));
+            if (handler.isDragon()) {
+                float angle = -(float) handler.getMovementData().bodyYaw * ((float) Math.PI / 180F);
+                float x = Mth.sin(angle);
+                float z = Mth.cos(angle);
+                float scale = getScale(player, handler.getSize());
+                lookVector.set(x * scale, 0, z * scale);
             }
         }
 
         return lookVector;
+    }
+
+    public static float getScale(final Player player, double size) {
+        // The formula is generated based on input / output pairs of various sizes which looked correct
+        return (float) ((0.017 * Math.pow(size, 1.06) + 0.135) * player.getAttributeValue(Attributes.SCALE));
     }
 }

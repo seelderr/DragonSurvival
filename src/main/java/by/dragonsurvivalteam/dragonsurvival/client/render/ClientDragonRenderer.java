@@ -45,8 +45,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
@@ -235,9 +233,7 @@ public class ClientDragonRenderer {
 
                 poseStack.mulPose(Axis.YN.rotationDegrees((float) handler.getMovementData().bodyYaw));
 
-                // This is some arbitrary scaling that was created back when the maximum size was hard capped at 40. Touching it will cause the render to desync from the hitbox.
-                AttributeInstance attributeInstance = player.getAttribute(Attributes.SCALE);
-                float scale = (float) (Math.max(size / 40.0D, 0.4D) * (attributeInstance != null ? attributeInstance.getValue() : 1.0D));
+                float scale = Functions.getScale(player, size);
                 poseStack.scale(scale, scale, scale);
 
                 ((EntityRendererAccessor) renderPlayerEvent.getRenderer()).dragonSurvival$setShadowRadius((float) ((3.0F * size + 62.0F) / 260.0F));
@@ -248,17 +244,15 @@ public class ClientDragonRenderer {
                 if (player.isCrouching() && handler.isWingsSpread() && !player.onGround()) {
                     poseStack.translate(0, -0.15, 0);
                 } else if (player.isCrouching()) {
-                    if (size > DragonLevel.MAX_HANDLED_SIZE) {
-                        poseStack.translate(0, 0.045, 0);
-                    } else {
-                        // FIXME level
-                        poseStack.translate(0, 0.325 - size / /* DragonLevel.ADULT.size */ 40 * 0.140, 0);
-                    }
+                    // Needed to prevent the dragon model from sinking into the ground
+                    // The formula is generated based on input / output pairs of various sizes which looked correct
+                    double translate = 1 / (0.4 * Math.pow(size, 0.78) + 0.5);
+                    poseStack.translate(0, translate, 0);
                 } else if (player.isSwimming() || player.isAutoSpinAttack() || handler.isWingsSpread() && !player.onGround() && !player.isInWater() && !player.isInLava()) {
+                    // FIXME level
                     if (size > DragonLevel.MAX_HANDLED_SIZE) {
                         poseStack.translate(0, -0.55, 0);
                     } else {
-                        // FIXME level
                         poseStack.translate(0, -0.15 - size / /* DragonLevel.ADULT.size */ 40 * 0.2, 0);
                     }
                 }
@@ -368,15 +362,15 @@ public class ClientDragonRenderer {
                 if (!player.isSpectator()) {
                     // Render the parrot on the players shoulder
                     ((LivingRendererAccessor) playerRenderer).dragonSurvival$getRenderLayers().stream().filter(ParrotOnShoulderLayer.class::isInstance).findAny().ifPresent(renderLayer -> {
-                        poseStack.scale(1.0F / scale, 1.0F / scale, 1.0F / scale);
-                        poseStack.mulPose(Axis.XN.rotationDegrees(180.0F));
+                        poseStack.scale(1 / scale, 1 / scale, 1 / scale);
+                        poseStack.mulPose(Axis.XN.rotationDegrees(180));
                         double height = 1.3 * scale;
                         double forward = 0.3 * scale;
-                        float parrotHeadYaw = Mth.clamp(-1.0F * ((float) handler.getMovementData().bodyYaw - (float) handler.getMovementData().headYaw), -75.0F, 75.0F);
+                        float parrotHeadYaw = Mth.clamp(-1 * ((float) handler.getMovementData().bodyYaw - (float) handler.getMovementData().headYaw), -75, 75);
                         poseStack.translate(0, -height, -forward);
-                        renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0.0F, 0.0F, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) handler.getMovementData().headPitch);
+                        renderLayer.render(poseStack, renderTypeBuffer, eventLight, player, 0, 0, partialRenderTick, (float) player.tickCount + partialRenderTick, parrotHeadYaw, (float) handler.getMovementData().headPitch);
                         poseStack.translate(0, height, forward);
-                        poseStack.mulPose(Axis.XN.rotationDegrees(-180.0F));
+                        poseStack.mulPose(Axis.XN.rotationDegrees(-180));
                         poseStack.scale(scale, scale, scale);
                     });
 

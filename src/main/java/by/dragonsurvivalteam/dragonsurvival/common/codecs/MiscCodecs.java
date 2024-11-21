@@ -13,6 +13,13 @@ import net.minecraft.world.item.Item;
 import java.util.Arrays;
 
 public class MiscCodecs {
+    public static Codec<Double> doubleRange(double min, double max) {
+        return Codec.DOUBLE.validate(value -> value >= min && value <= max
+                ? DataResult.success(value)
+                : DataResult.error(() -> "Value must be within range [" + min + ";" + max + "]: " + value)
+        );
+    }
+
     public record Bounds(double min, double max) {
         public static Codec<Bounds> CODEC = RecordCodecBuilder.create(instance -> instance.group(
                 Codec.DOUBLE.fieldOf("min").forGetter(Bounds::min),

@@ -21,21 +21,21 @@ public class ClientGrowthComponent implements ClientTooltipComponent {
         this.tooltip = Component.translatable(component.item().getDescriptionId()).append(": ").append(time(component.growth()));
     }
 
-    private Component time(int ticks) {
+    private Component time(int ticks) { // TODO :: red for negative, green for positive?
         int hours = (int) (Functions.ticksToHours(ticks));
         int minutes = (int) (Functions.ticksToMinutes(ticks - Functions.hoursToTicks(hours)));
         int seconds = (int) (Functions.ticksToSeconds(ticks - Functions.hoursToTicks(hours) - Functions.minutesToTicks(minutes)));
         StringBuilder builder = new StringBuilder();
 
-        if (hours > 0) {
+        if (hours != 0) {
             builder.append(hours).append("h ");
         }
 
-        if (minutes > 0) {
+        if (minutes != 0) {
             builder.append(minutes).append("m ");
         }
 
-        if (seconds > 0) {
+        if (seconds != 0) {
             builder.append(seconds).append("s");
         }
 

@@ -1,8 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
-import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.DSAttributeModifier;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType;
@@ -14,6 +12,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Registry;
@@ -26,20 +25,16 @@ import net.minecraft.resources.RegistryFixedCodec;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ExtraCodecs;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
+import java.util.Optional;
 import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
@@ -49,8 +44,9 @@ public record DragonLevel(
         List<DSAttributeModifier> modifiers,
         List<ScalingAttributeModifier> scalingModifiers,
         int harvestLevelBonus,
+        double breakSpeedMultiplier,
         List<MiscCodecs.GrowthItem> growthItems
-) {
+) implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonLevel>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_levels"));
 
     public static final Codec<DragonLevel> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
@@ -59,14 +55,12 @@ public record DragonLevel(
             DSAttributeModifier.CODEC.listOf().fieldOf("modifiers").forGetter(DragonLevel::modifiers),
             ScalingAttributeModifier.CODEC.listOf().fieldOf("scaling_modifiers").forGetter(DragonLevel::scalingModifiers),
             ExtraCodecs.intRange(0, 4).fieldOf("harvest_level_bonus").forGetter(DragonLevel::harvestLevelBonus),
+            MiscCodecs.doubleRange(1, 10).fieldOf("break_speed_multiplier").forGetter(DragonLevel::breakSpeedMultiplier),
             MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonLevel::growthItems)
     ).apply(instance, instance.stable(DragonLevel::new)));
 
     public static final Codec<Holder<DragonLevel>> CODEC = RegistryFixedCodec.create(REGISTRY);
     public static final StreamCodec<RegistryFriendlyByteBuf, Holder<DragonLevel>> STREAM_CODEC = ByteBufCodecs.holderRegistry(REGISTRY);
-
-    /** Currently used for certain mechanics / animations */
-    public static final double MAX_HANDLED_SIZE = 60; // TODO level :: remove
 
     @Translation(type = Translation.Type.LEVEL, comments = "Newborn")
     public static ResourceKey<DragonLevel> newborn = key("newborn");
@@ -80,6 +74,20 @@ public record DragonLevel(
     @Translation(type = Translation.Type.LEVEL, comments = "Ancient")
     public static ResourceKey<DragonLevel> ancient = key("ancient");
 
+    // --- Actual fields --- //
+
+    /** Currently used for certain mechanics / animations */
+    public static final double MAX_HANDLED_SIZE = 60; // TODO level :: remove
+
+    private static DragonLevel smallest;
+    private static DragonLevel largest;
+
+    public static void update(@Nullable final HolderLookup.Provider provider) {
+        Pair<DragonLevel, DragonLevel> sizes = getSizes(provider);
+        smallest = sizes.first();
+        largest = sizes.second();
+    }
+
     public double ticksToSize(int ticks) {
         return (sizeRange().max() - sizeRange().min()) / ticksUntilGrown() * ticks;
     }
@@ -88,71 +96,34 @@ public record DragonLevel(
         return ((size - sizeRange().min())) / (sizeRange().max() - sizeRange().min());
     }
 
-    /** The player attribute map doesn't contain attributes that weren't accessed before */
-    public void applyModifiers(final Player player) {
-        Set<Holder<Attribute>> attributes = new HashSet<>();
-        modifiers.forEach(modifier -> attributes.add(modifier.attribute()));
-        scalingModifiers.forEach(modifier -> attributes.add(modifier.attribute()));
-
-        DragonStateHandler data = DragonStateProvider.getData(player);
-        attributes.forEach(attribute -> applyModifiers(data.getTypeNameLowerCase(), data.getSize(), player.getAttribute(attribute)));
-    }
-
-    /** Intended for usage within descriptions */
-    public double getAttributeValue(final String dragonType, double size, final Holder<Attribute> attribute) {
-        AttributeInstance attributeInstance = new AttributeInstance(attribute, instance -> { /* Nothing to do */ });
-        applyModifiers(dragonType, size, attributeInstance);
-        return attributeInstance.getValue();
-    }
-
-    private void applyModifiers(final String dragonType, double size, @Nullable final AttributeInstance instance) {
-        if (instance == null) {
-            return;
-        }
-
-        modifiers().forEach(modifier -> {
-            if (!modifier.attribute().is(instance.getAttribute()) || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
-                return;
-            }
-
-            instance.addPermanentModifier(modifier.modifier());
-        });
-
-        scalingModifiers().forEach(modifier -> {
-            if (!modifier.attribute().is(instance.getAttribute()) || modifier.dragonType().isPresent() && !modifier.dragonType().get().equals(dragonType)) {
-                return;
-            }
-
-            instance.addPermanentModifier(modifier.getModifier(size));
-        });
-    }
-
     @SubscribeEvent
     public static void register(final DataPackRegistryEvent.NewRegistry event) {
         event.dataPackRegistry(REGISTRY, DIRECT_CODEC, DIRECT_CODEC);
     }
 
-    // TODO :: add block_break_speed, jump height, step height and damage bonus
     public static void registerLevels(final BootstrapContext<DragonLevel> context) {
         context.register(newborn, new DragonLevel(
-                new MiscCodecs.Bounds(14, 20),
+                new MiscCodecs.Bounds(1, 20), // TODO level :: set back to min 14
                 Functions.hoursToTicks(3),
                 List.of(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 1, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, -7, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 1, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.025, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 1.5, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 0,
+                1.5,
                 List.of(
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.ELDER_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(20), DSItems.WEAK_DRAGON_HEART.value()),
-                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(10), DSItems.DRAGON_HEART_SHARD.value())
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(10), DSItems.DRAGON_HEART_SHARD.value()),
+                        MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 )
         ));
 
@@ -163,19 +134,22 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 2, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.25, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 2, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.05, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 2.5, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 1,
+                2,
                 List.of(
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(45), DSItems.ELDER_DRAGON_HEART.value()),
-                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(25), DSItems.WEAK_DRAGON_HEART.value())
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(25), DSItems.WEAK_DRAGON_HEART.value()),
+                        MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 )
         ));
 
@@ -186,39 +160,47 @@ public record DragonLevel(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.5, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.1, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 1,
+                3,
                 List.of(
-                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.ELDER_DRAGON_HEART.value())
+                        MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.ELDER_DRAGON_HEART.value()),
+                        MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 )
         ));
 
         context.register(ancient, new DragonLevel(
-                new MiscCodecs.Bounds(40, 60),
+                new MiscCodecs.Bounds(40, 200), // TODO level :: set back to max 200
                 Functions.daysToTicks(30),
                 List.of(
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.SUBMERGED_MINING_SPEED, 3, AttributeModifier.Operation.ADD_VALUE, DragonTypes.SEA.getTypeNameLowerCase()),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.STEP_HEIGHT, 0.5, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ATTACK_DAMAGE, 3, AttributeModifier.Operation.ADD_VALUE),
+                        DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.JUMP_STRENGTH, 0.1, AttributeModifier.Operation.ADD_VALUE),
                         DSAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 4, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 List.of(
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MOVEMENT_SPEED, 0.0015f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.ENTITY_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.BLOCK_INTERACTION_RANGE, 0.01f, AttributeModifier.Operation.ADD_VALUE),
-                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 1, AttributeModifier.Operation.ADD_VALUE),
+                        ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, Attributes.MAX_HEALTH, 0.5f, AttributeModifier.Operation.ADD_VALUE),
                         ScalingAttributeModifier.createModifier(ModifierType.DRAGON_LEVEL, DSAttributes.DRAGON_BREATH_RANGE, 0.05f, AttributeModifier.Operation.ADD_VALUE)
                 ),
                 1,
-                List.of()
+                3,
+                List.of(
+                        MiscCodecs.GrowthItem.create(Functions.hoursToTicks(1), DSItems.ELDER_DRAGON_HEART.value()),
+                        MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
+                )
         ));
     }
 
@@ -260,7 +242,15 @@ public record DragonLevel(
         return registry.listElementIds().toList();
     }
 
-    public static Holder<DragonLevel> getLargest(@Nullable final HolderLookup.Provider provider) {
+    public static double getBoundedSize(double size) {
+        return Math.clamp(size, smallest.sizeRange().min(), largest.sizeRange().max());
+    }
+
+    public static MiscCodecs.Bounds getBounds() {
+        return new MiscCodecs.Bounds(smallest.sizeRange().min(), largest.sizeRange().max());
+    }
+
+    public static Optional<Holder.Reference<DragonLevel>> get(@Nullable final HolderLookup.Provider provider, final ResourceKey<DragonLevel> key) {
         HolderLookup.RegistryLookup<DragonLevel> registry;
 
         if (provider == null) {
@@ -269,38 +259,10 @@ public record DragonLevel(
             registry = provider.lookupOrThrow(REGISTRY);
         }
 
-        Holder<DragonLevel> dragonLevel = null;
-
-        for (Holder.Reference<DragonLevel> level : Objects.requireNonNull(registry).listElements().toList()) {
-            if (dragonLevel == null || level.value().sizeRange().max() > dragonLevel.value().sizeRange().max()) {
-                dragonLevel = level;
-            }
-        }
-
-        return dragonLevel;
+        return Objects.requireNonNull(registry).get(key);
     }
 
-    public static Holder<DragonLevel> getSmallest(@Nullable final HolderLookup.Provider provider) {
-        HolderLookup.RegistryLookup<DragonLevel> registry;
-
-        if (provider == null) {
-            registry = CommonHooks.resolveLookup(REGISTRY);
-        } else {
-            registry = provider.lookupOrThrow(REGISTRY);
-        }
-
-        Holder<DragonLevel> dragonLevel = null;
-
-        for (Holder.Reference<DragonLevel> level : Objects.requireNonNull(registry).listElements().toList()) {
-            if (dragonLevel == null || level.value().sizeRange().min() < dragonLevel.value().sizeRange().min()) {
-                dragonLevel = level;
-            }
-        }
-
-        return dragonLevel;
-    }
-
-    public static Holder<DragonLevel> getLevel(@Nullable final HolderLookup.Provider provider, double size) {
+    public static Holder<DragonLevel> get(@Nullable final HolderLookup.Provider provider, double size) {
         HolderLookup.RegistryLookup<DragonLevel> registry;
 
         if (provider == null) {
@@ -334,8 +296,28 @@ public record DragonLevel(
         throw new IllegalStateException("There is no valid dragon level for the supplied size [" + size + "]");
     }
 
-    public static boolean isSmallest(@Nullable final HolderLookup.Provider provider, final Holder<DragonLevel> dragonLevel, double size) {
-        Holder<DragonLevel> smallest = getLevel(provider, 0);
-        return dragonLevel.is(smallest) && dragonLevel.value().sizeRange().min() == size;
+    private static Pair<DragonLevel, DragonLevel> getSizes(@Nullable final HolderLookup.Provider provider) {
+        HolderLookup.RegistryLookup<DragonLevel> registry;
+
+        if (provider == null) {
+            registry = CommonHooks.resolveLookup(REGISTRY);
+        } else {
+            registry = provider.lookupOrThrow(REGISTRY);
+        }
+
+        DragonLevel smallest = null;
+        DragonLevel largest = null;
+
+        for (Holder.Reference<DragonLevel> level : Objects.requireNonNull(registry).listElements().toList()) {
+            if (smallest == null || level.value().sizeRange().min() < smallest.sizeRange().min()) {
+                smallest = level.value();
+            }
+
+            if (largest == null || level.value().sizeRange().max() > largest.sizeRange().max()) {
+                largest = level.value();
+            }
+        }
+
+        return Pair.of(smallest, largest);
     }
 }

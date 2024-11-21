@@ -72,10 +72,10 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 DragonLevelCustomization preset = lazy.get();
                 RegistryAccess access = Objects.requireNonNull(Minecraft.getInstance().player).registryAccess();
 
-                if (newborn.active && newborn.selected()) { // FIXME :: level
-                    Holder<DragonLevel> newborn = /* DragonLevel.getLevel(access, 0); */ access.holderOrThrow(DragonLevel.newborn);
+                if (newborn.active && newborn.selected()) {
+                    Holder<DragonLevel> newborn = access.holderOrThrow(DragonLevel.newborn);
 
-                    screen.preset.put(newborn.getKey(), Lazy.of(() -> {
+                    screen.preset.put(Objects.requireNonNull(newborn.getKey()), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
@@ -85,7 +85,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 if (young.active && young.selected()) {
                     Holder<DragonLevel> young = access.holderOrThrow(DragonLevel.young);
 
-                    screen.preset.put(young.getKey(), Lazy.of(() -> {
+                    screen.preset.put(Objects.requireNonNull(young.getKey()), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;
@@ -95,7 +95,7 @@ public class CopyEditorSettingsComponent extends AbstractContainerEventHandler i
                 if (adult.active && adult.selected()) {
                     Holder<DragonLevel> adult = access.holderOrThrow(DragonLevel.adult);
 
-                    screen.preset.put(adult.getKey(), Lazy.of(() -> {
+                    screen.preset.put(Objects.requireNonNull(adult.getKey()), Lazy.of(() -> {
                         DragonLevelCustomization customization = new DragonLevelCustomization();
                         customization.deserializeNBT(access, preset.serializeNBT(access));
                         return customization;

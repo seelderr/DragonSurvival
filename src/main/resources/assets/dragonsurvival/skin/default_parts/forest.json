@@ -35,5 +35,17 @@
     "MAGIC": "forest_magic_4",
     "EXTRA": "forest_extra_wings_2",
     "EXTRA1": "forest_extra_tail_11"
+  },
+  "dragonsurvival:ancient": {
+    "BASE": "base_0",
+    "BOTTOM": "bottom_1",
+    "EYES": "eyes_12",
+    "HORNS": "horns_20",
+    "SPIKES": "spikes_2",
+    "CLAWS": "claw_3_forest",
+    "TEETH": "teeth_3",
+    "MAGIC": "forest_magic_4",
+    "EXTRA": "forest_extra_wings_2",
+    "EXTRA1": "forest_extra_tail_11"
   }
 }

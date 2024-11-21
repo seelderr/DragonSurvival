@@ -350,7 +350,7 @@
   "dragonsurvival.configuration.bonuses_enabled": "Bonuses Enabled",
   "dragonsurvival.configuration.bonuses_enabled.tooltip": "If enabled all dragon bonuses are disabled",
   "dragonsurvival.configuration.break_speed_reduction": "Break Speed Reduction",
-  "dragonsurvival.configuration.break_speed_reduction.tooltip": "The base break speed / bonus break speed will be divided by this value if an effective claw tool is present for the block",
+  "dragonsurvival.configuration.break_speed_reduction.tooltip": "The break speed multiplier of the dragon level will be divided by this value if:\n- The block is not part of the harvestable blocks of that dragon type\n- The dragon has a valid tool in the claw inventory",
   "dragonsurvival.configuration.burn": "Burn",
   "dragonsurvival.configuration.burn.tooltip": "Enable / Disable the burn ability",
   "dragonsurvival.configuration.burn_chance": "Burn Chance",

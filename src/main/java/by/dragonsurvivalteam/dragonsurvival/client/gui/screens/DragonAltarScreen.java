@@ -11,6 +11,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.*;
@@ -27,6 +28,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DyeColor;
 import net.neoforged.neoforge.client.gui.widget.ExtendedButton;
+import net.neoforged.neoforge.common.CommonHooks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -114,24 +116,12 @@ public class DragonAltarScreen extends Screen {
             if (btn instanceof AltarTypeButton button) {
                 if (button.isHoveredOrFocused()) {
                     handler1.setType(button.type);
-
-                    if (handler1.getBody() == null) {
-                        handler1.setBody(DragonBody.random(null));
-                    }
-
-                    handler1.setHasFlight(true);
-                    handler1.setSize(0, null);
-                    handler1.getSkinData().get(Objects.requireNonNull(handler1.getLevel()).getKey()).get().defaultSkin = true;
-
                     handler2.setType(button.type);
 
-                    if (handler2.getBody() == null) {
-                        handler2.setBody(DragonBody.random(null));
+                    if (button.type != null) {
+                        initializeHandler(handler1);
+                        initializeHandler(handler2);
                     }
-
-                    handler2.setHasFlight(true);
-                    handler2.setSize(button.type == null ? -1 : 0, null);
-                    handler2.getSkinData().get(Objects.requireNonNull(handler2.getLevel()).getKey()).get().defaultSkin = true;
 
                     FakeClientPlayerUtils.getFakePlayer(0, handler1).animationSupplier = () -> animations[animation1];
                     FakeClientPlayerUtils.getFakePlayer(1, handler2).animationSupplier = () -> animations[animation2];
@@ -164,8 +154,18 @@ public class DragonAltarScreen extends Screen {
         }
 
         TextRenderUtil.drawCenteredScaledText(guiGraphics, width / 2, 10, 2f, title.getString(), DyeColor.WHITE.getTextColor());
-
         super.render(guiGraphics, mouseX, mouseY, partialTick);
+    }
+
+    private void initializeHandler(final DragonStateHandler handler) {
+        if (handler.getBody() == null) {
+            handler.setBody(DragonBody.random(null));
+        }
+
+        handler.setHasFlight(true);
+        //noinspection DataFlowIssue -> registyr is expected to be present
+        handler.setSize(CommonHooks.resolveLookup(DragonLevel.REGISTRY).getOrThrow(DragonLevel.adult), null);
+        handler.getSkinData().get(Objects.requireNonNull(handler.getLevel()).getKey()).get().defaultSkin = true;
     }
 
     @Override
@@ -229,7 +229,7 @@ public class DragonAltarScreen extends Screen {
         addRenderableWidget(new ExtendedButton(width / 2 - 75, height - 25, 150, 20, Component.translatable(LangKey.GUI_DRAGON_EDITOR), action -> Minecraft.getInstance().setScreen(new DragonEditorScreen(Minecraft.getInstance().screen))) {
             @Override
             public void renderWidget(@NotNull final GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-                visible = DragonStateProvider.isDragon(minecraft.player);
+                visible = DragonStateProvider.isDragon(Objects.requireNonNull(minecraft).player);
                 super.renderWidget(guiGraphics, mouseX, mouseY, partialTick);
             }
         });

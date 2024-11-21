@@ -1,4 +1,5 @@
 {
+  "break_speed_multiplier": 1.5,
   "growth_items": [
     {
       "growth_in_ticks": 36000,
@@ -11,6 +12,10 @@
     {
       "growth_in_ticks": 12000,
       "items": "dragonsurvival:heart_element"
+    },
+    {
+      "growth_in_ticks": -72000,
+      "items": "dragonsurvival:star_bone"
     }
   ],
   "harvest_level_bonus": 0,
@@ -41,6 +46,14 @@
       }
     },
     {
+      "attribute": "minecraft:generic.jump_strength",
+      "modifier": {
+        "amount": 0.025,
+        "id": "dragonsurvival:dragonsurvival/level/1763909375/minecraft.generic.jump_strength",
+        "operation": "add_value"
+      }
+    },
+    {
       "attribute": "dragonsurvival:dragon_breath_range",
       "modifier": {
         "amount": 1.5,
@@ -62,12 +75,12 @@
     },
     {
       "attribute": "minecraft:generic.max_health",
-      "id": "dragonsurvival:dragonsurvival/level/345750019/minecraft.generic.max_health",
+      "id": "dragonsurvival:dragonsurvival/level/347224317/minecraft.generic.max_health",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
-        "base": 1.0,
-        "per_level_above_first": 1.0
+        "base": 0.5,
+        "per_level_above_first": 0.5
       }
     },
     {
@@ -83,7 +96,7 @@
   ],
   "size_range": {
     "max": 20.0,
-    "min": 14.0
+    "min": 1.0
   },
   "ticks_until_grown": 216000
 }

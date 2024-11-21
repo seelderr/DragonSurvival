@@ -1,20 +1,16 @@
 package by.dragonsurvivalteam.dragonsurvival.magic.common.passive;
 
 
+import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.DSAttributeModifier;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.ManaHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.ai.attributes.AttributeInstance;
 
-import java.util.List;
 import java.util.Objects;
 
 public abstract class MagicAbility extends PassiveDragonAbility {
@@ -37,12 +33,9 @@ public abstract class MagicAbility extends PassiveDragonAbility {
         int abilityLevel = Math.min(99, getLevel());
         String manaFromAbility = abilityLevel > 0 ? "+" + abilityLevel : "0";
 
-        Holder<DragonBody> body = DragonStateProvider.getData(player).getBody();
-        List<DSAttributeModifier> manaModifiers = Objects.requireNonNull(body).value().modifiers().stream().filter(modifier -> modifier.attribute().is(DSAttributes.MANA)).toList();
-
-        AttributeInstance dummyInstance = new AttributeInstance(DSAttributes.MANA, instance -> { /* Nothing to do */ });
-        manaModifiers.forEach(modifier -> dummyInstance.addTransientModifier(modifier.modifier()));
-        int bodyMana = (int) Math.min(99, dummyInstance.getValue() - DSAttributes.MANA.value().getDefaultValue());
+        DragonStateHandler data = DragonStateProvider.getData(player);
+        double attributeValue = Objects.requireNonNull(data.getBody()).value().getAttributeValue(data.getTypeNameLowerCase(), data.getSize(), DSAttributes.MANA);
+        int bodyMana = (int) Math.min(99, attributeValue - Objects.requireNonNull(player.getAttribute(DSAttributes.MANA)).getBaseValue());
 
         String manaFromBody = "0";
 

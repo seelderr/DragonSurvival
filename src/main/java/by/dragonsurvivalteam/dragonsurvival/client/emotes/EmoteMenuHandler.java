@@ -390,34 +390,38 @@ public class EmoteMenuHandler {
         ArrayList<Emote> emotes = new ArrayList<>(DSEmotes.EMOTES);
 
         emotes.removeIf(emote -> {
-            if (emote.requirements != null) {
-                if (emote.requirements.type != null) {
-                    boolean hasType = false;
-                    for (String t : emote.requirements.type) {
-                        if (t.equalsIgnoreCase(handler.getTypeName())) {
-                            hasType = true;
-                            break;
-                        }
-                    }
+            if (emote.requirements == null) {
+                return false;
+            }
 
-                    if (!hasType) {
-                        return true;
+            if (emote.requirements.type != null) {
+                String dragonType = handler.getTypeNameLowerCase();
+                boolean hasType = false;
+
+                for (String type : emote.requirements.type) {
+                    if (type.equals(dragonType)) {
+                        hasType = true;
+                        break;
                     }
                 }
 
-                if (emote.requirements.age != null) {
-                    boolean hasAge = false;
-                    for (String age : emote.requirements.age) {
-                        // FIXME level
-                        //noinspection DataFlowIssue -> level and key are present
-                        if (age.equalsIgnoreCase(handler.getLevel().getKey().location().getPath())) {
-                            hasAge = true;
-                            break;
-                        }
-                    }
-
-                    return !hasAge;
+                if (!hasType) {
+                    return true;
                 }
+            }
+
+            if (emote.requirements.age != null) {
+                String dragonLevel = Objects.requireNonNull(handler.getLevel().getKey()).location().toString();
+                boolean hasAge = false;
+
+                for (String level : emote.requirements.age) {
+                    if (level.equals(dragonLevel)) {
+                        hasAge = true;
+                        break;
+                    }
+                }
+
+                return !hasAge;
             }
 
             return false;

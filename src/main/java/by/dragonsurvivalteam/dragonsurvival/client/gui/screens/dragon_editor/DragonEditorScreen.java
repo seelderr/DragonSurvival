@@ -208,14 +208,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         }
     }
 
-    private float zoomToSetForDragonLevel(Holder<DragonLevel> dragonLevel) {
-        return (float) (dragonLevel.value().sizeRange().min() * 2); // TODO level :: check
+    private float setZoom(final Holder<DragonLevel> dragonLevel) {
+        return (float) (0.5 * dragonLevel.value().sizeRange().min() + 28);
     }
 
     public final Function<Holder<DragonLevel>, Holder<DragonLevel>> selectLevelAction = (newLevel) -> {
         Holder<DragonLevel> previousLevel = dragonLevel;
         dragonLevel = newLevel;
-        dragonRender.zoom = zoomToSetForDragonLevel(dragonLevel);
+        dragonRender.zoom = setZoom(dragonLevel);
         HANDLER.getSkinData().compileSkin(dragonLevel);
         update();
 
@@ -440,6 +440,14 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             dragonType = localHandler.getType();
             dragonLevel = localHandler.getLevel();
             dragonBody = localHandler.getBody();
+        } else if (dragonType != null) {
+            if (dragonLevel == null) {
+                dragonLevel = DragonLevel.get(null, DragonLevel.newborn).orElseThrow();
+            }
+
+            if (dragonBody == null) {
+                dragonBody = DragonBody.random(null);
+            }
         } else {
             return;
         }
@@ -468,13 +476,11 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
         HANDLER.getSkinData().skinPreset = preset;
         HANDLER.getSkinData().compileSkin(dragonLevel);
-
-        // TODO level :: check
-        dragonRender.zoom = (float) (dragonLevel.value().sizeRange().min() * 2);
-
         HANDLER.setHasFlight(true);
         HANDLER.setType(dragonType);
         HANDLER.setBody(dragonBody);
+
+        dragonRender.zoom = setZoom(dragonLevel);
     }
 
     private boolean dragonTypeWouldChange(DragonStateHandler handler) {
@@ -533,7 +539,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             }
 
             String[] values = valueList.toArray(new String[0]);
-            String curValue = partToTranslation(preset.get(dragonLevel.getKey()).get().layerSettings.get(layers).get().selectedSkin);
+            String curValue = partToTranslation(preset.get(Objects.requireNonNull(dragonLevel.getKey())).get().layerSettings.get(layers).get().selectedSkin);
 
             DropDownButton btn = new DragonEditorDropdownButton(this, row < 8 ? width / 2 - 210 : width / 2 + 80, guiTop - 5 + (row >= 8 ? (row - 8) * 20 : row * 20), 100, 15, curValue, values, layers);
             dropdownButtons.put(layers, btn);
@@ -914,8 +920,8 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
 
             double size = data.getSavedDragonSize(data.getTypeName());
 
-            if (!ServerConfig.saveGrowthStage || size == 0) {
-                data.setSize(0, minecraft.player);
+            if (!ServerConfig.saveGrowthStage || size == DragonStateHandler.NO_SIZE) {
+                data.setSize(minecraft.player.registryAccess().holderOrThrow(DragonLevel.newborn), minecraft.player);
             } else {
                 data.setSize(size, minecraft.player);
             }

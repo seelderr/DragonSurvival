@@ -10,7 +10,6 @@ import by.dragonsurvivalteam.dragonsurvival.common.items.armor.DragonHunterWeapo
 import by.dragonsurvivalteam.dragonsurvival.common.items.armor.LightDragonArmorItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.ChargedSoupItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.food.DragonFoodItem;
-import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarBoneItem;
 import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.util.BlockPosHelper;
@@ -47,7 +46,7 @@ public class DSItems {
     // --- Growth --- //
 
     @Translation(type = Translation.Type.ITEM, comments = "Star Bone")
-    public static final Holder<Item> STAR_BONE = DS_ITEMS.register("star_bone", location -> new StarBoneItem(new Properties(), location.getPath()));
+    public static final Holder<Item> STAR_BONE = DS_ITEMS.register("star_bone", location -> new TooltipItem(new Properties(), location.getPath()));
 
     @Translation(type = Translation.Type.ITEM, comments = "Star Heart")
     public static final Holder<Item> STAR_HEART = DS_ITEMS.register("star_heart", location -> new StarHeartItem(new Properties(), location.getPath()));
