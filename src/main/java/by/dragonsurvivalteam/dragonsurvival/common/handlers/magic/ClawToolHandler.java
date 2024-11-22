@@ -262,9 +262,14 @@ public class ClawToolHandler {
         BlockState state = event.getState();
 
         if (!state.is(handler.getType().harvestableBlocks()) || handler.hasValidClawTool(state)) {
-            bonus /= DragonBonusConfig.bonusBreakSpeedReduction;
+            bonus = getReducedBonus(bonus);
         }
 
-        event.setNewSpeed((float) (event.getNewSpeed() * Math.max(1, bonus)));
+        event.setNewSpeed((float) (event.getNewSpeed() * bonus));
+    }
+
+    public static double getReducedBonus(double bonus) {
+        // 1 is the default / minimum multiplier - only reduce the added bonus (e.g. 1.5 -> 1.25)
+        return 1 + (bonus - 1) / DragonBonusConfig.breakSpeedReduction;
     }
 }

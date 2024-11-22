@@ -38,7 +38,7 @@ public record Modifier(ModifierType type, Holder<Attribute> attribute, LevelBase
         return new Modifier(type, attribute, perSize, operation, Optional.empty());
     }
 
-    public static Modifier create(final ModifierType type, final Holder<Attribute> attribute, LevelBasedValue perSize, final AttributeModifier.Operation operation, final String dragonType) {
+    public static Modifier create(final ModifierType type, final Holder<Attribute> attribute, final LevelBasedValue perSize, final AttributeModifier.Operation operation, final String dragonType) {
         return new Modifier(type, attribute, perSize, operation, Optional.of(dragonType));
     }
 

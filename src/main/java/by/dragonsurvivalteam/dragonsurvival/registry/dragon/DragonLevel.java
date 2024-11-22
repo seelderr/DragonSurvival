@@ -23,10 +23,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 @EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public record DragonLevel(
@@ -61,6 +61,19 @@ public record DragonLevel(
         Pair<DragonLevel, DragonLevel> sizes = getSizes(provider);
         smallest = sizes.first();
         largest = sizes.second();
+
+        StringBuilder builder = new StringBuilder();
+        checkLevel(builder, provider, DragonLevels.newborn);
+        checkLevel(builder, provider, DragonLevels.young);
+        checkLevel(builder, provider, DragonLevels.adult);
+
+        if (!builder.isEmpty()) {
+            throw new IllegalStateException("The following built-in dragon levels are missing, resulting in an invalid game state:" + builder);
+        }
+    }
+
+    private static void checkLevel(final StringBuilder builder, @Nullable final HolderLookup.Provider provider, final ResourceKey<DragonLevel> levelKey) {
+        get(provider, levelKey).ifPresentOrElse(level -> { /* Nothing to do */ }, () -> builder.append("\n- ").append(levelKey.location()));
     }
 
     public double ticksToSize(int ticks) {

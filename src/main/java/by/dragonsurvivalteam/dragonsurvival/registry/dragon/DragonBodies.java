@@ -14,6 +14,8 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 
 import java.util.List;
 
+import static by.dragonsurvivalteam.dragonsurvival.common.codecs.ModifierType.DRAGON_BODY;
+
 public class DragonBodies {
     @Translation(type = Translation.Type.BODY_DESCRIPTION, comments = {
             "§6■ Central Type§r",
@@ -61,44 +63,44 @@ public class DragonBodies {
         ), 1, false, false));
 
         context.register(east, new DragonBody(List.of(
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ARMOR, 2, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ATTACK_KNOCKBACK, -1, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.GRAVITY, 0.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.JUMP_STRENGTH, 0.1f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.MOVEMENT_SPEED, 0.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, NeoForgeMod.SWIM_SPEED, 1, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_SPEED, 0.2f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                Modifier.constant(DRAGON_BODY, Attributes.ARMOR, 2, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.ATTACK_DAMAGE, -1, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.ATTACK_KNOCKBACK, -1, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.GRAVITY, 0.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, Attributes.JUMP_STRENGTH, 0.1f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.MOVEMENT_SPEED, 0.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, NeoForgeMod.SWIM_SPEED, 1, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_SPEED, 0.2f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 1, false, true));
 
         context.register(north, new DragonBody(List.of(
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ATTACK_DAMAGE, -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ATTACK_KNOCKBACK, -0.5f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.MOVEMENT_SPEED, -0.3f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, NeoForgeMod.SWIM_SPEED, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, -0.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                Modifier.constant(DRAGON_BODY, Attributes.ATTACK_DAMAGE, -0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, Attributes.ATTACK_KNOCKBACK, -0.5f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.MOVEMENT_SPEED, -0.3f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, NeoForgeMod.SWIM_SPEED, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.MANA, 2, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, -0.1f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 0.55, true, true));
 
         context.register(south, new DragonBody(List.of(
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ATTACK_DAMAGE, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.GRAVITY, 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.JUMP_STRENGTH, 0.2f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.MOVEMENT_SPEED, 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, NeoForgeMod.SWIM_SPEED, -0.2f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_SPEED, -0.2f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, -0.5f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                Modifier.constant(DRAGON_BODY, Attributes.ATTACK_DAMAGE, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.GRAVITY, 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, Attributes.JUMP_STRENGTH, 0.2f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.MOVEMENT_SPEED, 0.2f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, NeoForgeMod.SWIM_SPEED, -0.2f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_SPEED, -0.2f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, -0.5f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 1, false, true));
 
         context.register(west, new DragonBody(List.of(
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.ATTACK_KNOCKBACK, 0.5f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.MOVEMENT_SPEED, -0.3f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
-                Modifier.constant(ModifierType.DRAGON_BODY, Attributes.STEP_HEIGHT, 1, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, NeoForgeMod.SWIM_SPEED, -0.3f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_SPEED, 0.2f, AttributeModifier.Operation.ADD_VALUE),
-                Modifier.constant(ModifierType.DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
+                Modifier.constant(DRAGON_BODY, Attributes.ATTACK_KNOCKBACK, 0.5f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, Attributes.MOVEMENT_SPEED, -0.3f, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL),
+                Modifier.constant(DRAGON_BODY, Attributes.STEP_HEIGHT, 1, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, NeoForgeMod.SWIM_SPEED, -0.3f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_SPEED, 0.2f, AttributeModifier.Operation.ADD_VALUE),
+                Modifier.constant(DRAGON_BODY, DSAttributes.FLIGHT_STAMINA_COST, 1, AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL)
         ), 1, false, false));
     }
 

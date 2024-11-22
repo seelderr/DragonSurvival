@@ -39,5 +39,5 @@ public class DragonBonusConfig {
             "- The dragon has a valid tool in the claw inventory"
     })
     @ConfigOption(side = ConfigSide.SERVER, category = "bonuses", key = "break_speed_reduction")
-    public static Float bonusBreakSpeedReduction = 2f;
+    public static Float breakSpeedReduction = 2f;
 }

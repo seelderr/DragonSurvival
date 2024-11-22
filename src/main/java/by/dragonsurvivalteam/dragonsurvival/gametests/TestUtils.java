@@ -27,10 +27,11 @@ public class TestUtils {
         return setBlock(helper, block, BlockPos.ZERO);
     }
 
+    /** The position needs to be the non-absolute position (meaning without using {@link GameTestHelper#absolutePos(BlockPos)}) */
     public static BlockState setBlock(final GameTestHelper helper, final Block block, final BlockPos position) {
         helper.setBlock(position, block);
-        // TODO :: should log the block which is currently set
-        helper.assertBlock(position, blockToCheck -> blockToCheck == block, "Block at position [" + position + "] is wrong - expected [" + block + "]");
+        BlockState state = helper.getBlockState(position);
+        helper.assertTrue(state.is(block), "Block at position [" + position + "] was [" + state.getBlock() + "] - expected [" + block + "]");
         return helper.getBlockState(position);
     }
 
