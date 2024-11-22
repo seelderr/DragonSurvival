@@ -58,7 +58,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(10), DSItems.DRAGON_HEART_SHARD.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Condition.naturalGrowth(),
+                Optional.of(Condition.defaultNaturalGrowthBlocker()),
                 Optional.empty()
         ));
 
@@ -87,7 +87,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.WEAK_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Condition.naturalGrowth(),
+                Optional.of(Condition.defaultNaturalGrowthBlocker()),
                 Optional.empty()
         ));
 
@@ -115,7 +115,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(1), DSItems.ELDER_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Condition.naturalGrowth(),
+                Optional.of(Condition.defaultNaturalGrowthBlocker()),
                 Optional.empty()
         ));
     }

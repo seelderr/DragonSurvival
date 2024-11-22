@@ -13,9 +13,9 @@ public class Condition {
         return EntityPredicate.wrap(EntityPredicate.Builder.entity().build());
     }
 
-    public static EntityPredicate naturalGrowth() {
+    public static EntityPredicate defaultNaturalGrowthBlocker() {
         return EntityPredicate.Builder.entity().subPredicate(
-                DragonPredicate.Builder.dragon().starHeart(StarHeartItem.State.INACTIVE).build()
+                DragonPredicate.Builder.dragon().starHeart(StarHeartItem.State.ACTIVE).build()
         ).build();
     }
 

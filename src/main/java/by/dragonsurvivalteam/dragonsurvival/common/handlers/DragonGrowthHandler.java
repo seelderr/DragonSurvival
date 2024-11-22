@@ -9,6 +9,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
+import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -19,6 +20,8 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
+
+import java.util.Optional;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
@@ -84,8 +87,9 @@ public class DragonGrowthHandler {
 
         DragonLevel dragonLevel = data.getLevel().value();
         double newSize = DragonLevel.getBoundedSize(data.getSize() + dragonLevel.ticksToSize(getInterval()));
+        Optional<EntityPredicate> isNaturalGrowthStopped = dragonLevel.isNaturalGrowthStopped();
 
-        if (newSize == data.getSize() || !DragonLevel.getBounds().matches(data.getSize()) || !dragonLevel.canNaturallyGrow().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
+        if (newSize == data.getSize() || isNaturalGrowthStopped.isPresent() && isNaturalGrowthStopped.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
             if (data.isGrowing) {
                 data.isGrowing = false;
                 PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(false));

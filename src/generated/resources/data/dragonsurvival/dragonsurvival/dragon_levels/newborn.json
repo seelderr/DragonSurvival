@@ -18,7 +18,12 @@
       "items": "dragonsurvival:star_bone"
     }
   ],
-  "harvest_level_bonus": 0,
+  "is_natural_growth_stopped": {
+    "type_specific": {
+      "type": "dragonsurvival:dragon_predicate",
+      "star_heart_state": "active"
+    }
+  },
   "modifiers": [
     {
       "type": "dragonsurvival/level/",

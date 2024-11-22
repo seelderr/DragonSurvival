@@ -1,7 +1,6 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
-import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -25,10 +24,10 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 
+import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 /*
 TODO ::
@@ -47,19 +46,19 @@ public record DragonLevel(
         int harvestLevelBonus,
         double breakSpeedMultiplier,
         List<MiscCodecs.GrowthItem> growthItems,
-        EntityPredicate canNaturallyGrow,
+        Optional<EntityPredicate> isNaturalGrowthStopped,
         Optional<EntityPredicate> canGrowInto
 ) implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonLevel>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_levels"));
 
     public static final Codec<DragonLevel> DIRECT_CODEC = RecordCodecBuilder.create(instance -> instance.group(
             MiscCodecs.bounds().fieldOf("size_range").forGetter(DragonLevel::sizeRange),
-            ExtraCodecs.intRange(20, Functions.daysToTicks(30)).fieldOf("ticks_until_grown").forGetter(DragonLevel::ticksUntilGrown),
-            Modifier.CODEC.listOf().fieldOf("modifiers").forGetter(DragonLevel::modifiers),
-            ExtraCodecs.intRange(0, 4).fieldOf("harvest_level_bonus").forGetter(DragonLevel::harvestLevelBonus),
-            MiscCodecs.doubleRange(1, 10).fieldOf("break_speed_multiplier").forGetter(DragonLevel::breakSpeedMultiplier),
+            ExtraCodecs.intRange(20, Functions.daysToTicks(365)).fieldOf("ticks_until_grown").forGetter(DragonLevel::ticksUntilGrown),
+            Modifier.CODEC.listOf().optionalFieldOf("modifiers", List.of()).forGetter(DragonLevel::modifiers),
+            ExtraCodecs.intRange(0, 4).optionalFieldOf("harvest_level_bonus", 0).forGetter(DragonLevel::harvestLevelBonus),
+            MiscCodecs.doubleRange(1, 10).optionalFieldOf("break_speed_multiplier", 1d).forGetter(DragonLevel::breakSpeedMultiplier),
             MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonLevel::growthItems),
-            EntityPredicate.CODEC.optionalFieldOf("can_naturally_grow", Condition.naturalGrowth()).forGetter(DragonLevel::canNaturallyGrow),
+            EntityPredicate.CODEC.optionalFieldOf("is_natural_growth_stopped").forGetter(DragonLevel::isNaturalGrowthStopped),
             EntityPredicate.CODEC.optionalFieldOf("can_grow_into").forGetter(DragonLevel::canGrowInto)
     ).apply(instance, instance.stable(DragonLevel::new)));
 
