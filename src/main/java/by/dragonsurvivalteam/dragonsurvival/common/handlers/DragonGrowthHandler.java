@@ -4,13 +4,13 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
+import by.dragonsurvivalteam.dragonsurvival.network.player.SyncGrowthState;
 import by.dragonsurvivalteam.dragonsurvival.network.player.SyncSize;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAdvancementTriggers;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import net.minecraft.ChatFormatting;
-import net.minecraft.advancements.critereon.EntityPredicate;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -21,8 +21,6 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
-
-import java.util.Optional;
 
 @EventBusSubscriber(modid = DragonSurvival.MODID)
 public class DragonGrowthHandler {
@@ -94,26 +92,22 @@ public class DragonGrowthHandler {
         }
 
         DragonLevel dragonLevel = data.getLevel().value();
-        Optional<EntityPredicate> canNaturallyGrow = dragonLevel.canNaturallyGrow();
-
-        if (canNaturallyGrow.isPresent() && !canNaturallyGrow.get().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
-            return;
-        }
-
-        if (!data.isDragon() || /* FIXME :: probably remove? */ !data.isGrowing) {
-            return;
-        }
-
         int increment = Functions.secondsToTicks(60);
+        double newSize = DragonLevel.getBoundedSize(data.getSize() + dragonLevel.ticksToSize(increment));
 
-        if (serverPlayer.tickCount % increment != 0) {
+        if (newSize == data.getSize() || !DragonLevel.getBounds().matches(data.getSize()) || !dragonLevel.canNaturallyGrow().matches(serverPlayer.serverLevel(), serverPlayer.position(), serverPlayer)) {
+            if (data.isGrowing) {
+                data.isGrowing = false;
+                PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(false));
+            }
+
             return;
+        } else if (!data.isGrowing) {
+            data.isGrowing = true;
+            PacketDistributor.sendToPlayer(serverPlayer, new SyncGrowthState.Data(true));
         }
 
-        double oldSize = data.getSize();
-        double newSize = dragonLevel.getSizeWithinRange(oldSize + dragonLevel.ticksToSize(increment));
-
-        if (newSize != oldSize) {
+        if (serverPlayer.tickCount % increment == 0) {
             data.setSize(newSize, serverPlayer);
             PacketDistributor.sendToPlayersTrackingEntityAndSelf(serverPlayer, new SyncSize.Data(serverPlayer.getId(), data.getSize()));
             DSAdvancementTriggers.BE_DRAGON.get().trigger(serverPlayer, data.getSize(), data.getTypeName());

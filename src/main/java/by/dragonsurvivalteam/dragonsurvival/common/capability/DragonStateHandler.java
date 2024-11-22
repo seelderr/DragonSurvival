@@ -6,6 +6,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.capability.subcapabilities.*;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.common.handlers.magic.HunterHandler;
+import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.config.ServerConfig;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
@@ -38,10 +39,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 public class DragonStateHandler extends EntityStateHandler {
-    public static final String DRAGON_BODY = "dragon_body";
-    public static final String DRAGON_LEVEL = "dragon_level";
-    public static final String ENTITY_STATE = "entity_state";
-
     public static final int NO_SIZE = -1;
 
     @SuppressWarnings("unchecked")
@@ -65,6 +62,7 @@ public class DragonStateHandler extends EntityStateHandler {
     private int hunterStacks;
 
     public boolean isGrowing = true;
+    public StarHeartItem.State starHeartState = StarHeartItem.State.INACTIVE;
 
     public boolean treasureResting;
     public int treasureRestTimer;
@@ -260,7 +258,6 @@ public class DragonStateHandler extends EntityStateHandler {
             return;
         }
 
-        isGrowing = true;
         getMagicData().initAbilities(type);
         dragonType = DragonTypes.newDragonTypeInstance(type.getSubtypeName());
     }
@@ -431,7 +428,8 @@ public class DragonStateHandler extends EntityStateHandler {
 
             tag.putDouble("size", getSize());
             tag.putBoolean("destructionEnabled", getDestructionEnabled());
-            tag.putBoolean("growing", isGrowing);
+            tag.putBoolean(IS_GROWING, isGrowing);
+            tag.putInt(STAR_HEART_STATE, starHeartState.ordinal());
 
             tag.putBoolean("isFlying", isWingsSpread());
 
@@ -528,7 +526,8 @@ public class DragonStateHandler extends EntityStateHandler {
             }
 
             setDestructionEnabled(tag.getBoolean("destructionEnabled"));
-            isGrowing = !tag.contains("growing") || tag.getBoolean("growing");
+            isGrowing = !tag.contains(IS_GROWING) || tag.getBoolean(IS_GROWING);
+            starHeartState = StarHeartItem.State.values()[tag.getInt(STAR_HEART_STATE)];
 
             treasureResting = tag.getBoolean("resting");
             treasureRestTimer = tag.getInt("restingTimer");
@@ -630,4 +629,11 @@ public class DragonStateHandler extends EntityStateHandler {
     public int getHunterStacks() {
         return hunterStacks;
     }
+
+    public static final String DRAGON_BODY = "dragon_body";
+    public static final String DRAGON_LEVEL = "dragon_level";
+    public static final String ENTITY_STATE = "entity_state";
+
+    public static final String STAR_HEART_STATE = "star_heart_state";
+    public static final String IS_GROWING = "is_growing";
 }

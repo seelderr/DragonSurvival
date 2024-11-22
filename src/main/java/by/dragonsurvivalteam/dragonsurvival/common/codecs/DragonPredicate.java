@@ -3,6 +3,7 @@ package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateHandler;
 import by.dragonsurvivalteam.dragonsurvival.common.capability.DragonStateProvider;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.AbstractDragonType;
+import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
 import com.mojang.serialization.Codec;
@@ -21,12 +22,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public record DragonPredicate(Optional<String> dragonType, Optional<HolderSet<DragonLevel>> dragonLevel, Optional<HolderSet<DragonBody>> dragonBody, Optional<MiscCodecs.Bounds> sizeRange) implements EntitySubPredicate {
+public record DragonPredicate(
+        Optional<String> dragonType,
+        Optional<HolderSet<DragonLevel>> dragonLevel,
+        Optional<HolderSet<DragonBody>> dragonBody,
+        Optional<MiscCodecs.Bounds> sizeRange,
+        Optional<StarHeartItem.State> starHeartState
+) implements EntitySubPredicate {
     public static final MapCodec<DragonPredicate> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             Codec.STRING.optionalFieldOf("dragon_type").forGetter(DragonPredicate::dragonType),
             RegistryCodecs.homogeneousList(DragonLevel.REGISTRY).optionalFieldOf("dragon_level").forGetter(DragonPredicate::dragonLevel),
             RegistryCodecs.homogeneousList(DragonBody.REGISTRY).optionalFieldOf("dragon_body").forGetter(DragonPredicate::dragonBody),
-            MiscCodecs.bounds().optionalFieldOf("size_range").forGetter(DragonPredicate::sizeRange)
+            MiscCodecs.bounds().optionalFieldOf("size_range").forGetter(DragonPredicate::sizeRange),
+            StarHeartItem.State.CODEC.optionalFieldOf("star_heart_state").forGetter(DragonPredicate::starHeartState)
     ).apply(instance, DragonPredicate::new));
 
     @Override
@@ -58,6 +66,10 @@ public record DragonPredicate(Optional<String> dragonType, Optional<HolderSet<Dr
             return false;
         }
 
+        if (starHeartState().isPresent() && starHeartState().get() != data.starHeartState) {
+            return false;
+        }
+
         return true;
     }
 
@@ -72,6 +84,7 @@ public record DragonPredicate(Optional<String> dragonType, Optional<HolderSet<Dr
         private Optional<HolderSet<DragonLevel>> dragonLevel = Optional.empty();
         private Optional<HolderSet<DragonBody>> dragonBody = Optional.empty();
         private Optional<MiscCodecs.Bounds> sizeRange = Optional.empty();
+        private Optional<StarHeartItem.State> starHeartState = Optional.empty();
 
         public static DragonPredicate.Builder dragon() {
             return new DragonPredicate.Builder();
@@ -97,8 +110,13 @@ public record DragonPredicate(Optional<String> dragonType, Optional<HolderSet<Dr
             return this;
         }
 
+        public DragonPredicate.Builder starHeart(final StarHeartItem.State starHeartState) {
+            this.starHeartState = Optional.of(starHeartState);
+            return this;
+        }
+
         public DragonPredicate build() {
-            return new DragonPredicate(dragonType, dragonLevel, dragonBody, sizeRange);
+            return new DragonPredicate(dragonType, dragonLevel, dragonBody, sizeRange, starHeartState);
         }
     }
 }

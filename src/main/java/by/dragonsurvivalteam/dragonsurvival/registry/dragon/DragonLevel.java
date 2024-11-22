@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -46,7 +47,7 @@ public record DragonLevel(
         int harvestLevelBonus,
         double breakSpeedMultiplier,
         List<MiscCodecs.GrowthItem> growthItems,
-        Optional<EntityPredicate> canNaturallyGrow,
+        EntityPredicate canNaturallyGrow,
         Optional<EntityPredicate> canGrowInto
 ) implements AttributeModifierSupplier {
     public static final ResourceKey<Registry<DragonLevel>> REGISTRY = ResourceKey.createRegistryKey(DragonSurvival.res("dragon_levels"));
@@ -58,7 +59,7 @@ public record DragonLevel(
             ExtraCodecs.intRange(0, 4).fieldOf("harvest_level_bonus").forGetter(DragonLevel::harvestLevelBonus),
             MiscCodecs.doubleRange(1, 10).fieldOf("break_speed_multiplier").forGetter(DragonLevel::breakSpeedMultiplier),
             MiscCodecs.GrowthItem.CODEC.listOf().optionalFieldOf("growth_items", List.of()).forGetter(DragonLevel::growthItems),
-            EntityPredicate.CODEC.optionalFieldOf("can_naturally_grow").forGetter(DragonLevel::canNaturallyGrow),
+            EntityPredicate.CODEC.optionalFieldOf("can_naturally_grow", Condition.naturalGrowth()).forGetter(DragonLevel::canNaturallyGrow),
             EntityPredicate.CODEC.optionalFieldOf("can_grow_into").forGetter(DragonLevel::canGrowInto)
     ).apply(instance, instance.stable(DragonLevel::new)));
 

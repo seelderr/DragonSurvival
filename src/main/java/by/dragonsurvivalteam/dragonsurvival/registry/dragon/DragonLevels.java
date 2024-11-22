@@ -2,9 +2,11 @@ package by.dragonsurvivalteam.dragonsurvival.registry.dragon;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Condition;
+import by.dragonsurvivalteam.dragonsurvival.common.codecs.DragonPredicate;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.MiscCodecs;
 import by.dragonsurvivalteam.dragonsurvival.common.codecs.Modifier;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
+import by.dragonsurvivalteam.dragonsurvival.common.items.growth.StarHeartItem;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSAttributes;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSItems;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
@@ -58,7 +60,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(10), DSItems.DRAGON_HEART_SHARD.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Optional.empty(),
+                Condition.naturalGrowth(),
                 Optional.empty()
         ));
 
@@ -87,7 +89,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.minutesToTicks(30), DSItems.WEAK_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Optional.empty(),
+                Condition.naturalGrowth(),
                 Optional.empty()
         ));
 
@@ -115,7 +117,7 @@ public class DragonLevels {
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(1), DSItems.ELDER_DRAGON_HEART.value()),
                         MiscCodecs.GrowthItem.create(Functions.hoursToTicks(-1), DSItems.STAR_BONE.value())
                 ),
-                Optional.of(Condition.dragonSize(40, 50).build()), // FIXME :: (test) remove
+                Condition.build(DragonPredicate.Builder.dragon().starHeart(StarHeartItem.State.INACTIVE).sizeRange(40, 50)), // FIXME :: (test) remove
                 Optional.empty()
         ));
     }

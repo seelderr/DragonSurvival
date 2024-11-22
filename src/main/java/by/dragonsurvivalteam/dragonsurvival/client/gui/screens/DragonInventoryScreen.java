@@ -305,23 +305,23 @@ public class DragonInventoryScreen extends EffectRenderingInventoryScreen<Dragon
             double percentage = Math.clamp(dragonLevel.getProgress(handler.getSize()), 0, 1);
             String ageInformation = NumberFormat.getPercentInstance().format(percentage);
 
-            double missing = dragonLevel.sizeRange().max() - handler.getSize();
-            double increment = (dragonLevel.sizeRange().max() - dragonLevel.sizeRange().min()) / dragonLevel.ticksUntilGrown();
-            double seconds = Functions.ticksToSeconds((int) (missing / increment));
+            if (handler.isGrowing) {
+                double missing = dragonLevel.sizeRange().max() - handler.getSize();
+                double increment = (dragonLevel.sizeRange().max() - dragonLevel.sizeRange().min()) / dragonLevel.ticksUntilGrown();
+                double seconds = Functions.ticksToSeconds((int) (missing / increment));
 
-            if (seconds > 0) {
-                int minutes = (int) (seconds / 60);
-                int hours = minutes / 60;
-                minutes -= hours * 60;
+                if (seconds > 0) {
+                    int minutes = (int) (seconds / 60);
+                    int hours = minutes / 60;
+                    minutes -= hours * 60;
 
-                String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
-                String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
-
-                if (handler.isGrowing) {
+                    String hourString = hours > 0 ? hours >= 10 ? Integer.toString(hours) : "0" + hours : "00";
+                    String minuteString = minutes > 0 ? minutes >= 10 ? Integer.toString(minutes) : "0" + minutes : "00";
                     ageInformation += " (" + hourString + ":" + minuteString + ")";
-                } else {
-                    ageInformation += " (§4--:--§r)";
+
                 }
+            } else {
+                ageInformation += " (§4--:--§r)";
             }
 
             List<GrowthComponent> growthItems = new ArrayList<>();
