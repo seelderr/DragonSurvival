@@ -77,10 +77,10 @@ public class DragonLevelCustomization implements INBTSerializable<CompoundTag> {
 
         for (EnumSkinLayer layer : EnumSkinLayer.values()) {
             layerSettings.put(layer, Lazy.of(() -> {
-                LayerSettings group = new LayerSettings();
+                LayerSettings settings = new LayerSettings();
                 CompoundTag layerData = tag.getCompound(layer.name());
-                group.deserializeNBT(provider, layerData);
-                return group;
+                settings.deserializeNBT(provider, layerData);
+                return settings;
             }));
         }
     }

@@ -7,6 +7,7 @@ import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.network.syncing.SyncComplete;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -110,7 +111,7 @@ public class DragonCommand {
         }
 
         if (dragonType != null && dragonLevel == null) {
-            dragonLevel = player.registryAccess().holderOrThrow(DragonLevel.newborn);
+            dragonLevel = player.registryAccess().holderOrThrow(DragonLevels.newborn);
         }
 
         if (dragonType == null && cap.getType() != null) {

@@ -1,6 +1,7 @@
 package by.dragonsurvivalteam.dragonsurvival.registry.datagen.tags;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderLookup;
@@ -25,7 +26,7 @@ public class DSBodyTags extends TagsProvider<DragonBody> {
 
     @Override
     protected void addTags(@NotNull final HolderLookup.Provider provider) {
-        tag(ORDER).add(DragonBody.center, DragonBody.east, DragonBody.north, DragonBody.south, DragonBody.west);
+        tag(ORDER).add(DragonBodies.center, DragonBodies.east, DragonBodies.north, DragonBodies.south, DragonBodies.west);
     }
 
     public static List<Holder<DragonBody>> getOrdered(@Nullable final HolderLookup.Provider provider) {

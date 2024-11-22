@@ -2,6 +2,7 @@ package by.dragonsurvivalteam.dragonsurvival.client.gui.screens;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.hud.MagicHUD;
+import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.buttons.DragonBodyButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.TabButton;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.widgets.buttons.generic.HelpButton;
@@ -19,6 +20,7 @@ import by.dragonsurvivalteam.dragonsurvival.network.dragon_editor.SyncDragonSkin
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import com.ibm.icu.impl.Pair;
 import com.mojang.math.Axis;
@@ -132,7 +134,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
     private int guiTop;
     private float yRot = -3;
     private float xRot = -5;
-    private float zoom = 0;
+    private float zoom;
     private URI clickedLink;
 
     public SkinsScreen(Screen sourceScreen) {
@@ -275,7 +277,6 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
             DragonStateHandler handler = DragonStateProvider.getData(Objects.requireNonNull(player));
             handler.getSkinData().renderCustomSkin = !handler.getSkinData().renderCustomSkin;
             ConfigHandler.updateConfigValue("render_custom_skin", handler.getSkinData().renderCustomSkin);
-
             PacketDistributor.sendToServer(new SyncDragonSkinSettings(player.getId(), handler.getSkinData().renderCustomSkin));
             setTextures();
         }, Supplier::get) {
@@ -287,7 +288,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         });
 
         // Button to enable / disable the rendering of custom dragon skin of other players
-        addRenderableWidget(new Button(startX + 128, startY + 128, imageWidth, 20, Component.translatable(SHOW_OTHER_CUSTOM_SKINS), button -> {
+        addRenderableWidget(new Button(startX + 128, startY + 45 + 48, imageWidth, 20, Component.translatable(SHOW_OTHER_CUSTOM_SKINS), button -> {
             ClientDragonRenderer.renderOtherPlayerSkins = !ClientDragonRenderer.renderOtherPlayerSkins;
             ConfigHandler.updateConfigValue("render_other_players_custom_skins", ClientDragonRenderer.renderOtherPlayerSkins);
             setTextures();
@@ -375,12 +376,12 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         addRenderableWidget(new Button(startX + 90, startY - 20, 11, 17, Component.empty(), button -> {
             ResourceKey<DragonLevel> nextLevel = dragonLevel.getKey();
 
-            if (dragonLevel.is(DragonLevel.newborn)) {
-                nextLevel = DragonLevel.young;
-            } else if (dragonLevel.is(DragonLevel.young)) {
-                nextLevel = DragonLevel.adult;
-            } else if (dragonLevel.is(DragonLevel.adult)) {
-                nextLevel = DragonLevel.newborn;
+            if (dragonLevel.is(DragonLevels.newborn)) {
+                nextLevel = DragonLevels.young;
+            } else if (dragonLevel.is(DragonLevels.young)) {
+                nextLevel = DragonLevels.adult;
+            } else if (dragonLevel.is(DragonLevels.adult)) {
+                nextLevel = DragonLevels.newborn;
             }
 
             dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
@@ -400,12 +401,12 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         addRenderableWidget(new Button(startX - 70, startY - 20, 11, 17, Component.empty(), button -> {
             ResourceKey<DragonLevel> nextLevel = dragonLevel.getKey();
 
-            if (dragonLevel.is(DragonLevel.adult)) {
-                nextLevel = DragonLevel.young;
-            } else if (dragonLevel.is(DragonLevel.young)) {
-                nextLevel = DragonLevel.newborn;
-            } else if (dragonLevel.is(DragonLevel.newborn)) {
-                nextLevel = DragonLevel.adult;
+            if (dragonLevel.is(DragonLevels.adult)) {
+                nextLevel = DragonLevels.young;
+            } else if (dragonLevel.is(DragonLevels.young)) {
+                nextLevel = DragonLevels.newborn;
+            } else if (dragonLevel.is(DragonLevels.newborn)) {
+                nextLevel = DragonLevels.adult;
             }
 
             dragonLevel = Objects.requireNonNull(player).registryAccess().holderOrThrow(Objects.requireNonNull(nextLevel));
@@ -473,7 +474,7 @@ public class SkinsScreen extends Screen implements DragonBodyScreen {
         SkinsScreen.skinTexture = skinTexture;
 
         if (Objects.equals(lastPlayerName, playerName) || lastPlayerName == null) {
-            zoom = (float) dragonLevel.value().sizeRange().min();
+            zoom = DragonEditorScreen.setZoom(dragonLevel);
         }
 
         noSkin = defaultSkin;

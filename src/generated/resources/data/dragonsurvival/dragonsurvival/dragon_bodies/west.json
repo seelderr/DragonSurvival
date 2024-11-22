@@ -2,52 +2,40 @@
   "can_hide_wings": false,
   "modifiers": [
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.attack_knockback",
-      "modifier": {
-        "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/body/347224317/minecraft.generic.attack_knockback",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.5
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.movement_speed",
-      "modifier": {
-        "amount": -0.3,
-        "id": "dragonsurvival:dragonsurvival/body/-935644241/minecraft.generic.movement_speed",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": -0.3
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.step_height",
-      "modifier": {
-        "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/body/345750019/minecraft.generic.step_height",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 1.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "neoforge:swim_speed",
-      "modifier": {
-        "amount": -0.3,
-        "id": "dragonsurvival:dragonsurvival/body/388782700/neoforge.swim_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": -0.3
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_speed",
-      "modifier": {
-        "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/347224224/dragonsurvival.flight_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_stamina_cost",
-      "modifier": {
-        "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/body/-978676922/dragonsurvival.flight_stamina_cost",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": 1.0
     }
   ]
 }

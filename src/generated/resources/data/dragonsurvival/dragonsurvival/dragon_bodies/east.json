@@ -1,84 +1,64 @@
 {
   "modifiers": [
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.armor",
-      "modifier": {
-        "amount": 2.0,
-        "id": "dragonsurvival:dragonsurvival/body/345750050/minecraft.generic.armor",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 2.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.attack_damage",
-      "modifier": {
-        "amount": -1.0,
-        "id": "dragonsurvival:dragonsurvival/body/345793264/minecraft.generic.attack_damage",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": -1.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.attack_knockback",
-      "modifier": {
-        "amount": -1.0,
-        "id": "dragonsurvival:dragonsurvival/body/345793264/minecraft.generic.attack_knockback",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": -1.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.gravity",
-      "modifier": {
-        "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/body/-977202748/minecraft.generic.gravity",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": 0.1
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.jump_strength",
-      "modifier": {
-        "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/body/347224193/minecraft.generic.jump_strength",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.1
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.movement_speed",
-      "modifier": {
-        "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/body/-977202748/minecraft.generic.movement_speed",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": 0.1
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "neoforge:swim_speed",
-      "modifier": {
-        "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/body/345750019/neoforge.swim_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 1.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:mana",
-      "modifier": {
-        "amount": 2.0,
-        "id": "dragonsurvival:dragonsurvival/body/345750050/dragonsurvival.mana",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 2.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_speed",
-      "modifier": {
-        "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/347224224/dragonsurvival.flight_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_stamina_cost",
-      "modifier": {
-        "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/-935644272/dragonsurvival.flight_stamina_cost",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": -0.2
     }
   ]
 }

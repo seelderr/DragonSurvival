@@ -1,60 +1,46 @@
 {
   "modifiers": [
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.attack_damage",
-      "modifier": {
-        "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/body/347224317/minecraft.generic.attack_damage",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.5
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.gravity",
-      "modifier": {
-        "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/-977202717/minecraft.generic.gravity",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": 0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.jump_strength",
-      "modifier": {
-        "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/347224224/minecraft.generic.jump_strength",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.movement_speed",
-      "modifier": {
-        "amount": 0.2,
-        "id": "dragonsurvival:dragonsurvival/body/-977202717/minecraft.generic.movement_speed",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": 0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "neoforge:swim_speed",
-      "modifier": {
-        "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/388782669/neoforge.swim_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": -0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_speed",
-      "modifier": {
-        "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/388782669/dragonsurvival.flight_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": -0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_stamina_cost",
-      "modifier": {
-        "amount": -0.5,
-        "id": "dragonsurvival:dragonsurvival/body/-935644179/dragonsurvival.flight_stamina_cost",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": -0.5
     }
   ]
 }

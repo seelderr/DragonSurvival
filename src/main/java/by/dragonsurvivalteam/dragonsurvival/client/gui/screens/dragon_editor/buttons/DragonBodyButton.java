@@ -5,6 +5,7 @@ import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.SkinsScreen;
 import by.dragonsurvivalteam.dragonsurvival.client.gui.screens.dragon_editor.DragonEditorScreen;
 import by.dragonsurvivalteam.dragonsurvival.mixins.client.TextureManagerAccess;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import net.minecraft.client.Minecraft;
@@ -52,8 +53,8 @@ public class DragonBodyButton extends Button {
         ResourceManager manager = ((TextureManagerAccess) Minecraft.getInstance().getTextureManager()).dragonSurvival$getResourceManager();
 
         if (manager.getResource(iconLocation).isEmpty()) {
-            DragonSurvival.LOGGER.warn("Icon [{}] does not exist - using icon from body type [{}] as fallback", iconLocation, DragonBody.center);
-            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBody.center.location().getNamespace(), LOCATION_PREFIX + DragonBody.center.location().getPath() + iconLocationSuffix);
+            DragonSurvival.LOGGER.warn("Icon [{}] does not exist - using icon from body type [{}] as fallback", iconLocation, DragonBodies.center);
+            iconLocation = ResourceLocation.fromNamespaceAndPath(DragonBodies.center.location().getNamespace(), LOCATION_PREFIX + DragonBodies.center.location().getPath() + iconLocationSuffix);
         }
 
         this.iconLocation = iconLocation;

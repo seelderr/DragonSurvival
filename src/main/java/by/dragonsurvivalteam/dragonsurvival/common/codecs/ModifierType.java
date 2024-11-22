@@ -1,19 +1,23 @@
 package by.dragonsurvivalteam.dragonsurvival.common.codecs;
 
 import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
+import com.mojang.serialization.Codec;
 import net.minecraft.core.Holder;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
+import org.jetbrains.annotations.NotNull;
 
-import java.text.NumberFormat;
 import java.util.Objects;
 
-public enum ModifierType {
+public enum ModifierType implements StringRepresentable {
     DRAGON_TYPE("type"),
     DRAGON_BODY("body"),
     DRAGON_LEVEL("level");
+
+    public static final Codec<ModifierType> CODEC = StringRepresentable.fromEnum(ModifierType::values);
 
     private static final RandomSource RANDOM = RandomSource.create();
     private final String path;
@@ -26,12 +30,10 @@ public enum ModifierType {
         return path;
     }
 
-    public ResourceLocation randomId(final Holder<Attribute> attribute, double amount, final AttributeModifier.Operation operation) {
+    public ResourceLocation randomId(final Holder<Attribute> attribute, final AttributeModifier.Operation operation) {
         String attributeId = attribute.getRegisteredName().replace(":", ".");
-        NumberFormat format = NumberFormat.getInstance();
-        format.setMaximumFractionDigits(4);
-        // Currently only relevant for data generation -> should be specific enough to avoid overlapping
-        return DragonSurvival.res(path() + Objects.hash(format.format(amount), operation.getSerializedName()) + "/" + attributeId);
+        int hash = Objects.hash(String.valueOf(RANDOM.nextInt(100_000)), operation.getSerializedName());
+        return DragonSurvival.res(path() + hash  + "/" + attributeId);
     }
 
     public static boolean isRelevant(final ResourceLocation id) {
@@ -44,5 +46,10 @@ public enum ModifierType {
         }
 
         return false;
+    }
+
+    @Override
+    public @NotNull String getSerializedName() {
+        return path();
     }
 }

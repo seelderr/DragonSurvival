@@ -4,8 +4,8 @@ import by.dragonsurvivalteam.dragonsurvival.DragonSurvival;
 import by.dragonsurvivalteam.dragonsurvival.common.dragon_types.DragonTypes;
 import by.dragonsurvivalteam.dragonsurvival.config.ConfigHandler;
 import by.dragonsurvivalteam.dragonsurvival.config.obj.ConfigSide;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
-import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.BeforeBatch;
 import net.minecraft.gametest.framework.GameTest;
@@ -29,7 +29,7 @@ public class DragonBonusTests {
     @GameTest(template = TestUtils.AIR_CUBE_3X, batch = "dragon_bonus_tests")
     public static void test_break_speed_and_harvest_level_bonus(final GameTestHelper helper) {
         Player player = TestUtils.createPlayer(helper, GameType.DEFAULT_MODE);
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.newborn);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonLevels.newborn);
 
         BlockState state = TestUtils.setBlock(helper, Blocks.IRON_ORE);
         BlockPos position = helper.absolutePos(BlockPos.ZERO);
@@ -40,7 +40,7 @@ public class DragonBonusTests {
         helper.assertTrue(!canHarvest, String.format("[%s] can be harvested - expected block to not be harvestable", state));
 
         // Set a level that has a harvest level bonus
-        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBody.center, DragonLevel.young);
+        TestUtils.setToDragon(helper, player, DragonTypes.CAVE, DragonBodies.center, DragonLevels.young);
         canHarvest = player.hasCorrectToolForDrops(state, helper.getLevel(), position);
         helper.assertTrue(canHarvest, String.format("[%s] cannot be harvested - expected block to be harvestable", state));
 

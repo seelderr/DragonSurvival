@@ -37,6 +37,7 @@ import by.dragonsurvivalteam.dragonsurvival.registry.datagen.Translation;
 import by.dragonsurvivalteam.dragonsurvival.registry.datagen.lang.LangKey;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
 import by.dragonsurvivalteam.dragonsurvival.server.handlers.ServerFlightHandler;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -208,8 +209,8 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         }
     }
 
-    private float setZoom(final Holder<DragonLevel> dragonLevel) {
-        return (float) (0.5 * dragonLevel.value().sizeRange().min() + 28);
+    public static float setZoom(final Holder<DragonLevel> dragonLevel) {
+        return (float) (0.4 * dragonLevel.value().sizeRange().min() + 20);
     }
 
     public final Function<Holder<DragonLevel>, Holder<DragonLevel>> selectLevelAction = (newLevel) -> {
@@ -442,7 +443,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             dragonBody = localHandler.getBody();
         } else if (dragonType != null) {
             if (dragonLevel == null) {
-                dragonLevel = DragonLevel.get(null, DragonLevel.newborn).orElseThrow();
+                dragonLevel = DragonLevel.get(null, DragonLevels.newborn).orElseThrow();
             }
 
             if (dragonBody == null) {
@@ -514,9 +515,9 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
         }
 
         if (!data.isDragon() || DragonLevel.isBuiltinLevel(Objects.requireNonNull(data.getLevel()).getKey())) {
-            addRenderableWidget(new DragonLevelButton(this, DragonLevel.newborn, -180));
-            addRenderableWidget(new DragonLevelButton(this, DragonLevel.young, -60));
-            addRenderableWidget(new DragonLevelButton(this, DragonLevel.adult, 60));
+            addRenderableWidget(new DragonLevelButton(this, DragonLevels.newborn, -180));
+            addRenderableWidget(new DragonLevelButton(this, DragonLevels.young, -60));
+            addRenderableWidget(new DragonLevelButton(this, DragonLevels.adult, 60));
         } else {
             addRenderableWidget(new DragonLevelButton(this, data.getLevel().getKey(), -60));
         }
@@ -921,7 +922,7 @@ public class DragonEditorScreen extends Screen implements DragonBodyScreen {
             double size = data.getSavedDragonSize(data.getTypeName());
 
             if (!ServerConfig.saveGrowthStage || size == DragonStateHandler.NO_SIZE) {
-                data.setSize(minecraft.player.registryAccess().holderOrThrow(DragonLevel.newborn), minecraft.player);
+                data.setSize(minecraft.player.registryAccess().holderOrThrow(DragonLevels.newborn), minecraft.player);
             } else {
                 data.setSize(size, minecraft.player);
             }

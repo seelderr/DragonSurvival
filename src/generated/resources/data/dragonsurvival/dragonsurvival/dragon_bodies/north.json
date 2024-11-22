@@ -3,52 +3,40 @@
   "height_multiplier": 0.55,
   "modifiers": [
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.attack_damage",
-      "modifier": {
-        "amount": -0.2,
-        "id": "dragonsurvival:dragonsurvival/body/-935644272/minecraft.generic.attack_damage",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": -0.2
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.attack_knockback",
-      "modifier": {
-        "amount": -0.5,
-        "id": "dragonsurvival:dragonsurvival/body/388782762/minecraft.generic.attack_knockback",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": -0.5
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "minecraft:generic.movement_speed",
-      "modifier": {
-        "amount": -0.3,
-        "id": "dragonsurvival:dragonsurvival/body/-935644241/minecraft.generic.movement_speed",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": -0.3
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "neoforge:swim_speed",
-      "modifier": {
-        "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/body/347224317/neoforge.swim_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.5
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:mana",
-      "modifier": {
-        "amount": 2.0,
-        "id": "dragonsurvival:dragonsurvival/body/345750050/dragonsurvival.mana",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 2.0
     },
     {
+      "type": "dragonsurvival/body/",
       "attribute": "dragonsurvival:flight_stamina_cost",
-      "modifier": {
-        "amount": -0.1,
-        "id": "dragonsurvival:dragonsurvival/body/-935644303/dragonsurvival.flight_stamina_cost",
-        "operation": "add_multiplied_total"
-      }
+      "operation": "add_multiplied_total",
+      "per_size": -0.1
     }
   ]
 }

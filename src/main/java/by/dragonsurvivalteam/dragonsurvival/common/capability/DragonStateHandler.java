@@ -11,8 +11,10 @@ import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerEndMixin;
 import by.dragonsurvivalteam.dragonsurvival.mixins.PlayerStartMixin;
 import by.dragonsurvivalteam.dragonsurvival.network.client.ClientProxy;
 import by.dragonsurvivalteam.dragonsurvival.registry.DSModifiers;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBodies;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonBody;
 import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevel;
+import by.dragonsurvivalteam.dragonsurvival.registry.dragon.DragonLevels;
 import by.dragonsurvivalteam.dragonsurvival.util.DragonUtils;
 import by.dragonsurvivalteam.dragonsurvival.util.Functions;
 import by.dragonsurvivalteam.dragonsurvival.util.ToolUtils;
@@ -489,13 +491,13 @@ public class DragonStateHandler extends EntityStateHandler {
 
         try {
             ResourceLocation bodyLocation = ResourceLocation.parse(tag.getString(DRAGON_BODY));
-            Optional<Holder.Reference<DragonBody>> optionalBody = provider.holder(DragonBody.key(bodyLocation));
+            Optional<Holder.Reference<DragonBody>> optionalBody = provider.holder(DragonBodies.key(bodyLocation));
             optionalBody.ifPresent(body -> dragonBody = body);
         } catch (ResourceLocationException ignored) {}
 
         try {
             ResourceLocation levelLocation = ResourceLocation.parse(tag.getString(DRAGON_LEVEL));
-            Optional<Holder.Reference<DragonLevel>> optionalLevel = provider.holder(DragonLevel.key(levelLocation));
+            Optional<Holder.Reference<DragonLevel>> optionalLevel = provider.holder(DragonLevels.key(levelLocation));
             optionalLevel.ifPresent(level -> dragonLevel = level);
         } catch (ResourceLocationException ignored) {}
 

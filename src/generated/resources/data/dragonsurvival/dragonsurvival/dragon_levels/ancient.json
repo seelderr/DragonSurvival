@@ -13,59 +13,45 @@
   "harvest_level_bonus": 1,
   "modifiers": [
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:player.submerged_mining_speed",
       "dragon_type": "sea",
-      "modifier": {
-        "amount": 3.0,
-        "id": "dragonsurvival:dragonsurvival/level/345750081/minecraft.player.submerged_mining_speed",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 3.0
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:generic.step_height",
-      "modifier": {
-        "amount": 0.5,
-        "id": "dragonsurvival:dragonsurvival/level/347224317/minecraft.generic.step_height",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.5
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:generic.attack_damage",
-      "modifier": {
-        "amount": 3.0,
-        "id": "dragonsurvival:dragonsurvival/level/345750081/minecraft.generic.attack_damage",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 3.0
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:generic.jump_strength",
-      "modifier": {
-        "amount": 0.1,
-        "id": "dragonsurvival:dragonsurvival/level/347224193/minecraft.generic.jump_strength",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 0.1
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:generic.safe_fall_distance",
-      "modifier": {
-        "amount": 1.0,
-        "id": "dragonsurvival:dragonsurvival/level/345750019/minecraft.generic.safe_fall_distance",
-        "operation": "add_value"
-      }
+      "operation": "add_value",
+      "per_size": 1.0
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "dragonsurvival:dragon_breath_range",
-      "modifier": {
-        "amount": 4.0,
-        "id": "dragonsurvival:dragonsurvival/level/345750112/dragonsurvival.dragon_breath_range",
-        "operation": "add_value"
-      }
-    }
-  ],
-  "scaling_modifiers": [
+      "operation": "add_value",
+      "per_size": 4.0
+    },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:generic.movement_speed",
-      "id": "dragonsurvival:dragonsurvival/level/1359000882/minecraft.generic.movement_speed",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
@@ -74,8 +60,8 @@
       }
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:player.entity_interaction_range",
-      "id": "dragonsurvival:dragonsurvival/level/391495541/minecraft.player.entity_interaction_range",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
@@ -84,8 +70,8 @@
       }
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:player.block_interaction_range",
-      "id": "dragonsurvival:dragonsurvival/level/391495541/minecraft.player.block_interaction_range",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
@@ -94,8 +80,8 @@
       }
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "minecraft:generic.max_health",
-      "id": "dragonsurvival:dragonsurvival/level/347224317/minecraft.generic.max_health",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
@@ -104,8 +90,8 @@
       }
     },
     {
+      "type": "dragonsurvival/level/",
       "attribute": "dragonsurvival:dragon_breath_range",
-      "id": "dragonsurvival:dragonsurvival/level/391495665/dragonsurvival.dragon_breath_range",
       "operation": "add_value",
       "per_size": {
         "type": "minecraft:linear",
@@ -115,8 +101,8 @@
     }
   ],
   "size_range": {
-    "max": 60.0,
-    "min": 40.0
+    "max": 120.0,
+    "min": 60.0
   },
   "ticks_until_grown": 51840000
 }
